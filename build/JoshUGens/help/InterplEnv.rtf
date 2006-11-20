@@ -1,0 +1,115 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf110
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 InterplEnv					
+\fs24 envelope specification
+\f1\b0 \
+\
+
+\f0\b superclass: Object\
+
+\f1\b0 \
+An InterplEnv is a specification for a segmented envelope. InterplEnvs can be used both server-side, by an 
+\f0\b IEnvGen 
+\f1\b0 within a SynthDef, and clientside, with methods such as 
+\f0\b at
+\f1\b0 . An InterplEnv can have any number of segments. An InterplEnv can have several shapes for its segments.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs28 \cf0 Differences between InterplEnv and Env\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs24 \cf0 \
+InterplEnvs do not have release or loop nodes.  They are of a fixed duration. Mostly, it is meant to be used with IEnvGen, where 'times' are actually an index into the envelope curves that are described.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs28 \cf0 \
+Basic Creation
+\f1\b0\fs24 \
+\
+*
+\f0\b new(levels, times, curves)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+	Create a new envelope specification.\
+	
+\f0\b levels
+\f1\b0  - an array of levels. The first level is the initial value of the envelope.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1120\fi-1120\ql\qnatural
+\cf0 	
+\f0\b times
+\f1\b0  - an array of durations of segments in seconds. There should be one fewer duration than there are levels.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 	
+\f0\b curve
+\f1\b0  - this parameter determines the shape of the envelope segments.\
+	The possible values are:\
+		'step' - flat segments\
+		'linear' - linear segments, the default\
+		'exponential' - natural exponential growth and decay. In this case, the levels must all be nonzero\
+					and the have the same sign.\
+		'sine' - sinusoidal S shaped segments.\
+		'welch' - sinusoidal segments shaped like the sides of a Welch window.\
+		a Float - a curvature value for all segments.\
+		An Array of Floats - curvature values for each segments.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs28 \cf0 Instance Methods
+\f1\b0\fs24 \
+	
+\f2 	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 plot(size)\
+
+\f1\b0 \
+	Plot this envelope's shape in a window.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li1140\fi-1140\ql\qnatural
+\cf0 	
+\f0\b size
+\f1\b0  - The size of the plot. The default is 400.
+\f2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 	
+\f1 \
+	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 asArray\
+
+\f1\b0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li560\fi-560\ql\qnatural
+\cf0 	Converts the Env to an Array in a specially ordered format. This allows for Env parameters to be settable arguments in a 
+\f0\b [\ul SynthDef\ulnone ]
+\f1\b0 . See example above under *
+\f0\b newClear
+\f1\b0 .\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 	
+\f2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs28 \cf0 Client-side Access and Stream Support
+\f2\b0\fs24 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 at(time)\
+
+\f1\b0 \
+	Returns the value of the InterplEnv at 
+\f0\b time
+\f1\b0 .\
+	\
+		
+\f2\fs18 \cf2 InterplEnv\cf0 ([0, 1, 0.707], [0.2, 1.3], [\\lin, \\sin]).at(0.5);
+\f1\fs24 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2 \cf0 				}

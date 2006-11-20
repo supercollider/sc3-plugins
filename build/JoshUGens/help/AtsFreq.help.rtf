@@ -1,0 +1,99 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf2 AtsFreq / AtsAmp			
+\fs28 Use Freq and Amp data from a given partial
+\fs36 \
+AtsParInfo					
+\fs28 One UGen to return both Amp and Freq info
+\fs36 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf2 \
+AtsFreq.kr(atsbuffer partialNum, filePointer, mul, add);\
+\
+- returns frequency information for a given partial\
+\
+	partialNumber - 
+\f1\b0 the number of the partial to return frequency data for.  Partial 0 is the first partial.
+\f0\b \
+
+\f1\b0 \
+
+\f0\b AtsAmp.kr(atsbuffer, partialNum, filePointer, mul, add);\
+
+\f1\b0 \
+
+\f0\b - returns amplitude information for a given partial\
+\
+	partialNumber - 
+\f1\b0 the number of the partial to return frequency data for.  Partial 0 is the first partial.\
+	\
+
+\f0\b AtsParInfo.kr(atsbuffer, partialNum, filePointer, mul, add);\
+
+\f1\b0 \
+
+\f0\b - returns amplitude and freq information for a given partial\
+\
+	partialNumber - 
+\f1\b0 the number of the partial to return frequency data for.  Partial 0 is the first partial.\
+	\
+	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs30 \cf2 \ul \ulc0 Usage
+\f1\b0\fs24 \ulnone \
+	 
+\f0\b \ul \
+
+\f1\b0 \ulnone For resynthesis purposes, an ATS file needs to be loaded into a buffer.  When loading an ATS file, you need to supply a buffer number to store ATS data in.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs20 \cf2 s.boot;\
+\
+a = \cf3 AtsFile\cf2 .new(\cf4 "sounds/a11wlk01.ats"\cf2 ).loadToBuffer;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b0\fs20 \cf2 ( \cf5 //use freq and amp information for a filter ugen (just the first 30 partials)\cf2 \
+\{\
+	\cf3 var\cf2  noise, freqs, amps, partials;\
+	partials = \cf3 Array\cf2 .series(30, 1, 1);\
+	\cf5 // outputs an array of 30 freq values;\cf2 \
+	freqs = \cf3 AtsFreq\cf2 .kr(a.buffer, partials, \cf3 MouseX\cf2 .kr(0, 1));\
+	\cf5 // outputs an array of 30 amp values\cf2 \
+	amps = \cf3 AtsAmp\cf2 .kr(a.buffer, partials, \cf3 MouseX\cf2 .kr(0, 1));\
+	\cf5 // feed these into a reson filter, mix down to one channel\cf2 \
+	\cf3 Mix\cf2 .ar(\cf3 Resonz\cf2 .ar(\cf3 WhiteNoise\cf2 .ar(20), freqs, 0.01, amps));\
+	\}.play(s);
+\fs18 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf2 );\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs20 \cf2 ( \cf5 //use freq and amp information for a filter ugen (just the first 30 partials)\cf2 \
+\{\
+	\cf3 var\cf2  noise, freqs, amps, freqs1, amps1, partials, out;\
+	partials = \cf3 Array\cf2 .series(30, 1, 1);\
+	\cf5 // outputs an array of 30 freq values;\cf2 \
+	out = \cf3 AtsParInfo\cf2 .kr(a.buffer, partials, \cf3 MouseX\cf2 .kr(0, 1));\
+	\cf5 // need to flop the array output\cf2 \
+	#amps, freqs = out.flop;\
+	\cf5 // outputs an array of 30 amp values\cf2 \
+	\cf5 // feed these into a reson filter, mix down to one channel\cf2 \
+	\cf3 Mix\cf2 .ar(\cf3 Resonz\cf2 .ar(\cf3 WhiteNoise\cf2 .ar(20), freqs, 0.01, amps ));\
+	\}.play(s);
+\fs18 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf2 );}
