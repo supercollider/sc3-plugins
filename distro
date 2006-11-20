@@ -1,0 +1,10 @@
+#! /bin/sh
+
+svn export build Extensions
+cp build/AmbisonicUGens/*.scx Extensions/AmbisonicUGens
+cp build/BEQSuiteUGens/*.scx Extensions/BEQSuiteUGens
+cp build/BlackRainUGens/*.scx Extensions/BlackRainUGens
+cp build/JoshPVUGens/*.scx Extensions/JoshPVUGens
+cp build/JoshUGens/*.scx Extensions/JoshUGens
+cp build/ReverbUGens/*.scx Extensions/ReverbUGens
+
