@@ -7,4 +7,5 @@ cp build/BlackRainUGens/*.scx Extensions/BlackRainUGens
 cp build/JoshPVUGens/*.scx Extensions/JoshPVUGens
 cp build/JoshUGens/*.scx Extensions/JoshUGens
 cp build/ReverbUGens/*.scx Extensions/ReverbUGens
-
+cp build/StkUGens/*.scx Extensions/StkUGens
+cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
