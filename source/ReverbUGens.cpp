@@ -3,6 +3,12 @@
 
 #include "SC_PlugIn.h"
 
+// gcc3.3 mathlib doesnt know these yet
+#if gccversion < 4 
+    #define powf pow
+    #define sqrtf sqrt
+#endif
+
 static InterfaceTable *ft;
 
 struct FreeVerb : public Unit

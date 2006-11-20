@@ -43,7 +43,7 @@
 		breakpoints = (
 		);
 		perUserDictionary = {
-			PBXPerProjectTemplateStateSaveDate = 185680022;
+			PBXPerProjectTemplateStateSaveDate = 185680315;
 			PBXWorkspaceContents = (
 				{
 					LeftSlideOut = {
@@ -56,7 +56,7 @@
 								};
 								NavCount = 1;
 								NavGeometry0 = {
-									Frame = "{{0, 0}, {756, 621}}";
+									Frame = "{{0, 0}, {762, 621}}";
 									NavBarVisible = YES;
 								};
 								NavSplitVertical = NO;
@@ -91,15 +91,15 @@
 				{
 					ContentSize = "{1021, 644}";
 					LeftSlideOut = {
-						ActiveTab = 0;
-						ActiveTabName = PBXGroupTreeModule;
+						ActiveTab = 3;
+						ActiveTabName = PBXTargetTreeModule;
 						Collapsed = NO;
 						Frame = "{{0, 23}, {1021, 621}}";
 						Split0 = {
 							Collapsed = NO;
-							Frame = "{{265, 0}, {756, 621}}";
+							Frame = "{{259, 0}, {762, 621}}";
 							Split0 = {
-								Frame = "{{0, 0}, {756, 621}}";
+								Frame = "{{0, 0}, {762, 621}}";
 							};
 							SplitCount = 1;
 							Tab0 = {
@@ -217,7 +217,7 @@
 					WindowLocation = "{1, 40}";
 				},
 			);
-			PBXWorkspaceStateSaveDate = 185680022;
+			PBXWorkspaceStateSaveDate = 185680315;
 		};
 		perUserProjectItems = {
 			17BA35D80A48827500A802D7 = 17BA35D80A48827500A802D7;
