@@ -10,3 +10,5 @@ mv ReverbUGens.so Extensions/ReverbUGens
 mv StkUGens.so Extensions/StkUGens
 cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
 
+mkdir Extensions/test
+mv Extensions/StkUGens Extensions/test

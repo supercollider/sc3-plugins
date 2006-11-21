@@ -14,19 +14,33 @@ plugs = [
 	'BEQSuiteUGens',
 	'BlackrainUGens',
 	'JoshUGens',
-	'ReverbUGens',
-	'StkUGens'
+	'ReverbUGens'
 ]
 
 for file in plugs :
 	Environment(
-        	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+        	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server'],
         	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
         	CXXFLAGS = ['-Wno-deprecated -O3 '],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = '.so'
 	).SharedLibrary(file, 'source/' + file + '.cpp');
+
+
+
+##############################################
+# StkUGens
+
+Environment(
+        CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+        CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+        CCFLAGS = ['-Wno-unknown-pragmas'],
+        CXXFLAGS = ['-Wno-deprecated -O3 '],
+        SHLIBPREFIX = '',
+        SHLIBSUFFIX = '.so'
+).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH='../stk-4.2.1/src');
+
 
 ##############################################
 # fft plugs
