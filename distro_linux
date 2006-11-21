@@ -1,0 +1,12 @@
+#! /bin/sh
+
+svn export build Extensions
+mv AmbisonicUGens.so Extensions/AmbisonicUGens
+mv BEQSuiteUGens.so Extensions/BEQSuiteUGens
+mv BlackrainUGens.so Extensions/BlackrainUGens
+mv JoshPVUGens.so Extensions/JoshPVUGens
+mv JoshUGens.so Extensions/JoshUGens
+mv ReverbUGens.so Extensions/ReverbUGens
+mv StkUGens.so Extensions/StkUGens
+cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
+
