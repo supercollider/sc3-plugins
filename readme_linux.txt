@@ -35,7 +35,7 @@ build sc3-plugins:
 
 $ cd scdev/sc3-plugins
 $ scons
-$ distro_linux
+$ ./distro_linux
 
 the resulting Extensions folder can now be moved out of the tree to your sc extensions folder.
 you can add a test sub dir and drop folders in there to disable a particular ugens pack.
