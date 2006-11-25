@@ -1,0 +1,174 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+\f3\fswiss\fcharset77 Helvetica-Oblique;\f4\fswiss\fcharset77 Helvetica-BoldOblique;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;\red191\green0\blue0;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 FFTTriggered			 Fast Fourier Transform snapshot UGen
+\f1\b0\fs18 \
+\
+
+\f2\fs24 Based on 
+\f0\b [\ul FFT\ulnone ]
+\f2\b0 , but analyses the signal only when triggered, rather than in a continuous sequence. The point is to be able to synchronise analysis windows exactly with trigger signals. Its purpose is for spectral analysis rather than "phase vocoder" manipulation, since IFFT typically won't be able to reconstruct a continuous audio signal.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 	chain = FFTTriggered(buffer, input, trig, maxoverlap=0.5)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs18 \cf2 	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 Analysis windows can be produced whenever triggered (whenever trig>0), but only once in each control period (i.e. the maximum rate is control-rate). The "maxoverlap" parameter can be used to further limit the maximum triggering rate: for example, with maxoverlap set at 0.5 and a buffer size of 2048, the analysis can only be triggered every 1024 samples. \
+\
+The analysis windows are typically constrained to occur at the beginning of a control period (because the trigger signal is control-rate), but the maxoverlap parameter can change this. For example, if the maxoverlap is 0.1 and the buffer size is 2048, and the trigger signal is continuously positive, then an analysis will be triggered every 205 samples, despite not being an exact multiple of the block size (default 64). In other words, the maxoverlap constraint is applied at audio-rate rather than control-rate.\
+\
+\
+
+\f0\b Examples
+\f2\b0 \
+\
+This first example is very simple and doesn't make use of FFTTriggered's timing advantages (since triggers from the language client are not precisely timed), but it does use lower CPU 
+\f3\i (on average)
+\f2\i0  than if using FFT:\
+\
+
+\f1\fs18 s.boot;\
+b = \cf3 Buffer\cf0 .alloc(s, 2048, 1);\
+(\
+x = \cf3 SynthDef\cf0 (\cf4 "help_ffttriggered_gendy"\cf0 , \{ \cf3 |t_trig=0|\cf0 \
+	\cf3 var\cf0  in, chain, centroid;\
+	\
+	\cf2 // We'll analyse a Gendy sound with slowly varying parameters\cf0 \
+	in = \cf3 Gendy1\cf0 .ar(	maxfreq: \cf3 LFPar\cf0 .kr(0.1).range(200, 500), \
+					minfreq: \cf3 LFPar\cf0 .kr(0.345).range(10, 300));\
+	\
+	chain = \cf3 FFTTriggered\cf0 (b.bufnum, in, t_trig);\
+	centroid = \cf3 FFTPercentile\cf0 .kr(chain, 0.5);\
+	centroid.poll(t_trig, \cf4 "Spectral centroid"\cf0 );\
+\
+	\cf3 Out\cf0 .ar(0, (in * 0.1).dup);\
+\}).play(s);\
+)\
+\
+x.set(\cf5 \\t_trig\cf0 , 1); \cf2 // Run this line, whenever you want to analyse the signal\cf0 \
+\
+x.free;\
+\
+\
+
+\f2\fs24 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\i \cf0 For the following examples, you need the 
+\f4\b OnsetDetection
+\f3\b0  UGen (in Nick Collins' "FiveIMS" release).
+\f1\i0\fs18 \
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 Here's a clearer example of why this UGen is needed. We'll use OnsetDetection to look for onsets, and when detected we'll post some analytical information derived from the 
+\f4\i\b ordinary FFT UGen
+\f2\i0\b0 's output. The measured power will kind-of work, but erratically, because the relative alignment of the FFT windows and the onset detector will drift in and out of phase.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 s.boot;\
+b = \cf3 Buffer\cf0 .alloc(s, 4096, 1);\
+(\
+x = \cf3 SynthDef\cf0 (\cf4 "help_ffttriggered_vanilla"\cf0 , \{\
+	\cf3 var\cf0  in, chain, amp, ampmeasured, onsets;\
+	\
+	amp = \cf3 LFPulse\cf0 .kr(1).range(0,1) * \cf3 LFPulse\cf0 .kr(0.5).range(0.3, 1);\
+	\
+	in = \cf3 Pulse\cf0 .ar(110) * amp;\
+	\
+	onsets = \cf3 OnsetDetection\cf0 .ar(in);\
+	\
+	amp.poll(onsets, \cf4 "\\nReal amplitude"\cf0 );\
+	\
+	\cf2 // Now we'll use ORDINARY FFT, and FFTPower, to determine amp.\cf0 \
+	\cf2 // The point is not specifically about amplitude, by the way, it's\cf0 \
+	\cf2 //   just a nice simple measure.\cf0 \
+	chain = \cf3 FFT\cf0 (b.bufnum, in);\
+	ampmeasured = \cf3 FFTPower\cf0 .kr(chain) * 0.36;\
+	ampmeasured.poll(onsets, \cf4 "Measured power"\cf0 );\
+\
+	\cf3 Out\cf0 .kr(0, onsets);\
+	\
+	\cf3 Out\cf0 .ar(0, (in * 0.1).dup);\
+\}).play(s);\
+)\
+x.free;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 \
+Next let's do exactly the same 
+\f4\i\b but with FFTTriggered
+\f2\i0\b0 . This should keep the FFT windows locked in phase with the detected onsets, and therefore our analyses will be less erratic.\
+\
+It also uses less CPU on average, because "unwanted" stretches of time are not FFT'ed. The peak CPU is slightly higher though.\
+\
+
+\f1\fs18 (\
+x = \cf3 SynthDef\cf0 (\cf4 "help_ffttriggered_nuevo"\cf0 , \{\
+	\cf3 var\cf0  in, chain, amp, ampmeasured, onsets;\
+	\
+	amp = \cf3 LFPulse\cf0 .kr(1).range(0,1) * \cf3 LFPulse\cf0 .kr(0.5).range(0.3, 1);\
+	\
+	in = \cf3 Pulse\cf0 .ar(110) * amp;\
+	\
+	onsets = \cf3 OnsetDetection\cf0 .ar(in);\
+	\
+	amp.poll(onsets, \cf4 "\\nReal amplitude"\cf0 );\
+	\
+	\cf2 // Same measures, but this time using FFTTriggered.\
+	// The onset detector is used as the trigger.\cf0 \
+	chain = \cf3 FFTTriggered\cf0 (b.bufnum, in, onsets);\
+	ampmeasured = \cf3 FFTPower\cf0 .kr(chain) * 0.36;\
+	ampmeasured.poll(onsets, \cf4 "Measured power"\cf0 );\
+\
+	\cf3 Out\cf0 .kr(0, onsets);\
+	\
+	\cf3 Out\cf0 .ar(0, (in * 0.1).dup);\
+\}).play(s);\
+)\
+x.free;\
+\
+\
+\
+
+\f2\fs24 This example shows what happens when you try to reconstruct FFTTriggered windows using IFFT. If the trigger signal corresponds to the onsets, then only the onsets will be reconstructed. (If the trigger signal is constantly on, then a full reconstruction is possible, but this is more expensive than using the ordinary FFT UGen so not recommended.)\
+\cf6 \
+
+\f1\fs18 b = \cf7 Buffer\cf6 .alloc(s, 4096, 1);
+\f2\fs24 \
+
+\f1\fs18 c = \cf7 Buffer\cf6 .read(s,\cf8 "sounds/a11wlk01.wav"\cf6 );\
+(\
+\cf7 SynthDef\cf6 (\cf8 "help_ffttriggered_ifft"\cf6 , \{ \cf7 arg\cf6  out=0,bufnum=0,fftbufnum=0;\
+	\cf7 var\cf6  in, chain, onsets;\
+\
+	in = \cf7 PlayBuf\cf6 .ar(1, bufnum, \cf7 BufRateScale\cf6 .kr(bufnum), loop:1);\
+	\
+	onsets = \cf7 OnsetDetection\cf6 .ar(in, threshold:0.7);\
+	\
+	chain = \cf7 FFTTriggered\cf6 (fftbufnum, in, onsets);\
+	\
+	\cf9 // Note: We're doing *nothing* to the signal imbetween FFTTriggered and IFFT\cf6 \
+	\
+	\cf7 Out\cf6 .ar(0, \cf7 Pan2\cf6 .ar(\cf7 IFFT\cf6 (chain)));\
+	\
+\}).play(s,[\cf10 \\out\cf6 , 0, \cf10 \\bufnum\cf6 , c.bufnum, \cf10 \\fftbufnum\cf6 , b.bufnum]);\
+)}
