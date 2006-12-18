@@ -37,8 +37,8 @@ $ cd scdev/sc3-plugins
 $ scons
 $ ./distro_linux
 
-the resulting Extensions folder can now be moved out of the tree to your sc extensions folder.
-you can add a test sub dir and drop folders in there to disable a particular ugens pack.
+the resulting Extensions folder can now be moved out of the tree to your sc extensions folder (or even better create a symlink).
+you can add a sub dir named 'test' inside this Extensions directory and drop folders in there to disable a particular ugens pack.
 
 for the StkUGens to work and boot scsynth succesfully if this ugen pack was installed, the rawwaves folder needs to be installed at the same level of scsynth as noted on the UGens Pack directory. a sylink works fine for this.
 

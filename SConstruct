@@ -14,7 +14,8 @@ plugs = [
 	'BEQSuiteUGens',
 	'BlackrainUGens',
 	'JoshUGens',
-	'ReverbUGens'
+	'ReverbUGens',
+	'MCLDChaosUGens'
 ]
 
 for file in plugs :
@@ -58,4 +59,5 @@ Environment(
        	SHLIBSUFFIX = '.so'
 ).SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base);
 
+##############################################
 

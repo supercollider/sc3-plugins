@@ -10,5 +10,10 @@ mv ReverbUGens.so Extensions/ReverbUGens
 mv StkUGens.so Extensions/StkUGens
 cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
 
+mv MCLDChaosUGens.so Extensions/MCLD_UGens
+// for now disable these
+mkdir Extensions/MCLD_UGens/test
+mv MCLD_UGens/FFTTriggered.sc  MCLD_UGens/MCLD_CQ_UGens.sc MCLD_UGens/MCLDFFTUGens.sc MCLD_UGens/test
+
 mkdir Extensions/test
 mv Extensions/StkUGens Extensions/test
