@@ -47,8 +47,15 @@ FFTFlatnessSplitPercentile : MultiOutUGen {
 
 FFTFlux : UGen
 {
-	*kr { arg buffer;
-		^this.multiNew('control', buffer)
+	*kr { arg buffer, normalise=1;
+		^this.multiNew('control', buffer, normalise)
+	}
+}
+
+FFTFluxPos : UGen
+{
+	*kr { arg buffer, normalise=1;
+		^this.multiNew('control', buffer, normalise)
 	}
 }
 
@@ -60,6 +67,22 @@ FFTSubbandPower : MultiOutUGen {
 		cutfreqs.sort;
 		// Note the extra arg inserted so the UGen knows how many freqs to expect
 		^this.multiNew('control', chain, cutfreqs.size, incdc, *cutfreqs)
+	}
+	init { arg ... theInputs;
+		inputs = theInputs;
+		numbands = inputs[1] + 1;
+		^this.initOutputs(numbands, rate);
+	}
+}
+
+FFTSubbandFlux : MultiOutUGen {
+	
+	var <numbands;
+	
+	*kr { arg chain, cutfreqs, posonly=0;
+		cutfreqs.sort;
+		// Note the extra arg inserted so the UGen knows how many freqs to expect
+		^this.multiNew('control', chain, cutfreqs.size, posonly, *cutfreqs)
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
