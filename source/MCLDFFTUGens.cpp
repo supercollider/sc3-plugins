@@ -46,6 +46,7 @@ struct FFTFlux_Unit : FFTAnalyser_OutOfPlace
 	float m_yesternorm;
 	float m_yesterdc;
 	float m_yesternyq;
+	bool m_normalise;
 };
 
 struct FFTFlatnessSplitPercentile_Unit : FFTPercentile_Unit
@@ -122,12 +123,18 @@ extern "C"
 
 	void FFTPercentile_Ctor(FFTPercentile_Unit *unit);
 	void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples);
+	void FFTPercentile_Dtor(FFTPercentile_Unit *unit);
 
 	void FFTFlux_Ctor(FFTFlux_Unit *unit);
 	void FFTFlux_next(FFTFlux_Unit *unit, int inNumSamples);
+	void FFTFlux_Dtor(FFTFlux_Unit *unit);
+	void FFTFluxPos_Ctor(FFTFlux_Unit *unit);
+	void FFTFluxPos_next(FFTFlux_Unit *unit, int inNumSamples);
+	void FFTFluxPos_Dtor(FFTFlux_Unit *unit);
 
 	void FFTFlatnessSplitPercentile_Ctor(FFTFlatnessSplitPercentile_Unit *unit);
 	void FFTFlatnessSplitPercentile_next(FFTFlatnessSplitPercentile_Unit *unit, int inNumSamples);
+	void FFTFlatnessSplitPercentile_Dtor(FFTFlatnessSplitPercentile_Unit *unit);
 
 	void FFTDiffMags_Ctor(FFTAnalyser_Unit *unit);
 	void FFTDiffMags_next(FFTAnalyser_Unit *unit, int inNumSamples);
@@ -275,7 +282,7 @@ void FFTSubbandPower_Ctor(FFTSubbandPower *unit)
 	SETCALC(FFTSubbandPower_next);
 	
 	// ZIN0(1) tells us how many cutoffs we're looking for
-	int numcutoffs = ZIN0(1);
+	int numcutoffs = (int)ZIN0(1);
 	int numbands = numcutoffs+1;
 	
 	float * outvals = (float*)RTAlloc(unit->mWorld, numbands * sizeof(float));
@@ -361,7 +368,7 @@ void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
 	for (int i=0; i<numbins; ++i) {
 		float real = p->bin[i].real;
 		float imag = p->bin[i].imag;
-		cumul += real*real + imag*imag;
+		cumul += sqrt(real*real + imag*imag);
 		
 		// A convenient place to store the mag values...
 		q->bin[i].real = cumul;
@@ -374,6 +381,16 @@ void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
 	float bestposition = 0; // May be linear-interpolated between bins, but not implemented yet
 	           // NB If nothing beats the target (e.g. if fraction is -1) zero Hz is returned
 	float nyqfreq = ((float)unit->mWorld->mSampleRate) * 0.5f;
+	for(int i=0; i<numbins; i++) {
+		//Print("Testing %g, at position %i", q->bin[i].real, i);
+		if(q->bin[i].real >= target){
+			bestposition = (nyqfreq * (float)(i+1)) / (float)(numbins+2);
+			//Print("Target %g beaten by %g (at position %i), equating to freq %g\n", 
+			//				target, p->bin[i].real, i, bestposition);
+			break;
+		}
+	}
+/* THIS COUNTDOWN METHOD DEPRECATED IN FAVOUR OF COUNT-UP, for various reasons.
 	for(int i=numbins-1; i>-1; i--) {
 		//Print("Testing %g, at position %i", q->bin[i].real, i);
 		if(q->bin[i].real <= target){
@@ -383,6 +400,7 @@ void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
 			break;
 		}
 	}
+*/
 
 	// Store the val for output in future calls
 	unit->outval = bestposition;
@@ -400,8 +418,28 @@ void FFTPercentile_Ctor(FFTPercentile_Unit *unit)
 	unit->m_tempbuf = 0;
 }
 
+void FFTPercentile_Dtor(FFTPercentile_Unit *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+void FFTFlux_Ctor(FFTFlux_Unit *unit)
+{
+	SETCALC(FFTFlux_next);
+
+	unit->m_tempbuf = 0;
+
+	unit->m_yesternorm = 1.0f;
+	unit->m_yesterdc = 0.0f;
+	unit->m_yesternyq = 0.0f;
+	
+	unit->m_normalise = ZIN0(1) > 0.f; // Whether we want to normalise or not
+
+	unit->outval = 0.f;
+	ZOUT0(0) = 0.f;
+}
 
 void FFTFlux_next(FFTFlux_Unit *unit, int inNumSamples)
 {
@@ -422,14 +460,19 @@ void FFTFlux_next(FFTFlux_Unit *unit, int inNumSamples)
 	
 	float yesternorm = unit->m_yesternorm; // Should have been calculated on prev cycle
 	
-	// First iteration is to find the sum of magnitudes (to find the normalisation factor):
-	float currnorm = (p->dc * p->dc) + (p->nyq * p->nyq);
-	for (int i=0; i<numbins; ++i) {
-		currnorm += p->bin[i].mag * p->bin[i].mag;
-	}
-	// The normalisation factor is 1-over-sum
-	if(currnorm != 0.0f) {
-		currnorm = 1.0f / currnorm;
+	float currnorm;
+	if(unit->m_normalise){
+		// First iteration is to find the sum of magnitudes (to find the normalisation factor):
+		currnorm = (p->dc * p->dc) + (p->nyq * p->nyq);
+		for (int i=0; i<numbins; ++i) {
+			currnorm += p->bin[i].mag * p->bin[i].mag;
+		}
+		// The normalisation factor is 1-over-sum
+		if(currnorm != 0.0f) {
+			currnorm = 1.0f / currnorm;
+		}
+	} else {
+		currnorm = 1.f;
 	}
 	
 	// This iteration is the meat of the algorithm. Compare current (normed) bins against prev.
@@ -457,10 +500,17 @@ void FFTFlux_next(FFTFlux_Unit *unit, int inNumSamples)
 	ZOUT0(0) = unit->outval;
 
 }
-
-void FFTFlux_Ctor(FFTFlux_Unit *unit)
+void FFTFlux_Dtor(FFTFlux_Unit *unit)
 {
-	SETCALC(FFTFlux_next);
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+void FFTFluxPos_Ctor(FFTFlux_Unit *unit)
+{
+	SETCALC(FFTFluxPos_next);
 
 	unit->m_tempbuf = 0;
 
@@ -470,6 +520,78 @@ void FFTFlux_Ctor(FFTFlux_Unit *unit)
 
 	unit->outval = 0.f;
 	ZOUT0(0) = 0.f;
+}
+
+void FFTFluxPos_next(FFTFlux_Unit *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+
+	// Modified form of MAKE TEMP BUF, here used for storing last frame's magnitudes:
+	if (!unit->m_tempbuf) {
+		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+		unit->m_numbins = numbins;
+		
+		// Must also ensure the yester is zero'ed
+		// because it will be compared before being filled in FFTFlux calculation
+		memset(unit->m_tempbuf, 0, numbins * sizeof(float));
+	} else if (numbins != unit->m_numbins) return;
+	
+	SCPolarBuf *p = ToPolarApx(buf); // Current frame
+	float* yestermags = unit->m_tempbuf; // This is an array storing the yester magnitudes
+	
+	float yesternorm = unit->m_yesternorm; // Should have been calculated on prev cycle
+
+	float currnorm;
+	if(unit->m_normalise){
+		// First iteration is to find the sum of magnitudes (to find the normalisation factor):
+		currnorm = (p->dc * p->dc) + (p->nyq * p->nyq);
+		for (int i=0; i<numbins; ++i) {
+			currnorm += p->bin[i].mag * p->bin[i].mag;
+		}
+		// The normalisation factor is 1-over-sum
+		if(currnorm != 0.0f) {
+			currnorm = 1.0f / currnorm;
+		}
+	} else {
+		currnorm = 1.f;
+	}
+
+	
+	// This iteration is the meat of the algorithm. Compare current (normed) bins against prev.
+	float onebindiff  = sc_abs(p->dc  * currnorm) - sc_abs(unit->m_yesterdc  * yesternorm);
+	float fluxsquared = 0.f;
+	if(onebindiff > 0.f)
+		fluxsquared += (onebindiff * onebindiff);
+	onebindiff        = sc_abs(p->nyq * currnorm) - sc_abs(unit->m_yesternyq * yesternorm);
+	if(onebindiff > 0.f)
+		fluxsquared += (onebindiff * onebindiff);
+	// Now the bins
+	for (int i=0; i<numbins; ++i) {
+		// Sum the squared difference of normalised mags onto the cumulative value
+		onebindiff = (p->bin[i].mag * currnorm) - (yestermags[i] * yesternorm);
+
+		////////// THIS IS WHERE FFTFluxPos DIFFERS FROM FFTFlux - THE SIMPLE ADDITION OF AN "IF": //////////
+		if(onebindiff > 0.f) // The IF only applies to the next line - formatting is a bit weird to keep in line with the other func
+
+		fluxsquared += (onebindiff * onebindiff);
+		// Overwrite yestermag values with current values, so they're available next time
+		yestermags[i] = p->bin[i].mag;
+	}
+	
+	// Store the just-calc'ed norm as yesternorm
+	unit->m_yesternorm = currnorm;
+	unit->m_yesterdc = p->dc;
+	unit->m_yesternyq = p->nyq;
+	
+	// Store the val for output in future calls
+	unit->outval = sqrt(fluxsquared);
+
+	ZOUT0(0) = unit->outval;
+
+}
+void FFTFluxPos_Dtor(FFTFlux_Unit *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -567,6 +689,13 @@ void FFTFlatnessSplitPercentile_Ctor(FFTFlatnessSplitPercentile_Unit *unit)
 	unit->m_tempbuf = 0;
 }
 
+void FFTFlatnessSplitPercentile_Dtor(FFTFlatnessSplitPercentile_Unit *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
 void FFTDiffMags_next(FFTAnalyser_Unit *unit, int inNumSamples)
 {
 
@@ -599,7 +728,7 @@ void FFTDiffMags_Ctor(FFTAnalyser_Unit *unit)
 	ZOUT0(0) = ZIN0(0);
 }
 
-////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 
 void PV_DiffMags_next(PV_Unit *unit, int inNumSamples)
@@ -636,9 +765,10 @@ void load(InterfaceTable *inTable)
 
 	(*ft->fDefineUnit)("FFTPower", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTPower_Ctor, 0, 0);
 	(*ft->fDefineUnit)("FFTFlatness", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTFlatness_Ctor, 0, 0);
-	(*ft->fDefineUnit)("FFTPercentile", sizeof(FFTPercentile_Unit), (UnitCtorFunc)&FFTPercentile_Ctor, 0, 0);
-	(*ft->fDefineUnit)("FFTFlux", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFlux_Ctor, 0, 0);
-	(*ft->fDefineUnit)("FFTFlatnessSplitPercentile", sizeof(FFTFlatnessSplitPercentile_Unit), (UnitCtorFunc)&FFTFlatnessSplitPercentile_Ctor, 0, 0);
+	(*ft->fDefineUnit)("FFTPercentile", sizeof(FFTPercentile_Unit), (UnitCtorFunc)&FFTPercentile_Ctor, (UnitDtorFunc)&FFTPercentile_Dtor, 0);
+	(*ft->fDefineUnit)("FFTFlux", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFlux_Ctor, (UnitDtorFunc)&FFTFlux_Dtor, 0);
+	(*ft->fDefineUnit)("FFTFluxPos", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFluxPos_Ctor, (UnitDtorFunc)&FFTFluxPos_Dtor, 0);
+	(*ft->fDefineUnit)("FFTFlatnessSplitPercentile", sizeof(FFTFlatnessSplitPercentile_Unit), (UnitCtorFunc)&FFTFlatnessSplitPercentile_Ctor, (UnitDtorFunc)&FFTFlatnessSplitPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTDiffMags", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTDiffMags_Ctor, 0, 0);
 	(*ft->fDefineUnit)("PV_DiffMags", sizeof(PV_Unit), (UnitCtorFunc)&PV_DiffMags_Ctor, 0, 0);
 	DefineDtorUnit(FFTSubbandPower);
