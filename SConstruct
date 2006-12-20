@@ -15,6 +15,7 @@ plugs = [
 	'BlackrainUGens',
 	'JoshUGens',
 	'ReverbUGens',
+	'MCLDBufferUGens',
 	'MCLDChaosUGens'
 ]
 
@@ -44,7 +45,7 @@ Environment(
 
 
 ##############################################
-# fft plugs
+# JoshPVUGens
 
 fft_src_base = [ sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/SCComplex.cpp',
 	sc3_source + '/source/plugins/FFT2InterfaceTable.cpp', sc3_source + '/source/plugins/Convolution.cpp', 
@@ -60,4 +61,26 @@ Environment(
 ).SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base);
 
 ##############################################
+# MCLDFFTTriggeredUGens
+
+Environment(
+       	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/source/plugins'],
+       	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+       	CCFLAGS = ['-Wno-unknown-pragmas'],
+       	CXXFLAGS = ['-Wno-deprecated -O3 '],
+       	SHLIBPREFIX = '',
+       	SHLIBSUFFIX = '.so'
+).SharedLibrary('MCLDFFTTriggeredUGens', ['source/MCLDFFTTriggeredUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c'];
+
+##############################################
+# MCLDFFTUGens
+
+Environment(
+       	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/source/plugins'],
+       	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+       	CCFLAGS = ['-Wno-unknown-pragmas'],
+       	CXXFLAGS = ['-Wno-deprecated -O3 '],
+       	SHLIBPREFIX = '',
+       	SHLIBSUFFIX = '.so'
+).SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTTriggeredUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp'];
 
