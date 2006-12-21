@@ -70,7 +70,7 @@ Environment(
        	CXXFLAGS = ['-Wno-deprecated -O3 '],
        	SHLIBPREFIX = '',
        	SHLIBSUFFIX = '.so'
-).SharedLibrary('MCLDFFTTriggeredUGens', ['source/MCLDFFTTriggeredUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c'];
+).SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c']);
 
 ##############################################
 # MCLDFFTUGens
@@ -82,5 +82,5 @@ Environment(
        	CXXFLAGS = ['-Wno-deprecated -O3 '],
        	SHLIBPREFIX = '',
        	SHLIBSUFFIX = '.so'
-).SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTTriggeredUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp'];
+).SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp']);
 
