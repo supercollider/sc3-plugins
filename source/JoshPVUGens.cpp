@@ -179,23 +179,21 @@ SCComplexBuf* ToComplexApx(SndBuf *buf)
 }
 	 
 #define CALC_FREQS \
-	if(unit->m_remainingLoops == 0) { \
-	    for (int i = 0; i < numbins; i++){ \
-		float phasedif = p->bin[i].phase - phases[i]; /* get the phase differece */ \
-		while (phasedif > pi) /* unwrap the phase */ \
-		    phasedif -= twopi; \
-		while (phasedif < pi) \
-		    phasedif += twopi; \
-		/* calculate the freq */ \
-		freq = (sr / twopi) * (unit->m_centerfreqs[i] + (phasedif / (float)numbins)); \
-		freqs[i + (numbins * unit->m_curframe)] = freq; /* save the freqs */ \
-		/* store the current phases to the buffer */ \
-		phases[i] = p->bin[i].phase; \
-	    } \
-	    unit->m_curframe = (unit->m_curframe + 1) % unit->m_numFrames; \
-	    unit->m_remainingLoops = unit->m_numLoops; \
-	} 
-	   
+	for (int i = 0; i < numbins; i++){ \
+	    float phasedif = p->bin[i].phase - phases[i]; /* get the phase differece */ \
+	    while (phasedif > pi) /* unwrap the phase */ \
+		phasedif -= twopi; \
+	    while (phasedif < pi) \
+		phasedif += twopi; \
+	    /* calculate the freq */ \
+	    freq = (sr / twopi) * (unit->m_centerfreqs[i] + (phasedif / (float)numbins)); \
+	    freqs[i + (numbins * unit->m_curframe)] = freq; /* save the freqs */ \
+	    /* store the current phases to the buffer */ \
+	    phases[i] = p->bin[i].phase; \
+	} \
+	unit->m_curframe = (unit->m_curframe + 1) % unit->m_numFrames;
+
+
 void PV_PartialSynthF_next(PV_PartialSynthF *unit, int inNumSamples)
 {
 	PV_GET_BUF
@@ -205,7 +203,6 @@ void PV_PartialSynthF_next(PV_PartialSynthF *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *freqs = unit->m_freqs; 
-	unit->m_remainingLoops -= 1;
 	
 	float thresh = ZIN0(1); /* a freq threshold */
 	int numFrames = unit->m_numFrames;
@@ -259,16 +256,6 @@ void PV_PartialSynthF_first(PV_PartialSynthF *unit, int inNumSamples)
 	PV_GET_BUF
 
 	SCPolarBuf *p = ToPolarApx(buf);
-
-	/* 
-	2 overlaps. This will tell the funcs whether or not to look for new FFT data.  New data should be available
-	every (fft bufsize / 2) in audio samples.  This UGen calcs at the control rate though, so we need to 
-	figure out how many control periods to wait before checking for new data. This should equal:
-	(fftbufsize * 0.5 ) / controlrate
-	fftbufsize * 0.5 should equal the number of bins... so:
-	*/
-	float sr = (float)unit->mWorld->mSampleRate;	
-	unit->m_numLoops = unit->m_remainingLoops = (int)(numbins / (sr / BUFRATE)); 
 	
 	int numFrames = (int)unit->m_numFrames;
 	float initflag = IN0(3);
@@ -317,7 +304,6 @@ void PV_PartialSynthF_next_z(PV_PartialSynthF *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *freqs = unit->m_freqs; 
-	unit->m_remainingLoops -= 1;
 	float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
 	float freq = 0.f;
 	float initflag = IN0(3);
@@ -405,16 +391,6 @@ void PV_NoiseSynthF_first(PV_NoiseSynthF *unit, int inNumSamples)
 	PV_GET_BUF
 
 	SCPolarBuf *p = ToPolarApx(buf);
-
-	/* 
-	2 overlaps. This will tell the funcs whether or not to look for new FFT data.  New data should be available
-	every (fft bufsize / 2) in audio samples.  This UGen calcs at the control rate though, so we need to 
-	figure out how many control periods to wait before checking for new data. This should equal:
-	(fftbufsize * 0.5 ) / controlrate
-	fftbufsize * 0.5 should equal the number of bins... so:
-	*/
-	float sr = (float)unit->mWorld->mSampleRate; 
-	unit->m_numLoops = unit->m_remainingLoops =  (int)(numbins / (sr / BUFRATE));  
 	
 	int numFrames = (int)unit->m_numFrames;
 	
@@ -465,7 +441,6 @@ void PV_NoiseSynthF_next_z(PV_NoiseSynthF *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *freqs = unit->m_freqs; 
-	unit->m_remainingLoops -= 1;
 	float sr = SAMPLERATE * BUFRATE; /* we need the audio rate... calc it here */
 	float freq = 0.f;
 	
@@ -484,11 +459,9 @@ void PV_NoiseSynthF_next_z(PV_NoiseSynthF *unit, int inNumSamples)
 	}	
 		
 	/* if we have enought data to start modifying the buffer, then change to the next function */
-//	if (unit->m_curframe == (unit->m_numFrames - 1)) {
 	if (unit->m_curframe == 1) unit->m_nextflag = 1;
 	if ((unit->m_curframe == 0) && (unit->m_nextflag == 1)) {
 	    /* reset m_curframe */
-//	    unit->m_curframe = 0;
 	    SETCALC(PV_NoiseSynthF_next);
 	}
 }
@@ -502,7 +475,6 @@ if < thresh, resynth
 
 #define CALC_PHASEDIF \
 	int skip = (numbins * unit->m_curframe); \
-	if(unit->m_remainingLoops == 0) { \
 	    for (int i = 0; i < numbins; i++){ \
 		float prevphase = phases[i]; \
 		float phase = p->bin[i].phase; \
@@ -518,9 +490,7 @@ if < thresh, resynth
 		phasedifs[i + skip] = phasedif; /* save the phasedif */ \
 		/* store the current phases to the buffer */ \
 		phases[i] = p->bin[i].phase; \
-	    } \
 	    unit->m_curframe = (unit->m_curframe + 1) % unit->m_numFrames; \
-	    unit->m_remainingLoops = unit->m_numLoops; \
 	} 
 
 	    
@@ -533,7 +503,6 @@ void PV_PartialSynthP_next(PV_PartialSynthP *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *phasedifs = unit->m_phasedifs; 
-	unit->m_remainingLoops -= 1;
 	
 	float thresh = ZIN0(1); /* This expects values between 0 and 2pi */
 	int numFrames = unit->m_numFrames;
@@ -580,16 +549,6 @@ void PV_PartialSynthP_first(PV_PartialSynthP *unit, int inNumSamples)
 	PV_GET_BUF
 
 	SCPolarBuf *p = ToPolarApx(buf);
-
-	/* 
-	2 overlaps. This will tell the funcs whether or not to look for new FFT data.  New data should be available
-	every (fft bufsize / 2) in audio samples.  This UGen calcs at the control rate though, so we need to 
-	figure out how many control periods to wait before checking for new data. This should equal:
-	(fftbufsize * 0.5 ) / controlrate
-	fftbufsize * 0.5 should equal the number of bins... so:
-	*/
-	float sr = (float)unit->mWorld->mSampleRate; 
-	unit->m_numLoops = unit->m_remainingLoops =  (int)(numbins / (sr / BUFRATE)); 
 	
 	int numFrames = (int)unit->m_numFrames;
 	
@@ -634,7 +593,6 @@ void PV_PartialSynthP_next_z(PV_PartialSynthP *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *phasedifs = unit->m_phasedifs;
-	unit->m_remainingLoops -= 1;
 	
 	/* check to see if there is another frames worth of phase data to collect... do so if there is and set
 	unit->m_remainingLoops to the number of loops until new data is available ++ curframe */
@@ -651,7 +609,6 @@ void PV_PartialSynthP_next_z(PV_PartialSynthP *unit, int inNumSamples)
 	}	
 		
 	/* if we have enought data to start modifying the buffer, then change to the next function */
-//	if (unit->m_curframe == (unit->m_numFrames - 1)) {
 	if (unit->m_curframe == 1) unit->m_nextflag = 1;
 	if ((unit->m_curframe == 0) && (unit->m_nextflag == 1)) {
 	    /* reset m_curframe */
@@ -669,7 +626,6 @@ void PV_NoiseSynthP_next(PV_NoiseSynthP *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *phasedifs = unit->m_phasedifs; 
-	unit->m_remainingLoops -= 1;
 	
 	float thresh = ZIN0(1); /* This expects values between 0 and 2pi */
 	int numFrames = unit->m_numFrames;
@@ -718,16 +674,6 @@ void PV_NoiseSynthP_first(PV_NoiseSynthP *unit, int inNumSamples)
 	PV_GET_BUF
 
 	SCPolarBuf *p = ToPolarApx(buf);
-
-	/* 
-	2 overlaps. This will tell the funcs whether or not to look for new FFT data.  New data should be available
-	every (fft bufsize / 2) in audio samples.  This UGen calcs at the control rate though, so we need to 
-	figure out how many control periods to wait before checking for new data. This should equal:
-	(fftbufsize * 0.5 ) / controlrate
-	fftbufsize * 0.5 should equal the number of bins... so:
-	*/
-	float sr = (float)unit->mWorld->mSampleRate; 
-	unit->m_numLoops = unit->m_remainingLoops =  (int)(numbins / (sr / BUFRATE)); 
 	
 	int numFrames = (int)unit->m_numFrames;
 	
@@ -772,7 +718,6 @@ void PV_NoiseSynthP_next_z(PV_NoiseSynthP *unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 	float *phases = unit->m_phases; 
  	float *phasedifs = unit->m_phasedifs; 
-	unit->m_remainingLoops -= 1;
 	
 	/* check to see if there is another frames worth of phase data to collect... do so if there is and set
 	unit->m_remainingLoops to the number of loops until new data is available ++ curframe */
@@ -789,7 +734,6 @@ void PV_NoiseSynthP_next_z(PV_NoiseSynthP *unit, int inNumSamples)
 	}	
 		
 	/* if we have enought data to start modifying the buffer, then change to the next function */
-//	if (unit->m_curframe == (unit->m_numFrames - 1)) {
 	if (unit->m_curframe == 1) unit->m_nextflag = 1;
 	if ((unit->m_curframe == 0) && (unit->m_nextflag == 1)) {
 	    /* reset m_curframe */
@@ -1133,10 +1077,10 @@ void PV_Invert_next(PV_Invert* unit, int inNumSamples)
 	
 	for(int i = 1; i < numbins; i++){
 	    mymag = p->bin[i].mag;
-	    if(mymag > 0.00001) // if the magnitude is greater the -96dB
+	    if(mymag > 0.00001) // if the magnitude is greater then -96dB
 		p->bin[i].mag = log(p->bin[i].mag) * -1; // invert it
 		else
-		p->bin[i].mag = 11.052408446371 + (frand(s1, s2, s3) * 2.763102111593); // avoid infs... invert ran num betwee -96 and -120dB
+		p->bin[i].mag = 11.052408446371 + (frand(s1, s2, s3) * 2.763102111593); // avoid infs... invert ran num between -96 and -120dB
 	    }
 	RPUT
 }
