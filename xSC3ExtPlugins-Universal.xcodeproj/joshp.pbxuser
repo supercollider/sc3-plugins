@@ -176,6 +176,14 @@
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
 		);
 	};
+	F386C9F70B120C060030B5C1 /* SC_BufGen.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 698}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {1030, 698}}";
+			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+		};
+	};
 	F386CA7B0B120C8B0030B5C1 /* SC_Types.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 952}}";
@@ -185,6 +193,21 @@
 		};
 	};
 	F3949A960B0D81EA0066FA8D /* ReverbUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
 	F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */ = {
@@ -223,10 +246,10 @@
 	};
 	F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1334, 59542}}";
-			sepNavSelRange = "{1012, 23}";
-			sepNavVisRect = "{{0, 317}, {942, 195}}";
-			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1334, 58898}}";
+			sepNavSelRange = "{114559, 0}";
+			sepNavVisRect = "{{0, 55130}, {1030, 698}}";
+			sepNavWindowFrame = "{{221, 28}, {1069, 827}}";
 		};
 	};
 	F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */ = {
@@ -243,14 +266,22 @@
 	F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
+	F3FE07800B0D770D00A29459 /* BEQSuiteUGens.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 22708}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 8934}, {1030, 698}}";
+			sepNavWindowFrame = "{{310, 51}, {1069, 827}}";
+		};
+	};
 	F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
 	F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 16324}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 0}, {1030, 698}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 15540}}";
+			sepNavSelRange = "{29278, 0}";
+			sepNavVisRect = "{{0, 14834}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
@@ -259,14 +290,8 @@
 		activeBuildStyle = F3FE071D0B0D755000A29459 /* Development */;
 		activeTarget = 631417A30A203392007B9355 /* All */;
 		addToTargets = (
-			F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */,
 			631417A30A203392007B9355 /* All */,
-			F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
-			F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */,
-			F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */,
-			F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */,
-			F3949A960B0D81EA0066FA8D /* ReverbUGens (Upgraded) */,
-			F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */,
+			F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -280,7 +305,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					414.2085,
+					414,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -308,6 +333,18 @@
 					PBXFileDataSource_Errors_ColumnID,
 					PBXFileDataSource_Warnings_ColumnID,
 					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFindDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					200,
+					120,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFindDataSource_MessageID,
+					PBXFindDataSource_LocationID,
 				);
 			};
 			PBXConfiguration.PBXFileTableDataSource3.PBXSymbolsDataSource = {
@@ -348,8 +385,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 185732480;
-			PBXWorkspaceStateSaveDate = 185732480;
+			PBXPerProjectTemplateStateSaveDate = 190680293;
+			PBXWorkspaceStateSaveDate = 190680293;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
