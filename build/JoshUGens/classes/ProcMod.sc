@@ -1,7 +1,8 @@
 ProcMod {
 	var <amp, <>group, <env, <addAction, <target, <>clock, 
-		<timeScale, <lag, <>id, server, <envbus, <releasetime, <>function, 
-		<>releaseFunc, <>onReleaseFunc, <>responder, <envnode, <isRunning = false, <data;
+		<timeScale, <lag, <>id, <>server, <envbus, <releasetime, <>function, 
+		<>releaseFunc, <>onReleaseFunc, <>responder, <envnode, <isRunning = false, <data,
+		<starttime, <window, gui = false, button;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
 			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
@@ -47,6 +48,7 @@ ProcMod {
 			}, {
 			server.sendBundle(nil, [\g_new, group, addAction, target])
 			});
+		starttime = Main.elapsedTime;
 		function.asArray.do{arg me; 
 				me.isKindOf(Function).if({
 					me.value;
@@ -56,6 +58,9 @@ ProcMod {
 				};
 		}
 	
+	now {
+		^Main.elapsedTime - starttime
+		}
 	
 	value {
 		this.play;
@@ -160,7 +165,57 @@ ProcMod {
 		responder.notNil.if({responder.remove});
 		isRunning = false;
 		server.sendMsg(\n_free, group);
-		}	
+		gui.if({{button.value_(0)}.defer});
+		}
+	
+	// ProcMod.gui should create a small GUI that will control the ProcMod - start / stop, amp
+	gui {arg bounds = Rect(0, 0, 400, 70), upperLevel = 6, lowerLevel = -inf, parent;
+		var slider, numbox, winw, winh, dbspec, xspace, yspace;
+		gui = true;
+		window = parent ? GUI.window.new(this.id, bounds);
+		winh = bounds.height;
+		winw = bounds.width;
+		window.view.decorator.isNil.if({
+			window.view.decorator = FlowLayout( window.view.bounds, Point(10, 10), Point(10, 10));
+			});
+		xspace = window.view.decorator.gap.x * 1.5;
+		yspace = window.view.decorator.gap.y * 1.5;
+		window.front;
+		window.onClose_({gui = false});
+		button = GUI.button.new(window, Rect(0, 0, winw * 0.3 - xspace, winh * 0.8 - yspace))
+			.states_([
+				["start " ++ this.id, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
+				["stop " ++ this.id, Color.black, Color(0.7, 0.3, 0.3, 0.3)],
+				["releasing\npress to kill", Color.black, 
+					Color(0.3, 0.3, 0.7, 0.3)],
+				]);
+		isRunning.if({button.value_(1)});
+		button.action_({arg me;
+				var actions;
+				actions = [
+					{this.kill}, 
+					{this.play}, 
+					{this.release}
+					];
+				actions[me.value].value;
+				});
+		dbspec = [lowerLevel, upperLevel, \db].asSpec;
+		slider = GUI.slider.new(window, Rect(winw * 0.3, 0, winw * 0.5 - xspace, winh * 0.8 - yspace))
+			.value_(dbspec.unmap(amp.ampdb).quantize(0.01))
+			.action_({arg me;
+				var ampval;
+				ampval = dbspec.map(me.value);
+				this.amp_(ampval.dbamp);
+				numbox.value_(ampval.quantize(0.01));
+				});
+		numbox = GUI.numberBox.new(window, Rect(winw * 0.8, 0, winw * 0.2 - xspace, winh * 0.8- yspace))
+			.value_(amp.ampdb.quantize(0.01))
+			.action_({arg me;
+				this.amp_(me.value.dbamp);
+				slider.value_(dbspec.unmap(me.value));
+				});
+		^this;
+		}
 	
 	*initClass {
 		StartUp.add {
@@ -368,8 +423,8 @@ ProcEvents {
 							"Pedal ready".postln;
 							pedresp.add;
 							{
-								pedalgui = SCWindow.new("pedal", guiBounds).front;
-								SCButton.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
+								pedalgui = GUI.window.new("pedal", guiBounds).front;
+								GUI.button.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
 										pedalgui.bounds.height * 0.02, 
 										pedalgui.bounds.width * 0.8, 
 										pedalgui.bounds.height * 0.2))
@@ -383,7 +438,7 @@ ProcEvents {
 										server.sendMsg(\n_set, pedalnode, 
 											\mute, (me.value - 1).abs);
 										});
-								SCSlider.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
+								GUI.slider.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
 										pedalgui.bounds.height * 0.3,
 										pedalgui.bounds.width * 0.3, 
 										pedalgui.bounds.height * 0.6))
@@ -395,7 +450,7 @@ ProcEvents {
 										pedalgui.view.children[idx + 1].value_(mapval);
 										server.sendMsg(\n_set, pedalnode, \headroom, mapval); 
 										});
-								SCNumberBox.new(pedalgui, Rect(pedalgui.bounds.width * 0.45, 
+								GUI.numberBox.new(pedalgui, Rect(pedalgui.bounds.width * 0.45, 
 										pedalgui.bounds.height * 0.8, 
 										pedalgui.bounds.width * 0.4,
 										pedalgui.bounds.height * 0.1))
@@ -429,14 +484,14 @@ ProcEvents {
 		pracmode = true;
 		pracdict = Dictionary.new;
 		//bounds = SCWindow.screenBounds;
-		pracwindow = SCWindow.new(id.asString ++ " practice window", 
+		pracwindow = GUI.window.new(id.asString ++ " practice window", 
 			guibounds = Rect(20, 20, bounds.width * 0.9, bounds.height * 0.9)).front;
 		stripwidth = (guibounds.width - 10) * 0.066;
 		stripheight = (guibounds.height - 40) * 0.25;
 		eventArray.flat.do{arg me, i;
 			var thisbutton;
 			level = (i / 15).floor;
-			thisbutton = SCButton(pracwindow,
+			thisbutton = GUI.button(pracwindow,
 				Rect(5 + (stripwidth * (i % 15)),
 					5 + ((level * stripheight) + (level * 5)),
 					stripwidth * 0.9, stripheight * 0.1))
@@ -456,7 +511,7 @@ ProcEvents {
 					
 			pracdict.add(me -> pracwindow.view.children.indexOf(thisbutton));
 			
-			SCSlider(pracwindow,
+			GUI.slider.new(pracwindow,
 				Rect(5 + (stripwidth * (i % 15)),
 					5 + ((level * stripheight) + (((stripheight * 0.2) + (level *  5)))),
 					stripwidth * 0.3, stripheight * 0.6))
@@ -469,7 +524,7 @@ ProcEvents {
 					eventDict[me].amp_(val.dbamp);
 					});
 			
-			SCNumberBox(pracwindow,
+			GUI.numberBox.new(pracwindow,
 				Rect(5 + (stripwidth * (i % 15)),
 					10 + ((level * stripheight) + (((stripheight * 0.8) + (level * 5)))),
 					stripwidth * 0.75, stripheight * 0.125))
@@ -488,23 +543,23 @@ ProcEvents {
 		^pracwindow;
 		}
 	
-	perfGUI {arg guiBounds;
+	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
 		var buttonheight, buttonwidth;
 		
 
-		bounds = SCWindow.screenBounds;
+		bounds = GUI.window.screenBounds;
 
 		guiBounds = guiBounds ? Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
 				bounds.height * 0.3);
 				
 		gui = true;
 		
-		window = SCWindow.new(id.asString, guiBounds);
+		window = GUI.window.new(id.asString, guiBounds);
 		
 		buttonheight = guiBounds.height * 0.15;
 		buttonwidth = guiBounds.width * 0.5;
 		
-		SCNumberBox(window, Rect(10 + buttonwidth, 10, buttonwidth * 0.9, 
+		GUI.numberBox.new(window, Rect(10 + buttonwidth, 10, buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.value_(index)
 			.font_(Font("Arial", 24))
@@ -512,10 +567,10 @@ ProcEvents {
 				window.view.children[window.view.children.indexOf(me) + 1].focus(true);
 				});
 			
-		eventButton = SCButton.new(window, Rect(10, 10, buttonwidth * 0.9, 
+		eventButton = GUI.button.new(window, Rect(10, 10, buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.states_([
-				["Next Event:", Color.black, Color(0.3, 0.7, 0.3, 0.7)]
+				["Next Event:", Color.black, buttonColor]
 				])
 			.font_(Font("Arial", 24))
 			.action_({arg me;
@@ -532,15 +587,15 @@ ProcEvents {
 					})
 				});
 						
-		SCStaticText(window, Rect(10, 10 + buttonheight, buttonwidth * 1.8, 
+		GUI.staticText.new(window, Rect(10, 10 + buttonheight, buttonwidth * 1.8, 
 				buttonheight * 0.9))
 			.font_(Font("Arial", 24))
 			.string_("No events currently running");
 
-		SCButton(window, Rect(10, 10 + (buttonheight * 2), buttonwidth * 0.9, 
+		GUI.button.new(window, Rect(10, 10 + (buttonheight * 2), buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.states_([
-				["Reset", Color.black, Color(0.3, 0.7, 0.3, 0.7)]
+				["Reset", Color.black, buttonColor]
 				])
 			.font_(Font("Arial", 24))
 			.action_({arg me;
@@ -548,10 +603,10 @@ ProcEvents {
 				this.reset;
 				});				 
 
-		releaseButton = SCButton(window, Rect(10, 10 + (buttonheight * 3), buttonwidth * 0.9, 
+		releaseButton = GUI.button(window, Rect(10, 10 + (buttonheight * 3), buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.states_([
-				["Release All", Color.black, Color(0.3, 0.7, 0.3, 0.7)]
+				["Release All", Color.black, buttonColor]
 				])
 			.font_(Font("Arial", 24))
 			.action_({arg me;
@@ -559,10 +614,10 @@ ProcEvents {
 				this.releaseAll;
 				});
 
-		killButton = SCButton(window, Rect(10, 10 + (buttonheight * 4), buttonwidth * 0.9, 
+		killButton = GUI.button.new(window, Rect(10, 10 + (buttonheight * 4), buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.states_([
-				["Kill All", Color.black, Color(0.3, 0.7, 0.3, 0.7)]
+				["Kill All", Color.black, buttonColor]
 				])
 			.font_(Font("Arial", 24))
 			.action_({arg me;
@@ -570,7 +625,7 @@ ProcEvents {
 				this.killAll;
 				});
 		
-		SCSlider(window, Rect(buttonwidth + 10, 5 + buttonheight * 2, buttonwidth * 0.2,
+		GUI.slider.new(window, Rect(buttonwidth + 10, 5 + buttonheight * 2, buttonwidth * 0.2,
 				buttonheight * 3))
 			.value_(ControlSpec(-90, 6, \db).unmap(amp.ampdb))
 			.action_({arg me;
@@ -582,7 +637,7 @@ ProcEvents {
 					val.round(0.01));
 				});
 				
-		SCNumberBox(window, Rect((buttonwidth * 1.3) + 10, 5 + buttonheight * 2, 
+		GUI.numberBox.new(window, Rect((buttonwidth * 1.3) + 10, 5 + buttonheight * 2, 
 				buttonwidth * 0.4, buttonheight * 0.9))
 			.value_(amp.ampdb)
 			.font_(Font("Arial", 24))
@@ -623,5 +678,85 @@ ProcEvents {
 			
 			}
 	}
+
+}
+
+/* this is predominantly a GUI class that stores ProcMods and displays them in a GUI. The GUI has 
+* two parts. A window that shows ProcMods in GUI mode, and a DragSink that takes ProcMods, places
+* them in the GUI, and can save them to a file as an archive
+*/
+
+ProcSink {
+	var <name, <sinkWindow, <sinkBounds, <window, <bounds, <numProcs, <screenWidth,
+		<screenHeight, <procMods, gui = false, <columns, rows, baseheight;
+
+	*new {arg name, sinkBounds, bounds, columns = 3;
+		^super.newCopyArgs(name).init(sinkBounds, bounds, columns);
+	}
+	
+	*loadFromFile {arg path;
+		^ProcSink.readArchive(path).initFromFile;
+		}
+	
+	init {arg argSinkBounds, argBounds, argColumns;
+		procMods = Array.new;
+		numProcs = 0;
+		columns = argColumns;
+		rows = 1;
+		screenWidth = GUI.window.screenBounds.width;
+		screenHeight = GUI.window.screenBounds.height;
+		sinkBounds = argSinkBounds ? Rect(10, screenHeight * 0.6, screenWidth * 0.1 - 20, 
+			screenHeight * 0.2 - 20);
+		sinkWindow = GUI.window.new("ProcSink", sinkBounds).front;
+		GUI.dragSink.new(sinkWindow, Rect(5, 5, sinkBounds.width - 10, sinkBounds.height * 0.6))
+			.action_({arg me;
+				this.add(me.object)
+				});
+		GUI.button.new(sinkWindow, Rect(5, sinkBounds.height * 0.7, sinkBounds.width - 10,
+				sinkBounds.height * 0.3 - 10))
+			.states_([
+				["Save state", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
+				["Save state", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
+				["Saved", Color.black, Color(0.3, 0.7, 0.3, 0.3)]
+				])
+			.action_({arg me;
+				var actions;
+				actions = [
+					{nil},
+					{GUI.dialog.savePanel({arg paths;
+						paths.postln;
+						this.writeArchive(paths);
+						me.value_(2);
+						}, {
+						"No file saved".postln;
+						})},
+					{nil}];
+				actions[me.value].value;
+				});
+		bounds = argBounds ? Rect(screenWidth * 0.1, screenHeight * 0.9, screenWidth * 0.9, screenHeight * 0.1);
+		baseheight = bounds.height;
+		this.gui;
+	}
+	
+//	initFromFile { // instead, make a rebuild GUI function
+//		this.gui;
+//		procMods.do({arg me; this.add(me, false)});
+//		}
+	
+	gui {
+		window = GUI.window.new(name, bounds).front;
+		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
+		}
+		
+	add {arg proc, upperLevel = 6, lowerLevel = -inf; //new = true;
+		numProcs = numProcs + 1;
+		procMods = procMods.add(proc);
+		rows = (numProcs / columns).ceil;
+		window.bounds_(Rect(window.bounds.left, window.bounds.top, window.bounds.width, 
+			rows * baseheight - window.view.decorator.gap.x));
+		{proc.gui(Rect(0, 0, window.bounds.width / columns, baseheight), upperLevel, 
+			lowerLevel, window)}.defer;
+	}
+			
 
 }

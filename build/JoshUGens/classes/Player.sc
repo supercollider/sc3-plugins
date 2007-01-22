@@ -25,7 +25,7 @@ Player {
 		
 	init {arg argsoundfilepath, argFormatOut, argstarttime, argoutbus, argamp, argxywz, argenv;
 		tempoclock = TempoClock.new;
-		(GUI.id == \cocao).if({	
+		(GUI.id == \cocoa).if({	
 			(argsoundfilepath.isNil).if({
 				GUI.dialog.getPaths({arg paths;
 					argsoundfilepath = paths[0];
