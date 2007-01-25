@@ -3989,11 +3989,11 @@ void Pluck_next_aa(Pluck *unit, int inNumSamples)
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			iwrphase++;
 		};
 	} else {
@@ -4030,11 +4030,11 @@ void Pluck_next_aa(Pluck *unit, int inNumSamples)
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
 			iwrphase++;
 		};
@@ -4116,11 +4116,11 @@ void Pluck_next_aa_z(Pluck *unit, int inNumSamples)
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			iwrphase++;
 		};
@@ -4176,11 +4176,11 @@ void Pluck_next_aa_z(Pluck *unit, int inNumSamples)
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			feedbk += feedbk_slope;
 			iwrphase++;
@@ -4201,7 +4201,6 @@ void Pluck_next_aa_z(Pluck *unit, int inNumSamples)
 		SETCALC(Pluck_next_aa);
 	}
 }
-
 
 void Pluck_next_kk(Pluck *unit, int inNumSamples)
 {
@@ -4246,12 +4245,13 @@ void Pluck_next_kk(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(coef)) * value) + (coef * lastsamp);
+//			float onepole = value + coef * (lastsamp - value);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+//			float onepole = (value * (1.-coef)) - (coef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
-			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
 			iwrphase++;
 		};
 	} else {
@@ -4284,12 +4284,13 @@ void Pluck_next_kk(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(curcoef)) * value) + (curcoef * lastsamp);
+//			float onepole = value + coef * (lastsamp - value);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+//			float onepole = (value * (1.-curcoef)) - (curcoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
-			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
 			feedbk += feedbk_slope;
 			curcoef += coef_slope;
 			iwrphase++;
@@ -4370,12 +4371,13 @@ void Pluck_next_kk_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(coef)) * value) + (coef * lastsamp);
+//			float onepole = value + coef * (lastsamp - value);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+//			float onepole = (value * 0.5) - (coef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
-			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
 			}
 			iwrphase++;
 		};
@@ -4426,13 +4428,14 @@ void Pluck_next_kk_z(Pluck *unit, int inNumSamples)
 					d2 = dlybuf[irdphase2 & mask];
 					d3 = dlybuf[irdphase3 & mask];
 				}
-				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+//			float onepole = value + coef * (lastsamp - value);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+//			float onepole = (value * 0.5) - (curcoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
-			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
 			}
 			feedbk += feedbk_slope;
 			curcoef += coef_slope;
@@ -4454,7 +4457,6 @@ void Pluck_next_kk_z(Pluck *unit, int inNumSamples)
 		SETCALC(Pluck_next_kk);
 	}
 }
-
 
 void Pluck_next_ak(Pluck *unit, int inNumSamples)
 {
@@ -4500,11 +4502,11 @@ void Pluck_next_ak(Pluck *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			iwrphase++;
 		};
 	} else {
@@ -4543,11 +4545,11 @@ void Pluck_next_ak(Pluck *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
 			curcoef += coef_slope;
 			iwrphase++;
@@ -4630,11 +4632,11 @@ void Pluck_next_ak_z(Pluck *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			iwrphase++;
 		};
@@ -4692,11 +4694,11 @@ void Pluck_next_ak_z(Pluck *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
-			float onepole = ((1 - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			feedbk += feedbk_slope;
 			curcoef +=coef_slope;
@@ -4765,11 +4767,11 @@ void Pluck_next_ka(Pluck *unit, int inNumSamples)
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			iwrphase++;
 		};
 	} else {
@@ -4801,11 +4803,11 @@ void Pluck_next_ka(Pluck *unit, int inNumSamples)
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
 			iwrphase++;
 		};
@@ -4886,11 +4888,11 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			iwrphase++;
 		};
@@ -4941,11 +4943,11 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 //			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
-			float onepole = ((1 - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
 //			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
-			out[i] = lastsamp = value;
+			out[i] = lastsamp = onepole;
 			}
 			feedbk += feedbk_slope;
 			iwrphase++;
