@@ -1,7 +1,7 @@
 #include "SC_PlugIn.h"
 
 #include "Skini.h"  // caps
-#include "SKINI.tbl"
+#include "include/SKINI.tbl"
 
 #include "OneZero.h"
 #include "OnePole.h"
