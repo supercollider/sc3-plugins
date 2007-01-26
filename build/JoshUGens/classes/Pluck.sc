@@ -4,7 +4,14 @@ Pluck : UGen {
 			coef = 0.5, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, trig, maxdelaytime, delaytime, decaytime, coef).madd(mul, add)}
 	}
+
+Pluck2 : UGen {
 	
+	*ar { arg in = 0.0, gate = 1.0, maxdelaytime = 0.2, delaytime = 0.2, decaytime = 1.0, 
+			coef = 0.5, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', in, gate, maxdelaytime, delaytime, decaytime, coef).madd(mul, add)}
+	}
+		
 /*
 s = Server.local.boot;
 
@@ -24,6 +31,12 @@ s = Server.local.boot;
 			}.play(s);
 )
 s.quit;
-
+s=Server.internal.boot;
+s.scope
+{LeakDC.ar(
+	Pluck2.ar(LFNoise0.ar(30, 0.1), Trig.kr(Dust.kr(4), 0.1), 1, 440.reciprocal, 5, 
+	coef: 0.3)
+	)
+}.play(s)
 
 */
