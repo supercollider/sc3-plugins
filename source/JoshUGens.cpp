@@ -309,6 +309,11 @@ struct Pluck : public FeedbackDelay
 	long m_inputsamps;
 };
 
+struct Pluck2 : public FeedbackDelay
+{	float m_lastsamp, m_prevtrig, m_coef;
+	long m_inputsamps;
+};
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
@@ -424,6 +429,16 @@ extern "C"
 	void Pluck_next_ka_z(Pluck *unit, int inNumSamples);
 	void Pluck_next_ak(Pluck *unit, int inNumSamples);
 	void Pluck_next_ak_z(Pluck *unit, int inNumSamples);
+
+	void Pluck2_Ctor(Pluck2* unit);
+	void Pluck2_next_aa(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_aa_z(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_kk(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_kk_z(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_ka(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_ka_z(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_ak(Pluck2 *unit, int inNumSamples);
+	void Pluck2_next_ak_z(Pluck2 *unit, int inNumSamples);
 }
 
 
@@ -3806,54 +3821,6 @@ void PosRatio_next(PosRatio *unit, int inNumSamples){
 		unit->outval = outval;
 	}
 
-/*			    
-void Pluck_Ctor(Pluck* unit){
-    float freq = unit->m_freq = IN0(1);
-    float delsamps = unit->m_delsamps = (1. / freq) * SAMPLERATE; // the number of sample (a float... use cubic interp) to delay
-    int delbufsamps = unit->m_delbufsamps = (int)delsamps + 1;
-    unit->m_dlybuf = (float*)RTAlloc(unit->mWorld, delbufsamps * sizeof(float));
-    for(int i = 0; i < delbufsamps; i++){
-	unit->m_dlybuf[i] = 0.f;
-	}
-    float trigval = unit->m_trigval = IN0(3); // check trig signal
-    if(trigval > 0.){  // is there a trigger?
-	unit->m_dlybuf[0] = IN0(0);   /// if there is, fill first value of excitation signal into the delaybuf
-	unit->m_counter = delbufsamps - 1; // counter is the number of samples - 1
-	} else {
-	unit->m_counter = 0;
-	}
-    SETCALC(Pluck_next_a);
-    ClearUnitOutputs(unit, 1);
-    }
-*/
-/* triggerable Pluck... for now, freq is fixed :(  */
-/*
-void Pluck_next_a(Pluck* unit, int inNumSamples){
-    float* out = OUT(0);
-    float* trigval = IN(3);
-    float* in = IN(0);
-    float* dlybuf = unit->m_dlybuf;
-    
-    int counter = unit->m_counter;
-    
-    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    if(counter > 0){
-		dlybuf[unit->m_delbufsamps - counter] = in[i];
-		--counter;
-		}
-	    out[i] = 0;
-	}
-    
-    unit->m_dlybuf = dlybuf;
-    /// Print("%g, %g, %g\n", unit->m_freq, unit->m_delsamps, (float)unit->m_delbufsamps);
-    }
-
-void Pluck_Dtor(Pluck* unit){
-    RTFree(unit->mWorld, unit->m_dlybuf);
-    }
-*/
 
 void DelayUnit_AllocDelayLine(DelayUnit *unit)
 {
@@ -3936,8 +3903,6 @@ void Pluck_Ctor(Pluck *unit)
 		SETCALC(Pluck_next_kk_z); //kk
 		}
 	    }
-//	SETCALC(Pluck_next_aa_z);
-//	SETCALC(Pluck_next_k_z);
 	OUT0(0) = unit->m_lastsamp = 0.f;
 	unit->m_prevtrig = 0.f;
 	unit->m_inputsamps = 0;
@@ -3987,11 +3952,8 @@ void Pluck_next_aa(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -4028,11 +3990,8 @@ void Pluck_next_aa(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -4114,11 +4073,8 @@ void Pluck_next_aa_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4174,11 +4130,8 @@ void Pluck_next_aa_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4245,11 +4198,7 @@ void Pluck_next_kk(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef * (lastsamp - value);
 			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
-//			float onepole = (value * (1.-coef)) - (coef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
 			out[i] = lastsamp = onepole; //value;
 			iwrphase++;
@@ -4284,11 +4233,7 @@ void Pluck_next_kk(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef * (lastsamp - value);
 			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
-//			float onepole = (value * (1.-curcoef)) - (curcoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
 			out[i] = lastsamp = onepole; //value;
 			feedbk += feedbk_slope;
@@ -4371,11 +4316,7 @@ void Pluck_next_kk_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef * (lastsamp - value);
 			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
-//			float onepole = (value * 0.5) - (coef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
 			out[i] = lastsamp = onepole; //value;
 			}
@@ -4429,11 +4370,7 @@ void Pluck_next_kk_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef * (lastsamp - value);
 			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
-//			float onepole = (value * 0.5) - (curcoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
 			out[i] = lastsamp = onepole; //value;
 			}
@@ -4501,10 +4438,7 @@ void Pluck_next_ak(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -4544,10 +4478,7 @@ void Pluck_next_ak(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -4631,10 +4562,7 @@ void Pluck_next_ak_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4693,10 +4621,7 @@ void Pluck_next_ak_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4765,11 +4690,8 @@ void Pluck_next_ka(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -4801,11 +4723,8 @@ void Pluck_next_ka(Pluck *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);		
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -4886,11 +4805,8 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4941,11 +4857,8 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-//			float onepole = value + coef[i] * (lastsamp - value);
 			float thiscoef = coef[i];
 			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * ((value + lastsamp) * 0.5f));
-//			dlybuf[iwrphase & mask] = zapgremlins(thisin + feedbk * onepole);				
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
 			out[i] = lastsamp = onepole;
 			}
@@ -4968,6 +4881,837 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 	}
 }
 
+/* Pluck2... gated input to delay line */
+
+void Pluck2_Ctor(Pluck2 *unit)
+{
+	FeedbackDelay_Reset(unit);
+	if (INRATE(1) == calc_FullRate) {
+	    if(INRATE(5) == calc_FullRate){
+		SETCALC(Pluck2_next_aa_z);
+		} else {
+		SETCALC(Pluck2_next_ak_z); //ak
+		}
+	    } else {
+	    if(INRATE(5) == calc_FullRate){ 
+		SETCALC(Pluck2_next_ka_z); //ka
+		} else { 
+		SETCALC(Pluck2_next_kk_z); //kk
+		}
+	    }
+	OUT0(0) = unit->m_lastsamp = 0.f;
+	unit->m_prevtrig = 0.f;
+	unit->m_coef = IN0(5);
+}
+
+void Pluck2_next_aa(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *gate = IN(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float *coef = IN(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float thisin;
+	
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+	for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+
+	    for(int i = 0; i < inNumSamples; i++){
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			feedbk += feedbk_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+}
+
+
+void Pluck2_next_aa_z(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *gate = IN(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float *coef = IN(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float d0, d1, d2, d3;
+	float thisin;
+	
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+		for(int i = 0; i < inNumSamples; i++) {
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin; 
+				out[i] = 0.f;
+			} else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+
+		for(int i = 0; i < inNumSamples; i++) {
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin;
+				out[i] = 0.f;
+			    } else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			feedbk += feedbk_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+	unit->m_numoutput += inNumSamples;
+	if (unit->m_numoutput >= unit->m_idelaylen) {
+		SETCALC(Pluck2_next_aa);
+	}
+}
+
+void Pluck2_next_kk(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float gate = IN0(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float coef = IN0(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float thisin;
+
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime && coef == unit->m_coef) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+
+	    for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+		
+		float curcoef = unit->m_coef;
+		float coef_slope = CALCSLOPE(coef, curcoef);
+		    
+	    for(int i = 0; i < inNumSamples; i++){
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
+			feedbk += feedbk_slope;
+			curcoef += coef_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_coef = coef;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+}
+
+
+void Pluck2_next_kk_z(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float gate = IN0(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float coef = IN0(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float d0, d1, d2, d3;
+	float thisin;
+				
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime && coef == unit->m_coef) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+		for(int i = 0; i < inNumSamples; i++){
+
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin; 
+				out[i] = 0.f;
+			} else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
+			}
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+		
+		float curcoef = unit->m_coef;
+		float coef_slope = CALCSLOPE(coef, curcoef);
+
+		for(int i = 0; i < inNumSamples; i++) {
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin;
+				out[i] = 0.f;
+			    } else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);				
+			out[i] = lastsamp = onepole; //value;
+			}
+			feedbk += feedbk_slope;
+			curcoef += coef_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+		unit->m_coef = coef;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+	unit->m_numoutput += inNumSamples;
+	if (unit->m_numoutput >= unit->m_idelaylen) {
+		SETCALC(Pluck2_next_kk);
+	}
+}
+
+void Pluck2_next_ak(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *gate = IN(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float coef = IN0(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float thisin;
+
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+	for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+
+		float curcoef = unit->m_coef;
+		float coef_slope = CALCSLOPE(coef, curcoef);
+
+	    for(int i = 0; i < inNumSamples; i++){
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			feedbk += feedbk_slope;
+			curcoef += coef_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+		unit->m_coef = coef;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+}
+
+
+void Pluck2_next_ak_z(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *gate = IN(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float coef = IN0(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float d0, d1, d2, d3;
+	float thisin;
+	
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime && coef == unit->m_coef) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+		for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin; 
+				out[i] = 0.f;
+			} else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+		
+		float curcoef = unit->m_coef;
+		float coef_slope = CALCSLOPE(coef, curcoef);
+		
+		for(int i = 0; i < inNumSamples; i++) {
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate[i];
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin;
+				out[i] = 0.f;
+			    } else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			feedbk += feedbk_slope;
+			curcoef +=coef_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+		unit->m_coef = coef;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+	unit->m_numoutput += inNumSamples;
+	if (unit->m_numoutput >= unit->m_idelaylen) {
+		SETCALC(Pluck2_next_ak);
+	}
+}
+
+
+void Pluck2_next_ka(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float gate = IN0(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float *coef = IN(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float thisin;
+
+	
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+	for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+
+	    for(int i = 0; i < inNumSamples; i++){
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			float d0 = dlybuf[irdphase0 & mask];
+			float d1 = dlybuf[irdphase1 & mask];
+			float d2 = dlybuf[irdphase2 & mask];
+			float d3 = dlybuf[irdphase3 & mask];
+			float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			feedbk += feedbk_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+}
+
+
+void Pluck2_next_ka_z(Pluck2 *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float gate = IN0(1);
+	float delaytime = IN0(3);
+	float decaytime = IN0(4);
+	float *coef = IN(5);
+	float lastsamp = unit->m_lastsamp;
+	
+	float *dlybuf = unit->m_dlybuf;
+	long iwrphase = unit->m_iwrphase;
+	float dsamp = unit->m_dsamp;
+	float feedbk = unit->m_feedbk;
+	long mask = unit->m_mask;
+	float d0, d1, d2, d3;
+	float thisin;
+	
+	if (delaytime == unit->m_delaytime && decaytime == unit->m_decaytime) {
+		long idsamp = (long)dsamp;
+		float frac = dsamp - idsamp;
+		for(int i = 0; i < inNumSamples; i++){
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin; 
+				out[i] = 0.f;
+			} else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			iwrphase++;
+		};
+	} else {
+	
+		float next_dsamp = CalcDelay(unit, delaytime);
+		float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+		
+		float next_feedbk = CalcFeedback(delaytime, decaytime);
+		float feedbk_slope = CALCSLOPE(next_feedbk, feedbk);
+
+		for(int i = 0; i < inNumSamples; i++) {
+			dsamp += dsamp_slope;
+			long idsamp = (long)dsamp;
+			float frac = dsamp - idsamp;
+			long irdphase1 = iwrphase - idsamp;
+			long irdphase2 = irdphase1 - 1;
+			long irdphase3 = irdphase1 - 2;
+			long irdphase0 = irdphase1 + 1;
+			thisin = in[i] * gate;
+			if (irdphase0 < 0) {
+				dlybuf[iwrphase & mask] = thisin;
+				out[i] = 0.f;
+			    } else {
+				if (irdphase1 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+				} else if (irdphase2 < 0) {
+					d1 = d2 = d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+				} else if (irdphase3 < 0) {
+					d3 = 0.f;
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+				} else {
+					d0 = dlybuf[irdphase0 & mask];
+					d1 = dlybuf[irdphase1 & mask];
+					d2 = dlybuf[irdphase2 & mask];
+					d3 = dlybuf[irdphase3 & mask];
+				}
+				float value = cubicinterp(frac, d0, d1, d2, d3);
+			float thiscoef = coef[i];
+			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;				
+			out[i] = lastsamp = onepole;
+			}
+			feedbk += feedbk_slope;
+			iwrphase++;
+		};
+		unit->m_feedbk = feedbk;
+		unit->m_dsamp = dsamp;
+		unit->m_delaytime = delaytime;
+		unit->m_decaytime = decaytime;
+	}
+	
+	unit->m_lastsamp = zapgremlins(lastsamp);
+	unit->m_iwrphase = iwrphase;
+
+	unit->m_numoutput += inNumSamples;
+	if (unit->m_numoutput >= unit->m_idelaylen) {
+		SETCALC(Pluck2_next_ka);
+	}
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -5010,6 +5754,7 @@ void load(InterfaceTable *inTable)
     (UnitDtorFunc)&DelayUnit_Dtor, 0);
     
 	DefineDelayUnit(Pluck);
+	DefineDelayUnit(Pluck2);
 }
 
 
