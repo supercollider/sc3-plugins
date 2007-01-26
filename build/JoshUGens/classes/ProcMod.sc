@@ -241,7 +241,8 @@ ProcEvents {
 		<id, gui = false, <window, <server, firstevent = false, initmod, killmod, <amp,
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
 		<eventButton, <killButton, <releaseButton, >starttime = nil, <pedal = false, 
-		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds;
+		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
+		<bigNum = false, bigNumWindow;
 	
 	*new {arg events, amp, initmod, killmod, id, server;
 		server = server ? Server.default;
@@ -286,7 +287,9 @@ ProcEvents {
 					releaseArray[i] = releaseArray[i].add(thisrel)
 					})
 				}
-			};	
+			};
+		// for the GUI if needed
+		bounds = GUI.window.screenBounds;	
 	}
 	
 	index_ {arg nextIdx;
@@ -542,13 +545,26 @@ ProcEvents {
 		pracwindow.onClose_({pracmode = false});
 		^pracwindow;
 		}
-	
+		
+	bigNumGUI {arg bigNumBounds, fontSize = 96;
+		var numstring;
+		bigNumBounds = bigNumBounds ? Rect(bounds.width * 0.5, bounds.height * 0.5,
+			bounds.width * 0.3, bounds.height * 0.3);
+		bigNum = true;
+		bigNumWindow = GUI.window.new(id.asString, bigNumBounds);
+		bigNumWindow.front;
+		bigNumWindow.onClose_({bigNum = false});
+		GUI.staticText.new(bigNumWindow, Rect(0, 0, bigNumBounds.width, bigNumBounds.height))
+			.string_("No event")
+			.font_(Font("Arial", fontSize))
+			.align_(\center);
+		gui.if({window.front});
+		^this;
+		}
+		
 	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
 		var buttonheight, buttonwidth;
 		
-
-		bounds = GUI.window.screenBounds;
-
 		guiBounds = guiBounds ? Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
 				bounds.height * 0.3);
 				
@@ -577,6 +593,9 @@ ProcEvents {
 				var numbox, numboxval;
 				numbox = window.view.children.indexOf(me)-1;
 				numboxval = window.view.children[numbox].value;
+				bigNum.if({
+					bigNumWindow.view.children[0].string_(numboxval)
+					});
 				(numboxval < eventArray.size).if({
 					this.play(numboxval);
 					window.view.children[numbox].value_(numboxval + 1);
@@ -603,7 +622,7 @@ ProcEvents {
 				this.reset;
 				});				 
 
-		releaseButton = GUI.button(window, Rect(10, 10 + (buttonheight * 3), buttonwidth * 0.9, 
+		releaseButton = GUI.button.new(window, Rect(10, 10 + (buttonheight * 3), buttonwidth * 0.9, 
 				buttonheight * 0.9))
 			.states_([
 				["Release All", Color.black, buttonColor]
@@ -650,7 +669,7 @@ ProcEvents {
 				
 		window.view.children[1].focus(true);
 		
-		window.onClose_({this.killAll; gui = false});
+		window.onClose_({this.killAll; gui = false; bigNum.if({bigNumWindow.close})});
 		
 		window.front;
 		
