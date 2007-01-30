@@ -5,7 +5,7 @@ Pluck : UGen {
 		^this.multiNew('audio', in, trig, maxdelaytime, delaytime, decaytime, coef).madd(mul, add)}
 	}
 
-Pluck2 : UGen {
+CombLP : UGen {
 	
 	*ar { arg in = 0.0, gate = 1.0, maxdelaytime = 0.2, delaytime = 0.2, decaytime = 1.0, 
 			coef = 0.5, mul = 1.0, add = 0.0;
@@ -34,7 +34,7 @@ s.quit;
 s=Server.internal.boot;
 s.scope
 {LeakDC.ar(
-	Pluck2.ar(In.ar(24), MouseX.kr(0,1).round, 1, 440.reciprocal, 5, 
+	CombLP.ar(Dust.ar(10), MouseX.kr(0,1).round, 1, 440.reciprocal, 5, 
 	coef: 0.3)
 	)
 }.play(s)
