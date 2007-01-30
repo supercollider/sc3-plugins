@@ -309,7 +309,7 @@ struct Pluck : public FeedbackDelay
 	long m_inputsamps;
 };
 
-struct Pluck2 : public FeedbackDelay
+struct CombLP : public FeedbackDelay
 {	float m_lastsamp, m_prevtrig, m_coef;
 	long m_inputsamps;
 };
@@ -430,15 +430,15 @@ extern "C"
 	void Pluck_next_ak(Pluck *unit, int inNumSamples);
 	void Pluck_next_ak_z(Pluck *unit, int inNumSamples);
 
-	void Pluck2_Ctor(Pluck2* unit);
-	void Pluck2_next_aa(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_aa_z(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_kk(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_kk_z(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_ka(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_ka_z(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_ak(Pluck2 *unit, int inNumSamples);
-	void Pluck2_next_ak_z(Pluck2 *unit, int inNumSamples);
+	void CombLP_Ctor(CombLP* unit);
+	void CombLP_next_aa(CombLP *unit, int inNumSamples);
+	void CombLP_next_aa_z(CombLP *unit, int inNumSamples);
+	void CombLP_next_kk(CombLP *unit, int inNumSamples);
+	void CombLP_next_kk_z(CombLP *unit, int inNumSamples);
+	void CombLP_next_ka(CombLP *unit, int inNumSamples);
+	void CombLP_next_ka_z(CombLP *unit, int inNumSamples);
+	void CombLP_next_ak(CombLP *unit, int inNumSamples);
+	void CombLP_next_ak_z(CombLP *unit, int inNumSamples);
 }
 
 
@@ -4881,22 +4881,22 @@ void Pluck_next_ka_z(Pluck *unit, int inNumSamples)
 	}
 }
 
-/* Pluck2... gated input to delay line */
+/* CombLP... gated input to delay line */
 
-void Pluck2_Ctor(Pluck2 *unit)
+void CombLP_Ctor(CombLP *unit)
 {
 	FeedbackDelay_Reset(unit);
 	if (INRATE(1) == calc_FullRate) {
 	    if(INRATE(5) == calc_FullRate){
-		SETCALC(Pluck2_next_aa_z);
+		SETCALC(CombLP_next_aa_z);
 		} else {
-		SETCALC(Pluck2_next_ak_z); //ak
+		SETCALC(CombLP_next_ak_z); //ak
 		}
 	    } else {
 	    if(INRATE(5) == calc_FullRate){ 
-		SETCALC(Pluck2_next_ka_z); //ka
+		SETCALC(CombLP_next_ka_z); //ka
 		} else { 
-		SETCALC(Pluck2_next_kk_z); //kk
+		SETCALC(CombLP_next_kk_z); //kk
 		}
 	    }
 	OUT0(0) = unit->m_lastsamp = 0.f;
@@ -4904,7 +4904,7 @@ void Pluck2_Ctor(Pluck2 *unit)
 	unit->m_coef = IN0(5);
 }
 
-void Pluck2_next_aa(Pluck2 *unit, int inNumSamples)
+void CombLP_next_aa(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -4982,7 +4982,7 @@ void Pluck2_next_aa(Pluck2 *unit, int inNumSamples)
 }
 
 
-void Pluck2_next_aa_z(Pluck2 *unit, int inNumSamples)
+void CombLP_next_aa_z(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5098,11 +5098,11 @@ void Pluck2_next_aa_z(Pluck2 *unit, int inNumSamples)
 
 	unit->m_numoutput += inNumSamples;
 	if (unit->m_numoutput >= unit->m_idelaylen) {
-		SETCALC(Pluck2_next_aa);
+		SETCALC(CombLP_next_aa);
 	}
 }
 
-void Pluck2_next_kk(Pluck2 *unit, int inNumSamples)
+void CombLP_next_kk(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5185,7 +5185,7 @@ void Pluck2_next_kk(Pluck2 *unit, int inNumSamples)
 }
 
 
-void Pluck2_next_kk_z(Pluck2 *unit, int inNumSamples)
+void CombLP_next_kk_z(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5305,11 +5305,11 @@ void Pluck2_next_kk_z(Pluck2 *unit, int inNumSamples)
 
 	unit->m_numoutput += inNumSamples;
 	if (unit->m_numoutput >= unit->m_idelaylen) {
-		SETCALC(Pluck2_next_kk);
+		SETCALC(CombLP_next_kk);
 	}
 }
 
-void Pluck2_next_ak(Pluck2 *unit, int inNumSamples)
+void CombLP_next_ak(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5390,7 +5390,7 @@ void Pluck2_next_ak(Pluck2 *unit, int inNumSamples)
 }
 
 
-void Pluck2_next_ak_z(Pluck2 *unit, int inNumSamples)
+void CombLP_next_ak_z(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5509,12 +5509,12 @@ void Pluck2_next_ak_z(Pluck2 *unit, int inNumSamples)
 
 	unit->m_numoutput += inNumSamples;
 	if (unit->m_numoutput >= unit->m_idelaylen) {
-		SETCALC(Pluck2_next_ak);
+		SETCALC(CombLP_next_ak);
 	}
 }
 
 
-void Pluck2_next_ka(Pluck2 *unit, int inNumSamples)
+void CombLP_next_ka(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5593,7 +5593,7 @@ void Pluck2_next_ka(Pluck2 *unit, int inNumSamples)
 }
 
 
-void Pluck2_next_ka_z(Pluck2 *unit, int inNumSamples)
+void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -5709,7 +5709,7 @@ void Pluck2_next_ka_z(Pluck2 *unit, int inNumSamples)
 
 	unit->m_numoutput += inNumSamples;
 	if (unit->m_numoutput >= unit->m_idelaylen) {
-		SETCALC(Pluck2_next_ka);
+		SETCALC(CombLP_next_ka);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5754,7 +5754,7 @@ void load(InterfaceTable *inTable)
     (UnitDtorFunc)&DelayUnit_Dtor, 0);
     
 	DefineDelayUnit(Pluck);
-	DefineDelayUnit(Pluck2);
+	DefineDelayUnit(CombLP);
 }
 
 
