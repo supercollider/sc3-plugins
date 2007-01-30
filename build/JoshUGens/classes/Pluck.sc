@@ -34,7 +34,7 @@ s.quit;
 s=Server.internal.boot;
 s.scope
 {LeakDC.ar(
-	Pluck2.ar(LFNoise0.ar(30, 0.1), Trig.kr(Dust.kr(4), 0.1), 1, 440.reciprocal, 5, 
+	Pluck2.ar(In.ar(24), MouseX.kr(0,1).round, 1, 440.reciprocal, 5, 
 	coef: 0.3)
 	)
 }.play(s)

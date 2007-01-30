@@ -1,29 +1,30 @@
 ProcMod {
-	var <amp, <>group, <env, <addAction, <target, <>clock, 
-		<timeScale, <lag, <>id, <>server, <envbus, <releasetime, <>function, 
-		<>releaseFunc, <>onReleaseFunc, <>responder, <envnode, <isRunning = false, <data,
-		<starttime, <window, gui = false, button;
+	var <amp, <>group, <addAction, <target, 
+		<timeScale, <lag, <>id, <>function, 
+		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
+		<starttime, <window, gui = false, button, process, retrig = false, isReleasing = false,
+		oldgroups, <>clock, <env,  <>server, <envbus, <releasetime, uniqueClock = false;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
 			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
-		var envbus, releasetime;
-		server = server ? Server.default;
-		clock = clock ? SystemClock;
-		group = group ? server.nextNodeID;
+		^super.newCopyArgs(amp, group, addAction, target, timeScale, lag, id, function, 
+			releaseFunc, onReleaseFunc, responder).init(clock, server, env);
+	}
+	
+	init {arg argClock, argServer, argEnv;
+		server = argServer ?? {Server.default};
+		env = argEnv;
 		(env.notNil).if({
 			env.isKindOf(Env).if({
-				envbus = server.controlBusAllocator.alloc(1);
 				releasetime = env.releaseTime;
 				}, {
 				env.isKindOf(Number).if({releasetime = env})
 				})
 			});
-		^super.newCopyArgs(amp, group, env, addAction, target, 
-			clock, timeScale, lag, id, server, envbus, releasetime, function, releaseFunc,
-			onReleaseFunc, responder);
-	}
-	
-	
+		clock = argClock ?? {uniqueClock = true; TempoClock.new};
+		oldgroups = [];
+		}
+		
 	*play {arg env, amp = 1, id, group, addAction = 0, target = 1, function, 
 			releaseFunc, onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
 		^this.new(env, amp, id, group, addAction, target, function, releaseFunc, onReleaseFunc,
@@ -31,31 +32,43 @@ ProcMod {
 		}
 
 	play {
-		isRunning = true;
-		// add the responder if it isn't nil
-		responder.notNil.if({responder.add});
-		// create this Proc's group, and if there is an env, start it
-		// also, if there is no release node, schedule the Procs release
-		env.isKindOf(Env).if({
-			server.sendBundle(nil,
-				[\g_new, group, addAction, target], 
-				[\s_new, \procmodenv_5216, envnode = server.nextNodeID, 0, group, 
-					\outbus, envbus, \amp, amp, \timeScale, timeScale, \lag, lag],
-				[\n_setn, envnode, \env, env.asArray.size] ++ env.asArray);
-			env.releaseNode.isNil.if({
-				clock.sched(env.times.sum, {this.release});
-				})
-			}, {
-			server.sendBundle(nil, [\g_new, group, addAction, target])
-			});
-		starttime = Main.elapsedTime;
-		function.asArray.do{arg me; 
-				me.isKindOf(Function).if({
-					me.value;
-					}, {
-					me.reset; me.play(clock)
+		var thisfun;
+		isRunning.not.if({	
+			isRunning = true;
+			// add the responder if it isn't nil
+			responder.notNil.if({responder.add});
+			// create this Proc's group, and if there is an env, start it
+			// also, if there is no release node, schedule the Procs release
+			group = group ?? {server.nextNodeID};
+			env.isKindOf(Env).if({
+				envbus = server.controlBusAllocator.alloc(1);
+				server.sendBundle(nil,
+					[\g_new, group, addAction, target], 
+					[\s_new, \procmodenv_5216, envnode = server.nextNodeID, 0, group, 
+						\outbus, envbus, \amp, amp, \timeScale, timeScale, \lag, lag],
+					[\n_setn, envnode, \env, env.asArray.size] ++ env.asArray);
+				env.releaseNode.isNil.if({
+					clock.sched(env.times.sum, {this.release});
 					})
-				};
+				}, {
+				server.sendBundle(nil, [\g_new, group, addAction, target])
+				});
+			starttime = Main.elapsedTime;
+			function.isKindOf(Function).if({
+				retrig = true;
+				thisfun = function.value(group, envbus);
+				(thisfun.isKindOf(Routine) || thisfun.isKindOf(Task)).if({
+					process = thisfun; this.processPlay;
+					})
+				}, {
+				process = function; this.processPlay;
+				})
+			})
+		}
+		
+	processPlay {
+		process.reset;
+		process.play(clock);
 		}
 	
 	now {
@@ -114,65 +127,77 @@ ProcMod {
 		}
 		
 	release {
+		var curproc, curresp, curgroup, currelfunc;
+		curproc = process;
+		curresp = responder;
+		responder = nil;
+		curgroup = group;
+		currelfunc = releaseFunc;
 		isRunning.if({
 			onReleaseFunc.value;
-			group.notNil.if({
-				env.notNil.if({
-					server.sendMsg(\n_set, group, \gate, 0);
-					releasetime.notNil.if({
-						clock.sched(releasetime,
-							{this.clear})
-						}, {
-						this.clear;
-						})
-					}, {
-					this.clear;
-					})
-				}, {
-				"No group to release".warn;
-				this.clear;
+			env.notNil.if({
+				server.sendMsg(\n_set, group, \gate, 0);
 				});
+			releasetime.notNil.if({
+				clock.sched(releasetime, {this.clear(curproc, curresp, curgroup, currelfunc)})
+				}, {
+				this.clear(curproc, curresp, curgroup, currelfunc)
+				});
+			});
+		// if retriggerable... clear out group now
+		retrig.if({
+			oldgroups = oldgroups.add(group); 
+			group = nil; 
+			isRunning = false; 
+			isReleasing = true;
 			});
 		}
 	
 	kill {
-		isRunning.if({server.sendMsg(\n_free, group)});
-		this.clear;
+		var curproc, curresp, curgroup, currelfunc;
+		curproc = process;
+		curresp = responder;
+		curgroup = group;
+		currelfunc = releaseFunc;
+		isRunning.if({server.sendMsg(\n_free, curgroup)});
+		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
+		this.clear(curproc, curresp, curgroup, currelfunc);
+		isRunning = false;
+		// if a tempo clock was created for this procMod, clear it
+		uniqueClock.if({clock.clear});
 	}
 	
 	// stops the function that is running
-	stopfunction {
-		(function.notNil).if({
-		function.isKindOf(Array).if({
-			function.do{arg me; me.stop;}
-			}, {
-			function.stop})
-			}, {
-			"No function to stop".postln});	
+	stopprocess {arg oldproc;
+		oldproc.stop;
 	}
 
-	clear {
-		this.stopfunction;
-		releaseFunc.notNil.if({
-			releaseFunc.asArray.do{arg me; 
-					me.isKindOf(Function).if({
-						me.value;
-						}, {
-						me.reset; me.play(clock)
-						})
-					}
-				});
-		responder.notNil.if({responder.remove});
-		isRunning = false;
-		server.sendMsg(\n_free, group);
-		gui.if({{button.value_(0)}.defer});
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc;
+		server.sendMsg(\n_free, oldgroup);
+		oldgroups.remove(oldgroup);
+		oldproc.notNil.if({this.stopprocess(oldproc)});
+		oldrelfunc.notNil.if({
+			oldrelfunc.isKindOf(Function).if({
+				oldrelfunc.value;
+				}, {
+				oldrelfunc.reset; oldrelfunc.play(clock)
+				})
+			});
+		oldresp.notNil.if({oldresp.remove});
+		retrig.not.if({isRunning = false});
+		retrig.if({isReleasing = false});
 		}
-	
+
+	responder_ {arg aResponder;
+		responder = aResponder;
+		isRunning.if({responder.add});
+		}
+			
 	// ProcMod.gui should create a small GUI that will control the ProcMod - start / stop, amp
 	gui {arg bounds = Rect(0, 0, 400, 70), upperLevel = 6, lowerLevel = -inf, parent;
 		var slider, numbox, winw, winh, dbspec, xspace, yspace;
 		gui = true;
-		window = parent ? GUI.window.new(this.id, bounds);
+		window = parent ?? {GUI.window.new(this.id, bounds)};
 		winh = bounds.height;
 		winw = bounds.width;
 		window.view.decorator.isNil.if({
@@ -186,16 +211,13 @@ ProcMod {
 			.states_([
 				["start " ++ this.id, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
 				["stop " ++ this.id, Color.black, Color(0.7, 0.3, 0.3, 0.3)],
-				["releasing\npress to kill", Color.black, 
-					Color(0.3, 0.3, 0.7, 0.3)],
 				]);
 		isRunning.if({button.value_(1)});
 		button.action_({arg me;
 				var actions;
 				actions = [
-					{this.kill}, 
-					{this.play}, 
-					{this.release}
+					{this.release},
+					{this.play}
 					];
 				actions[me.value].value;
 				});
@@ -223,7 +245,8 @@ ProcMod {
 			var env;
 			env = EnvGen.kr(
 				Control.names(\env).kr(Env.newClear(30)), gate, 
-					1, 0, timeScale, doneAction: 2) * Lag2.kr(amp, lag);
+//					1, 0, timeScale, doneAction: 2) * Lag2.kr(amp, lag);
+					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
 			Out.kr(outbus, env);
 		}).writeDefFile;
 		}
@@ -245,7 +268,7 @@ ProcEvents {
 		<bigNum = false, bigNumWindow;
 	
 	*new {arg events, amp, initmod, killmod, id, server;
-		server = server ? Server.default;
+		server = server ?? {Server.default};
 		^super.new.init(events, amp, initmod, killmod, id, server);
 	}
 	
@@ -380,11 +403,11 @@ ProcEvents {
 				testinc = 0;
 			var testnode, testid, pedalid, headspec;
 			headspec = ControlSpec.new(0, headroom * 10, \lin);
-			guiBounds = guiBounds ? gui.if({
+			guiBounds = guiBounds ?? {gui.if({
 				Rect(window.bounds.left + window.bounds.width + 10, 
 					window.bounds.top,window.bounds.width * 0.3, 
 					window.bounds.height * 0.7);
-					}, {Rect(10, 10, 144, 288)});
+					}, {Rect(10, 10, 144, 288)})};
 			server.serverRunning.if({
 				pedal = true;
 				// poll every 0.1 seconds
@@ -548,8 +571,8 @@ ProcEvents {
 		
 	bigNumGUI {arg bigNumBounds, fontSize = 96;
 		var numstring;
-		bigNumBounds = bigNumBounds ? Rect(bounds.width * 0.5, bounds.height * 0.5,
-			bounds.width * 0.3, bounds.height * 0.3);
+		bigNumBounds = bigNumBounds ?? {Rect(bounds.width * 0.5, bounds.height * 0.5,
+			bounds.width * 0.3, bounds.height * 0.3)};
 		bigNum = true;
 		bigNumWindow = GUI.window.new(id.asString, bigNumBounds);
 		bigNumWindow.front;
@@ -565,8 +588,8 @@ ProcEvents {
 	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
 		var buttonheight, buttonwidth;
 		
-		guiBounds = guiBounds ? Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
-				bounds.height * 0.3);
+		guiBounds = guiBounds ?? {Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
+				bounds.height * 0.3)};
 				
 		gui = true;
 		
@@ -706,11 +729,13 @@ ProcEvents {
 */
 
 ProcSink {
-	var <name, <sinkWindow, <sinkBounds, <window, <bounds, <numProcs, <screenWidth,
-		<screenHeight, <procMods, gui = false, <columns, rows, baseheight;
+	var <name, initmod, killmod, server, <sinkWindow, <sinkBounds, <window, <bounds, <numProcs,
+		<screenWidth, <screenHeight, <procMods, gui = false, <columns, rows, baseheight,
+		<starttime;
 
-	*new {arg name, sinkBounds, bounds, columns = 3;
-		^super.newCopyArgs(name).init(sinkBounds, bounds, columns);
+	*new {arg name, sinkBounds, bounds, columns = 3, initmod, killmod, server;
+		server = server ?? {Server.default};
+		^super.newCopyArgs(name, initmod, killmod, server).init(sinkBounds, bounds, columns);
 	}
 	
 	*loadFromFile {arg path;
@@ -724,8 +749,8 @@ ProcSink {
 		rows = 1;
 		screenWidth = GUI.window.screenBounds.width;
 		screenHeight = GUI.window.screenBounds.height;
-		sinkBounds = argSinkBounds ? Rect(10, screenHeight * 0.6, screenWidth * 0.1 - 20, 
-			screenHeight * 0.2 - 20);
+		sinkBounds = argSinkBounds ?? {Rect(10, screenHeight * 0.6, screenWidth * 0.1 - 20, 
+			screenHeight * 0.2 - 20)};
 		sinkWindow = GUI.window.new("ProcSink", sinkBounds).front;
 		GUI.dragSink.new(sinkWindow, Rect(5, 5, sinkBounds.width - 10, sinkBounds.height * 0.6))
 			.action_({arg me;
@@ -752,7 +777,8 @@ ProcSink {
 					{nil}];
 				actions[me.value].value;
 				});
-		bounds = argBounds ? Rect(screenWidth * 0.1, screenHeight * 0.9, screenWidth * 0.9, screenHeight * 0.1);
+		sinkWindow.onClose_({this.kill});
+		bounds = argBounds ?? {Rect(screenWidth * 0.1, screenHeight * 0.9, screenWidth * 0.9, screenHeight * 0.1)};
 		baseheight = bounds.height;
 		this.gui;
 	}
@@ -765,6 +791,25 @@ ProcSink {
 	gui {
 		window = GUI.window.new(name, bounds).front;
 		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
+		window.onClose_({this.kill});
+		this.start;
+		}
+		
+	start {
+		initmod.notNil.if({initmod.play});
+		starttime = Main.elapsedTime;
+		}
+	
+	now {
+		^(Main.elapsedTime - starttime)
+		}
+		
+	kill {
+		window.isClosed.not.if({window.close});
+		sinkWindow.isClosed.not.if({sinkWindow.close});
+		procMods.do({arg me; me.kill});
+		killmod.notNil.if({killmod.play});
+		killmod = nil;
 		}
 		
 	add {arg proc, upperLevel = 6, lowerLevel = -inf; //new = true;
