@@ -186,6 +186,7 @@ ProcMod {
 		oldresp.notNil.if({oldresp.remove});
 		retrig.not.if({isRunning = false});
 		retrig.if({isReleasing = false});
+		{gui.if(button.value_(0))}.defer;
 		}
 
 	responder_ {arg aResponder;
@@ -245,7 +246,6 @@ ProcMod {
 			var env;
 			env = EnvGen.kr(
 				Control.names(\env).kr(Env.newClear(30)), gate, 
-//					1, 0, timeScale, doneAction: 2) * Lag2.kr(amp, lag);
 					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
 			Out.kr(outbus, env);
 		}).writeDefFile;
@@ -729,9 +729,9 @@ ProcEvents {
 */
 
 ProcSink {
-	var <name, initmod, killmod, server, <sinkWindow, <sinkBounds, <window, <bounds, <numProcs,
+	var <name, initmod, killmod, server, <sinkWindow, <sinkBounds, <procWindow, <bounds, <numProcs,
 		<screenWidth, <screenHeight, <procMods, gui = false, <columns, rows, baseheight,
-		<starttime;
+		<>starttime;
 
 	*new {arg name, sinkBounds, bounds, columns = 3, initmod, killmod, server;
 		server = server ?? {Server.default};
@@ -778,10 +778,11 @@ ProcSink {
 				actions[me.value].value;
 				});
 		sinkWindow.onClose_({this.kill});
-		bounds = argBounds ?? {Rect(screenWidth * 0.1, screenHeight * 0.9, screenWidth * 0.9, screenHeight * 0.1)};
+		bounds = argBounds ?? {Rect(screenWidth * 0.1, screenHeight * 0.9, 
+			screenWidth * 0.9, screenHeight * 0.1)};
 		baseheight = bounds.height;
 		this.gui;
-	}
+		}
 	
 //	initFromFile { // instead, make a rebuild GUI function
 //		this.gui;
@@ -789,9 +790,10 @@ ProcSink {
 //		}
 	
 	gui {
-		window = GUI.window.new(name, bounds).front;
-		window.view.decorator = FlowLayout(window.view.bounds, Point(10, 10), Point(10, 10));
-		window.onClose_({this.kill});
+		procWindow = GUI.window.new(name, bounds).front;
+		procWindow.view.decorator = 
+			FlowLayout(procWindow.view.bounds, Point(10, 10), Point(10, 10));
+		procWindow.onClose_({this.kill});
 		this.start;
 		}
 		
@@ -805,21 +807,23 @@ ProcSink {
 		}
 		
 	kill {
-		window.isClosed.not.if({window.close});
+		procWindow.isClosed.not.if({procWindow.close});
 		sinkWindow.isClosed.not.if({sinkWindow.close});
-		procMods.do({arg me; me.kill});
+		procMods.do({arg me; (me.isRunning).if({ me.kill })});
 		killmod.notNil.if({killmod.play});
-		killmod = nil;
 		}
 		
-	add {arg proc, upperLevel = 6, lowerLevel = -inf; //new = true;
+	add {arg proc, upperLevel = 6, lowerLevel = -inf; 
 		numProcs = numProcs + 1;
 		procMods = procMods.add(proc);
 		rows = (numProcs / columns).ceil;
-		window.bounds_(Rect(window.bounds.left, window.bounds.top, window.bounds.width, 
-			rows * baseheight - window.view.decorator.gap.x));
-		{proc.gui(Rect(0, 0, window.bounds.width / columns, baseheight), upperLevel, 
-			lowerLevel, window)}.defer;
+		{
+		procWindow.bounds_(Rect(procWindow.bounds.left, procWindow.bounds.top, 
+			procWindow.bounds.width, rows * baseheight - procWindow.view.decorator.gap.x));
+		proc.gui(Rect(0, 0, procWindow.bounds.width / columns, baseheight), upperLevel, 
+			lowerLevel, procWindow)}.defer;
+		// why does this need to be contiually reset?
+		procWindow.onClose_({this.kill});
 	}
 			
 
