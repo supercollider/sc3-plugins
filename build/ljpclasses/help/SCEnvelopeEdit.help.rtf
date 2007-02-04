@@ -1,0 +1,116 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 SCEnvelopeEdit			envelope editor view\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs24 \cf0 SCEnvelopeEdit.new(parent, bounds, env, pointsPerSegment)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+SCEnvelopeEdit is a vector-based breakpoint editor for the Env class.  It takes an Env object as an argument that is modified from the GUI.  Changing properties of the Env object directly will not be reflected on the GUI.  You must call 'refresh' after doing this.  You cannot add breakpoints.\
+\
+The breakpoints are color coded as follows:\
+	blue -	normal\
+	red -		sustain node\
+	green -	loop node
+\f0\b \
+\
+
+\f1\b0 Public Methods:
+\f0\b \
+\
+refresh()\
+
+\f1\b0 If the Env object is modified directly, this needs to be called to update the GUI.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 minLevel_(float)
+\f1\b0 \
+Changes minimum level shown in editor.
+\f0\b \
+\
+maxLevel_(float)
+\f1\b0 \
+Changes maximum level shown in editor.\
+\
+
+\f0\b minTime_(float)
+\f1\b0 \
+Changes minimum time (sec) shown in editor.  Negative times are okay because Env uses inter-node \
+durations.\
+\
+
+\f0\b maxTime_(float)
+\f1\b0 \
+Changes maximum time (sec) shown in editor.
+\f0\b \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b0\fs18 \cf0 (\
+\cf2 // make a basic editor\cf0 \
+e = \cf3 Env\cf0 .adsr;\
+w = \cf3 SCWindow\cf0 (\cf4 "Env Editor"\cf0 , \cf3 Rect\cf0 (200,200,300,200));\
+v = \cf3 SCEnvelopeEdit\cf0 (w, w.view.bounds.moveBy(20,20).resizeBy(-40,-40), e, 20).resize_(5);\
+w.front;\
+)\
+\
+v.maxLevel_(2);	\cf2 // to give more headroom\cf0 \
+v.maxTime_(2);	\cf2 // to increase release point\cf0 \
+v.minTime_(-1);	\cf2 // to increase attack time\cf0 \
+\
+e.curves = \cf5 'sin'\cf0 ;	\cf2 // env object is changed\cf0 \
+v.refresh;		\cf2 // must refresh editor\cf0 \
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 Controlling a Synth
+\f2\b0\fs18 \
+\
+s=\cf3 Server\cf0 .internal;\
+\
+(\
+e = \cf3 Env\cf0 ([0, 1, 0.7, 0.9, 0], [0.03, 0.03, 0.03, 0.03], \cf5 'sin'\cf0 );\
+f = \cf3 Env\cf0 ([0, 1, 0.7, 0.9, 0], [0.03, 0.03, 0.03, 0.03], \cf5 'sin'\cf0 );\
+w = \cf3 SCWindow\cf0 (\cf4 "Shards"\cf0 , \cf3 Rect\cf0 (100, 100, 500, 400));\
+v = \cf3 SCEnvelopeEdit\cf0 (w, w.view.bounds.resizeBy(-20, -200), e, 10).resize_(2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 SCStaticText\cf0 (w, v.bounds).string_(\cf4 " amplitude"\cf0 ).resize_(2);\
+x = \cf3 SCEnvelopeEdit\cf0 (w, v.bounds.moveBy(0, 200), f, 10).resize_(2);\
+\cf3 SCStaticText\cf0 (w, x.bounds).string_(\cf4 " frequency"\cf0 ).resize_(2);\
+w.front;\
+)\
+\
+(\
+\cf3 SynthDef\cf0 (\cf4 "sineBlip"\cf0 , \{ \
+	\cf3 arg\cf0  freq=440, vol=0.1, la0, la1, la2, la3, la4, ta0, ta1, ta2, ta3, crva,\
+		lf0, lf1, lf2, lf3, lf4, tf0, tf1, tf2, tf3, crvf;\
+	\cf3 var\cf0  signal, fenv, aenv;\
+	fenv = \cf3 EnvGen\cf0 .ar(\cf3 Env\cf0 ([lf0,lf1,lf2,lf3,lf4],[tf0,tf1,tf2,tf3], crvf));\
+	aenv = \cf3 EnvGen\cf0 .ar(\cf3 Env\cf0 ([la0,la1,la2,la3,la4],[ta0,ta1,ta2,ta3], crva), doneAction: 2);\
+	signal = \cf3 SinOsc\cf0 .ar([freq, freq*2] * fenv) * aenv * vol;\
+	\cf3 Out\cf0 .ar(0, signal.dup);\
+\}).send(s);\
+)\
+\
+(\
+\cf3 Routine\cf0 (\{\
+	\cf3 var\cf0  par, indices;\
+	indices = (2..21);\
+	loop(\{\
+		par = (indices +++ (v.env.levels ++ v.env.times ++ v.env.curves ++ x.env.levels ++ x.env.times ++ x.env.curves)).flatten;\
+		s.sendBundle(s.latency, [\cf5 \\s_new\cf0 , \cf4 "sineBlip"\cf0 , -1, 1, 1, \cf5 \\freq\cf0 , exprand(4e3,11e3)] ++ par);\
+		0.04.wait;\
+	\});\
+\}).play;\
+)\
+}
