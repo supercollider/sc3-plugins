@@ -25,6 +25,7 @@
 				F3A15D200B5D8C9A00D75043 /* PBXTargetDependency */,
 				F3A15D1E0B5D8C9A00D75043 /* PBXTargetDependency */,
 				F3A15D1C0B5D8C9A00D75043 /* PBXTargetDependency */,
+				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -33,11 +34,6 @@
 
 /* Begin PBXBuildFile section */
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
-		F33ED3410B116E81005F3A0B /* AIAttributedStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF540B116E80005F3A0B /* AIAttributedStringAdditions.h */; };
-		F33ED3420B116E81005F3A0B /* AIColorAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF550B116E80005F3A0B /* AIColorAdditions.h */; };
-		F33ED3430B116E81005F3A0B /* AIHTMLDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF560B116E80005F3A0B /* AIHTMLDecoder.h */; };
-		F33ED3440B116E81005F3A0B /* AIStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF570B116E80005F3A0B /* AIStringAdditions.h */; };
-		F33ED3450B116E81005F3A0B /* AITextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF580B116E80005F3A0B /* AITextAttributes.h */; };
 		F33ED3460B116E81005F3A0B /* ChangeCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF590B116E80005F3A0B /* ChangeCounter.h */; };
 		F33ED3470B116E81005F3A0B /* ControlSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF5A0B116E80005F3A0B /* ControlSpec.h */; };
 		F33ED3480B116E81005F3A0B /* DrawBackground.h in Headers */ = {isa = PBXBuildFile; fileRef = F33ECF5B0B116E80005F3A0B /* DrawBackground.h */; };
@@ -219,6 +215,8 @@
 		F3A15D080B5D8C3900D75043 /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = F50D05E302E69B6B01CA2799 /* SCComplex.h */; };
 		F3A15D0B0B5D8C3900D75043 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
 		F3A15D190B5D8C6C00D75043 /* MCLDFFTUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */; };
+		F3A8FA480B73DCD600296CCA /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F3A8FA510B73DD1800296CCA /* LoopBuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */; };
 		F3D5773D0B1203BD0095BFC4 /* FFT_UGens.h in Headers */ = {isa = PBXBuildFile; fileRef = 46781BC805C8505F002B7D2B /* FFT_UGens.h */; };
 		F3D5773E0B1203BD0095BFC4 /* fftlib.h in Headers */ = {isa = PBXBuildFile; fileRef = F50D05DA02E69B6B01CA2799 /* fftlib.h */; };
 		F3D5773F0B1203BD0095BFC4 /* SCComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = F50D05E302E69B6B01CA2799 /* SCComplex.h */; };
@@ -307,6 +305,13 @@
 			remoteGlobalIDString = F3A15CC00B5D89BE00D75043;
 			remoteInfo = "MCLDBufferUGens (Upgraded)";
 		};
+		F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A8FA430B73DCD600296CCA;
+			remoteInfo = "LoopBuf (Upgraded)";
+		};
 		F3D57D230B102BBC0034519F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -359,11 +364,6 @@
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SKINI.tbl; path = source/StkUGens/include/SKINI.tbl; sourceTree = SOURCE_ROOT; };
-		F33ECF540B116E80005F3A0B /* AIAttributedStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AIAttributedStringAdditions.h; path = ../../headers/app/AIAttributedStringAdditions.h; sourceTree = SOURCE_ROOT; };
-		F33ECF550B116E80005F3A0B /* AIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AIColorAdditions.h; path = ../../headers/app/AIColorAdditions.h; sourceTree = SOURCE_ROOT; };
-		F33ECF560B116E80005F3A0B /* AIHTMLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AIHTMLDecoder.h; path = ../../headers/app/AIHTMLDecoder.h; sourceTree = SOURCE_ROOT; };
-		F33ECF570B116E80005F3A0B /* AIStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AIStringAdditions.h; path = ../../headers/app/AIStringAdditions.h; sourceTree = SOURCE_ROOT; };
-		F33ECF580B116E80005F3A0B /* AITextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AITextAttributes.h; path = ../../headers/app/AITextAttributes.h; sourceTree = SOURCE_ROOT; };
 		F33ECF590B116E80005F3A0B /* ChangeCounter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ChangeCounter.h; path = ../../headers/app/ChangeCounter.h; sourceTree = SOURCE_ROOT; };
 		F33ECF5A0B116E80005F3A0B /* ControlSpec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControlSpec.h; path = ../../headers/app/ControlSpec.h; sourceTree = SOURCE_ROOT; };
 		F33ECF5B0B116E80005F3A0B /* DrawBackground.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DrawBackground.h; path = ../../headers/app/DrawBackground.h; sourceTree = SOURCE_ROOT; };
@@ -417,7 +417,7 @@
 		F33ECFD00B116E81005F3A0B /* ReadWriteMacros.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ReadWriteMacros.h; path = ../../headers/server/ReadWriteMacros.h; sourceTree = SOURCE_ROOT; };
 		F33ECFD10B116E81005F3A0B /* Rendezvous.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Rendezvous.h; path = ../../headers/server/Rendezvous.h; sourceTree = SOURCE_ROOT; };
 		F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = STKUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StkAll.cpp; path = source/StkAll.cpp; sourceTree = SOURCE_ROOT; };
+		F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StkAll.cpp; path = StkUGens/StkAll.cpp; sourceTree = "<group>"; };
 		F3564C0E0B0E8493008AFA51 /* ADSR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ADSR.h; path = source/StkUGens/include/ADSR.h; sourceTree = SOURCE_ROOT; };
 		F3564C0F0B0E8493008AFA51 /* Asymp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Asymp.h; path = source/StkUGens/include/Asymp.h; sourceTree = SOURCE_ROOT; };
 		F3564C100B0E8493008AFA51 /* BandedWG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = BandedWG.h; path = source/StkUGens/include/BandedWG.h; sourceTree = SOURCE_ROOT; };
@@ -546,6 +546,8 @@
 		F3A15CF60B5D8B9200D75043 /* MCLDChaosUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDChaosUGens.cpp; sourceTree = "<group>"; };
 		F3A15D150B5D8C3900D75043 /* MCLDFFTUgensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDFFTUgensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDFFTUGens.cpp; sourceTree = "<group>"; };
+		F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LoopBuf.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LoopBuf.cpp; sourceTree = "<group>"; };
 		F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ReverbUGens.cpp; path = source/ReverbUGens.cpp; sourceTree = SOURCE_ROOT; };
 		F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BlackrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BlackrainUGens.cpp; path = source/BlackrainUGens.cpp; sourceTree = SOURCE_ROOT; };
@@ -620,6 +622,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3A8FA470B73DCD600296CCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A8FA480B73DCD600296CCA /* vecLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3D57D180B102B8A0034519F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -679,11 +689,6 @@
 		F33ECF530B116E80005F3A0B /* app */ = {
 			isa = PBXGroup;
 			children = (
-				F33ECF540B116E80005F3A0B /* AIAttributedStringAdditions.h */,
-				F33ECF550B116E80005F3A0B /* AIColorAdditions.h */,
-				F33ECF560B116E80005F3A0B /* AIHTMLDecoder.h */,
-				F33ECF570B116E80005F3A0B /* AIStringAdditions.h */,
-				F33ECF580B116E80005F3A0B /* AITextAttributes.h */,
 				F33ECF590B116E80005F3A0B /* ChangeCounter.h */,
 				F33ECF5A0B116E80005F3A0B /* ControlSpec.h */,
 				F33ECF5B0B116E80005F3A0B /* DrawBackground.h */,
@@ -903,7 +908,7 @@
 				F3564C6E0B0E8493008AFA51 /* WvOut.h */,
 			);
 			name = include;
-			path = source/Stk/include;
+			path = source/StkUGens/include;
 			sourceTree = "<group>";
 		};
 		F50D057E02E69B6B01CA2799 /* source */ = {
@@ -923,6 +928,7 @@
 				F3A15CD10B5D8ADE00D75043 /* MCLDBufferUGens.cpp */,
 				F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */,
 				F3564C040B0E83FD008AFA51 /* StkAll.cpp */,
+				F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */,
 				F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */,
 				F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */,
 				F3A15CB10B5D6D9200D75043 /* MCLDFFTTriggeredUGen.cpp */,
@@ -956,6 +962,7 @@
 				F3A15CE20B5D8B0600D75043 /* MCLD_CQ_UgensUB.scx */,
 				F3A15CF50B5D8B6D00D75043 /* MCLDChaosUgensUB.scx */,
 				F3A15D150B5D8C3900D75043 /* MCLDFFTUgensUB.scx */,
+				F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1083,11 +1090,6 @@
 				F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */,
 				F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */,
 				F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */,
-				F33ED3410B116E81005F3A0B /* AIAttributedStringAdditions.h in Headers */,
-				F33ED3420B116E81005F3A0B /* AIColorAdditions.h in Headers */,
-				F33ED3430B116E81005F3A0B /* AIHTMLDecoder.h in Headers */,
-				F33ED3440B116E81005F3A0B /* AIStringAdditions.h in Headers */,
-				F33ED3450B116E81005F3A0B /* AITextAttributes.h in Headers */,
 				F33ED3460B116E81005F3A0B /* ChangeCounter.h in Headers */,
 				F33ED3470B116E81005F3A0B /* ControlSpec.h in Headers */,
 				F33ED3480B116E81005F3A0B /* DrawBackground.h in Headers */,
@@ -1199,6 +1201,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3A15D080B5D8C3900D75043 /* SCComplex.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A8FA440B73DCD600296CCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1385,6 +1394,26 @@
 			productReference = F3A15D150B5D8C3900D75043 /* MCLDFFTUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf (Upgraded)" */;
+			buildPhases = (
+				F3A8FA440B73DCD600296CCA /* Headers */,
+				F3A8FA450B73DCD600296CCA /* Sources */,
+				F3A8FA470B73DCD600296CCA /* Frameworks */,
+				F3A8FA490B73DCD600296CCA /* Rez */,
+				F3A8FA4A0B73DCD600296CCA /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "LoopBuf (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens (Upgraded)" */;
@@ -1515,6 +1544,7 @@
 				F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */,
 				F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */,
 				F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */,
+				F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */,
 			);
 		};
 /* End PBXProject section */
@@ -1563,6 +1593,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3A15D0F0B5D8C3900D75043 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A8FA490B73DCD600296CCA /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1662,6 +1699,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		F3A15D100B5D8C3900D75043 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		F3A8FA4A0B73DCD600296CCA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1777,6 +1823,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3A8FA450B73DCD600296CCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A8FA510B73DD1800296CCA /* LoopBuf.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3D57D160B102B8A0034519F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1859,6 +1913,11 @@
 			isa = PBXTargetDependency;
 			target = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */;
 			targetProxy = F3A15D230B5D8C9A00D75043 /* PBXContainerItemProxy */;
+		};
+		F3A8FA540B73DDA000296CCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */;
+			targetProxy = F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */;
 		};
 		F3D57D240B102BBC0034519F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2664,6 +2723,103 @@
 			};
 			name = Default;
 		};
+		F3A8FA4C0B73DCD600296CCA /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = LoopBuf;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F3A8FA4D0B73DCD600296CCA /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = LoopBuf;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F3A8FA4E0B73DCD600296CCA /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = LoopBuf;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		F3D57D1D0B102B8A0034519F /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3238,6 +3394,16 @@
 				F3A15D120B5D8C3900D75043 /* Development */,
 				F3A15D130B5D8C3900D75043 /* Deployment */,
 				F3A15D140B5D8C3900D75043 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A8FA4C0B73DCD600296CCA /* Development */,
+				F3A8FA4D0B73DCD600296CCA /* Deployment */,
+				F3A8FA4E0B73DCD600296CCA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;

@@ -31,28 +31,14 @@
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
-	F3466FB70B5FDEA3005E5117 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */;
-	};
-	F346701A0B6056A0005E5117 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */;
-		name = "JoshUGens.cpp: 4845";
-		rLen = 0;
-		rLoc = 142047;
-		rType = 0;
-		vrLen = 1407;
-		vrLoc = 141452;
-	};
 	F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
 	F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 21658}}";
-			sepNavSelRange = "{61, 0}";
-			sepNavVisRect = "{{0, 0}, {1030, 698}}";
+			sepNavIntBoundsRect = "{{0, 0}, {854, 21672}}";
+			sepNavSelRange = "{23, 0}";
+			sepNavVisRect = "{{0, 0}, {761, 73}}";
 			sepNavWindowFrame = "{{20, 42}, {1069, 827}}";
 		};
 	};
@@ -143,6 +129,14 @@
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
+	F3564C410B0E8493008AFA51 /* OnePole.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 1120}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 422}, {1030, 698}}";
+			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+		};
+	};
 	F3564C470B0E8493008AFA51 /* PluckTwo.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 1204}}";
@@ -224,6 +218,9 @@
 	F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
+	F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */ = {
+		activeExec = 0;
+	};
 	F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {942, 19488}}";
@@ -260,10 +257,10 @@
 	};
 	F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1334, 70196}}";
-			sepNavSelRange = "{142047, 0}";
-			sepNavVisRect = "{{0, 67541}, {1030, 698}}";
-			sepNavWindowFrame = "{{136, 35}, {1069, 827}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1334, 80654}}";
+			sepNavSelRange = "{166766, 0}";
+			sepNavVisRect = "{{0, 69566}, {1059, 532}}";
+			sepNavWindowFrame = "{{357, 41}, {1069, 827}}";
 		};
 	};
 	F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */ = {
@@ -302,10 +299,10 @@
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
 		activeBuildStyle = F3FE071D0B0D755000A29459 /* Development */;
-		activeTarget = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
+		activeTarget = F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */;
 		addToTargets = (
 			631417A30A203392007B9355 /* All */,
-			F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */,
+			F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -399,12 +396,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 190832283;
-			PBXWorkspaceStateSaveDate = 190832283;
-		};
-		perUserProjectItems = {
-			F3466FB70B5FDEA3005E5117 /* PBXBookmark */ = F3466FB70B5FDEA3005E5117 /* PBXBookmark */;
-			F346701A0B6056A0005E5117 /* PBXTextBookmark */ = F346701A0B6056A0005E5117 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 192312946;
+			PBXWorkspaceStateSaveDate = 192312946;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
