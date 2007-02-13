@@ -2,7 +2,7 @@ ProcMod {
 	var <amp, <>group, <addAction, <target, 
 		<timeScale, <lag, <>id, <>function, 
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
-		<starttime, <window, gui = false, button, process, retrig = false, isReleasing = false,
+		<starttime, <window, gui = false, <button, process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
@@ -56,7 +56,7 @@ ProcMod {
 			starttime = Main.elapsedTime;
 			function.isKindOf(Function).if({
 				retrig = true;
-				thisfun = function.value(group, envbus);
+				thisfun = function.value(group, envbus, server);
 				(thisfun.isKindOf(Routine) || thisfun.isKindOf(Task)).if({
 					process = thisfun; this.processPlay;
 					})
@@ -126,8 +126,8 @@ ProcMod {
 			})
 		}
 		
-	release {
-		var curproc, curresp, curgroup, currelfunc;
+	release {arg reltime;
+		var curproc, curresp, curgroup, currelfunc, newrelval;
 		curproc = process;
 		curresp = responder;
 		responder = nil;
@@ -136,10 +136,20 @@ ProcMod {
 		isRunning.if({
 			onReleaseFunc.value;
 			env.notNil.if({
-				server.sendMsg(\n_set, group, \gate, 0);
+				newrelval = reltime.notNil.if({
+					reltime.neg - 1;
+					}, {
+					0
+					});
+				server.sendMsg(\n_set, group, \gate, newrelval);
 				});
 			releasetime.notNil.if({
-				clock.sched(releasetime, {this.clear(curproc, curresp, curgroup, currelfunc)})
+				newrelval = reltime.notNil.if({
+					reltime
+					}, {
+					releasetime
+					});
+				clock.sched(newrelval, {this.clear(curproc, curresp, curgroup, currelfunc)})
 				}, {
 				this.clear(curproc, curresp, curgroup, currelfunc)
 				});
@@ -186,7 +196,7 @@ ProcMod {
 		oldresp.notNil.if({oldresp.remove});
 		retrig.not.if({isRunning = false});
 		retrig.if({isReleasing = false});
-		gui.if({{button.value_(0)}.defer});
+//		gui.if({{button.value_(0)}.defer});//
 		}
 
 	responder_ {arg aResponder;
@@ -758,25 +768,6 @@ ProcSink {
 				});
 		GUI.button.new(sinkWindow, Rect(5, sinkBounds.height * 0.7, sinkBounds.width - 10,
 				sinkBounds.height * 0.3 - 10))
-//			.states_([
-//				["Save state", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
-//				["Save state", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
-//				["Saved", Color.black, Color(0.3, 0.7, 0.3, 0.3)]
-//				])
-//			.action_({arg me;
-//				var actions;
-//				actions = [
-//					{nil},
-//					{GUI.dialog.savePanel({arg paths;
-//						paths.postln;
-//						this.writeArchive(paths);
-//						me.value_(2);
-//						}, {
-//						"No file saved".postln;
-//						})},
-//					{nil}];
-//				actions[me.value].value;
-//				});
 			.states_([
 				["Start piece", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
 				["Stop piece", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
@@ -797,18 +788,12 @@ ProcSink {
 		this.gui(argParent);
 		}
 	
-//	initFromFile { // instead, make a rebuild GUI function
-//		this.gui;
-//		procMods.do({arg me; this.add(me, false)});
-//		}
-	
 	gui {arg parent;
 		procWindow = parent ?? {GUI.window.new(name, bounds).front};
 		procWindow.view.decorator = 
 			FlowLayout(procWindow.view.bounds, Point(10, 10), Point(10, 10));
 		procWindow.onClose_({this.kill});
 		sinkWindow.front;
-//		this.start;
 		}
 		
 	start {
@@ -822,8 +807,10 @@ ProcSink {
 		}
 		
 	kill {
-		procWindow.isClosed.not.if({procWindow.close});
-		sinkWindow.isClosed.not.if({sinkWindow.close});
+		{
+			procWindow.isClosed.not.if({procWindow.close});
+			sinkWindow.isClosed.not.if({sinkWindow.close});
+		}.defer;
 		procMods.do({arg me; (me.isRunning).if({ me.kill })});
 		killmod.notNil.if({killmod.play});
 		}
@@ -843,3 +830,4 @@ ProcSink {
 			
 
 }
+

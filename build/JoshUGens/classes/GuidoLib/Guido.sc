@@ -555,14 +555,31 @@ PitchClass {
 	classvar notenames, notenums, noteToScale, scaleToNote, accToSize, sizeToAcc, accToGuido;
 	// deal with transposition, notenames and PC classes here
 	// note and acc are symbols, octave is an integer, where middle c = c4
-	*new {arg note, acc = \n, octave = 4;
-		var pitch;
-		note.isKindOf(Number).if({
-			octave = (note.round/12).floor - 1;
-			#note, acc = notenums[note%12]});
-		pitch = (note ++ acc).asSymbol;
+	
+//	*new {arg note, acc = \n, octave = 4;
+//		var pitch;
+//		note.isKindOf(Number).if({
+//			octave = (note.round/12).floor - 1;
+//			#note, acc = notenums[note%12]});
+//		pitch = (note ++ acc).asSymbol;
+//		^super.newCopyArgs(note, acc, octave, pitch).init;
+//		}
+
+	*new {arg pitch, octave = 4;
+		var note, acc, str;
+		pitch.isKindOf(Number).if({
+			octave = (pitch.round/12).floor - 1;
+			#note, acc = notenums[pitch%12]});
+//		pitch = (note ++ acc).asSymbol;
+		str = pitch.asString;
+		note = str[0].asSymbol;
+		if(str.size > 1, 
+			{acc = str[1..str.size-1].asSymbol},
+			{pitch = (str ++ "n").asSymbol; acc = \n}
+			);
 		^super.newCopyArgs(note, acc, octave, pitch).init;
 		}
+
 		
 	init {
 		pitchclass = notenames[pitch];
@@ -598,6 +615,7 @@ PitchClass {
 			endnote = scaleToNote[newscale % 7];
 			// distance from the 'natural' note
 			size = accToSize[acc];
+
 			// need to work in exceptions for scales!
 			sizeAlter = 
 				case
@@ -840,9 +858,9 @@ PitchClass {
 								{true} {-2};
 							}
 						)}
-					{true} {0};	
+					{true} {0};
 			newacc = sizeToAcc[size + sizeAlter];
-			^this.class.new(endnote, newacc, newoctave);
+			^this.class.new((endnote ++ newacc).asSymbol, newoctave);
 			}, {
 			^this.class.new(this.keynum + (aPitchInterval * dir))
 			})
@@ -906,6 +924,7 @@ PitchClass {
 			\dff -> 0,
 //			\cqs -> 0.5,
 //			\dtqf -> 0.5,
+			\bss -> 1,
 			\cs -> 1,
 			\df -> 1,
 //			\ctqs -> 1.5,

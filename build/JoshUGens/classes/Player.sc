@@ -720,14 +720,13 @@ Player {
 			
 			// 12 //
 			
-			(GUI.current == GUI.cocoa).if({
-				GUI.soundFileView.new(window, Rect(10, 120, 500, 100))
-					.soundfile_( sf )
-					.readWithTask(0, sf.numFrames )
-					.canFocus_(false)
-					.waveColors_(Array.fill(sf.numChannels, rgb(0, 255, 0)))
-					.gridColor_(Color.black); 
-				});
+			GUI.soundFileView.new(window, Rect(10, 120, 500, 100))
+				.soundfile_( sf )
+				.readWithTask(0, sf.numFrames )
+				.canFocus_(false)
+				.waveColors_(Array.fill(sf.numChannels, rgb(0, 255, 0)))
+				.gridColor_(Color.black); 
+
 					
 
 			window.front;
