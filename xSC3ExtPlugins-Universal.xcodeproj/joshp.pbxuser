@@ -1,11 +1,27 @@
 // !$*UTF8*$!
 {
+	46781BC805C8505F002B7D2B /* FFT_UGens.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 1526}}";
+			sepNavSelRange = "{2811, 0}";
+			sepNavVisRect = "{{0, 828}, {1030, 698}}";
+			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
+		};
+	};
 	46781BD205C85772002B7D2B /* FFT2InterfaceTable.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 700}}";
+			sepNavSelRange = "{1238, 0}";
+			sepNavVisRect = "{{0, 2}, {1030, 698}}";
+			sepNavWindowFrame = "{{291, 51}, {1069, 827}}";
+		};
+	};
+	46781CEC05C872AC002B7D2B /* Convolution.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 13986}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 0}, {1030, 698}}";
-			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+			sepNavVisRect = "{{0, 8097}, {1030, 698}}";
+			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
 		};
 	};
 	631417A30A203392007B9355 /* All */ = {
@@ -15,6 +31,7 @@
 		isa = PBXFileBreakpoint;
 		actions = (
 		);
+		breakpointStyle = 0;
 		continueAfterActions = 0;
 		delayBeforeContinue = 0;
 		fileReference = F3564C040B0E83FD008AFA51 /* StkAll.cpp */;
@@ -184,6 +201,57 @@
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
 		);
 	};
+	F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F37FF6580B86A56C006B0AA3 /* bhobChaos.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 25774}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 25076}, {1030, 698}}";
+			sepNavWindowFrame = "{{285, 51}, {1069, 827}}";
+		};
+	};
+	F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 5348}}";
+			sepNavSelRange = "{8798, 40}";
+			sepNavVisRect = "{{0, 4650}, {1030, 698}}";
+			sepNavWindowFrame = "{{136, 51}, {1069, 827}}";
+		};
+	};
+	F37FF7A10B86BD4E006B0AA3 /* bhobFFT (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F37FF7CD0B86BE28006B0AA3 /* bhobFilt (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F37FF7E00B86BE6C006B0AA3 /* bhobGrain (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F37FF8150B86BF98006B0AA3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */;
+		name = "bhobFFT.cpp: 364";
+		rLen = 0;
+		rLoc = 8796;
+		rType = 0;
+		vrLen = 1707;
+		vrLoc = 0;
+	};
+	F37FF8160B86BF98006B0AA3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */;
+		name = "void initPV_bhobFFT(InterfaceTable *it)";
+		rLen = 40;
+		rLoc = 8798;
+		rType = 0;
+		vrLen = 1031;
+		vrLoc = 8088;
+	};
 	F386C9F70B120C060030B5C1 /* SC_BufGen.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 698}}";
@@ -196,7 +264,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 952}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 0}, {1030, 698}}";
+			sepNavVisRect = "{{0, 254}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
@@ -217,6 +285,14 @@
 	};
 	F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */ = {
 		activeExec = 0;
+	};
+	F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1202, 10878}}";
+			sepNavSelRange = "{22494, 35}";
+			sepNavVisRect = "{{0, 10180}, {1030, 698}}";
+			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+		};
 	};
 	F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */ = {
 		activeExec = 0;
@@ -258,8 +334,8 @@
 	F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1334, 80654}}";
-			sepNavSelRange = "{166766, 0}";
-			sepNavVisRect = "{{0, 69566}, {1059, 532}}";
+			sepNavSelRange = "{1926, 27}";
+			sepNavVisRect = "{{0, 147}, {1030, 698}}";
 			sepNavWindowFrame = "{{357, 41}, {1069, 827}}";
 		};
 	};
@@ -291,18 +367,17 @@
 	F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 15540}}";
-			sepNavSelRange = "{29278, 0}";
-			sepNavVisRect = "{{0, 14834}, {1030, 698}}";
+			sepNavSelRange = "{29157, 0}";
+			sepNavVisRect = "{{0, 14842}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeBuildStyle = F3FE071D0B0D755000A29459 /* Development */;
-		activeTarget = F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */;
+		activeTarget = 631417A30A203392007B9355 /* All */;
 		addToTargets = (
+			F37FF7A10B86BD4E006B0AA3 /* bhobFFT (Upgraded) */,
 			631417A30A203392007B9355 /* All */,
-			F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -365,7 +440,7 @@
 					16,
 					200,
 					50,
-					183,
+					494.2085,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXSymbolsDataSource_SymbolTypeIconID,
@@ -380,7 +455,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					200,
-					344,
+					374,
 					20,
 					48,
 					43,
@@ -396,11 +471,39 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 192312946;
-			PBXWorkspaceStateSaveDate = 192312946;
+			PBXPerProjectTemplateStateSaveDate = 193423885;
+			PBXWorkspaceStateSaveDate = 193423885;
+		};
+		perUserProjectItems = {
+			F37FF8150B86BF98006B0AA3 = F37FF8150B86BF98006B0AA3 /* PBXTextBookmark */;
+			F37FF8160B86BF98006B0AA3 = F37FF8160B86BF98006B0AA3 /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
+		};
+	};
+	F50D05DA02E69B6B01CA2799 /* fftlib.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 882}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 184}, {1030, 698}}";
+			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+		};
+	};
+	F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 2100}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 99}, {1030, 698}}";
+			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
+		};
+	};
+	F50D05E302E69B6B01CA2799 /* SCComplex.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 1806}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 42}, {1030, 698}}";
+			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
 		};
 	};
 }
