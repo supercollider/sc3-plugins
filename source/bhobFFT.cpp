@@ -66,6 +66,9 @@ extern "C"
 	void PV_Cutoff_next(PV_Unit *unit, int inNumSamples);
 }
 
+// these are already defined in PV_ThrirdParty.cpp. so build doest work on pbuilder - br
+#if gccversion >= 4
+
 SCPolarBuf* ToPolarApx(SndBuf *buf)
 {
 	if (buf->coord == coord_Complex) {
@@ -91,6 +94,9 @@ SCComplexBuf* ToComplexApx(SndBuf *buf)
 	}
 	return (SCComplexBuf*)buf->data;
 }
+
+#endif // gccversion >= 4
+
 
 void PV_CommonMag_next(PV_Unit *unit, int inNumSamples)
 {

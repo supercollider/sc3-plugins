@@ -1,0 +1,35 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 // Probalistic Noise UGens\
+\
+// LFBrownNoise0.kr(freq, dev, mul, add)... (also LFBrownNoise1, LFBrownNoise2) 0 < dev <= 2.  higher values mean bigger steps.  \
+\
+// TBetaRand.kr(lo, hi, prob1, prob2, trig)... prob1 < prob2 means lo is more likely.  and vice versa.  prob1 & prob2 < 1 leans towards lo and hi values.  prob1 & prob2 = 1 is linear random.  > 1 tends towards guassian distribution.\
+\
+// TBrownRand.kr(lo, hi, dev, trig)... 0 < dev <= 2.  higher values mean bigger steps.    \
+// TGaussRand.kr(lo, hi, trig)... gaussian distribution between lo and hi.\
+// GaussTrig.kr(freq, dev)...  emits a trigger around freq.  0.0 <= dev < 1.  0.0 is like Impulse, higher values introduce more randomness.\
+\
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \{ Pan2.ar(\
+	SinOsc.ar(\
+		Lag.ar(\
+			LinExp.ar(\
+				TBrownRand.ar(0, 1, 1.0, Dust.ar(8)),\
+				0, 1,\
+				120, 6000\
+			),\
+			0.02\
+		), \
+		mul: LFBrownNoise2.kr(6, 1.0, 0.4, 0.5)\
+	).squared * \
+		Decay2.kr(GaussTrig.kr(8.0, 0.2), 0.02, 0.2), \
+	Lag.kr(\
+		TBetaRand.kr(-1.0, 1.0, Line.kr(4, 0.1, 5), Line.kr(2, 0.1, 5), Impulse.kr(8.0)), 	0.2)\
+	) \
+\}.play \
+)}

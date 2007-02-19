@@ -125,7 +125,7 @@
 				175290200B11344D00A802D7,
 			);
 			isa = PBXGroup;
-			name = ReverbUGen;
+			name = ReverbUGens;
 			refType = 4;
 		};
 		1752900B0B11334100A802D7 = {
@@ -2842,6 +2842,640 @@
 			settings = {
 			};
 		};
+		17A9C96E0B8912C100A80144 = {
+			children = (
+				17A9C9780B89137C00A80144,
+			);
+			isa = PBXGroup;
+			name = LoopBuf;
+			path = "";
+			refType = 4;
+		};
+		17A9C96F0B8912ED00A80144 = {
+			buildPhases = (
+				17A9C9700B8912ED00A80144,
+				17A9C9710B8912ED00A80144,
+				17A9C9730B8912ED00A80144,
+				17A9C9740B8912ED00A80144,
+				17A9C9750B8912ED00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "LoopBuf-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = LoopBuf;
+			productName = blackrainUGens;
+			productReference = 17A9C9760B8912ED00A80144;
+		};
+		17A9C9700B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9710B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9790B89137C00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9730B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9740B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9750B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/LoopBuf-gcc3.scx build/ljpclasses";
+		};
+		17A9C9760B8912ED00A80144 = {
+			isa = PBXLibraryReference;
+			path = "LoopBuf-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9770B89130400A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C96F0B8912ED00A80144;
+		};
+		17A9C9780B89137C00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LoopBuf.cpp;
+			refType = 4;
+		};
+		17A9C9790B89137C00A80144 = {
+			fileRef = 17A9C9780B89137C00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C97A0B8914B700A80144 = {
+			children = (
+				17A9C9A30B8916A000A80144,
+				17A9C9A50B8917EA00A80144,
+				17A9C9A70B8917F700A80144,
+				17A9C9A90B89180400A80144,
+				17A9C9AB0B89180E00A80144,
+			);
+			isa = PBXGroup;
+			name = BhobUGens;
+			path = "";
+			refType = 4;
+		};
+		17A9C97B0B89150300A80144 = {
+			buildPhases = (
+				17A9C97C0B89150300A80144,
+				17A9C97D0B89150300A80144,
+				17A9C97F0B89150300A80144,
+				17A9C9800B89150300A80144,
+				17A9C9810B89150300A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobChaos-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobChaosUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9820B89150300A80144;
+		};
+		17A9C97C0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C97D0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A40B8916A000A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C97F0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9800B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9810B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobChaos-gcc3.scx build/bhobUGens";
+		};
+		17A9C9820B89150300A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobChaos-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9830B89150700A80144 = {
+			buildPhases = (
+				17A9C9840B89150700A80144,
+				17A9C9850B89150700A80144,
+				17A9C9870B89150700A80144,
+				17A9C9880B89150700A80144,
+				17A9C9890B89150700A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobFFT-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobFFTUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C98A0B89150700A80144;
+		};
+		17A9C9840B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9850B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A60B8917EA00A80144,
+				17A9C9BC0B891BF900A80144,
+				17A9C9BD0B891C0F00A80144,
+				17A9C9BE0B891C1400A80144,
+				17A9C9BF0B891C1900A80144,
+				17A9C9C00B891D4F00A80144,
+				17A9C9C10B891D7C00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9870B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9880B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9890B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobFFT-gcc3.scx build/bhobUGens";
+		};
+		17A9C98A0B89150700A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobFFT-gcc3.scx";
+			refType = 3;
+		};
+		17A9C98B0B89150B00A80144 = {
+			buildPhases = (
+				17A9C98C0B89150B00A80144,
+				17A9C98D0B89150B00A80144,
+				17A9C98F0B89150B00A80144,
+				17A9C9900B89150B00A80144,
+				17A9C9910B89150B00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BhobFilt-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BhobFiltUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9920B89150B00A80144;
+		};
+		17A9C98C0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C98D0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A80B8917F700A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C98F0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9900B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9910B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BhobFilt-gcc3.scx build/bhobUGens";
+		};
+		17A9C9920B89150B00A80144 = {
+			isa = PBXLibraryReference;
+			path = "BhobFilt-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9930B89151300A80144 = {
+			buildPhases = (
+				17A9C9940B89151300A80144,
+				17A9C9950B89151300A80144,
+				17A9C9970B89151300A80144,
+				17A9C9980B89151300A80144,
+				17A9C9990B89151300A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobGrain-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobGrainUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C99A0B89151300A80144;
+		};
+		17A9C9940B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9950B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9AA0B89180400A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9970B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9980B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9990B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobGrain-gcc3.scx build/bhobUGens";
+		};
+		17A9C99A0B89151300A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobGrain-gcc3.scx";
+			refType = 3;
+		};
+		17A9C99B0B89158F00A80144 = {
+			buildPhases = (
+				17A9C99C0B89158F00A80144,
+				17A9C99D0B89158F00A80144,
+				17A9C99F0B89158F00A80144,
+				17A9C9A00B89158F00A80144,
+				17A9C9A10B89158F00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BhobNoise-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BhobNoiseUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9A20B89158F00A80144;
+		};
+		17A9C99C0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C99D0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9AC0B89180E00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C99F0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9A00B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9A10B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BhobNoise-gcc3.scx build/bhobUGens";
+		};
+		17A9C9A20B89158F00A80144 = {
+			isa = PBXLibraryReference;
+			path = "BhobNoise-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9A30B8916A000A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobChaos.cpp;
+			refType = 4;
+		};
+		17A9C9A40B8916A000A80144 = {
+			fileRef = 17A9C9A30B8916A000A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A50B8917EA00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobFFT.cpp;
+			refType = 4;
+		};
+		17A9C9A60B8917EA00A80144 = {
+			fileRef = 17A9C9A50B8917EA00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A70B8917F700A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BhobFilt.cpp;
+			refType = 4;
+		};
+		17A9C9A80B8917F700A80144 = {
+			fileRef = 17A9C9A70B8917F700A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A90B89180400A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobGrain.cpp;
+			refType = 4;
+		};
+		17A9C9AA0B89180400A80144 = {
+			fileRef = 17A9C9A90B89180400A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9AB0B89180E00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BhobNoise.cpp;
+			refType = 4;
+		};
+		17A9C9AC0B89180E00A80144 = {
+			fileRef = 17A9C9AB0B89180E00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9AD0B89189B00A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C97B0B89150300A80144;
+		};
+		17A9C9AE0B89189D00A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C9830B89150700A80144;
+		};
+		17A9C9AF0B8918A100A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C98B0B89150B00A80144;
+		};
+		17A9C9B00B8918A300A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C9930B89151300A80144;
+		};
+		17A9C9B10B8918A700A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C99B0B89158F00A80144;
+		};
+		17A9C9BC0B891BF900A80144 = {
+			fileRef = 175290CD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BD0B891C0F00A80144 = {
+			fileRef = 175290C70B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BE0B891C1400A80144 = {
+			fileRef = 175290CC0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BF0B891C1900A80144 = {
+			fileRef = 175290DC0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9C00B891D4F00A80144 = {
+			fileRef = 175290D00B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9C10B891D7C00A80144 = {
+			fileRef = 175290DD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		17B779F60B1D3D5000A802D7 = {
 			isa = PBXTargetDependency;
 			target = 17A732680B1D381D00A802D7;
@@ -3029,6 +3663,12 @@
 				17A732780B1D382900A802D7,
 				17A732880B1D382C00A802D7,
 				17A732980B1D384500A802D7,
+				17A9C96F0B8912ED00A80144,
+				17A9C97B0B89150300A80144,
+				17A9C9830B89150700A80144,
+				17A9C98B0B89150B00A80144,
+				17A9C9930B89151300A80144,
+				17A9C99B0B89158F00A80144,
 			);
 		};
 		F50D04F802E68E8201CA2799 = {
@@ -3267,6 +3907,8 @@
 				1752900A0B11333700A802D7,
 				179814DB0B1160DD00A802D7,
 				17A732A80B1D38A300A802D7,
+				17A9C96E0B8912C100A80144,
+				17A9C97A0B8914B700A80144,
 			);
 			isa = PBXGroup;
 			name = plugins;
@@ -3287,6 +3929,12 @@
 				17A732970B1D382C00A802D7,
 				17A732A70B1D384500A802D7,
 				177D916A0B39F44100A802D7,
+				17A9C9760B8912ED00A80144,
+				17A9C9820B89150300A80144,
+				17A9C98A0B89150700A80144,
+				17A9C9920B89150B00A80144,
+				17A9C99A0B89151300A80144,
+				17A9C9A20B89158F00A80144,
 			);
 			isa = PBXGroup;
 			path = build;
@@ -3366,6 +4014,12 @@
 				17B779F70B1D3D5200A802D7,
 				17B779F80B1D3D5500A802D7,
 				17B779F90B1D3D5800A802D7,
+				17A9C9770B89130400A80144,
+				17A9C9AD0B89189B00A80144,
+				17A9C9AE0B89189D00A80144,
+				17A9C9AF0B8918A100A80144,
+				17A9C9B00B8918A300A80144,
+				17A9C9B10B8918A700A80144,
 			);
 			isa = PBXAggregateTarget;
 			name = All;
