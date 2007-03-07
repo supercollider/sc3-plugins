@@ -322,7 +322,7 @@ ProcEvents {
 				}
 			};
 		// for the GUI if needed
-		bounds = GUI.window.screenBounds;	
+//		bounds = GUI.window.screenBounds;	//
 	}
 	
 	index_ {arg nextIdx;
@@ -597,6 +597,7 @@ ProcEvents {
 		
 	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
 		var buttonheight, buttonwidth;
+		bounds = GUI.window.screenBounds;	
 		
 		guiBounds = guiBounds ?? {Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
 				bounds.height * 0.3)};

@@ -123,7 +123,7 @@ InterplPairs : InterplEnv {
 		}
 	}
 	
-// pairs is an array of [time, [chord, chord, chord], time, [chord, chord, chord]]
+// pairs is an array of [time, [val, val, val], time, [val, val, val]]
 // format. All chords MUST have the same number of members
 
 InterplChord {

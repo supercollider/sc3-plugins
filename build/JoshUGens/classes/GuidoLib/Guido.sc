@@ -569,8 +569,9 @@ PitchClass {
 		var note, acc, str;
 		pitch.isKindOf(Number).if({
 			octave = (pitch.round/12).floor - 1;
-			#note, acc = notenums[pitch%12]});
-//		pitch = (note ++ acc).asSymbol;
+			pitch = notenums[pitch%12];
+//			pitch = (note ++ acc).asSymbol
+			});
 		str = pitch.asString;
 		note = str[0].asSymbol;
 		if(str.size > 1, 
@@ -582,6 +583,7 @@ PitchClass {
 
 		
 	init {
+		pitch = pitch.asSymbol;
 		pitchclass = notenames[pitch];
 		keynum = pitchclass + (12 * (1 + octave));
 		freq = keynum.midicps;
@@ -977,29 +979,29 @@ PitchClass {
 //			\cqf -> 11.5
 			];
 		notenums = Dictionary[
-			0 -> [\c, \n],
+			0 -> \cn,
 //			0.5 -> [\c, \qs],
-			1 -> [\c, \s],
+			1 -> \cs,
 //			1.5 -> [\c, \tqs],
-			2 -> [\d, \n],
+			2 -> \dn,
 //			2.5 -> [\d, \qs],
-			3 -> [\d, \s],
+			3 -> \ef,
 //			3.5 -> [\d, \tqs],
-			4 -> [\e, \n],
+			4 -> \en,
 //			4.5 -> [\e, \qs],
-			5 -> [\f, \n],
+			5 -> \fn,
 //			5.5 -> [\f, \qs],
-			6 -> [\f, \s],
+			6 -> \fs,
 //			6.5 -> [\f, \tqs],
-			7 -> [\g, \n],
+			7 -> \gn,
 //			7.5 -> [\g, \qs],
-			8 -> [\g, \s],
+			8 -> \af,
 //			8.5 -> [\g, \tqs],
-			9 -> [\a, \n],
+			9 -> \an,
 //			9.5 -> [\a, \qs],
-			10 -> [\a, \s],
+			10 -> \bf,
 //			10.5 -> [\a, \tqs],
-			11 -> [\b, \n],
+			11 -> \bn,
 //			11.5 -> [\b, \qs]
 			];
 		accToGuido = IdentityDictionary[
@@ -1245,7 +1247,7 @@ PitchCollection {
 		member = pitchCollection[thisIndex];
 		// return a new PitchClass with the appropriate octave... check for nums close
 		// to the next octave at C with the round
-		^PitchClass.new(member.note, member.acc, (keynum.round / 12).floor - 1);
+		^PitchClass.new((member.note ++ member.acc), (keynum.round / 12).floor - 1);
 		}
 		
 	choose {

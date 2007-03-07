@@ -5,10 +5,21 @@ Tendency {
 		^super.newCopyArgs(high, low);
 		}
 		
-	at {|time|
-		^(this.highAt(time)).rrand(this.lowAt(time))
+	at {|time, dist = \uniform, prob1 = 0.5, prob2 = 0.5|
+		^case
+			{dist == \uniform} {this.uniformAt(time)}
+			{dist == \lpRand} {this.lpRandAt(time)}
+			{dist == \hpRand} {this.hpRandAt(time)}
+			{dist == \meanRand} {this.meanRandAt(time)}
+			{dist == \betaRand} {this.betaRandAt(time, prob1, prob2)}
+			{true} {this.uniformAt(time)};		
+//			(this.highAt(time)).rrand(this.lowAt(time))
 	}
 	
+	uniformAt {|time|
+		^this.highAt(time).rrand(this.lowAt(time))
+		}
+		
 	highAt {|time|
 		^this.valAt(high, time);
 		}
@@ -56,13 +67,7 @@ Tendency {
 		startTime = thisThread.beats;
 		loop {
 			thisTime = thisThread.beats - startTime;
-			inval = case 
-				{dist == \uniform} {this.at(thisTime)}
-				{dist == \lpRand} {this.lpRandAt(thisTime)}
-				{dist == \hpRand} {this.hpRandAt(thisTime)}
-				{dist == \meanRand} {this.meanRandAt(thisTime)}
-				{dist == \betaRand} {this.betaRandAt(thisTime, prob1, prob2)}
-				{true} {this.at(thisTime)};
+			inval = this.at(thisTime, dist, prob1, prob2);
 			inval.yield;
 			}
 		^inval;

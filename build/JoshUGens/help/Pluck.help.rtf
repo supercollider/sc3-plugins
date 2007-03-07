@@ -39,7 +39,7 @@
 // excitation signal is WhiteNoise, triggered twice a second with varying OnePole coef\cf0 \
 (\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 	\{\cf3 Pluck\cf0 .ar(\cf3 WhiteNoise\cf0 .ar(0.1), \cf3 Impulse\cf0 .kr(1), 440.reciprocal, 440.reciprocal, 10, \
+\cf0 	\{\cf3 Pluck\cf0 .ar(\cf3 WhiteNoise\cf0 .ar(0.1), \cf3 Impulse\cf0 .kr(2), 440.reciprocal, 440.reciprocal, 10, \
 		coef:\cf3 MouseX\cf0 .kr(-0.999, 0.999))\
 	\}.play(s)\
 )\
@@ -50,7 +50,7 @@
 \cf0 (\
 	\{\
 		\cf3 var\cf0  freq, numparts;\
-		numparts = 10;\
+		numparts = 50;\
 		freq = \cf3 SinOsc\cf0 .kr(\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (0.05, 0.2)\}), \
 			\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (0, 1.0)\})).range(1000, 3000);\
 		\cf3 LeakDC\cf0 .ar(\
@@ -58,7 +58,7 @@
 				\cf3 Pluck\cf0 .ar(\
 					\cf3 WhiteNoise\cf0 .ar(0.1).dup(numparts), \
 					\cf3 Impulse\cf0 .kr(\cf3 Array\cf0 .fill(numparts, \{\cf3 Rand\cf0 (10, 12)\})), \
-					100.reciprocal, freq.reciprocal, 2, Rand(0.3, 0.8), mul: 1),\
+					100.reciprocal, freq.reciprocal, 2, Rand(0.01, 0.2), mul: 1),\
 				Array.fill(numparts, \{\cf3 Rand\cf0 .new(-1.0, 1.0)\}))\
 			.sum\
 			);\

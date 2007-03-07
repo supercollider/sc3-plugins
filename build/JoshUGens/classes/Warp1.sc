@@ -4,9 +4,10 @@
 
 Warp1 : UGen {
 	*ar { arg bufnum=0, pointer=0, freqScale = 1,
-			windowSize = 0.2, overlaps = 8, windowRandRatio = 0.0, mul=0.1, interp=4; 
+			windowSize = 0.2, overlaps = 8, windowRandRatio = 0.0, interp=1,
+			mul = 1, add = 0; 
 		^this.multiNew('audio', bufnum, pointer, freqScale, 
-			windowSize, overlaps, windowRandRatio, mul, interp)
+			windowSize, overlaps, windowRandRatio, interp).madd(mul, add);
 	}
 //	init { arg ... theInputs;
 //		inputs = theInputs;
