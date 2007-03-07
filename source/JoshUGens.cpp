@@ -2267,7 +2267,6 @@ void Warp1_next(Warp1 *unit, int inNumSamples)
 	ClearUnitOutputs(unit, inNumSamples);
 	float *out;
 	out = ZOUT(0);
-	
 	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
