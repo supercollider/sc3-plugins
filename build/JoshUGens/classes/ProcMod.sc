@@ -21,7 +21,7 @@ ProcMod {
 				env.isKindOf(Number).if({releasetime = env})
 				})
 			});
-		clock = argClock ?? {uniqueClock = true; TempoClock.new};
+		clock = argClock;// ?? {uniqueClock = true; TempoClock.new};
 		oldgroups = [];
 		}
 		
@@ -33,6 +33,7 @@ ProcMod {
 
 	play {
 		var thisfun;
+		clock = clock ?? {uniqueClock = true; TempoClock.new};
 		isRunning.not.if({	
 			isRunning = true;
 			// add the responder if it isn't nil
@@ -127,12 +128,13 @@ ProcMod {
 		}
 		
 	release {arg reltime;
-		var curproc, curresp, curgroup, currelfunc, newrelval;
+		var curproc, curresp, curgroup, currelfunc, newrelval, curclock;
 		curproc = process;
 		curresp = responder;
 		responder = nil;
 		curgroup = group;
 		currelfunc = releaseFunc;
+		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
 			onReleaseFunc.value;
 			env.notNil.if({
@@ -149,9 +151,11 @@ ProcMod {
 					}, {
 					releasetime
 					});
-				clock.sched(newrelval, {this.clear(curproc, curresp, curgroup, currelfunc)})
+				curclock.sched(newrelval, {
+					this.clear(curproc, curresp, curgroup, currelfunc, curclock)
+					})
 				}, {
-				this.clear(curproc, curresp, curgroup, currelfunc)
+				this.clear(curproc, curresp, curgroup, currelfunc, curclock)
 				});
 			});
 		// if retriggerable... clear out group now
@@ -164,17 +168,18 @@ ProcMod {
 		}
 	
 	kill {
-		var curproc, curresp, curgroup, currelfunc;
+		var curproc, curresp, curgroup, currelfunc, oldclock;
 		curproc = process;
 		curresp = responder;
 		curgroup = group;
 		currelfunc = releaseFunc;
 		isRunning.if({server.sendMsg(\n_free, curgroup)});
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
-		this.clear(curproc, curresp, curgroup, currelfunc);
-		isRunning = false;
 		// if a tempo clock was created for this procMod, clear it
-		uniqueClock.if({clock.clear});
+		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
+		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
+		isRunning = false;
+
 	}
 	
 	// stops the function that is running
@@ -182,7 +187,9 @@ ProcMod {
 		oldproc.stop;
 	}
 
-	clear {arg oldproc, oldresp, oldgroup, oldrelfunc;
+// need to check for TempoClock - old clocks need to be saved until 
+// they can be garbage collected
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock;
 		server.sendMsg(\n_free, oldgroup);
 		oldgroups.remove(oldgroup);
 		oldproc.notNil.if({this.stopprocess(oldproc)});
@@ -196,6 +203,7 @@ ProcMod {
 		oldresp.notNil.if({oldresp.remove});
 		retrig.not.if({isRunning = false});
 		retrig.if({isReleasing = false});
+		oldclock.notNil.if({ oldclock.stop });
 //		gui.if({{button.value_(0)}.defer});//
 		}
 
