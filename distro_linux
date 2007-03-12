@@ -1,6 +1,7 @@
 #! /bin/sh
 
 svn export --force build Extensions
+
 mv AmbisonicUGens.so Extensions/AmbisonicUGens
 mv BEQSuiteUGens.so Extensions/BEQSuiteUGens
 mv BlackrainUGens.so Extensions/BlackrainUGens
@@ -9,8 +10,9 @@ mv JoshUGens.so Extensions/JoshUGens
 mv ReverbUGens.so Extensions/ReverbUGens
 mv StkUGens.so Extensions/StkUGens
 cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
-
 mv MCLD*.so Extensions/MCLD_UGens
+mv LoopBuf.so Extensions/ljpclasses
+mv bhob*.so Bhob*.so Extensions/bhobUGens
 
 # for now disable this
 mkdir Extensions/MCLD_UGens/test
