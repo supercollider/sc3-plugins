@@ -6,8 +6,8 @@ BLowPass : UGen {
 
 	*sc { arg dummy, freq = 1200.0, rq = 1.0;
 		var w0, cos_w0, i, alpha, a0, a1, b0rz, b1, b2, sr;
-		sr  = Server.default.sampleRate;
-		w0 = pi * 2 * freq * sr.reciprocal;
+		sr  = SampleRate.ir;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		cos_w0 = w0.cos; i = 1 - cos_w0;
 		alpha = w0.sin * 0.5 * rq;
 		b0rz = (1 + alpha).reciprocal;	
@@ -26,8 +26,8 @@ BHiPass : UGen {
 
 	*sc { arg dummy, freq = 1200.0, rq = 1.0;
 		var i, w0, cos_w0, alpha, a0, a1, b0rz, b1, b2, sr;
-		sr  = Server.default.sampleRate;
-		w0 =  pi * 2 * freq * sr.reciprocal;
+		sr  = SampleRate.ir;
+		w0 =  pi * 2 * freq * SampleDur.ir;
 		cos_w0 = w0.cos; i = 1 + cos_w0;
 		alpha = w0.sin * 0.5 * rq;
 		b0rz = (1 + alpha).reciprocal;		
@@ -46,8 +46,8 @@ BAllPass : UGen {
 
 	*sc { arg dummy, freq = 1200.0, rq = 1.0;
 		var w0, alpha, a0, b1, b0rz, sr;
-		sr  = Server.default.sampleRate;
-		w0 = pi * 2 * freq * sr.reciprocal;
+		sr  = SampleRate.ir;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		alpha = w0.sin * 0.5 * rq;
 		b0rz = (1 + alpha).reciprocal;
 		a0 = (1 - alpha) * b0rz;
@@ -63,8 +63,8 @@ BBandPass : UGen {
 
 	*sc { arg dummy, freq = 1200.0, bw = 1.0;
 		var w0, sin_w0, alpha, a0, b0rz, b1, b2, sr;
-		sr  = Server.default.sampleRate;
-		w0 = pi * 2 * freq * sr.reciprocal;
+		sr  = SampleRate.ir;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		sin_w0 = w0.sin;
 	//	alpha = w0.sin * 0.5 * rq;
 		alpha = sin_w0 * sinh(0.34657359027997 * bw * w0 / sin_w0);
@@ -83,8 +83,8 @@ BBandStop : UGen {
 
 	*sc { arg dummy, freq = 1200.0, bw = 1.0;
 		var w0, sin_w0, alpha, b1, b2, b0rz, sr;
-		sr  = Server.default.sampleRate;
-		w0 = pi * 2 * freq * sr.reciprocal;
+		sr  = SampleRate.ir;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		sin_w0 = w0.sin;
 	//	alpha = w0.sin * 0.5 * rq;
 		alpha = sin_w0 * sinh(0.34657359027997 * bw * w0 / sin_w0);
@@ -102,9 +102,9 @@ BPeakEQ : UGen {
 
 	*sc { arg dummy, freq = 1200.0, rq = 1.0, db = 0.0;
 		var a, w0, alpha, a0, a2, b1, b2, b0rz, sr;
-		sr  = Server.default.sampleRate;
+		sr  = SampleRate.ir;
 		a = pow(10, db/40);
-		w0 = pi * 2 * freq * sr.reciprocal;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		alpha = w0.sin * 0.5 * rq;
 		b0rz = (1 + (alpha / a)).reciprocal;
 		a0 = (1 + (alpha * a)) * b0rz;
@@ -122,9 +122,9 @@ BLowShelf : UGen {
 
 	*sc { arg dummy, freq = 120.0, rs = 1.0, db = 0.0;
 		var a, w0, sin_w0, cos_w0, alpha, i, j, k, a0, a1, a2, b0rz, b1, b2, sr;
-		sr  = Server.default.sampleRate;
+		sr  = SampleRate.ir;
 		a = pow(10, db/40);
-		w0 = pi * 2 * freq * sr.reciprocal;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		cos_w0 = w0.cos;
 		sin_w0 = w0.sin;
 		alpha = sin_w0 * 0.5 * sqrt((a + a.reciprocal) * (rs - 1) + 2.0);
@@ -148,9 +148,9 @@ BHiShelf : UGen {
 
 	*sc { arg dummy, freq = 120.0, rs = 1.0, db = 0.0;
 		var a, w0, sin_w0, cos_w0, alpha, i, j, k, a0, a1, a2, b0rz, b1, b2, sr;
-		sr  = Server.default.sampleRate;
+		sr  = SampleRate.ir;
 		a = pow(10, db/40);
-		w0 = pi * 2 * freq * sr.reciprocal;
+		w0 = pi * 2 * freq * SampleDur.ir;
 		cos_w0 = w0.cos; 
 		sin_w0 = w0.sin;
 		alpha = sin_w0 * 0.5 * sqrt((a + a.reciprocal) * (rs - 1) + 2.0);
