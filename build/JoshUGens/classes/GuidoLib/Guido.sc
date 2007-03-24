@@ -136,18 +136,19 @@ GuidoVoice {
 				curbeat = me.beat;
 				events.remove(me);
 				firstdur = beatsPerMeasure - ((me.beat - 1) % beatsPerMeasure);
-				me.isKindOf(GuidoNote).if({
+				(me.isKindOf(GuidoNote) || me.isKindOf(GuidoChord)).if({
 					notearray = [];
-					notearray = notearray.add(GuidoNote(me.note, curbeat, firstdur));
+					notearray = notearray.add(me.class.new(me.note, curbeat, firstdur));
 					curbeat = curbeat + firstdur;
 					numFullMeasNotes = ((me.duration - firstdur) / beatsPerMeasure).floor;
 					numFullMeasNotes.do({arg i;
-						notearray = notearray.add(GuidoNote(me.note, curbeat, beatsPerMeasure));
+						notearray = notearray.add(me.class.new(me.note, curbeat, 
+							beatsPerMeasure));
 						curbeat = curbeat + beatsPerMeasure;
 						});
 					lastdur = (me.duration - firstdur) - (numFullMeasNotes * beatsPerMeasure);
 					(lastdur > 0).if({
-						notearray = notearray.add(GuidoNote(me.note, curbeat, lastdur))
+						notearray = notearray.add(me.class.new(me.note, curbeat, lastdur))
 						});
 					this.add(GuidoSpanner(notearray, me.beat, \tie));
 					}, {
@@ -300,7 +301,7 @@ GuidoMeter : GuidoEvent {
 
 
 GuidoChord : GuidoEvent {
-	var <>notes, <>beat, <>duration, <>marks;
+	var <>note, <>beat, <>duration, <>marks;
 	
 	*new {arg aPitchClassArray, beat, duration, marks;
 		(beat >= 1).if({
@@ -316,9 +317,9 @@ GuidoChord : GuidoEvent {
 		var rhythm = (duration / 4).asFraction;
 		marks.do({arg me; me.isKindOf(GuidoArticulation).if({articulation = articulation + 1})});
 		markstring = "";
-		numnotes = notes.size;
+		numnotes = note.size;
 		notestring = "{ ";
-		notes.do({arg me, i;
+		note.do({arg me, i;
 			notestring = notestring ++ me.guidoString ++ "*"++rhythm[0]++"/"++rhythm[1];
 			(i != (numnotes-1)).if({
 				notestring = notestring ++ ", ";
@@ -549,7 +550,7 @@ GuidoTimeSig {
 
 	
 /* For GUIDO objects - no quartertones yet */
-
+	
 PitchClass {
 	var <note, <acc, <octave, <pitch, <pitchclass, <keynum, <freq;
 	classvar notenames, notenums, noteToScale, scaleToNote, accToSize, sizeToAcc, accToGuido;
@@ -595,7 +596,7 @@ PitchClass {
 		gacc = accToGuido[acc]
 		^note.asString++gacc++oct;
 		}
-		
+	
 //	// direction should be \up or \down - aPitchInterval can be an instance of PitchInterval
 	// OR an + or - integer (direction can be exculded in this case
 	transpose {arg aPitchInterval, direction = \up;
@@ -1303,3 +1304,6 @@ PitchCollection {
 
 }
 
+PC : PitchClass { }
+PI : PitchInterval { }
+PColl : PitchCollection { }

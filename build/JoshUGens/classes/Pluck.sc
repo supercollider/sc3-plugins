@@ -15,27 +15,28 @@ CombLP : UGen {
 /*
 s = Server.local.boot;
 
-{Pluck.ar(WhiteNoise.ar(1), Impulse.kr(2), 1, 440.reciprocal, 1, coef: SinOsc.ar(20).range(0.9, 1.0))}.play(s)
+{Pluck.ar(WhiteNoise.ar(1), Impulse.kr(2), 1, 440.reciprocal, 1, coef: SinOsc.ar(20).range(0.0, 0.01))}.play(s)
 
 (
 	{var freq, numparts;
-	numparts = 10;
+	numparts = 100;
 	freq = SinOsc.kr(Array.fill(numparts, {Rand(0.05, 0.2)}), 
 		Array.fill(numparts, {Rand(0, 1.0)})).range(1000, 3000);
 	LeakDC.ar(
 		Pluck.ar(
 			WhiteNoise.ar(1).dup(numparts), 
 			Impulse.ar(Array.fill(numparts, {Rand(20, 24)})), 
-			1, freq.reciprocal, 51, mul: 1,
-			coef: 0.5).sum);	
+			1, freq.reciprocal, 51, mul: 0.01,
+			coef: 0.2).sum);	
 			}.play(s);
 )
 s.quit;
 s=Server.internal.boot;
 s.scope
 {LeakDC.ar(
-	CombLP.ar(Dust.ar(10), MouseX.kr(0,1).round, 1, 440.reciprocal, 5, 
-	coef: 0.3)
+	a = CombLP.ar(Dust.ar(10), MouseX.kr(0,1).round, 1, 440.reciprocal, 50, 
+	coef: 0.001);
+	[a, DelayN.ar(a, 0.01, 0.01)]
 	)
 }.play(s)
 
