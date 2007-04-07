@@ -594,7 +594,7 @@ PitchClass {
 		var oct, gacc;
 		oct = octave - 3;
 		gacc = accToGuido[acc]
-		^note.asString++gacc++oct;
+		^note.asString++gacc++oct.asInteger;
 		}
 	
 //	// direction should be \up or \down - aPitchInterval can be an instance of PitchInterval

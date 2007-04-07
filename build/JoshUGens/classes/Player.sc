@@ -24,7 +24,7 @@ Player {
 		}
 		
 	init {arg argsoundfilepath, argFormatOut, argstarttime, argoutbus, argamp, argxywz, argenv;
-		tempoclock = TempoClock.new;
+//		tempoclock = TempoClock.new;
 		(GUI.id == \cocoa).if({	
 			(argsoundfilepath.isNil).if({
 				GUI.dialog.getPaths({arg paths;
@@ -190,9 +190,11 @@ Player {
 	}
 	
 	playfunc {arg start, dur;
+		tempoclock = TempoClock.new;
 		Routine.run({
 			var players, defenv;
 			isPlaying = true;
+			0.1.wait;
 			bufnum = server.bufferAllocator.alloc(numchan);
 			players = [
 				// play straight out, as is
@@ -337,7 +339,7 @@ Player {
 		isPlaying = false;
 		// reset start time in case pause has been used
 		this.starttime_(initstarttime);
-		tempoclock.clear;
+		tempoclock.stop;
 		this.close;
 		// if the GUI is open, stop it
 		AppClock.sched(0.01, {isGui.if({

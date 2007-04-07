@@ -19,7 +19,7 @@ SCScore {
 	add {arg ... events;
 		events.flat.do({arg event;
 			case { // if the event is a note ...
-				event.isKindOf(SCNote)
+				(event.isKindOf(SCNote) || event.isKindOf(SCGroup))
 				} {
 				event.bundle.do({arg me;
 					score.add(me);
@@ -52,15 +52,17 @@ SCScore {
 		}
 		
 	play {arg server, clock, quant = 0.0;
-		server = server ? Server.default;
+		server = server ?? {Server.default};
 		server.boot;
 		server.waitForBoot({
 			this.loadBuffers(server, clock, quant);
 			CmdPeriod.doOnce({
-				buffers.do({arg me;
-					me.free(nil);
-					});
-				"Buffers freed".postln;
+				(buffers.size > 0).if({
+					buffers.do({arg me;
+						me.free(nil);
+						});
+					"Buffers freed".postln;
+					})
 				})
 			})
 		}
@@ -157,7 +159,7 @@ SCNoteObj {
 	// create an SCNote instance
 	new {arg starttime, duration, addAction = 0, target = 1, server;
 		^SCNote.new(starttime, duration, addAction, target, server, synthdefname)
-			.args_(args);
+			.args_(args.deepCopy);
 		}
 		
 	args {
@@ -176,7 +178,7 @@ SCNote  {
 		<endtime, <args, <>node, messages, <isPlaying = false, setnDict;
 	
 	*new {arg starttime, duration, addAction = 0, target = 1, server, synthdefname;
-		server = server ? Server.default;
+		server = server ?? {Server.default};
 		^super.newCopyArgs(starttime, duration, addAction, target, server, synthdefname)
 			.init;
 		}
@@ -302,6 +304,7 @@ SCNote  {
 		bund = [\n_free, node];
 		isPlaying.if({
 			server.sendBundle(time, bund);
+			isPlaying = false;
 			}, {
 			this.checktime(time).if({
 				messages = messages.add([time, bund]);
@@ -322,8 +325,8 @@ SCBuffer {
 		
 	init {
 		var sf;
-		server = server ? Server.default;
-		bufnum = bufnum ? server.bufferAllocator.alloc(1);
+		server = server ?? {Server.default};
+		bufnum = bufnum ?? {server.bufferAllocator.alloc(1)};
 		path.notNil.if({
 			sf = SoundFile.new(path);
 			sf.openRead;
@@ -363,10 +366,133 @@ SCBuffer {
 
 	}
 	
-
+/* methods common to SCGroup and SCNote need to be put into their own class (SCNode???) */
 SCGroup {
+	var <>starttime, <node, <addAction, <target, <server, messages, isPlaying = false, <endtime = nil;
 	
+	*new {arg starttime = 0.0, node, addAction = 0, target = 1, server;
+		^this.newCopyArgs(starttime, node, addAction, target, server).init;
+		}
+		
+	init {
+		server = server ?? {Server.default};
+		node = node ?? {server.nextNodeID};
+		messages = Array.new;
+		}
+		
+	newBundle {
+		var bundlearray;
+		bundlearray =	this.buildBundle;
+		^[starttime, bundlearray];	
+		}
 	
+	buildBundle {
+		var bundlearray;
+		bundlearray =	[\g_new, node, addAction, target];
+		^bundlearray;		
+		}
+		
+	bundle {
+		messages = messages.add(this.newBundle);
+		^messages;
+		}
+
+	// create the group for RT uses
+	create {arg time;
+		server.sendBundle(time, this.buildBundle);
+		isPlaying = true;
+		^this;
+		}
+		
+	freeAll {arg time;
+		var bund;
+		bund = [\g_freeAll, node];
+		isPlaying.if({
+			server.sendBundle(time, bund);
+			isPlaying = false;
+			}, {
+			this.checktime(time).if({
+				messages = messages.add([time, bund]);
+				}, {
+				"\"freeAll\" failed".warn
+				})
+			})
+		}
+	
+	deepFree {arg time;
+		var bund;
+		bund = [\g_deepFree, node];
+		isPlaying.if({
+			server.sendBundle(time, bund);
+			isPlaying = false;
+			}, {
+			this.checktime(time).if({
+				messages = messages.add([time, bund]);
+				}, {
+				"\"deepFree\" failed".warn
+				})
+			})
+		}
+		
+	// immeditaely kill the node
+	free {arg time;
+		var bund;
+		bund = [\n_free, node];
+		isPlaying.if({
+			server.sendBundle(time, bund);
+			isPlaying = false;
+			}, {
+			this.checktime(time).if({
+				messages = messages.add([time, bund]);
+				}, {
+				"\"free\" failed".warn
+				})
+			})
+		}	
+
+	set {arg time, key, value;
+		var bund;
+		bund = [\n_set, node, key, value];
+		isPlaying.if({ // if playing... send the set message now!
+			server.sendBundle(time, bund);
+			}, {
+			this.checktime(time).if({
+				messages = messages.add([time, bund]);
+				}, {
+				"\"set\" failed".warn
+				})
+			})
+		}
+	
+	setn {arg time, key ... values;
+		var bund;
+		values = values.flat;
+		bund = [\n_setn, node, key, values.size] ++ values;
+		isPlaying.if({
+			server.sendBundle(time, bund);
+			}, {
+			this.checktime(time).if({
+				messages = messages.add([time, bund])
+				}, {
+				"\"setn\" failed".warn
+				})
+			})		
+		}	
+
+	release {arg time, key = \gate;
+		this.set(time, key, 0);
+		isPlaying = false;
+		node = server.nextNodeID;
+		}
+		
+	checktime {arg time;
+		(time > starttime).if({
+			^true
+			}, {
+			"You can only set values after an event has occured".warn;
+			^false;
+			})		
+		}
 	}
 	
 SCControl {

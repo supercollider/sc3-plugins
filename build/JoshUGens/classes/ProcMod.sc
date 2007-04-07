@@ -2,8 +2,9 @@ ProcMod {
 	var <amp, <>group, <addAction, <target, 
 		<timeScale, <lag, <>id, <>function, 
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
-		<starttime, <window, gui = false, <button, process, retrig = false, isReleasing = false,
-		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false;
+		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
+		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
+		<tempo = 1;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
 			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
@@ -33,7 +34,7 @@ ProcMod {
 
 	play {
 		var thisfun;
-		clock = clock ?? {uniqueClock = true; TempoClock.new};
+		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({	
 			isRunning = true;
 			// add the responder if it isn't nil
@@ -49,7 +50,10 @@ ProcMod {
 						\outbus, envbus, \amp, amp, \timeScale, timeScale, \lag, lag],
 					[\n_setn, envnode, \env, env.asArray.size] ++ env.asArray);
 				env.releaseNode.isNil.if({
-					clock.sched(env.times.sum, {this.release});
+					clock.sched(env.times.sum, {
+						this.release; 
+						{gui.if({button.value_(0)})}.defer;
+						});
 					})
 				}, {
 				server.sendBundle(nil, [\g_new, group, addAction, target])
@@ -66,7 +70,16 @@ ProcMod {
 				})
 			})
 		}
-		
+	
+	tempo_ {arg newTempo;
+		tempo = newTempo;
+		clock.notNil.if({
+			clock.isKindOf(TempoClock).if({
+				clock.tempo_(tempo)
+				})
+			})
+		}
+			
 	processPlay {
 		process.reset;
 		process.play(clock);
@@ -177,6 +190,7 @@ ProcMod {
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
 		// if a tempo clock was created for this procMod, clear it
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
+		curproc.stop;
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
 		isRunning = false;
 
@@ -300,7 +314,8 @@ ProcEvents {
 		server = argserver;
 		amp = argamp;
 		index = 0;
-		arginitmod.notNil.if({firstevent = true; initmod = arginitmod;});
+		firstevent = true; 
+		arginitmod.notNil.if({initmod = arginitmod;});
 		argkillmod.notNil.if({killmod = argkillmod});
 		events.do{arg me, i;
 			#proc, release = me;
@@ -348,9 +363,8 @@ ProcEvents {
 			"Play".postln;
 			// for some reason, asking for the first node ID sometimes throws a
 			// 'duplicate node' error. This avoids it
-			server.nextNodeID;
 			starttime.isNil.if({starttime = Main.elapsedTime});
-			initmod.value; 
+			initmod.notNil.if({initmod.value}); 
 			server.sendMsg(\s_new, \procevoutenv6253, procampsynth = server.nextNodeID, 1,
 				0, \amp, amp);
 			firstevent = false;
@@ -393,7 +407,9 @@ ProcEvents {
 	}
 	
 	killAll {
+		eventDict.do{arg me; me.isRunning.if({me.kill})};
 		killmod.notNil.if({killmod.value});
+		initmod.notNil.if({initmod.kill});
 		gui.if({window.close; gui = false; pracwindow.notNil.if({pracwindow.close})});
 		pedal.if({pedrespsetup.remove; pedresp.remove; pedalgui.notNil.if({pedalgui.close})});
 		this.reset;
@@ -693,7 +709,7 @@ ProcEvents {
 				var val;
 				val = ControlSpec(-90, 6, \db).map(me.value);
 				amp = val;
-				server.sendMsg(\n_set, procampsynth, \amp, val.dbamp);
+				server.sendMsg(\n_set, procampsynth, \amp, val.dbamp.postln);
 				window.view.children[window.view.children.indexOf(me) + 1].value_(
 					val.round(0.01));
 				});
@@ -706,7 +722,7 @@ ProcEvents {
 				var val;
 				val = ControlSpec(-90, 6, \db).unmap(me.value);
 				window.view.children[window.view.children.indexOf(me) - 1].value_(val);
-				server.sendMsg(\n_set, procampsynth, \amp, me.value.dbamp);
+				server.sendMsg(\n_set, procampsynth, \amp, me.value.dbamp.postln);
 				});
 				
 		window.view.children[1].focus(true);
