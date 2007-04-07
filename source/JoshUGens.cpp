@@ -223,6 +223,16 @@ struct Grain
 	int interp;
 };
 
+struct WinGrain
+{
+	double phase, rate;
+	double winPos, winInc; // tells the grain where to look in the winBuf for an amp value
+//	double b1, y1, y2; // envelope
+	int counter;
+	int bufnum;
+	int interp;
+};
+
 const int kMaxGrains = 64;
 
 struct Warp1 : public Unit
@@ -232,6 +242,16 @@ struct Warp1 : public Unit
 	uint32 ms1, ms2, ms3;
 	int mNextGrain;
 	Grain mGrains[kMaxGrains];
+};
+
+struct Warp2 : public Unit
+{
+	float mPrevTrig;
+	int mNumActive;
+	uint32 ms1, ms2, ms3;
+	int mNextGrain, mWindowSize;
+	WinGrain mGrains[kMaxGrains];
+	float* mWindow;
 };
 
 struct MonoGrain : public Unit
@@ -386,6 +406,9 @@ extern "C"
 	void Warp1_next(Warp1 *unit, int inNumSamples);
 	void Warp1_Ctor(Warp1* unit);
 
+	void Warp2_next(Warp2 *unit, int inNumSamples);
+	void Warp2_Ctor(Warp2* unit);
+	
 	void MonoGrain_next(MonoGrain *unit, int inNumSamples);
 	void MonoGrain_Ctor(MonoGrain* unit);
 
@@ -1773,10 +1796,10 @@ void BFEncode2_Ctor(BFEncode2 *unit)
 {
 	SETCALC(BFEncode2_next);
 	float sinint, cosint, azimuth, rho;
-	float point_x = unit->m_point_x = ZIN0(1);
-	float point_y = unit->m_point_y = ZIN0(2);
-	float elevation = unit->m_elevation = ZIN0(3);
-	float level = unit->m_level = ZIN0(4);
+	float point_x = unit->m_point_x = IN0(1);
+	float point_y = unit->m_point_y = IN0(2);
+	float elevation = unit->m_elevation = IN0(3);
+	float level = unit->m_level = IN0(4);
 
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
@@ -1788,8 +1811,9 @@ void BFEncode2_Ctor(BFEncode2 *unit)
 	float cosb = cos(elevation);
 	
 	if(rho >= 1) {
-		sinint = (rsqrt2 * (sin(0.78539816339745 * 1.0))) / pow(rho, (float)1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745 * 1.0))) / pow(rho, (float)1.5);
+		float intrho = 1 / (pow(rho, 1.5));
+		sinint = (rsqrt2 * (sin(0.78539816339745 * 1.0))) * intrho; // pow(rho, (float)1.5);
+		cosint =  (rsqrt2 * (cos(0.78539816339745 * 1.0))) * intrho; // / pow(rho, (float)1.5);
 		}
 	    else 
 		{
@@ -1808,17 +1832,17 @@ void BFEncode2_Ctor(BFEncode2 *unit)
 
 void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
 {       
-	float sinint, cosint, azimuth, rho;
-	float *Wout = ZOUT(0);
-	float *Xout = ZOUT(1);
-	float *Yout = ZOUT(2);
-	float *Zout = ZOUT(3);
+	float sinint, cosint, azimuth, rho, z;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
 	
-	float *in = ZIN(0);
-	float point_x = ZIN0(1);
-	float point_y = ZIN0(2);
-	float elevation = ZIN0(3);
-	float level = ZIN0(4);
+	float *in = IN(0);
+	float point_x = IN0(1);
+	float point_y = IN0(2);
+	float elevation = IN0(3);
+	float level = IN0(4);
 
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
@@ -1840,9 +1864,10 @@ void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
 		float cosa = cos(azimuth);
 		float cosb = cos(elevation);
 		if(rho >= 1) {
-			sinint = (rsqrt2 * (sin(0.78539816339745))) / pow(rho, (float)1.5);
-			cosint =  (rsqrt2 * (cos(0.78539816339745))) / pow(rho, (float)1.5);
-			}
+			float intrho = 1 / (pow(rho, 1.5));
+			sinint = (rsqrt2 * (sin(0.78539816339745 * 1.0))) * intrho; // pow(rho, (float)1.5);
+			cosint =  (rsqrt2 * (cos(0.78539816339745 * 1.0))) * intrho; // / pow(rho, (float)1.5);
+		    }
 		    else 
 			{sinint = rsqrt2 * (sin(0.78539816339745 * rho));
 			cosint = rsqrt2 * (cos(0.78539816339745 * rho));
@@ -1860,31 +1885,31 @@ void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
 		float Y_slope = CALCSLOPE(next_Y_amp, Y_amp);
 		float Z_slope = CALCSLOPE(next_Z_amp, Z_amp);
 		
-		LOOP(inNumSamples, 
-			float z = ZXP(in);
+		for(int i = 0; i < inNumSamples; i++){ 
+			z = in[i];
 			// vary w according to x, y and z
-			ZXP(Wout) = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			ZXP(Xout) = z * X_amp;
-			ZXP(Yout) = z * Y_amp;
-			ZXP(Zout) = z * Z_amp;
+			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
+			Xout[i] = z * X_amp;
+			Yout[i] = z * Y_amp;
+			Zout[i] = z * Z_amp;
 			W_amp += W_slope;
 			X_amp += X_slope;
 			Y_amp += Y_slope;
 			Z_amp += Z_slope;
-		);
+		    }
 		unit->m_W_amp = W_amp;
 		unit->m_X_amp = X_amp;
 		unit->m_Y_amp = Y_amp;
 		unit->m_Z_amp = Z_amp;
 	} else {
-		LOOP(inNumSamples, 
-			float z = ZXP(in);
+		for(int i = 0; i < inNumSamples; i++){ 
+			z = in[i];
 			// vary w according to x, y and z
-			ZXP(Wout) = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			ZXP(Xout) = z * X_amp;
-			ZXP(Yout) = z * Y_amp;
-			ZXP(Zout) = z * Z_amp;
-		);
+			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
+			Xout[i] = z * X_amp;
+			Yout[i] = z * Y_amp;
+			Zout[i] = z * Z_amp;
+		    };
 	}
 }
 
@@ -1894,10 +1919,10 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 {
 	SETCALC(BFEncode1_next);
 	float sinint, cosint;
-	float azimuth = unit->m_azimuth = ZIN0(1);
-	float elevation = unit->m_elevation = ZIN0(2);
- 	float rho = unit->m_rho = ZIN0(3);
-	float level = unit->m_level = ZIN0(4);
+	float azimuth = unit->m_azimuth = IN0(1);
+	float elevation = unit->m_elevation = IN0(2);
+ 	float rho = unit->m_rho = IN0(3);
+	float level = unit->m_level = IN0(4);
 
 	float sina = sin(azimuth);
 	float sinb = sin(elevation);
@@ -1905,9 +1930,10 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 	float cosa = cos(azimuth);
 	float cosb = cos(elevation);
 	
-	if(rho >= 1) 
-		{sinint = (rsqrt2 * (sin(0.78539816339745))) / pow(rho, (float)1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745))) / pow(rho, (float)1.5);}
+	if(rho >= 1) {
+		float intrho = 1 / pow(rho, 1.5);
+		sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
+		cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);}
 	    else 
 		{
 		sinint = rsqrt2 * (sin(0.78539816339745 * rho));
@@ -1923,17 +1949,17 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 
 void BFEncode1_next(BFEncode1 *unit, int inNumSamples)
 {       
-	float sinint, cosint;
-	float *Wout = ZOUT(0);
-	float *Xout = ZOUT(1);
-	float *Yout = ZOUT(2);
-	float *Zout = ZOUT(3);
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
 	
-	float *in = ZIN(0);
-	float azimuth = ZIN0(1);
-	float elevation = ZIN0(2);
-	float rho = ZIN0(3);
-	float level = ZIN0(4);
+	float *in = IN(0);
+	float azimuth = IN0(1);
+	float elevation = IN0(2);
+	float rho = IN0(3);
+	float level = IN0(4);
 
 	float W_amp = unit->m_W_amp;
 	float X_amp = unit->m_X_amp;
@@ -1953,8 +1979,9 @@ void BFEncode1_next(BFEncode1 *unit, int inNumSamples)
 		float cosb = cos(elevation);
 		
 		if(rho >= 1) {
-			sinint = (rsqrt2 * (sin(0.78539816339745))) / pow(rho, (float)1.5);
-			cosint =  (rsqrt2 * (cos(0.78539816339745))) / pow(rho, (float)1.5);}
+			float intrho = 1 / pow(rho, 1.5);
+			sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
+			cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);}
 		    else { 
 			sinint = rsqrt2 * (sin(0.78539816339745 * rho));
 			cosint = rsqrt2 * (cos(0.78539816339745 * rho));
@@ -1970,31 +1997,32 @@ void BFEncode1_next(BFEncode1 *unit, int inNumSamples)
 		float Y_slope = CALCSLOPE(next_Y_amp, Y_amp);
 		float Z_slope = CALCSLOPE(next_Z_amp, Z_amp);
 		
-		LOOP(inNumSamples, 
-			float z = ZXP(in);
+		for(int i = 0; i < inNumSamples; i++){
+			z = in[i];
 			// vary w according to x, y and z
-			ZXP(Wout) = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
-			ZXP(Xout) = z * X_amp;
-			ZXP(Yout) = z * Y_amp;
-			ZXP(Zout) = z * Z_amp;
+			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
+			Xout[i] = z * X_amp;
+			Yout[i] = z * Y_amp;
+			Zout[i] = z * Z_amp;
 			W_amp += W_slope;
 			X_amp += X_slope;
 			Y_amp += Y_slope;
 			Z_amp += Z_slope;
-		);
+		    }
 		unit->m_W_amp = W_amp;
 		unit->m_X_amp = X_amp;
 		unit->m_Y_amp = Y_amp;
 		unit->m_Z_amp = Z_amp;
 	} else {
-		LOOP(inNumSamples, 
-			float z = ZXP(in);
-			// vary w according to x, y and z
-			ZXP(Wout) = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			ZXP(Xout) = z * X_amp;
-			ZXP(Yout) = z * Y_amp;
-			ZXP(Zout) = z * Z_amp;
-		);
+	    for(int i = 0; i < inNumSamples; i++)
+		{ 
+		    z = in[i];
+		    // vary w according to x, y and z
+		    Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
+		    Xout[i] = z * X_amp;
+		    Yout[i] = z * Y_amp;
+		    Zout[i] = z * Z_amp;
+		}
 	}
 }
 
@@ -2002,121 +2030,17 @@ void BFEncode1_next(BFEncode1 *unit, int inNumSamples)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-void BFEncodeSter_Ctor(BFEncodeSter *unit)
+
+/*void BFEncodeSter_Ctor(BFEncodeSter *unit)
 {
-	SETCALC(BFEncodeSter_next);
-	float sinint, cosint;
-	float spread = unit->m_spread = IN0(2);
-	float azimuth = unit->m_azimuth = IN0(3);
-	float elevation = unit->m_elevation = IN0(4);
- 	float rho = unit->m_rho = IN0(5);
-	float level = unit->m_level = IN0(6);
 
-	float sina = sin(azimuth);
-	float sinb = sin(elevation);
-	
-	float cosa = cos(azimuth);
-	float cosb = cos(elevation);
-	
-	if(rho >= 1) 
-		{sinint = (rsqrt2 * (sin(0.78539816339745))) / pow(rho, 1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745))) / pow(rho, 1.5);}
-	    else 
-		{
-		sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-		cosint = rsqrt2 * (cos(0.78539816339745 * rho));};
-	
-	unit->m_W_amp = level * cosint;
-	unit->m_X_amp = cosa * cosb * level * sinint;
-	unit->m_Y_amp = sina * cosb * level * sinint;
-	unit->m_Z_amp = sinb * level * sinint;
-
-	BFEncodeSter_next(unit, 1);
 }
 
 void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
 {       
-	float sinint, cosint, curr, curl;
-	float *Wout = OUT(0);
-	float *Xout = OUT(1);
-	float *Yout = OUT(2);
-	float *Zout = OUT(3);
-	
-	float *l = IN(0); // the left part of the signal
-	float *r = IN(1); // the right part
-	float spread = IN(2); // the spread (in radians) between the signals
-	float azimuth = IN0(3); // the center point of the signals
-	float elevation = IN0(4);
-	float rho = IN0(5);
-	float level = IN0(6);
 
-	float W_ampL = unit->m_W_ampL;
-	float X_ampL = unit->m_X_ampL;
-	float Y_ampL = unit->m_Y_ampL;
-	float Z_ampL = unit->m_Z_ampL;
+}*/
 
-	if (spread != unit->m_spread, azimuth != unit->m_azimuth || rho != unit->m_rho || elevation != unit->m_elevation || 
-			level != unit->m_level) {
-		unit->m_spread = spread
-		unit->m_azimuth = azimuth;
-		unit->m_elevation = elevation;
-		unit->m_level = level;
-		unit->m_rho = rho;
-		
-		float sinaL = sin(azimuth - (spread * 0.5));
-		float sinbL = sin(elevation);
-		
-		float cosaL = cos(azimuth + (spread * 0.5));
-		float cosbL = cos(elevation);
-		
-		if(rho >= 1) {
-			sinint = (rsqrt2 * (sin(0.78539816339745))) / pow(rho, 1.5);
-			cosint =  (rsqrt2 * (cos(0.78539816339745))) / pow(rho, 1.5);}
-		    else { 
-			sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-			cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-			};
-		
-		float next_W_amp = level * cosint;
-		float next_X_amp = cosa * cosb * level * sinint;
-		float next_Y_amp = sina * cosb * level * sinint;
-		float next_Z_amp = sinb * level * sinint;
-		
-		float W_slope = CALCSLOPE(next_W_amp, W_amp);
-		float X_slope = CALCSLOPE(next_X_amp, X_amp);
-		float Y_slope = CALCSLOPE(next_Y_amp, Y_amp);
-		float Z_slope = CALCSLOPE(next_Z_amp, Z_amp);
-		
-		for (int i = 0; i < inNumSamples; ++i){
-			curl = l[i];
-			curr = r[i]; /// 'z' was the mono input sig
-			// vary w according to x, y and z
-			Wout[i] = curl * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
-			Xout[i] = curl * X_amp;
-			Yout[i] = curl * Y_amp;
-			Zout[i] = curl * Z_amp;
-			W_amp += W_slope;
-			X_amp += X_slope;
-			Y_amp += Y_slope;
-			Z_amp += Z_slope;
-		};
-		unit->m_W_amp = W_amp;
-		unit->m_X_amp = X_amp;
-		unit->m_Y_amp = Y_amp;
-		unit->m_Z_amp = Z_amp;
-	} else {
-		for (int i = 0; i < inNumSamples; ++i){
-			float z = ZXP(in);
-			// vary w according to x, y and z
-			ZXP(Wout) = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			ZXP(Xout) = z * X_amp;
-			ZXP(Yout) = z * Y_amp;
-			ZXP(Zout) = z * Z_amp;
-		};
-	}
-}
-*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void BFDecode1_Ctor(BFDecode1 *unit)
@@ -2125,8 +2049,8 @@ void BFDecode1_Ctor(BFDecode1 *unit)
 
 	BFDecode1_next(unit, 1);
 	
-	float angle = ZIN0(4);
-	float elevation = ZIN0(5);
+	float angle = IN0(4);
+	float elevation = IN0(5);
 	
 	unit->m_cosa = cos(angle);
 	unit->m_sina = sin(angle);
@@ -2135,11 +2059,11 @@ void BFDecode1_Ctor(BFDecode1 *unit)
 
 void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 {
-	float *Win0 = ZIN(0);
-	float *Xin0 = ZIN(1);
-	float *Yin0 = ZIN(2);
-	float *Zin0 = ZIN(3);
-	float *out = ZOUT(0);
+	float *Win0 = IN(0);
+	float *Xin0 = IN(1);
+	float *Yin0 = IN(2);
+	float *Zin0 = IN(3);
+	float *out = OUT(0);
 
 	float cosa = unit->m_cosa;
 	float sina = unit->m_sina;
@@ -2150,12 +2074,13 @@ void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 	float Y_amp = sina; //0.5 * sina;
 	float Z_amp = sinb; //0.5 * sinb;
 
-	LOOP(inNumSamples, 
-		ZXP(out) = (ZXP(Win0) * W_amp) +    
-			(ZXP(Xin0) * X_amp) + 
-			(ZXP(Yin0) * Y_amp) + 
-			(ZXP(Zin0) * Z_amp);
-	)
+	for(int i = 0; i < inNumSamples; i++)
+	    { 
+		out[i] = (Win0[i] * W_amp) +    
+			(Xin0[i] * X_amp) + 
+			(Yin0[i] * Y_amp) + 
+			(Zin0[i] * Z_amp);
+	    }
 }
 
 
@@ -2173,7 +2098,6 @@ static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 
 	return ((c3 * x + c2) * x + c1) * x + c0;
 }
-
 inline float IN_AT(Unit* unit, int index, int offset) 
 {
 	if (INRATE(index) == calc_FullRate) return IN(index)[offset];
@@ -2201,6 +2125,13 @@ inline double sc_gloop(double in, double hi)
 	uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
 	uint32 bufFrames = buf->frames; \
 	int guardFrame __attribute__((__unused__)) = bufFrames - 2; \
+
+#define CHECK_BUF \
+	if (!bufData) { \
+                unit->mDone = true; \
+		ClearUnitOutputs(unit, inNumSamples); \
+		return; \
+	}
 
 #define GRAIN_LOOP_BODY_4 \
 		float amp = y1 * y1; \
@@ -2260,7 +2191,6 @@ inline double sc_gloop(double in, double hi)
 		double y0 = b1 * y1 - y2; \
 		y2 = y1; \
 		y1 = y0; \
-	
 	
 void Warp1_next(Warp1 *unit, int inNumSamples)
 {
@@ -2343,11 +2273,11 @@ void Warp1_next(Warp1 *unit, int inNumSamples)
 			grain->bufnum = bufnum;
 			
 			RGET
-			
-			s1 = trand(s1, s2, s3);
-			s2 = trand(s2, s3, s1);
-			s3 = trand(s3, s1, s2);
-			
+//			
+//			s1 = trand(s1, s2, s3);
+//			s2 = trand(s2, s3, s1);
+//			s3 = trand(s3, s1, s2);
+//			
 
 			double overlaps = IN_AT(unit, 4, i);
 			double counter = IN_AT(unit, 3, i) * SAMPLERATE;
@@ -2415,6 +2345,230 @@ void Warp1_Ctor(Warp1 *unit)
 	
 	ClearUnitOutputs(unit, 1);
 }
+
+#define BUF_GRAIN_AMP \
+		int iWinPos = (int)winPos; \
+		double winFrac = winPos - (double)iWinPos;\
+		float* winTable1 = windowData + iWinPos;\
+		float* winTable2 = winTable1 + 1;\
+		if (winPos > windowGuardFrame) {\
+		    winTable2 -= windowSamples; \
+		    } \
+		float amp = lininterp(winFrac, winTable1[0], winTable2[0]); \
+		
+#define BUF_GRAIN_LOOP_BODY_4 \
+		phase = sc_gloop(phase, loopMax); \
+		int32 iphase = (int32)phase; \
+		float* table1 = bufData + iphase; \
+		float* table0 = table1 - 1; \
+		float* table2 = table1 + 1; \
+		float* table3 = table1 + 2; \
+		if (iphase == 0) { \
+			table0 += bufSamples; \
+		} else if (iphase >= guardFrame) { \
+			if (iphase == guardFrame) { \
+				table3 -= bufSamples; \
+			} else { \
+				table2 -= bufSamples; \
+				table3 -= bufSamples; \
+			} \
+		} \
+		float fracphase = phase - (double)iphase; \
+		float a = table0[0]; \
+		float b = table1[0]; \
+		float c = table2[0]; \
+		float d = table3[0]; \
+		float outval = amp * cubicinterp(fracphase, a, b, c, d); \
+		ZXP(out1) += outval; \
+
+#define BUF_GRAIN_LOOP_BODY_2 \
+		phase = sc_gloop(phase, loopMax); \
+		int32 iphase = (int32)phase; \
+		float* table1 = bufData + iphase; \
+		float* table2 = table1 + 1; \
+		if (iphase > guardFrame) { \
+			table2 -= bufSamples; \
+		} \
+		float fracphase = phase - (double)iphase; \
+		float b = table1[0]; \
+		float c = table2[0]; \
+		float outval = amp * (b + fracphase * (c - b)); \
+		ZXP(out1) += outval; \
+		
+// amp needs to be calculated by looking up values in window
+
+#define BUF_GRAIN_LOOP_BODY_1 \
+		phase = sc_gloop(phase, loopMax); \
+		int32 iphase = (int32)phase; \
+		float outval = amp * bufData[iphase]; \
+		ZXP(out1) += outval; \
+
+	
+void Warp2_next(Warp2 *unit, int inNumSamples)
+{
+	ClearUnitOutputs(unit, inNumSamples);
+	float *out;
+	out = ZOUT(0);
+	int nextGrain = unit->mNextGrain;
+	
+	World *world = unit->mWorld;
+	SndBuf *bufs = world->mSndBufs;
+	uint32 numBufs = world->mNumSndBufs;
+	
+	float winBuf = IN0(4); // the buffer that holds the grain shape
+	SndBuf *window = unit->mWorld->mSndBufs + (int)winBuf;
+	
+	float *windowData __attribute__((__unused__)) = window->data; 
+	uint32 windowSamples __attribute__((__unused__)) = window->samples; 
+	uint32 windowFrames = window->frames; 
+	int windowGuardFrame __attribute__((__unused__)) = windowFrames - 1; 
+
+	for (int i=0; i < unit->mNumActive; ) {
+		WinGrain *grain = unit->mGrains + i;
+		uint32 bufnum = grain->bufnum;
+		
+		GRAIN_BUF
+		
+		if (bufChannels != 1) {
+			 ++i;
+			 continue;
+		}
+
+		double loopMax = (double)bufFrames;
+
+		double rate = grain->rate;
+		double phase = grain->phase;
+		double winInc = grain->winInc;
+		double winPos = grain->winPos;
+		
+		float *out1 = out;
+
+		int nsmps = sc_min(grain->counter, inNumSamples);
+		if (grain->interp >= 4) {
+			for (int j=0; j<nsmps; ++j) {
+				BUF_GRAIN_AMP
+				BUF_GRAIN_LOOP_BODY_4;
+				phase += rate;
+				winPos += winInc;
+			}
+		} else if (grain->interp >= 2) {
+			for (int j=0; j<nsmps; ++j) {
+				BUF_GRAIN_AMP
+				BUF_GRAIN_LOOP_BODY_2;
+				phase += rate;
+				winPos += winInc;
+			}
+		} else {
+			for (int j=0; j<nsmps; ++j) {
+				BUF_GRAIN_AMP
+				BUF_GRAIN_LOOP_BODY_1;
+				phase += rate;
+				winPos += winInc;
+			}
+		}
+		
+		grain->phase = phase;
+		grain->winPos = winPos;
+
+		grain->counter -= nsmps;
+		if (grain->counter <= 0) {
+			// remove grain
+			*grain = unit->mGrains[--unit->mNumActive];
+		} else ++i;
+	}
+	
+	for (int i=0; i<inNumSamples; ++i) {
+		--nextGrain;
+		if (nextGrain == 0) {
+			// start a grain
+			if (unit->mNumActive+1 >= kMaxGrains) break;
+			uint32 bufnum = (uint32)IN_AT(unit, 0, i);
+			if (bufnum >= numBufs) continue;
+			
+			GRAIN_BUF
+			
+			if (bufChannels != 1) continue;
+
+			float bufSampleRate = buf->samplerate;
+			float bufRateScale = bufSampleRate * SAMPLEDUR;
+			double loopMax = (double)bufFrames;
+
+			WinGrain *grain = unit->mGrains + unit->mNumActive++;
+			grain->bufnum = bufnum;
+			
+			RGET
+
+			double overlaps = IN_AT(unit, 5, i);
+			double counter = IN_AT(unit, 3, i) * SAMPLERATE;
+			double winrandamt = frand2(s1, s2, s3) * IN_AT(unit, 6, i);
+			counter = floor(counter + (counter * winrandamt));
+			counter = sc_max(4., counter);
+			grain->counter = (int)counter;
+			
+			nextGrain = (int)(counter / overlaps);
+			
+			unit->mNextGrain = nextGrain;
+			
+			double rate = grain->rate = IN_AT(unit, 2, i) * bufRateScale;
+			double phase = IN_AT(unit, 1, i) * bufFrames;
+			grain->interp = (int)IN_AT(unit, 7, i);
+			
+			double winPos = grain->winPos = 0.f;
+			double winInc = grain->winInc = (double)windowSamples / counter; 
+			
+			float *out1 = out + i;
+			
+			int nsmps = sc_min(grain->counter, inNumSamples - i);
+			if (grain->interp >= 4) {
+				for (int j=0; j<nsmps; ++j) {
+					BUF_GRAIN_AMP
+					BUF_GRAIN_LOOP_BODY_4;
+					phase += rate;
+					winPos +=winInc;
+				}
+			} else if (grain->interp >= 2) {
+				for (int j=0; j<nsmps; ++j) {
+					BUF_GRAIN_AMP
+					BUF_GRAIN_LOOP_BODY_2;
+					phase += rate;
+					winPos +=winInc;				
+				}
+			} else {
+				for (int j=0; j<nsmps; ++j) {
+					BUF_GRAIN_AMP
+					BUF_GRAIN_LOOP_BODY_1;
+					phase += rate;
+					winPos +=winInc;
+				}
+			}
+			
+			grain->phase = phase;
+			grain->winPos = winPos;
+
+			// store random values
+			RPUT
+			// end change
+			grain->counter -= nsmps;
+			if (grain->counter <= 0) {
+				// remove grain
+				*grain = unit->mGrains[--unit->mNumActive];
+			}
+		}
+	}	
+	
+	unit->mNextGrain = nextGrain;
+}
+
+void Warp2_Ctor(Warp2 *unit)
+{	
+	SETCALC(Warp2_next);
+		
+	unit->mNumActive = 0;
+	unit->mNextGrain = 1;
+	ClearUnitOutputs(unit, 1);
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // LPC Ugens built by Richard Karpen, Don Craig and Josh Parmenter
@@ -5732,6 +5886,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(B2Ster);
 	DefineSimpleCantAliasUnit(Maxamp);
 	DefineSimpleCantAliasUnit(Warp1);
+	DefineSimpleCantAliasUnit(Warp2);
 	DefineSimpleCantAliasUnit(MonoGrain);
 	DefineSimpleCantAliasUnit(MonoGrainBF);
 	DefineSimpleUnit(LPCSynth);
