@@ -396,8 +396,8 @@ Examples:\
 \
 (\
 \cf4 // create a ProcMod... feed the function in at init time\cf0 \
-a = \cf2 ProcMod\cf0 .new(\cf2 Env\cf0 ([0, 1, 0], [1, 1], \cf3 \\sin\cf0 , 1), 0.02,\
-		function: \{arg group, envbus;\
+a = \cf2 ProcMod\cf0 .new(\cf2 Env\cf0 ([0, 1, 0], [1, 1], \cf3 \\sin\cf0 , 1), 0.02)\
+	.function_(\{arg group, envbus;\
 			\cf2 Task\cf0 (\{\
 				\cf2 inf\cf0 .do\{\
 					s.sendMsg(\cf3 \\s_new\cf0 , \cf3 \\singrain\cf0 , s.nextNodeID, 0, group,\
@@ -406,8 +406,7 @@ a = \cf2 ProcMod\cf0 .new(\cf2 Env\cf0 ([0, 1, 0], [1, 1], \cf3 \\sin\cf0 , 1), 
 					0.05.wait;\
 					\}\
 				\});\
-			\}\
-		);\
+			\});\
 \
 \cf4 // create a ProcMod... set the function after init time\cf0 \
 b = \cf2 ProcMod\cf0 .new(\cf2 Env\cf0 ([0, 1, 0], [1, 1], \cf3 \\sin\cf0 , 1), 0.02)\
