@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b31a06}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {text-decoration: underline}
+span.s2 {color: #0019bc}
+span.s3 {color: #000000}
+span.s4 {color: #0014bd}
+span.s5 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>FFTPhaseDev - Measure phase deviation of signal</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>FFTPhaseDev.kr(chain, weight=0, powthresh=0.1)</b></p>
+<p class="p4"><br></p>
+<p class="p3">Calculates the <b>phase deviation</b> of the signal, which is a measure of the total rate of change of<span class="Apple-converted-space">  </span>the phase of the spectral components, across all the FFT bins. A stationary signal (such as a steady sine wave) should exhibit zero phase deviation, whereas a non-stationary signal (such as a sine wave of modulating frequency, or more complex changing sound) should exhibit a positive phase deviation.</p>
+<p class="p4"><br></p>
+<p class="p3">This measure can be used as a component in <b>onset detection</b> - see [<span class="s1">OnsetsDS</span>] - but may also have other applications.</p>
+<p class="p4"><br></p>
+<p class="p3">The comparison is frame-by-frame, so its behaviour will depend to some extent upon your frame size.</p>
+<p class="p4"><br></p>
+<p class="p3">The optional second argument <b>weight</b> specifies (at creation time - cannot be modulated) whether the phase deviations should be weighted by the instantaneous magnitude of each bin. Set it greater than zero to activate the weighting feature (it's either on or off; no shades of gray).</p>
+<p class="p4"><br></p>
+<p class="p3">The other optional argument <b>powthresh</b> tells the UGen to ignore FFT bins where the power is lower than a threshold. (This option can be modulated at control rate.) This is most useful when the "weighted" option is NOT used. You're free to combine the options in any way you want though.</p>
+<p class="p4"><br></p>
+<p class="p3">For more details about both algorithms (weighted and unweighted) see<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>Dixon, S. (2006) <b>Onset Detection Revisited.</b> In <i>Proceedings of the 9th International Conference on Digital Audio Effects (DAFx-06), Montreal, Canada</i>. pp. 133-137.</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p3"><b>Examples</b></p>
+<p class="p5"><br></p>
+<p class="p3">These examples use the standard unweighted measure, with a fixed powthresh value. Feel free to dabble with the parameters.</p>
+<p class="p5"><br></p>
+<p class="p6">s.boot;</p>
+<p class="p6">b = <span class="s2">Buffer</span>.alloc(s, 512, 1);</p>
+<p class="p5"><br></p>
+<p class="p7">// Move the mouse to vary the frequency, and the amount of noise added.</p>
+<p class="p7">// Watch the scope/post window to see the change in phase deviation.</p>
+<p class="p6">(</p>
+<p class="p6">x = {</p>
+<p class="p6"><span class="s2">var</span> in, chain, flux;</p>
+<p class="p6">in = <span class="s2">SinOsc</span>.ar(<span class="s2">MouseX</span>.kr(50, 500, 1), 0, 0.1) + <span class="s2">WhiteNoise</span>.ar(<span class="s2">MouseY</span>.kr(0, 0.1));</p>
+<p class="p6">chain = <span class="s2">FFT</span>(b.bufnum, in);</p>
+<p class="p6">flux = <span class="s2">FFTPhaseDev</span>.kr(chain);</p>
+<p class="p8"><span class="s3">flux.poll(10, </span>"Phase deviation"<span class="s3">);</span></p>
+<p class="p6"><span class="s2">Out</span>.ar(0, in.dup);</p>
+<p class="p6"><span class="s2">Out</span>.kr(0, flux);</p>
+<p class="p6">}.play(s);</p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p6">x.free;b.free;</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p7">// Load an audio file and plot the phase deviation as a function of time</p>
+<p class="p6">b = <span class="s2">Buffer</span>.alloc(s, 512, 1);</p>
+<p class="p8"><span class="s3">c = </span><span class="s2">Buffer</span><span class="s3">.read(s, </span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p6">(</p>
+<p class="p6">x = {</p>
+<p class="p6"><span class="s4">var</span> in, chain, phasedev;</p>
+<p class="p6">in = <span class="s4">PlayBuf</span>.ar(1, c.bufnum, <span class="s4">BufRateScale</span>.kr(c.bufnum));</p>
+<p class="p6">chain = <span class="s4">FFT</span>(b.bufnum, in);</p>
+<p class="p6">phasedev = <span class="s4">FFTPhaseDev</span>.kr(chain, 0, 10) * 0.1;</p>
+<p class="p6">phasedev.poll(10, <span class="s5">"Phase deviation"</span>);</p>
+<p class="p6"><span class="s4">Out</span>.ar(0, in.dup * 0.1);</p>
+<p class="p6"><span class="s4">K2A</span>.ar(phasedev)</p>
+<p class="p6">}.plot(c.numFrames/c.sampleRate, s);</p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p6">x.free; b.free; c.free;</p>
+</body>
+</html>

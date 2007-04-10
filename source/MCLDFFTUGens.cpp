@@ -26,6 +26,14 @@ FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
 // Used by PV_MagLog
 #define SMALLEST_NUM_FOR_LOG 2e-42
 
+#define PI 3.1415926535898f
+#define MPI -3.1415926535898f
+#define TWOPI 6.28318530717952646f 
+#define THREEPI 9.4247779607694f
+
+/* Rewrap phase into +-pi domain: essentially mod(phase+pi,-2pi)+pi */
+#define PHASE_REWRAP(phase)  ((phase) + TWOPI * (1.f + floorf(-((phase)+PI)/TWOPI)))
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -71,6 +79,26 @@ struct FFTSubbandPower : FFTAnalyser_Unit
 	bool m_cutoff_inited;
 	bool m_inc_dc;
 };
+
+struct FFTPhaseDev : FFTAnalyser_OutOfPlace
+{
+	bool m_weight; // Whether or not to weight the phase deviations according to the magnitudes
+};
+
+struct FFTComplexDev : FFTAnalyser_OutOfPlace
+{
+	bool m_rectify; // Whether or not to ignore bins whose power is decreasing
+};
+
+struct FFTMKL : FFTAnalyser_OutOfPlace
+{
+};
+
+struct PV_Whiten : Unit {
+	float m_relaxcoef, m_floor, m_smear;
+	int m_bindownsample;
+};
+
 
 
 // for operation on one buffer
@@ -163,6 +191,21 @@ extern "C"
 	
 	void PV_MagExp_Ctor(PV_Unit *unit);
 	void PV_MagExp_next(PV_Unit *unit, int inNumSamples);
+	
+	void FFTPhaseDev_Ctor(FFTPhaseDev *unit);
+	void FFTPhaseDev_Dtor(FFTPhaseDev *unit);
+	void FFTPhaseDev_next(FFTPhaseDev *unit, int inNumSamples);
+
+	void FFTComplexDev_Ctor(FFTComplexDev *unit);
+	void FFTComplexDev_Dtor(FFTComplexDev *unit);
+	void FFTComplexDev_next(FFTComplexDev *unit, int inNumSamples);
+
+	void FFTMKL_Ctor(FFTMKL *unit);
+	void FFTMKL_Dtor(FFTMKL *unit);
+	void FFTMKL_next(FFTMKL *unit, int inNumSamples);
+	
+	void PV_Whiten_Ctor(PV_Whiten *unit);
+	void PV_Whiten_next(PV_Whiten *unit, int inNumSamples);
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -829,6 +872,364 @@ void PV_MagExp_next(PV_Unit *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void FFTPhaseDev_next(FFTPhaseDev *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+	
+	// Get the current frame, as polar. NB We don't care about DC or nyquist in this UGen.
+	SCPolarBuf *p = ToPolarApx(buf);
+	int tbpointer;
+	
+	float powthresh = ZIN0(2);
+	
+	// MAKE_TEMP_BUF but modified:
+	if (!unit->m_tempbuf) {
+		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, numbins * 2 * sizeof(float));
+		memset(unit->m_tempbuf, 0, numbins * 2 * sizeof(float)); // Ensure it's zeroed
+		// Ensure the initial values don't cause some weird jump in the output - set them to vals which will produce deviation of zero
+		tbpointer = 0;
+		for (int i=0; i<numbins; ++i) {
+			unit->m_tempbuf[tbpointer++] = p->bin[i].phase;
+			unit->m_tempbuf[tbpointer++] = 0.f;
+		}
+		unit->m_numbins = numbins;
+	} else if (numbins != unit->m_numbins) return;
+	
+	// Retrieve state
+	bool useweighting = unit->m_weight;
+	float *storedvals = unit->m_tempbuf;
+	
+	// Note: temp buf is stored in this format: phase[0],d_phase[0],phase[1],d_phase[1], ...
+	
+//	Print("\nbin[10] phase: %g\nbin[10] yesterphase: %g\nbin[10] yesterdiff: %g\n", 
+//		/*PHASE_REWRAP(*/p->bin[10].phase/*)*/, storedvals[20], storedvals[21]);
+	
+	//Print("\npowthresh is %g", powthresh);
+	
+	// Iterate through, calculating the deviation from expected value.
+	double totdev = 0.0;
+	tbpointer = 0;
+	float deviation;
+	for (int i=0; i<numbins; ++i) {
+		// Thresholding as Brossier did - discard bin's phase deviation if bin's power is minimal
+		if(p->bin[i].mag > powthresh) {
+		
+			// Deviation is the *second difference* of the phase, which is calc'ed as curval - yesterval - yesterfirstdiff
+			deviation = p->bin[i].phase - storedvals[tbpointer++] - storedvals[tbpointer++];
+			// Wrap onto +-PI range
+			deviation = PHASE_REWRAP(deviation);
+			
+			if(useweighting){
+				totdev += fabs(deviation * p->bin[i].mag);
+			} else {
+				totdev += fabs(deviation);
+			}
+		}
+	}
+	
+	// totdev will be the output, but first we need to fill tempbuf with today's values, ready for tomorrow.
+	tbpointer = 0;
+	float diff;
+	for (int i=0; i<numbins; ++i) {
+		diff = p->bin[i].phase - storedvals[tbpointer]; // Retrieving yesterphase from buf
+		storedvals[tbpointer++] = p->bin[i].phase; // Storing phase
+		// Wrap onto +-PI range
+		diff = PHASE_REWRAP(diff);
+		
+		storedvals[tbpointer++] = diff; // Storing first diff to buf
+		
+	}
+
+	// Store the val for output in future calls
+	unit->outval = (float)totdev;
+
+	ZOUT0(0) = unit->outval;
+}
+
+void FFTPhaseDev_Ctor(FFTPhaseDev *unit)
+{
+	SETCALC(FFTPhaseDev_next);
+	
+	unit->m_weight = (ZIN0(1) > 0.f) ? true : false;
+	
+	ZOUT0(0) = unit->outval = 0.;
+	unit->m_tempbuf = 0;
+}
+
+void FFTPhaseDev_Dtor(FFTPhaseDev *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTComplexDev_next(FFTComplexDev *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+	
+	// Get the current frame, as polar. NB We don't care about DC or nyquist in this UGen.
+	SCPolarBuf *p = ToPolarApx(buf);
+	int tbpointer;
+	
+	float powthresh = ZIN0(2);
+	
+	// MAKE_TEMP_BUF but modified:
+	if (!unit->m_tempbuf) {
+		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, numbins * 3 * sizeof(float));
+		memset(unit->m_tempbuf, 0,  numbins * 3 * sizeof(float)); // Ensure it's zeroed
+		// Ensure the initial values don't cause some weird jump in the output - set them to vals which will produce deviation of zero
+		tbpointer = 0;
+		for (int i=0; i<numbins; ++i) {
+			unit->m_tempbuf[tbpointer++] = p->bin[i].phase;
+			unit->m_tempbuf[tbpointer++] = 0.f;
+		}
+		unit->m_numbins = numbins;
+	} else if (numbins != unit->m_numbins) return;
+	
+	// Retrieve state
+	float *storedvals = unit->m_tempbuf;
+	bool rectify = unit->m_rectify;
+	
+	// Note: temp buf is stored in this format: mag[0],phase[0],d_phase[0],mag[1],phase[1],d_phase[1], ...
+	
+	
+	//Print("\npowthresh is %g", powthresh);
+	
+	// Iterate through, calculating the deviation from expected value.
+	double totdev = 0.0;
+	tbpointer = 0;
+	float curmag, predmag, predphase, yesterphase, yesterphasediff;
+	float deviation;
+	for (int i=0; i<numbins; ++i) {
+		curmag = p->bin[i].mag;
+
+		// Predict mag as yestermag
+		predmag = storedvals[tbpointer++];
+		yesterphase = storedvals[tbpointer++];
+		yesterphasediff = storedvals[tbpointer++];
+
+		// Thresholding as Brossier did - discard bin's deviation if bin's power is minimal
+		if(curmag > powthresh) {
+			// If rectifying, ignore decreasing bins
+			if((!rectify) || (curmag >= predmag)){
+				
+				// Predict phase as yesterval + yesterfirstdiff
+				predphase = yesterphase + yesterphasediff;
+				
+				// Deviation is Euclidean distance between predicted and actual.
+				// In polar coords: sqrt(r1^2 +  r2^2 - r1r2 cos (theta1 - theta2))
+				deviation = sqrt(predmag * predmag + curmag * curmag
+								  - predmag * predmag * cos(PHASE_REWRAP(predphase - p->bin[i].phase))
+								);			
+				
+				totdev += deviation;
+			}
+		}
+	}
+	
+	// totdev will be the output, but first we need to fill tempbuf with today's values, ready for tomorrow.
+	tbpointer = 0;
+	float diff;
+	for (int i=0; i<numbins; ++i) {
+		storedvals[tbpointer++] = p->bin[i].mag; // Storing mag
+		diff = p->bin[i].phase - storedvals[tbpointer]; // Retrieving yesterphase from buf
+		storedvals[tbpointer++] = p->bin[i].phase; // Storing phase
+		// Wrap onto +-PI range
+		diff = PHASE_REWRAP(diff);
+		
+		storedvals[tbpointer++] = diff; // Storing first diff to buf
+		
+	}
+
+	// Store the val for output in future calls
+	unit->outval = (float)totdev;
+
+	ZOUT0(0) = unit->outval;
+}
+
+void FFTComplexDev_Ctor(FFTComplexDev *unit)
+{
+	SETCALC(FFTComplexDev_next);
+
+	unit->m_rectify = (ZIN0(1) > 0.f) ? true : false;
+	
+	ZOUT0(0) = unit->outval = 0.;
+	unit->m_tempbuf = 0;
+}
+
+void FFTComplexDev_Dtor(FFTComplexDev *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTMKL_next(FFTMKL *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+	
+	// Get the current frame, as polar. NB We don't care about DC or nyquist in this UGen.
+	SCPolarBuf *p = ToPolarApx(buf);
+	int tbpointer;
+	float eta = ZIN0(1);
+	
+	// MAKE_TEMP_BUF but modified:
+	if (!unit->m_tempbuf) {
+		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, numbins * 1 * sizeof(float));
+		memset(unit->m_tempbuf, 0, numbins * 1 * sizeof(float)); // Ensure it's zeroed
+		// Ensure the initial values don't cause some weird jump in the output - set them to vals which will produce deviation of zero
+		tbpointer = 0;
+		for (int i=0; i<numbins; ++i) {
+			unit->m_tempbuf[tbpointer++] = p->bin[i].mag;
+		}
+		unit->m_numbins = numbins;
+	} else if (numbins != unit->m_numbins) return;
+	
+	// Retrieve state
+	float *storedvals = unit->m_tempbuf;
+	
+	// Note: for this UGen, temp buf is just mag[0],mag[1],... - we ain't interested in phase etc
+	
+	// Iterate through, calculating the Modified Kullback-Liebler distance
+	double totdev = 0.0;
+	tbpointer = 0;
+	float curmag, yestermag;
+	float deviation;
+	for (int i=0; i<numbins; ++i) {
+		curmag = p->bin[i].mag;
+		yestermag = storedvals[tbpointer];
+		
+		// Here's the main implementation of Brossier's MKL eq'n (eqn 2.9 from his thesis):
+		deviation = sc_abs(curmag) / (sc_abs(yestermag) + eta);
+		totdev += log(1.f + deviation);
+		
+		// Store the mag as yestermag
+		storedvals[tbpointer++] = curmag;
+	}
+
+	// Store the val for output in future calls
+	unit->outval = (float)totdev;
+
+	ZOUT0(0) = unit->outval;
+}
+
+void FFTMKL_Ctor(FFTMKL *unit)
+{
+	SETCALC(FFTMKL_next);
+
+	ZOUT0(0) = unit->outval = 0.;
+	unit->m_tempbuf = 0;
+}
+
+void FFTMKL_Dtor(FFTMKL *unit)
+{
+	RTFree(unit->mWorld, unit->m_tempbuf);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PV_Whiten_Ctor(PV_Whiten *unit){
+	
+	SETCALC(PV_Whiten_next);
+	
+	ZOUT0(0) = ZIN0(0);
+}
+
+
+void PV_Whiten_next(PV_Whiten *unit, int inNumSamples){
+
+	float fbufnum1 = ZIN0(0);
+	float fbufnum2 = ZIN0(1);
+	if (fbufnum1 < 0.f || fbufnum2 < 0.f) { ZOUT0(0) = -1.f; return; }
+//	Print("\nfbufnum1: %g; fbufnum2: %g", fbufnum1, fbufnum2);
+	uint32 ibufnum1 = (int)fbufnum1;
+	uint32 ibufnum2 = (int)fbufnum2;
+	World *world = unit->mWorld;
+	if (ibufnum1 >= world->mNumSndBufs) ibufnum1 = 0;
+	if (ibufnum2 >= world->mNumSndBufs) ibufnum2 = 0;
+	SndBuf *buf1 = world->mSndBufs + ibufnum1;
+	SndBuf *buf2 = world->mSndBufs + ibufnum2;
+	int numbins = buf1->samples - 2 >> 1;
+//	Print("\nibufnum1: %d; ibufnum2: %d", ibufnum1, ibufnum2);
+//	if (buf1->samples != buf2->samples) return;
+	
+//	Print("\nnumbins: %d", numbins);
+	
+//	memcpy(buf2->data, buf1->data, buf1->samples * sizeof(float));
+
+	SCPolarBuf *indata = ToPolarApx(buf1);
+	
+	// This buffer stores numbins+2 amplitude tracks, in "logical" order (DC, bin1, ... nyquist), not in the order produced by the FFT
+	float *pkdata = buf2->data;
+	
+	// Update the parameters
+	float relax = ZIN0(2);
+	float relaxcoef = (relax == 0.0f) ? 0.0f : exp(log1/(relax * SAMPLERATE));
+	float floor = ZIN0(3);
+	float smear = ZIN0(4);
+	unsigned int bindownsample = (int)ZIN0(5);
+	
+	float val,oldval;
+	////////////////////// Now for each bin, update the record of the peak value /////////////////////
+	
+	val = fabs(indata->dc);	// Grab current magnitude
+	oldval = pkdata[0];
+	// If it beats the amplitude stored then that's our new amplitude; otherwise our new amplitude is a decayed version of the old one
+	if(val < oldval) {
+		val = val + (oldval - val) * relaxcoef;
+	}
+	pkdata[0] = val; // Store the "amplitude trace" back
+	
+	val = fabs(indata->nyq);
+	oldval = pkdata[numbins+1];
+	if(val < oldval) {
+		val = val + (oldval - val) * relaxcoef;
+	}
+	pkdata[numbins+1] = val;
+	
+//	Print("-----------Peaks-------\n");
+	for(int i=0; i<numbins; ++i){
+		val = fabs(indata->bin[i].mag);
+		oldval = pkdata[i+1];
+		if(val < oldval) {
+			val = val + (oldval - val) * relaxcoef;
+		}
+		pkdata[i+1] = val;
+		//Print("%g, ", val);
+	}
+//	Print("\n");
+	
+	// Perform smearing now
+	if(smear != 0.f){
+		float oldval, newval;
+		oldval = pkdata[0];
+		// What we want is to keep the largest of curval, prevval*smear, nextval*smear.
+		// We do this in two steps, by keeping the biggest of prevval and nextval, then keeping the largest of (biggest*smear, curval)
+		for(int i=1; i<=numbins; i++){
+			oldval = sc_max(oldval, pkdata[i+1]);
+			newval = sc_max(oldval * smear, pkdata[i]);
+			
+			oldval = pkdata[i]; // For next iter
+			pkdata[i] = newval;
+		}
+	}
+	
+	//////////////////////////// Now for each bin, rescale the current magnitude ////////////////////////////
+	indata->dc  /= sc_max(floor, pkdata[0]);
+	indata->nyq /= sc_max(floor, pkdata[numbins+1]);
+	for(int i=0; i<numbins; ++i){
+		indata->bin[i].mag /= sc_max(floor, pkdata[i+1]);
+	}
+	
+	ZOUT0(0) = fbufnum1;
+	
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void load(InterfaceTable *inTable)
 {
 	ft= inTable;
@@ -847,4 +1248,9 @@ void load(InterfaceTable *inTable)
 	(*ft->fDefineUnit)("PV_MagExp", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagExp_Ctor, 0, 0);
 	DefineDtorUnit(FFTSubbandPower);
 
+	DefineDtorUnit(FFTPhaseDev);
+	DefineDtorUnit(FFTComplexDev);
+	DefineDtorUnit(FFTMKL);
+
+	DefineSimpleUnit(PV_Whiten);
 }

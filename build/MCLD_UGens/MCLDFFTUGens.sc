@@ -104,3 +104,29 @@ PV_MagExp : UGen
 		^this.multiNew('control', buffer)
 	}
 }
+
+FFTPhaseDev : UGen
+{
+	*kr { |buffer, weight=0, powthresh=0.1|
+		^this.multiNew('control', buffer, weight, powthresh)
+	}
+}
+FFTComplexDev : UGen
+{
+	*kr { |buffer, rectify=0, powthresh=0.1|
+		^this.multiNew('control', buffer, rectify, powthresh)
+	}
+}
+FFTMKL : UGen
+{
+	*kr { |buffer, epsilon=1e-06|
+		^this.multiNew('control', buffer, epsilon)
+	}
+}
+
+PV_Whiten : UGen
+{
+	*new { | chain, trackbufnum, relaxtime=2, floor=0.1, smear=0, bindownsample=0 |
+		^this.multiNew('control', chain, trackbufnum, relaxtime, floor, smear, bindownsample)
+	}
+}

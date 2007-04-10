@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {font: 14.0px Helvetica}
+span.s2 {text-decoration: underline}
+span.s3 {color: #000ebe}
+span.s4 {color: #000000}
+span.s5 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>FFTMKL<span class="Apple-tab-span">	</span>Modified Kullback-Liebler Distance metric</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>FFTMKL.kr(chain, epsilon=0.000001)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Calculates a modified version of the <b><i>Kullback-Liebler Distance</i></b>, which originates as a measure of similarity between probability distributions, but is modified here to a version particularly suited to onset detection. Specifically, we use equation 2.9 (p41) in</p>
+<p class="p4"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>P. Brossier,<span class="s1"> </span><b>Automatic Annotation of Musical Audio for Interactive Applications</b>, PhD thesis, Queen Mary, University of London, August 2006.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">The calculation is the sum over all K bins of</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>log(1 + mag[k][n] / (mag[k][n - 1] + epsilon))</p>
+<p class="p2"><br></p>
+<p class="p3">The parameter <b>epsilon</b> "is designed to avoid large variations when very low energy levels are encountered, and thus prevents large peaks in the detection function at offset times." Feel free to fiddle with it.</p>
+<p class="p2"><br></p>
+<p class="p3">This UGen is used in one of the modes of the onset detector [<span class="s2">OnsetsDS</span>].</p>
+<p class="p2"><br></p>
+<p class="p4"><br></p>
+<p class="p3"><b>Example</b></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p6">// Load an audio file and plot the MKL distance as a function of time</p>
+<p class="p5">b = <span class="s3">Buffer</span>.alloc(s, 512, 1);</p>
+<p class="p7"><span class="s4">c = </span><span class="s3">Buffer</span><span class="s4">.read(s, </span>"sounds/a11wlk01.wav"<span class="s4">);</span></p>
+<p class="p5">(</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="s3">var</span> in, chain, mkl;</p>
+<p class="p5">in = <span class="s3">PlayBuf</span>.ar(1, c.bufnum, <span class="s3">BufRateScale</span>.kr(c.bufnum));</p>
+<p class="p5">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p5">mkl = <span class="s3">FFTMKL</span>.kr(chain);</p>
+<p class="p5">mkl.poll(10, <span class="s5">"MKL distance"</span>);</p>
+<p class="p5"><span class="s3">Out</span>.ar(0, in.dup * 0.1);</p>
+<p class="p5"><span class="s3">K2A</span>.ar(mkl)</p>
+<p class="p5">}.plot(c.numFrames/c.sampleRate, s);</p>
+<p class="p5">)</p>
+<p class="p4"><br></p>
+<p class="p5">x.free; b.free; c.free;</p>
+</body>
+</html>

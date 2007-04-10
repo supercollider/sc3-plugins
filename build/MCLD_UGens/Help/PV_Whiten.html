@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a02310}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a71d0f}
+span.s1 {font: 13.0px Helvetica}
+span.s2 {text-decoration: underline}
+span.s3 {color: #0028b6}
+span.s4 {color: #a02310}
+span.s5 {color: #000000}
+span.s6 {color: #0022b7}
+span.s7 {color: #606060}
+span.s8 {color: #366e18}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>PV_Whiten <span class="Apple-converted-space">        </span></b><span class="s1"><b>Adaptive whitening</b></span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><b>PV_Whiten(chain, trackbufnum, relaxtime=2, floor=0.1, smear=0)</b></p>
+<p class="p2"><br></p>
+<p class="p3">This UGen implements a kind of real-time "adaptive whitening", in other words, boosting some frequency ranges with the aim of ensuring that all frequencies' dynamic ranges reach the same peak. It tracks the peak magnitudes within each FFT bin, and rescales the values over time so that the peak magnitude in each bin reaches a value of 1. The memory of recent peaks fades over time, fading away in a time specified by the <b>relaxtime</b> parameter but never dropping below <b>floor</b> (the default floor of 0.1 is useful for many applications but for some applications you may wish to push it right down, as far as 0.000001). Floor should never be zero or negative; you'll probably have divide-by-zero problems in those cases.</p>
+<p class="p2"><br></p>
+<p class="p3">PV_Whiten requires a secondary buffer (the parameter <b>trackbufnum</b>) in which it will store its record of recent magnitudes. You can query this buffer while the synth is running, to get a view of the current state of the bin tracking.</p>
+<p class="p2"><br></p>
+<p class="p3">Note: <b>relaxtime</b> needs to be scaled according to the frame-rate of your FFT stream. In other words, the default of 0.1 does not represent 0.1 seconds, but 0.1 * (frame hop size), which when using the standard FFT UGen means 0.1 * (FFT size / 2). For FFT of size 512 (as used in the examples below) this means 0.1 ==&gt; 25.6 seconds relax time.</p>
+<p class="p2"><br></p>
+<p class="p3">The <b>smear</b> factor smooths out the spectral profile being derived. If the smear factor is greater than zero, the stored magnitudes are compared against their immediate neighbours multiplied by the smear factor, the largest value being kept.<span class="Apple-converted-space">  </span>Sensible values for the smear factor are between zero and one. The UGen will not prevent you from trying unsensible values.</p>
+<p class="p2"><br></p>
+<p class="p3">The motivation for creating this UGen was as a preprocessing step for onset detection - see [<span class="s2">OnsetsDS</span>] - but feel free to use it for other things.</p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p4">s.boot.doWhenBooted({</p>
+<p class="p4">b = <span class="s3">Buffer</span>.alloc(s, 512, 1); <span class="s4">// For FFT</span></p>
+<p class="p5"><span class="s5">c = </span><span class="s3">Buffer</span><span class="s5">.read(s,</span>"sounds/a11wlk01.wav"<span class="s5">);</span></p>
+<p class="p6"><span class="s5">d = </span><span class="s3">Buffer</span><span class="s5">.alloc(s, 512, 1); </span>// For PV_Whiten to store its peak estimates</p>
+<p class="p4">});</p>
+<p class="p4">)</p>
+<p class="p7"><br></p>
+<p class="p4">(</p>
+<p class="p8">// Move the mouse left-right to vary the relax time, up/down to vary the smear</p>
+<p class="p4"><span class="s6">SynthDef</span>(<span class="s7">"help-pv_whiten"</span>, { <span class="s6">arg</span> out=0, bufnum=0, soundBufnum=2, trackbufnum=3;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s6">var</span> in, chain;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>in = <span class="s6">PlayBuf</span>.ar(1, soundBufnum, <span class="s6">BufRateScale</span>.kr(soundBufnum), loop: 1);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s6">FFT</span>(bufnum, in);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s6">PV_Whiten</span>(chain, trackbufnum, <span class="s6">MouseX</span>.kr(0.01, 10, 1), smear: <span class="s6">MouseY</span>.kr(0, 1));<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s6">Out</span>.ar(out, 0.5 * <span class="s6">IFFT</span>(chain).dup);</p>
+<p class="p4">}).play(s,[<span class="s8">\out</span>, 0, <span class="s8">\bufnum</span>, b.bufnum, <span class="s8">\soundBufnum</span>, c.bufnum, <span class="s8">\trackbufnum</span>, d.bufnum]);</p>
+<p class="p4">)</p>
+<p class="p7"><br></p>
+<p class="p6">// What's in the buffer?</p>
+<p class="p4">d.getToFloatArray(action: {<span class="s3">|ar|</span> {ar.plot}.defer});</p>
+<p class="p7"><br></p>
+<p class="p6">// This task plots the buffer contents many times per second.<span class="Apple-converted-space"> </span></p>
+<p class="p6">// WARNING: You'll probably need Cmd+. to stop it<span class="Apple-converted-space"> </span></p>
+<p class="p4">(</p>
+<p class="p4">t = <span class="s6">Task</span>({</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s6">var</span> oldw;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>loop({</p>
+<p class="p4"><span class="Apple-tab-span">	</span>d.getToFloatArray(count: 150, action: {<span class="s6">|ar|</span> {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>oldw = w;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w = ar.plot;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(oldw.isNil.not, {oldw.close});</p>
+<p class="p4"><span class="Apple-tab-span">	</span>}.defer});</p>
+<p class="p4"><span class="Apple-tab-span">	</span>0.05.wait;</p>
+<p class="p4">})}).play;</p>
+<p class="p4">)</p>
+<p class="p4">t.stop;</p>
+</body>
+</html>
