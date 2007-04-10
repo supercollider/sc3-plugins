@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {text-decoration: underline}
+span.s2 {color: #0000bf}
+span.s3 {color: #000000}
+span.s4 {color: #606060}
+span.s5 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>PV_MagExp<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>exponential of magnitudes</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>PV_MagExp(buffer)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Converts the magnitudes to their exponentials. No renormalisation is performed. This can be used in combination with [<span class="s1">PV_MagLog</span>] for vocoder manipulation.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>WARNING:</b> If you use it without a corresponding PV_MagLog, this is likely to push the levels very very high. So please mind your ears.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>buffer</b> - fft buffer.</p>
+<p class="p2"><br></p>
+<p class="p4">s.boot;</p>
+<p class="p5"><br></p>
+<p class="p4">(</p>
+<p class="p4">b = <span class="s2">Buffer</span>.alloc(s,2048,1);</p>
+<p class="p6"><span class="s3">c = </span><span class="s2">Buffer</span><span class="s3">.read(s,</span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p4">)</p>
+<p class="p5"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="s2">SynthDef</span>(<span class="s4">"help-magexp"</span>, {<span class="Apple-converted-space">  </span><span class="s2">arg</span> out=0, bufnum=0, soundBufnum=2;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> in, chain;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>in = <span class="s2">PlayBuf</span>.ar(1, soundBufnum, <span class="s2">BufRateScale</span>.kr(soundBufnum), loop: 1);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s2">FFT</span>(bufnum, in);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s2">PV_MagLog</span>(chain);<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span></span>// PV_ConformalMap behaves quite differently in the log domain</p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain=<span class="s2">PV_ConformalMap</span>(chain, <span class="s2">MouseX</span>.kr(-1.0,1.0), <span class="s2">MouseY</span>.kr(-1.0,1.0));</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s2">PV_MagExp</span>(chain);<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(out, 0.3 * <span class="s2">IFFT</span>(chain).clip2(1).dup);<span class="Apple-converted-space"> </span></p>
+<p class="p4">}).play(s,[<span class="s5">\out</span>, 0, <span class="s5">\bufnum</span>, b.bufnum, <span class="s5">\soundBufnum</span>, c.bufnum]);</p>
+<p class="p4">)</p>
+</body>
+</html>

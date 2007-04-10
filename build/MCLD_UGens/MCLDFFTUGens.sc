@@ -21,8 +21,8 @@ FFTFlatness : UGen
 
 FFTPercentile : UGen
 {
-	*kr { arg buffer, fraction=0.5;
-		^this.multiNew('control', buffer, fraction)
+	*kr { arg buffer, fraction=0.5, interpolate=0;
+		^this.multiNew('control', buffer, fraction, interpolate)
 	}
 }
 
@@ -91,3 +91,16 @@ FFTSubbandFlux : MultiOutUGen {
 	}
 }
 
+PV_MagLog : UGen 
+{
+	*new { arg buffer;
+		^this.multiNew('control', buffer)
+	}
+}
+
+PV_MagExp : UGen 
+{
+	*new { arg buffer;
+		^this.multiNew('control', buffer)
+	}
+}

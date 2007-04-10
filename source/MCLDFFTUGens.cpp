@@ -23,6 +23,9 @@ FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
 #include "SCComplex.h"
 #include "FFT_UGens.h"
 
+// Used by PV_MagLog
+#define SMALLEST_NUM_FOR_LOG 2e-42
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -39,6 +42,7 @@ struct FFTAnalyser_OutOfPlace : FFTAnalyser_Unit
 
 struct FFTPercentile_Unit : FFTAnalyser_OutOfPlace 
 {
+	bool m_interpolate;
 };
 
 struct FFTFlux_Unit : FFTAnalyser_OutOfPlace 
@@ -52,6 +56,11 @@ struct FFTFlux_Unit : FFTAnalyser_OutOfPlace
 struct FFTFlatnessSplitPercentile_Unit : FFTPercentile_Unit
 {
 	float outval2;
+};
+
+struct FFTPower : FFTAnalyser_Unit
+{
+	float m_normfactor;
 };
 
 struct FFTSubbandPower : FFTAnalyser_Unit
@@ -115,8 +124,8 @@ extern "C"
 {
 	void load(InterfaceTable *inTable);
 
-	void FFTPower_Ctor(FFTAnalyser_Unit *unit);
-	void FFTPower_next(FFTAnalyser_Unit *unit, int inNumSamples);
+	void FFTPower_Ctor(FFTPower *unit);
+	void FFTPower_next(FFTPower *unit, int inNumSamples);
 
 	void FFTFlatness_Ctor(FFTAnalyser_Unit *unit);
 	void FFTFlatness_next(FFTAnalyser_Unit *unit, int inNumSamples);
@@ -148,7 +157,12 @@ extern "C"
 	void FFTSubbandPower_Ctor(FFTSubbandPower *unit);
 	void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples);
 	void FFTSubbandPower_Dtor(FFTSubbandPower *unit);
-
+	
+	void PV_MagLog_Ctor(PV_Unit *unit);
+	void PV_MagLog_next(PV_Unit *unit, int inNumSamples);
+	
+	void PV_MagExp_Ctor(PV_Unit *unit);
+	void PV_MagExp_next(PV_Unit *unit, int inNumSamples);
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -183,30 +197,41 @@ void init_SCComplex(InterfaceTable *inTable);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void FFTPower_next(FFTAnalyser_Unit *unit, int inNumSamples)
+void FFTPower_next(FFTPower *unit, int inNumSamples)
 {
 	FFTAnalyser_GET_BUF
 
-	SCComplexBuf *p = ToComplexApx(buf);
+	float normfactor = unit->m_normfactor;
+	if(normfactor == 0.f){
+		unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
+	}
+
+//	SCComplexBuf *p = ToComplexApx(buf);
+	SCPolarBuf *p = ToPolarApx(buf);
 	
 	float total = sc_abs(p->dc) + sc_abs(p->nyq);
 	
+//	for (int i=0; i<numbins; ++i) {
+//		float rabs = (p->bin[i].real);
+//		float iabs = (p->bin[i].imag);
+//		total += sqrt((rabs*rabs) + (iabs*iabs));
+//	}
 	for (int i=0; i<numbins; ++i) {
-		float rabs = (p->bin[i].real);
-		float iabs = (p->bin[i].imag);
-		total += sqrt((rabs*rabs) + (iabs*iabs));
+		total += sc_abs(p->bin[i].mag);
 	}
 
 	// Store the val for output in future calls
-	unit->outval = total / (numbins + 2.);
+	unit->outval = total * normfactor;
 
 	ZOUT0(0) = unit->outval;
 }
 
-void FFTPower_Ctor(FFTAnalyser_Unit *unit)
+void FFTPower_Ctor(FFTPower *unit)
 {
 	SETCALC(FFTPower_next);
 	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_normfactor = 0.f;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,6 +383,7 @@ void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
 
 	// Percentile value as a fraction. eg: 0.5 == 50-percentile (median).
 	float fraction = ZIN0(1);
+	bool interpolate = unit->m_interpolate;
 
 	// The magnitudes in *p will be converted to cumulative sum values and stored in *q temporarily
 	SCComplexBuf *p = ToComplexApx(buf);
@@ -381,10 +407,16 @@ void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
 	float bestposition = 0; // May be linear-interpolated between bins, but not implemented yet
 	           // NB If nothing beats the target (e.g. if fraction is -1) zero Hz is returned
 	float nyqfreq = ((float)unit->mWorld->mSampleRate) * 0.5f;
+	float binpos;
 	for(int i=0; i<numbins; i++) {
 		//Print("Testing %g, at position %i", q->bin[i].real, i);
 		if(q->bin[i].real >= target){
-			bestposition = (nyqfreq * (float)(i+1)) / (float)(numbins+2);
+			if(interpolate && i!=0) {
+				binpos = ((float)i) + 1.f - (q->bin[i].real - target) / (q->bin[i].real - q->bin[i-1].real);
+			} else {
+				binpos = ((float)i) + 1.f;
+			}
+			bestposition = (nyqfreq * binpos) / (float)(numbins+2);
 			//Print("Target %g beaten by %g (at position %i), equating to freq %g\n", 
 			//				target, p->bin[i].real, i, bestposition);
 			break;
@@ -413,6 +445,7 @@ void FFTPercentile_Ctor(FFTPercentile_Unit *unit)
 	SETCALC(FFTPercentile_next);
 
 //	unit->m_subtotals = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
+	unit->m_interpolate = ZIN0(2) > 0.f;
 
 	ZOUT0(0) = unit->outval = 0.;
 	unit->m_tempbuf = 0;
@@ -756,6 +789,45 @@ void PV_DiffMags_Ctor(PV_Unit *unit)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void PV_MagLog_Ctor(PV_Unit *unit)
+{
+	SETCALC(PV_MagLog_next);
+	ZOUT0(0) = ZIN0(0);
+}
+
+void PV_MagLog_next(PV_Unit *unit, int inNumSamples)
+{
+	PV_GET_BUF
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	for (int i=0; i<numbins; ++i) {
+		float mag = p->bin[i].mag;
+		p->bin[i].mag = log(mag > SMALLEST_NUM_FOR_LOG ? mag : SMALLEST_NUM_FOR_LOG);
+	}
+}
+
+////
+
+void PV_MagExp_Ctor(PV_Unit *unit)
+{
+	SETCALC(PV_MagExp_next);
+	ZOUT0(0) = ZIN0(0);
+}
+
+void PV_MagExp_next(PV_Unit *unit, int inNumSamples)
+{
+	PV_GET_BUF
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	for (int i=0; i<numbins; ++i) {
+		float mag = p->bin[i].mag;
+		p->bin[i].mag = exp(mag);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
 {
@@ -763,7 +835,7 @@ void load(InterfaceTable *inTable)
 
 	init_SCComplex(inTable);
 
-	(*ft->fDefineUnit)("FFTPower", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTPower_Ctor, 0, 0);
+	(*ft->fDefineUnit)("FFTPower", sizeof(FFTPower), (UnitCtorFunc)&FFTPower_Ctor, 0, 0);
 	(*ft->fDefineUnit)("FFTFlatness", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTFlatness_Ctor, 0, 0);
 	(*ft->fDefineUnit)("FFTPercentile", sizeof(FFTPercentile_Unit), (UnitCtorFunc)&FFTPercentile_Ctor, (UnitDtorFunc)&FFTPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTFlux", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFlux_Ctor, (UnitDtorFunc)&FFTFlux_Dtor, 0);
@@ -771,6 +843,8 @@ void load(InterfaceTable *inTable)
 	(*ft->fDefineUnit)("FFTFlatnessSplitPercentile", sizeof(FFTFlatnessSplitPercentile_Unit), (UnitCtorFunc)&FFTFlatnessSplitPercentile_Ctor, (UnitDtorFunc)&FFTFlatnessSplitPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTDiffMags", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTDiffMags_Ctor, 0, 0);
 	(*ft->fDefineUnit)("PV_DiffMags", sizeof(PV_Unit), (UnitCtorFunc)&PV_DiffMags_Ctor, 0, 0);
+	(*ft->fDefineUnit)("PV_MagLog", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagLog_Ctor, 0, 0);
+	(*ft->fDefineUnit)("PV_MagExp", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagExp_Ctor, 0, 0);
 	DefineDtorUnit(FFTSubbandPower);
 
 }
