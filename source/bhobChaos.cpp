@@ -268,13 +268,31 @@ inline double mod2pi(double in) {
 }
 
 float Mirroring (float lower, float upper, float in);
+/*
 float Mirroring (float lower, float upper, float in)
 {
-	if(in > upper || in < lower) {
-		float infrac=fabs(in-(long)in);
-		if (in<lower) in=lower + infrac;
-		else in=upper - infrac;
-	} 
+	if(in>upper || in<lower) {
+		float range= (upper-lower);
+		if(in<lower) in=(2*upper-lower)-in;
+		in=fmod(in-upper, 2*range);
+		if(in<range) in=upper-in;
+		else in=in-(range);
+	}
+	return in;
+}
+*/
+
+float Mirroring (float lower, float upper, float in)
+{
+	if(in>upper || in<lower) {
+		if(in<lower) {
+			float diff=lower - in;
+			in = sc_min(upper, lower + diff);
+		} else {
+			float diff=in - upper;
+			in = sc_max(lower, upper - diff);
+		}
+	}
 	return in;
 }
 

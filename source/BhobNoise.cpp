@@ -91,7 +91,7 @@ struct Gendy4 : public Unit
 	float* mMemoryDur;
 };
 
-struct Gendy5 : public Unit 
+struct Gendy0 : public Unit 
 {
 	double mPhase;
 	float mAmp, mDur, mSpeed;      
@@ -142,9 +142,9 @@ extern "C"
 	void Gendy4_Ctor(Gendy4* unit);
 	void Gendy4_Dtor(Gendy4* unit);
 	
-	void Gendy5_next_k(Gendy5 *unit, int inNumSamples);
-	void Gendy5_Ctor(Gendy5* unit);
-	void Gendy5_Dtor(Gendy5* unit);
+	void Gendy0_next_k(Gendy0 *unit, int inNumSamples);
+	void Gendy0_Ctor(Gendy0* unit);
+	void Gendy0_Dtor(Gendy0* unit);
 };
 
 #define RGET \
@@ -217,11 +217,15 @@ float Gendyn_distribution( int which, float a, float f) {
 float Mirroring (float lower, float upper, float in);
 float Mirroring (float lower, float upper, float in)
 {
-	if(in > upper || in < lower) {
-		float infrac=fabs(in-(long)in);
-		if (in<lower) in=lower + infrac;
-		else in=upper - infrac;
-	} 
+	if(in>upper || in<lower) {
+		if(in<lower) {
+			float diff=lower - in;
+			in = sc_min(upper, lower + diff);
+		} else {
+			float diff=in - upper;
+			in = sc_max(lower, upper - diff);
+		}
+	}
 	return in;
 }
 
@@ -635,7 +639,11 @@ void TBetaRand_next_k(TBetaRand* unit, int inNumSamples)
 			value=pow(frand(s1, s2, s3), prob1);
 			sum=value + pow(frand(s1, s2, s3), prob2);
 		};
-		ZOUT0(0) = unit->m_value = (value/sum) * (hi-lo) + lo;
+		if (sum == 0.f) {
+			ZOUT0(0) = unit->m_value = 0.f;
+		} else {
+			ZOUT0(0) = unit->m_value = (value/sum) * (hi-lo) + lo;
+		}
 		RPUT
 	} else {
 		ZOUT0(0) = unit->m_value;
@@ -666,7 +674,11 @@ void TBetaRand_next_a(TBetaRand* unit, int inNumSamples)
 			};
 			float lo=ZIN0(0);
 			float hi=ZIN0(1);
-			ZXP(out) = value = (value/sum) * (hi - lo) + lo;
+			if (sum == 0.f) {
+				ZXP(out) = value = 0.f;
+			} else {
+				ZXP(out) = value = (value/sum) * (hi - lo) + lo;
+			}
 			prev=next;
 			RPUT
 		} else {
@@ -764,9 +776,9 @@ void Gendy4_next_k(Gendy4 *unit, int inNumSamples) {
 			amp=nextamp;
 			unit->mIndex=index;
 			nextamp=(unit->mMemoryAmp[index])+(scaleamp*Gendyn_distribution(whichamp, aamp, rgen.frand()));
-			nextamp=Mirroring(-1.0, 1.0, nextamp);
+			nextamp=Mirroring(-1.f, 1.f, nextamp);
 			float next_midpnt = (amp + nextamp) * 0.5;
-			unit->mMemoryAmp[index]= nextamp;
+			unit->mMemoryAmp[index] = nextamp;
 					
 			rate=(unit->mMemoryDur[index])+(scaledur*Gendyn_distribution(whichdur, adur, rgen.frand()));
 			rate=Mirroring(0.0, 1.0, rate);
@@ -797,9 +809,9 @@ void Gendy4_next_k(Gendy4 *unit, int inNumSamples) {
 	unit->mCurve = curve;
 }
 
-void Gendy5_Ctor( Gendy5* unit ) {
+void Gendy0_Ctor( Gendy0* unit ) {
                          
-	SETCALC(Gendy5_next_k);
+	SETCALC(Gendy0_next_k);
 	unit->mPhase = 1.f;
 	unit->mAmp = 0.0; 
 			
@@ -819,13 +831,13 @@ void Gendy5_Ctor( Gendy5* unit ) {
 	}
 }
     
-void Gendy5_Dtor(Gendy5 *unit)
+void Gendy0_Dtor(Gendy0 *unit)
 {
 	RTFree(unit->mWorld, unit->mMemoryAmp);
 	RTFree(unit->mWorld, unit->mMemoryDur);
 }
             
-void Gendy5_next_k(Gendy5 *unit, int inNumSamples) {
+void Gendy0_next_k(Gendy0 *unit, int inNumSamples) {
         
 	float *out = ZOUT(0);
 			
@@ -856,23 +868,11 @@ void Gendy5_next_k(Gendy5 *unit, int inNumSamples) {
 			index=(index+1)%num;
 			unit->mIndex=index;
 			amp=(unit->mMemoryAmp[index])+(scaleamp*Gendyn_distribution(whichamp, aamp, rgen.frand()));
-				
-			if(amp>1.0 || amp<-1.0) {
-				if(amp<0.0) amp=amp+4.0;
-				amp=fmod(amp,4.0f); 
-				if(amp>1.0 && amp<3.0)
-				amp= 2.0-amp;
-				else if(amp>1.0)
-				amp=amp-4.0;
-			};
+			amp=Mirroring(-1.f, 1.f, amp);
 			unit->mMemoryAmp[index]= amp;
 			
 			rate=(unit->mMemoryDur[index])+(scaledur*Gendyn_distribution(whichdur, adur, rgen.frand()));
-			if(rate>1.0 || rate<0.0) {
-				if(rate<0.0) rate=rate+2.0;
-				rate= fmod(rate,2.0f);
-				rate= 2.0-rate;
-			}
+			rate=Mirroring(0.0, 1.f, rate);
 			unit->mMemoryDur[index]= rate;
 			speed=(minfreq+((maxfreq-minfreq)*rate))*SAMPLEDUR*num;
 		} 
@@ -902,7 +902,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(TGaussRand);
 	DefineSimpleUnit(TBetaRand);
 	DefineDtorUnit(Gendy4);
-	DefineDtorUnit(Gendy5);
+	DefineDtorUnit(Gendy0);
 }
 
 ////////////////////////////////////////////////////////////////////
