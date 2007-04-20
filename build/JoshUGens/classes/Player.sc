@@ -289,8 +289,29 @@ Player {
 					decode = BFDecode1.ar(w, x, y, z, [0.1666pi, -0.16666pi, -0.5pi, 
 						-0.83333pi, 0.83333pi, 0.5pi ]);
 					Out.ar(outbus, decode * IEnvGen.kr(env, envpoint, amp) *
+							EnvGen.kr(Env.asr(0.05, 1, 0.05), gate, doneAction: 2))					},
+				{arg gate = 1, outbus = 0, amp = 1, mute_w = 1, mute_x = 1, mute_y = 1, 
+					mute_z = 1;
+					var out, w, x, y, z, decode, envpoint, envstartpoint;
+					envstartpoint = start - initstarttime;
+					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);					xywz.if({
+						(numchan == 3).if({
+							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
+							z = 0.0},{
+							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
+								[mute_x, mute_y, mute_w, mute_z];
+							})},{
+						(numchan == 4).if({
+							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
+							z = 0.0},{
+							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
+								[mute_w, mute_x, mute_y, mute_z]
+							})});
+					decode = BFDecode1.ar(w, x, y, z, [0.125pi, -0.125pi, -0.375pi, -0.625pi, 
+						-0.875pi, 0.875pi, 0.625pi, 0.375 ]);
+					Out.ar(outbus, decode * IEnvGen.kr(env, envpoint, amp) *
 							EnvGen.kr(Env.asr(0.05, 1, 0.05), gate, doneAction: 2))					}
-				];
+			];
 			tempoclock.sched(0.05, {curtime = 0;
 				Routine.run({
 					var synthdef, newenv; 
@@ -386,6 +407,7 @@ Player {
 			\uhj ->2,
 			\quad -> 3,
 			\hex -> 4,
+			\eight -> 5
 			];
 		numouts = IdentityDictionary[
 			\straight -> 0,
@@ -393,6 +415,7 @@ Player {
 			\uhj ->2,
 			\quad -> 4,
 			\hex -> 6,
+			\eight -> 8
 			];
 		outvals = IdentityDictionary[
 			14 -> 0,
@@ -424,7 +447,7 @@ Player {
 			
 			guiplayfunc = [{this.pause},{this.play}];
 			guioutbus = [{outbus = 14}, {outbus = 0}, {outbus = 8}, {outbus = 2}];
-			guiformats = [\straight, \stereo, \uhj, \quad, \hex];
+			guiformats = [\straight, \stereo, \uhj, \quad, \hex, \eight];
 			guibfformats = [{xywz = false}, {xywz = true}];
 			scopefun = [
 				{isScope = false; scope.window.close; window.front},
@@ -492,7 +515,7 @@ Player {
 					["UHJ", Color.black, Color(0.5, 0.5, 0.9, 0.5)],
 					["Quad", Color.black, Color(0.5, 0.5, 0.5, 0.9)],
 					["Hexagon", Color.black, Color(0.7, 0.5, 0.7, 0.9)],
-					])
+					["Eight", Color.black, Color.white],					])
 				.action_({arg me;
 					var thisnum;
 					window.view.children[0].focus(true);
