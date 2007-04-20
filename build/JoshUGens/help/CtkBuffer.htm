@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #7f2726; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #7f2726}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a61818}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #042ba5}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #001ab6}
+span.s3 {color: #000000}
+span.s4 {color: #042ba5}
+span.s5 {color: #606060}
+span.s6 {color: #a61818}
+span.s7 {color: #0000bf}
+span.s8 {color: #516b2c}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>CtkBuffer<span class="Apple-tab-span">	</span></b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a note prototyping system</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Part of the CompositionToolKit (Ctk) system. See Ctk help for more details</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>CtkBuffers can be used for both real-time and non-real-time (NRT) purposes, and can be used for soundfile playback, DiskIn allocation and to allocate empty buffer space.</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Class Methods</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*new(path, size, startFrame, numFrames, numChannels, bufnum, server) </b>-</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>bufnum</b> - defaults to nil. If nil, a buffer id will be allocated for you.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>server</b> - defaults to Server.default.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> </span>Depending on the parameters passed to the new method, different kinds buffers will be allocated. <b><span class="Apple-converted-space"> </span></b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>if path is given</b></p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> </span>the soundfile will be completely loaded into a CtkBuffer for use in UGens such as PlayBuf or BufRd. Size and<span class="Apple-converted-space">   </span></p>
+<p class="p1"><span class="Apple-converted-space"> </span>numChannels will be calculated for you with the SoundFile class. startFrame default to 0 and numFrames<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> </span>defaults to 0 (the entire file is read in)</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>if path and size is given</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span></b>A CtkBuffer suitable for use with DiskIn is allocated. The buffer is left open and will be closed when the buffer<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> </span>is freed. Size should be a power of 2 (see the DiskIn file for). startFrame defaults to 0, numFrames defaults to</p>
+<p class="p1"><span class="Apple-converted-space"> </span>the buffer size.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>if only size is given</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span></b>An empty buffer is allocated of size. numChannels defaults to 1.</p>
+<p class="p2"><span class="Apple-converted-space"> </span><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>load(time, sync)</b> - for real-time uses, load the file to the server in 'time' seconds. time defaults to 0.0. sync</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>defaults to false. If true, a messages will post to let you know the buffer has been allocated.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>free(time)</b> - for real-time use, frees and, if necessary, closes the instance of CtkBuffer in 'time' seconds. time</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>defaults to 0.0.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>set(time, startPos, values)</b> - set a value or an Array of values to a CtkBuffer. If using in real-time, the CtkBuffer</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>must be loaded first.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>zero(time) </b>- zero the values in the buffer out.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>write(time, path, headerFormat, sampleFormat, numberOfFrames, starttingFrame)</b> -</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>openWrite(time, path, headerFormat, sampleFormat, numberOfFrames, starttingFrame)</b> -</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>closeWrite(time)</b> -</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>fill(time, newValue, start, numSamples) </b>- fill a buffer with newValue starting at sample start for numSamples.</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>From the Server-Command-Reference: " This is only meant for setting a few samples, not whole buffers or</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>large sections"<span class="Apple-converted-space"> </span></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>write </b>-</p>
+<p class="p1"><span class="Apple-converted-space"> </span><b>query</b> -</p>
+<p class="p1"><span class="Apple-converted-space"> </span><b>get </b>-</p>
+<p class="p1"><span class="Apple-converted-space"> </span><b>addTo(CtkScore)</b> - add this instance of CtkBuffer to a CtkScore for playing or NRT rendering.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>*All buffers are allocated at the beginning of the score. If a CtkScore is played, all CtkBuffers are loaded</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>to the server before performance begins and may cause a delay. All CtkBuffers are freed when<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>performance of a CtkScore is finished.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>numChannels </b>- return the number of channels in a CtkBuffer</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>duration</b> - return the duration of the buffer, in seconds.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>Wave File Commands</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><span class="Apple-converted-space"> </span><b>gen(time, cmd, normalize, wavetable, clear ... args) </b>- See the Wave Fill Commands for more in<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>Server-Command-Reference for more details. This is the basic template used for the following standard<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>b_gen commands. cmd is one of \sine1, \sine2, \sine3, or \cheby. 'normalize' defaults to 0 (don't normalize,<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>1 to normalize), 'wavetable' specifies whether or not the buffer should use Wavetable format (defaults to</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>0, set to 1 for Wavetables) and clear specifies if the buffer should be cleared before values are set or if</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>new values should add to values previously in the buffer (defaults to 1 to clear values, 0 to add to old<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>ones). The format of args is dependent on the wave command (see more below)</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>sine1(time, normalize, wavetable, clear ... args) </b>- args are individual floats that are applied to harmonic<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>partials of a sine wave and can vary in size.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>e.g. args = 1 - create a wave with only a fundamental frequency.</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>e.g. args = 0.2, 1, 0.5, 0.2 - four partials, fundamental has an amplitude of 0.2, first partial's is 1, second</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>partial's is 0.5, and the third partial's is 0.2.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>sine2(time, normalize, wavetable, clear ... args) </b>- args are pairs where the first float specifies the frequency</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>of a partial (where 1 is the base frequency of the buffer) and the second value is its amplitude.</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>e.g. args = 1, 0.5, 4, 0.2 - fundamental has a strength of 0.5, and the third partial has a strength of 0.2.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>sine3(time, normalize, wavetable, clear ... args)</b> - args are sets of three values (similar to above) that<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>correspond to partial frequency, amplitude and phase.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>cheby(time, normalize, wavetable, clear ... args)</b> - args can be a series of floats that correspond to a series</p>
+<p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>of chebyshev polynomials. The first float is for n = 1, where:</p>
+<p class="p1"><span class="Apple-tab-span">	</span> <span class="Apple-tab-span">	</span>cheby(n) = amplitude<span class="Apple-converted-space">  </span>* cos(n * acos(x))</p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>copy()</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>Real-time uses</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p3">s = <span class="s2">Server</span>.internal.boot;</p>
+<p class="p3"><span class="s2">Server</span>.default = s;</p>
+<p class="p4"><br></p>
+<p class="p5">//for use with PlayBuf</p>
+<p class="p5"><span class="s3">a = </span><span class="s4">CtkBuffer</span><span class="s3">(</span><span class="s5">"sounds/a11wlk01-44_1.aiff"</span><span class="s3">).load(sync: </span><span class="s4">true</span><span class="s3">); </span>// load and sync with the server</p>
+<p class="p6"><br></p>
+<p class="p3">b = {<span class="s4">PlayBuf</span>.ar(1, a.bufnum)}.play(s);</p>
+<p class="p6"><span class="Apple-converted-space"> </span></p>
+<p class="p3">b.free;</p>
+<p class="p6"><span class="Apple-converted-space"> </span></p>
+<p class="p3">a.free;</p>
+<p class="p6"><br></p>
+<p class="p5">// for use with DiskIn</p>
+<p class="p5"><span class="s3">a = </span><span class="s4">CtkBuffer</span><span class="s3">(</span><span class="s5">"sounds/a11wlk01-44_1.aiff"</span><span class="s3">, 32768).load(sync: </span><span class="s4">true</span><span class="s3">); </span>// load and sync with the server</p>
+<p class="p6"><br></p>
+<p class="p3">b = {<span class="s4">DiskIn</span>.ar(1, a.bufnum)}.play(s);</p>
+<p class="p6"><br></p>
+<p class="p3">b.free;</p>
+<p class="p6"><span class="Apple-converted-space"> </span></p>
+<p class="p3">a.free;</p>
+<p class="p6"><br></p>
+<p class="p7">// for use with delays</p>
+<p class="p7"><span class="s3">a = </span><span class="s2">CtkBuffer</span><span class="s3">(</span><span class="s5">"sounds/a11wlk01-44_1.aiff"</span><span class="s3">, 32768).load(sync: </span><span class="s2">true</span><span class="s3">); </span>// load and sync with the server</p>
+<p class="p3">b = <span class="s2">CtkBuffer</span>(size: 32768).load(sync: <span class="s2">true</span>); <span class="s6">// load and sync with the server</span></p>
+<p class="p6"><br></p>
+<p class="p3">c = {<span class="s2">var</span> play, del;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>play = <span class="s2">DiskIn</span>.ar(1, a.bufnum);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>del = <span class="s2">BufDelayN</span>.ar(b.bufnum, play, 0.25);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>[play, del]</p>
+<p class="p3"><span class="Apple-tab-span">	</span>}.play(s);</p>
+<p class="p6"><br></p>
+<p class="p3">c.free;</p>
+<p class="p3">a.free;<span class="Apple-converted-space"> </span></p>
+<p class="p3">b.free;</p>
+<p class="p6"><br></p>
+<p class="p7">// allocating and setting values</p>
+<p class="p3">a = <span class="s2">CtkBuffer</span>(size: 2048);</p>
+<p class="p3">a.load(sync: <span class="s2">true</span>);</p>
+<p class="p3">a.set(0.0, 0, <span class="s2">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
+<p class="p6"><br></p>
+<p class="p3">b = {<span class="s2">PlayBuf</span>.ar(1, a.bufnum, loop: 1)}.play(s);</p>
+<p class="p2"><br></p>
+<p class="p7">// change the values in the buffer</p>
+<p class="p3">a.set(0.0, 1024, <span class="s2">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
+<p class="p6"><br></p>
+<p class="p7">// zero it out</p>
+<p class="p3">a.zero;</p>
+<p class="p6"><br></p>
+<p class="p8">// refill them</p>
+<p class="p9">a.set(0.0, 0, <span class="s7">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
+<p class="p9">a.set(0.0, 0, <span class="s7">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
+<p class="p10"><br></p>
+<p class="p9">b.free;</p>
+<p class="p10"><br></p>
+<p class="p9">a.free;</p>
+<p class="p10"><br></p>
+<p class="p8">// with Osc, OscN and Shaper with the fill commands</p>
+<p class="p10"><br></p>
+<p class="p9">a = <span class="s7">CtkBuffer</span>(size: 32768).load(sync: <span class="s7">true</span>);</p>
+<p class="p9">a.sine1(0.0, 1, 1, 1, 0.3);</p>
+<p class="p10"><br></p>
+<p class="p9">b = {<span class="s7">Osc</span>.ar(a.bufnum, 440, mul: 0.5)}.play(s);</p>
+<p class="p9">a.sine1(0.0, 1, 1, 1, 0.3, 0.2, 0.5);</p>
+<p class="p9">a.sine3(0.0, 1, 1, 1, 1, 0.3, 0.0, 4, 0.2, 0.2, 9, 0.4, 0.5);</p>
+<p class="p10"><br></p>
+<p class="p9">b.free;</p>
+<p class="p9">a.free;</p>
+<p class="p11"><b></b><br></p>
+<p class="p9">a = <span class="s7">CtkBuffer</span>(size: 32768).load(sync: <span class="s7">true</span>);</p>
+<p class="p9">a.sine1(0.0, 1, 0, 1, 0.3);</p>
+<p class="p10"><br></p>
+<p class="p9">b = {<span class="s7">OscN</span>.ar(a.bufnum, 440, mul: 0.5)}.play(s);</p>
+<p class="p9">a.sine1(0.0, 1, 0, 1, 0.3, 0.2, 0.5);</p>
+<p class="p9">a.sine3(0.0, 1, 0, 1, 1, 0.3, 0.0, 4, 0.2, 0.2, 9, 0.4, 0.5);</p>
+<p class="p10"><br></p>
+<p class="p9">b.free;</p>
+<p class="p9">a.free;</p>
+<p class="p10"><br></p>
+<p class="p9">a = <span class="s7">CtkBuffer</span>(size: 32768).load(sync: <span class="s7">true</span>);</p>
+<p class="p9">a.cheby(0.0, 1, 1, 1, 0.3, 0.2, 0.5);</p>
+<p class="p10"><br></p>
+<p class="p9">s.scope;</p>
+<p class="p10"><br></p>
+<p class="p9">b = {<span class="s7">Shaper</span>.ar(a.bufnum, <span class="s7">SinOsc</span>.ar(440, 0, 0.5), mul: 0.5)}.play(s);</p>
+<p class="p10"><br></p>
+<p class="p9">a.cheby(0.0, 1, 1, 1, 1.0, 0.5, 0.2);</p>
+<p class="p9">a.cheby(0.0, 1, 1, 1, 0.1, 0.5, 1.0);</p>
+<p class="p9">a.cheby(0.0, 1, 1, 1, 1.0);</p>
+<p class="p10"><br></p>
+<p class="p9">b.free;</p>
+<p class="p9">a.free;</p>
+<p class="p2"><b></b><br></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>Uses with CtkScore</b></p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p3"><span class="s4">var</span> play, buf, score, playfun;</p>
+<p class="p6"><br></p>
+<p class="p3">score = <span class="s4">CtkScore</span>.new;</p>
+<p class="p6"><br></p>
+<p class="p12"><span class="s3">play = </span>CtkNoteObject<span class="s3">(</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">SynthDef</span>(<span class="s8">\play</span>, {<span class="s4">arg</span> buffer, rate = 1, duration, start;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">OffsetOut</span>.ar(0,<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Pan2</span>.ar(</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">PlayBuf</span>.ar(1, buffer, <span class="s4">BufRateScale</span>.kr(buffer) * rate,<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>startPos: start * <span class="s4">BufSampleRate</span>.kr(buffer)) *</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">EnvGen</span>.ar(</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s8">\sin</span>),</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>timeScale: duration)))</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p3"><span class="Apple-tab-span">	</span>);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p13"><span class="s3">buf = </span><span class="s4">CtkBuffer</span><span class="s3">(</span>"sounds/a11wlk01-44_1.aiff"<span class="s3">).addTo(score);</span></p>
+<p class="p6"><br></p>
+<p class="p3">CtkBuffer(size: 1024).set(0.0, 0, Array.fill(1024, {-1.0.rrand(1.0)})).zero(1).addTo(score);</p>
+<p class="p6"><br></p>
+<p class="p3">playfun = {<span class="s4">arg</span> starttime, gestdur, rateenv;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">var</span> note, now, ratio, rate;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>now = 0;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>while({</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ratio = now / gestdur;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rate = rateenv[ratio];</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>play.new(now + starttime, 0.5)</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.buffer_(buf) </span>// the arg will parse the CtkBuffer and grab its bufnum</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.rate_(rate)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.duration_(0.5)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.start_((buf.duration - (0.5 * rate)).rand)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>now = now + 0.2;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>now &lt; gestdur;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p3">playfun.value(0, 20, <span class="s4">Env</span>([0.5, 2.0, 1.0], [0.2, 0.8], [3, -5]));</p>
+<p class="p6"><br></p>
+<p class="p5">// uncomment to play the score</p>
+<p class="p5">//score.play(s);</p>
+<p class="p5">// uncomment to save the score</p>
+<p class="p5">//score.saveToFile("~/Desktop/test.sc".standardizePath);</p>
+<p class="p5">// uncomment to write the score to a soundfile</p>
+<p class="p5">//score.write("~/Desktop/test.aiff".standardizePath,<span class="Apple-converted-space"> </span></p>
+<p class="p5">//<span class="Apple-tab-span">	</span>options: ServerOptions.new.numOutputBusChannels_(2));</p>
+<p class="p3">)</p>
+</body>
+</html>
