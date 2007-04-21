@@ -567,11 +567,21 @@ CtkBuffer : CtkObj {
 			var cond;
 			Routine.run({
 				server.sendBundle(nil, bundle);
+				// are there already messages to send? If yes... SYNC!, then send NOW
+				(messages.size > 0).if({
+					var msg;
+					server.sync(cond);
+					messages.do({arg me; 
+						msg = me[1].postln;
+						server.sendBundle(nil, msg);
+						server.sync(cond);
+						});
+					});
 				sync.if({
 					server.sync(cond);
-					isPlaying = true;
 					("CtkBuffer with bufnum id "++bufnum++" loaded").postln;
 					});
+				isPlaying = true;
 				})
 			});
 		}
@@ -617,8 +627,8 @@ CtkBuffer : CtkObj {
 		}
 	
 	// write a buffer out to a file. For DiskOut usage in real-time, use openWrite and closeWrite
-	write {arg time = 0.0, path, headerFormat, sampleFormat, numberOfFrames = 1, 
-			startingFrame = 0;		
+	write {arg time = 0.0, path, headerFormat = 'aiff', sampleFormat='int16', 
+			numberOfFrames = -1, startingFrame = 0;	
 		var bund;
 		bund = [\b_write, bufnum, path, headerFormat, sampleFormat, numberOfFrames, 
 			startingFrame, 0];
@@ -626,8 +636,8 @@ CtkBuffer : CtkObj {
 		}
 	
 	// prepare a buffer for use with DiskOut
-	openWrite {arg time = 0.0, path, headerFormat, sampleFormat, numberOfFrames = 1, 
-			startingFrame = 0;		
+	openWrite {arg time = 0.0, path, headerFormat = 'aiff', sampleFormat='int16', 
+			numberOfFrames = -1, startingFrame = 0;	
 		var bund;
 		isOpen = true;
 		bund = [\b_write, bufnum, path, headerFormat, sampleFormat, numberOfFrames, 
@@ -639,7 +649,7 @@ CtkBuffer : CtkObj {
 		var bund;
 		isOpen = false;
 		bund = [\b_close, bufnum];
-		this.bufferFunc(time, bufnum);
+		this.bufferFunc(time, bund);
 		}
 		
 	gen {arg time = 0.0, cmd, normalize = 0, wavetable = 0, clear = 1 ... args;
@@ -665,6 +675,15 @@ CtkBuffer : CtkObj {
 		this.gen(time, \cheby, normalize, wavetable, clear, args);
 		}
 		
+	fillWithEnv {arg time = 0.0, env, wavetable = 0.0;
+		env = (wavetable > 0.0).if({
+			env.asSignal(size * 0.5).asWavetable;
+			}, {
+			env.asSignal(size)
+			});
+		this.set(time = 0.0, 0, env);
+		}
+
 	// checks if this is a live, active buffer for real-time use, or being used to build a CtkScore
 	bufferFunc {arg time, bund;
 		isPlaying.if({
