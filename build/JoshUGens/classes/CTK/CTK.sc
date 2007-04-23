@@ -566,10 +566,10 @@ CtkBuffer : CtkObj {
 		SystemClock.sched(time, {
 			var cond;
 			Routine.run({
+				var msg;
 				server.sendBundle(nil, bundle);
 				// are there already messages to send? If yes... SYNC!, then send NOW
 				(messages.size > 0).if({
-					var msg;
 					server.sync(cond);
 					messages.do({arg me; 
 						msg = me[1].postln;

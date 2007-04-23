@@ -551,7 +551,7 @@ ProcEvents {
 		eventArray.flat.do{arg me, i;
 			var thisbutton;
 			level = (i / 15).floor;
-			thisbutton = GUI.button(pracwindow,
+			thisbutton = GUI.button.new(pracwindow,
 				Rect(5 + (stripwidth * (i % 15)),
 					5 + ((level * stripheight) + (level * 5)),
 					stripwidth * 0.9, stripheight * 0.1))

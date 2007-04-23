@@ -320,20 +320,22 @@ BFMonitor {
 					gate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
-				Out.ar(out, BFDecode.ar(w, x, y, z, [0.25, -0.25, -0.75, -1.25] * pi) * env);
+				Out.ar(out, BFDecode1.ar(w, x, y, z, [0.25, -0.25, -0.75, -1.25] * pi) * env);
 			}, {arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
 					gate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
-				Out.ar(out, BFDecode.ar(w, x, y, z, [0.1666, -0.1666, -0.5, -0.8333, 0.8333, 0.5]
+				Out.ar(out, BFDecode1.ar(w, x, y, z, [0.1666, -0.1666, -0.5, -0.8333, 0.8333, 0.5]
 					* pi) * env);
 			}
 			];
 		Routine.run({
 			isPlaying.not.if({	
 				isPlaying = true;
+				"Routine".postln;
+				formats[formatOut].postln;
 				synthdef = players[formats[formatOut]].asSynthDef.send(server);
 				nodeID = server.nextNodeID;
 				server.sync(cond);
@@ -363,9 +365,9 @@ BFMonitor {
 		formats = IdentityDictionary[
 			\straight -> 0,
 			\stereo -> 1,
-			\uhj ->2,
+			\uhj -> 2,
 			\quad -> 3,
-			\hex -> 4,
+			\hex -> 4
 			];	
 		}
 	}

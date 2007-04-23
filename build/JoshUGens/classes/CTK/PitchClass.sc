@@ -46,7 +46,18 @@ PitchClass {
 		gacc = accToGuido[acc]
 		^note.asString++gacc++oct.asInteger;
 		}
-	
+	// can be a PitchClass or float that represents a keynum (quartertones are okay this way)
+	invert {arg center;
+		var change;
+		center = center.isKindOf(PitchClass).if({
+			center.keynum
+			}, {
+			center ?? {60}
+			});
+		change = this.keynum - center * 2;
+		^this.class.new(this.keynum - change)
+		}
+		
 //	// direction should be \up or \down - aPitchInterval can be an instance of PitchInterval
 	// OR an + or - integer (direction can be exculded in this case
 	transpose {arg aPitchInterval, direction = \up;
