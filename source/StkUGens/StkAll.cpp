@@ -597,34 +597,39 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	
-	float in00=IN0(0);
-	float in01=IN0(1);
-	float in02=IN0(2);
-	float in03=IN0(3);
- 	if(IN0(4) > 0) { 
+	float freq  	= IN0(0);
+	float bowpressure	= IN0(1);
+	float bowpos	= IN0(2);
+	
+	//float vibfreq	= IN0(3); // Not used yet
+	//float vibgain	= IN0(4); // Not used yet
+	
+	float loudness	= IN0(5);
+	float trig		= IN0(6);
+ 	if(trig > 0) { 
 		if(unit->trig < 0) {
 
 				unit->bowed->noteOff( 0);
-			    unit->bowed->noteOn(IN0(0) ,1);
+			    unit->bowed->noteOn(freq, 1);
 				};
 			};
-	unit->trig = IN0(4);
+	unit->trig = trig;
 	 		
-	if(in00 != unit->freq) {
-		unit->bowed->setFrequency(in00);  
-		unit->freq = in00;};
+	if(freq != unit->freq) {
+		unit->bowed->setFrequency(freq);  
+		unit->freq = freq;};
 	
-	if(in01 != unit->bowpressure) {
-		unit->bowed->controlChange(__SK_BowPressure_, in01);
-		unit->bowpressure = in01; };
+	if(bowpressure != unit->bowpressure) {
+		unit->bowed->controlChange(__SK_BowPressure_, bowpressure);
+		unit->bowpressure = bowpressure; };
  	
-	if(in02 != unit->bowposition) {
-		unit->bowed->controlChange(__SK_BowPosition_, in02);
-		unit->bowposition = in02; };
+	if(bowpos != unit->bowposition) {
+		unit->bowed->controlChange(__SK_BowPosition_, bowpos);
+		unit->bowposition = bowpos; };
  		
-	if(in03 != unit->loudness) {
-		unit->bowed->controlChange(__SK_AfterTouch_Cont_, in03);
-		unit->loudness = in03; };
+	if(loudness != unit->loudness) {
+		unit->bowed->controlChange(__SK_AfterTouch_Cont_, loudness);
+		unit->loudness = loudness; };
 
  	for (int i=0; i < inNumSamples; ++i)
 	{
