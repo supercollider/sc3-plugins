@@ -9,19 +9,17 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a61818}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001ab6}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000bf}
+span.s2 {color: #001ab6}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
-span.s5 {color: #bf0000}
-span.s6 {color: #007300}
+span.s5 {color: #a61818}
+span.s6 {color: #347019}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -39,7 +37,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b><span class="Apple-converted-space"> </span>bufnum</b> - defaults to nil. If nil, a buffer id will be allocated for you.</p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>server</b> - defaults to Server.default.</p>
 <p class="p2"><span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space"> </span>Depending on the parameters passed to the new method, different kinds buffers will be allocated. <b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><span class="Apple-converted-space"> </span>Depending on the parameters passed to the new method, different kinds buffers will be allocated. There are also creation methods for the more commonly used buffer types. <b><span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>if path is given</b></p>
 <p class="p2"><span class="Apple-converted-space"> </span></p>
@@ -57,6 +55,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span></b>An empty buffer is allocated of size. numChannels defaults to 1.</p>
 <p class="p2"><span class="Apple-converted-space"> </span><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*diskin(path, size, startFrame, server) </b>- create a CtkBuffer suitable for DiskIn usage. size defaults to 32768.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*playbuf(path, startFrame, numFrames, server) </b>- create a CtkBuffer suitable for PlayBuf usage.</p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*buffer(size, numChannels, server) </b>- create a CtkBuffer of empty size and numChannels.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>load(time, sync)</b> - for real-time uses, load the file to the server in 'time' seconds. time defaults to 0.0. sync</p>
 <p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>defaults to false. If true, a messages will post to let you know the buffer has been allocated. If other<span class="Apple-converted-space"> </span></p>
 <p class="p1"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span>methods have been applied to a CtkBuffer (Wave fill commands or other fill or zero commands), these<span class="Apple-converted-space"> </span></p>
@@ -156,7 +158,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3">a.set(0.0, 0, <span class="s2">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
 <p class="p4"><br></p>
 <p class="p3">b = {<span class="s2">PlayBuf</span>.ar(1, a.bufnum, loop: 1)}.play(s);</p>
-<p class="p6"><br></p>
+<p class="p2"><br></p>
 <p class="p5">// change the values in the buffer</p>
 <p class="p3">a.set(0.0, 1024, <span class="s2">Array</span>.fill(1024, {-1.0.rrand(1.0)}));</p>
 <p class="p4"><br></p>
@@ -182,7 +184,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p3">b.free;</p>
 <p class="p3">a.free;</p>
-<p class="p6"><br></p>
+<p class="p2"><br></p>
 <p class="p3">a = <span class="s2">CtkBuffer</span>(size: 32768).load(sync: <span class="s2">true</span>);</p>
 <p class="p3">a.sine1(0.0, 1, 0, 1, 0.3);</p>
 <p class="p4"><br></p>
@@ -232,16 +234,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p3">b.free;</p>
 <p class="p3">a.free;</p>
-<p class="p6"><br></p>
+<p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>Uses with CtkScore</b></p>
 <p class="p2"><br></p>
-<p class="p7">(</p>
+<p class="p3">(</p>
 <p class="p3"><span class="s2">var</span> play, buf, score, playfun;</p>
 <p class="p4"><br></p>
 <p class="p3">score = <span class="s2">CtkScore</span>.new;</p>
 <p class="p4"><br></p>
-<p class="p8"><span class="s3">play = </span>CtkNoteObject<span class="s3">(</span></p>
+<p class="p6"><span class="s3">play = </span>CtkNoteObject<span class="s3">(</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s6">\play</span>, {<span class="s2">arg</span> buffer, rate = 1, duration, start;</p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">OffsetOut</span>.ar(0,<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Pan2</span>.ar(</p>
@@ -253,7 +255,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p3"><span class="Apple-tab-span">	</span>);</p>
 <p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s3">buf = </span><span class="s2">CtkBuffer</span><span class="s3">(</span>"sounds/a11wlk01-44_1.aiff"<span class="s3">).addTo(score);</span></p>
+<p class="p7"><span class="s3">buf = </span><span class="s2">CtkBuffer</span><span class="s3">(</span>"sounds/a11wlk01-44_1.aiff"<span class="s3">).addTo(score);</span></p>
 <p class="p4"><br></p>
 <p class="p3"><span class="s2">CtkBuffer</span>(size: 1024).set(0.0, 0, <span class="s2">Array</span>.fill(1024, {-1.0.rrand(1.0)})).zero(1).addTo(score);</p>
 <p class="p4"><br></p>
@@ -283,6 +285,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">// uncomment to write the score to a soundfile</p>
 <p class="p5">//score.write("~/Desktop/test.aiff".standardizePath,<span class="Apple-converted-space"> </span></p>
 <p class="p5">//<span class="Apple-tab-span">	</span>options: ServerOptions.new.numOutputBusChannels_(2));</p>
-<p class="p7">)</p>
+<p class="p3">)</p>
 </body>
 </html>

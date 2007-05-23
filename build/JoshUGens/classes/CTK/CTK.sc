@@ -145,7 +145,7 @@ CtkScore {
 			"Buffer loaded!".postln;
 			});		
 		this.sortScore;
-		score.recordNRT("trashme", path, sampleRate: sampleRate, headerFormat: headerFormat,
+		score.recordNRT("/tmp/trashme", path, sampleRate: sampleRate, headerFormat: headerFormat,
 		 	sampleFormat: sampleFormat, options: options, duration: duration);
 		}
 
@@ -224,15 +224,47 @@ CtkObj {
 	}
 	
 CtkNode : CtkObj {
-	classvar addActions;
+	classvar addActions, <nodes, <servers, <resps, cmd;
 
 	var <addAction, <target, <server;
-	var <node, <messages, <server, <isPlaying = false, <starttime, <>willFree = false;
+	var <node, <messages, <starttime, <>willFree = false;
+	
+	watch {
+		var thisidx, idx;
+		servers.includes(server).not.if({
+			idx = servers.size;
+			servers = servers.add(server); // add the server
+			nodes = nodes.add([]); // add an array for these nodes to live in
+			resps = resps.add(OSCresponderNode(server.addr, '/n_end', {arg time, resp, msg;
+				nodes[idx].remove(msg[1])}).add); // add a responder to remove nodes
+			cmd.if({cmd = false; CmdPeriod.doOnce({this.cmdPeriod})});
+			});
+		thisidx = servers.indexOf(server);
+		nodes[thisidx] = nodes[thisidx].add(node);
+		}
+	
+	isPlaying {
+		var idx;
+		(servers.size > 0).if({
+			idx = servers.indexOf(server);
+			nodes[idx].includes(node).if({^true}, {^false});
+			}, {
+			^false
+			})
+		}
+		
+	cmdPeriod {
+		resps.do({arg me; me.remove});
+		resps = [];
+		servers = [];
+		nodes = [];
+		cmd = true;
+		}
 		
 	set {arg time = 0.0, key, value;
 		var bund;
 		bund = [\n_set, node, key, value];
-		isPlaying.if({ // if playing... send the set message now!
+		this.isPlaying.if({ // if playing... send the set message now!
 			SystemClock.sched(time, {
 				server.sendBundle(nil, bund);
 				});
@@ -245,7 +277,7 @@ CtkNode : CtkObj {
 		var bund;
 		values = values.flat;
 		bund = [\n_setn, node, key, values.size] ++ values;
-		isPlaying.if({
+		this.isPlaying.if({
 			SystemClock.sched(time, {server.sendBundle(nil, bund)});
 			}, {
 			messages = messages.add([time+starttime, bund])
@@ -255,12 +287,6 @@ CtkNode : CtkObj {
 	release {arg time = 0.0, key = \gate;
 		this.set(time, key, 0);
 		willFree = true;
-		isPlaying.if({
-			SystemClock.sched(time, {
-				isPlaying = false;
-//				node = server.nextNodeID; // if playing, 
-				});
-			});
 		^this;
 		}
 	
@@ -269,9 +295,8 @@ CtkNode : CtkObj {
 		var bund;
 		bund = [\n_free, node];
 		willFree = true;
-		isPlaying.if({
+		this.isPlaying.if({
 			SystemClock.sched(time, {server.sendBundle(nil, bund)});
-			isPlaying = false;
 			}, {
 			addMsg.if({
 				messages = messages.add([time+starttime, bund]);
@@ -293,6 +318,10 @@ CtkNode : CtkObj {
 			3 -> 3,
 			4 -> 4
 			];
+		nodes = [];
+		servers = [];
+		resps = [];
+		cmd = true;
 		}
 	}	
 
@@ -300,7 +329,7 @@ CtkNode : CtkObj {
 // create Scores and don't directly send messages to the Server
 
 CtkNote : CtkNode {
-	
+
 	var <duration, <synthdefname,
 		<endtime, <args, <setnDict, <mapDict;
 			
@@ -308,6 +337,7 @@ CtkNote : CtkNode {
 		server = server ?? {Server.default};
 		^super.newCopyArgs(addAction, target, server).init(starttime, duration, synthdefname);
 		}
+		
 
 	init {arg argstarttime, argduration, argsynthdefname;
 		starttime = argstarttime;
@@ -328,7 +358,7 @@ CtkNote : CtkNode {
 			this.addUniqueMethod(argname.asSymbol, {arg note; args.at(argname)});
 			this.addUniqueMethod((argname.asString++"_").asSymbol, {arg note, newValue;
 				args.put(argname.asSymbol, newValue);
-				isPlaying.if({
+				this.isPlaying.if({
 					// real-time support
 					case {
 						(newValue.isArray || newValue.isKindOf(Env))
@@ -416,7 +446,7 @@ CtkNote : CtkNode {
 	// support playing and releasing notes ... not for use with scores
 	play {arg latency;
 		var bund;
-		isPlaying.not.if({
+		this.isPlaying.not.if({
 			bund = this.buildBundle;
 			server.sendBundle(latency, this.buildBundle);
 			setnDict.keysValuesDo({arg key, val;
@@ -425,7 +455,8 @@ CtkNote : CtkNode {
 			mapDict.keysValuesDo({arg key, val;
 				server.sendBundle(latency, [\n_map, node, key, val]);
 				});
-			isPlaying = true;
+			this.watch;
+//			isPlaying = true;
 			// if a duration is given... kill it
 			duration.notNil.if({
 				SystemClock.sched(duration, {this.free(addMsg: false)})
@@ -435,7 +466,7 @@ CtkNote : CtkNode {
 			"This instance of CtkNote is already playing".warn;
 			})
 		}
-
+		
 	}
 
 /* methods common to CtkGroup and CtkNote need to be put into their own class (CtkNode???) */
@@ -482,7 +513,8 @@ CtkGroup : CtkNode {
 	play {arg time = 0.0;
 //		SystemClock.sched(time, {server.sendBundle(nil, this.buildBundle)});
 		server.sendBundle(nil, this.buildBundle);
-		isPlaying = true;
+		this.watch;
+//		isPlaying = true;
 		isGroupPlaying = true;
 		^this;
 		}
@@ -493,7 +525,7 @@ CtkGroup : CtkNode {
 		bund2 = [\n_free, node];
 		isGroupPlaying.if({
 			SystemClock.sched(0.0, {server.sendBundle(nil, bund1, bund2)});
-			isPlaying = false;
+//			isPlaying = false;
 			isGroupPlaying = false;
 			}, {
 			time = time ?? {0.0};
@@ -507,7 +539,7 @@ CtkGroup : CtkNode {
 		bund2 = [\n_free, node];
 		isGroupPlaying.if({
 			SystemClock.sched(0.0, {server.sendBundle(nil, bund1, bund2)});
-			isPlaying = false;
+//			isPlaying = false;
 			isGroupPlaying = false;
 			}, {
 			time = time ?? {0.0};
@@ -528,7 +560,23 @@ CtkBuffer : CtkObj {
 	*new {arg path, size, startFrame = 0, numFrames, numChannels, bufnum, server;
 		^this.newCopyArgs(bufnum, path, size, startFrame, numFrames, numChannels, server).init;
 		}
+	
+	*diskin {arg path, size = 32768, startFrame = 0, server;
+		^this.new(path, size, startFrame, server: server)
+		}
 		
+//	*diskout {arg path, size, numChannels, server;
+//		^this.new(size: size, numChannels: numChannels, server: server)
+//		}
+		
+	*playbuf {arg path, startFrame = 0, numFrames = 0, server;
+		^this.new(path, startFrame: startFrame, numFrames: numFrames, server: server)
+		}
+		
+	*buffer {arg size, numChannels, server;
+		^this.new(size: size, numChannels: numChannels, server: server)
+		}
+
 	init {
 		var sf, nFrames;
 		server = server ?? {Server.default};
@@ -562,7 +610,7 @@ CtkBuffer : CtkObj {
 		freeBundle = [\b_free, bufnum];			
 		}
 		
-	load {arg time = 0.0, sync = false;
+	load {arg time = 0.0, sync = true;
 		SystemClock.sched(time, {
 			var cond;
 			Routine.run({

@@ -84,7 +84,7 @@ GuidoVoice {
 			} {
 				anEvent.isKindOf(GuidoMelody)
 			} {
-				anEvent.guidoNotes.do({arg me; events = events.add(me)})
+				anEvent.notes.do({arg me; events = events.add(me)})
 			} {
 				true
 			} {
@@ -95,16 +95,15 @@ GuidoVoice {
 	sort {
 		events = events.sort({arg a, b; a.beat < b.beat});
 		}
-				
+					
 	fillWithRests {
 		var curbeat, lastbeat, eventcopy;
 		curbeat = 1.0;
 		eventcopy = events.copy;
 		// check for gaps... fill with rests
 		eventcopy.do{arg me;
-			(me.beat > curbeat).if({
-//				eventcopy = eventcopy.add(GuidoRest(curbeat, me.beat - curbeat));
-				this.add(GuidoRest(curbeat, me.beat - curbeat));
+			(me.beat > (curbeat + 0.02)).if({
+				this.add(GuidoRest(curbeat, (me.beat - curbeat)));
 				}, {
 				(me.beat < curbeat).if({
 					"This voice appears to have overlapping events. Voices can't overlap, though two voices may have the same staffid.".warn
@@ -234,12 +233,16 @@ GuidoEvent {
 		file.write(string);
 		string.postln;
 		}
+		
+	calcRhyDur {arg duration;
+		^(duration / 4).asFraction(64, false);
+		}
 	}
 
 // aPitchClass should be an instance of PitchClass or an integer keynum
 GuidoNote : GuidoEvent {
-	var <>note, <>beat, <>duration, <>marks;
-	*new {arg aPitchClass, beat, duration, marks;
+	var <note, <>beat, <>duration, <>marks, <endtime;
+	*new {arg aPitchClass = 60, beat = 1.0, duration = 1.0, marks;
 		(beat >= 1).if({
 			^super.newCopyArgs(aPitchClass, beat, duration, marks.asArray).init;
 			}, {
@@ -249,15 +252,25 @@ GuidoNote : GuidoEvent {
 	}
 	
 	init {
-		note.isKindOf(Number).if({
-			note = PitchClass(note);
+		this.note_(note);
+//		note.isKindOf(Number).if({
+//			note = PitchClass(note);
+//			});
+		endtime = beat + duration;
+		}
+		
+	note_ {arg aPitchClass;
+		aPitchClass.isKindOf(Number).if({
+			note = PitchClass(aPitchClass);
+			}, {
+			note = aPitchClass
 			})
 		}
 		
 	// both return a new instance of GuidoNote
 	// interval can be PitchInterval or +-integer
-	transpose {arg interval;
-		^this.class.new(note.transpose(interval), beat, duration, marks);
+	transpose {arg interval, dir;
+		^this.class.new(note.transpose(interval, dir), beat, duration, marks);
 		}
 	
 	// center be a PitchClass or number representing a keynum 
@@ -272,7 +285,7 @@ GuidoNote : GuidoEvent {
 		
 	outputString {
 		var string, markstring, articulation = 0;
-		var rhythm = (duration / 4).asFraction;
+		var rhythm = this.calcRhyDur(duration);
 		markstring = "";
 		marks.do({arg me; me.isKindOf(GuidoArticulation).if({articulation = articulation + 1})});
 		(marks.size > 0).if({
@@ -289,7 +302,7 @@ GuidoNote : GuidoEvent {
 // augment and diminute
 
 GuidoMelody : GuidoEvent {
-	var <>guidoNotes;
+	var <>notes;
 	
 	*new {arg ... guidoNotes;
 		^super.newCopyArgs(guidoNotes.flat);
@@ -298,69 +311,70 @@ GuidoMelody : GuidoEvent {
 	outputString {
 		var string;
 		string = "";
-		guidoNotes.do({arg me;
+		notes.do({arg me;
 			string = string ++ me.outputString;
 			});
 		^string;
 		}
 
 	// interval can be PitchInterval or +-integer		
-	transpose {arg interval;
-		var notes;
-		notes = Array.newClear(guidoNotes.size);
-		guidoNotes.do({arg me, i;
-			notes[i] = me.transpose(interval);
+	transpose {arg interval, dir;
+		var thesenotes;
+		thesenotes = Array.newClear(notes.size);
+		notes.do({arg me, i;
+			thesenotes[i] = me.transpose(interval, dir);
 			})
-		^this.class.new(notes);
+		^this.class.new(thesenotes);
 		}
 		
 	invert {arg center;
-		var notes;
-		notes = Array.newClear(guidoNotes.size);
-		guidoNotes.do({arg me, i;
-			notes[i] = me.invert(center);
+		var thesenotes;
+		thesenotes = Array.newClear(notes.size);
+		center = center ?? this.notes[0].note;
+		notes.do({arg me, i;
+			thesenotes[i] = me.invert(center);
 			})
-		^this.class.new(notes);
+		^this.class.new(thesenotes);
 		}
 		
 	scaleDur {arg timeScale;
-		var notes, start, curdur;
-		start = guidoNotes[0].beat;
-		notes = Array.newClear(guidoNotes.size);
-		guidoNotes.do({arg me, i;
-			notes[i] = me.copy;
-			notes[i].beat_(((notes[i].beat - start) * timeScale) + start);
-			notes[i].duration_(notes[i].duration * timeScale);
+		var thesenotes, start, curdur;
+		start = notes[0].beat;
+		thesenotes = Array.newClear(notes.size);
+		notes.do({arg me, i;
+			thesenotes[i] = me.copy;
+			thesenotes[i].beat_(((thesenotes[i].beat - start) * timeScale) + start);
+			thesenotes[i].duration_(thesenotes[i].duration * timeScale);
 			});
-		^this.class.new(notes);	
+		^this.class.new(thesenotes);	
 		}
 		
 	retrograde {
-		var notes, start, nextdur, size;
-		start = guidoNotes[0].beat;
-		size = guidoNotes.size;
+		var thesenotes, start, nextdur, size;
+		start = notes[0].beat;
+		size = notes.size;
 		nextdur = 0.0;
-		notes = Array.newClear(size);
-		guidoNotes.reverse.do({arg me, i;
+		thesenotes = Array.newClear(size);
+		notes.reverse.do({arg me, i;
 			start = start + nextdur;
-			notes[i] = me.copy;
+			thesenotes[i] = me.copy;
 			(i < (size-1)).if({
-				nextdur = guidoNotes[size - 1 - i].beat - guidoNotes[size - 2 - i].beat;
+				nextdur = notes[size - 1 - i].beat - notes[size - 2 - i].beat;
 				});
-			notes[i].beat = start;
+			thesenotes[i].beat = start;
 			});
-		^this.class.new(notes);	
+		^this.class.new(thesenotes);	
 		}
 	
 	// add to all starttimes
 	offset {arg time;
-		var notes;
-		notes = Array.newClear(guidoNotes.size);
-		guidoNotes.do({arg me, i;
-			notes[i] = me.copy;
-			notes[i].beat_(notes[i].beat + time);
+		var thesenotes;
+		thesenotes = Array.newClear(notes.size);
+		notes.do({arg me, i;
+			thesenotes[i] = me.copy;
+			thesenotes[i].beat_(thesenotes[i].beat + time);
 			});
-		^this.class.new(notes);
+		^this.class.new(thesenotes);
 		}
 	}
 	
@@ -375,7 +389,7 @@ GuidoRest : GuidoEvent {
 		
 	outputString {
 		var rhythm;
-		rhythm = (duration / 4).asFraction;
+		rhythm = this.calcRhyDur(duration);
 		^"\t_"++"*"++rhythm[0]++"/"++rhythm[1]++" \t%% "++beat++"\n"
 		}
 	}
@@ -399,7 +413,7 @@ GuidoMeter : GuidoEvent {
 GuidoChord : GuidoEvent {
 	var <>note, <>beat, <>duration, <>marks;
 	
-	*new {arg aPitchClassArray, beat, duration, marks;
+	*new {arg aPitchClassArray, beat = 1.0, duration = 1.0, marks;
 		(beat >= 1).if({
 			^super.newCopyArgs(aPitchClassArray, beat, duration, marks.asArray)
 			}, {
@@ -410,12 +424,13 @@ GuidoChord : GuidoEvent {
 		
 	outputString {
 		var string, markstring, notestring, numnotes, articulation = 0;
-		var rhythm = (duration / 4).asFraction;
+		var rhythm = this.calcRhyDur(duration);
 		marks.do({arg me; me.isKindOf(GuidoArticulation).if({articulation = articulation + 1})});
 		markstring = "";
 		numnotes = note.size;
 		notestring = "{ ";
 		note.do({arg me, i;
+			me.isKindOf(Number).if({me = PitchClass(me)});
 			notestring = notestring ++ me.guidoString ++ "*"++rhythm[0]++"/"++rhythm[1];
 			(i != (numnotes-1)).if({
 				notestring = notestring ++ ", ";
