@@ -50,25 +50,25 @@ BFEncodeSter : Panner {
 
 }
 
-BFDecode1 : Panner {
+BFDecode1 : UGen {
 	
 	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, mul = 1, add = 0;
 		^this.multiNew('audio', w, x, y, z, azimuth, elevation ).madd(mul, add);
 	}
 	
 	*ar1 {arg w, x, y, z, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, mul = 1, 
-			add = 0;
+			add = 0, scaleflag = 1;
 		var dist, scaler;
 		dist = ((maxDist - distance) / 345);
-		scaler = 1/((distance/maxDist)**1.5);
-		^DelayC.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
+		scaler = if(scaleflag, 1/((distance/maxDist)**1.5), 1);
+		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
 	}
 	
-	init { arg ... theInputs;
-		inputs = theInputs;		
-		channels = [OutputProxy(\audio,this, 0)];
-		^channels
-	}
+//	init { arg ... theInputs;
+//		inputs = theInputs;		
+//		channels = [OutputProxy(\audio,this, 0)];
+//		^channels
+//	}
 // 	checkInputs { ^this.checkNInputs(4) }
 }
 

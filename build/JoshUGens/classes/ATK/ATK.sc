@@ -31,7 +31,7 @@ DistanceB : Panner {
 }
 
 // canonical dominance - Y, Z -> 0
-// dom value should be between 0 and 1?
+// dom value should be between -0.5 and 1?
 
 Dominate : Panner {	
 	*ar { arg w, x, y, z, dom;

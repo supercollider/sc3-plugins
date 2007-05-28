@@ -659,3 +659,49 @@ GuidoTimeSig {
 		}	
 	}
 
+GuidoTime {
+	var <>now, <>tollerance;
+	
+	*new {arg curtime = 1.0, tollerance = 0.98;
+		^this.newCopyArgs(curtime, tollerance)
+		}
+		
+	add {arg timeval;
+		var temp;
+		temp = now + timeval;
+		now = this.check(temp);
+		}
+	
+	// this.check should be run everytime 'now' is updated
+	check {arg timeval;
+		^(((timeval % 1) >= tollerance).if({timeval.round}, {timeval}));
+		}
+		
+	value {
+		^now;
+		}
+		
+	+ {arg aVal;
+		^now + aVal;
+		}
+	
+	- {arg aVal;
+		^now - aVal;
+		}
+	
+	* {arg aVal;
+		^now * aVal;
+		}
+	/ {arg aVal;
+		^now / aVal
+		}
+		
+	+= {arg aVal;
+		var temp;
+		temp = this.check(now + aVal);
+		now = temp;
+		^temp
+		}
+	
+		
+}
