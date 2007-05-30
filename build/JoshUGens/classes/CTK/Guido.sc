@@ -682,6 +682,7 @@ GuidoTime {
 		}
 		
 	+ {arg aVal;
+		aVal = (aVal.isKindOf(GuidoTime)).if({aVal.now}, {aVal});
 		^now + aVal;
 		}
 	

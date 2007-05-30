@@ -64,6 +64,7 @@ CtkScore {
 	saveToFile {arg path;
 		this.addBuffers;
 		this.sortScore;
+		this.mergeTimes;
 		score.saveToFile(path);
 		}
 	
@@ -88,6 +89,24 @@ CtkScore {
 		buffermsg.do({arg me;
 			score.add(me);
 			});			
+		}
+	
+	mergeTimes {
+		var idx, ascore;
+		idx = 0;
+		ascore = score.score;
+		while({
+			(ascore[idx][0].round(0.00001) == ascore[idx+1][0].round(0.00001)).if({
+				ascore[idx+1].removeAt(0);
+				ascore[idx+1].do({arg me;
+					ascore[idx] = ascore[idx].add(me);
+					});
+				ascore.removeAt(idx+1);
+				}, {
+				idx = idx + 1;
+				});
+			idx < (ascore.size-1);
+			});		
 		}
 		
 	play {arg server, clock, quant = 0.0;
@@ -126,6 +145,7 @@ CtkScore {
 				"Buffer loaded!".postln;
 				});
 			this.sortScore; // sort the score
+			this.mergeTimes;
 			score.play(server, clock, quant); // finally... play the score!
 			});
 		}
@@ -133,6 +153,7 @@ CtkScore {
 	// SC2 it!
 	write {arg path, duration, sampleRate = 44100, headerFormat = "AIFF", 
 			sampleFormat = "int16", options;
+		var newscore;
 		(buffers.size > 0).if({
 			buffers.do({arg me;
 				score.score.addFirst([0, me.bundle]);
@@ -145,7 +166,9 @@ CtkScore {
 			"Buffer loaded!".postln;
 			});		
 		this.sortScore;
-		score.recordNRT("/tmp/trashme", path, sampleRate: sampleRate, headerFormat: headerFormat,
+		this.mergeTimes;
+		score.recordNRT("/tmp/trashme", path, sampleRate: sampleRate, 
+			headerFormat: headerFormat,
 		 	sampleFormat: sampleFormat, options: options, duration: duration);
 		}
 
@@ -182,19 +205,25 @@ CtkProtoNotes {
 	
 		
 CtkNoteObject {
-	var <synthdef, <synthdefname, args;
-	*new {arg synthdef;
-		^super.newCopyArgs(synthdef).init;
+	var <synthdef, <server, <synthdefname, args;
+	*new {arg synthdef, server;
+		^super.newCopyArgs(synthdef, server).init;
 		}
 		
 	init {
 		var sargs, sargsdefs;
-		synthdef.load(Server.default);
+		synthdef.load(server ?? {Server.default});
 		args = Dictionary.new;
 		synthdefname = synthdef.name;
-		synthdef.allControlNames.do({arg ctl;
+		synthdef.allControlNames.do({arg ctl, i;
 			var def, name = ctl.name;
-			def = ctl.defaultValue ?? {[]};
+			def = ctl.defaultValue ?? {
+				(i == (synthdef.allControlNames.size - 1)).if({
+					synthdef.controls[ctl.index..synthdef.controls.size-1];
+					}, {
+					synthdef.controls[ctl.index..synthdef.allControlNames[i+1].index-1];
+					})
+				};
 			args.add(name -> def);
 			})
 		}
@@ -438,7 +467,7 @@ CtkNote : CtkNode {
 	bundle {
 		messages = messages.add(this.newBundle);
 		(duration.notNil && willFree.not).if({
-			messages = messages.add([starttime + duration, [\n_free, node]]);
+			messages = messages.add([(starttime + duration).asFloat, [\n_free, node]]);
 			});
 		^messages;
 		}
@@ -471,18 +500,22 @@ CtkNote : CtkNode {
 
 /* methods common to CtkGroup and CtkNote need to be put into their own class (CtkNode???) */
 CtkGroup : CtkNode {
-	var <endtime = nil, <isGroupPlaying = false;
+	var <endtime = nil, <duration, <isGroupPlaying = false;
 	
-	*new {arg starttime = 0.0, node, addAction = 0, target = 1, server;
-		^super.newCopyArgs(addAction, target, server).init(starttime);
+	*new {arg starttime = 0.0, duration, node, addAction = 0, target = 1, server;
+		^super.newCopyArgs(addAction, target, server).init(starttime, duration);
 		}
 		
-	*play {arg starttime = 0.0, node, addAction = 0, target = 1, server;
-		^this.new(starttime, node, addAction, target, server).play;
+	*play {arg starttime = 0.0, duration, node, addAction = 0, target = 1, server;
+		^this.new(starttime, duration, node, addAction, target, server).play;
 		}
 		
-	init {arg argstarttime;
+	init {arg argstarttime, argduration;
 		starttime = argstarttime;
+		duration = argduration;
+		duration.notNil.if({
+			endtime = starttime + duration
+			});
 		(target.isKindOf(CtkNote) || target.isKindOf(CtkGroup)).if({
 			target = target.node
 			});
@@ -506,15 +539,25 @@ CtkGroup : CtkNode {
 		
 	bundle {
 		messages = messages.add(this.newBundle);
+		(duration.notNil).if({
+			messages = messages.add([(starttime + duration).asFloat, 
+				[\g_freeAll, node], [\n_free, node]]);
+			});
 		^messages;
 		}
 
 	// create the group for RT uses
-	play {arg time = 0.0;
-//		SystemClock.sched(time, {server.sendBundle(nil, this.buildBundle)});
-		server.sendBundle(nil, this.buildBundle);
+	play {arg time;
+		var bundle = this.buildBundle;
+		time.notNil.if({
+			SystemClock.sched(time, {server.sendBundle(nil, bundle)});
+			}, {
+			server.sendBundle(nil, bundle);
+			});
+		duration.notNil.if({
+			SystemClock.sched(duration, {this.freeAll})
+			});
 		this.watch;
-//		isPlaying = true;
 		isGroupPlaying = true;
 		^this;
 		}
@@ -524,27 +567,15 @@ CtkGroup : CtkNode {
 		bund1 = [\g_freeAll, node];
 		bund2 = [\n_free, node];
 		isGroupPlaying.if({
-			SystemClock.sched(0.0, {server.sendBundle(nil, bund1, bund2)});
-//			isPlaying = false;
+			SystemClock.sched(time, {server.sendBundle(nil, bund1, bund2)});
 			isGroupPlaying = false;
 			}, {
-			time = time ?? {0.0};
 			messages = messages.add([starttime + time, bund1, bund2]);
 			})
 		}
 	
-	deepFree {arg time;
-		var bund1, bund2;
-		bund1 = [\g_freeAll, node];
-		bund2 = [\n_free, node];
-		isGroupPlaying.if({
-			SystemClock.sched(0.0, {server.sendBundle(nil, bund1, bund2)});
-//			isPlaying = false;
-			isGroupPlaying = false;
-			}, {
-			time = time ?? {0.0};
-			messages = messages.add([starttime + time, bund1, bund2]);
-			})
+	deepFree {arg time = 0.0;
+		this.freeAll(time);
 		}
 		
 	}
