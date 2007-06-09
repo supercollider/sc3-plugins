@@ -37,7 +37,7 @@
 		// check if starttime is greater then 0... recalculate first part of env
 		if(start > 0, {
 			temp = newtimes[inc]; //newenv.times[inc];
-			("Temp =" ++ temp).postln;
+//			("Temp = " ++ temp).postln;
 			while ({
 				temp < start
 				}, {

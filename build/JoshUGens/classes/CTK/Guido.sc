@@ -106,7 +106,7 @@ GuidoVoice {
 				this.add(GuidoRest(curbeat, (me.beat - curbeat)));
 				}, {
 				(me.beat < curbeat).if({
-					"This voice appears to have overlapping events. Voices can't overlap, though two voices may have the same staffid.".warn
+					("This voice appears to have overlapping events. Voices can't overlap, though two voices may have the same staffid. Beat: " ++ me.beat ++ " curbeat: " ++ curbeat).warn
 					})
 				});
 			curbeat = me.beat + me.duration;
