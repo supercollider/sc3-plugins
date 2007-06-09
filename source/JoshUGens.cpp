@@ -1937,7 +1937,8 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 	    else 
 		{
 		sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-		cosint = rsqrt2 * (cos(0.78539816339745 * rho));};
+		cosint = rsqrt2 * (cos(0.78539816339745 * rho));
+		};
 	
 	unit->m_W_amp = level * cosint;
 	unit->m_X_amp = cosa * cosb * level * sinint;
@@ -3647,10 +3648,10 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 }
 
 
-
+/*
 struct IEnvGen : public Unit
 {
-    float m_level;
+    float m_level, m_offset;
     float m_startpoint, m_numvals, m_pointin;
     float* m_envvals;
 };
@@ -3736,25 +3737,25 @@ void IEnvGen_Ctor(IEnvGen *unit)
 		SETCALC(IEnvGen_next_k); 
 		}
 		
-	// pointer,
+	// pointer, offset
 	// initlevel, numstages, totaldur,
 	// [dur, shape, curve, level] * numvals
-	int numstages = (int)IN0(2);
-	int numvals = numstages * 4; // initlevel + (levels, dur, shape, curves) * stages
-	float point = unit->m_pointin = IN0(0);
+	int numStages = (int)IN0(3);
+	int numvals = numStages * 4; // initlevel + (levels, dur, shape, curves) * stages
+	float offset = unit->m_offset = IN0(1);
+	float point = unit->m_pointin = IN0(0) - offset;
 	unit->m_envvals = (float*)RTAlloc(unit->mWorld, (int)(numvals + 1.) * sizeof(float));
 	
-	unit->m_envvals[0] = IN0(1);
+	unit->m_envvals[0] = IN0(2);
 //	Print("%3.3f\n", unit->m_envvals[0]);
 	// fill m_envvals with the values;
 	for (int i = 1; i <= numvals; i++) {
-	    unit->m_envvals[i] = IN0(3 + i);
+	    unit->m_envvals[i] = IN0(4 + i);
 //	    Print("%3.3f\n", unit->m_envvals[i]);
 	}
 	
 //	float out = OUT0(0);
-	int numStages = (int)IN0(2);
-	float totalDur = IN0(3);
+	float totalDur = IN0(4);
 	float level = 0.f;
 	float newtime = 0.f;
 	int stage = 0;
@@ -3798,13 +3799,14 @@ void IEnvGen_next_a(IEnvGen *unit, int inNumSamples)
     float* out = OUT(0);
     float level = unit->m_level;
     float* pointin = IN(0);
-    int numStages = (int)IN0(2);
+    float offset = unit->m_offset;
+    int numStages = (int)IN0(3);
     float point; // = unit->m_pointin;
 
-    float totalDur = IN0(3);
+    float totalDur = IN0(4);
 
     int stagemul;
-    // pointer,
+    // pointer, offset
     // level0, numstages, totaldur,    
     // [initval, [dur, shape, curve, level] * N ]
 	
@@ -3812,7 +3814,7 @@ void IEnvGen_next_a(IEnvGen *unit, int inNumSamples)
 	    if (pointin[i] == unit->m_pointin){
 		out[i] = level;
 		} else {
-		unit->m_pointin = point = pointin[i];
+		unit->m_pointin = point = sc_max(pointin[i] - offset, 0.0);
 		float newtime = 0.f;
 		int stage = 0;
 		float seglen = 0.f;
@@ -3851,11 +3853,11 @@ void IEnvGen_next_k(IEnvGen *unit, int inNumSamples)
 {
     float* out = OUT(0);
     float level = unit->m_level;
-    float pointin = IN0(0);
-    int numStages = (int)IN0(2);
+    float pointin = sc_max(IN0(0) - unit->m_offset, 0);
+    int numStages = (int)IN0(3);
 
-    float totalDur = IN0(3);
-    // pointer,
+    float totalDur = IN0(4);
+    // pointer, offset
     // level0, numstages, totaldur,
     float point = unit->m_pointin;
 
@@ -3903,7 +3905,7 @@ void IEnvGen_next_k(IEnvGen *unit, int inNumSamples)
    	unit->m_pointin = pointin;
     }
 }
-	
+*/	
 void PosRatio_Ctor(PosRatio* unit){
     float period = unit->period = IN0(1);
 	unit->maxsamples = (int)(SAMPLERATE / period);
@@ -5900,7 +5902,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(PVInfo);
 	DefineDtorCantAliasUnit(Balance);
 	DefineSimpleUnit(MoogVCF);
-	DefineDtorUnit(IEnvGen);
+//	DefineDtorUnit(IEnvGen);
 	DefineSimpleUnit(PosRatio);
     
 #define DefineDelayUnit(name) \
