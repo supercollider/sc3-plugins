@@ -1,0 +1,79 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;\red0\green115\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 PV_NoiseSynthF			return only bins that are unstable\
+PV_PartialSynthF			return only bins that are stable\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 PV_NoiseSynthF and PV_PartialSynthF base these decisions on whether or not freq data across numFrames is within a given threshold\
+\
+PV_NoiseSynthF(buffer, threshold, numFrames)\
+PV_PartialSynthF(buffer, threshold, numFrames)\
+\
+Examples:
+\f1\b0\fs18 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\{\cf2 SinOsc\cf0 .ar(440, 0, 0.5) + \cf2 PinkNoise\cf0 .ar(0.4)\}.play; \cf3 // a sample sig\cf0 \
+\
+\cf2 SynthDef\cf0 (\cf4 \\partialsynth\cf0 , \{\cf2 arg\cf0  fftbuf;\
+	\cf2 var\cf0  in, chain, out;\
+	in = \cf2 SinOsc\cf0 .ar(440, 0, 0.5) + \cf2 PinkNoise\cf0 .ar(0.4);\
+	chain = \cf2 FFT\cf0 (fftbuf, in);\
+	\cf3 // resynhtesize according to MouseX. If 0, only sound with VERY stable changes of frequecy\cf0 \
+	\cf3 // will be returned. Upper limit should be Nyqust / nBins , e.g. 22050 / 2048 -> 21.532\cf0 \
+	\cf3 // or + and - 21.532\cf0 \
+	chain = \cf2 PV_NoiseSynthF\cf0 (chain, \cf2 MouseX\cf0 .kr(0, 21.532));\
+	out = \cf2 IFFT\cf0 (chain);\
+	\cf2 Out\cf0 .ar(0, out.dup); \
+	\}).load(s);\
+\
+s.boot;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 // the fft buf\cf0 \
+s.sendMsg(\cf4 \\b_alloc\cf0 , 0, 2048);\
+\
+\cf3 // start the synth\cf0 \
+s.sendMsg(\cf4 \\s_new\cf0 , \cf4 \\partialsynth\cf0 , z = s.nextNodeID, 0, 1, \cf4 \\fftbuf\cf0 , 0);\
+\cf3 // free it\cf0 \
+s.sendMsg(\cf4 \\n_free\cf0 , z);\
+s.sendMsg(\cf4 \\b_free\cf0 , 0);\
+\
+\
+\
+\cf2 SynthDef\cf0 (\cf4 \\noisesynth\cf0 , \{\cf2 arg\cf0  fftbuf;\
+	\cf2 var\cf0  in, chain, out;\
+	in = \cf2 SinOsc\cf0 .ar(440, 0, 0.5) + \cf2 PinkNoise\cf0 .ar(0.4);\
+	chain = \cf2 FFT\cf0 (fftbuf, in);\
+	\cf3 // resynhtesize according to MouseX. If 0, only sound with VERY stable changes of frequecy\cf0 \
+	\cf3 // will be zeroed out. Upper limit should be Nyqust / nbins , e.g. 22050 / 1024 -> 21.532\cf0 \
+	\cf3 // or + and - 21.532\cf0 \
+	chain = \cf2 PV_NoiseSynthF\cf0 (chain, \cf2 MouseX\cf0 .kr(0, 21.532));\
+	out = \cf2 IFFT\cf0 (chain);\
+	\cf2 Out\cf0 .ar(0, out.dup); \
+	\}).load(s);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 // the fft buf\cf0 \
+s.sendMsg(\cf4 \\b_alloc\cf0 , 0, 2048);\
+\
+\cf3 // start the synth\cf0 \
+s.sendMsg(\cf4 \\s_new\cf0 , \cf4 \\noisesynth\cf0 , z = s.nextNodeID, 0, 1, \cf4 \\fftbuf\cf0 , 0);\
+\cf3 // free it\cf0 \
+s.sendMsg(\cf4 \\n_free\cf0 , z);\
+s.sendMsg(\cf4 \\b_free\cf0 , 0);\
+\
+\
+s.quit\
+\
+}

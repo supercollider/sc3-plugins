@@ -1,0 +1,51 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+s.boot;\
+\cf2 // LoShelf\cf0 \
+(\
+\cf3 Patch\cf0 (\{ \cf3 arg\cf0  bypass=0, ffreq=120.0, boostcut=0.0, amp=0.1;\
+	\cf3 var\cf0  dry, filter;\
+	\
+	dry = \cf3 AudioIn\cf0 .ar([1,2]);\
+	\
+	filter = \cf3 LoShelf\cf0 .ar(dry, ffreq, boostcut.dbamp);\
+	\
+	((dry * bypass) + (filter * (bypass < 0.5))) * amp;\
+\}).gui\
+)\
+\
+\cf2 // HiShelf\cf0 \
+(\
+\cf3 Patch\cf0 (\{ \cf3 arg\cf0  bypass=0, ffreq=2200.0, boostcut=0.0, amp=0.1;\
+	\cf3 var\cf0  dry, filter;\
+	\
+	dry = \cf3 AudioIn\cf0 .ar([1,2]);\
+	\
+	filter = \cf3 HiShelf\cf0 .ar(dry, ffreq, boostcut.dbamp);\
+	\
+	((dry * bypass) + (filter * (bypass < 0.5))) * amp;\
+\}).gui\
+)\
+\
+\cf2 // Tone\cf0 \
+(\
+\cf3 Patch\cf0 (\{ \cf3 arg\cf0  bypass=0, tone=0.0, amp=0.1;\
+	\cf3 var\cf0  dry, filter;\
+	\
+	dry = \cf3 AudioIn\cf0 .ar([1,2]);\
+	\
+	filter = \cf3 Tone\cf0 .ar(dry, tone.dbamp) * (bypass < 0.5);\
+	\
+	((dry * bypass) + filter) * amp;\
+\}, [\
+	\cf3 nil\cf0 ,\
+	\cf3 KrKnobEditor\cf0 .new(0.0, \cf4 \\boostcut\cf0 ),\
+	\cf3 nil\cf0 \
+]).gui\
+)\
+}

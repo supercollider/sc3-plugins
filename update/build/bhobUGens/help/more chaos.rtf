@@ -1,0 +1,32 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 2D chaos ugens similar to sc chaos ugens, but x is mapped to freq, y to amplitude.  arguments are minfreq, maxfreq, parameters.  where applicable, the parameters arguments are in the same order as sc chaos ugens\
+\
+\{ Henon2DC.ar(440, 1880, LFNoise2.kr(1, 0.1, 1.3), 0.3).dup \}.play\
+\{ Gbman2DL.ar(200, 800).dup \}.play\
+\
+// each also has a corresponding trigger\
+\{ Ringz.ar(StandardTrig.ar(10, 20), 2205, 0.02).fold2(0.5).dup \}.play\
+\
+// can be k-rate \
+\{ SinOsc.ar(Latoocarfian2DN.kr(4, 16, mul:220, add:440)).cubed.fold2(0.6).dup \}.play\
+\
+// trig & oscillator\
+(\
+\{\
+var trig, sig;\
+trig=\cf2 LatoocarfianTrig.kr(4, 12, [1.1, 1.5]);\cf0 \
+sig=Latoocarfian2DC.ar(420, 8200, Lag.kr(\cf2 TRand.kr(0.4, 0.8, trig), 0.1)\cf0 , Lag.kr(\cf2 TRand.kr(2.0, 3.0, trig), 0.1), \cf0 d:[1.0, 1.05], mul:Latch.kr(trig, trig));\
+(sig.cubed * 2).tanh\
+\}.play\
+)\
+\
+and there are a few chaos patterns as well.  Phenon, etc. (see class file).  these output arrays where applicable and are normalized from 0-1 by default (you can remove normalization by setting the n argument to false).  \
+\
+p=Pstandard.new;\
+x=p.asStream;\
+\
+20.do(\{ x.next.postln \});}

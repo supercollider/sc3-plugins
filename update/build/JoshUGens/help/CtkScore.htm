@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0c319d}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #702b2a}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0c319d}
+span.s3 {color: #000000}
+span.s4 {color: #586933}
+span.s5 {color: #702b2a}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>CtkScore<span class="Apple-tab-span">	</span></b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a system for rendering Scores with the Ctk objects.</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Part of the CompositionToolKit (Ctk) system. See Ctk help for more details</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Class Methods</b></p>
+<p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b>*new(events) </b>- where events are instances of CtkNote, CtkGroup, CtkBuffer or CtkControl. Any number of</p>
+<p class="p1"><span class="Apple-tab-span">	</span>initial events may be passed in at creation time.</p>
+<p class="p3"><br></p>
+<p class="p1"><b>add(events) </b>- where events are instances of CtkNote, CtkGroup, CtkBuffer or CtkControl. Any number of<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>events may added.</p>
+<p class="p1"><b>score</b> - returns the Score that is created as part of CtkScore.</p>
+<p class="p1"><b>saveToFile(path)</b> - saves the Score associated with this instance of CtkScore to 'path'</p>
+<p class="p1"><b>play(server, clock, quant)</b> - plays this instance of CtkScore on server. An optional clock and quant may be</p>
+<p class="p1"><span class="Apple-tab-span">	</span>passed in. See the Score helpfile for more information. See below for more details on CtkBuffer<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>management.</p>
+<p class="p1"><b>write(path, duration, sampleRate, headerFormat, sampleFormat, options)</b> - renders the CtkScore in NRT</p>
+<p class="p1"><span class="Apple-tab-span">	</span>mode to 'path'.<span class="Apple-converted-space">  </span>'duration' defaults to 'nil' and will render the entire CtkScore. 'sampleRate' defaults</p>
+<p class="p1"><span class="Apple-tab-span">	</span>to '44100', headerFormat to 'AIFF' and 'sampleFormat' to 'int16'. 'options' can be an instance of<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>ServerOptions.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><b>Notes on playing CtkScore -<span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><span class="Apple-tab-span">	</span>When CtkScore.play is called, the CtkScore is rendered fully before performance starts (and may cause</p>
+<p class="p1"><span class="Apple-tab-span">	</span>a delay. Events that are instances of CtkBuffer are also allocated to the Server before performance starts</p>
+<p class="p1"><span class="Apple-tab-span">	</span>to ensure they are ready for use. This, too, may cause a slight delay.</p>
+<p class="p2"><br></p>
+<p class="p1"><b>Examples that populate an instance of CtkScore. The CtkScore can then be rendered in NRT, played or saved as a file.</b></p>
+<p class="p2"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="s2">var</span> scpn, score, grainfun, gliss;</p>
+<p class="p5"><span class="s3">scpn = </span>CtkProtoNotes<span class="s3">(</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\control</span>, {<span class="s2">arg</span> outbus, rate, low, hi;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(outbus, <span class="s2">LFNoise2</span>.kr(rate).range(low, hi))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\test</span>, {<span class="s2">arg</span> freq, amp, dur;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">BPF</span>.ar(<span class="s2">WhiteNoise</span>.ar(amp), freq, 0.01, amp * envgen);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, <span class="s2">Pan2</span>.ar(src, <span class="s2">Rand</span>(-1.0, 1.0)));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p4"><span class="Apple-tab-span">	</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">score = <span class="s2">CtkScore</span>.new;</p>
+<p class="p3"><br></p>
+<p class="p6">/*</p>
+<p class="p6">creates a granular gesture of duration. Each grain is 0.1 seconds long, new grain every 0.02 seconds</p>
+<p class="p6">*/</p>
+<p class="p3"><br></p>
+<p class="p4">grainfun = {<span class="s2">arg</span> starttime, duration, ampenv, lowfreq, hifreq;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> now, note;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>now = 0;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>ampenv.times = ampenv.times.normalizeSum * duration; <span class="s5">// scale the Env's time to the gestures</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>while({</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create a note... add it to the CtkScore</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note = scpn[<span class="s4">\test</span>].new(starttime + now, 0.1)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(lowfreq.rrand(hifreq))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampenv[now])</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(0.1).addTo(score);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>now = now + 0.02;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>now &lt; duration;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">gliss = {<span class="s2">arg</span> starttime, duration, rate, lowfreq, hifreq;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> cbus, control, note;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cbus = <span class="s2">CtkControl</span>.new;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>control = scpn[<span class="s4">\control</span>].new(starttime, duration)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(cbus.bus)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.rate_(rate)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.low_(lowfreq)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.hi_(hifreq)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>note = scpn[<span class="s4">\test</span>].new(starttime, duration, <span class="s4">\tail</span>, 1)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(cbus)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(2)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(duration)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><br></p>
+<p class="p4">grainfun.value(1, 10, <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], [3, -5]), 440, 880);</p>
+<p class="p4">grainfun.value(4, 4, <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], [3, -5]), 4400, 8800);</p>
+<p class="p4">grainfun.value(6, 12, <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], [3, -5]), 300, 400);</p>
+<p class="p4">grainfun.value(3, 10, <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], [3, -5]), 200, 200);</p>
+<p class="p4">grainfun.value(1.5, 20, <span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], [3, -5]), 7000, 7100);</p>
+<p class="p3"><br></p>
+<p class="p4">5.do({<span class="s2">arg</span> i;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> j;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>j = i + 1;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>gliss.value(3 + (i + 4), 10.rrand(7), j.reciprocal, 440 * j, 880 * j);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>});</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p6">// uncomment to play the CtkScore you have created</p>
+<p class="p6">//score.play(s);</p>
+<p class="p3"><br></p>
+<p class="p6">// uncomment to write the score to a soundfile</p>
+<p class="p6">score.write("~/Desktop/test.aiff".standardizePath, 22,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>options: ServerOptions.new.numOutputBusChannels_(2));</p>
+<p class="p3"><br></p>
+<p class="p6">// uncomment to save the CtkScore as a file</p>
+<p class="p6">//score.saveToFile("~/Desktop/test.sc".standardizePath);</p>
+<p class="p4">)</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>

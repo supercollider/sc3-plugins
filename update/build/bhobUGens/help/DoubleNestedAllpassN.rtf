@@ -1,0 +1,93 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 ArialMT;
+\f3\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 NestedAllpassN, NestedAllpassL, NestedAllpassC\
+DoubleNestedAllpassN, DoubleNestedAllpassL, DoubleNestedAllpassC\
+\
+Nested Allpass filters as proposed by Vercoe and Pluckett\
+\
+
+\fs24 NestedAllpassN.ar(in, maxdel1, delay1, gain1, maxdel2, delay2, gain2);\
+DoubleNestedAllpassN.ar(in, maxdel1, delay1, gain1, maxdel2, delay2, gain2, maxdel3, delay3, gain3);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2 \cf0 Useful for reverberation, especially implementing Gardner reverbs.
+\f1 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\fs18 \cf2 (\
+\cf3 Instr\cf2 ([\cf4 \\reverb\cf2 , \cf4 \\gardnerS\cf2 ], \{\cf3 |chan=2, in|\cf2 \
+	\cf3 var\cf2  lp, fb, ap1, ap2, revout;\
+	fb=\cf3 LocalIn\cf2 .ar(chan);\
+	lp=\cf3 LPF\cf2 .ar(in, 6000);\
+	lp=\cf3 DelayL\cf2 .ar(lp, 0.024, 0.024);\
+	ap1=\cf3 DoubleNestedAllpassL\cf2 .ar(lp + (0.5 * fb));\
+	ap2=\cf3 NestedAllpassL\cf2 .ar(ap1);\
+	revout=ap1 * 0.5 + (ap2 * 0.6);\
+	\cf3 LocalOut\cf2 .ar(\cf3 BPF\cf2 .ar(revout * 0.5, 1600, 0.5));\
+	revout\
+\});\
+\
+\cf3 Instr\cf2 ([\cf4 \\reverb\cf2 , \cf4 \\gardnerM\cf2 ], \{\cf3 |chan=2, in|\cf2 \
+	\cf3 var\cf2  lp, fb, ap1, ap2, ap3, revout;\
+	fb=\cf3 LocalIn\cf2 .ar(chan);\
+	lp=\cf3 LPF\cf2 .ar(in, 6000);\
+	ap1=\cf3 DoubleNestedAllpassL\cf2 .ar(lp + (0.5 * fb), 0.0047, 0.0047, 0.25, 0.0083, 0.0083, 0.35, 0.022, 0.022, 0.45);\
+	ap2=\cf3 AllpassL\cf2 .ar(\cf3 DelayL\cf2 .ar(ap1, 0.005, 0.005), 0.03, 0.03, 0.25952);\
+	ap2=\cf3 DelayL\cf2 .ar(ap2, 0.067, 0.067);\
+	ap3=\cf3 NestedAllpassL\cf2 .ar(lp + \cf3 DelayL\cf2 .ar(ap2, 0.015, 0.015, 0.4), 0.0292, 0.0292, 0.25, 0.0098, 0.0098, 0.35);\
+	revout=\cf3 Mix\cf2 .ar([ap1, ap2, ap3]) * 0.5;\
+	\cf3 LocalOut\cf2 .ar(\cf3 BPF\cf2 .ar(revout * 0.4, 1000, 0.5));\
+	revout\
+\});\
+\
+\cf3 Instr\cf2 ([\cf4 \\reverb\cf2 , \cf4 \\gardnerL\cf2 ], \{\cf3 |chan=2, in|\cf2 \
+	\cf3 var\cf2  lp, fb, ap1, ap2, ap3, ap4, revout;\
+	lp=\cf3 LPF\cf2 .ar(in, 4000);\
+	fb=\cf3 LocalIn\cf2 .ar(chan);\
+	ap1=\cf3 AllpassL\cf2 .ar(lp + (0.5 * fb), 0.008, 0.008, 0.0459);\
+	ap2=\cf3 AllpassL\cf2 .ar(ap1, 0.012, 0.012, 0.06885);\
+	ap2=\cf3 DelayL\cf2 .ar(ap2, 0.004, 0.004);\
+	ap3=\cf3 NestedAllpassL\cf2 .ar(\cf3 DelayL\cf2 .ar(ap2, 0.017, 0.017), 0.025, 0.025, 0.5, 0.062, 0.062, 0.25);\
+	ap3=\cf3 DelayL\cf2 .ar(ap3, 0.031, 0.031);\
+	ap4=\cf3 DoubleNestedAllpassL\cf2 .ar(\cf3 DelayL\cf2 .ar(ap3, 0.003, 0.003), 0.120, 0.120, 0.5, 0.076, 0.076, 0.25, 0.030, 0.030, 0.25);\
+	revout=\cf3 Mix\cf2 .ar([ap4 * 0.8, ap3 * 0.8, ap2 * 1.5]);\
+	\cf3 LocalOut\cf2 .ar(\cf3 BPF\cf2 .ar(revout * 0.5, 1000, 0.5));\
+	revout\
+\});\
+)\
+\
+(\
+\{ \
+	\cf3 var\cf2  sig, rev;\
+	sig=\cf3 Splay\cf2 .arFill(8, \{ \cf3 FSinOsc\cf2 .ar(\cf3 ExpRand\cf2 (120, 850)).squared * \cf3 Decay2\cf2 .ar(\cf3 Dust\cf2 .ar(2), 0.02, 0.1, 0.3) \});\
+	rev=\cf3 Instr\cf2 .ar([\cf4 \\reverb\cf2 , \cf4 \\gardnerS\cf2 ], [2, sig]);\
+	0.5 * rev + sig\
+\}.play\
+)\
+\
+(\
+\{ \
+	\cf3 var\cf2  sig, rev;\
+	sig=\cf3 Splay\cf2 .arFill(8, \{ \cf3 FSinOsc\cf2 .ar(\cf3 ExpRand\cf2 (120, 850)).squared * \cf3 Decay2\cf2 .ar(\cf3 Dust\cf2 .ar(2), 0.02, 0.1, 0.3) \});\
+	rev=\cf3 Instr\cf2 .ar([\cf4 \\reverb\cf2 , \cf4 \\gardnerM\cf2 ], [2, sig]);\
+	0.5 * rev + sig\
+\}.play\
+)\
+\
+(\
+\{ \
+	\cf3 var\cf2  sig, rev;\
+	sig=\cf3 Splay\cf2 .arFill(8, \{ \cf3 FSinOsc\cf2 .ar(\cf3 ExpRand\cf2 (120, 850)).squared * \cf3 Decay2\cf2 .ar(\cf3 Dust\cf2 .ar(2), 0.02, 0.1, 0.3) \});\
+	rev=\cf3 Instr\cf2 .ar([\cf4 \\reverb\cf2 , \cf4 \\gardnerL\cf2 ], [2, sig]);\
+	0.5 * rev + sig\
+\}.play\
+)}

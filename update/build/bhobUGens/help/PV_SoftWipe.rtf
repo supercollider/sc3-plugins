@@ -1,0 +1,62 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 PV_SoftWipe		combine low and high bins from two inputs with interpolation\
+
+\f1\b0\fs24 \
+
+\f0\b PV_SoftWipe.ar(bufferA,  bufferB, wipe)\
+
+\f1\b0 \
+Copies low bins from one input and the high bins of the other.  Interpolates.\
+
+\f0\b bufferA
+\f1\b0  - fft buffer A.\
+
+\f0\b bufferB
+\f1\b0  - fft buffer B.\
+
+\f0\b wipe
+\f1\b0  - can range between -1 and +1.\
+if wipe == 0 then the output is the same as inA.\
+if  wipe > 0 then it begins replacing with bins from inB from the bottom up. \
+if  wipe < 0 then it begins replacing with bins from inB from the top down.\
+\
+
+\f2\fs18 \cf2 s.boot;\
+(\
+b = \cf3 Buffer\cf2 .alloc(s,2048,1);\
+c = \cf3 Buffer\cf2 .alloc(s,2048,1);\
+d = \cf3 Buffer\cf2 .read(s,\cf4 "sounds/a11wlk01.wav"\cf2 );\
+)\
+
+\f1\fs24 \
+
+\f2\fs18 (\
+\cf3 SynthDef\cf2 (\cf4 "help-SoftWipe"\cf2 , \{ \cf3 arg\cf2  out=0,bufnumA=0, bufnumB=1;\
+	\cf3 var\cf2  inA, chainA, inB, chainB, chain;\
+	inA = \cf3 WhiteNoise\cf2 .ar(0.2);\
+	inB = \cf3 LFSaw\cf2 .ar(100, 0, 0.2);\
+	chainA = \cf3 FFT\cf2 (bufnumA, inA);\
+	chainB = \cf3 FFT\cf2 (bufnumB, inB);\
+	chain = \cf3 PV_SoftWipe\cf2 (chainA, chainB, \cf3 MouseX\cf2 .kr(-1, 1)); \
+	\cf3 Out\cf2 .ar(out, 0.5 * \cf3 IFFT\cf2 (chain).dup);\
+\}).play(s,[\cf5 \\out\cf2 , 0, \cf5 \\bufnumA\cf2 , b.bufnum, \cf5 \\bufnumB\cf2 , c.bufnum ]);\
+)\
+\
+(\
+\cf3 SynthDef\cf2 (\cf4 "help-SoftWipe2"\cf2 , \{ \cf3 arg\cf2  out=0,bufnumA=0, bufnumB=1, soundBufnum=2;\
+	\cf3 var\cf2  inA, chainA, inB, chainB, chain;\
+	inA = \cf3 WhiteNoise\cf2 .ar(0.2);\
+	inB = \cf3 PlayBuf\cf2 .ar(1, soundBufnum, \cf3 BufRateScale\cf2 .kr(soundBufnum), loop: 1);\
+	chainA = \cf3 FFT\cf2 (bufnumA, inA);\
+	chainB = \cf3 FFT\cf2 (bufnumB, inB);\
+	chain = \cf3 PV_SoftWipe\cf2 (chainA, chainB, \cf3 LFCub\cf2 .kr(0.05)); \
+	\cf3 Out\cf2 .ar(out, 0.5 * \cf3 IFFT\cf2 (chain).dup);\
+\}).play(s,[\cf5 \\out\cf2 , 0, \cf5 \\bufnumA\cf2 , b.bufnum, \cf5 \\bufnumB\cf2 , c.bufnum, \cf5 \\soundBufnum\cf2 , d.bufnum]);\
+)\
+}

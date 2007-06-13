@@ -1,0 +1,81 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fnil\fcharset77 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs20 \cf2 // remap magnitudes to a new mag curve\cf0 \
+\cf2 // a curve of Env([0, 1], [1]) will output the input\cf0 \
+\cf2 // a curve of Env([1, 0], [1]) will output the inverse magnitudes (loud partials are quiet, quiet\cf0 \
+\cf2 // partials are loud... and so on.  The Env times don't have to equal 1 (they are scaled internally\cf0 \
+\cf2 // to 1 no matter what)
+\fs24 \cf0 \
+\
+\{\cf3 PinkNoise\cf0 .ar(0.03) + \cf3 SinOsc\cf0 .ar(440, 0, 0.5)\}.play(s)\
+\
+\cf3 SynthDef\cf0 (\cf4 \\magmap\cf0 , \{\cf3 arg\cf0  fftbuf, envbuf;\
+	\cf3 var\cf0  in, chain, out;\
+	in = \cf3 PinkNoise\cf0 .ar(0.03) + \cf3 SinOsc\cf0 .ar(440, 0, 0.5);\
+	chain = \cf3 FFT\cf0 (fftbuf, in);\
+	chain = \cf3 PV_MagMap\cf0 (chain, envbuf);\
+	out = \cf3 IFFT\cf0 (chain);\
+	\cf3 Out\cf0 .ar(1, out);\
+	\}).load(s);\
+\
+s.boot;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 // the fft buf\cf0 \
+s.sendMsg(\cf4 \\b_alloc\cf0 , 0, 2048);\
+\cf2 // the curve to map the sound onto\cf0 \
+a = \cf3 Env\cf0 ([0, 1, 0], [0.05, 0.95], \cf4 \\welch\cf0 ).plot;\
+\cf2 // send the signal to a buffer\cf0 \
+s.sendBundle(0.1, [\cf4 \\b_alloc\cf0 , 1, 256, 1, [\cf4 \\b_setn\cf0 , 1, 0, 256] ++ a.asSignal(256)])\
+\cf2 // start the synth\cf0 \
+s.sendMsg(\cf4 \\s_new\cf0 , \cf4 \\magmap\cf0 , z = s.nextNodeID, 0, 1, \cf4 \\fftbuf\cf0 , 0, \cf4 \\envbuf\cf0 , 1);\
+\
+\cf2 // free it\cf0 \
+s.sendMsg(\cf4 \\n_free\cf0 , z);\
+\
+a = \cf3 Env\cf0 ([1, 0], [1]).plot;\
+\cf2 // send the signal to a buffer\cf0 \
+s.sendBundle(0.1, [\cf4 \\b_alloc\cf0 , 1, 256, 1, [\cf4 \\b_setn\cf0 , 1, 0, 256] ++ a.asSignal(256)])\
+s.sendMsg(\cf4 \\s_new\cf0 , \cf4 \\magmap\cf0 , z = s.nextNodeID, 0, 1, \cf4 \\fftbuf\cf0 , 0, \cf4 \\envbuf\cf0 , 1);\
+\cf2 // free it\cf0 \
+s.sendMsg(\cf4 \\n_free\cf0 , z);\
+\
+\
+\
+\cf3 SynthDef\cf0 (\cf4 \\magmap\cf0 , \{\cf3 arg\cf0  fftbuf, envbuf, sndbuf;\
+	\cf3 var\cf0  in, chain, out;\
+	in = \cf3 PlayBuf\cf0 .ar(1, sndbuf, \cf3 BufRateScale\cf0 .kr(sndbuf), loop: 1);\
+	chain = \cf3 FFT\cf0 (fftbuf, in);\
+	chain = \cf3 PV_MagMap\cf0 (chain, envbuf);\
+	out = \cf3 IFFT\cf0 (chain);\
+	\cf3 Out\cf0 .ar(1, out);\
+	\}).load(s);\
+\
+s.boot;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 // the fft buf\cf0 \
+s.sendMsg(\cf4 \\b_alloc\cf0 , 0, 2048);\
+\cf2 // the curve to map the sound onto\
+\cf0 a = Env([0, 1], [1], \\lin); // get original back\
+//a = \cf3 Env\cf0 ([1, 0], [1], \cf4 \\lin\cf0 ); // noise partials are loudest\
+//a = Env([0.1, 1, 0.1], [0.5, 0.5], \\exp); // shape the sound!\
+//a = Env([0.1, 1, 0.1], [0.8, 0.2], [\\exp, \\sin]);\
+\cf2 // send the signal to a buffer\cf0 \
+s.sendBundle(0.1, [\cf4 \\b_alloc\cf0 , 1, 256, 1, [\cf4 \\b_setn\cf0 , 1, 0, 256] ++ a.asSignal(256)],\
+	[\cf4 \\b_allocRead\cf0 , 2, \cf5 "/Users/joshp/SND/
+\f1\fs30 vln-g4.aiff"\cf0 ]
+\f0\fs24 )\
+\cf2 // start the synth\cf0 \
+s.sendMsg(\cf4 \\s_new\cf0 , \cf4 \\magmap\cf0 , z = s.nextNodeID, 0, 1, \cf4 \\fftbuf\cf0 , 0, \cf4 \\envbuf\cf0 , 1, \\sndbuf, 2);\
+\
+s.sendMsg(\cf4 \\n_free\cf0 , z);\
+s.quit\
+\
+}

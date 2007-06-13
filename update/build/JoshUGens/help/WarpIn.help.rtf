@@ -1,0 +1,102 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-BoldOblique;
+\f3\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green115\blue0;\red0\green0\blue191;\red191\green0\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 WarpIn			Warp live input
+\f1\b0\fs24 \
+\
+Inspired by Chad Kirby's SuperCollider2 Warp1 class, which was inspired by Richard Karpen's sndwarp for CSound. A granular time strecher and pitchshifter.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 Warp1.ar(in, buffer, warpFactor, freqScale, windowSize, overlaps, windowRandRatio, interp, mul, add)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0 \cf0 \
+	
+\f0\b in - 
+\f1\b0 a mono input\
+	
+\f0\b buffer
+\f1\b0  - the buffer number of a mono buffer.\
+	
+\f0\b warpFactor
+\f1\b0  - amount to stretch or compress the buffer. 0.5 is half speed, 2 is twice the speed. Since the \
+		sound is recorded and warped at the same time, warpFactors of greater than 1 may overshoot the\
+		record buf.\
+	
+\f0\b freqScale
+\f1\b0 - the amount of frequency shift. 1.0 is normal, 0.5 is one octave down, 2.0 is one octave up.\
+		Negative values play the soundfile backwards.\
+	
+\f0\b windowSIze
+\f1\b0  - the size of each grain window\
+	
+\f0\b overlaps
+\f1\b0  - the number of overlaping windows.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 	windowRandRatio 
+\f1\b0 - the amount of randomness to the windowing function.  Must be between 0 (no\
+		randomness) to 1.0 (probably to random actually)
+\f0\b  \
+	interp -
+\f2\i  
+\f1\i0\b0 the interpolation method used for pitchshifting grains. 1 = no interpolation. 2 = linear. \
+		4 = cubic interpolation (more computationally intensive).
+\f0\b \
+\
+\
+Examples:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\b0\fs18 \cf0 s = Server.local;\
+s.boot;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f3\b0\fs18 \cf0 //Use headphones for these examples!\
+(\
+s.sendMsg(\cf2 \\b_alloc\cf0 , 0, 32768 * 16, 1);\
+\
+\cf3 SynthDef\cf0 (\cf2 \\warp\cf0 , \{\cf3 arg\cf0  buffer = 0;\
+	\cf3 var\cf0  out, pointer, buflength, env, dir, warp;\
+	env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([0.01, 1, 1, 0.01], [0.1, 14, 0.9], \cf2 'exp'\cf0 ), doneAction: 2);\
+	buflength = BufDur.kr(buffer);\
+	warp = EnvGen.kr(Env([1, 0.5, 2], [buflength * 0.5, buflength * 0.5]));\
+	out = \cf3 WarpIn\cf0 .ar(\cf3 In\cf0 .ar(8, 1), 0, \cf3 warp\cf0 , 1);\
+	\cf3 Out\cf0 .ar(0, out * env);\
+\}).send(s);\
+\
+)\
+\
+\
+s.sendMsg(\cf2 \\s_new\cf0 , \cf2 \\warp\cf0 , 1000, 0, 0, \cf2 \\buffer\cf0 , 0);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf4 //Using Mouse Controls for freqshift and warp arguments\cf0 \
+(\
+s.sendMsg(\cf2 \\b_alloc\cf0 , 0, 32768 * 16, 1);\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 SynthDef\cf0 (\cf2 \\warp\cf0 , \{\cf3 arg\cf0  buffer = 0;\
+	\cf3 var\cf0  out, warp, filelength, env, freq;\
+	warp = \cf3 MouseX\cf0 .kr(0.25, 1);\
+	freq = \cf3 MouseY\cf0 .kr(0.5, 4);\
+	env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 ([0.01, 1, 1, 0.01], [0.1, 14, 0.9], \cf2 'exp'\cf0 ), doneAction: 2);\
+	out = \cf3 WarpIn\cf0 .ar(In.ar(8, 1), buffer, warp, freq, 0.1, 8, 0.05, 1.0);\
+	\cf3 Out\cf0 .ar(0, out * env * 5);\
+\}).send(s);\
+\
+)\
+\
+\
+s.sendMsg(\cf2 \\s_new\cf0 , \cf2 \\warp\cf0 , 1000, 0, 0, \cf2 \\buffer\cf0 , 0);\
+\
+}
