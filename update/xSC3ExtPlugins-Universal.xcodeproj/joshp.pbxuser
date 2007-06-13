@@ -46,6 +46,16 @@
 		vrLen = 210;
 		vrLoc = 0;
 	};
+	F3323AC00C206C8400576E26 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F33A46670B0EC50D00E05136 /* SKINI.tbl */;
+		name = "SKINI.tbl: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 210;
+		vrLoc = 0;
+	};
 	F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {752, 1848}}";
@@ -578,6 +588,7 @@
 		perUserProjectItems = {
 			F3323AB90C206BEF00576E26 /* PBXBookmark */ = F3323AB90C206BEF00576E26 /* PBXBookmark */;
 			F3323ABA0C206BEF00576E26 /* PBXTextBookmark */ = F3323ABA0C206BEF00576E26 /* PBXTextBookmark */;
+			F3323AC00C206C8400576E26 /* PBXTextBookmark */ = F3323AC00C206C8400576E26 /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
