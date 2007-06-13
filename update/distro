@@ -1,0 +1,18 @@
+#! /bin/sh
+
+svn export --force build Extensions
+cp build/AmbisonicUGens/*.scx Extensions/AmbisonicUGens
+cp build/BEQSuiteUGens/*.scx Extensions/BEQSuiteUGens
+cp build/BlackrainUGens/*.scx Extensions/BlackrainUGens
+cp build/JoshPVUGens/*.scx Extensions/JoshPVUGens
+cp build/JoshUGens/*.scx Extensions/JoshUGens
+cp build/ReverbUGens/*.scx Extensions/ReverbUGens
+cp build/StkUGens/*.scx Extensions/StkUGens
+cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
+cp build/MCLD_UGens/*.scx Extensions/MCLD_UGens
+cp build/ljpclasses/*.scx Extensions/ljpclasses
+cp build/bhobUGens/*.scx Extensions/bhobUGens
+
+mkdir Extensions/test
+mv Extensions/StkUGens Extensions/test
+

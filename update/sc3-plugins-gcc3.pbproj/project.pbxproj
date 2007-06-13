@@ -1,0 +1,4048 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 38;
+	objects = {
+		1748DB9107C5F16800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1748DB9207C5F16800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				1752900F0B1133D000A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1748DB9307C5F16800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1748DB9407C5F16800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1748DB9507C5F16800A802D7 = {
+			buildPhases = (
+				1748DB9107C5F16800A802D7,
+				1748DB9207C5F16800A802D7,
+				1748DB9307C5F16800A802D7,
+				1748DB9407C5F16800A802D7,
+				1748DB9707C5F2AC00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BlackRainUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BlackRainUGens;
+			productName = blackrainUGens;
+			productReference = 1748DB9607C5F16800A802D7;
+		};
+		1748DB9607C5F16800A802D7 = {
+			isa = PBXLibraryReference;
+			path = "BlackRainUGens-gcc3.scx";
+			refType = 3;
+		};
+		1748DB9707C5F2AC00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BlackRainUGens-gcc3.scx build/BlackRainUGens";
+		};
+		1748DB9807C5F59000A802D7 = {
+			isa = PBXTargetDependency;
+			target = 1748DB9507C5F16800A802D7;
+		};
+		175290060B1132F300A802D7 = {
+			children = (
+				1752900E0B1133D000A802D7,
+			);
+			isa = PBXGroup;
+			name = BlackrainUGens;
+			refType = 4;
+		};
+		175290070B11330C00A802D7 = {
+			children = (
+				1752900C0B1133C000A802D7,
+			);
+			isa = PBXGroup;
+			name = BEQSuiteUGens;
+			refType = 4;
+		};
+		175290080B11332000A802D7 = {
+			children = (
+				175290220B11345900A802D7,
+			);
+			isa = PBXGroup;
+			name = JoshPVUGens;
+			refType = 4;
+		};
+		175290090B11332C00A802D7 = {
+			children = (
+				1752902C0B1134B900A802D7,
+			);
+			isa = PBXGroup;
+			name = JoshUGens;
+			refType = 4;
+		};
+		1752900A0B11333700A802D7 = {
+			children = (
+				175290200B11344D00A802D7,
+			);
+			isa = PBXGroup;
+			name = ReverbUGens;
+			refType = 4;
+		};
+		1752900B0B11334100A802D7 = {
+			children = (
+				175290FB0B113E3500A802D7,
+			);
+			isa = PBXGroup;
+			name = AmbisonicUGens;
+			refType = 4;
+		};
+		1752900C0B1133C000A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BEQSuiteUGens.cpp;
+			refType = 4;
+		};
+		1752900E0B1133D000A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BlackrainUGens.cpp;
+			refType = 4;
+		};
+		1752900F0B1133D000A802D7 = {
+			fileRef = 1752900E0B1133D000A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290100B11341400A802D7 = {
+			buildPhases = (
+				175290110B11341400A802D7,
+				175290120B11341400A802D7,
+				175290140B11341400A802D7,
+				175290150B11341400A802D7,
+				175290160B11341400A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "JoshPVUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = JoshPVUGens;
+			productName = blackrainUGens;
+			productReference = 175290170B11341400A802D7;
+		};
+		175290110B11341400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290ED0B1139AE00A802D7,
+				175290EF0B1139B100A802D7,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290120B11341400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290230B11345900A802D7,
+				175290E90B1139A400A802D7,
+				175290EA0B1139AB00A802D7,
+				175290EB0B1139AC00A802D7,
+				175290EC0B1139AE00A802D7,
+				175290EE0B1139B000A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290140B11341400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290F10B113A9500A802D7,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290150B11341400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290160B11341400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/JoshPVUGens-gcc3.scx build/JoshPVUGens";
+		};
+		175290170B11341400A802D7 = {
+			isa = PBXLibraryReference;
+			path = "JoshPVUGens-gcc3.scx";
+			refType = 3;
+		};
+		175290180B11342D00A802D7 = {
+			buildPhases = (
+				175290190B11342D00A802D7,
+				1752901A0B11342D00A802D7,
+				1752901C0B11342D00A802D7,
+				1752901D0B11342D00A802D7,
+				1752901E0B11342D00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "ReverbUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = ReverbUGens;
+			productName = blackrainUGens;
+			productReference = 1752901F0B11342D00A802D7;
+		};
+		175290190B11342D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1752901A0B11342D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290210B11344D00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1752901C0B11342D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1752901D0B11342D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1752901E0B11342D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/ReverbUGens-gcc3.scx build/ReverbUGens";
+		};
+		1752901F0B11342D00A802D7 = {
+			isa = PBXLibraryReference;
+			path = "ReverbUGens-gcc3.scx";
+			refType = 3;
+		};
+		175290200B11344D00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ReverbUGens.cpp;
+			refType = 4;
+		};
+		175290210B11344D00A802D7 = {
+			fileRef = 175290200B11344D00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290220B11345900A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = JoshPVUGens.cpp;
+			refType = 4;
+		};
+		175290230B11345900A802D7 = {
+			fileRef = 175290220B11345900A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290240B11348400A802D7 = {
+			buildPhases = (
+				175290250B11348400A802D7,
+				175290260B11348400A802D7,
+				175290280B11348400A802D7,
+				175290290B11348400A802D7,
+				1752902A0B11348400A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "JoshUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = JoshUGens;
+			productName = blackrainUGens;
+			productReference = 1752902B0B11348400A802D7;
+		};
+		175290250B11348400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290260B11348400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				1752902D0B1134B900A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290280B11348400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290290B11348400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1752902A0B11348400A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/JoshUGens-gcc3.scx build/JoshUGens";
+		};
+		1752902B0B11348400A802D7 = {
+			isa = PBXLibraryReference;
+			path = "JoshUGens-gcc3.scx";
+			refType = 3;
+		};
+		1752902C0B1134B900A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = JoshUGens.cpp;
+			refType = 4;
+		};
+		1752902D0B1134B900A802D7 = {
+			fileRef = 1752902C0B1134B900A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1752902E0B1134C400A802D7 = {
+			isa = PBXTargetDependency;
+			target = 175290100B11341400A802D7;
+		};
+		1752902F0B1134C800A802D7 = {
+			isa = PBXTargetDependency;
+			target = 175290240B11348400A802D7;
+		};
+		175290300B1134CB00A802D7 = {
+			isa = PBXTargetDependency;
+			target = 175290180B11342D00A802D7;
+		};
+		175290330B11356E00A802D7 = {
+			fileRef = 1752900C0B1133C000A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1752903C0B1138D900A802D7 = {
+			children = (
+				1752903D0B11393A00A802D7,
+			);
+			isa = PBXGroup;
+			name = "sc3 source";
+			refType = 4;
+		};
+		1752903D0B11393A00A802D7 = {
+			children = (
+				175290C40B11393C00A802D7,
+				175290C50B11393C00A802D7,
+				175290C70B11393C00A802D7,
+				175290C80B11393C00A802D7,
+				175290C90B11393C00A802D7,
+				175290CA0B11393C00A802D7,
+				175290CB0B11393C00A802D7,
+				175290CC0B11393C00A802D7,
+				175290CD0B11393C00A802D7,
+				175290CE0B11393C00A802D7,
+				175290CF0B11393C00A802D7,
+				175290D00B11393C00A802D7,
+				175290D10B11393C00A802D7,
+				175290D20B11393C00A802D7,
+				175290D30B11393C00A802D7,
+				175290D40B11393C00A802D7,
+				175290D50B11393C00A802D7,
+				175290D60B11393C00A802D7,
+				175290D70B11393C00A802D7,
+				175290D80B11393C00A802D7,
+				175290D90B11393C00A802D7,
+				175290DA0B11393C00A802D7,
+				175290DB0B11393C00A802D7,
+				175290DC0B11393C00A802D7,
+				175290DD0B11393C00A802D7,
+				175290DE0B11393C00A802D7,
+				175290DF0B11393C00A802D7,
+				175290E00B11393C00A802D7,
+			);
+			isa = PBXGroup;
+			name = plugins;
+			path = /Users/x/scdev/supercollider/source/plugins;
+			refType = 0;
+		};
+		175290C40B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BinaryOpUGens.cpp;
+			refType = 4;
+		};
+		175290C50B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ChaosUGens.cpp;
+			refType = 4;
+		};
+		175290C70B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Convolution.cpp;
+			refType = 4;
+		};
+		175290C80B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DelayUGens.cpp;
+			refType = 4;
+		};
+		175290C90B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DemandUGens.cpp;
+			refType = 4;
+		};
+		175290CA0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DiskIO_UGens.cpp;
+			refType = 4;
+		};
+		175290CB0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DynNoiseUGens.cpp;
+			refType = 4;
+		};
+		175290CC0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FeatureDetection.cpp;
+			refType = 4;
+		};
+		175290CD0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FFT2InterfaceTable.cpp;
+			refType = 4;
+		};
+		175290CE0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FFT_UGens.cpp;
+			refType = 4;
+		};
+		175290CF0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FFT_UGens.h;
+			refType = 4;
+		};
+		175290D00B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = fftlib.c;
+			refType = 4;
+		};
+		175290D10B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = fftlib.h;
+			refType = 4;
+		};
+		175290D20B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FilterUGens.cpp;
+			refType = 4;
+		};
+		175290D30B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = GendynUGens.cpp;
+			refType = 4;
+		};
+		175290D40B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = IOUGens.cpp;
+			refType = 4;
+		};
+		175290D50B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LFUGens.cpp;
+			refType = 4;
+		};
+		175290D60B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MacUGens.cpp;
+			refType = 4;
+		};
+		175290D70B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MulAddUGens.cpp;
+			refType = 4;
+		};
+		175290D80B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = NoiseUGens.cpp;
+			refType = 4;
+		};
+		175290D90B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = OscUGens.cpp;
+			refType = 4;
+		};
+		175290DA0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PanUGens.cpp;
+			refType = 4;
+		};
+		175290DB0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PhysicalModelingUGens.cpp;
+			refType = 4;
+		};
+		175290DC0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PV_ThirdParty.cpp;
+			refType = 4;
+		};
+		175290DD0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SCComplex.cpp;
+			refType = 4;
+		};
+		175290DE0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SCComplex.h;
+			refType = 4;
+		};
+		175290DF0B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TriggerUGens.cpp;
+			refType = 4;
+		};
+		175290E00B11393C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = UnaryOpUGens.cpp;
+			refType = 4;
+		};
+		175290E90B1139A400A802D7 = {
+			fileRef = 175290C70B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290EA0B1139AB00A802D7 = {
+			fileRef = 175290CC0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290EB0B1139AC00A802D7 = {
+			fileRef = 175290CD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290EC0B1139AE00A802D7 = {
+			fileRef = 175290D00B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290ED0B1139AE00A802D7 = {
+			fileRef = 175290D10B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290EE0B1139B000A802D7 = {
+			fileRef = 175290DD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290EF0B1139B100A802D7 = {
+			fileRef = 175290DE0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290F10B113A9500A802D7 = {
+			fileRef = F5499A1103A3023A01BA7E76;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290F30B113DDA00A802D7 = {
+			buildPhases = (
+				175290F40B113DDA00A802D7,
+				175290F50B113DDA00A802D7,
+				175290F70B113DDA00A802D7,
+				175290F80B113DDA00A802D7,
+				175290F90B113DDA00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "AmbisonicUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = AmbisonicUGens;
+			productInstallPath = "";
+			productName = blackrainUGens;
+			productReference = 175290FA0B113DDA00A802D7;
+		};
+		175290F40B113DDA00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290F50B113DDA00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290FC0B113E3500A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290F70B113DDA00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290F80B113DDA00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		175290F90B113DDA00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/AmbisonicUGens-gcc3.scx build/AmbisonicUGens";
+		};
+		175290FA0B113DDA00A802D7 = {
+			isa = PBXLibraryReference;
+			path = "AmbisonicUGens-gcc3.scx";
+			refType = 3;
+		};
+		175290FB0B113E3500A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = AmbisonicUGens.cpp;
+			refType = 4;
+		};
+		175290FC0B113E3500A802D7 = {
+			fileRef = 175290FB0B113E3500A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		175290FD0B113E4100A802D7 = {
+			isa = PBXTargetDependency;
+			target = 175290F30B113DDA00A802D7;
+		};
+		177183AF0B39F8EB00A802D7 = {
+			fileRef = 175290D10B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		177183B00B39F8EC00A802D7 = {
+			fileRef = 175290D00B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		177183B10B39F8FE00A802D7 = {
+			fileRef = 175290DD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		177183B20B39F8FF00A802D7 = {
+			fileRef = 175290DE0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		177D91630B39F44100A802D7 = {
+			buildPhases = (
+				177D91640B39F44100A802D7,
+				177D91650B39F44100A802D7,
+				177D91670B39F44100A802D7,
+				177D91680B39F44100A802D7,
+				177D91690B39F44100A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "MCLDBufferUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = MCLDBufferUGens;
+			productName = blackrainUGens;
+			productReference = 177D916A0B39F44100A802D7;
+		};
+		177D91640B39F44100A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		177D91650B39F44100A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				177D916C0B39F48400A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		177D91670B39F44100A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		177D91680B39F44100A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		177D91690B39F44100A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/MCLDBufferUGens-gcc3.scx build/MCLD_UGens";
+		};
+		177D916A0B39F44100A802D7 = {
+			isa = PBXLibraryReference;
+			path = "MCLDBufferUGens-gcc3.scx";
+			refType = 3;
+		};
+		177D916B0B39F48400A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MCLDBufferUGens.cpp;
+			refType = 4;
+		};
+		177D916C0B39F48400A802D7 = {
+			fileRef = 177D916B0B39F48400A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		177D916D0B39F49B00A802D7 = {
+			isa = PBXTargetDependency;
+			target = 177D91630B39F44100A802D7;
+		};
+		179814D20B11608C00A802D7 = {
+			buildPhases = (
+				179814D30B11608C00A802D7,
+				179814D40B11608C00A802D7,
+				179814D60B11608C00A802D7,
+				179814D70B11608C00A802D7,
+				179814D80B11608C00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_SEARCH_PATHS = "/Users/x/scdev/stk-4.2.1/src";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN -Isource/StkUGens/include";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "StkUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = StkUGens;
+			productName = blackrainUGens;
+			productReference = 179814D90B11608C00A802D7;
+		};
+		179814D30B11608C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				179815450B1160DD00A802D7,
+				179815460B1160DD00A802D7,
+				179815470B1160DD00A802D7,
+				179815480B1160DD00A802D7,
+				179815490B1160DD00A802D7,
+				1798154A0B1160DD00A802D7,
+				1798154B0B1160DD00A802D7,
+				1798154C0B1160DD00A802D7,
+				1798154D0B1160DD00A802D7,
+				1798154E0B1160DD00A802D7,
+				1798154F0B1160DD00A802D7,
+				179815500B1160DD00A802D7,
+				179815510B1160DD00A802D7,
+				179815520B1160DD00A802D7,
+				179815530B1160DD00A802D7,
+				179815540B1160DD00A802D7,
+				179815550B1160DD00A802D7,
+				179815560B1160DD00A802D7,
+				179815570B1160DD00A802D7,
+				179815580B1160DD00A802D7,
+				179815590B1160DD00A802D7,
+				1798155A0B1160DD00A802D7,
+				1798155B0B1160DD00A802D7,
+				1798155C0B1160DD00A802D7,
+				1798155D0B1160DD00A802D7,
+				1798155E0B1160DD00A802D7,
+				1798155F0B1160DD00A802D7,
+				179815600B1160DD00A802D7,
+				179815610B1160DD00A802D7,
+				179815620B1160DD00A802D7,
+				179815630B1160DD00A802D7,
+				179815640B1160DD00A802D7,
+				179815650B1160DD00A802D7,
+				179815660B1160DD00A802D7,
+				179815670B1160DD00A802D7,
+				179815680B1160DD00A802D7,
+				179815690B1160DD00A802D7,
+				1798156A0B1160DD00A802D7,
+				1798156B0B1160DD00A802D7,
+				1798156C0B1160DD00A802D7,
+				1798156D0B1160DD00A802D7,
+				1798156E0B1160DD00A802D7,
+				1798156F0B1160DD00A802D7,
+				179815700B1160DD00A802D7,
+				179815710B1160DD00A802D7,
+				179815720B1160DD00A802D7,
+				179815730B1160DD00A802D7,
+				179815740B1160DD00A802D7,
+				179815750B1160DD00A802D7,
+				179815760B1160DD00A802D7,
+				179815770B1160DD00A802D7,
+				179815780B1160DD00A802D7,
+				179815790B1160DD00A802D7,
+				1798157A0B1160DD00A802D7,
+				1798157B0B1160DD00A802D7,
+				1798157C0B1160DD00A802D7,
+				1798157D0B1160DD00A802D7,
+				1798157E0B1160DD00A802D7,
+				1798157F0B1160DD00A802D7,
+				179815800B1160DD00A802D7,
+				179815810B1160DD00A802D7,
+				179815820B1160DD00A802D7,
+				179815830B1160DD00A802D7,
+				179815840B1160DD00A802D7,
+				179815850B1160DD00A802D7,
+				179815860B1160DD00A802D7,
+				179815870B1160DD00A802D7,
+				179815880B1160DD00A802D7,
+				179815890B1160DD00A802D7,
+				1798158A0B1160DD00A802D7,
+				1798158B0B1160DD00A802D7,
+				1798158C0B1160DD00A802D7,
+				1798158D0B1160DD00A802D7,
+				1798158E0B1160DD00A802D7,
+				1798158F0B1160DD00A802D7,
+				179815900B1160DD00A802D7,
+				179815910B1160DD00A802D7,
+				179815920B1160DD00A802D7,
+				179815930B1160DD00A802D7,
+				179815940B1160DD00A802D7,
+				179815950B1160DD00A802D7,
+				179815960B1160DD00A802D7,
+				179815970B1160DD00A802D7,
+				179815980B1160DD00A802D7,
+				179815990B1160DD00A802D7,
+				1798159A0B1160DD00A802D7,
+				1798159B0B1160DD00A802D7,
+				1798159C0B1160DD00A802D7,
+				1798159D0B1160DD00A802D7,
+				1798159E0B1160DD00A802D7,
+				1798159F0B1160DD00A802D7,
+				179815A00B1160DD00A802D7,
+				179815A10B1160DD00A802D7,
+				179815A20B1160DD00A802D7,
+				179815A30B1160DD00A802D7,
+				179815A40B1160DD00A802D7,
+				179815A50B1160DD00A802D7,
+				179815A60B1160DD00A802D7,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		179814D40B11608C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				179815A70B1160DD00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		179814D60B11608C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				179815B30B11618B00A802D7,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		179814D70B11608C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		179814D80B11608C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/StkUGens-gcc3.scx build/StkUGens";
+		};
+		179814D90B11608C00A802D7 = {
+			isa = PBXLibraryReference;
+			path = "StkUGens-gcc3.scx";
+			refType = 3;
+		};
+		179814DA0B1160B700A802D7 = {
+			isa = PBXTargetDependency;
+			target = 179814D20B11608C00A802D7;
+		};
+		179814DB0B1160DD00A802D7 = {
+			children = (
+				179814DD0B1160DD00A802D7,
+				179815440B1160DD00A802D7,
+			);
+			isa = PBXGroup;
+			path = StkUGens;
+			refType = 4;
+		};
+		179814DD0B1160DD00A802D7 = {
+			children = (
+				179814E00B1160DD00A802D7,
+				179814E10B1160DD00A802D7,
+				179814E20B1160DD00A802D7,
+				179814E30B1160DD00A802D7,
+				179814E40B1160DD00A802D7,
+				179814E50B1160DD00A802D7,
+				179814E60B1160DD00A802D7,
+				179814E70B1160DD00A802D7,
+				179814E80B1160DD00A802D7,
+				179814E90B1160DD00A802D7,
+				179814EA0B1160DD00A802D7,
+				179814EB0B1160DD00A802D7,
+				179814EC0B1160DD00A802D7,
+				179814ED0B1160DD00A802D7,
+				179814EE0B1160DD00A802D7,
+				179814EF0B1160DD00A802D7,
+				179814F00B1160DD00A802D7,
+				179814F10B1160DD00A802D7,
+				179814F20B1160DD00A802D7,
+				179814F30B1160DD00A802D7,
+				179814F40B1160DD00A802D7,
+				179814F50B1160DD00A802D7,
+				179814F60B1160DD00A802D7,
+				179814F70B1160DD00A802D7,
+				179814F80B1160DD00A802D7,
+				179814F90B1160DD00A802D7,
+				179814FA0B1160DD00A802D7,
+				179814FB0B1160DD00A802D7,
+				179814FC0B1160DD00A802D7,
+				179814FD0B1160DD00A802D7,
+				179814FE0B1160DD00A802D7,
+				179814FF0B1160DD00A802D7,
+				179815000B1160DD00A802D7,
+				179815010B1160DD00A802D7,
+				179815020B1160DD00A802D7,
+				179815030B1160DD00A802D7,
+				179815040B1160DD00A802D7,
+				179815050B1160DD00A802D7,
+				179815060B1160DD00A802D7,
+				179815070B1160DD00A802D7,
+				179815080B1160DD00A802D7,
+				179815090B1160DD00A802D7,
+				1798150A0B1160DD00A802D7,
+				1798150B0B1160DD00A802D7,
+				1798150C0B1160DD00A802D7,
+				1798150D0B1160DD00A802D7,
+				1798150E0B1160DD00A802D7,
+				1798150F0B1160DD00A802D7,
+				179815100B1160DD00A802D7,
+				179815110B1160DD00A802D7,
+				179815120B1160DD00A802D7,
+				179815130B1160DD00A802D7,
+				179815140B1160DD00A802D7,
+				179815150B1160DD00A802D7,
+				179815160B1160DD00A802D7,
+				179815170B1160DD00A802D7,
+				179815180B1160DD00A802D7,
+				179815190B1160DD00A802D7,
+				1798151A0B1160DD00A802D7,
+				1798151B0B1160DD00A802D7,
+				1798151C0B1160DD00A802D7,
+				1798151D0B1160DD00A802D7,
+				1798151E0B1160DD00A802D7,
+				1798151F0B1160DD00A802D7,
+				179815200B1160DD00A802D7,
+				179815210B1160DD00A802D7,
+				179815220B1160DD00A802D7,
+				179815230B1160DD00A802D7,
+				179815240B1160DD00A802D7,
+				179815250B1160DD00A802D7,
+				179815260B1160DD00A802D7,
+				179815270B1160DD00A802D7,
+				179815280B1160DD00A802D7,
+				179815290B1160DD00A802D7,
+				1798152A0B1160DD00A802D7,
+				1798152B0B1160DD00A802D7,
+				1798152C0B1160DD00A802D7,
+				1798152D0B1160DD00A802D7,
+				1798152E0B1160DD00A802D7,
+				1798152F0B1160DD00A802D7,
+				179815300B1160DD00A802D7,
+				179815310B1160DD00A802D7,
+				179815320B1160DD00A802D7,
+				179815330B1160DD00A802D7,
+				179815340B1160DD00A802D7,
+				179815350B1160DD00A802D7,
+				179815360B1160DD00A802D7,
+				179815370B1160DD00A802D7,
+				179815380B1160DD00A802D7,
+				179815390B1160DD00A802D7,
+				1798153A0B1160DD00A802D7,
+				1798153B0B1160DD00A802D7,
+				1798153C0B1160DD00A802D7,
+				1798153D0B1160DD00A802D7,
+				1798153E0B1160DD00A802D7,
+				1798153F0B1160DD00A802D7,
+				179815400B1160DD00A802D7,
+				179815410B1160DD00A802D7,
+				179815420B1160DD00A802D7,
+				179815430B1160DD00A802D7,
+			);
+			isa = PBXGroup;
+			path = include;
+			refType = 4;
+		};
+		179814E00B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ADSR.h;
+			refType = 4;
+		};
+		179814E10B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Asymp.h;
+			refType = 4;
+		};
+		179814E20B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BandedWG.h;
+			refType = 4;
+		};
+		179814E30B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BeeThree.h;
+			refType = 4;
+		};
+		179814E40B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BiQuad.h;
+			refType = 4;
+		};
+		179814E50B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Blit.h;
+			refType = 4;
+		};
+		179814E60B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BlitSaw.h;
+			refType = 4;
+		};
+		179814E70B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BlitSquare.h;
+			refType = 4;
+		};
+		179814E80B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BlowBotl.h;
+			refType = 4;
+		};
+		179814E90B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BlowHole.h;
+			refType = 4;
+		};
+		179814EA0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Bowed.h;
+			refType = 4;
+		};
+		179814EB0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BowTable.h;
+			refType = 4;
+		};
+		179814EC0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Brass.h;
+			refType = 4;
+		};
+		179814ED0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Chorus.h;
+			refType = 4;
+		};
+		179814EE0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Clarinet.h;
+			refType = 4;
+		};
+		179814EF0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Delay.h;
+			refType = 4;
+		};
+		179814F00B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DelayA.h;
+			refType = 4;
+		};
+		179814F10B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DelayL.h;
+			refType = 4;
+		};
+		179814F20B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Drummer.h;
+			refType = 4;
+		};
+		179814F30B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Echo.h;
+			refType = 4;
+		};
+		179814F40B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Effect.h;
+			refType = 4;
+		};
+		179814F50B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Envelope.h;
+			refType = 4;
+		};
+		179814F60B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FileRead.h;
+			refType = 4;
+		};
+		179814F70B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FileWrite.h;
+			refType = 4;
+		};
+		179814F80B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FileWvIn.h;
+			refType = 4;
+		};
+		179814F90B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FileWvOut.h;
+			refType = 4;
+		};
+		179814FA0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Filter.h;
+			refType = 4;
+		};
+		179814FB0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Flute.h;
+			refType = 4;
+		};
+		179814FC0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FM.h;
+			refType = 4;
+		};
+		179814FD0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FMVoices.h;
+			refType = 4;
+		};
+		179814FE0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = FormSwep.h;
+			refType = 4;
+		};
+		179814FF0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Function.h;
+			refType = 4;
+		};
+		179815000B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Generator.h;
+			refType = 4;
+		};
+		179815010B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Granulate.h;
+			refType = 4;
+		};
+		179815020B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = HevyMetl.h;
+			refType = 4;
+		};
+		179815030B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = InetWvIn.h;
+			refType = 4;
+		};
+		179815040B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = InetWvOut.h;
+			refType = 4;
+		};
+		179815050B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Instrmnt.h;
+			refType = 4;
+		};
+		179815060B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = JCRev.h;
+			refType = 4;
+		};
+		179815070B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = JetTable.h;
+			refType = 4;
+		};
+		179815080B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mandolin.h;
+			refType = 4;
+		};
+		179815090B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mesh2D.h;
+			refType = 4;
+		};
+		1798150A0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Messager.h;
+			refType = 4;
+		};
+		1798150B0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MidiFileIn.h;
+			refType = 4;
+		};
+		1798150C0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Modal.h;
+			refType = 4;
+		};
+		1798150D0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ModalBar.h;
+			refType = 4;
+		};
+		1798150E0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Modulate.h;
+			refType = 4;
+		};
+		1798150F0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Moog.h;
+			refType = 4;
+		};
+		179815100B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mutex.h;
+			refType = 4;
+		};
+		179815110B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Noise.h;
+			refType = 4;
+		};
+		179815120B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = NRev.h;
+			refType = 4;
+		};
+		179815130B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = OnePole.h;
+			refType = 4;
+		};
+		179815140B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = OneZero.h;
+			refType = 4;
+		};
+		179815150B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PercFlut.h;
+			refType = 4;
+		};
+		179815160B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Phonemes.h;
+			refType = 4;
+		};
+		179815170B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PitShift.h;
+			refType = 4;
+		};
+		179815180B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Plucked.h;
+			refType = 4;
+		};
+		179815190B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PluckTwo.h;
+			refType = 4;
+		};
+		1798151A0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PoleZero.h;
+			refType = 4;
+		};
+		1798151B0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PRCRev.h;
+			refType = 4;
+		};
+		1798151C0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ReedTable.h;
+			refType = 4;
+		};
+		1798151D0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Resonate.h;
+			refType = 4;
+		};
+		1798151E0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Rhodey.h;
+			refType = 4;
+		};
+		1798151F0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtAudio.h;
+			refType = 4;
+		};
+		179815200B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtDuplex.h;
+			refType = 4;
+		};
+		179815210B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtError.h;
+			refType = 4;
+		};
+		179815220B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtMidi.h;
+			refType = 4;
+		};
+		179815230B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtWvIn.h;
+			refType = 4;
+		};
+		179815240B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RtWvOut.h;
+			refType = 4;
+		};
+		179815250B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Sampler.h;
+			refType = 4;
+		};
+		179815260B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Saxofony.h;
+			refType = 4;
+		};
+		179815270B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Shakers.h;
+			refType = 4;
+		};
+		179815280B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Simple.h;
+			refType = 4;
+		};
+		179815290B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SineWave.h;
+			refType = 4;
+		};
+		1798152A0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SingWave.h;
+			refType = 4;
+		};
+		1798152B0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Sitar.h;
+			refType = 4;
+		};
+		1798152C0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Skini.h;
+			refType = 4;
+		};
+		1798152D0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SKINI.msg;
+			refType = 4;
+		};
+		1798152E0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SKINI.tbl;
+			refType = 4;
+		};
+		1798152F0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Socket.h;
+			refType = 4;
+		};
+		179815300B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Sphere.h;
+			refType = 4;
+		};
+		179815310B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = StifKarp.h;
+			refType = 4;
+		};
+		179815320B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Stk.h;
+			refType = 4;
+		};
+		179815330B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = STKAlloc.h;
+			refType = 4;
+		};
+		179815340B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SubNoise.h;
+			refType = 4;
+		};
+		179815350B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TcpClient.h;
+			refType = 4;
+		};
+		179815360B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TcpServer.h;
+			refType = 4;
+		};
+		179815370B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Thread.h;
+			refType = 4;
+		};
+		179815380B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TubeBell.h;
+			refType = 4;
+		};
+		179815390B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TwoPole.h;
+			refType = 4;
+		};
+		1798153A0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TwoZero.h;
+			refType = 4;
+		};
+		1798153B0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = UdpSocket.h;
+			refType = 4;
+		};
+		1798153C0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Vector3D.h;
+			refType = 4;
+		};
+		1798153D0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Voicer.h;
+			refType = 4;
+		};
+		1798153E0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VoicForm.h;
+			refType = 4;
+		};
+		1798153F0B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WaveLoop.h;
+			refType = 4;
+		};
+		179815400B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Whistle.h;
+			refType = 4;
+		};
+		179815410B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Wurley.h;
+			refType = 4;
+		};
+		179815420B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WvIn.h;
+			refType = 4;
+		};
+		179815430B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WvOut.h;
+			refType = 4;
+		};
+		179815440B1160DD00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = StkAll.cpp;
+			refType = 4;
+		};
+		179815450B1160DD00A802D7 = {
+			fileRef = 179814E00B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815460B1160DD00A802D7 = {
+			fileRef = 179814E10B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815470B1160DD00A802D7 = {
+			fileRef = 179814E20B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815480B1160DD00A802D7 = {
+			fileRef = 179814E30B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815490B1160DD00A802D7 = {
+			fileRef = 179814E40B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154A0B1160DD00A802D7 = {
+			fileRef = 179814E50B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154B0B1160DD00A802D7 = {
+			fileRef = 179814E60B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154C0B1160DD00A802D7 = {
+			fileRef = 179814E70B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154D0B1160DD00A802D7 = {
+			fileRef = 179814E80B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154E0B1160DD00A802D7 = {
+			fileRef = 179814E90B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798154F0B1160DD00A802D7 = {
+			fileRef = 179814EA0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815500B1160DD00A802D7 = {
+			fileRef = 179814EB0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815510B1160DD00A802D7 = {
+			fileRef = 179814EC0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815520B1160DD00A802D7 = {
+			fileRef = 179814ED0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815530B1160DD00A802D7 = {
+			fileRef = 179814EE0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815540B1160DD00A802D7 = {
+			fileRef = 179814EF0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815550B1160DD00A802D7 = {
+			fileRef = 179814F00B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815560B1160DD00A802D7 = {
+			fileRef = 179814F10B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815570B1160DD00A802D7 = {
+			fileRef = 179814F20B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815580B1160DD00A802D7 = {
+			fileRef = 179814F30B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815590B1160DD00A802D7 = {
+			fileRef = 179814F40B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155A0B1160DD00A802D7 = {
+			fileRef = 179814F50B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155B0B1160DD00A802D7 = {
+			fileRef = 179814F60B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155C0B1160DD00A802D7 = {
+			fileRef = 179814F70B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155D0B1160DD00A802D7 = {
+			fileRef = 179814F80B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155E0B1160DD00A802D7 = {
+			fileRef = 179814F90B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798155F0B1160DD00A802D7 = {
+			fileRef = 179814FA0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815600B1160DD00A802D7 = {
+			fileRef = 179814FB0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815610B1160DD00A802D7 = {
+			fileRef = 179814FC0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815620B1160DD00A802D7 = {
+			fileRef = 179814FD0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815630B1160DD00A802D7 = {
+			fileRef = 179814FE0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815640B1160DD00A802D7 = {
+			fileRef = 179814FF0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815650B1160DD00A802D7 = {
+			fileRef = 179815000B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815660B1160DD00A802D7 = {
+			fileRef = 179815010B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815670B1160DD00A802D7 = {
+			fileRef = 179815020B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815680B1160DD00A802D7 = {
+			fileRef = 179815030B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815690B1160DD00A802D7 = {
+			fileRef = 179815040B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156A0B1160DD00A802D7 = {
+			fileRef = 179815050B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156B0B1160DD00A802D7 = {
+			fileRef = 179815060B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156C0B1160DD00A802D7 = {
+			fileRef = 179815070B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156D0B1160DD00A802D7 = {
+			fileRef = 179815080B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156E0B1160DD00A802D7 = {
+			fileRef = 179815090B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798156F0B1160DD00A802D7 = {
+			fileRef = 1798150A0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815700B1160DD00A802D7 = {
+			fileRef = 1798150B0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815710B1160DD00A802D7 = {
+			fileRef = 1798150C0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815720B1160DD00A802D7 = {
+			fileRef = 1798150D0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815730B1160DD00A802D7 = {
+			fileRef = 1798150E0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815740B1160DD00A802D7 = {
+			fileRef = 1798150F0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815750B1160DD00A802D7 = {
+			fileRef = 179815100B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815760B1160DD00A802D7 = {
+			fileRef = 179815110B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815770B1160DD00A802D7 = {
+			fileRef = 179815120B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815780B1160DD00A802D7 = {
+			fileRef = 179815130B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815790B1160DD00A802D7 = {
+			fileRef = 179815140B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157A0B1160DD00A802D7 = {
+			fileRef = 179815150B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157B0B1160DD00A802D7 = {
+			fileRef = 179815160B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157C0B1160DD00A802D7 = {
+			fileRef = 179815170B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157D0B1160DD00A802D7 = {
+			fileRef = 179815180B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157E0B1160DD00A802D7 = {
+			fileRef = 179815190B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798157F0B1160DD00A802D7 = {
+			fileRef = 1798151A0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815800B1160DD00A802D7 = {
+			fileRef = 1798151B0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815810B1160DD00A802D7 = {
+			fileRef = 1798151C0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815820B1160DD00A802D7 = {
+			fileRef = 1798151D0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815830B1160DD00A802D7 = {
+			fileRef = 1798151E0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815840B1160DD00A802D7 = {
+			fileRef = 1798151F0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815850B1160DD00A802D7 = {
+			fileRef = 179815200B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815860B1160DD00A802D7 = {
+			fileRef = 179815210B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815870B1160DD00A802D7 = {
+			fileRef = 179815220B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815880B1160DD00A802D7 = {
+			fileRef = 179815230B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815890B1160DD00A802D7 = {
+			fileRef = 179815240B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158A0B1160DD00A802D7 = {
+			fileRef = 179815250B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158B0B1160DD00A802D7 = {
+			fileRef = 179815260B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158C0B1160DD00A802D7 = {
+			fileRef = 179815270B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158D0B1160DD00A802D7 = {
+			fileRef = 179815280B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158E0B1160DD00A802D7 = {
+			fileRef = 179815290B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798158F0B1160DD00A802D7 = {
+			fileRef = 1798152A0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815900B1160DD00A802D7 = {
+			fileRef = 1798152B0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815910B1160DD00A802D7 = {
+			fileRef = 1798152C0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815920B1160DD00A802D7 = {
+			fileRef = 1798152F0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815930B1160DD00A802D7 = {
+			fileRef = 179815300B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815940B1160DD00A802D7 = {
+			fileRef = 179815310B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815950B1160DD00A802D7 = {
+			fileRef = 179815320B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815960B1160DD00A802D7 = {
+			fileRef = 179815330B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815970B1160DD00A802D7 = {
+			fileRef = 179815340B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815980B1160DD00A802D7 = {
+			fileRef = 179815350B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815990B1160DD00A802D7 = {
+			fileRef = 179815360B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159A0B1160DD00A802D7 = {
+			fileRef = 179815370B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159B0B1160DD00A802D7 = {
+			fileRef = 179815380B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159C0B1160DD00A802D7 = {
+			fileRef = 179815390B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159D0B1160DD00A802D7 = {
+			fileRef = 1798153A0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159E0B1160DD00A802D7 = {
+			fileRef = 1798153B0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1798159F0B1160DD00A802D7 = {
+			fileRef = 1798153C0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A00B1160DD00A802D7 = {
+			fileRef = 1798153D0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A10B1160DD00A802D7 = {
+			fileRef = 1798153E0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A20B1160DD00A802D7 = {
+			fileRef = 1798153F0B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A30B1160DD00A802D7 = {
+			fileRef = 179815400B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A40B1160DD00A802D7 = {
+			fileRef = 179815410B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A50B1160DD00A802D7 = {
+			fileRef = 179815420B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A60B1160DD00A802D7 = {
+			fileRef = 179815430B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815A70B1160DD00A802D7 = {
+			fileRef = 179815440B1160DD00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		179815B20B11618B00A802D7 = {
+			isa = PBXFileReference;
+			name = libstk.a;
+			path = "../stk-4.2.1/src/libstk.a";
+			refType = 2;
+		};
+		179815B30B11618B00A802D7 = {
+			fileRef = 179815B20B11618B00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732680B1D381D00A802D7 = {
+			buildPhases = (
+				17A732690B1D381D00A802D7,
+				17A7326C0B1D381D00A802D7,
+				17A732730B1D381D00A802D7,
+				17A732750B1D381D00A802D7,
+				17A732760B1D381D00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "MCLD_CQ_UGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = MCLD_CQ_UGens;
+			productName = blackrainUGens;
+			productReference = 17A732770B1D381D00A802D7;
+		};
+		17A732690B1D381D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A7326C0B1D381D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A732AA0B1D38BA00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732730B1D381D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A732BA0B1D3BD500A802D7,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732750B1D381D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732760B1D381D00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/MCLD_CQ_UGens-gcc3.scx build/MCLD_UGens";
+		};
+		17A732770B1D381D00A802D7 = {
+			isa = PBXLibraryReference;
+			path = "MCLD_CQ_UGens-gcc3.scx";
+			refType = 3;
+		};
+		17A732780B1D382900A802D7 = {
+			buildPhases = (
+				17A732790B1D382900A802D7,
+				17A7327C0B1D382900A802D7,
+				17A732830B1D382900A802D7,
+				17A732850B1D382900A802D7,
+				17A732860B1D382900A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "MCLDChaosUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = MCLDChaosUGens;
+			productName = blackrainUGens;
+			productReference = 17A732870B1D382900A802D7;
+		};
+		17A732790B1D382900A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A7327C0B1D382900A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A732AD0B1D396300A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732830B1D382900A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732850B1D382900A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732860B1D382900A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/MCLDChaosUGens-gcc3.scx build/MCLD_UGens";
+		};
+		17A732870B1D382900A802D7 = {
+			isa = PBXLibraryReference;
+			path = "MCLDChaosUGens-gcc3.scx";
+			refType = 3;
+		};
+		17A732880B1D382C00A802D7 = {
+			buildPhases = (
+				17A732890B1D382C00A802D7,
+				17A7328C0B1D382C00A802D7,
+				17A732930B1D382C00A802D7,
+				17A732950B1D382C00A802D7,
+				17A732960B1D382C00A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "MCLDFFTTriggeredUGen-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = MCLDFFTTriggeredUGen;
+			productName = blackrainUGens;
+			productReference = 17A732970B1D382C00A802D7;
+		};
+		17A732890B1D382C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				177183AF0B39F8EB00A802D7,
+				177183B20B39F8FF00A802D7,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A7328C0B1D382C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A732B00B1D3A5100A802D7,
+				177183B00B39F8EC00A802D7,
+				177183B10B39F8FE00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732930B1D382C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732950B1D382C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732960B1D382C00A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/MCLDFFTTriggeredUGen-gcc3.scx build/MCLD_UGens";
+		};
+		17A732970B1D382C00A802D7 = {
+			isa = PBXLibraryReference;
+			path = "MCLDFFTTriggeredUGen-gcc3.scx";
+			refType = 3;
+		};
+		17A732980B1D384500A802D7 = {
+			buildPhases = (
+				17A732990B1D384500A802D7,
+				17A7329C0B1D384500A802D7,
+				17A732A30B1D384500A802D7,
+				17A732A50B1D384500A802D7,
+				17A732A60B1D384500A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "MCLDFFTUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = MCLDFFTUGens;
+			productName = blackrainUGens;
+			productReference = 17A732A70B1D384500A802D7;
+		};
+		17A732990B1D384500A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A7329B0B1D384500A802D7,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A7329B0B1D384500A802D7 = {
+			fileRef = 175290DE0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A7329C0B1D384500A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A732A20B1D384500A802D7,
+				17A732B70B1D3B5C00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732A20B1D384500A802D7 = {
+			fileRef = 175290DD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732A30B1D384500A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732A50B1D384500A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A732A60B1D384500A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/MCLDFFTUGens-gcc3.scx build/MCLD_UGens";
+		};
+		17A732A70B1D384500A802D7 = {
+			isa = PBXLibraryReference;
+			path = "MCLDFFTUGens-gcc3.scx";
+			refType = 3;
+		};
+		17A732A80B1D38A300A802D7 = {
+			children = (
+				177D916B0B39F48400A802D7,
+				17A732A90B1D38BA00A802D7,
+				17A732AC0B1D396300A802D7,
+				17A732AF0B1D3A5100A802D7,
+				17A732B60B1D3B5C00A802D7,
+			);
+			isa = PBXGroup;
+			name = MCLD_CQ_UGens;
+			path = "";
+			refType = 4;
+		};
+		17A732A90B1D38BA00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MCLD_CQ_UGens.cpp;
+			refType = 4;
+		};
+		17A732AA0B1D38BA00A802D7 = {
+			fileRef = 17A732A90B1D38BA00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732AC0B1D396300A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MCLDChaosUGens.cpp;
+			refType = 4;
+		};
+		17A732AD0B1D396300A802D7 = {
+			fileRef = 17A732AC0B1D396300A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732AF0B1D3A5100A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MCLDFFTTriggeredUGen.cpp;
+			refType = 4;
+		};
+		17A732B00B1D3A5100A802D7 = {
+			fileRef = 17A732AF0B1D3A5100A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732B60B1D3B5C00A802D7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MCLDFFTUGens.cpp;
+			refType = 4;
+		};
+		17A732B70B1D3B5C00A802D7 = {
+			fileRef = 17A732B60B1D3B5C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A732BA0B1D3BD500A802D7 = {
+			fileRef = F5499A1103A3023A01BA7E76;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C96E0B8912C100A80144 = {
+			children = (
+				17A9C9780B89137C00A80144,
+			);
+			isa = PBXGroup;
+			name = LoopBuf;
+			path = "";
+			refType = 4;
+		};
+		17A9C96F0B8912ED00A80144 = {
+			buildPhases = (
+				17A9C9700B8912ED00A80144,
+				17A9C9710B8912ED00A80144,
+				17A9C9730B8912ED00A80144,
+				17A9C9740B8912ED00A80144,
+				17A9C9750B8912ED00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "LoopBuf-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = LoopBuf;
+			productName = blackrainUGens;
+			productReference = 17A9C9760B8912ED00A80144;
+		};
+		17A9C9700B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9710B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9790B89137C00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9730B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9740B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9750B8912ED00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/LoopBuf-gcc3.scx build/ljpclasses";
+		};
+		17A9C9760B8912ED00A80144 = {
+			isa = PBXLibraryReference;
+			path = "LoopBuf-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9770B89130400A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C96F0B8912ED00A80144;
+		};
+		17A9C9780B89137C00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LoopBuf.cpp;
+			refType = 4;
+		};
+		17A9C9790B89137C00A80144 = {
+			fileRef = 17A9C9780B89137C00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C97A0B8914B700A80144 = {
+			children = (
+				17A9C9A30B8916A000A80144,
+				17A9C9A50B8917EA00A80144,
+				17A9C9A70B8917F700A80144,
+				17A9C9A90B89180400A80144,
+				17A9C9AB0B89180E00A80144,
+			);
+			isa = PBXGroup;
+			name = BhobUGens;
+			path = "";
+			refType = 4;
+		};
+		17A9C97B0B89150300A80144 = {
+			buildPhases = (
+				17A9C97C0B89150300A80144,
+				17A9C97D0B89150300A80144,
+				17A9C97F0B89150300A80144,
+				17A9C9800B89150300A80144,
+				17A9C9810B89150300A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobChaos-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobChaosUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9820B89150300A80144;
+		};
+		17A9C97C0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C97D0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A40B8916A000A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C97F0B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9800B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9810B89150300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobChaos-gcc3.scx build/bhobUGens";
+		};
+		17A9C9820B89150300A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobChaos-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9830B89150700A80144 = {
+			buildPhases = (
+				17A9C9840B89150700A80144,
+				17A9C9850B89150700A80144,
+				17A9C9870B89150700A80144,
+				17A9C9880B89150700A80144,
+				17A9C9890B89150700A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobFFT-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobFFTUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C98A0B89150700A80144;
+		};
+		17A9C9840B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9850B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A60B8917EA00A80144,
+				17A9C9BC0B891BF900A80144,
+				17A9C9BD0B891C0F00A80144,
+				17A9C9BE0B891C1400A80144,
+				17A9C9BF0B891C1900A80144,
+				17A9C9C00B891D4F00A80144,
+				17A9C9C10B891D7C00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9870B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9880B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9890B89150700A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobFFT-gcc3.scx build/bhobUGens";
+		};
+		17A9C98A0B89150700A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobFFT-gcc3.scx";
+			refType = 3;
+		};
+		17A9C98B0B89150B00A80144 = {
+			buildPhases = (
+				17A9C98C0B89150B00A80144,
+				17A9C98D0B89150B00A80144,
+				17A9C98F0B89150B00A80144,
+				17A9C9900B89150B00A80144,
+				17A9C9910B89150B00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BhobFilt-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BhobFiltUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9920B89150B00A80144;
+		};
+		17A9C98C0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C98D0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9A80B8917F700A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C98F0B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9900B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9910B89150B00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BhobFilt-gcc3.scx build/bhobUGens";
+		};
+		17A9C9920B89150B00A80144 = {
+			isa = PBXLibraryReference;
+			path = "BhobFilt-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9930B89151300A80144 = {
+			buildPhases = (
+				17A9C9940B89151300A80144,
+				17A9C9950B89151300A80144,
+				17A9C9970B89151300A80144,
+				17A9C9980B89151300A80144,
+				17A9C9990B89151300A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "bhobGrain-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = bhobGrainUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C99A0B89151300A80144;
+		};
+		17A9C9940B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9950B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9AA0B89180400A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9970B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9980B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9990B89151300A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/bhobGrain-gcc3.scx build/bhobUGens";
+		};
+		17A9C99A0B89151300A80144 = {
+			isa = PBXLibraryReference;
+			path = "bhobGrain-gcc3.scx";
+			refType = 3;
+		};
+		17A9C99B0B89158F00A80144 = {
+			buildPhases = (
+				17A9C99C0B89158F00A80144,
+				17A9C99D0B89158F00A80144,
+				17A9C99F0B89158F00A80144,
+				17A9C9A00B89158F00A80144,
+				17A9C9A10B89158F00A80144,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BhobNoise-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BhobNoiseUGens;
+			productName = blackrainUGens;
+			productReference = 17A9C9A20B89158F00A80144;
+		};
+		17A9C99C0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C99D0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+				17A9C9AC0B89180E00A80144,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C99F0B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9A00B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17A9C9A10B89158F00A80144 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BhobNoise-gcc3.scx build/bhobUGens";
+		};
+		17A9C9A20B89158F00A80144 = {
+			isa = PBXLibraryReference;
+			path = "BhobNoise-gcc3.scx";
+			refType = 3;
+		};
+		17A9C9A30B8916A000A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobChaos.cpp;
+			refType = 4;
+		};
+		17A9C9A40B8916A000A80144 = {
+			fileRef = 17A9C9A30B8916A000A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A50B8917EA00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobFFT.cpp;
+			refType = 4;
+		};
+		17A9C9A60B8917EA00A80144 = {
+			fileRef = 17A9C9A50B8917EA00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A70B8917F700A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BhobFilt.cpp;
+			refType = 4;
+		};
+		17A9C9A80B8917F700A80144 = {
+			fileRef = 17A9C9A70B8917F700A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9A90B89180400A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = bhobGrain.cpp;
+			refType = 4;
+		};
+		17A9C9AA0B89180400A80144 = {
+			fileRef = 17A9C9A90B89180400A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9AB0B89180E00A80144 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = BhobNoise.cpp;
+			refType = 4;
+		};
+		17A9C9AC0B89180E00A80144 = {
+			fileRef = 17A9C9AB0B89180E00A80144;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9AD0B89189B00A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C97B0B89150300A80144;
+		};
+		17A9C9AE0B89189D00A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C9830B89150700A80144;
+		};
+		17A9C9AF0B8918A100A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C98B0B89150B00A80144;
+		};
+		17A9C9B00B8918A300A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C9930B89151300A80144;
+		};
+		17A9C9B10B8918A700A80144 = {
+			isa = PBXTargetDependency;
+			target = 17A9C99B0B89158F00A80144;
+		};
+		17A9C9BC0B891BF900A80144 = {
+			fileRef = 175290CD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BD0B891C0F00A80144 = {
+			fileRef = 175290C70B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BE0B891C1400A80144 = {
+			fileRef = 175290CC0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9BF0B891C1900A80144 = {
+			fileRef = 175290DC0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9C00B891D4F00A80144 = {
+			fileRef = 175290D00B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17A9C9C10B891D7C00A80144 = {
+			fileRef = 175290DD0B11393C00A802D7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17B779F60B1D3D5000A802D7 = {
+			isa = PBXTargetDependency;
+			target = 17A732680B1D381D00A802D7;
+		};
+		17B779F70B1D3D5200A802D7 = {
+			isa = PBXTargetDependency;
+			target = 17A732780B1D382900A802D7;
+		};
+		17B779F80B1D3D5500A802D7 = {
+			isa = PBXTargetDependency;
+			target = 17A732880B1D382C00A802D7;
+		};
+		17B779F90B1D3D5800A802D7 = {
+			isa = PBXTargetDependency;
+			target = 17A732980B1D384500A802D7;
+		};
+		17C51CB9086A187800A802D7 = {
+			buildPhases = (
+				17C51CBA086A187800A802D7,
+				17C51CBB086A187800A802D7,
+				17C51CBD086A187800A802D7,
+				17C51CBE086A187800A802D7,
+				17C51CBF086A187800A802D7,
+			);
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_VERSION = 3.x;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = BUNDLE;
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DSC_DARWIN";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "BEQSuiteUGens-gcc3.scx";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = BEQSuiteUGens;
+			productInstallPath = "";
+			productName = blackrainUGens;
+			productReference = 17C51CC0086A187800A802D7;
+		};
+		17C51CBA086A187800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17C51CBB086A187800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+				175290330B11356E00A802D7,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17C51CBD086A187800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17C51CBE086A187800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17C51CBF086A187800A802D7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp build/BEQSuiteUGens-gcc3.scx build/BEQSuiteUGens";
+		};
+		17C51CC0086A187800A802D7 = {
+			isa = PBXLibraryReference;
+			path = "BEQSuiteUGens-gcc3.scx";
+			refType = 3;
+		};
+		17C51CC3086A194D00A802D7 = {
+			isa = PBXTargetDependency;
+			target = 17C51CB9086A187800A802D7;
+		};
+		17E5996B084E814700A802D7 = {
+			isa = PBXFrameworkReference;
+			name = CoreMIDI.framework;
+			path = /System/Library/Frameworks/CoreMIDI.framework;
+			refType = 0;
+		};
+		17E5996D084E81CB00A802D7 = {
+			isa = PBXFrameworkReference;
+			name = CoreFoundation.framework;
+			path = /System/Library/Frameworks/CoreFoundation.framework;
+			refType = 0;
+		};
+//170
+//171
+//172
+//173
+//174
+//920
+//921
+//922
+//923
+//924
+		920DAED20425A5D200A80067 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Altivec.h;
+			path = compat/headers/common/SC_Altivec.h;
+			refType = 2;
+		};
+		92CCC51F045B4BDE00CA2167 = {
+			isa = PBXFrameworkReference;
+			name = Carbon.framework;
+			path = /System/Library/Frameworks/Carbon.framework;
+			refType = 0;
+		};
+//920
+//921
+//922
+//923
+//924
+//AA0
+//AA1
+//AA2
+//AA3
+//AA4
+		AAE924420481416E00A8010B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Endian.h;
+			path = ../supercollider/headers/common/SC_Endian.h;
+			refType = 2;
+		};
+//AA0
+//AA1
+//AA2
+//AA3
+//AA4
+//F50
+//F51
+//F52
+//F53
+//F54
+		F50D04F702E68E8201CA2799 = {
+			buildStyles = (
+				F50D04F902E68E8201CA2799,
+				F50D04FA02E68E8201CA2799,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = F50D04F802E68E8201CA2799;
+			productRefGroup = F50D060302E69C2101CA2799;
+			projectDirPath = "";
+			targets = (
+				F5B740A502E94DC001CA2799,
+				175290F30B113DDA00A802D7,
+				17C51CB9086A187800A802D7,
+				1748DB9507C5F16800A802D7,
+				175290100B11341400A802D7,
+				175290240B11348400A802D7,
+				175290180B11342D00A802D7,
+				179814D20B11608C00A802D7,
+				177D91630B39F44100A802D7,
+				17A732680B1D381D00A802D7,
+				17A732780B1D382900A802D7,
+				17A732880B1D382C00A802D7,
+				17A732980B1D384500A802D7,
+				17A9C96F0B8912ED00A80144,
+				17A9C97B0B89150300A80144,
+				17A9C9830B89150700A80144,
+				17A9C98B0B89150B00A80144,
+				17A9C9930B89151300A80144,
+				17A9C99B0B89158F00A80144,
+			);
+		};
+		F50D04F802E68E8201CA2799 = {
+			children = (
+				F50D04FB02E69B6B01CA2799,
+				1752903C0B1138D900A802D7,
+				F50D057E02E69B6B01CA2799,
+				F50D060302E69C2101CA2799,
+				F50D069402E6A1C601CA2799,
+			);
+			isa = PBXGroup;
+			refType = 4;
+		};
+		F50D04F902E68E8201CA2799 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0 -faltivec";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		F50D04FA02E68E8201CA2799 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		F50D04FB02E69B6B01CA2799 = {
+			children = (
+				F5D127DC03355EEC0164B34C,
+				F50D054502E69B6B01CA2799,
+				F5959CFC0339983D01A80099,
+			);
+			isa = PBXGroup;
+			name = "sc3 headers";
+			path = ../supercollider/headers;
+			refType = 2;
+		};
+		F50D054502E69B6B01CA2799 = {
+			children = (
+				F50D054602E69B6B01CA2799,
+				F50D054702E69B6B01CA2799,
+				F50D054802E69B6B01CA2799,
+				F50D054902E69B6B01CA2799,
+				F50D054A02E69B6B01CA2799,
+				F50D054B02E69B6B01CA2799,
+				F50D054C02E69B6B01CA2799,
+				F50D054D02E69B6B01CA2799,
+				F50D054E02E69B6B01CA2799,
+				F50D054F02E69B6B01CA2799,
+				F50D055002E69B6B01CA2799,
+				F50D055102E69B6B01CA2799,
+				F50D055202E69B6B01CA2799,
+				F50D055302E69B6B01CA2799,
+				F50D055402E69B6B01CA2799,
+				F50D055502E69B6B01CA2799,
+				F50D055602E69B6B01CA2799,
+				F50D055702E69B6B01CA2799,
+				F50D055802E69B6B01CA2799,
+				F50D055902E69B6B01CA2799,
+				F50D055A02E69B6B01CA2799,
+				F50D055D02E69B6B01CA2799,
+			);
+			isa = PBXGroup;
+			name = plugin_interface;
+			path = ../supercollider/headers/plugin_interface;
+			refType = 2;
+		};
+		F50D054602E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = clz.h;
+			path = ../supercollider/headers/plugin_interface/clz.h;
+			refType = 2;
+		};
+		F50D054702E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Hash.h;
+			path = ../supercollider/headers/plugin_interface/Hash.h;
+			refType = 2;
+		};
+		F50D054802E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_BoundsMacros.h;
+			path = ../supercollider/headers/plugin_interface/SC_BoundsMacros.h;
+			refType = 2;
+		};
+		F50D054902E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_BufGen.h;
+			path = ../supercollider/headers/plugin_interface/SC_BufGen.h;
+			refType = 2;
+		};
+		F50D054A02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Constants.h;
+			path = ../supercollider/headers/plugin_interface/SC_Constants.h;
+			refType = 2;
+		};
+		F50D054B02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Dimension.h;
+			path = ../supercollider/headers/plugin_interface/SC_Dimension.h;
+			refType = 2;
+		};
+		F50D054C02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_FifoMsg.h;
+			path = ../supercollider/headers/plugin_interface/SC_FifoMsg.h;
+			refType = 2;
+		};
+		F50D054D02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Graph.h;
+			path = ../supercollider/headers/plugin_interface/SC_Graph.h;
+			refType = 2;
+		};
+		F50D054E02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_InlineBinaryOp.h;
+			path = ../supercollider/headers/plugin_interface/SC_InlineBinaryOp.h;
+			refType = 2;
+		};
+		F50D054F02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_InlineUnaryOp.h;
+			path = ../supercollider/headers/plugin_interface/SC_InlineUnaryOp.h;
+			refType = 2;
+		};
+		F50D055002E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_InterfaceTable.h;
+			path = ../supercollider/headers/plugin_interface/SC_InterfaceTable.h;
+			refType = 2;
+		};
+		F50D055102E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = sc_msg_iter.h;
+			path = ../supercollider/headers/plugin_interface/sc_msg_iter.h;
+			refType = 2;
+		};
+		F50D055202E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Node.h;
+			path = ../supercollider/headers/plugin_interface/SC_Node.h;
+			refType = 2;
+		};
+		F50D055302E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_PlugIn.h;
+			path = ../supercollider/headers/plugin_interface/SC_PlugIn.h;
+			refType = 2;
+		};
+		F50D055402E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Rate.h;
+			path = ../supercollider/headers/plugin_interface/SC_Rate.h;
+			refType = 2;
+		};
+		F50D055502E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_RGen.h;
+			path = ../supercollider/headers/plugin_interface/SC_RGen.h;
+			refType = 2;
+		};
+		F50D055602E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_SndBuf.h;
+			path = ../supercollider/headers/plugin_interface/SC_SndBuf.h;
+			refType = 2;
+		};
+		F50D055702E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Types.h;
+			path = ../supercollider/headers/plugin_interface/SC_Types.h;
+			refType = 2;
+		};
+		F50D055802E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Unit.h;
+			path = ../supercollider/headers/plugin_interface/SC_Unit.h;
+			refType = 2;
+		};
+		F50D055902E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Wire.h;
+			path = ../supercollider/headers/plugin_interface/SC_Wire.h;
+			refType = 2;
+		};
+		F50D055A02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_World.h;
+			path = ../supercollider/headers/plugin_interface/SC_World.h;
+			refType = 2;
+		};
+		F50D055D02E69B6B01CA2799 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Unroll.h;
+			path = ../supercollider/headers/plugin_interface/Unroll.h;
+			refType = 2;
+		};
+		F50D057E02E69B6B01CA2799 = {
+			children = (
+				1752900B0B11334100A802D7,
+				175290070B11330C00A802D7,
+				175290060B1132F300A802D7,
+				175290080B11332000A802D7,
+				175290090B11332C00A802D7,
+				1752900A0B11333700A802D7,
+				179814DB0B1160DD00A802D7,
+				17A732A80B1D38A300A802D7,
+				17A9C96E0B8912C100A80144,
+				17A9C97A0B8914B700A80144,
+			);
+			isa = PBXGroup;
+			name = plugins;
+			path = source;
+			refType = 4;
+		};
+		F50D060302E69C2101CA2799 = {
+			children = (
+				1748DB9607C5F16800A802D7,
+				17C51CC0086A187800A802D7,
+				175290170B11341400A802D7,
+				1752901F0B11342D00A802D7,
+				1752902B0B11348400A802D7,
+				175290FA0B113DDA00A802D7,
+				179814D90B11608C00A802D7,
+				17A732770B1D381D00A802D7,
+				17A732870B1D382900A802D7,
+				17A732970B1D382C00A802D7,
+				17A732A70B1D384500A802D7,
+				177D916A0B39F44100A802D7,
+				17A9C9760B8912ED00A80144,
+				17A9C9820B89150300A80144,
+				17A9C98A0B89150700A80144,
+				17A9C9920B89150B00A80144,
+				17A9C99A0B89151300A80144,
+				17A9C9A20B89158F00A80144,
+			);
+			isa = PBXGroup;
+			path = build;
+			refType = 4;
+		};
+		F50D069402E6A1C601CA2799 = {
+			children = (
+				179815B20B11618B00A802D7,
+				F5499A1103A3023A01BA7E76,
+				92CCC51F045B4BDE00CA2167,
+				17E5996B084E814700A802D7,
+				17E5996D084E81CB00A802D7,
+			);
+			isa = PBXGroup;
+			name = Frameworks;
+			refType = 4;
+		};
+		F5499A1103A3023A01BA7E76 = {
+			isa = PBXFrameworkReference;
+			name = vecLib.framework;
+			path = /System/Library/Frameworks/vecLib.framework;
+			refType = 0;
+		};
+		F5959CF80339983301A80099 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = MsgFifo.h;
+			path = ../supercollider/headers/server/MsgFifo.h;
+			refType = 2;
+		};
+		F5959CF90339983301A80099 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_SyncCondition.h;
+			path = ../supercollider/headers/server/SC_SyncCondition.h;
+			refType = 2;
+		};
+		F5959CFC0339983D01A80099 = {
+			children = (
+				F5959CF80339983301A80099,
+				F5959CF90339983301A80099,
+				F5959CFD03399CED01A80099,
+			);
+			isa = PBXGroup;
+			name = server;
+			path = ../supercollider/headers/server;
+			refType = 2;
+		};
+		F5959CFD03399CED01A80099 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Lock.h;
+			path = ../supercollider/headers/server/SC_Lock.h;
+			refType = 2;
+		};
+		F5B740A502E94DC001CA2799 = {
+			buildPhases = (
+			);
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+				175290FD0B113E4100A802D7,
+				1748DB9807C5F59000A802D7,
+				17C51CC3086A194D00A802D7,
+				1752902E0B1134C400A802D7,
+				1752902F0B1134C800A802D7,
+				175290300B1134CB00A802D7,
+				179814DA0B1160B700A802D7,
+				177D916D0B39F49B00A802D7,
+				17B779F60B1D3D5000A802D7,
+				17B779F70B1D3D5200A802D7,
+				17B779F80B1D3D5500A802D7,
+				17B779F90B1D3D5800A802D7,
+				17A9C9770B89130400A80144,
+				17A9C9AD0B89189B00A80144,
+				17A9C9AE0B89189D00A80144,
+				17A9C9AF0B8918A100A80144,
+				17A9C9B00B8918A300A80144,
+				17A9C9B10B8918A700A80144,
+			);
+			isa = PBXAggregateTarget;
+			name = All;
+			productName = "SC_Synth PlugIns";
+		};
+		F5D127DA03355EE10164B34C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SC_Sem.h;
+			path = ../supercollider/headers/common/SC_Sem.h;
+			refType = 2;
+		};
+		F5D127DC03355EEC0164B34C = {
+			children = (
+				F5D127DA03355EE10164B34C,
+				920DAED20425A5D200A80067,
+				AAE924420481416E00A8010B,
+			);
+			isa = PBXGroup;
+			name = common;
+			path = ../supercollider/headers/common;
+			refType = 2;
+		};
+	};
+	rootObject = F50D04F702E68E8201CA2799;
+}
