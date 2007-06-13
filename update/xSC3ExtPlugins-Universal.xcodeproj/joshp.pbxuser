@@ -8,14 +8,6 @@
 			sepNavWindowFrame = "{{291, 51}, {1069, 827}}";
 		};
 	};
-	46781CEC05C872AC002B7D2B /* Convolution.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 13986}}";
-			sepNavSelRange = "{28336, 0}";
-			sepNavVisRect = "{{0, 118}, {1030, 698}}";
-			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
-		};
-	};
 	631417A30A203392007B9355 /* All */ = {
 		activeExec = 0;
 	};
@@ -38,6 +30,27 @@
 			sepNavSelRange = "{469, 0}";
 			sepNavVisRect = "{{0, 0}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
+		};
+	};
+	F3323AB90C206BEF00576E26 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = F33A46670B0EC50D00E05136 /* SKINI.tbl */;
+	};
+	F3323ABA0C206BEF00576E26 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F33A46670B0EC50D00E05136 /* SKINI.tbl */;
+		name = "SKINI.tbl: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 210;
+		vrLoc = 0;
+	};
+	F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {752, 1848}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {752, 142}}";
 		};
 	};
 	F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
@@ -559,8 +572,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 203387532;
-			PBXWorkspaceStateSaveDate = 203387532;
+			PBXPerProjectTemplateStateSaveDate = 203451222;
+			PBXWorkspaceStateSaveDate = 203451222;
+		};
+		perUserProjectItems = {
+			F3323AB90C206BEF00576E26 /* PBXBookmark */ = F3323AB90C206BEF00576E26 /* PBXBookmark */;
+			F3323ABA0C206BEF00576E26 /* PBXTextBookmark */ = F3323ABA0C206BEF00576E26 /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {

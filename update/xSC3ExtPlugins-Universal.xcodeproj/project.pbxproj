@@ -313,8 +313,6 @@
 
 /* Begin PBXFileReference section */
 		46781BD205C85772002B7D2B /* FFT2InterfaceTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FFT2InterfaceTable.cpp; sourceTree = "<group>"; };
-		46781CEC05C872AC002B7D2B /* Convolution.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Convolution.cpp; path = ../supercollider/Source/plugins/Convolution.cpp; sourceTree = SOURCE_ROOT; };
-		467E248A05CFF06E007951D5 /* FeatureDetection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FeatureDetection.cpp; path = ../supercollider/Source/plugins/FeatureDetection.cpp; sourceTree = SOURCE_ROOT; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SKINI.tbl; path = source/StkUGens/include/SKINI.tbl; sourceTree = SOURCE_ROOT; };
@@ -417,7 +415,7 @@
 		F3564C6C0B0E8493008AFA51 /* Wurley.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Wurley.h; path = source/StkUGens/include/Wurley.h; sourceTree = SOURCE_ROOT; };
 		F3564C6D0B0E8493008AFA51 /* WvIn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvIn.h; path = source/StkUGens/include/WvIn.h; sourceTree = SOURCE_ROOT; };
 		F3564C6E0B0E8493008AFA51 /* WvOut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvOut.h; path = source/StkUGens/include/WvOut.h; sourceTree = SOURCE_ROOT; };
-		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = /usr/local/lib/libstk.a; sourceTree = "<absolute>"; };
+		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = lib/libstk.a; sourceTree = "<group>"; };
 		F37FF6570B86A534006B0AA3 /* bhobChaos.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = bhobChaos.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F37FF6580B86A56C006B0AA3 /* bhobChaos.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = bhobChaos.cpp; sourceTree = "<group>"; };
 		F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = bhobFFT.cpp; sourceTree = "<group>"; };
@@ -490,7 +488,7 @@
 		F50D05D902E69B6B01CA2799 /* fftlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = fftlib.c; sourceTree = "<group>"; };
 		F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SCComplex.cpp; sourceTree = "<group>"; };
 		F5499A1103A3023A01BA7E76 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
-		F5D127DE03383D340164B34C /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = /usr/local/lib/libsndfile.a; sourceTree = "<absolute>"; };
+		F5D127DE03383D340164B34C /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = lib/libsndfile.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -822,8 +820,6 @@
 				F3FE07630B0D76AC00A29459 /* AmbisonicUGens.cpp */,
 				F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */,
 				46781BD205C85772002B7D2B /* FFT2InterfaceTable.cpp */,
-				46781CEC05C872AC002B7D2B /* Convolution.cpp */,
-				467E248A05CFF06E007951D5 /* FeatureDetection.cpp */,
 				F50D05D902E69B6B01CA2799 /* fftlib.c */,
 				F50D05E202E69B6B01CA2799 /* SCComplex.cpp */,
 			);
@@ -2108,7 +2104,10 @@
 					ppc,
 					i386,
 				);
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					lib,
+				);
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
@@ -2120,7 +2119,10 @@
 					ppc,
 					i386,
 				);
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					lib,
+				);
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
@@ -2132,7 +2134,10 @@
 					ppc,
 					i386,
 				);
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					lib,
+				);
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
