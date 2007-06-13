@@ -2108,6 +2108,7 @@
 					ppc,
 					i386,
 				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
@@ -2119,6 +2120,7 @@
 					ppc,
 					i386,
 				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
@@ -2130,6 +2132,7 @@
 					ppc,
 					i386,
 				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
