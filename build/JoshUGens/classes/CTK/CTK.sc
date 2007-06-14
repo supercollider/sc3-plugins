@@ -388,34 +388,38 @@ CtkNote : CtkNode {
 			this.addUniqueMethod((argname.asString++"_").asSymbol, {arg note, newValue;
 				args.put(argname.asSymbol, newValue);
 				this.isPlaying.if({
-					// real-time support
-					case {
-						(newValue.isArray || newValue.isKindOf(Env))
-						}{
-						newValue.asArray;
-						server.sendBundle(nil, [\n_setn, node, argname, newValue.size] ++
-							newValue) 
-						}{
-						newValue.isKindOf(CtkControl)
-						}{
-						server.sendBundle(nil, [\n_map, node, argname, newValue.bus])
-						}{
-						newValue.isKindOf(CtkBuffer)
-						}{
-						server.sendBundle(nil, [\n_set, node, argname, newValue.bufnum])
-						}{
-						newValue.isKindOf(CtkAudio)
-						}{
-						server.sendBundle(nil, [\n_set, node, argname, newValue.bus])
-						}{
-						true
-						}{
-						server.sendBundle(nil, [\n_set, node, argname, newValue]);
-						};
+					this.handleRealTimeUpdate(argname, newValue);
 					});
 				note;
 				});
 			});		
+		}
+		
+	handleRealTimeUpdate {arg argname, newValue;
+		// real-time support
+		case {
+			(newValue.isArray || newValue.isKindOf(Env))
+			}{
+			newValue = newValue.asArray;
+			server.sendBundle(nil, [\n_setn, node, argname, newValue.size] ++
+				newValue) 
+			}{
+			newValue.isKindOf(CtkControl)
+			}{
+			server.sendBundle(nil, [\n_map, node, argname, newValue.bus])
+			}{
+			newValue.isKindOf(CtkBuffer)
+			}{
+			server.sendBundle(nil, [\n_set, node, argname, newValue.bufnum])
+			}{
+			newValue.isKindOf(CtkAudio)
+			}{
+			server.sendBundle(nil, [\n_set, node, argname, newValue.bus])
+			}{
+			true
+			}{
+			server.sendBundle(nil, [\n_set, node, argname, newValue]);
+			};
 		}
 
 	// every one of these has a tag and body... leaves room for addAction and 
