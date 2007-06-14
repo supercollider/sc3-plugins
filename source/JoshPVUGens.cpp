@@ -10,6 +10,8 @@
 //third party Phase Vocoder UGens
 
 #include "FFT_UGens.h"
+#include "SCComplex.h"
+#include "SC_PlugIn.h"
 
 // macros to put rgen state in registers
 #define RGET \
@@ -22,8 +24,14 @@
 	rgen.s1 = s1; \
 	rgen.s2 = s2; \
 	rgen.s3 = s3;
-	
+
+InterfaceTable *ft;	
+
 /* PV work */
+
+//struct PV_Unit : Unit
+//{
+//};
 
 struct PV_NoiseSynthP : PV_Unit
 {
@@ -92,8 +100,24 @@ struct PV_EvenBin : PV_Unit {};
 
 struct PV_Invert : PV_Unit {};
 
+//struct SCComplexBuf 
+//{
+//	float dc, nyq;
+//	SCComplex bin[1];
+//};
+//
+//struct SCPolarBuf 
+//{
+//	float dc, nyq;
+//	SCPolar bin[1];
+//};
+
 extern "C"
 {
+	#include "fftlib.h"
+
+	void load(InterfaceTable *inTable);
+
 	void PV_NoiseSynthP_Ctor(PV_NoiseSynthP *unit);
 	void PV_NoiseSynthP_Dtor(PV_NoiseSynthP *unit);
 	void PV_NoiseSynthP_first(PV_NoiseSynthP* unit, int inNumSamples);
@@ -145,12 +169,8 @@ extern "C"
 	
 	void PV_Invert_Ctor(PV_Invert *unit);
 	void PV_Invert_next(PV_Invert* unit, int inNumSamples);
-	
-	int isfloatgreater(const void *a, const void *b);
-	int isfloatless(const void *a, const void *b);
 
 }
-
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
 {
@@ -193,7 +213,17 @@ SCComplexBuf* ToComplexApx(SndBuf *buf)
 	} \
 	unit->m_curframe = (unit->m_curframe + 1) % unit->m_numFrames;
 
-
+// for operation on one buffer
+#define PV_GET_BUF \
+	float fbufnum = ZIN0(0); \
+	if (fbufnum < 0.f) { ZOUT0(0) = -1.f; return; } \
+	ZOUT0(0) = fbufnum; \
+	uint32 ibufnum = (uint32)fbufnum; \
+	World *world = unit->mWorld; \
+	if (ibufnum >= world->mNumSndBufs) ibufnum = 0; \
+	SndBuf *buf = world->mSndBufs + ibufnum; \
+	int numbins = buf->samples - 2 >> 1;
+	
 void PV_PartialSynthF_next(PV_PartialSynthF *unit, int inNumSamples)
 {
 	PV_GET_BUF
@@ -810,6 +840,7 @@ void PV_MagMap_next(PV_MagMap* unit, int inNumSamples)
 
 
 /* a function for sorting floats */
+int isfloatgreater(const void *a, const void *b);
 int isfloatgreater (const void *a, const void *b)
 {
   const float *fa = (const float *) a;
@@ -818,6 +849,8 @@ int isfloatgreater (const void *a, const void *b)
   return (*fa > *fb) - (*fa < *fb);
 }
 
+
+int isfloatless(const void *a, const void *b);
 int isfloatless (const void *a, const void *b)
 {
   const float *fa = (const float *) a;
@@ -1085,13 +1118,16 @@ void PV_Invert_next(PV_Invert* unit, int inNumSamples)
 	RPUT
 }
 
+
+void init_SCComplex(InterfaceTable *inTable);
+
 #define DefinePVUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(PV_Unit), (UnitCtorFunc)&name##_Ctor, 0, 0);
 	
-
-//void initPV_ThirdParty(InterfaceTable *it);
-void initPV_ThirdParty(InterfaceTable *it)
-{
+void load(InterfaceTable *inTable)
+    {
+    	ft = inTable;
+	init_SCComplex(inTable);
 	
 	DefineDtorUnit(PV_PartialSynthF);
 	DefineDtorUnit(PV_NoiseSynthF);
