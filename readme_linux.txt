@@ -3,8 +3,8 @@ linux instructions
 
 requirements
 ------------
-the plugins expect a supercollider source tree at the same level as a sc3-plugins svn check out.
-at the time of this writting, the stk library is needed as well.
+sc3-plugins svn checkout is expect live inside the supercollider source tree.
+The stk library is needed as well if you are planning to build the StkUGens.
 this is provided in the file release area of the sourceforge site.
 
 http://sourceforge.net/project/showfiles.php?group_id=182627
@@ -22,20 +22,28 @@ building sc3-plugins
 --------------------
 the directory tree will look something like this:
 
-scdev/ 
-    supercollider\
-       supercollider source is here
+
+    supercollider\     -   supercollider source tree
+       build\
+       headers\
+       source\
+       etc...
+       sc3-plugins\    -   sc3-plugins source tree
+	   build\
+	   compat\
+	   lib\
+	   etc...
     stk-4.2.1\
        stk lib stuff
-    sc3-plugins\
 
-(scdev can be any name)
 
-build sc3-plugins:
+building sc3-plugins:
 
-$ cd scdev/sc3-plugins
+$ cd supercollider/sc3-plugins
 $ scons
 $ ./distro_linux
+
+where supercollider is the name you gave to your supercollider source tree.
 
 the resulting Extensions folder can now be moved out of the tree to your sc extensions folder (or even better create a symlink).
 you can add a sub dir named 'test' inside this Extensions directory and drop folders in there to disable a particular ugens pack.

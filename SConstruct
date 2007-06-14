@@ -3,11 +3,11 @@
 
 # edit this to point to your SuperCollider3 source directory
 
-sc3_source = '../supercollider'
+sc3_source = '../'
 
 ##############################################
 # simple ugens
-headers = sc3_source + '/headers'
+headers = sc3_source + 'headers'
 
 plugs = [
 	'AmbisonicUGens',
@@ -17,6 +17,7 @@ plugs = [
 	'ReverbUGens',
 	'MCLDBufferUGens',
 	'MCLDChaosUGens',
+	'MCLDTriggeredStatsUgens',
 	'LoopBuf',
 	'bhobChaos',
 	'BhobFilt',
@@ -46,7 +47,7 @@ Environment(
        	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         SHLIBPREFIX = '',
         SHLIBSUFFIX = '.so'
-).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH='../stk-4.2.1/src');
+).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH='lib');
 
 
 ##############################################
@@ -87,3 +88,5 @@ FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '
 FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp',
 	sc3_source + '/source/plugins/FeatureDetection.cpp', sc3_source + '/source/plugins/fftlib.c',
 	sc3_source + '/source/plugins/PV_ThirdParty.cpp', sc3_source + '/source/plugins/SCComplex.cpp' ]);
+
+
