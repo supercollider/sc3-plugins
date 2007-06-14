@@ -1,71 +1,7 @@
 // !$*UTF8*$!
 {
-	46781BC805C8505F002B7D2B /* FFT_UGens.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 1526}}";
-			sepNavSelRange = "{2811, 0}";
-			sepNavVisRect = "{{0, 828}, {1030, 698}}";
-			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
-		};
-	};
-	46781BD205C85772002B7D2B /* FFT2InterfaceTable.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 700}}";
-			sepNavSelRange = "{1238, 0}";
-			sepNavVisRect = "{{0, 2}, {1030, 698}}";
-			sepNavWindowFrame = "{{291, 51}, {1069, 827}}";
-		};
-	};
-	46781CEC05C872AC002B7D2B /* Convolution.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 13986}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 8097}, {1030, 698}}";
-			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
-		};
-	};
 	631417A30A203392007B9355 /* All */ = {
 		activeExec = 0;
-	};
-	F307EBCB0BBF6235002D0FA4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */;
-		name = "JoshUGens.cpp: 2539";
-		rLen = 0;
-		rLoc = 72203;
-		rType = 0;
-		vrLen = 1338;
-		vrLoc = 62264;
-	};
-	F307EBCC0BBF6235002D0FA4 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F386CA030B120C060030B5C1 /* SC_SndBuf.h */;
-		name = "inline float lininterp(float x, float a, float b)";
-		rLen = 50;
-		rLoc = 2632;
-		rType = 0;
-		vrLen = 1079;
-		vrLoc = 1641;
-	};
-	F30C92D40BBF2A230057E320 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */;
-		name = "JoshUGens.cpp: 2539";
-		rLen = 0;
-		rLoc = 72203;
-		rType = 0;
-		vrLen = 1164;
-		vrLoc = 71363;
-	};
-	F30C92D50BBF2A230057E320 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F386CA030B120C060030B5C1 /* SC_SndBuf.h */;
-		name = "inline float lininterp(float x, float a, float b)";
-		rLen = 50;
-		rLoc = 2632;
-		rType = 0;
-		vrLen = 1075;
-		vrLoc = 1645;
 	};
 	F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */ = {
 		isa = PBXFileBreakpoint;
@@ -93,9 +29,9 @@
 	};
 	F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {854, 21672}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 21742}}";
 			sepNavSelRange = "{23, 0}";
-			sepNavVisRect = "{{0, 0}, {761, 73}}";
+			sepNavVisRect = "{{0, 428}, {1030, 698}}";
 			sepNavWindowFrame = "{{20, 42}, {1069, 827}}";
 		};
 	};
@@ -288,30 +224,6 @@
 	F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */ = {
 		activeExec = 0;
 	};
-	F386C9F70B120C060030B5C1 /* SC_BufGen.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 698}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 0}, {1030, 698}}";
-			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
-		};
-	};
-	F386CA030B120C060030B5C1 /* SC_SndBuf.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 1540}}";
-			sepNavSelRange = "{2632, 50}";
-			sepNavVisRect = "{{0, 834}, {1030, 698}}";
-			sepNavWindowFrame = "{{485, 47}, {1069, 827}}";
-		};
-	};
-	F386CA7B0B120C8B0030B5C1 /* SC_Types.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 952}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 254}, {1030, 698}}";
-			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
-		};
-	};
 	F3949A960B0D81EA0066FA8D /* ReverbUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -377,9 +289,9 @@
 	};
 	F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1334, 82810}}";
-			sepNavSelRange = "{72203, 0}";
-			sepNavVisRect = "{{0, 29821}, {1030, 698}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1334, 114408}}";
+			sepNavSelRange = "{1012, 23}";
+			sepNavVisRect = "{{0, 316}, {942, 195}}";
 			sepNavWindowFrame = "{{140, 51}, {1069, 827}}";
 		};
 	};
@@ -418,8 +330,9 @@
 	};
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeTarget = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
+		activeTarget = 631417A30A203392007B9355 /* All */;
 		addToTargets = (
+			F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -535,25 +448,11 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 197091797;
-			PBXWorkspaceStateSaveDate = 197091797;
-		};
-		perUserProjectItems = {
-			F307EBCB0BBF6235002D0FA4 /* PBXTextBookmark */ = F307EBCB0BBF6235002D0FA4 /* PBXTextBookmark */;
-			F307EBCC0BBF6235002D0FA4 /* PBXTextBookmark */ = F307EBCC0BBF6235002D0FA4 /* PBXTextBookmark */;
-			F30C92D40BBF2A230057E320 /* PBXTextBookmark */ = F30C92D40BBF2A230057E320 /* PBXTextBookmark */;
-			F30C92D50BBF2A230057E320 /* PBXTextBookmark */ = F30C92D50BBF2A230057E320 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 203485792;
+			PBXWorkspaceStateSaveDate = 203485792;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
-		};
-	};
-	F50D05DA02E69B6B01CA2799 /* fftlib.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 882}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 184}, {1030, 698}}";
-			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
 	F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {
@@ -562,14 +461,6 @@
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRect = "{{0, 99}, {1030, 698}}";
 			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
-		};
-	};
-	F50D05E302E69B6B01CA2799 /* SCComplex.h */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 1806}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 42}, {1030, 698}}";
-			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
 		};
 	};
 }
