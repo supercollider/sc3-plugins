@@ -313,7 +313,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F32DB3AE0C20EE5800BAAEFA</string>
+										<string>F3E27A730C20F17400538EF1</string>
 										<key>history</key>
 										<array>
 											<string>F3A88B100C2083950087CC1F</string>
@@ -330,7 +330,7 @@
 											<string>F32DB3270C20E3A400BAAEFA</string>
 											<string>F32DB3A90C20EE5800BAAEFA</string>
 											<string>F32DB3AA0C20EE5800BAAEFA</string>
-											<string>F32DB3AB0C20EE5800BAAEFA</string>
+											<string>F39CC56D0C20F16E003A7A54</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -348,8 +348,6 @@
 											<string>F32DB2D60C20DB9700BAAEFA</string>
 											<string>F32DB3020C20DC9B00BAAEFA</string>
 											<string>F32DB32A0C20E3A400BAAEFA</string>
-											<string>F32DB3AC0C20EE5800BAAEFA</string>
-											<string>F32DB3AD0C20EE5800BAAEFA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -407,9 +405,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>F32DB3AF0C20EE5800BAAEFA</string>
+				<string>F3E27A710C20F17400538EF1</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>F32DB3B00C20EE5800BAAEFA</string>
+				<string>F3E27A720C20F17400538EF1</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -543,9 +541,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>F32DB3B70C20EE5800BAAEFA</string>
-		<string>F3FE07450B0D763800A29459</string>
 		<string>/Users/joshp/src/supercollider/sc3-plugins/xSC3ExtPlugins-Universal.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

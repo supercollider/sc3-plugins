@@ -198,40 +198,6 @@
 		vrLen = 570;
 		vrLoc = 8687;
 	};
-	F32DB3AB0C20EE5800BAAEFA /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = F393A8AB0C1F734900C62D49 /* PV_ThirdParty.cpp */;
-	};
-	F32DB3AC0C20EE5800BAAEFA /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F3A15CB10B5D6D9200D75043 /* MCLDFFTTriggeredUGen.cpp */;
-		name = "#include <sndfile.h>";
-		rLen = 21;
-		rLoc = 917;
-		rType = 0;
-		vrLen = 986;
-		vrLoc = 81;
-	};
-	F32DB3AD0C20EE5800BAAEFA /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */;
-		name = "bhobFFT.cpp: 33";
-		rLen = 0;
-		rLoc = 1256;
-		rType = 0;
-		vrLen = 570;
-		vrLoc = 8687;
-	};
-	F32DB3AE0C20EE5800BAAEFA /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F393A8AB0C1F734900C62D49 /* PV_ThirdParty.cpp */;
-		name = "PV_ThirdParty.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
 	F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {752, 1848}}";
@@ -456,6 +422,16 @@
 	F3949A960B0D81EA0066FA8D /* ReverbUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
+	F39CC56D0C20F16E003A7A54 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F393A8AB0C1F734900C62D49 /* PV_ThirdParty.cpp */;
+		name = "PV_ThirdParty.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
 	F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -657,6 +633,16 @@
 			sepNavWindowFrame = "{{38, 25}, {1069, 827}}";
 		};
 	};
+	F3E27A730C20F17400538EF1 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F393A8AB0C1F734900C62D49 /* PV_ThirdParty.cpp */;
+		name = "PV_ThirdParty.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
 	F3FE07250B0D758200A29459 /* Source Control */ = {
 		isa = PBXSourceControlManager;
 		fallbackIsa = XCSourceControlManager;
@@ -857,8 +843,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 203482028;
-			PBXWorkspaceStateSaveDate = 203482028;
+			PBXPerProjectTemplateStateSaveDate = 203485553;
+			PBXWorkspaceStateSaveDate = 203485553;
 		};
 		perUserProjectItems = {
 			F305CB3B0C20D40F00BDDE21 /* PBXTextBookmark */ = F305CB3B0C20D40F00BDDE21 /* PBXTextBookmark */;
@@ -877,10 +863,7 @@
 			F32DB32A0C20E3A400BAAEFA /* PBXTextBookmark */ = F32DB32A0C20E3A400BAAEFA /* PBXTextBookmark */;
 			F32DB3A90C20EE5800BAAEFA /* PBXTextBookmark */ = F32DB3A90C20EE5800BAAEFA /* PBXTextBookmark */;
 			F32DB3AA0C20EE5800BAAEFA /* PBXTextBookmark */ = F32DB3AA0C20EE5800BAAEFA /* PBXTextBookmark */;
-			F32DB3AB0C20EE5800BAAEFA /* PBXBookmark */ = F32DB3AB0C20EE5800BAAEFA /* PBXBookmark */;
-			F32DB3AC0C20EE5800BAAEFA /* PBXTextBookmark */ = F32DB3AC0C20EE5800BAAEFA /* PBXTextBookmark */;
-			F32DB3AD0C20EE5800BAAEFA /* PBXTextBookmark */ = F32DB3AD0C20EE5800BAAEFA /* PBXTextBookmark */;
-			F32DB3AE0C20EE5800BAAEFA /* PBXTextBookmark */ = F32DB3AE0C20EE5800BAAEFA /* PBXTextBookmark */;
+			F39CC56D0C20F16E003A7A54 /* PBXTextBookmark */ = F39CC56D0C20F16E003A7A54 /* PBXTextBookmark */;
 			F3A88B100C2083950087CC1F /* PBXTextBookmark */ = F3A88B100C2083950087CC1F /* PBXTextBookmark */;
 			F3A88B120C2083950087CC1F /* PBXTextBookmark */ = F3A88B120C2083950087CC1F /* PBXTextBookmark */;
 			F3A88B130C2083950087CC1F /* PBXTextBookmark */ = F3A88B130C2083950087CC1F /* PBXTextBookmark */;
@@ -893,6 +876,7 @@
 			F3A88B380C20B43A0087CC1F /* PBXTextBookmark */ = F3A88B380C20B43A0087CC1F /* PBXTextBookmark */;
 			F3B11F910C20D8FC00FCF254 /* PBXTextBookmark */ = F3B11F910C20D8FC00FCF254 /* PBXTextBookmark */;
 			F3B11F930C20D8FC00FCF254 /* PBXTextBookmark */ = F3B11F930C20D8FC00FCF254 /* PBXTextBookmark */;
+			F3E27A730C20F17400538EF1 /* PBXTextBookmark */ = F3E27A730C20F17400538EF1 /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
@@ -914,11 +898,5 @@
 		name = SC_Complex.cpp;
 		path = /Users/joshp/src/supercollider/Source/server/SC_Complex.cpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {752, 2016}}";
-			sepNavSelRange = "{990, 0}";
-			sepNavVisRect = "{{0, 0}, {752, 414}}";
-			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
-		};
 	};
 }
