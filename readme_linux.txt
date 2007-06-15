@@ -1,27 +1,9 @@
 
-linux instructions
+linux build instructions
+------------------------
+The sc3-plugins svn checkout is expect live inside the supercollider source tree.
 
-requirements
-------------
-sc3-plugins svn checkout is expect live inside the supercollider source tree.
-The stk library is needed as well if you are planning to build the StkUGens.
-this is provided in the file release area of the sourceforge site.
-
-http://sourceforge.net/project/showfiles.php?group_id=182627
-
-the library has to be prebuilt prior attempting to build sc3-plugins.
-
-to build stk:
-
-$ cd scdev/stk-4.2.1
-$ ./configure
-$ cd src
-$ make
-
-building sc3-plugins
---------------------
-the directory tree will look something like this:
-
+The directory tree will look something like this:
 
     supercollider\     -   supercollider source tree
        build\
@@ -33,22 +15,49 @@ the directory tree will look something like this:
 	   compat\
 	   lib\
 	   etc...
-    stk-4.2.1\
+    stk-4.2.1\         -   the stklib
        stk lib stuff
 
 
-building sc3-plugins:
+building sc3-plugins
+--------------------
 
 $ cd supercollider/sc3-plugins
 $ scons
 $ ./distro_linux
 
-where supercollider is the name you gave to your supercollider source tree.
+where supercollider is the name of the supercollider source tree.
 
-the resulting Extensions folder can now be moved out of the tree to your sc extensions folder (or even better create a symlink).
-you can add a sub dir named 'test' inside this Extensions directory and drop folders in there to disable a particular ugens pack.
+The compiled UGens, Classes and Helpfiles, will be placed into a new 'Extensions' directory in sc3-plugins. This can be moved or better yet, create a symlink to it from your extensions folder.
 
-for the StkUGens to work and boot scsynth succesfully if this ugen pack was installed, the rawwaves folder needs to be installed at the same level of scsynth as noted on the UGens Pack directory. a sylink works fine for this.
+You can add a sub dir named 'test' inside this Extensions directory and move folders in there to disable a particular ugen pack.
+
+The StkUGens
+------------
+If you are planning to build the StkUGens you will need the stklib. This is provided in the file release area of the sourceforge project site at:
+
+http://sourceforge.net/project/showfiles.php?group_id=182627
+
+- Build stk:
+
+$ tar zxvf libstk.tar.gz
+$ cd scdev/stk-4.2.1
+$ ./configure
+$ cd src
+$ make
+
+- Edit SConstruct to enable building the StkUGens and set the path to point to the new built libstk.a:
+# enable this to build the StkUGens
+
+build_stkugens = True
+stklib_path = '/path/to/libstk.a'
+
+- Save the changes, execute scons and export the compiled UGens to a new 'Extensions' folder:
+
+$ scons
+$ ./distro_linux
+
+- For the StkUGens to work and boot scsynth succesfully if this ugen pack was installed, the rawwaves folder needs to be installed at the same level of scsynth as noted on the UGens Pack directory. a sylink works fine for this.
 
 
 questions - blackrain at realizedsound dot net

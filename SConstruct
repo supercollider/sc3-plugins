@@ -5,6 +5,11 @@
 
 sc3_source = '../'
 
+# enable this to build the StkUGens
+
+build_stkugens = False
+stklib_path = '/path/to/libstk.a'
+
 ##############################################
 # simple ugens
 headers = sc3_source + 'headers'
@@ -40,14 +45,15 @@ for file in plugs :
 ##############################################
 # StkUGens
 
-Environment(
-        CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
-        CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
-        CCFLAGS = ['-Wno-unknown-pragmas'],
-       	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
-        SHLIBPREFIX = '',
-        SHLIBSUFFIX = '.so'
-).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH='lib');
+if build_stkugens == True:
+	Environment(
+        	CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+        	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+        	CCFLAGS = ['-Wno-unknown-pragmas'],
+       		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
+        	SHLIBPREFIX = '',
+        	SHLIBSUFFIX = '.so'
+	).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH=stklib_path);
 
 
 ##############################################
@@ -65,17 +71,14 @@ FFT_Env = Environment(
 ##############################################
 # JoshPVUGens
 
-fft_src_base = [ sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/SCComplex.cpp',
-	sc3_source + '/source/plugins/FFT2InterfaceTable.cpp', sc3_source + '/source/plugins/Convolution.cpp', 
-	sc3_source + '/source/plugins/FeatureDetection.cpp' ]
+fft_src_base = [ sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/Convolution.cpp', sc3_source + '/source/plugins/FeatureDetection.cpp' ]
 
 FFT_Env.SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base);
 
 ##############################################
 # MCLDFFTTriggeredUGens
 
-FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', 
-	sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c']);
+FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c']);
 
 ##############################################
 # MCLDFFTUGens
@@ -85,8 +88,6 @@ FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '
 ##############################################
 # bhobfft
 
-FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp',
-	sc3_source + '/source/plugins/FeatureDetection.cpp', sc3_source + '/source/plugins/fftlib.c',
-	sc3_source + '/source/plugins/PV_ThirdParty.cpp', sc3_source + '/source/plugins/SCComplex.cpp' ]);
+FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/source/plugins/FeatureDetection.cpp', sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/PV_ThirdParty.cpp', sc3_source + '/source/plugins/SCComplex.cpp' ]);
 
 

@@ -8,8 +8,6 @@ mv BlackrainUGens.so Extensions/BlackrainUGens
 mv JoshPVUGens.so Extensions/JoshPVUGens
 mv JoshUGens.so Extensions/JoshUGens
 mv ReverbUGens.so Extensions/ReverbUGens
-mv StkUGens.so Extensions/StkUGens
-cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
 mv MCLD*.so Extensions/MCLD_UGens
 mv LoopBuf.so Extensions/ljpclasses
 mv bhob*.so Bhob*.so Extensions/bhobUGens
@@ -20,3 +18,7 @@ mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/MCLD_UGens/test
 
 mkdir Extensions/test
 mv Extensions/StkUGens Extensions/test
+
+mv StkUGens.so Extensions/StkUGens
+cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
+
