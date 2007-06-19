@@ -35,20 +35,20 @@ BFEncode2 : Panner {
 	}
 } 
 
-BFEncodeSter : Panner {
-
-	*ar { arg l, r, spread = 0.5pi, azimuth=0, elevation=0, rho = 1, gain=1;
-		^this.multiNew('audio', l, r, spread, azimuth, elevation, rho, gain )
-	}
-	
-	init { arg ... theInputs;
-		inputs = theInputs;		
-		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
-					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3) ];
-		^channels
-	}
-
-}
+//BFEncodeSter : Panner {
+//
+//	*ar { arg l, r, spread = 0.5pi, azimuth=0, elevation=0, rho = 1, gain=1;
+//		^this.multiNew('audio', l, r, spread, azimuth, elevation, rho, gain )
+//	}
+//	
+//	init { arg ... theInputs;
+//		inputs = theInputs;		
+//		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+//					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3) ];
+//		^channels
+//	}
+//
+//}
 
 BFDecode1 : UGen {
 	
