@@ -21,7 +21,7 @@ CtkScore {
 			case { // if the event is a note ...
 				(event.isKindOf(CtkNote) || event.isKindOf(CtkGroup))
 				} {
-				event.bundle.do({arg me;
+				event.prBundle.do({arg me;
 					score.add(me);
 					});
 				(event.endtime).notNil.if({
@@ -70,8 +70,7 @@ CtkScore {
 	
 	sortScore {
 		score.add([endtime, [0]]);
-		score.sort;
-		score.sort; // for now, sort twice (to preserve order)
+		score.sort({arg a, b; a[0] <= b[0]});
 		}
 	
 	addBuffers {
@@ -96,8 +95,8 @@ CtkScore {
 		idx = 0;
 		ascore = score.score;
 		while({
-			(ascore[idx][0].round(0.00001) == ascore[idx+1][0].round(0.00001)).if({
-				ascore[idx+1].removeAt(0);
+//			(ascore[idx][0].round(0.00001) == ascore[idx+1][0].round(0.00001)).if({
+			(ascore[idx][0].fuzzyEqual(ascore[idx+1][0], 0.00001) > 0).if({				ascore[idx+1].removeAt(0);
 				ascore[idx+1].do({arg me;
 					ascore[idx] = ascore[idx].add(me);
 					});
@@ -171,7 +170,22 @@ CtkScore {
 			headerFormat: headerFormat,
 		 	sampleFormat: sampleFormat, options: options, duration: duration);
 		}
-
+		
+	// add a time to all times in a CtkScore
+	offset {arg duration;
+		score.score = this.prOffset(score.score, duration);
+		}
+	
+	prOffset {arg array, duration;
+		^array.deepCopy.do({arg me; me[0] = me[0] + duration});
+		}
+		
+	merge {arg newScore, newScoreOffset = 0;
+		var addScore;
+		addScore = newScore.score.deepCopy;
+		addScore = this.prOffset(addScore, newScoreOffset);
+		score.score = score.score ++ addScore;
+		}
 	}
 
 // creates a dictionary of Synthdefs, and CtkNoteObjects
@@ -468,14 +482,24 @@ CtkNote : CtkNode {
 		^bundlearray;		
 		}
 		
-	bundle {
+	prBundle {
 		messages = messages.add(this.newBundle);
 		(duration.notNil && willFree.not).if({
 			messages = messages.add([(starttime + duration).asFloat, [\n_free, node]]);
 			});
 		^messages;
 		}
-	
+
+	bundle {
+		var thesemsgs;
+		thesemsgs = [];
+		thesemsgs = thesemsgs.add(this.newBundle);
+		(duration.notNil && willFree.not).if({
+			thesemsgs = thesemsgs.add([(starttime + duration).asFloat, [\n_free, node]]);
+			});
+		^thesemsgs;
+		}
+			
 	// support playing and releasing notes ... not for use with scores
 	play {arg latency;
 		var bund;
@@ -489,7 +513,6 @@ CtkNote : CtkNode {
 				server.sendBundle(latency, [\n_map, node, key, val]);
 				});
 			this.watch;
-//			isPlaying = true;
 			// if a duration is given... kill it
 			duration.notNil.if({
 				SystemClock.sched(duration, {this.free(addMsg: false)})
@@ -541,7 +564,7 @@ CtkGroup : CtkNode {
 		^bundlearray;		
 		}
 		
-	bundle {
+	prBundle {
 		messages = messages.add(this.newBundle);
 		(duration.notNil).if({
 			messages = messages.add([(starttime + duration).asFloat, 
@@ -550,6 +573,16 @@ CtkGroup : CtkNode {
 		^messages;
 		}
 
+	bundle {
+		var thesemsgs;
+		thesemsgs = [];
+		thesemsgs = thesemsgs.add(this.newBundle);
+		(duration.notNil && willFree.not).if({
+			thesemsgs = thesemsgs.add([(starttime + duration).asFloat, [\n_free, node]]);
+			});
+		^thesemsgs;
+		}
+		
 	// create the group for RT uses
 	play {arg time;
 		var bundle = this.buildBundle;
@@ -600,10 +633,6 @@ CtkBuffer : CtkObj {
 		^this.new(path, size, startFrame, server: server)
 		}
 		
-//	*diskout {arg path, size, numChannels, server;
-//		^this.new(size: size, numChannels: numChannels, server: server)
-//		}
-		
 	*playbuf {arg path, startFrame = 0, numFrames = 0, server;
 		^this.new(path, startFrame: startFrame, numFrames: numFrames, server: server)
 		}
@@ -640,6 +669,7 @@ CtkBuffer : CtkObj {
 			path.isNil && size.notNil
 			} {
 			numChannels = numChannels ?? {1};
+			duration = size / server.sampleRate;
 			bundle = [\b_alloc, bufnum, size, numChannels];
 			};
 		freeBundle = [\b_free, bufnum];			
