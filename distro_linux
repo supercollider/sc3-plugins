@@ -19,6 +19,6 @@ mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/MCLD_UGens/test
 mkdir Extensions/test
 mv Extensions/StkUGens Extensions/test
 
-mv StkUGens.so Extensions/StkUGens
-cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
+#mv StkUGens.so Extensions/StkUGens
+#cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
 

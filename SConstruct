@@ -12,7 +12,7 @@ stklib_path = '/path/to/libstk.a'
 
 ##############################################
 # simple ugens
-headers = sc3_source + 'headers'
+headers = sc3_source + 'Headers'
 
 plugs = [
 	'AmbisonicUGens',
@@ -60,7 +60,7 @@ if build_stkugens == True:
 # base FFT Envirnonment
 
 FFT_Env = Environment(
-       	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/source/plugins'],
+       	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
        	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
        	CCFLAGS = ['-Wno-unknown-pragmas'],
        	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
@@ -71,23 +71,23 @@ FFT_Env = Environment(
 ##############################################
 # JoshPVUGens
 
-fft_src_base = [ sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/Convolution.cpp', sc3_source + '/source/plugins/FeatureDetection.cpp' ]
+fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
 
 FFT_Env.SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base);
 
 ##############################################
 # MCLDFFTTriggeredUGens
 
-FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/source/plugins/SCComplex.cpp', sc3_source + '/source/plugins/fftlib.c']);
+FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']);
 
 ##############################################
 # MCLDFFTUGens
 
-FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/source/plugins/SCComplex.cpp']);
+FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp']);
 
 ##############################################
 # bhobfft
 
-FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/source/plugins/FeatureDetection.cpp', sc3_source + '/source/plugins/fftlib.c', sc3_source + '/source/plugins/PV_ThirdParty.cpp', sc3_source + '/source/plugins/SCComplex.cpp' ]);
+FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ]);
 
 
