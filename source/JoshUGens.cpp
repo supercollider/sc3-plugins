@@ -93,7 +93,7 @@ struct AtsSynth : public Unit
 {
 	int32 *m_phase; 
 	int32 m_phaseoffset, m_lomask;
-	float m_numPartials, m_partialStart, m_partialSkip;
+	int m_numPartials, m_partialStart, m_partialSkip;
 	float m_sinePct, m_noisePct, m_freqShift;
 	float m_fbufnum, m_framestart;
 	double m_cpstoinc, m_radtoinc;
@@ -108,7 +108,7 @@ struct PVSynth : AtsSynth
 struct PVInfo : public Unit
 {
 	float m_partialNum;
-	float m_numPartials, m_partialStart, m_partialSkip;
+	int m_numPartials, m_partialStart, m_partialSkip;
 	float m_fbufnum, m_framestart;
 	SndBuf *m_buf;
 };
@@ -117,8 +117,8 @@ struct AtsNoiSynth : public Unit
 {
 	int32 *m_phase; 
 	int32  m_lomask;
-	float m_numPartials, m_partialStart, m_partialSkip;
-	float m_numBands, m_bandStart, m_bandSkip;
+	int m_numPartials, m_partialStart, m_partialSkip;
+	int m_numBands, m_bandStart, m_bandSkip;
 	float m_sinePct, m_noisePct, m_freqShift;
 	float m_fbufnum,  m_framestart;
 	double m_cpstoinc, m_radtoinc;
@@ -131,41 +131,34 @@ struct AtsNoiSynth : public Unit
 	float m_level[25];
 	float m_slope[25];
 	int32 m_counter[25];
-	uint32 m_atss1[25];
-	uint32 m_atss2[25];
-	uint32 m_atss3[25];
 	SndBuf *m_buf;	
 	int phaseinit;
 };
 
 struct AtsFreq : public Unit
 {
-	float m_partialNum;
-	float m_numPartials, m_partialStart, m_partialSkip;
+	int m_partialNum;
 	float m_fbufnum, m_framestart;
 	SndBuf *m_buf;
 };
 
 struct AtsAmp : public Unit
 {
-	float m_partialNum;
-	float m_numPartials, m_partialStart, m_partialSkip, m_framestart;
-	float m_fbufnum;
+	int m_partialNum;
+	float m_fbufnum, m_framestart;
 	SndBuf *m_buf;
 };
 
 struct AtsNoise : public Unit
 {
-	float m_bandNum;
-	float m_numPartials, m_partialStart, m_partialSkip, m_framestart;
-	float m_fbufnum;
+	int m_bandNum;
+	float m_fbufnum, m_framestart;
 	SndBuf *m_buf;
 };
 
 struct AtsParInfo : public Unit
 {
-	float m_partialNum;
-	float m_numPartials, m_partialStart, m_partialSkip;
+	int m_partialNum;
 	float m_fbufnum, m_framestart;
 	SndBuf *m_buf;
 };
@@ -447,7 +440,6 @@ struct FMGrainI : public Unit
 struct BufGrain : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	Grain mGrains[kMaxGrains];
 };
@@ -455,7 +447,6 @@ struct BufGrain : public Unit
 struct BufGrainB : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	WinGrain mGrains[kMaxGrains];
 };
@@ -463,7 +454,6 @@ struct BufGrainB : public Unit
 struct BufGrainI : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	WinGrainI mGrains[kMaxGrains];
 };
@@ -684,7 +674,6 @@ struct WinGrainIBF
 struct BufGrainBF : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	GrainBF mGrains[kMaxGrains];
 };
@@ -692,7 +681,6 @@ struct BufGrainBF : public Unit
 struct BufGrainBBF : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	WinGrainBF mGrains[kMaxGrains];
 };
@@ -700,7 +688,6 @@ struct BufGrainBBF : public Unit
 struct BufGrainIBF : public Unit
 {
 	int mNumActive;
-	int mNextGrain;
 	float curtrig;
 	WinGrainIBF mGrains[kMaxGrains];
 };
@@ -713,9 +700,9 @@ struct AudioMSG : public Unit
 
 struct Balance : public Unit
 {
-	float m_scaler, m_pastTestSig;
-	float *m_pastTestSums;
-	int m_numTurns, m_sampbuf, m_numPeriods;
+	float m_scaler;
+	float m_hp, m_stor;
+	float m_coef1, m_coef2, m_prevq, m_prevr, m_preva;
 };
 
 struct MoogVCF : public Unit
@@ -952,11 +939,8 @@ extern "C"
 	void AudioMSG_next_k(AudioMSG *unit, int inNumSamples);
 	
 	void Balance_Ctor(Balance* unit);
-	void Balance_Dtor(Balance* unit);
-	void Balance_next_a(Balance *unit, int inNumSamples);
-	void Balance_next_za(Balance *unit, int inNumSamples);
-	void Balance_next_k(Balance *unit, int inNumSamples);
-	void Balance_next_zk(Balance *unit, int inNumSamples);
+	void Balance_next_a(Balance* unit, int inNumSamples);
+	void Balance_next_k(Balance* unit, int inNumSamples);
 		
 	void MoogVCF_Ctor(MoogVCF* unit);
 	void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples);
@@ -1081,7 +1065,6 @@ void B2UHJ_Ctor(B2UHJ *unit)
 	unit->m_yy1[i] = 0.0;
 	}
     ClearUnitOutputs(unit, 1);
-//    B2UHJ_next(unit, 1);
 }
 
 void B2UHJ_next(B2UHJ *unit, int inNumSamples)
@@ -1522,8 +1505,8 @@ void BFEncode2_Ctor(BFEncode2 *unit)
 	
 	if(rho >= 1) {
 		float intrho = 1 / (pow(rho, 1.5));
-		sinint = (rsqrt2 * (sin(0.78539816339745 * 1.0))) * intrho; // pow(rho, (float)1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745 * 1.0))) * intrho; // / pow(rho, (float)1.5);
+		sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; // pow(rho, (float)1.5);
+		cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho; // / pow(rho, (float)1.5);
 		}
 	    else 
 		{
@@ -1780,6 +1763,7 @@ void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 	float sina = unit->m_sina;
 	float sinb = unit->m_sinb;
 	
+	// scaling is done according to W in the Encoders
 	float W_amp = 1.0; //0.7071067811865476;
 	float X_amp = cosa; //0.5 * cosa;
 	float Y_amp = sina; //0.5 * sina;
@@ -2177,7 +2161,7 @@ void Maxamp_next(Maxamp *unit, int inNumSamples)
 		else{
 		    unit->m_remainingSamps = --remainingSamps;
 		    }
-	    out[j] =  in[j];
+	    out[j] = in[j];
 	}   
 }
 
@@ -2190,10 +2174,10 @@ void PVSynth_Ctor(AtsSynth* unit)
 {
 	SETCALC(AtsSynth_next);
 	int tableSizeSin = ft->mSineSize;
-	unit->m_numPartials = ZIN0(1);
-	unit->m_partialStart = ZIN0(2);
-	unit->m_partialSkip = ZIN0(3);
-	int numPartials = (int)unit->m_numPartials;
+	unit->m_numPartials = (int)ZIN0(1);
+	unit->m_partialStart = (int)ZIN0(2);
+	unit->m_partialSkip = (int)ZIN0(3);
+	int numPartials = unit->m_numPartials;
 	unit->m_lomask = (tableSizeSin - 1) << 3; 
 	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.; 
@@ -2226,14 +2210,14 @@ void AtsSynth_Ctor(AtsSynth* unit)
 {
 	SETCALC(AtsSynth_next);
 	int tableSizeSin = ft->mSineSize;
-	unit->m_numPartials = ZIN0(1);
-	unit->m_partialStart = ZIN0(2);
-	unit->m_partialSkip = ZIN0(3);
+	unit->m_numPartials = (int)ZIN0(1);
+	unit->m_partialStart = (int)ZIN0(2);
+	unit->m_partialSkip = (int)ZIN0(3);
 	unit->m_framestart = ZIN0(4);
 	unit->m_lomask = (tableSizeSin - 1) << 3; 
 	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
-	unit->m_phase = (int32*)RTAlloc(unit->mWorld, (int)unit->m_numPartials * sizeof(int32));
+	unit->m_phase = (int32*)RTAlloc(unit->mWorld, unit->m_numPartials * sizeof(int32));
 	unit->phaseinit = 1;
 	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
@@ -2249,7 +2233,7 @@ void AtsSynth_next(AtsSynth *unit, int inNumSamples)
 {
 	if(unit->phaseinit > 0)
 	{
-	for (int i = 0; i < (int)unit->m_numPartials; i++){
+	for (int i = 0; i < unit->m_numPartials; i++){
 	    unit->m_phase[i] = 0;
 	    }
 	unit->phaseinit = -1;
@@ -2287,12 +2271,12 @@ void AtsSynth_next(AtsSynth *unit, int inNumSamples)
 	float framepct = frameend - (float)frameround1;
 	float startframepct = framestart - (float)startframeround1;
 	
-	float numPartials = unit->m_numPartials;
-	float partialStart = unit->m_partialStart;
-	float partialSkip = unit->m_partialSkip;
-	int totalPartials = (int)numPartials;
+	int numPartials = unit->m_numPartials;
+	int partialStart = unit->m_partialStart;
+	int partialSkip = unit->m_partialSkip;
+	int totalPartials = numPartials;
 
-	int *partials = new int[(int)numPartials]; //this will be the partials to synthesize
+	int *partials = new int[numPartials]; //this will be the partials to synthesize
 	
 	startframeround2 = 1;
 
@@ -2308,9 +2292,9 @@ void AtsSynth_next(AtsSynth *unit, int inNumSamples)
 	
 	//fill partials with the correct partials, check if partials requested are actually present
 	
-	for (int j = 0; j < (int)numPartials; ++j){
-	    int aPartial = (int)partialStart + ((int)partialSkip * j);
-	    if (aPartial < (int)filePartials[0]) 
+	for (int j = 0; j < numPartials; ++j){
+	    int aPartial = partialStart + (partialSkip * j);
+	    if (aPartial < filePartials[0]) 
 		partials[j] = aPartial;
 		else
 		--totalPartials;
@@ -2334,15 +2318,15 @@ void AtsSynth_next(AtsSynth *unit, int inNumSamples)
 	    ampData = ampDataStart + (numFrames * partials[i]);
 	    freqData = freqDataStart + (numFrames * partials[i]);
 	    
-	    startatsAmp1 = bufData + (int)(ampData + startframeround1); //this is the position in the file of the amp
+	    startatsAmp1 = bufData + (ampData + startframeround1); //this is the position in the file of the amp
 
-	    endatsAmp1 = bufData + (int)(ampData + frameround1); 
+	    endatsAmp1 = bufData + (ampData + frameround1); 
 	    	    
 	    startampin = lininterp(startframepct, startatsAmp1[0], startatsAmp1[startframeround2]); 
 	    endampin = lininterp(framepct, endatsAmp1[0], endatsAmp1[frameround2]); 
 	    ampslope = CALCSLOPE(endampin, startampin);
 	    
-	    atsFreq1 = bufData + (int)(freqData + frameround1); //this is the position in the file of the freq
+	    atsFreq1 = bufData + (freqData + frameround1); //this is the position in the file of the freq
 
 	    freqin = (lininterp(framepct, atsFreq1[0], atsFreq1[frameround2]) * freqMul) + freqAdd; 
 	    freq = (int32)(unit->m_cpstoinc * freqin);
@@ -2370,14 +2354,13 @@ void AtsNoiSynth_Ctor(AtsNoiSynth* unit)
 	SETCALC(AtsNoiSynth_next);
 	int i;
 	int tableSizeSin = ft->mSineSize;
-	unit->m_numPartials = ZIN0(1);
-	unit->m_partialStart = ZIN0(2);
-	unit->m_partialSkip = ZIN0(3);
+	int numPartials = unit->m_numPartials = (int)ZIN0(1);
+	unit->m_partialStart = (int)ZIN0(2);
+	unit->m_partialSkip = (int)ZIN0(3);
 	unit->m_framestart = ZIN0(4);
-	unit->m_numBands = ZIN0(9);
-	unit->m_bandStart = ZIN0(10);
-	unit->m_bandSkip = ZIN0(11);
-	int numPartials = (int)unit->m_numPartials;
+	unit->m_numBands = (int)ZIN0(9);
+	unit->m_bandStart = (int)ZIN0(10);
+	unit->m_bandSkip = (int)ZIN0(11);
 	//int numBands = (int)unit->m_numBands;
 	unit->m_lomask = (tableSizeSin - 1) << 3; 
 	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
@@ -2417,7 +2400,7 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 {
 	if(unit->phaseinit > 0)
 	{
-	    for (int i = 0; i < (int)unit->m_numPartials; i++){
+	    for (int i = 0; i < unit->m_numPartials; i++){
 		unit->m_phase[i] = 0.;
 		}
 	    unit->phaseinit = -1;
@@ -2455,18 +2438,18 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 	float framepct = frameend - (float)frameround1;
 	float startframepct = framestart - (float)startframeround1;
 	
-	float numPartials = unit->m_numPartials;
-	float partialStart = unit->m_partialStart;
-	float partialSkip = unit->m_partialSkip;
-	float numBands = unit->m_numBands;
-	float bandStart = unit->m_bandStart;
-	float bandSkip = unit->m_bandSkip;
+	int numPartials = unit->m_numPartials;
+	int partialStart = unit->m_partialStart;
+	int partialSkip = unit->m_partialSkip;
+	int numBands = unit->m_numBands;
+	int bandStart = unit->m_bandStart;
+	int bandSkip = unit->m_bandSkip;
 	float sinePct = IN0(5);
 	float noisePct = IN0(6);
 	float freqMul = IN0(7);
 	float freqAdd = IN0(8);
-	int totalPartials = (int)numPartials;
-	int totalBands = (int)numBands;
+	int totalPartials = numPartials;
+	int totalBands = numBands;
 	
 	int *partials = new int[totalPartials]; //this will be the partials to synthesize
 	int *bands = new int[totalBands]; //this will be the bands to synthesize
@@ -2485,8 +2468,8 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 		
 	//fill partials with the correct partials, check if partials requested are actually present
 	
-	for (int i = 0; i < (int)numPartials; ++i){
-	    int aPartial = (int)partialStart + ((int)partialSkip * i);
+	for (int i = 0; i < numPartials; ++i){
+	    int aPartial = partialStart + (partialSkip * i);
 	    if (aPartial < (int)filePartials[0]) 
 		partials[i] = aPartial;
 		else
@@ -2528,8 +2511,8 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 	    unit->m_phase[i] = phase;
 	    }
 	
-	for (int i = 0; i < (int)numBands; ++i){
-	    int aBand = (int)bandStart + ((int)bandSkip * i);
+	for (int i = 0; i < numBands; ++i){
+	    int aBand = bandStart + (bandSkip * i);
 	    if (aBand < 25) 
 		bands[i] = aBand;
 		else
@@ -2591,7 +2574,7 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 void AtsFreq_Ctor(AtsFreq* unit)
 {
 	SETCALC(AtsFreq_next);
-	unit->m_partialNum = ZIN0(1);
+	unit->m_partialNum = (int)ZIN0(1);
 	unit->m_fbufnum = -1e9f;
 	unit->m_framestart = ZIN0(2);
 	ClearUnitOutputs(unit, 1);
@@ -2615,10 +2598,10 @@ void AtsFreq_next(AtsFreq *unit, int inNumSamples)
 	float* filePartials = bufData + 1;
 	float* fileFrames = bufData + 2;
 	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	float numFrames = fileFrames[0];
-	float framestart = unit->m_framestart * ((int)numFrames - 1);
+	int numFrames = (int)fileFrames[0];
+	float framestart = unit->m_framestart * (numFrames - 1);
 	float frame = IN0(2);
-	float frameend = frame * ((int)numFrames - 1);
+	float frameend = frame * (numFrames - 1);
 	int startframeround1 = (int)framestart;
 	int startframeround2;
 	float startframepct = framestart-(float)startframeround1;
@@ -2626,7 +2609,7 @@ void AtsFreq_next(AtsFreq *unit, int inNumSamples)
 	int endframeround2;
 	float endframepct = frameend-(float)endframeround1;
 		
-	float partialNum = unit->m_partialNum;
+	int partialNum = unit->m_partialNum;
 	
 	startframeround2 = startframeround1 + 1;
 	endframeround2 = endframeround1 + 1;
@@ -2646,7 +2629,7 @@ void AtsFreq_next(AtsFreq *unit, int inNumSamples)
 		return;
 		};
 	
-	int freqData = freqDataStart + ((int)numFrames * (int)partialNum);
+	int freqData = freqDataStart + (numFrames * partialNum);
 	int startfreqData1 = freqData + startframeround1;
 	int startfreqData2 = freqData  + startframeround2;
 	float* startatsFreq1 = bufData + startfreqData1; //this is the position in the file of the freq
@@ -2673,7 +2656,7 @@ void AtsFreq_next(AtsFreq *unit, int inNumSamples)
 void AtsAmp_Ctor(AtsAmp* unit)
 {
 	SETCALC(AtsAmp_next);
-	unit->m_partialNum = ZIN0(1);
+	unit->m_partialNum = (int)ZIN0(1);
 	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
 	unit->m_framestart = ZIN0(2);
@@ -2697,7 +2680,7 @@ void AtsAmp_next(AtsAmp *unit, int inNumSamples)
 	float* filePartials = bufData + 1;
 	float* fileFrames = bufData + 2;
 	int ampDataStart = 4;
-	float numFrames = fileFrames[0];
+	int numFrames = (int)fileFrames[0];
 	float framestart = unit->m_framestart * ((int)numFrames - 1);
 	float frame = IN0(2);
 	float frameend = frame * ((int)numFrames - 1);
@@ -2707,7 +2690,7 @@ void AtsAmp_next(AtsAmp *unit, int inNumSamples)
 	int endframeround1 = (int)frameend;
 	int endframeround2;
 	float endframepct = frameend - (float)endframeround1;
-	float partialNum = unit->m_partialNum;
+	int partialNum = unit->m_partialNum;
 
 	
 	startframeround2 = startframeround1 + 1;
@@ -2728,7 +2711,7 @@ void AtsAmp_next(AtsAmp *unit, int inNumSamples)
 		return;
 		};
 		
-	int ampData = ampDataStart + ((int)numFrames * (int)partialNum);
+	int ampData = ampDataStart + (numFrames * partialNum);
 	int startampData1 = ampData + startframeround1;
 	int startampData2 = ampData + startframeround2;
 	float* startatsAmp1 = bufData + startampData1; //this is the position in the file of the amp
@@ -2755,7 +2738,7 @@ void AtsAmp_next(AtsAmp *unit, int inNumSamples)
 void AtsNoise_Ctor(AtsNoise* unit)
 {
 	SETCALC(AtsNoise_next);
-	unit->m_bandNum = IN0(1);
+	unit->m_bandNum = (int)IN0(1);
 	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
 	unit->m_framestart = IN0(2);
@@ -2779,17 +2762,17 @@ void AtsNoise_next(AtsNoise *unit, int inNumSamples)
 	float* filePartials = bufData + 1;
 	float* fileFrames = bufData + 2;
 	int noiseDataStart = (((int)filePartials[0] * (int)fileFrames[0]) * 3) + 4;
-	float numFrames = fileFrames[0];
-	float framestart = unit->m_framestart * ((int)numFrames - 1);
+	int numFrames = (int)fileFrames[0];
+	float framestart = unit->m_framestart * (numFrames - 1);
 	float frame = IN0(2);
-	float frameend = frame * ((int)numFrames - 1);
+	float frameend = frame * (numFrames - 1);
 	int startframeround1 = (int)framestart;
 	int startframeround2;
 	float startframepct = framestart-(float)startframeround1;
 	int endframeround1 = (int)frameend;
 	int endframeround2;
 	float endframepct = frameend - (float)endframeround1;
-	float bandNum = unit->m_bandNum;
+	int bandNum = unit->m_bandNum;
 
 	
 	startframeround2 = startframeround1 + 1;
@@ -2810,7 +2793,7 @@ void AtsNoise_next(AtsNoise *unit, int inNumSamples)
 		return;
 		};
 	
-	int noiseData = noiseDataStart + ((int)numFrames * (int)bandNum);		
+	int noiseData = noiseDataStart + (numFrames * bandNum);		
 	int startnoiseData1 =  noiseData + startframeround1;
 	int startnoiseData2 = noiseData + startframeround2;
 	float* startatsnoise1 = bufData + startnoiseData1; //this is the position in the file of the noise
@@ -2837,7 +2820,7 @@ void AtsNoise_next(AtsNoise *unit, int inNumSamples)
 void AtsParInfo_Ctor(AtsParInfo* unit)
 {
 	SETCALC(AtsParInfo_next);
-	unit->m_partialNum = ZIN0(1);
+	unit->m_partialNum = (int)ZIN0(1);
 	unit->m_framestart = ZIN0(2);
 	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
@@ -2863,7 +2846,7 @@ void AtsParInfo_next(AtsParInfo *unit, int inNumSamples)
 	float* fileFrames = bufData + 2;
 	int ampDataStart = 4;
 	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	float numFrames = fileFrames[0];
+	int numFrames = (int)fileFrames[0];
 	float framestart = unit->m_framestart * ((int)numFrames - 1);
 	float frame = IN0(2);
 	float frameend = frame * ((int)numFrames - 1);
@@ -2875,7 +2858,7 @@ void AtsParInfo_next(AtsParInfo *unit, int inNumSamples)
 	int endframeround2;
 	float endframepct = frameend-(float)endframeround1;
 		
-	float partialNum = unit->m_partialNum;
+	int partialNum = unit->m_partialNum;
 
 	
 	startframeround2 = startframeround1 + 1;
@@ -2895,29 +2878,30 @@ void AtsParInfo_next(AtsParInfo *unit, int inNumSamples)
 		ClearUnitOutputs(unit, inNumSamples); 
 		return;
 		};
-		
-	int startampData1 = ampDataStart + (((int)numFrames * (int)partialNum) + startframeround1);
-	int startampData2 = ampDataStart + (((int)numFrames * (int)partialNum) + startframeround2);
+	
+	int partialFrame = numFrames * partialNum;
+	int startampData1 = ampDataStart + (partialFrame + startframeround1);
+	int startampData2 = ampDataStart + (partialFrame + startframeround2);
 	float* startatsAmp1 = bufData + startampData1; //this is the position in the file of the amp
 	float* startatsAmp2 = bufData + startampData2;
 	float startampin = (startatsAmp1[0] + ((startatsAmp2[0] - startatsAmp1[0]) * startframepct));
 
-	int endampData1 = ampDataStart + (((int)numFrames * (int)partialNum) + endframeround1);
-	int endampData2 = ampDataStart + (((int)numFrames * (int)partialNum) + endframeround2);
+	int endampData1 = ampDataStart + (partialFrame + endframeround1);
+	int endampData2 = ampDataStart + (partialFrame + endframeround2);
 	float* endatsAmp1 = bufData + endampData1; //this is the position in the file of the amp
 	float* endatsAmp2 = bufData + endampData2;
 	float endampin = (endatsAmp1[0] + ((endatsAmp2[0] - endatsAmp1[0]) * endframepct));
 	
 	float ampslope = CALCSLOPE(endampin, startampin);
 	
-	int startfreqData1 = freqDataStart + (((int)numFrames * (int)partialNum) + startframeround1);
-	int startfreqData2 = freqDataStart + (((int)numFrames * (int)partialNum) + startframeround2);
+	int startfreqData1 = freqDataStart + (partialFrame + startframeround1);
+	int startfreqData2 = freqDataStart + (partialFrame + startframeround2);
 	float* startatsFreq1 = bufData + startfreqData1; //this is the position in the file of the amp
 	float* startatsFreq2 = bufData + startfreqData2;
 	float startfreqin = (startatsFreq1[0] + ((startatsFreq2[0] - startatsFreq1[0]) * startframepct));
 
-	int endfreqData1 = freqDataStart + (((int)numFrames * (int)partialNum) + endframeround1);
-	int endfreqData2 = freqDataStart + (((int)numFrames * (int)partialNum) + endframeround2);
+	int endfreqData1 = freqDataStart + (partialFrame + endframeround1);
+	int endfreqData2 = freqDataStart + (partialFrame + endframeround2);
 	float* endatsFreq1 = bufData + endfreqData1; //this is the position in the file of the amp
 	float* endatsFreq2 = bufData + endfreqData2;
 	float endfreqin = (endatsFreq1[0] + ((endatsFreq2[0]- endatsFreq1[0]) * endframepct));
@@ -4831,7 +4815,6 @@ void BufGrain_next_a(BufGrain *unit, int inNumSamples)
 	float *out;
 	out = ZOUT(0);
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -4951,7 +4934,6 @@ void BufGrain_next_a(BufGrain *unit, int inNumSamples)
 		unit->curtrig = trig[i];
 	    }
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrain_next_k(BufGrain *unit, int inNumSamples)
@@ -4960,7 +4942,6 @@ void BufGrain_next_k(BufGrain *unit, int inNumSamples)
 	float *out;
 	out = ZOUT(0);
 	float trig = IN0(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -5077,7 +5058,6 @@ void BufGrain_next_k(BufGrain *unit, int inNumSamples)
 	    }
 	    unit->curtrig = trig;
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrain_Ctor(BufGrain *unit)
@@ -5087,7 +5067,6 @@ void BufGrain_Ctor(BufGrain *unit)
 	    else
 	    SETCALC(BufGrain_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrain_next_k(unit, 1); // should be _k
 }
@@ -5100,7 +5079,6 @@ void BufGrainB_next_a(BufGrainB *unit, int inNumSamples)
 	float *out;
 	out = ZOUT(0);
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -5230,7 +5208,6 @@ void BufGrainB_next_a(BufGrainB *unit, int inNumSamples)
 		unit->curtrig = trig[i];
 	    }
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainB_next_k(BufGrainB *unit, int inNumSamples)
@@ -5239,7 +5216,6 @@ void BufGrainB_next_k(BufGrainB *unit, int inNumSamples)
 	float *out;
 	out = ZOUT(0);
 	float trig = IN0(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -5366,7 +5342,6 @@ void BufGrainB_next_k(BufGrainB *unit, int inNumSamples)
 	    }
 	    unit->curtrig = trig;
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainB_Ctor(BufGrainB *unit)
@@ -5376,7 +5351,6 @@ void BufGrainB_Ctor(BufGrainB *unit)
 	    else
 	    SETCALC(BufGrainB_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrainB_next_k(unit, 1); // should be _k
 }
@@ -5390,7 +5364,6 @@ void BufGrainI_next_a(BufGrainI *unit, int inNumSamples)
 	float *out;
 	out = ZOUT(0);
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -5529,7 +5502,6 @@ void BufGrainI_next_a(BufGrainI *unit, int inNumSamples)
 		unit->curtrig = trig[i];
 	    }
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainI_next_k(BufGrainI *unit, int inNumSamples)
@@ -5676,7 +5648,6 @@ void BufGrainI_Ctor(BufGrainI *unit)
 	    else
 	    SETCALC(BufGrainI_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrainI_next_k(unit, 1); // should be _k
 }
@@ -8127,17 +8098,12 @@ void FMGrainIBF_Ctor(FMGrainIBF *unit)
 void BufGrainBF_next_a(BufGrainBF *unit, int inNumSamples)
 {
 	ClearUnitOutputs(unit, inNumSamples);
-	float *Wout;
-	float *Xout;
-	float *Yout;
-	float *Zout;
-	Wout = ZOUT(0);
-	Xout = ZOUT(1);
-	Yout = ZOUT(2);
-	Zout = ZOUT(3);
+	float *Wout = ZOUT(0);
+	float *Xout = ZOUT(1);
+	float *Yout = ZOUT(2);
+	float *Zout = ZOUT(3);
 	
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -8269,23 +8235,17 @@ void BufGrainBF_next_a(BufGrainBF *unit, int inNumSamples)
 		}
 		unit->curtrig = trig[i];
 	    }
-	
-	unit->mNextGrain = nextGrain;
-}
+	}
 
 void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 {
 	ClearUnitOutputs(unit, inNumSamples);
-	float *Wout;
-	float *Xout;
-	float *Yout;
-	float *Zout;
-	Wout = ZOUT(0);
-	Xout = ZOUT(1);
-	Yout = ZOUT(2);
-	Zout = ZOUT(3);
-	float trig = IN0(0);
-	int nextGrain = unit->mNextGrain;
+	float *Wout = ZOUT(0);
+	float *Xout = ZOUT(1);
+	float *Yout = ZOUT(2);
+	float *Zout = ZOUT(3);
+	
+	float trig = ZIN0(0);
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -8345,12 +8305,12 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 			*grain = unit->mGrains[--unit->mNumActive];
 		} else ++i;
 	    }
-	
-		if ((trig > 0) && (unit->curtrig <=0)) {
+					
+		if ((trig > 0.) && (unit->curtrig <= 0.)) {
 			// start a grain
 			if (unit->mNumActive+1 >= kMaxSynthGrains) {Print("Too many grains!\n");
 			} else {
-			uint32 bufnum = (uint32)IN0(2);
+			uint32 bufnum = (uint32)ZIN0(2);
 			
 			GRAIN_BUF
 			
@@ -8361,19 +8321,25 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 			GrainBF *grain = unit->mGrains + unit->mNumActive++;
 			grain->bufnum = bufnum;
 			
-			double counter = IN0(1) * SAMPLERATE;
+			double counter = ZIN0(1) * SAMPLERATE;
 			counter = sc_max(4., counter);
 			grain->counter = (int)counter;
 						
-			double rate = grain->rate = IN0(3) * bufRateScale;
-			double phase = IN0(4) * bufFrames;
-			grain->interp = (int)IN0(5);
-			
+			double rate = grain->rate = ZIN0(3) * bufRateScale;
+			double phase = ZIN0(4) * bufFrames;
+			grain->interp = (int)ZIN0(5);
+
 			double w = pi / counter;
 			double b1 = grain->b1 = 2. * cos(w);
 			double y1 = sin(w);
 			double y2 = 0.;
-			GET_BF_AMPS
+
+			float azimuth = ZIN0(6);
+			float elevation = ZIN0(7);
+			float rho = ZIN0(8);
+			
+			CALC_BF_COEFS 
+						
 			float *Wout1 = Wout;
 			float *Xout1 = Xout;
 			float *Yout1 = Yout;
@@ -8400,7 +8366,6 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 			grain->phase = phase;
 			grain->y1 = y1;
 			grain->y2 = y2;
-			// end change
 			grain->counter -= nsmps;
 			if (grain->counter <= 0) {
 				// remove grain
@@ -8410,7 +8375,6 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 	    }
 	    unit->curtrig = trig;
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainBF_Ctor(BufGrainBF *unit)
@@ -8420,7 +8384,6 @@ void BufGrainBF_Ctor(BufGrainBF *unit)
 	    else
 	    SETCALC(BufGrainBF_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrainBF_next_k(unit, 1); // should be _k
 }
@@ -8441,7 +8404,6 @@ void BufGrainBBF_next_a(BufGrainBBF *unit, int inNumSamples)
 	Zout = ZOUT(3);
 
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -8585,7 +8547,6 @@ void BufGrainBBF_next_a(BufGrainBBF *unit, int inNumSamples)
 		unit->curtrig = trig[i];
 	    }
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
@@ -8600,7 +8561,6 @@ void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
 	Yout = ZOUT(2);
 	Zout = ZOUT(3);
 	float trig = IN0(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -8741,7 +8701,6 @@ void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
 	    }
 	    unit->curtrig = trig;
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainBBF_Ctor(BufGrainBBF *unit)
@@ -8751,7 +8710,6 @@ void BufGrainBBF_Ctor(BufGrainBBF *unit)
 	    else
 	    SETCALC(BufGrainBBF_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrainBBF_next_k(unit, 1); // should be _k
 }
@@ -8772,7 +8730,6 @@ void BufGrainIBF_next_a(BufGrainIBF *unit, int inNumSamples)
 	Zout = ZOUT(3);
 	
 	float *trig = IN(0);
-	int nextGrain = unit->mNextGrain;
 	
 	World *world = unit->mWorld;
 	SndBuf *bufs = world->mSndBufs;
@@ -8925,7 +8882,6 @@ void BufGrainIBF_next_a(BufGrainIBF *unit, int inNumSamples)
 		unit->curtrig = trig[i];
 	    }
 	
-	unit->mNextGrain = nextGrain;
 }
 
 void BufGrainIBF_next_k(BufGrainIBF *unit, int inNumSamples)
@@ -9092,242 +9048,170 @@ void BufGrainIBF_Ctor(BufGrainIBF *unit)
 	    else
 	    SETCALC(BufGrainIBF_next_k);	
 	unit->mNumActive = 0;
-	unit->mNextGrain = 1;
 	unit->curtrig = 0.f;	
 	BufGrainIBF_next_k(unit, 1); // should be _k
 }
 
 //////////////////////////////////////////////////
 
+/*
+void Balance_Ctor(Balance* unit)
+{
+	unit->m_scaler = 0.f;
+	if (INRATE(1) == calc_FullRate) {
+	    SETCALC(Balance_next_a);
+	    } else {
+	    SETCALC(Balance_next_k);
+	    }
+	unit->m_scaler = 0.f;
+	ClearUnitOutputs(unit, 1);
+}
+*/
 
 void Balance_Ctor(Balance* unit)
 {
 	unit->m_scaler = 0.f;
 	if (INRATE(1) == calc_FullRate) {
-	    SETCALC(Balance_next_za);
+	    SETCALC(Balance_next_a);
 	    } else {
-	    SETCALC(Balance_next_zk);
+	    SETCALC(Balance_next_k);
 	    }
-	unit->m_numPeriods = (int)IN0(2);
-	unit->m_pastTestSig = 0.f;
-	unit->m_pastTestSums = (float*)RTAlloc(unit->mWorld, unit->m_numPeriods * sizeof(float));
-	unit->m_scaler = 0.f;
-	// zero out the m_pastTestSums array
-	for (int i = 0; i < unit->m_numPeriods; i++){
-	    unit->m_pastTestSums[i] = 0.f;}
+	unit->m_hp = IN0(2); // 10.; // these are the csound defaults
+	unit->m_stor = IN0(3); // 0.; 
+	float b = 2.0 - cos(unit->m_hp * (twopi/SAMPLERATE));
+	unit->m_coef2 = b - sqrt(b*b - 1.0);
+	unit->m_coef1 = 1.0 - unit->m_coef2;
+	unit->m_prevq = unit->m_prevr = unit->m_preva =  0.f;
 	ClearUnitOutputs(unit, 1);
-	unit->m_numTurns = 0;
 }
 
-void Balance_Dtor(Balance* unit)
-{	
-	RTFree(unit->mWorld, unit->m_pastTestSums);
-}
-
-
-void Balance_next_za(Balance* unit, int inNumSamples)
-{
-	float* insig = IN(0);
-	float* testsig = IN(1);
-	float* out = OUT(0);
-	float insum = 0.f;
-	float testsum = 0.f;
-	float scaler = unit->m_scaler;
-	float newinrms, newtestrms, newscale, levelinc, sumholder;
-	
-	for(int i = 0; i < inNumSamples; i++){
-	    insum += pow(insig[i], 2);
-	    testsum += pow(testsig[i], 2);
-	    }
-	
-	sumholder = testsum;
-	
-	// place the current value into 
-	// work in the past samples
-	for(int i = 0; i < unit->m_numTurns; i++){
-	    testsum += unit->m_pastTestSums[i];
-	    }
-	    
-	newinrms = sqrt(insum/inNumSamples);
-	newtestrms = sqrt(testsum/(inNumSamples + (inNumSamples * unit->m_numTurns)));
-	
-	// protect a divide by zero... perhaps there is a better way to do this
-	if(newinrms <= 0.f) {
-	    newscale = 0.f; levelinc = 0.f;
-	    } else {
-	    newscale = newtestrms / newinrms;
-	    levelinc = CALCSLOPE(newscale, scaler);
-	    }
-		
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = insig[i] * scaler;
-	    // overwrite old data with new data
-	    scaler += levelinc;
-	    }
-	
-	unit->m_scaler = newscale;
-	
-	unit->m_pastTestSums[unit->m_numTurns] = sumholder; 
-	// numTurns will keep advancing the pointer into the buffer of past samples
-	unit->m_numTurns = (unit->m_numTurns + 1);
-	if(unit->m_numTurns >= (unit->m_numPeriods - 2)) SETCALC(Balance_next_a);
-	
-}
-	
 void Balance_next_a(Balance* unit, int inNumSamples)
 {
-	float* insig = IN(0);
-	float* testsig = IN(1);
-	float* out = OUT(0);
-	float insum = 0.f;
-	float testsum = 0.f;
-	float scaler = unit->m_scaler;
-	float newinrms, newtestrms, newscale, levelinc, sumholder;
-	
-	for(int i = 0; i < inNumSamples; i++){
-	    insum += pow(insig[i], 2);
-	    testsum += pow(testsig[i], 2);
-	    }
-	
-	sumholder = testsum;
-	
-	// place the current value into 
-	// work in the past samples
-	for(int i = 0; i < (unit->m_numPeriods - 1); i++){
-	    testsum += unit->m_pastTestSums[i];
-	    }
-
-	newinrms = sqrt(insum/inNumSamples);
-	newtestrms = sqrt(testsum / (inNumSamples * unit->m_numPeriods));
-		
-	// protect a divide by zero... perhaps there is a better way to do this
-	if(newinrms <= 0.f) {
-	    newscale = 0.f; levelinc = 0.f;
-	    } else {
-	    newscale = newtestrms / newinrms;
-	    levelinc = CALCSLOPE(newscale, scaler);
-	    }
-		
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = insig[i] * scaler;
-	    // overwrite old data with new data
-	    scaler += levelinc;
-	    }
-	    
-	unit->m_scaler = scaler;
-	
-//	Print("scaler : %6.6f\n", scaler);
-	unit->m_pastTestSums[unit->m_numTurns] = sumholder; 
-	// numTurns will keep advancing the pointer into the buffer of past samples
-	unit->m_numTurns = (unit->m_numTurns + 1)%(unit->m_numPeriods);
-	
+    float* insig = IN(0);
+    float* testsig = IN(1);
+    float* out = OUT(0);
+    float q = unit->m_prevq;
+    float coef1 = unit->m_coef1;
+    float coef2 = unit->m_coef2;
+    float r = unit->m_prevr;
+    float preva = unit->m_preva; // the scaler
+    float a;
+    for(int i = 0; i < inNumSamples; i++){
+	float as = powf(insig[i], 2);
+	float cs = powf(testsig[i], 2);
+	q = coef1 * as + coef2 * q;
+	r = coef1 * cs + coef2 * r;
+	}
+    unit->m_prevq = q;
+    unit->m_prevr = r;
+    if (q != 0.0)
+	a = sqrt(r/q);
+    else
+	a = sqrt(r);
+    float inc = CALCSLOPE(a, preva);
+    for(int i = 0; i < inNumSamples; i++){
+	out[i] = insig[i] * preva;
+	preva += inc;
+	}
+    unit->m_preva = preva;
 }
 
-
-void Balance_next_zk(Balance* unit, int inNumSamples)
-{
-	float* insig = IN(0);
-	float testsig = IN0(1);
-	float* out = OUT(0);
-	float insum = 0.f;
-	float testsum = 0.f;
-	float scaler = unit->m_scaler;
-	float newinrms, newtestrms, newscale, levelinc, sumholder;
-	float lastTestSig = unit->m_pastTestSig;
-	float testSigSlope = CALCSLOPE(testsig, lastTestSig);
-	
-	for(int i = 0; i < inNumSamples; i++){
-		testsum += pow(lastTestSig, 2);
-		insum += pow(insig[i], 2);
-		lastTestSig += testSigSlope;
-	    }
-	
-	sumholder = testsum;
-	
-	// place the current value into 
-	// work in the past samples
-	for(int i = 0; i < unit->m_numTurns; i++){
-	    testsum += unit->m_pastTestSums[i];
-	    }
-	    
-	newinrms = sqrt(insum/inNumSamples);
-	newtestrms = sqrt(testsum/(inNumSamples + (inNumSamples * unit->m_numTurns)));
-	
-	// protect a divide by zero... perhaps there is a better way to do this
-	if(newinrms <= 0.f) {
-	    newscale = 0.f; levelinc = 0.f;
-	    } else {
-	    newscale = newtestrms / newinrms;
-	    levelinc = CALCSLOPE(newscale, scaler);
-	    }
-		
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = insig[i] * scaler;
-	    // overwrite old data with new data
-	    scaler += levelinc;
-	    }
-	
-	unit->m_scaler = newscale;
-	
-	unit->m_pastTestSums[unit->m_numTurns] = sumholder; 
-	// numTurns will keep advancing the pointer into the buffer of past samples
-	unit->m_numTurns = (unit->m_numTurns + 1);
-	if(unit->m_numTurns >= (unit->m_numPeriods - 2)) SETCALC(Balance_next_k);
-	
-}
-	
 void Balance_next_k(Balance* unit, int inNumSamples)
 {
-	float* insig = IN(0);
-	float testsig = IN0(1);
-	float* out = OUT(0);
-	float insum = 0.f;
-	float testsum = 0.f;
-	float scaler = unit->m_scaler;
-	float newinrms, newtestrms, newscale, levelinc, sumholder;
-	
-	float lastTestSig = unit->m_pastTestSig;
-	float testSigSlope = CALCSLOPE(testsig, lastTestSig);
-	
-	for(int i = 0; i < inNumSamples; i++){
-		testsum += pow(lastTestSig, 2);
-		insum += pow(insig[i], 2);
-		lastTestSig += testSigSlope;
-	    }
-	
-	sumholder = testsum;
-	
-	// place the current value into 
-	// work in the past samples
-	for(int i = 0; i < (unit->m_numPeriods - 1); i++){
-	    testsum += unit->m_pastTestSums[i];
-	    }
-	    
-	newinrms = sqrt(insum/inNumSamples);
-	newtestrms = sqrt(testsum/(inNumSamples * unit->m_numPeriods));
-	
-	// protect a divide by zero... perhaps there is a better way to do this
-	if(newinrms <= 0.f) {
-	    newscale = 0.f; levelinc = 0.f;
-	    } else {
-	    newscale = newtestrms / newinrms;
-	    levelinc = CALCSLOPE(newscale, scaler);
-	    }
-		
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = insig[i] * scaler;
-	    // overwrite old data with new data
-	    scaler += levelinc;
-	    }
-	unit->m_scaler = newscale;
-	
-//	Print("scaler : %6.6f\n", scaler);
-	unit->m_pastTestSums[unit->m_numTurns] = sumholder; 
-	// numTurns will keep advancing the pointer into the buffer of past samples
-	unit->m_numTurns = (unit->m_numTurns + 1)%(unit->m_numPeriods - 1);
-	
+    float* insig = IN(0);
+    float testsig = IN0(1);
+    float* out = OUT(0);
+    float q = unit->m_prevq;
+    float coef1 = unit->m_coef1;
+    float coef2 = unit->m_coef2;
+    float r = unit->m_prevr;
+    float preva = unit->m_preva; // the scaler
+    float a;
+    for(int i = 0; i < inNumSamples; i++){
+	float as = powf(insig[i], 2);
+	q = coef1 * as + coef2 * q;
+	}
+    r = testsig;
+    unit->m_prevq = q;
+    unit->m_prevr = r;
+    if (q != 0.0)
+	a = sqrt(r/q);
+    else
+	a = sqrt(r);
+    float inc = CALCSLOPE(a, preva);
+    for(int i = 0; i < inNumSamples; i++){
+	out[i] = insig[i] * preva;
+	preva += inc;
+	}
+    unit->m_preva = preva;
 }
 
+//void Balance_next_a(Balance* unit, int inNumSamples)
+//{
+//	float* insig = IN(0);
+//	float* testsig = IN(1);
+//	float* out = OUT(0);
+//	float insum = 0.f;
+//	float testsum = 0.f;
+//	float scaler = unit->m_scaler;
+//	float newscale, levelinc;
+//	
+//	for(int i = 0; i < inNumSamples; i++){
+//	    insum += powf(insig[i], 2);
+//	    testsum += powf(testsig[i], 2);
+//	    }
+//	
+//	float newinrms = sqrt(insum/inNumSamples);
+//	float newtestrms = sqrt(testsum /inNumSamples);
+//		
+//	// protect a divide by zero... perhaps there is a better way to do this
+//	if(newinrms <= 0.f) {
+//	    newscale = 0.f; levelinc = 0.f;
+//	    } else {
+//	    newscale = newtestrms / newinrms;
+//	    levelinc = CALCSLOPE(newscale, scaler);
+//	    }
+//		
+//	for(int i = 0; i < inNumSamples; i++){
+//	    out[i] = insig[i] * scaler;
+//	    // overwrite old data with new data
+//	    scaler += levelinc;
+//	    }
+//	    
+//	unit->m_scaler = scaler;	
+//}
+//
+//void Balance_next_k(Balance* unit, int inNumSamples)
+//{
+//	float* insig = IN(0);
+//	float testsig = IN0(1);
+//	float* out = OUT(0);
+//	float insum = 0.f;
+//	float scaler = unit->m_scaler;
+//	float newscale, levelinc;
+//	
+//	for(int i = 0; i < inNumSamples; i++){
+//	    insum += powf(insig[i], 2);
+//	    }
+//	
+//	float newinrms = sqrt(insum/inNumSamples);
+//	float newtestrms = sqrt(powf(testsig, 2));
+//	// protect a divide by zero... perhaps there is a better way to do this
+//	if(newinrms <= 0.f) {
+//	    newscale = 0.f; levelinc = 0.f;
+//	    } else {
+//	    newscale = newtestrms / newinrms;
+//	    levelinc = CALCSLOPE(newscale, scaler);
+//	    }
+//		
+//	for(int i = 0; i < inNumSamples; i++){
+//	    out[i] = insig[i] * scaler;
+//	    // overwrite old data with new data
+//	    scaler += levelinc;
+//	    }
+//	    
+//	unit->m_scaler = scaler;	
+//}
 
 
 /*
@@ -11604,7 +11488,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(B2UHJ);
 	DefineDtorUnit(PVSynth);
 	DefineSimpleUnit(PVInfo);
-	DefineDtorCantAliasUnit(Balance);
+	DefineSimpleCantAliasUnit(Balance);
 	DefineSimpleUnit(MoogVCF);
 	DefineSimpleUnit(PosRatio);
     
