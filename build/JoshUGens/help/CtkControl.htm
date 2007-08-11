@@ -11,14 +11,14 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001ab6}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a61818}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0021b0}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #972121}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #042ba5}
-span.s3 {color: #001ab6}
+span.s2 {color: #002fa0}
+span.s3 {color: #0021b0}
 span.s4 {color: #000000}
-span.s5 {color: #347019}
-span.s6 {color: #a61818}
+span.s5 {color: #426e1f}
+span.s6 {color: #972121}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -88,7 +88,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span>freq = pnotes[<span class="s5">\control</span>].new(addAction: <span class="s5">\head</span>, target: group)</p>
 <p class="p6"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(bus1.bus) </span>// need to use the .bus method on CtkControl to just pass in its bus id<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.rate_(1)</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.low_(1000)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.low_(100)</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.hi_(1050)</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
 <p class="p3"><br></p>
@@ -226,7 +226,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span>});</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
 <p class="p6">// uncomment to play the CtkScore you have created</p>
-<p class="p6">//score.play(s);</p>
+<p class="p6">score.play(s);</p>
 <p class="p3"><br></p>
 <p class="p6">// uncomment to write the score to a soundfile</p>
 <p class="p6">//score.write("~/Desktop/test.aiff".standardizePath, 22,<span class="Apple-converted-space"> </span></p>

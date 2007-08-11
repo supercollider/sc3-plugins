@@ -58,7 +58,7 @@ a = \cf2 AtsFile\cf0 .new(\cf3 "sounds/a11wlk01.ats"\cf0 ).loadToBuffer;\
 \
 ( \cf4 //play just the resynth, with LFSaw pointing into the file\cf0 \
 \{\
-	\cf2 AtsNoiSynth\cf0 .ar(a.buffer, a.numPartials, 0, 1, \
+	\cf2 AtsSynth\cf0 .ar(a.buffer, a.numPartials, 0, 1, \
 		filePointer: 
 \fs18 \cf2 LFSaw\cf0 .ar(a.sndDur.reciprocal, 1, 0.5, 0.5)
 \fs20 , mul: 1)\

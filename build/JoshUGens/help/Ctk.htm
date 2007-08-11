@@ -16,7 +16,7 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 <p class="p1"><b>Ctk - The Composition Tool Kit</b></p>
 <p class="p2"><br></p>
 <p class="p3"><b>A set of Object classes to aid specifically in the creation of fixed pieces through the use of a Score-like structure. To make general usage easier, the Ctk Objects also support real-time control through the .play method. The Objects included in the Ctk are:</b></p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p3"><b>CtkScore</b></p>
 <p class="p3"><b>CtkProtoNotes</b></p>
 <p class="p3"><b>CtkNoteObject</b></p>
@@ -24,18 +24,18 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 <p class="p3"><b>CtkBuffer</b></p>
 <p class="p3"><b>CtkControl</b></p>
 <p class="p3"><b>CtkAudio</b></p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p3">The Ctk Objects can be used as a replacement for the Object oriented Classes in the standard SuperCollider distribution (Synth, Buffer, Group,<span class="Apple-converted-space">  </span>and Bus). The main difference is that these classes can easily be used to populate a CtkScore for NRT synthesis.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
 <p class="p3"><b>Disadvantages to the standard Object classes:</b></p>
 <p class="p2"><br></p>
-<p class="p3">- Since the classes can operate in both modes, CtkNotes (the Ctk equivalent of Synth) needs to be explicitly told to 'play'. Synthesis does note begin automatically.<span class="Apple-converted-space"> </span></p>
-<p class="p3">- CtkNotes are prototyped according to an actual SynthDef, as a result some of the objects syntax is a little different. Arguments are passed to the CtkNote instance in a different way the Synth and may take some getting used to (though the syntax is more in line with the getter and setter methods of other SC objects... more below).</p>
+<p class="p3">- Since the classes can operate in both modes, CtkNotes (the Ctk equivalent of Synth) needs to be explicitly told to 'play'. Synthesis does not begin automatically.<span class="Apple-converted-space"> </span></p>
+<p class="p3">- CtkNotes are prototyped according to an actual SynthDef, as a result some of the objects syntax is a little different. Arguments are passed to the CtkNote instance in a different way than Synth and may take some getting used to (though the syntax is more in line with the getter and setter methods of other SC objects... more below).</p>
 <p class="p3">- To make these Objects as flexible as possible with other Ctk objects, the classes check for quite a bit internally. This of course adds some overhead to the language side of SuperCollider, though I haven't noticed any performance problems in the test code I have run.</p>
 <p class="p3">- Probably other things. Let me know if there are other difficulties you find so I can warn others.</p>
 <p class="p2"><br></p>
 <p class="p3"><b>Advantages to the standard Object classes:</b></p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p3">- Very easy to use in both real-time and non-real-time mode.</p>
 <p class="p3">- arguments to instances of CtkNote are set through more traditional getter and setter methods. When a CtkNoteObject is created, methods are added to its instance that correspond with the Control parameters of a SynthDef (including array parameters).</p>
 <p class="p3">- In real-time mode, the change of an argument's value will be reflected in the running synth.</p>

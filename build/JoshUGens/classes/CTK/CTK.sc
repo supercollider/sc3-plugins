@@ -258,6 +258,14 @@ CtkNoteObject {
 	
 }
 
+CtkSynthDef : CtkNoteObject {
+	*new {arg name, ugenGraphFunc, rates, prependArgs, variants;
+		var sd;
+		sd = SynthDef(name, ugenGraphFunc, rates, prependArgs, variants);
+		^super.new(sd);
+		}
+	}
+
 CtkObj {
 	
 	addTo {arg aCtkScore;
@@ -269,11 +277,18 @@ CtkObj {
 CtkNode : CtkObj {
 	classvar addActions, <nodes, <servers, <resps, cmd;
 
-	var <addAction, <target, <server;
-	var <node, <messages, <starttime, <>willFree = false;
+	var <addAction, <target, <>server;
+	var <>node, <>messages, <>starttime, <>willFree = false;
 	
 	watch {
-		var thisidx, idx;
+		var thisidx;
+		this.addServer;
+		thisidx = servers.indexOf(server);
+		nodes[thisidx] = nodes[thisidx].add(node);
+		}
+		
+	addServer {
+		var idx;
 		servers.includes(server).not.if({
 			idx = servers.size;
 			servers = servers.add(server); // add the server
@@ -282,12 +297,12 @@ CtkNode : CtkObj {
 				nodes[idx].remove(msg[1])}).add); // add a responder to remove nodes
 			cmd.if({cmd = false; CmdPeriod.doOnce({this.cmdPeriod})});
 			});
-		thisidx = servers.indexOf(server);
-		nodes[thisidx] = nodes[thisidx].add(node);
+	
 		}
 	
 	isPlaying {
 		var idx;
+		this.addServer;
 		(servers.size > 0).if({
 			idx = servers.indexOf(server);
 			nodes[idx].includes(node).if({^true}, {^false});
@@ -312,6 +327,7 @@ CtkNode : CtkObj {
 				server.sendBundle(nil, bund);
 				});
 			}, {
+			starttime = starttime ? {0.0};
 			messages = messages.add([starttime + time, bund]);
 			})
 		}
@@ -323,6 +339,7 @@ CtkNode : CtkObj {
 		this.isPlaying.if({
 			SystemClock.sched(time, {server.sendBundle(nil, bund)});
 			}, {
+			starttime = starttime ? {0.0};
 			messages = messages.add([time+starttime, bund])
 			})		
 		}
@@ -347,6 +364,7 @@ CtkNode : CtkObj {
 			})
 		}
 		
+	asUGenInput {^node}
 		
 	*initClass {
 		addActions = IdentityDictionary[
@@ -381,6 +399,16 @@ CtkNote : CtkNode {
 		^super.newCopyArgs(addAction, target, server).init(starttime, duration, synthdefname);
 		}
 		
+	copy {arg newStarttime;
+		var newNote;
+		newNote = this.deepCopy;
+		newNote.server_(server);
+		newNote.starttime_(newStarttime);
+		newNote.messages = Array.new;
+		newNote.node_(newNote.server.nextNodeID);
+		newNote.args_(args.deepCopy);
+		^newNote;
+		}
 
 	init {arg argstarttime, argduration, argsynthdefname;
 		starttime = argstarttime;
@@ -412,7 +440,7 @@ CtkNote : CtkNode {
 	handleRealTimeUpdate {arg argname, newValue;
 		// real-time support
 		case {
-			(newValue.isArray || newValue.isKindOf(Env))
+			(newValue.isArray || newValue.isKindOf(Env) || newValue.isKindOf(InterplEnv))
 			}{
 			newValue = newValue.asArray;
 			server.sendBundle(nil, [\n_setn, node, argname, newValue.size] ++
@@ -422,17 +450,18 @@ CtkNote : CtkNode {
 			}{
 			server.sendBundle(nil, [\n_map, node, argname, newValue.bus])
 			}{
-			newValue.isKindOf(CtkBuffer)
-			}{
-			server.sendBundle(nil, [\n_set, node, argname, newValue.bufnum])
-			}{
-			newValue.isKindOf(CtkAudio)
-			}{
-			server.sendBundle(nil, [\n_set, node, argname, newValue.bus])
-			}{
 			true
+//			newValue.isKindOf(CtkBuffer)
 			}{
-			server.sendBundle(nil, [\n_set, node, argname, newValue]);
+			server.sendBundle(nil, [\n_set, node, argname, newValue.asUGenInput])
+//			}{
+//			newValue.isKindOf(CtkAudio)
+//			}{
+//			server.sendBundle(nil, [\n_set, node, argname, newValue.bus])
+//			}{
+//			true
+//			}{
+//			server.sendBundle(nil, [\n_set, node, argname, newValue]);
 			};
 		}
 
@@ -458,37 +487,32 @@ CtkNote : CtkNode {
 		bundlearray =	[\s_new, synthdefname, node, addActions[addAction], target];
 		args.keysValuesDo({arg key, val;
 			case {
-				(val.isArray || val.isKindOf(Env))
+				(val.isArray || val.isKindOf(Env) || val.isKindOf(InterplEnv))
 				}{
 				setnDict.add(key -> val.asArray)
 				}{
 				val.isKindOf(CtkControl)
 				}{
-				mapDict.add(key -> val.bus);
-				}{
-				val.isKindOf(CtkBuffer)
-				}{
-				bundlearray = bundlearray ++ [key, val.bufnum];
-				}{
-				val.isKindOf(CtkAudio)
-				}{
-				bundlearray = bundlearray ++ [key, val.bus];
+				mapDict.add(key -> val.asUGenInput);
 				}{
 				true
+//				val.isKindOf(CtkBuffer)
 				}{
-				bundlearray = bundlearray ++ [key, val];
+				bundlearray = bundlearray ++ [key, val.asUGenInput];
+//				}{
+//				val.isKindOf(CtkAudio)
+//				}{
+//				bundlearray = bundlearray ++ [key, val.bus];
+//				}{
+//				true
+//				}{
+//				bundlearray = bundlearray ++ [key, val];
 				}
 			});
 		^bundlearray;		
 		}
 		
-	prBundle {
-		messages = messages.add(this.newBundle);
-		(duration.notNil && willFree.not).if({
-			messages = messages.add([(starttime + duration).asFloat, [\n_free, node]]);
-			});
-		^messages;
-		}
+
 
 	bundle {
 		var thesemsgs;
@@ -522,7 +546,14 @@ CtkNote : CtkNode {
 			"This instance of CtkNote is already playing".warn;
 			})
 		}
-		
+
+	prBundle {
+		messages = messages.add(this.newBundle);
+		(duration.notNil && willFree.not).if({
+			messages = messages.add([(starttime + duration).asFloat, [\n_free, node]]);
+			});
+		^messages;
+		}		
 	}
 
 /* methods common to CtkGroup and CtkNote need to be put into their own class (CtkNode???) */
@@ -543,9 +574,9 @@ CtkGroup : CtkNode {
 		duration.notNil.if({
 			endtime = starttime + duration
 			});
-		(target.isKindOf(CtkNote) || target.isKindOf(CtkGroup)).if({
-			target = target.node
-			});
+//		(target.isKindOf(CtkNote) || target.isKindOf(CtkGroup)).if({
+			target = target.asUGenInput;
+//			});
 		server = server ?? {Server.default};
 		node = node ?? {server.nextNodeID};
 		messages = Array.new;
@@ -805,6 +836,8 @@ CtkBuffer : CtkObj {
 			messages = messages.add([time, bund])
 			});
 		}
+	
+	asUGenInput {^bufnum}
 	}
 		
 CtkControl : CtkObj {
@@ -846,6 +879,8 @@ CtkControl : CtkObj {
 		value = val;
 		^this;
 		}
+	
+	asUGenInput {^bus}
 	}
 
 // not really needed... but it does most of the things that CtkControl does
@@ -859,6 +894,8 @@ CtkAudio : CtkObj {
 		server = server ?? {Server.default};
 		bus = bus ?? {server.audioBusAllocator.alloc(numChans)};
 		}
+		
+	asUGenInput {^bus}
 	}
 	
 /* this will be similar to ProcMod ... global envelope magic */

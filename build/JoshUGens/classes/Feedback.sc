@@ -5,9 +5,9 @@ Feedback {
 	*ar {arg in, feedbackpct = 1, delayTime = 0.1, bufnum = -1, mul = 1;
 		var trig, delayedSignals;
 		trig = Impulse.ar(delayTime.reciprocal);
-		delayedSignals = (PlayBuf.ar(1, bufnum, 1, trig, 0, 1.0) 
+		delayedSignals = (PlayBuf.ar(1, bufnum, 1, 1, 0, 1.0) 
 			* feedbackpct) + in;
-		RecordBuf.ar(delayedSignals, bufnum, 0, 1.0, 0.0, 1.0, 1.0, trig);
+		RecordBuf.ar(delayedSignals, bufnum, 0, 1.0, 0.0, 1.0, 1.0, 1);
 		^(delayedSignals * mul);
 	}
 }

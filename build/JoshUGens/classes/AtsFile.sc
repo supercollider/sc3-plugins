@@ -350,8 +350,8 @@ AtsFile : File {
 				increment = arr.at(filetype.asInteger);
 				
 				^Array.fill(numFrames, 
-					{ arg i; 0.0; // not using phase for now... fill with 0.0's 
-						//data.at( ( i*increment+3+(par*3) ).asInteger ) 
+					{ arg i; //0.0; // not using phase for now... fill with 0.0's 
+						data.at( ( i*increment+3+(par*3) ).asInteger ) 
 					})
 	
 	}

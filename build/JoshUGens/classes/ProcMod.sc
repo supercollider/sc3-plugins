@@ -5,6 +5,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1;
+	classvar addActions;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
 			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
@@ -45,7 +46,7 @@ ProcMod {
 			env.isKindOf(Env).if({
 				envbus = server.controlBusAllocator.alloc(1);
 				server.sendBundle(nil,
-					[\g_new, group, addAction, target], 
+					[\g_new, group, addActions[addAction], target], 
 					[\s_new, \procmodenv_5216, envnode = server.nextNodeID, 0, group, 
 						\outbus, envbus, \amp, amp, \timeScale, timeScale, \lag, lag],
 					[\n_setn, envnode, \env, env.asArray.size] ++ env.asArray);
@@ -56,7 +57,7 @@ ProcMod {
 						});
 					})
 				}, {
-				server.sendBundle(nil, [\g_new, group, addAction, target])
+				server.sendBundle(nil, [\g_new, group, addActions[addAction], target])
 				});
 			starttime = Main.elapsedTime;
 			function.isKindOf(Function).if({
@@ -120,7 +121,7 @@ ProcMod {
 		isRunning.if({
 				"You can not change an addAction while the ProcMod is running".warn;
 				}, {
-				addAction = newaddAction;
+				addAction = addActions[newaddAction];
 				})
 		}
 		
@@ -239,7 +240,7 @@ ProcMod {
 		xspace = window.view.decorator.gap.x * 1.5;
 		yspace = window.view.decorator.gap.y * 1.5;
 		window.front;
-		window.onClose_({gui = false});
+		window.onClose_({gui = false; (isRunning || isReleasing).if({this.kill})});
 		button = GUI.button.new(window, Rect(0, 0, winw * 0.3 - xspace, winh * 0.8 - yspace))
 			.states_([
 				["start " ++ this.id, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
@@ -273,6 +274,18 @@ ProcMod {
 		}
 	
 	*initClass {
+		addActions = IdentityDictionary[
+			\head -> 0,
+			\tail -> 1,
+			\before -> 2,
+			\after -> 3,
+			\replace -> 4,
+			0 -> 0,
+			1 -> 1,
+			2 -> 2,
+			3 -> 3,
+			4 -> 4
+			];	
 		StartUp.add {
 		SynthDef(\procmodenv_5216, {arg gate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;
 			var env;
@@ -298,6 +311,7 @@ ProcEvents {
 		<eventButton, <killButton, <releaseButton, >starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
 		<bigNum = false, bigNumWindow;
+	classvar addActions;
 	
 	*new {arg events, amp, initmod, killmod, id, server;
 		server = server ?? {Server.default};
@@ -476,7 +490,8 @@ ProcEvents {
 							// calc the trig level, and give it some headroom
 							testlevel = ((testlevel + msg[3]) / numlevels);
 							// start the pedal listening at the head of 0
-							server.sendMsg(\s_new, \procevtrig2343, pedalnode, addAction,
+							server.sendMsg(\s_new, \procevtrig2343, pedalnode, 
+								addActions[addAction],
 							 	target, \pedalin, pedalbus, \id, pedalid, \level, testlevel,
 								\trigwindow, trigwindow, \headroom, headroom);
 							// add the pedresp responder
@@ -532,8 +547,8 @@ ProcEvents {
 						})
 					}).add;
 				
-				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addAction, target,
-					\pedalin, pedalbus, \id, testid);
+				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addActions[addAction],
+					target, \pedalin, pedalbus, \id, testid);
 
 			}, {"Server isn't booted, pedal trig can't be loaded".warn})
 		}
@@ -735,6 +750,18 @@ ProcEvents {
 		}
 	
 	*initClass {
+		addActions = IdentityDictionary[
+			\head -> 0,
+			\tail -> 1,
+			\before -> 2,
+			\after -> 3,
+			\replace -> 4,
+			0 -> 0,
+			1 -> 1,
+			2 -> 2,
+			3 -> 3,
+			4 -> 4
+			];
 		StartUp.add {	
 			SynthDef(\procevoutenv6253, {arg amp = 1, lag = 0.2;
 				ReplaceOut.ar(0, In.ar(0, 8) * Lag2.kr(amp, lag))

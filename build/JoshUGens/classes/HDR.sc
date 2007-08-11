@@ -57,6 +57,7 @@ HDR {
 		}
 	
 	bfMonitorChans_ {arg ... wxyz;
+		wxyz = wxyz.flat;
 		(wxyz.size != 4).if({
 			"WXYZ array is not four channels - decoding may be incorrect".warn;
 			});
