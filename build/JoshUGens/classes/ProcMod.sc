@@ -306,19 +306,19 @@ ProcMod {
 
 ProcEvents {
 	var <eventDict, <ampDict, <eventArray, <releaseArray, <timeArray, <index,
-		<id, gui = false, <window, <server, firstevent = false, initmod, killmod, <amp,
+		<id, gui = false, <window, <server, firstevent = false, initmod, killmod, <amp, <lag,
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
 		<eventButton, <killButton, <releaseButton, >starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
 		<bigNum = false, bigNumWindow;
 	classvar addActions;
 	
-	*new {arg events, amp, initmod, killmod, id, server;
+	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
 		server = server ?? {Server.default};
-		^super.new.init(events, amp, initmod, killmod, id, server);
+		^super.new.init(events, amp, initmod, killmod, id, server, lag);
 	}
 	
-	init {arg events, argamp, arginitmod, argkillmod, argid, argserver;
+	init {arg events, argamp, arginitmod, argkillmod, argid, argserver, arglag;
 		var proc, release, newproc, evid;
 		eventDict = Dictionary.new(events.flat.size);
 		eventArray = Array.fill(events.size, {Array.new});
@@ -328,7 +328,8 @@ ProcEvents {
 		server = argserver;
 		amp = argamp;
 		index = 0;
-		firstevent = true; 
+		lag = arglag;
+		firstevent = true;
 		arginitmod.notNil.if({initmod = arginitmod;});
 		argkillmod.notNil.if({killmod = argkillmod});
 		events.do{arg me, i;
@@ -368,8 +369,11 @@ ProcEvents {
 		}
 		
 	next {
-		this.play(index);
-		index = index + 1;
+		gui.if({
+			eventButton.valueAction_(eventButton.value + 1);
+			}, {
+			this.play(index);
+			index = index + 1;			});
 	}
 	
 	play {arg event;
@@ -380,7 +384,7 @@ ProcEvents {
 			starttime.isNil.if({starttime = Main.elapsedTime});
 			initmod.notNil.if({initmod.value}); 
 			server.sendMsg(\s_new, \procevoutenv6253, procampsynth = server.nextNodeID, 1,
-				0, \amp, amp);
+				0, \amp, amp, \lag, lag);
 			firstevent = false;
 			});
 		eventArray[event].do{arg me; 
@@ -407,6 +411,8 @@ ProcEvents {
 		server.freeAll;
 		firstevent = true;
 		index = 0;
+		lag = 0.1;
+		this.amp_(1);
 		gui.if({
 			window.view.children[0].value_(0);
 			});
@@ -414,7 +420,29 @@ ProcEvents {
 		eventDict.do{arg me; me.group = server.nextNodeID};
 
 	}
-
+	
+	lag_ {arg newlag;
+		lag = newlag;
+		server.sendMsg(\n_set, procampsynth, \lag, lag);
+		}
+		
+	// amp should be linear
+	amp_ {arg newamp, newlag = 0.1;
+		var slide, db;
+		amp = newamp;
+		(newlag != lag).if({
+			this.lag_(newlag);
+			});
+		server.sendMsg(\n_set, procampsynth, \amp, amp);
+		gui.if({
+			db = amp.ampdb.round(0.1);
+			// convert to the sliders scale
+			slide = ControlSpec(-90, 6, \db).unmap(db);
+			window.view.children[7].value_(db);
+			window.view.children[6].value_(slide);
+			});
+		}
+		
 	scope {
 		procevscope = true;
 		^(server.name == 'internal').if({server.scope}, {"Must use internal server".warn});
@@ -723,10 +751,7 @@ ProcEvents {
 			.action_({arg me;
 				var val;
 				val = ControlSpec(-90, 6, \db).map(me.value);
-				amp = val;
-				server.sendMsg(\n_set, procampsynth, \amp, val.dbamp.postln);
-				window.view.children[window.view.children.indexOf(me) + 1].value_(
-					val.round(0.01));
+				this.amp_(val.dbamp);
 				});
 				
 		GUI.numberBox.new(window, Rect((buttonwidth * 1.3) + 10, 5 + buttonheight * 2, 
@@ -735,9 +760,8 @@ ProcEvents {
 			.font_(Font("Arial", 24))
 			.action_({arg me;
 				var val;
-				val = ControlSpec(-90, 6, \db).unmap(me.value);
-				window.view.children[window.view.children.indexOf(me) - 1].value_(val);
-				server.sendMsg(\n_set, procampsynth, \amp, me.value.dbamp.postln);
+				val = me.value.dbamp;
+				this.amp_(val);
 				});
 				
 		window.view.children[1].focus(true);
