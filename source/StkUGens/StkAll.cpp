@@ -92,10 +92,12 @@ static InterfaceTable *ft;
 {
 	Bowed *bowed;
 	float freq;
-	float bowposition;
 	float bowpressure;
+	float bowposition;
+	float vibfreq;
+	float vibgain;
 	float loudness;
-	float trig;
+	bool  gate;
 };
  
 /*
@@ -589,7 +591,7 @@ void StkBowed_Ctor(StkBowed* unit)
 	unit->bowed->noteOn(IN0(0) ,1);
 	SETCALC(StkBowed_next);
 	StkBowed_next(unit, 1);
-	unit->trig = 1;
+	unit->gate = false;
  
 }
 
@@ -601,20 +603,34 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 	float bowpressure	= IN0(1);
 	float bowpos	= IN0(2);
 	
-	//float vibfreq	= IN0(3); // Not used yet
-	//float vibgain	= IN0(4); // Not used yet
+	float vibfreq	= IN0(3);
+	float vibgain	= IN0(4);
 	
 	float loudness	= IN0(5);
-	float trig		= IN0(6);
- 	if(trig > 0) { 
-		if(unit->trig < 0) {
+	bool  gate		= IN0(6) > 0.f;
+	/*
+ 	if(gate > 0) {
+		if(unit->gate <= 0) {
 
 				unit->bowed->noteOff( 0);
 			    unit->bowed->noteOn(freq, 1);
 				};
 			};
-	unit->trig = trig;
-	 		
+	unit->gate = gate;
+	*/
+	if(gate != unit->gate){
+		if(gate){
+			Print("Starting\n");
+		    unit->bowed->noteOn(freq, 1000.f);
+//			unit->bowed->startBowing(1.f, IN0(7)); // IN0(7) is attackrate
+		}else{
+			Print("Stopping\n");
+			unit->bowed->noteOff(1000.f);
+//			unit->bowed->stopBowing(IN0(8)); // IN0(8) is decayrate
+		}
+		unit->gate = gate;
+	}
+	
 	if(freq != unit->freq) {
 		unit->bowed->setFrequency(freq);  
 		unit->freq = freq;};
@@ -627,14 +643,22 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 		unit->bowed->controlChange(__SK_BowPosition_, bowpos);
 		unit->bowposition = bowpos; };
  		
+	if(vibfreq != unit->vibfreq) {
+		unit->bowed->controlChange(__SK_ModFrequency_, vibfreq);
+		unit->vibfreq = vibfreq; };
+
+	if(vibgain != unit->vibgain) {
+		unit->bowed->controlChange(__SK_ModWheel_, vibgain);
+		unit->vibgain = vibgain; };
+
 	if(loudness != unit->loudness) {
 		unit->bowed->controlChange(__SK_AfterTouch_Cont_, loudness);
 		unit->loudness = loudness; };
 
  	for (int i=0; i < inNumSamples; ++i)
 	{
-		out[i] = unit->bowed->tick();
-        }
+		out[i] = unit->bowed->tick() * 7.5f; // Scaled to approx +-1
+	}
 
 }
  

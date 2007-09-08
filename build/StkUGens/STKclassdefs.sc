@@ -16,9 +16,9 @@ StkFlute : UGen {
 	}
 }
  
- StkBowed : UGen {
-	*ar { arg  freq=220, bowpressure = 64, bowposition = 64, vibfreq=64, vibgain=64, loudness=64,trig=1, mul = 1.0, add = 0.0;
-		^this.multiNew('audio', freq,  bowpressure, bowposition, vibfreq, vibgain, loudness,trig).madd(mul, add)
+StkBowed : UGen {
+	*ar { arg  freq=220, bowpressure = 64, bowposition = 64, vibfreq=64, vibgain=64, loudness=64,gate=1, attackrate=1, decayrate=1, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', freq,  bowpressure, bowposition, vibfreq, vibgain, loudness, gate, attackrate, decayrate).madd(mul, add)
 	}
 	*kr { arg  freq=220, bowpressure = 64, bowposition = 64, vibfreq=64, vibgain=64, loudness=64, trig = 1, mul = 1.0, add = 0.0;
 		^this.multiNew('control', freq,  bowpressure, bowposition, vibfreq, vibgain, loudness, trig).madd(mul, add) 
