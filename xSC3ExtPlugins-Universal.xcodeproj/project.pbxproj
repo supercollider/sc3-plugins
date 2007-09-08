@@ -31,6 +31,9 @@
 				F37FF8080B86BEFE006B0AA3 /* PBXTargetDependency */,
 				F37FF8060B86BEFE006B0AA3 /* PBXTargetDependency */,
 				F37FF8040B86BEFE006B0AA3 /* PBXTargetDependency */,
+				370E4CEE0C92DBF6000AE1EF /* PBXTargetDependency */,
+				370E4CEC0C92DBF6000AE1EF /* PBXTargetDependency */,
+				370E4CEA0C92DBF6000AE1EF /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -38,6 +41,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		370E4CAD0C92DAE5000AE1EF /* MCLDDistortionUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */; };
+		370E4CC70C92DB65000AE1EF /* MCLDFilterUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA70C92DAB6000AE1EF /* MCLDFilterUGens.cpp */; };
+		370E4CD60C92DB68000AE1EF /* MoogFFUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA80C92DAB6000AE1EF /* MoogFFUGen.cpp */; };
+		370E4D100C92DEEA000AE1EF /* AY_UGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */; };
+		370E4D250C92DFA1000AE1EF /* ayemu.h in Headers */ = {isa = PBXBuildFile; fileRef = 370E4D180C92DFA1000AE1EF /* ayemu.h */; };
+		370E4D260C92DFA1000AE1EF /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 370E4D190C92DFA1000AE1EF /* ayemu_8912.h */; };
+		370E4D270C92DFA1000AE1EF /* ayemu_vtxfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 370E4D1A0C92DFA1000AE1EF /* ayemu_vtxfile.h */; };
+		370E4D280C92DFA1000AE1EF /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 370E4D210C92DFA1000AE1EF /* ay8912.c */; };
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
 		F3271C4A0C20F375007DE8F1 /* PV_ThirdParty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */; };
 		F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -181,6 +192,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		370E4CE90C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */;
+			remoteInfo = "MCLDMoogFFUGen (Upgraded)";
+		};
+		370E4CEB0C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */;
+			remoteInfo = "MCLDFilterUGens (Upgraded)";
+		};
+		370E4CED0C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
+			remoteInfo = "MCLDDistortionUGens (Upgraded)";
+		};
 		F37FF8030B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -317,6 +349,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		370E4CA20C92DA53000AE1EF /* MCLDDistortionUgensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDDistortionUgensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AY_UGen.cpp; sourceTree = "<group>"; };
+		370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDDistortionUGens.cpp; sourceTree = "<group>"; };
+		370E4CA70C92DAB6000AE1EF /* MCLDFilterUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDFilterUGens.cpp; sourceTree = "<group>"; };
+		370E4CA80C92DAB6000AE1EF /* MoogFFUGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MoogFFUGen.cpp; sourceTree = "<group>"; };
+		370E4CD00C92DB65000AE1EF /* MCLDFilterUgensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDFilterUgensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		370E4CDE0C92DB68000AE1EF /* MCLDMoogFFUgenUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDMoogFFUgenUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDAYUGen.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		370E4D180C92DFA1000AE1EF /* ayemu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ayemu.h; sourceTree = "<group>"; };
+		370E4D190C92DFA1000AE1EF /* ayemu_8912.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ayemu_8912.h; sourceTree = "<group>"; };
+		370E4D1A0C92DFA1000AE1EF /* ayemu_vtxfile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ayemu_vtxfile.h; sourceTree = "<group>"; };
+		370E4D1D0C92DFA1000AE1EF /* ay8912.Plo */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ay8912.Plo; sourceTree = "<group>"; };
+		370E4D1E0C92DFA1000AE1EF /* lh5dec.Plo */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = lh5dec.Plo; sourceTree = "<group>"; };
+		370E4D1F0C92DFA1000AE1EF /* test.Po */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = test.Po; sourceTree = "<group>"; };
+		370E4D200C92DFA1000AE1EF /* vtxfile.Plo */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = vtxfile.Plo; sourceTree = "<group>"; };
+		370E4D210C92DFA1000AE1EF /* ay8912.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ay8912.c; sourceTree = "<group>"; };
+		370E4D220C92DFA1000AE1EF /* lh5dec.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lh5dec.c; sourceTree = "<group>"; };
+		370E4D230C92DFA1000AE1EF /* test.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
+		370E4D240C92DFA1000AE1EF /* vtxfile.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = vtxfile.c; sourceTree = "<group>"; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
@@ -463,6 +514,34 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		370E4C9B0C92DA53000AE1EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CC90C92DB65000AE1EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CD70C92DB68000AE1EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4D080C92DE86000AE1EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3564BDA0B0E82A4008AFA51 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -608,6 +687,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		370E4D160C92DFA1000AE1EF /* AY_libayemu */ = {
+			isa = PBXGroup;
+			children = (
+				370E4D170C92DFA1000AE1EF /* include */,
+				370E4D1B0C92DFA1000AE1EF /* src */,
+			);
+			name = AY_libayemu;
+			path = source/AY_libayemu;
+			sourceTree = SOURCE_ROOT;
+		};
+		370E4D170C92DFA1000AE1EF /* include */ = {
+			isa = PBXGroup;
+			children = (
+				370E4D180C92DFA1000AE1EF /* ayemu.h */,
+				370E4D190C92DFA1000AE1EF /* ayemu_8912.h */,
+				370E4D1A0C92DFA1000AE1EF /* ayemu_vtxfile.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		370E4D1B0C92DFA1000AE1EF /* src */ = {
+			isa = PBXGroup;
+			children = (
+				370E4D1C0C92DFA1000AE1EF /* .deps */,
+				370E4D210C92DFA1000AE1EF /* ay8912.c */,
+				370E4D220C92DFA1000AE1EF /* lh5dec.c */,
+				370E4D230C92DFA1000AE1EF /* test.c */,
+				370E4D240C92DFA1000AE1EF /* vtxfile.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		370E4D1C0C92DFA1000AE1EF /* .deps */ = {
+			isa = PBXGroup;
+			children = (
+				370E4D1D0C92DFA1000AE1EF /* ay8912.Plo */,
+				370E4D1E0C92DFA1000AE1EF /* lh5dec.Plo */,
+				370E4D1F0C92DFA1000AE1EF /* test.Po */,
+				370E4D200C92DFA1000AE1EF /* vtxfile.Plo */,
+			);
+			path = .deps;
+			sourceTree = "<group>";
+		};
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
@@ -626,6 +748,7 @@
 		F50D054502E69B6B01CA2799 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				370E4D160C92DFA1000AE1EF /* AY_libayemu */,
 				F318855B0B0EAAE10016AAA6 /* STKAlloc.h */,
 				F3564C0E0B0E8493008AFA51 /* ADSR.h */,
 				F3564C0F0B0E8493008AFA51 /* Asymp.h */,
@@ -736,6 +859,10 @@
 				F3A15CF60B5D8B9200D75043 /* MCLDChaosUGens.cpp */,
 				F3A15CE30B5D8B2400D75043 /* MCLD_CQ_UGens.cpp */,
 				F3A15CD10B5D8ADE00D75043 /* MCLDBufferUGens.cpp */,
+				370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */,
+				370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */,
+				370E4CA70C92DAB6000AE1EF /* MCLDFilterUGens.cpp */,
+				370E4CA80C92DAB6000AE1EF /* MoogFFUGen.cpp */,
 				F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */,
 				F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */,
 				F37FF6580B86A56C006B0AA3 /* bhobChaos.cpp */,
@@ -776,6 +903,10 @@
 				F37FF7D90B86BE28006B0AA3 /* bhobFilt.scx */,
 				F37FF7EC0B86BE6C006B0AA3 /* bhobGrain.scx */,
 				F37FF7FD0B86BEA6006B0AA3 /* bhobNoise.scx */,
+				370E4CA20C92DA53000AE1EF /* MCLDDistortionUgensUB.scx */,
+				370E4CD00C92DB65000AE1EF /* MCLDFilterUgensUB.scx */,
+				370E4CDE0C92DB68000AE1EF /* MCLDMoogFFUgenUB.scx */,
+				370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -801,6 +932,37 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		370E4C980C92DA53000AE1EF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CC40C92DB65000AE1EF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CD20C92DB68000AE1EF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4D050C92DE86000AE1EF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370E4D250C92DFA1000AE1EF /* ayemu.h in Headers */,
+				370E4D260C92DFA1000AE1EF /* ayemu_8912.h in Headers */,
+				370E4D270C92DFA1000AE1EF /* ayemu_vtxfile.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3564BD40B0E82A4008AFA51 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1028,6 +1190,86 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */;
+			buildPhases = (
+				370E4C980C92DA53000AE1EF /* Headers */,
+				370E4C990C92DA53000AE1EF /* Sources */,
+				370E4C9B0C92DA53000AE1EF /* Frameworks */,
+				370E4C9C0C92DA53000AE1EF /* Rez */,
+				370E4C9D0C92DA53000AE1EF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDDistortionUGens (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 370E4CA20C92DA53000AE1EF /* MCLDDistortionUgensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens (Upgraded)" */;
+			buildPhases = (
+				370E4CC40C92DB65000AE1EF /* Headers */,
+				370E4CC50C92DB65000AE1EF /* Sources */,
+				370E4CC90C92DB65000AE1EF /* Frameworks */,
+				370E4CCA0C92DB65000AE1EF /* Rez */,
+				370E4CCB0C92DB65000AE1EF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDFilterUGens (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 370E4CD00C92DB65000AE1EF /* MCLDFilterUgensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 370E4CDA0C92DB68000AE1EF /* Build configuration list for PBXNativeTarget "MCLDMoogFFUGen (Upgraded)" */;
+			buildPhases = (
+				370E4CD20C92DB68000AE1EF /* Headers */,
+				370E4CD30C92DB68000AE1EF /* Sources */,
+				370E4CD70C92DB68000AE1EF /* Frameworks */,
+				370E4CD80C92DB68000AE1EF /* Rez */,
+				370E4CD90C92DB68000AE1EF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDMoogFFUGen (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 370E4CDE0C92DB68000AE1EF /* MCLDMoogFFUgenUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen (Upgraded)" */;
+			buildPhases = (
+				370E4D050C92DE86000AE1EF /* Headers */,
+				370E4D060C92DE86000AE1EF /* Sources */,
+				370E4D080C92DE86000AE1EF /* Frameworks */,
+				370E4D090C92DE86000AE1EF /* Rez */,
+				370E4D0A0C92DE86000AE1EF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDAYUGen (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens (Upgraded)" */;
@@ -1419,11 +1661,43 @@
 				F37FF7CD0B86BE28006B0AA3 /* bhobFilt (Upgraded) */,
 				F37FF7E00B86BE6C006B0AA3 /* bhobGrain (Upgraded) */,
 				F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */,
+				370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */,
+				370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */,
+				370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */,
+				370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXRezBuildPhase section */
+		370E4C9C0C92DA53000AE1EF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CCA0C92DB65000AE1EF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CD80C92DB68000AE1EF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4D090C92DE86000AE1EF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3564BDC0B0E82A4008AFA51 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -1553,6 +1827,42 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		370E4C9D0C92DA53000AE1EF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		370E4CCB0C92DB65000AE1EF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		370E4CD90C92DB68000AE1EF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		370E4D0A0C92DE86000AE1EF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
 		F3564BDD0B0E82A4008AFA51 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1718,6 +2028,39 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		370E4C990C92DA53000AE1EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370E4CAD0C92DAE5000AE1EF /* MCLDDistortionUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CC50C92DB65000AE1EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370E4CC70C92DB65000AE1EF /* MCLDFilterUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4CD30C92DB68000AE1EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370E4CD60C92DB68000AE1EF /* MoogFFUGen.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		370E4D060C92DE86000AE1EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370E4D100C92DEEA000AE1EF /* AY_UGen.cpp in Sources */,
+				370E4D280C92DFA1000AE1EF /* ay8912.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3564BD80B0E82A4008AFA51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1873,6 +2216,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		370E4CEA0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */;
+			targetProxy = 370E4CE90C92DBF6000AE1EF /* PBXContainerItemProxy */;
+		};
+		370E4CEC0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */;
+			targetProxy = 370E4CEB0C92DBF6000AE1EF /* PBXContainerItemProxy */;
+		};
+		370E4CEE0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
+			targetProxy = 370E4CED0C92DBF6000AE1EF /* PBXContainerItemProxy */;
+		};
 		F37FF8040B86BEFE006B0AA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */;
@@ -1971,6 +2329,394 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		370E4C9F0C92DA53000AE1EF /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDDistortionUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		370E4CA00C92DA53000AE1EF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDDistortionUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		370E4CA10C92DA53000AE1EF /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDDistortionUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		370E4CCD0C92DB65000AE1EF /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFilterUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		370E4CCE0C92DB65000AE1EF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFilterUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		370E4CCF0C92DB65000AE1EF /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFilterUgensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		370E4CDB0C92DB68000AE1EF /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDMoogFFUgenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		370E4CDC0C92DB68000AE1EF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDMoogFFUgenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		370E4CDD0C92DB68000AE1EF /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDMoogFFUgenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		370E4D0C0C92DE86000AE1EF /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDAYUGen;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		370E4D0D0C92DE86000AE1EF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDAYUGen;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		370E4D0E0C92DE86000AE1EF /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDAYUGen;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		631417CD0A203392007B9355 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3821,6 +4567,46 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				370E4C9F0C92DA53000AE1EF /* Development */,
+				370E4CA00C92DA53000AE1EF /* Deployment */,
+				370E4CA10C92DA53000AE1EF /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				370E4CCD0C92DB65000AE1EF /* Development */,
+				370E4CCE0C92DB65000AE1EF /* Deployment */,
+				370E4CCF0C92DB65000AE1EF /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		370E4CDA0C92DB68000AE1EF /* Build configuration list for PBXNativeTarget "MCLDMoogFFUGen (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				370E4CDB0C92DB68000AE1EF /* Development */,
+				370E4CDC0C92DB68000AE1EF /* Deployment */,
+				370E4CDD0C92DB68000AE1EF /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				370E4D0C0C92DE86000AE1EF /* Development */,
+				370E4D0D0C92DE86000AE1EF /* Deployment */,
+				370E4D0E0C92DE86000AE1EF /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
 		631417CC0A203392007B9355 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
