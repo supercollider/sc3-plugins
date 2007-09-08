@@ -9,7 +9,7 @@
 	\cf2 var\cf0  in, chain, out;\
 	in = \cf2 SinOsc.ar(440, 0, 0.5) + PinkNoise.ar * 0.5;\cf0 \
 	chain = \cf2 FFT\cf0 (fftbuf, in);\
-	\cf4 // let the strongest (0 - 1023) partials through\cf0 \
+	\cf4 // let the weakest (0 - 1023) partials through\cf0 \
 	chain = \cf2 PV_MinMagN\cf0 (chain, MouseX.kr(0,1023));\
 	out = \cf2 IFFT\cf0 (chain);\
 	\cf2 Out\cf0 .ar(0, out);\

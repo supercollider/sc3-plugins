@@ -14,6 +14,8 @@
 			);
 			dependencies = (
 				F3FE074E0B0D765C00A29459 /* PBXTargetDependency */,
+				F36FC4100C936C8B0055E368 /* PBXTargetDependency */,
+				F36FC40E0C936C8B0055E368 /* PBXTargetDependency */,
 				F3D57D240B102BBC0034519F /* PBXTargetDependency */,
 				F3FE07690B0D76C600A29459 /* PBXTargetDependency */,
 				F3FE07830B0D771000A29459 /* PBXTargetDependency */,
@@ -152,6 +154,10 @@
 		F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6D0B0E8493008AFA51 /* WvIn.h */; };
 		F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6E0B0E8493008AFA51 /* WvOut.h */; };
 		F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3564CF70B0E8736008AFA51 /* libstk.a */; };
+		F36FC3EE0C936C0E0055E368 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F36FC3FD0C936C2D0055E368 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F36FC4080C936C5A0055E368 /* JoshGrainUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */; };
+		F36FC40C0C936C850055E368 /* JoshAmbiUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36FC40B0C936C850055E368 /* JoshAmbiUGens.cpp */; };
 		F37FF6500B86A534006B0AA3 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F37FF6590B86A56C006B0AA3 /* bhobChaos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F37FF6580B86A56C006B0AA3 /* bhobChaos.cpp */; };
 		F37FF7AF0B86BD4E006B0AA3 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -213,6 +219,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 370E4C970C92DA53000AE1EF;
 			remoteInfo = "MCLDDistortionUGens (Upgraded)";
+		};
+		F36FC40D0C936C8B0055E368 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+			remoteInfo = "JoshAmbiUGens (Upgraded)";
+		};
+		F36FC40F0C936C8B0055E368 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+			remoteInfo = "JoshGrainUGens (Upgraded)";
 		};
 		F37FF8030B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -475,6 +495,10 @@
 		F3564C6D0B0E8493008AFA51 /* WvIn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvIn.h; path = source/StkUGens/include/WvIn.h; sourceTree = SOURCE_ROOT; };
 		F3564C6E0B0E8493008AFA51 /* WvOut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvOut.h; path = source/StkUGens/include/WvOut.h; sourceTree = SOURCE_ROOT; };
 		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = lib/libstk.a; sourceTree = "<group>"; };
+		F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshGrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshAmbiUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshGrainUGens.cpp; sourceTree = "<group>"; };
+		F36FC40B0C936C850055E368 /* JoshAmbiUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshAmbiUGens.cpp; sourceTree = "<group>"; };
 		F37FF6570B86A534006B0AA3 /* bhobChaos.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = bhobChaos.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F37FF6580B86A56C006B0AA3 /* bhobChaos.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = bhobChaos.cpp; sourceTree = "<group>"; };
 		F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = bhobFFT.cpp; sourceTree = "<group>"; };
@@ -558,6 +582,22 @@
 			files = (
 				F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */,
 				F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3ED0C936C0E0055E368 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F36FC3EE0C936C0E0055E368 /* vecLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3FC0C936C2D0055E368 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F36FC3FD0C936C2D0055E368 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +905,8 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				F36FC40B0C936C850055E368 /* JoshAmbiUGens.cpp */,
+				F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */,
 				F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */,
 				F3A15CF60B5D8B9200D75043 /* MCLDChaosUGens.cpp */,
 				F3A15CE30B5D8B2400D75043 /* MCLD_CQ_UGens.cpp */,
@@ -919,6 +961,8 @@
 				370E4CDE0C92DB68000AE1EF /* MCLDMoogFFUgenUB.scx */,
 				370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */,
 				37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */,
+				F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */,
+				F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1084,6 +1128,20 @@
 				F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */,
 				F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */,
 				F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3EA0C936C0E0055E368 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3F90C936C2D0055E368 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1327,6 +1385,46 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens (Upgraded)" */;
+			buildPhases = (
+				F36FC3EA0C936C0E0055E368 /* Headers */,
+				F36FC3EB0C936C0E0055E368 /* Sources */,
+				F36FC3ED0C936C0E0055E368 /* Frameworks */,
+				F36FC3EF0C936C0E0055E368 /* Rez */,
+				F36FC3F00C936C0E0055E368 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "JoshGrainUGens (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens (Upgraded)" */;
+			buildPhases = (
+				F36FC3F90C936C2D0055E368 /* Headers */,
+				F36FC3FA0C936C2D0055E368 /* Sources */,
+				F36FC3FC0C936C2D0055E368 /* Frameworks */,
+				F36FC3FE0C936C2D0055E368 /* Rez */,
+				F36FC3FF0C936C2D0055E368 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "JoshAmbiUGens (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */ = {
@@ -1683,6 +1781,8 @@
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
+				F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */,
+				F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */,
 				F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */,
 				F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */,
 				F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */,
@@ -1746,6 +1846,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3564BDC0B0E82A4008AFA51 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3EF0C936C0E0055E368 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3FE0C936C2D0055E368 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1920,6 +2034,24 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		F3564BDD0B0E82A4008AFA51 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		F36FC3F00C936C0E0055E368 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		F36FC3FF0C936C2D0055E368 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2133,6 +2265,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F36FC3EB0C936C0E0055E368 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F36FC4080C936C5A0055E368 /* JoshGrainUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F36FC3FA0C936C2D0055E368 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F36FC40C0C936C850055E368 /* JoshAmbiUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F37FF64D0B86A534006B0AA3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2294,6 +2442,16 @@
 			isa = PBXTargetDependency;
 			target = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
 			targetProxy = 370E4CED0C92DBF6000AE1EF /* PBXContainerItemProxy */;
+		};
+		F36FC40E0C936C8B0055E368 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+			targetProxy = F36FC40D0C936C8B0055E368 /* PBXContainerItemProxy */;
+		};
+		F36FC4100C936C8B0055E368 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+			targetProxy = F36FC40F0C936C8B0055E368 /* PBXContainerItemProxy */;
 		};
 		F37FF8040B86BEFE006B0AA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2946,7 +3104,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
 			};
 			name = Development;
 		};
@@ -2959,7 +3117,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
 			};
 			name = Deployment;
 		};
@@ -2972,7 +3130,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
 			};
 			name = Default;
 		};
@@ -3065,6 +3223,200 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = STKUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		F36FC3F20C936C0E0055E368 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshGrainUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F36FC3F30C936C0E0055E368 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshGrainUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F36FC3F40C936C0E0055E368 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshGrainUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		F36FC4010C936C2D0055E368 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshAmbiUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F36FC4020C936C2D0055E368 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshAmbiUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F36FC4030C936C2D0055E368 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshAmbiUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -4804,6 +5156,26 @@
 				F3564BDF0B0E82A4008AFA51 /* Development */,
 				F3564BE00B0E82A4008AFA51 /* Deployment */,
 				F3564BE10B0E82A4008AFA51 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F36FC3F20C936C0E0055E368 /* Development */,
+				F36FC3F30C936C0E0055E368 /* Deployment */,
+				F36FC3F40C936C0E0055E368 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F36FC4010C936C2D0055E368 /* Development */,
+				F36FC4020C936C2D0055E368 /* Deployment */,
+				F36FC4030C936C2D0055E368 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;

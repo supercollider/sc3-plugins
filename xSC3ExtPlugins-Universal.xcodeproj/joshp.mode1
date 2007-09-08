@@ -260,11 +260,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>19</integer>
 									<integer>10</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 566}}</string>
+							<string>{{0, 138}, {186, 566}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -283,7 +284,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>173 187 1001 625 0 0 1440 878 </string>
+						<string>171 188 1001 625 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -320,7 +321,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {793, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>173 187 1001 625 0 0 1440 878 </string>
+								<string>171 188 1001 625 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -342,7 +343,7 @@
 								<key>Frame</key>
 								<string>{{0, 5}, {793, 579}}</string>
 								<key>RubberWindowFrame</key>
-								<string>173 187 1001 625 0 0 1440 878 </string>
+								<string>171 188 1001 625 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -366,9 +367,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>F3F0CF990C20F615000602BA</string>
+				<string>F36FC3E00C936BB40055E368</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>F3F0CF9A0C20F615000602BA</string>
+				<string>F36FC3E10C936BB40055E368</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -506,7 +507,7 @@
 		<string>/Users/joshp/src/supercollider/sc3-plugins/xSC3ExtPlugins-Universal.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>173 187 1001 625 0 0 1440 878 </string>
+	<string>171 188 1001 625 0 0 1440 878 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -522,12 +523,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string></string>
+								<string>SC_SndBuf.h</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -583,7 +586,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>F3FE07450B0D763800A29459</string>
-				<string>F3F0CF9B0C20F615000602BA</string>
+				<string>F36FC41C0C936CA70055E368</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

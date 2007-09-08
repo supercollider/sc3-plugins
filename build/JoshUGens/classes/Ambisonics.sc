@@ -1,7 +1,7 @@
 // A series of BFormat UGens for SC3. UGens by Josh Parmenter 4-3-2004
 // UGen plug-ins are based on James McCartney's Pan2B and DecodeB2 UGens.
 // added interior localization, z-signal manipulation, and rotate, tilt
-// and tumble transformations. Push and Dominate equations by Joe Anderson.
+// and tumble transformations.
 // B2Ster equations from 
 // http://www.cyber.rdg.ac.uk/P.Sharkey/WWW/icdvrat/WWW96/Papers/keating.htm
 
@@ -20,6 +20,19 @@ BFEncode1 : Panner {
 	}
 }
 
+BFEncodeSter : Panner {
+
+	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1;
+		^this.multiNew('audio', l, r, azimuth, width, elevation, rho, gain )
+	}
+	
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3) ];
+		^channels
+	}
+}
 
 BFEncode2 : Panner {
 	
@@ -35,20 +48,40 @@ BFEncode2 : Panner {
 	}
 } 
 
-//BFEncodeSter : Panner {
-//
-//	*ar { arg l, r, spread = 0.5pi, azimuth=0, elevation=0, rho = 1, gain=1;
-//		^this.multiNew('audio', l, r, spread, azimuth, elevation, rho, gain )
-//	}
-//	
-//	init { arg ... theInputs;
-//		inputs = theInputs;		
-//		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
-//					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3) ];
-//		^channels
-//	}
-//
-//}
+// second order encoder
+FMHEncode1 : Panner {
+	
+	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1;
+		^this.multiNew('audio', in, azimuth, elevation, rho, gain )
+	}
+	
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3),
+					OutputProxy(\audio,this,4), OutputProxy(\audio,this,5),
+					OutputProxy(\audio,this,6), OutputProxy(\audio,this,7),
+					OutputProxy(\audio,this,8) ];
+		^channels
+	}
+}
+
+FMHEncode2 : Panner {
+	
+	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1;
+		^this.multiNew('audio', in, point_x, point_y, elevation, gain)
+	}
+	
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3),
+					OutputProxy(\audio,this,4), OutputProxy(\audio,this,5),
+					OutputProxy(\audio,this,6), OutputProxy(\audio,this,7),
+					OutputProxy(\audio,this,8) ];
+		^channels
+	}
+}
 
 BFDecode1 : UGen {
 	
@@ -64,12 +97,6 @@ BFDecode1 : UGen {
 		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
 	}
 	
-//	init { arg ... theInputs;
-//		inputs = theInputs;		
-//		channels = [OutputProxy(\audio,this, 0)];
-//		^channels
-//	}
-// 	checkInputs { ^this.checkNInputs(4) }
 }
 
 BFManipulate : Panner {
@@ -190,17 +217,6 @@ B2Ster : Panner {
 
 	}
 
-//Hilbert : MultiOutUGen {
-//	*ar {arg in, mul = 1, add = 0;
-//		^this.multiNew('audio', in).madd(mul, add);
-//		}
-//	
-//	init {arg ... theInputs;
-//		inputs = theInputs;
-//		^this.initOutputs(2, rate);
-//		}
-//	}
-		
 // takes w, x, and y from a BF sig, returns a 2 channel UHJ file
 
 B2UHJ : Panner {

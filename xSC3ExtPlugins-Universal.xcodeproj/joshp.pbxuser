@@ -1,5 +1,28 @@
 // !$*UTF8*$!
 {
+	370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1189, 2058}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 1369}, {1189, 689}}";
+			sepNavWindowFrame = "{{15, 55}, {1228, 818}}";
+		};
+	};
+	370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */ = {
+		activeExec = 0;
+	};
+	370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */ = {
+		activeExec = 0;
+	};
+	37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
 	631417A30A203392007B9355 /* All */ = {
 		activeExec = 0;
 	};
@@ -177,6 +200,12 @@
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
 		);
 	};
+	F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
+	F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */ = {
+		activeExec = 0;
+	};
 	F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -255,9 +284,9 @@
 	};
 	F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {942, 19488}}";
-			sepNavSelRange = "{75, 23}";
-			sepNavVisRect = "{{0, 0}, {942, 195}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 20566}}";
+			sepNavSelRange = "{38979, 0}";
+			sepNavVisRect = "{{0, 19868}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
@@ -289,9 +318,9 @@
 	};
 	F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1334, 114408}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1334, 54446}}";
 			sepNavSelRange = "{1012, 23}";
-			sepNavVisRect = "{{0, 316}, {942, 195}}";
+			sepNavVisRect = "{{0, 53748}, {1030, 698}}";
 			sepNavWindowFrame = "{{140, 51}, {1069, 827}}";
 		};
 	};
@@ -332,7 +361,7 @@
 		activeBuildConfigurationName = Deployment;
 		activeTarget = 631417A30A203392007B9355 /* All */;
 		addToTargets = (
-			F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
+			F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -448,8 +477,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 203486726;
-			PBXWorkspaceStateSaveDate = 203486726;
+			PBXPerProjectTemplateStateSaveDate = 210987952;
+			PBXWorkspaceStateSaveDate = 210987952;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
