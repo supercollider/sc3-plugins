@@ -119,9 +119,14 @@ extern "C"
 	void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples);
 	void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples);
 	void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples);
+	void BFEncode1_next_aak(BFEncode1 *unit, int inNumSamples);
+	void BFEncode1_next_aka(BFEncode1 *unit, int inNumSamples);
+	void BFEncode1_next_kaa(BFEncode1 *unit, int inNumSamples);
+	void BFEncode1_next_kak(BFEncode1 *unit, int inNumSamples);
+	void BFEncode1_next_kka(BFEncode1 *unit, int inNumSamples);
 	void BFEncode1_Ctor(BFEncode1* unit);
 
-	void BFEncode2_next(BFEncode2 *unit, int inNumSamples);
+	void BFEncode2_next_kkk(BFEncode2 *unit, int inNumSamples);
 	void BFEncode2_Ctor(BFEncode2* unit); 
 
 	void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples);
@@ -655,11 +660,78 @@ void B2Ster_next(B2Ster *unit, int inNumSamples)
     }
 }
 
+
+#define SIN_COS \
+	sina = sin(azimuth); \
+	sinb = sin(elevation); \
+	\
+	cosa = cos(azimuth); \
+	cosb = cos(elevation); \
+
+#define CALC_INT \
+	if(rho >= 1) { \
+		intrho = 1 / pow(rho, 1.5); \
+		sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; \
+		cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} \
+	    else \
+		{ \
+		sinint = rsqrt2 * (sin(0.78539816339745 * rho)); \
+		cosint = rsqrt2 * (cos(0.78539816339745 * rho)); \
+		}; \
+	\
+	levelsinint = level * sinint; \
+
+#define CALC_AMPS \
+	W_amp = level * cosint; \
+	X_amp = cosa * cosb * levelsinint; \
+	Y_amp = sina * cosb * levelsinint; \
+	Z_amp = sinb * levelsinint; \
+	
+// vary w according to x, y and z
+#define BF_VALS_OUT \
+	z = in[i]; \
+	Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp))))); \
+	Xout[i] = z * X_amp; \
+	Yout[i] = z * Y_amp; \
+	Zout[i] = z * Z_amp; \
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 void BFEncode2_Ctor(BFEncode2 *unit)
 {
-	SETCALC(BFEncode2_next);
+	float intrho, levelsinint, sina, sinb, cosa, cosb;
+
+
+    if (INRATE(1) == calc_FullRate) {
+	if (INRATE(2) == calc_FullRate) {
+	    if (INRATE(3) == calc_FullRate) {
+		SETCALC(BFEncode2_next_kkk); //aaa
+		} else {
+		SETCALC(BFEncode2_next_kkk); //aak
+		}
+	    } else {
+	    if (INRATE(3) == calc_FullRate) {
+		SETCALC(BFEncode2_next_kkk); //aka
+		} else {
+		SETCALC(BFEncode2_next_kkk); //akk
+		}
+	    }
+	} else {
+	if (INRATE(2) == calc_FullRate) {
+	    if (INRATE(3) == calc_FullRate) {
+		SETCALC(BFEncode2_next_kkk); //kaa
+		} else {
+		SETCALC(BFEncode2_next_kkk); //kak
+		}
+	    } else {
+	    if (INRATE(3) == calc_FullRate) {
+		SETCALC(BFEncode2_next_kkk); //kka
+		} else {
+		SETCALC(BFEncode2_next_kkk);
+		}
+	    }
+	}
+	
 	float sinint, cosint, azimuth, rho;
 	float point_x = unit->m_point_x = IN0(1);
 	float point_y = unit->m_point_y = IN0(2);
@@ -669,35 +741,20 @@ void BFEncode2_Ctor(BFEncode2 *unit)
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
 	
-	float sina = sin(azimuth);
-	float sinb = sin(elevation);
-	
-	float cosa = cos(azimuth);
-	float cosb = cos(elevation);
-	
-	if(rho >= 1) {
-		float intrho = 1 / (pow(rho, 1.5));
-		sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; // pow(rho, (float)1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho; // / pow(rho, (float)1.5);
-		}
-	    else 
-		{
-		sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-		cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-		};
-
-	float levelsinint = level * sinint;
+	SIN_COS
+	CALC_INT
 
 	unit->m_W_amp = level * cosint;
 	unit->m_X_amp = cosa * cosb * levelsinint;
 	unit->m_Y_amp = sina * cosb * levelsinint;
 	unit->m_Z_amp = sinb * levelsinint;
 
-	BFEncode2_next(unit, 1);
+	BFEncode2_next_kkk(unit, 1);
 }
 
-void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
+void BFEncode2_next_kkk(BFEncode2 *unit, int inNumSamples)
 {       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;	
 	float sinint, cosint, azimuth, rho, z;
 	float *Wout = OUT(0);
 	float *Xout = OUT(1);
@@ -713,53 +770,35 @@ void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
 
-	float W_amp = unit->m_W_amp;
-	float X_amp = unit->m_X_amp;
-	float Y_amp = unit->m_Y_amp;
-	float Z_amp = unit->m_Z_amp;
-
+	float last_W_amp = W_amp = unit->m_W_amp;
+	float last_X_amp = X_amp = unit->m_X_amp;
+	float last_Y_amp = Y_amp = unit->m_Y_amp;
+	float last_Z_amp = Z_amp = unit->m_Z_amp;
+	
+	
 	if (point_x != unit->m_point_x || point_y != unit->m_point_y ||elevation != unit->m_elevation || level != unit->m_level) {
 		unit->m_point_x = point_x;
 		unit->m_point_y = point_y;
 		unit->m_elevation = elevation;
 		unit->m_level = level;
 
-		float sina =  sin(azimuth);
-		float sinb =  sin(elevation);
-
-		float cosa = cos(azimuth);
-		float cosb = cos(elevation);
-		if(rho >= 1) {
-			float intrho = 1 / (pow(rho, 1.5));
-			sinint = (rsqrt2 * (sin(0.78539816339745 * 1.0))) * intrho; // pow(rho, (float)1.5);
-			cosint =  (rsqrt2 * (cos(0.78539816339745 * 1.0))) * intrho; // / pow(rho, (float)1.5);
-		    }
-		    else 
-			{sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-			cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-			};
+		SIN_COS
+		CALC_INT
+		CALC_AMPS
 		
-		float levelsinint = level * sinint;
-
-		// vary w according to x, y and z
-//		float next_W_amp = rsqrt2 * level * cosint;
-		float next_W_amp = level * cosint;
-		float next_X_amp = cosa * cosb * levelsinint;
-		float next_Y_amp = sina * cosb * levelsinint;
-		float next_Z_amp = sinb * levelsinint;
+		float W_slope = CALCSLOPE(W_amp, last_W_amp);
+		float X_slope = CALCSLOPE(X_amp, last_X_amp);
+		float Y_slope = CALCSLOPE(Y_amp, last_Y_amp);
+		float Z_slope = CALCSLOPE(Z_amp, last_Z_amp);
 		
-		float W_slope = CALCSLOPE(next_W_amp, W_amp);
-		float X_slope = CALCSLOPE(next_X_amp, X_amp);
-		float Y_slope = CALCSLOPE(next_Y_amp, Y_amp);
-		float Z_slope = CALCSLOPE(next_Z_amp, Z_amp);
-		
+		// for the macros to work, reset W_amp (etc.) to the old values
+		W_amp = last_W_amp;
+		X_amp = last_X_amp;
+		Y_amp = last_Y_amp;
+		Z_amp = last_Z_amp;
+				
 		for(int i = 0; i < inNumSamples; i++){ 
-			z = in[i];
-			// vary w according to x, y and z
-			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			Xout[i] = z * X_amp;
-			Yout[i] = z * Y_amp;
-			Zout[i] = z * Z_amp;
+			BF_VALS_OUT
 			W_amp += W_slope;
 			X_amp += X_slope;
 			Y_amp += Y_slope;
@@ -771,12 +810,7 @@ void BFEncode2_next(BFEncode2 *unit, int inNumSamples)
 		unit->m_Z_amp = Z_amp;
 	} else {
 		for(int i = 0; i < inNumSamples; i++){ 
-			z = in[i];
-			// vary w according to x, y and z
-			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-			Xout[i] = z * X_amp;
-			Yout[i] = z * Y_amp;
-			Zout[i] = z * Z_amp;
+			BF_VALS_OUT
 		    };
 	}
 }
@@ -791,54 +825,39 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 	    if (INRATE(3) == calc_FullRate) {
 		SETCALC(BFEncode1_next_aaa);
 		} else {
-		SETCALC(BFEncode1_next_akk); // aak
+		SETCALC(BFEncode1_next_aak); 
 		}
 	    } else {
 	    if (INRATE(3) == calc_FullRate) {
-		SETCALC(BFEncode1_next_akk); //aka
+		SETCALC(BFEncode1_next_aka); 
 		} else {
-		SETCALC(BFEncode1_next_akk); // akk
+		SETCALC(BFEncode1_next_akk); 
 		}
 	    }
 	} else {
 	if (INRATE(2) == calc_FullRate) {
 	    if (INRATE(3) == calc_FullRate) {
-		SETCALC(BFEncode1_next_kkk); // kaa
+		SETCALC(BFEncode1_next_kaa);
 		} else {
-		SETCALC(BFEncode1_next_kkk); // kak
+		SETCALC(BFEncode1_next_kak);
 		}
 	    } else {
 	    if (INRATE(3) == calc_FullRate) {
-		SETCALC(BFEncode1_next_kkk); //kka
+		SETCALC(BFEncode1_next_kka);
 		} else {
-		SETCALC(BFEncode1_next_kkk); // kkk
+		SETCALC(BFEncode1_next_kkk);
 		}
 	    }
 	}
-	
+	float intrho, levelsinint, sina, sinb, cosa, cosb;
 	float sinint, cosint;
 	float azimuth = unit->m_azimuth = IN0(1);
 	float elevation = unit->m_elevation = IN0(2);
  	float rho = unit->m_rho = IN0(3);
 	float level = unit->m_level = IN0(4);
 
-	float sina = sin(azimuth);
-	float sinb = sin(elevation);
-	
-	float cosa = cos(azimuth);
-	float cosb = cos(elevation);
-	
-	if(rho >= 1) {
-		float intrho = 1 / pow(rho, 1.5);
-		sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
-		cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);
-	    else 
-		{
-		sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-		cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-		};
-
-	float levelsinint = level * sinint;
+	SIN_COS
+	CALC_INT
 	
 	unit->m_W_amp = level * cosint;
 	unit->m_X_amp = cosa * cosb * levelsinint;
@@ -850,6 +869,7 @@ void BFEncode1_Ctor(BFEncode1 *unit)
 
 void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples)
 {       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;	
 	float sinint, cosint, z = 0.0;
 	float *Wout = OUT(0);
 	float *Xout = OUT(1);
@@ -861,51 +881,36 @@ void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples)
 	float elevation = IN0(2);
 	float rho = IN0(3);
 	float level = IN0(4);
-
-	float W_amp = unit->m_W_amp;
-	float X_amp = unit->m_X_amp;
-	float Y_amp = unit->m_Y_amp;
-	float Z_amp = unit->m_Z_amp;
+	
+	float last_W_amp = W_amp = unit->m_W_amp;
+	float last_X_amp = X_amp = unit->m_X_amp;
+	float last_Y_amp = Y_amp = unit->m_Y_amp;
+	float last_Z_amp = Z_amp = unit->m_Z_amp;
 
 	if (azimuth != unit->m_azimuth || rho != unit->m_rho || elevation != unit->m_elevation || level != unit->m_level) {
 		unit->m_azimuth = azimuth;
 		unit->m_elevation = elevation;
 		unit->m_level = level;
 		unit->m_rho = rho;
+
+		SIN_COS
+		CALC_INT
+		CALC_AMPS
 		
-		float sina = sin(azimuth);
-		float sinb = sin(elevation);
+		float W_slope = CALCSLOPE(W_amp, last_W_amp);
+		float X_slope = CALCSLOPE(X_amp, last_X_amp);
+		float Y_slope = CALCSLOPE(Y_amp, last_Y_amp);
+		float Z_slope = CALCSLOPE(Z_amp, last_Z_amp);
 		
-		float cosa = cos(azimuth);
-		float cosb = cos(elevation);
-		
-		if(rho >= 1) {
-			float intrho = 1 / pow(rho, 1.5);
-			sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
-			cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);}
-		    else { 
-			sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-			cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-			};
-		float levelsinint = level * sinint;
-		
-		float next_W_amp = level * cosint;
-		float next_X_amp = cosa * cosb * levelsinint;
-		float next_Y_amp = sina * cosb * levelsinint;
-		float next_Z_amp = sinb * levelsinint;
-		
-		float W_slope = CALCSLOPE(next_W_amp, W_amp);
-		float X_slope = CALCSLOPE(next_X_amp, X_amp);
-		float Y_slope = CALCSLOPE(next_Y_amp, Y_amp);
-		float Z_slope = CALCSLOPE(next_Z_amp, Z_amp);
+		// for the macros to work, reset W_amp (etc.) to the old values
+		W_amp = last_W_amp;
+		X_amp = last_X_amp;
+		Y_amp = last_Y_amp;
+		Z_amp = last_Z_amp;
 		
 		for(int i = 0; i < inNumSamples; i++){
-			z = in[i];
-			// vary w according to x, y and z
-			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
-			Xout[i] = z * X_amp;
-			Yout[i] = z * Y_amp;
-			Zout[i] = z * Z_amp;
+			BF_VALS_OUT
+			
 			W_amp += W_slope;
 			X_amp += X_slope;
 			Y_amp += Y_slope;
@@ -918,12 +923,7 @@ void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples)
 	} else {
 	    for(int i = 0; i < inNumSamples; i++)
 		{ 
-		    z = in[i];
-		    // vary w according to x, y and z
-		    Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));
-		    Xout[i] = z * X_amp;
-		    Yout[i] = z * Y_amp;
-		    Zout[i] = z * Z_amp;
+		BF_VALS_OUT
 		}
 	}
 }
@@ -931,6 +931,7 @@ void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples)
 
 void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples)
 {       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
 	float sinint, cosint, z = 0.0;
 	float *Wout = OUT(0);
 	float *Xout = OUT(1);
@@ -938,9 +939,9 @@ void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples)
 	float *Zout = OUT(3);
 	
 	float *in = IN(0);
-	float *azimuth = IN(1);
-	float *elevation = IN(2);
-	float *rho = IN(3);
+	float *azimuthar = IN(1);
+	float *elevationar = IN(2);
+	float *rhoar = IN(3);
 	float newlevel = IN0(4);
 	float level = unit->m_level;
 	float levelslope = 0.f;
@@ -950,36 +951,15 @@ void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples)
 	    }
 	    
 	for(int i = 0; i < inNumSamples; i++){
-	    float thisaz = azimuth[i];
-	    float thiselevation = elevation[i];
-	    float thisrho = rho[i];
-	    float sina = sin(thisaz);
-	    float sinb = sin(thiselevation);
+	    float azimuth = azimuthar[i];
+	    float elevation = elevationar[i];
+	    float rho = rhoar[i];
 	    
-	    float cosa = cos(thisaz);
-	    float cosb = cos(thiselevation);
-	    
-	    if(thisrho >= 1) {
-		    float intrho = 1 / pow(thisrho, 1.5);
-		    sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
-		    cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);}
-		else { 
-		    sinint = rsqrt2 * (sin(0.78539816339745 * thisrho));
-		    cosint = rsqrt2 * (cos(0.78539816339745 * thisrho));
-		    };
-	    float levelsinint = level * sinint;
-	    
-	    float W_amp = level * cosint;
-	    float X_amp = cosa * cosb * levelsinint;
-	    float Y_amp = sina * cosb * levelsinint;
-	    float Z_amp = sinb * levelsinint;
-	
-	    z = in[i];
-	    // vary w according to x, y and z
-	    Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
-	    Xout[i] = z * X_amp;
-	    Yout[i] = z * Y_amp;
-	    Zout[i] = z * Z_amp;
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+
 	    level += levelslope;
 
 	}
@@ -989,6 +969,7 @@ void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples)
 
 void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples)
 {       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
 	float sinint, cosint, z = 0.0;
 	float *Wout = OUT(0);
 	float *Xout = OUT(1);
@@ -996,7 +977,7 @@ void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples)
 	float *Zout = OUT(3);
 	
 	float *in = IN(0);
-	float *azimuth = IN(1);
+	float *azimuthar = IN(1);
 	float newelevation = IN0(2);
 	float newrho = IN0(3);
 	float newlevel = IN0(4);
@@ -1014,36 +995,14 @@ void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples)
 	    }
 	    
 	for(int i = 0; i < inNumSamples; i++){
-	    float thisaz = azimuth[i];
-	    float sina = sin(thisaz);
-	    float sinb = sin(elevation);
+	    float azimuth = azimuthar[i];
 	    
-	    float cosa = cos(thisaz);
-	    float cosb = cos(elevation);
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
 	    
-	    if(rho >= 1) {
-		    float intrho = 1 / pow(rho, 1.5);
-		    sinint = (rsqrt2 * (sin(0.78539816339745))) * intrho; //  pow(rho, (float)1.5);
-		    cosint =  (rsqrt2 * (cos(0.78539816339745))) * intrho;} //  pow(rho, (float)1.5);}
-		else { 
-		    sinint = rsqrt2 * (sin(0.78539816339745 * rho));
-		    cosint = rsqrt2 * (cos(0.78539816339745 * rho));
-		    };
-	    float levelsinint = level * sinint;
-	    
-	    float W_amp = level * cosint;
-	    float X_amp = cosa * cosb * levelsinint;
-	    float Y_amp = sina * cosb * levelsinint;
-	    float Z_amp = sinb * levelsinint;
-	
-	    z = in[i];
-	    // vary w according to x, y and z
-	    Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))));			
-	    Xout[i] = z * X_amp;
-	    Yout[i] = z * Y_amp;
-	    Zout[i] = z * Z_amp;
-	    
-	    elevation += elevation;
+	    elevation += elslope;
 	    rho += rhoslope;
 	    level += levelslope;
 
@@ -1053,7 +1012,220 @@ void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples)
 	unit->m_rho = rho;
     }
 
+void BFEncode1_next_aak(BFEncode1 *unit, int inNumSamples)
+{       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	
+	float *in = IN(0);
+	float *azimuthar = IN(1);
+	float *elevationar = IN(2);
+	float newrho = IN0(3);
+	float newlevel = IN0(4);
+	float rho = unit->m_rho;
+	float level = unit->m_level;
+	float rhoslope = 0.f;
+	float levelslope = 0.f;
+	
+	if(newrho != unit->m_rho || newlevel != unit->m_level){
+	    rhoslope = CALCSLOPE(newrho, unit->m_rho);
+	    levelslope = CALCSLOPE(newlevel, unit->m_level);
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    float azimuth = azimuthar[i];
+	    float elevation = elevationar[i];
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+	    
+	    rho += rhoslope;
+	    level += levelslope;
 
+	}
+	unit->m_level = level;
+	unit->m_rho = rho;
+    }
+
+
+void BFEncode1_next_aka(BFEncode1 *unit, int inNumSamples)
+{       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	
+	float *in = IN(0);
+	float *azimuthar = IN(1);
+	float newelevation = IN0(2);
+	float *rhoar = IN(3);
+	float newlevel = IN0(4);
+	float elevation = unit->m_elevation;
+	float level = unit->m_level;
+	float elslope = 0.f;
+	float levelslope = 0.f;
+	
+	if(newelevation != unit->m_elevation || newlevel != unit->m_level){
+	    elslope = CALCSLOPE(newelevation, unit->m_elevation);
+	    levelslope = CALCSLOPE(newlevel, unit->m_level);
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    float azimuth = azimuthar[i];
+	    float rho = rhoar[i];
+	    
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+	    
+	    elevation += elslope;
+	    level += levelslope;
+
+	}
+	unit->m_elevation = elevation;
+	unit->m_level = level;
+    }
+
+void BFEncode1_next_kaa(BFEncode1 *unit, int inNumSamples)
+{       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	
+	float *in = IN(0);
+	float newazimuth = IN0(1);
+	float *elevationar = IN(2);
+	float *rhoar = IN(3);
+	float newlevel = IN0(4);
+	float azimuth = unit->m_azimuth;
+	float level = unit->m_level;
+	float azslope = 0.f;
+	float levelslope = 0.f;
+	
+	if(newazimuth != unit->m_azimuth || newlevel != unit->m_level){
+	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
+	    levelslope = CALCSLOPE(newlevel, unit->m_level);
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    float rho = rhoar[i];
+	    float elevation = elevationar[i];
+	    
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+	    
+	    azimuth += azslope;
+	    level += levelslope;
+
+	}
+	unit->m_level = level;
+	unit->m_azimuth = azimuth;
+    }
+
+
+void BFEncode1_next_kak(BFEncode1 *unit, int inNumSamples)
+{       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	
+	float *in = IN(0);
+	float newazimuth = IN0(1);
+	float *elevationar = IN(2);
+	float newrho = IN0(3);
+	float newlevel = IN0(4);
+	float azimuth = unit->m_azimuth;
+	float rho = unit->m_rho;
+	float level = unit->m_level;
+	float azslope = 0.f;
+	float rhoslope = 0.f;
+	float levelslope = 0.f;
+	
+	if(newazimuth != unit->m_azimuth || newrho != unit->m_rho || newlevel != unit->m_level){
+	    rhoslope = CALCSLOPE(newrho, unit->m_rho);
+	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
+	    levelslope = CALCSLOPE(newlevel, unit->m_level);
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    float elevation = elevationar[i];
+	    
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+	    
+	    azimuth += azslope;
+	    rho += rhoslope;
+	    level += levelslope;
+
+	}
+	unit->m_level = level;
+	unit->m_rho = rho;
+	unit->m_azimuth = azimuth;
+    }
+    
+void BFEncode1_next_kka(BFEncode1 *unit, int inNumSamples)
+{       
+	float intrho, levelsinint, sina, sinb, cosa, cosb, W_amp, X_amp, Y_amp, Z_amp;
+	float sinint, cosint, z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	
+	float *in = IN(0);
+	float newazimuth = IN0(1);
+	float newelevation = IN0(2);
+	float *rhoar = IN(3);
+	float newlevel = IN0(4);
+	float azimuth = unit->m_azimuth;
+	float elevation = unit->m_elevation;
+	float level = unit->m_level;
+	float azslope = 0.f;
+	float elslope = 0.f;
+	float levelslope = 0.f;
+	
+	if(newazimuth != unit->m_azimuth || newelevation != unit->m_elevation || newlevel != unit->m_level){
+	    elslope = CALCSLOPE(newelevation, unit->m_elevation);
+	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
+	    levelslope = CALCSLOPE(newlevel, unit->m_level);
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    float rho = rhoar[i];
+	    
+	    SIN_COS
+	    CALC_INT
+	    CALC_AMPS
+	    BF_VALS_OUT
+	    
+	    azimuth += azslope;
+	    elevation += elslope;
+	    level += levelslope;
+
+	}
+	unit->m_level = level;
+	unit->m_elevation = elevation;
+	unit->m_azimuth = azimuth;
+    }
+    
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

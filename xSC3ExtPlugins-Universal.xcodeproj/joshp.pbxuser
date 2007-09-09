@@ -20,6 +20,26 @@
 	370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */ = {
 		activeExec = 0;
 	};
+	373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */ = {
+		activeExec = 0;
+	};
+	373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1189, 1232}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 543}, {1189, 689}}";
+			sepNavWindowFrame = "{{15, 55}, {1228, 818}}";
+		};
+	};
+	373C2EE70C9404DC00A3D3FD /* MCLDUGens */ = {
+		activeExec = 0;
+	};
+	373C2EFE0C94051000A3D3FD /* bhobUGens */ = {
+		activeExec = 0;
+	};
+	373C2F0B0C94053300A3D3FD /* JoshUGens */ = {
+		activeExec = 0;
+	};
 	37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -46,20 +66,6 @@
 			sepNavVisRect = "{{0, 0}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
-	};
-	F32DD35F0C93714900A1B762 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */;
-	};
-	F32DD3D60C93BCD600A1B762 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */;
-		name = "JoshGrainUGens.cpp: 7064";
-		rLen = 0;
-		rLoc = 188886;
-		rType = 0;
-		vrLen = 934;
-		vrLoc = 162445;
 	};
 	F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 		activeExec = 0;
@@ -223,9 +229,17 @@
 	F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1189, 101920}}";
-			sepNavSelRange = "{188886, 0}";
-			sepNavVisRect = "{{0, 83347}, {1189, 689}}";
+			sepNavSelRange = "{162716, 0}";
+			sepNavVisRect = "{{0, 79603}, {1189, 689}}";
 			sepNavWindowFrame = "{{153, 60}, {1228, 818}}";
+		};
+	};
+	F36FC40B0C936C850055E368 /* JoshAmbiUGens.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {999, 25466}}";
+			sepNavSelRange = "{21768, 0}";
+			sepNavVisRect = "{{0, 10064}, {999, 637}}";
+			sepNavWindowFrame = "{{264, 91}, {1038, 766}}";
 		};
 	};
 	F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */ = {
@@ -397,7 +411,7 @@
 	};
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeTarget = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+		activeTarget = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
 		addToTargets = (
 			F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */,
 		);
@@ -515,12 +529,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 210989376;
-			PBXWorkspaceStateSaveDate = 210989376;
-		};
-		perUserProjectItems = {
-			F32DD35F0C93714900A1B762 /* PBXBookmark */ = F32DD35F0C93714900A1B762 /* PBXBookmark */;
-			F32DD3D60C93BCD600A1B762 /* PBXTextBookmark */ = F32DD3D60C93BCD600A1B762 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 211053582;
+			PBXWorkspaceStateSaveDate = 211053582;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
