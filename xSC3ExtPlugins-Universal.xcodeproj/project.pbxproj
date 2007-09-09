@@ -7,35 +7,70 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		373C2EE70C9404DC00A3D3FD /* MCLDUGens */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 373C2F180C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "MCLDUGens" */;
+			buildPhases = (
+			);
+			dependencies = (
+				373C2EFB0C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EF90C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EF70C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EF50C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EF30C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EF10C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EEF0C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EED0C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EEB0C9404EB00A3D3FD /* PBXTargetDependency */,
+				373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */,
+			);
+			name = MCLDUGens;
+			productName = MCLDUGensUB;
+		};
+		373C2EFE0C94051000A3D3FD /* bhobUGens */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 373C2F1C0C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "bhobUGens" */;
+			buildPhases = (
+			);
+			dependencies = (
+				373C2F080C94051E00A3D3FD /* PBXTargetDependency */,
+				373C2F060C94051E00A3D3FD /* PBXTargetDependency */,
+				373C2F040C94051E00A3D3FD /* PBXTargetDependency */,
+				373C2F020C94051E00A3D3FD /* PBXTargetDependency */,
+				373C2F000C94051E00A3D3FD /* PBXTargetDependency */,
+			);
+			name = bhobUGens;
+			productName = bhobUGens;
+		};
+		373C2F0B0C94053300A3D3FD /* JoshUGens */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 373C2F200C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "JoshUGens" */;
+			buildPhases = (
+			);
+			dependencies = (
+				373C2F130C94054000A3D3FD /* PBXTargetDependency */,
+				373C2F110C94054000A3D3FD /* PBXTargetDependency */,
+				373C2F0F0C94054000A3D3FD /* PBXTargetDependency */,
+				373C2F0D0C94054000A3D3FD /* PBXTargetDependency */,
+			);
+			name = JoshUGens;
+			productName = JoshUGens;
+		};
 		631417A30A203392007B9355 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 631417CC0A203392007B9355 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
 			);
 			dependencies = (
-				F3FE074E0B0D765C00A29459 /* PBXTargetDependency */,
-				F36FC4100C936C8B0055E368 /* PBXTargetDependency */,
-				F36FC40E0C936C8B0055E368 /* PBXTargetDependency */,
+				373C2EFD0C9404FE00A3D3FD /* PBXTargetDependency */,
+				373C2F0A0C94052100A3D3FD /* PBXTargetDependency */,
+				373C2F150C94054400A3D3FD /* PBXTargetDependency */,
 				F3D57D240B102BBC0034519F /* PBXTargetDependency */,
 				F3FE07690B0D76C600A29459 /* PBXTargetDependency */,
 				F3FE07830B0D771000A29459 /* PBXTargetDependency */,
-				F3FE079D0B0D778700A29459 /* PBXTargetDependency */,
 				F3949AAC0B0D832A0066FA8D /* PBXTargetDependency */,
 				F3D57D3E0B102D5C0034519F /* PBXTargetDependency */,
-				F3A15D240B5D8C9A00D75043 /* PBXTargetDependency */,
-				F3A15D220B5D8C9A00D75043 /* PBXTargetDependency */,
-				F3A15D200B5D8C9A00D75043 /* PBXTargetDependency */,
-				F3A15D1E0B5D8C9A00D75043 /* PBXTargetDependency */,
-				F3A15D1C0B5D8C9A00D75043 /* PBXTargetDependency */,
 				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
-				F37FF80C0B86BEFE006B0AA3 /* PBXTargetDependency */,
-				F37FF80A0B86BEFE006B0AA3 /* PBXTargetDependency */,
-				F37FF8080B86BEFE006B0AA3 /* PBXTargetDependency */,
-				F37FF8060B86BEFE006B0AA3 /* PBXTargetDependency */,
-				F37FF8040B86BEFE006B0AA3 /* PBXTargetDependency */,
-				370E4CEE0C92DBF6000AE1EF /* PBXTargetDependency */,
-				370E4CEC0C92DBF6000AE1EF /* PBXTargetDependency */,
-				370E4CEA0C92DBF6000AE1EF /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -51,6 +86,7 @@
 		370E4D260C92DFA1000AE1EF /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 370E4D190C92DFA1000AE1EF /* ayemu_8912.h */; };
 		370E4D270C92DFA1000AE1EF /* ayemu_vtxfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 370E4D1A0C92DFA1000AE1EF /* ayemu_vtxfile.h */; };
 		370E4D280C92DFA1000AE1EF /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 370E4D210C92DFA1000AE1EF /* ay8912.c */; };
+		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
 		F3271C4A0C20F375007DE8F1 /* PV_ThirdParty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */; };
@@ -199,75 +235,159 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		370E4CE90C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+		373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 370E4CD10C92DB68000AE1EF;
+			remoteGlobalIDString = 373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */;
+			remoteInfo = "MCLDGetenvUGen (Upgraded)";
+		};
+		373C2EEA0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */;
+			remoteInfo = "MCLDAYUGen (Upgraded)";
+		};
+		373C2EEC0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */;
 			remoteInfo = "MCLDMoogFFUGen (Upgraded)";
 		};
-		370E4CEB0C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+		373C2EEE0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 370E4CC30C92DB65000AE1EF;
+			remoteGlobalIDString = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */;
 			remoteInfo = "MCLDFilterUGens (Upgraded)";
 		};
-		370E4CED0C92DBF6000AE1EF /* PBXContainerItemProxy */ = {
+		373C2EF00C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 370E4C970C92DA53000AE1EF;
+			remoteGlobalIDString = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
 			remoteInfo = "MCLDDistortionUGens (Upgraded)";
 		};
-		F36FC40D0C936C8B0055E368 /* PBXContainerItemProxy */ = {
+		373C2EF20C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F36FC3F80C936C2D0055E368;
-			remoteInfo = "JoshAmbiUGens (Upgraded)";
+			remoteGlobalIDString = F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */;
+			remoteInfo = "MCLDFFTUGens (Upgraded)";
 		};
-		F36FC40F0C936C8B0055E368 /* PBXContainerItemProxy */ = {
+		373C2EF40C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F36FC3E90C936C0E0055E368;
-			remoteInfo = "JoshGrainUGens (Upgraded)";
+			remoteGlobalIDString = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
+			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
 		};
-		F37FF8030B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
+		373C2EF60C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F37FF7F10B86BEA6006B0AA3;
+			remoteGlobalIDString = F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */;
+			remoteInfo = "MCLDChaosUGens (Upgraded)";
+		};
+		373C2EF80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */;
+			remoteInfo = "MCLD_CQ_UGens (Upgraded)";
+		};
+		373C2EFA0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */;
+			remoteInfo = "MCLDBufferUGens (Upgraded)";
+		};
+		373C2EFC0C9404FE00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2EE70C9404DC00A3D3FD /* MCLDUGensUB */;
+			remoteInfo = MCLDUGensUB;
+		};
+		373C2EFF0C94051E00A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */;
 			remoteInfo = "bhobNoise (Upgraded)";
 		};
-		F37FF8050B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
+		373C2F010C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F37FF7E00B86BE6C006B0AA3;
+			remoteGlobalIDString = F37FF7E00B86BE6C006B0AA3 /* bhobGrain (Upgraded) */;
 			remoteInfo = "bhobGrain (Upgraded)";
 		};
-		F37FF8070B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
+		373C2F030C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F37FF7CD0B86BE28006B0AA3;
+			remoteGlobalIDString = F37FF7CD0B86BE28006B0AA3 /* bhobFilt (Upgraded) */;
 			remoteInfo = "bhobFilt (Upgraded)";
 		};
-		F37FF8090B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
+		373C2F050C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F37FF7A10B86BD4E006B0AA3;
+			remoteGlobalIDString = F37FF7A10B86BD4E006B0AA3 /* bhobFFT (Upgraded) */;
 			remoteInfo = "bhobFFT (Upgraded)";
 		};
-		F37FF80B0B86BEFE006B0AA3 /* PBXContainerItemProxy */ = {
+		373C2F070C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F37FF64B0B86A534006B0AA3;
+			remoteGlobalIDString = F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */;
 			remoteInfo = "bhobChaos (Upgraded)";
+		};
+		373C2F090C94052100A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2EFE0C94051000A3D3FD /* bhobUGens */;
+			remoteInfo = bhobUGens;
+		};
+		373C2F0C0C94054000A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */;
+			remoteInfo = "JoshPVUGens (Upgraded)";
+		};
+		373C2F0E0C94054000A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+			remoteInfo = "JoshAmbiUGens (Upgraded)";
+		};
+		373C2F100C94054000A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+			remoteInfo = "JoshGrainUGens (Upgraded)";
+		};
+		373C2F120C94054000A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
+			remoteInfo = "JoshUGens (Upgraded)";
+		};
+		373C2F140C94054400A3D3FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2F0B0C94053300A3D3FD /* JoshUGens */;
+			remoteInfo = JoshUGens;
 		};
 		F3949AAB0B0D832A0066FA8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -282,41 +402,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = F3A15C610B5D6D2D00D75043;
 			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
-		};
-		F3A15D1B0B5D8C9A00D75043 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3A15D050B5D8C3900D75043;
-			remoteInfo = "MCLDFFTUGens (Upgraded)";
-		};
-		F3A15D1D0B5D8C9A00D75043 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3A15C610B5D6D2D00D75043;
-			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
-		};
-		F3A15D1F0B5D8C9A00D75043 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3A15CE90B5D8B6D00D75043;
-			remoteInfo = "MCLDChaosUGens (Upgraded)";
-		};
-		F3A15D210B5D8C9A00D75043 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3A15CD40B5D8B0600D75043;
-			remoteInfo = "MCLD_CQ_UGens (Upgraded)";
-		};
-		F3A15D230B5D8C9A00D75043 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3A15CC00B5D89BE00D75043;
-			remoteInfo = "MCLDBufferUGens (Upgraded)";
 		};
 		F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -339,13 +424,6 @@
 			remoteGlobalIDString = F3564BD30B0E82A4008AFA51;
 			remoteInfo = "STKUGens (Upgraded)";
 		};
-		F3FE074D0B0D765C00A29459 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3FE07270B0D759000A29459;
-			remoteInfo = "JoshUGens (Upgraded)";
-		};
 		F3FE07680B0D76C600A29459 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -359,13 +437,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = F3FE076E0B0D76E400A29459;
 			remoteInfo = "BEQSuiteUGens (Upgraded)";
-		};
-		F3FE079C0B0D778700A29459 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3FE07880B0D775500A29459;
-			remoteInfo = "JoshPVUGens (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -389,6 +460,8 @@
 		370E4D220C92DFA1000AE1EF /* lh5dec.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lh5dec.c; sourceTree = "<group>"; };
 		370E4D230C92DFA1000AE1EF /* test.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
 		370E4D240C92DFA1000AE1EF /* vtxfile.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = vtxfile.c; sourceTree = "<group>"; };
+		373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDGetenvUGenUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDGetenvUGen.cpp; sourceTree = "<group>"; };
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -563,6 +636,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		370E4D080C92DE86000AE1EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		373C2ED90C94048F00A3D3FD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -914,6 +994,7 @@
 				370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */,
 				370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */,
 				370E4CA70C92DAB6000AE1EF /* MCLDFilterUGens.cpp */,
+				373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */,
 				370E4CA80C92DAB6000AE1EF /* MoogFFUGen.cpp */,
 				F3D57CFA0B10297C0034519F /* ReverbUGens.cpp */,
 				F37FF66F0B86A5E2006B0AA3 /* bhobFFT.cpp */,
@@ -963,6 +1044,7 @@
 				37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */,
 				F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */,
 				F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */,
+				373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1016,6 +1098,13 @@
 				370E4D250C92DFA1000AE1EF /* ayemu.h in Headers */,
 				370E4D260C92DFA1000AE1EF /* ayemu_8912.h in Headers */,
 				370E4D270C92DFA1000AE1EF /* ayemu_vtxfile.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		373C2ED60C94048F00A3D3FD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1345,6 +1434,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen (Upgraded)" */;
+			buildPhases = (
+				373C2ED60C94048F00A3D3FD /* Headers */,
+				373C2ED70C94048F00A3D3FD /* Sources */,
+				373C2ED90C94048F00A3D3FD /* Frameworks */,
+				373C2EDA0C94048F00A3D3FD /* Rez */,
+				373C2EDB0C94048F00A3D3FD /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDGetenvUGen (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
@@ -1805,6 +1914,10 @@
 				370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */,
 				370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */,
 				37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */,
+				373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */,
+				373C2EE70C9404DC00A3D3FD /* MCLDUGens */,
+				373C2EFE0C94051000A3D3FD /* bhobUGens */,
+				373C2F0B0C94053300A3D3FD /* JoshUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -1832,6 +1945,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		370E4D090C92DE86000AE1EF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		373C2EDA0C94048F00A3D3FD /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2016,6 +2136,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		370E4D0A0C92DE86000AE1EF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		373C2EDB0C94048F00A3D3FD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2249,6 +2378,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		373C2ED70C94048F00A3D3FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37BDA12D0C92E27000929FD5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2428,55 +2565,115 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		370E4CEA0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+		373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */;
+			targetProxy = 373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2EEB0C9404EB00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */;
+			targetProxy = 373C2EEA0C9404EB00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2EED0C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 370E4CD10C92DB68000AE1EF /* MCLDMoogFFUGen (Upgraded) */;
-			targetProxy = 370E4CE90C92DBF6000AE1EF /* PBXContainerItemProxy */;
+			targetProxy = 373C2EEC0C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
-		370E4CEC0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+		373C2EEF0C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */;
-			targetProxy = 370E4CEB0C92DBF6000AE1EF /* PBXContainerItemProxy */;
+			targetProxy = 373C2EEE0C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
-		370E4CEE0C92DBF6000AE1EF /* PBXTargetDependency */ = {
+		373C2EF10C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
-			targetProxy = 370E4CED0C92DBF6000AE1EF /* PBXContainerItemProxy */;
+			targetProxy = 373C2EF00C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F36FC40E0C936C8B0055E368 /* PBXTargetDependency */ = {
+		373C2EF30C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
-			targetProxy = F36FC40D0C936C8B0055E368 /* PBXContainerItemProxy */;
+			target = F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */;
+			targetProxy = 373C2EF20C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F36FC4100C936C8B0055E368 /* PBXTargetDependency */ = {
+		373C2EF50C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
-			targetProxy = F36FC40F0C936C8B0055E368 /* PBXContainerItemProxy */;
+			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
+			targetProxy = 373C2EF40C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F37FF8040B86BEFE006B0AA3 /* PBXTargetDependency */ = {
+		373C2EF70C9404EB00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */;
+			targetProxy = 373C2EF60C9404EB00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2EF90C9404EB00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */;
+			targetProxy = 373C2EF80C9404EB00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2EFB0C9404EB00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */;
+			targetProxy = 373C2EFA0C9404EB00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2EFD0C9404FE00A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2EE70C9404DC00A3D3FD /* MCLDUGens */;
+			targetProxy = 373C2EFC0C9404FE00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F000C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */;
-			targetProxy = F37FF8030B86BEFE006B0AA3 /* PBXContainerItemProxy */;
+			targetProxy = 373C2EFF0C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F37FF8060B86BEFE006B0AA3 /* PBXTargetDependency */ = {
+		373C2F020C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF7E00B86BE6C006B0AA3 /* bhobGrain (Upgraded) */;
-			targetProxy = F37FF8050B86BEFE006B0AA3 /* PBXContainerItemProxy */;
+			targetProxy = 373C2F010C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F37FF8080B86BEFE006B0AA3 /* PBXTargetDependency */ = {
+		373C2F040C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF7CD0B86BE28006B0AA3 /* bhobFilt (Upgraded) */;
-			targetProxy = F37FF8070B86BEFE006B0AA3 /* PBXContainerItemProxy */;
+			targetProxy = 373C2F030C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F37FF80A0B86BEFE006B0AA3 /* PBXTargetDependency */ = {
+		373C2F060C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF7A10B86BD4E006B0AA3 /* bhobFFT (Upgraded) */;
-			targetProxy = F37FF8090B86BEFE006B0AA3 /* PBXContainerItemProxy */;
+			targetProxy = 373C2F050C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
-		F37FF80C0B86BEFE006B0AA3 /* PBXTargetDependency */ = {
+		373C2F080C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F37FF64B0B86A534006B0AA3 /* bhobChaos (Upgraded) */;
-			targetProxy = F37FF80B0B86BEFE006B0AA3 /* PBXContainerItemProxy */;
+			targetProxy = 373C2F070C94051E00A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F0A0C94052100A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2EFE0C94051000A3D3FD /* bhobUGens */;
+			targetProxy = 373C2F090C94052100A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F0D0C94054000A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */;
+			targetProxy = 373C2F0C0C94054000A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F0F0C94054000A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+			targetProxy = 373C2F0E0C94054000A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F110C94054000A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+			targetProxy = 373C2F100C94054000A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F130C94054000A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
+			targetProxy = 373C2F120C94054000A3D3FD /* PBXContainerItemProxy */;
+		};
+		373C2F150C94054400A3D3FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2F0B0C94053300A3D3FD /* JoshUGens */;
+			targetProxy = 373C2F140C94054400A3D3FD /* PBXContainerItemProxy */;
 		};
 		F3949AAC0B0D832A0066FA8D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2487,31 +2684,6 @@
 			isa = PBXTargetDependency;
 			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
 			targetProxy = F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */;
-		};
-		F3A15D1C0B5D8C9A00D75043 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */;
-			targetProxy = F3A15D1B0B5D8C9A00D75043 /* PBXContainerItemProxy */;
-		};
-		F3A15D1E0B5D8C9A00D75043 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
-			targetProxy = F3A15D1D0B5D8C9A00D75043 /* PBXContainerItemProxy */;
-		};
-		F3A15D200B5D8C9A00D75043 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */;
-			targetProxy = F3A15D1F0B5D8C9A00D75043 /* PBXContainerItemProxy */;
-		};
-		F3A15D220B5D8C9A00D75043 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */;
-			targetProxy = F3A15D210B5D8C9A00D75043 /* PBXContainerItemProxy */;
-		};
-		F3A15D240B5D8C9A00D75043 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */;
-			targetProxy = F3A15D230B5D8C9A00D75043 /* PBXContainerItemProxy */;
 		};
 		F3A8FA540B73DDA000296CCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2528,11 +2700,6 @@
 			target = F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */;
 			targetProxy = F3D57D3D0B102D5C0034519F /* PBXContainerItemProxy */;
 		};
-		F3FE074E0B0D765C00A29459 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
-			targetProxy = F3FE074D0B0D765C00A29459 /* PBXContainerItemProxy */;
-		};
 		F3FE07690B0D76C600A29459 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */;
@@ -2542,11 +2709,6 @@
 			isa = PBXTargetDependency;
 			target = F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */;
 			targetProxy = F3FE07820B0D771000A29459 /* PBXContainerItemProxy */;
-		};
-		F3FE079D0B0D778700A29459 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */;
-			targetProxy = F3FE079C0B0D778700A29459 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2936,6 +3098,190 @@
 					"-Wno-unknown-pragmas",
 				);
 				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		373C2EDD0C94048F00A3D3FD /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDGetenvUGenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		373C2EDE0C94048F00A3D3FD /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDGetenvUGenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		373C2EDF0C94048F00A3D3FD /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDGetenvUGenUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		373C2F190C94059100A3D3FD /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = MCLDUGensUB;
+			};
+			name = Development;
+		};
+		373C2F1A0C94059100A3D3FD /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = MCLDUGensUB;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		373C2F1B0C94059100A3D3FD /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MCLDUGensUB;
+			};
+			name = Default;
+		};
+		373C2F1D0C94059100A3D3FD /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = bhobUGens;
+			};
+			name = Development;
+		};
+		373C2F1E0C94059100A3D3FD /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = bhobUGens;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		373C2F1F0C94059100A3D3FD /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = bhobUGens;
+			};
+			name = Default;
+		};
+		373C2F210C94059100A3D3FD /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = JoshUGens;
+			};
+			name = Development;
+		};
+		373C2F220C94059100A3D3FD /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = JoshUGens;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		373C2F230C94059100A3D3FD /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = JoshUGens;
 			};
 			name = Default;
 		};
@@ -5116,6 +5462,46 @@
 				370E4D0C0C92DE86000AE1EF /* Development */,
 				370E4D0D0C92DE86000AE1EF /* Deployment */,
 				370E4D0E0C92DE86000AE1EF /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				373C2EDD0C94048F00A3D3FD /* Development */,
+				373C2EDE0C94048F00A3D3FD /* Deployment */,
+				373C2EDF0C94048F00A3D3FD /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		373C2F180C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "MCLDUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				373C2F190C94059100A3D3FD /* Development */,
+				373C2F1A0C94059100A3D3FD /* Deployment */,
+				373C2F1B0C94059100A3D3FD /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		373C2F1C0C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "bhobUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				373C2F1D0C94059100A3D3FD /* Development */,
+				373C2F1E0C94059100A3D3FD /* Deployment */,
+				373C2F1F0C94059100A3D3FD /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		373C2F200C94059100A3D3FD /* Build configuration list for PBXAggregateTarget "JoshUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				373C2F210C94059100A3D3FD /* Development */,
+				373C2F220C94059100A3D3FD /* Deployment */,
+				373C2F230C94059100A3D3FD /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
