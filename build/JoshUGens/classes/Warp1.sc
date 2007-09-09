@@ -9,10 +9,6 @@ Warp1 : UGen {
 		^this.multiNew('audio', bufnum, pointer, freqScale, 
 			windowSize, overlaps, windowRandRatio, interp).madd(mul, add);
 	}
-//	init { arg ... theInputs;
-//		inputs = theInputs;
-//		^this.initOutputs(1, rate);
-//	}
 }
 
 Warp2 : UGen {
@@ -25,19 +21,33 @@ Warp2 : UGen {
 
 }
 
-//
-//Warp2 : MultiOutUGen {
-//	*ar { arg numChannels, bufnum=0, pointer=0, freqScale = 1,
-//			windowSize = 0.2, overlaps = 8, windowRandRatio = 0.0, interp=1,
-//			mul = 1, add = 0; 
-//		^this.multiNew('audio', numChannels, bufnum, pointer, freqScale, 
-//			windowSize, overlaps, windowRandRatio, interp).madd(mul, add);
-//	}
-//
-//	init { arg argNumChannels ... theInputs;
-//		inputs = theInputs;
-//		^this.initOutputs(argNumChannels, rate);
-//	}
-//	
-//	argNamesInputsOffset { ^2 }
-//}
+Warp1MC : MultiOutUGen {
+	*ar { arg numChannels, bufnum=0, pointer=0, freqScale = 1,
+			windowSize = 0.2, overlaps = 8, windowRandRatio = 0.0, interp=1,
+			mul = 1, add = 0; 
+		^this.multiNew('audio', numChannels, bufnum, pointer, freqScale, 
+			windowSize, overlaps, windowRandRatio, interp).madd(mul, add);
+	}
+	
+	init { arg argNumChannels ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(argNumChannels, rate);
+	}
+	argNamesInputsOffset { ^2 }
+}
+
+Warp2MC : MultiOutUGen {
+	*ar { arg numChannels, bufnum=0, pointer=0, freqScale = 1,
+			windowSize = 0.2, winBuf, overlaps = 8, windowRandRatio = 0.0, interp=1,
+			mul = 1, add = 0; 
+		^this.multiNew('audio', numChannels, bufnum, pointer, freqScale, 
+			windowSize, winBuf, overlaps, windowRandRatio, interp).madd(mul, add);
+	}
+	
+	init { arg argNumChannels ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(argNumChannels, rate);
+	}
+	argNamesInputsOffset { ^2 }
+
+}
