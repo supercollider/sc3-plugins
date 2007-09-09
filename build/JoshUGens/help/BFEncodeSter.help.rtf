@@ -1,0 +1,68 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 BFEncodeSter			Ambisonic B format encoder for stereo signals\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 BFEncodeSter.ar(l, r, azimuth, width elevation, rho, gain)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 l
+\f2\b0  - left side of the input signal\
+r - right side of the input signal\
+
+\f0\b azimuth
+\f2\b0  -  in radians, -pi to pi\
+
+\f0\b width 
+\f2\b0 - in radians, width of stereo image\
+
+\f0\b elevation
+\f2\b0  -  in radians, -0.5pi to +0.5pi\
+
+\f0\b rho
+\f2\b0  - the speaker radius (1 places shound at the radius, <1 within the radius, >1 is outside the radius)\
+	beyond the radius, nothing happens.\
+
+\f0\b gain
+\f2\b0  - a control rate level input.
+\f1\fs18 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 Output channels are in order W,X,Y,Z.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf0 \
+s=Server.internal.boot;\
+s.scope;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 // You'll only hear the first two channels on a stereo setup.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs20 \cf3 SynthDef\cf0 (\cf4 \\testster\cf0 , \{\
+	\cf3 var\cf0  w, x, y, z;\
+	#w, x, y, z = \cf3 BFEncodeSter\cf0 .ar(\
+		\cf3 PinkNoise\cf0 .ar(\cf3 Decay\cf0 .ar(\cf3 Impulse\cf0 .ar(2, 0, 0.25))),\
+		\cf3 SinOsc\cf0 .ar(440, 0, \cf3 Decay\cf0 .ar(\cf3 Impulse\cf0 .ar(2, 0.5, 0.25))),\
+		MouseY.kr(0, pi), // center position of image\
+		\cf3 MouseX\cf0 .kr(0, pi) // width\
+		);\
+	\cf3 Out\cf0 .ar(0, \cf3 B2Ster\cf0 .ar(w, x, y))\
+	\}).load(s);\
+	\
+s.sendMsg(\\s_new, \\testster, a=s.nextNodeID, 0, 1);\
+ \
+s.sendMsg(\\n_free, a);}
