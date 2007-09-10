@@ -41,7 +41,7 @@ struct DbufTag : public Unit
 	SndBuf *m_buf;
 	int *m_rule_offsets;
 	int *m_rule_lengths;
-	int32 m_axiom_size;
+	int32 m_axiom_size; // all these int32 could be uint32, but sc_wrap would need support for this.
 	int32 m_read_pos;
 	int32 m_write_pos; 
 	int m_numRules;
@@ -137,7 +137,7 @@ void DbufTag_initInputs(DbufTag *unit, int argOffset, int size)
 	for(int i=0; i < size; i++) {
 		unit->m_rule_offsets[i] = position;
 		position += unit->m_rule_lengths[i];
-		// printf("m_rule_offsets[%i]: %i\n", i, unit->m_rule_offsets[i]);
+		// printf("m_rule_offsets[%d]: %d\n", i, unit->m_rule_offsets[i]);
 	}
 }
 
@@ -164,7 +164,7 @@ void DbufTag_reset(DbufTag *unit, int recycle, int inNumSamples)
 		// write axiom to tape
 		for(int i = 0; i < unit->m_write_pos; i++) {
 			bufData[i] = (float) DEMANDINPUT(dtag_argoffset + i);
-			// printf("axiom[%i] = %i\n", i, (int) bufData[i]);
+			// printf("axiom[%d] = %d\n", i, (int) bufData[i]);
 		}
 	} else if (recycle < 0) {
 		// recycle < 0 - write_pos is left where it is, read_pos is offset by recycle value
@@ -179,7 +179,7 @@ void DbufTag_reset(DbufTag *unit, int recycle, int inNumSamples)
 			if(unit->m_write_pos >= bufFrames) {
 				unit->m_write_pos = unit->m_write_pos % bufFrames;
 			}
-			//printf("new write: %i, read: %i\n", unit->m_write_pos, unit->m_read_pos);
+			//printf("new write: %ld, read: %ld\n", unit->m_write_pos, unit->m_read_pos);
 		}
 }
 
@@ -193,7 +193,7 @@ void DbufTag_end(DbufTag *unit, int which_case, int inNumSamples) {
 		DbufTag_reset(unit, recycle, inNumSamples);
 		if(mode == 4) {
 			printf("tag system was reset externally.\n");
-			if(recycle) { printf("recycling. axiom length: %i\n", recycle); }
+			if(recycle) { printf("recycling. axiom length: %d\n", recycle); }
 		}
 		return;
 	}
@@ -216,17 +216,17 @@ void DbufTag_end(DbufTag *unit, int which_case, int inNumSamples) {
 		
 		if(recycle) {
 			
-			printf("recycling. axiom length: %i\n", recycle);
+			printf("recycling. axiom length: %d\n", recycle);
 			//printf("new axiom:\n"); // todo.
 			DbufTag_reset(unit, recycle, inNumSamples);
 			
 			GET_BUF
-			printf("new axiom (index %i..%i): ", unit->m_read_pos, unit->m_write_pos);
-			int n = unit->m_write_pos - unit->m_read_pos;
+			printf("new axiom (index %ld..%ld): ", unit->m_read_pos, unit->m_write_pos);
+			int32 n = unit->m_write_pos - unit->m_read_pos;
 			if(n < 0) { n = sc_wrap(n, 0, bufFrames - 1); }
-			for(int i=0; i < n; i++) {
-					int j = sc_wrap(unit->m_read_pos + i, 0, bufFrames - 1);
-					printf("%i ", bufData[j]);
+			for(int32 i=0; i < n; i++) {
+					int32 j = sc_wrap(unit->m_read_pos + i, 0, bufFrames - 1);
+					printf("%d ", (int)bufData[j]);
 			}
 			printf("\n");
 			
@@ -281,15 +281,15 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 		if(max > 32) { max = 32; }
 		for(int i=0; i<max; i++) {
 			if(i == write_pos) { printf(">"); } else if (i == read_pos) { printf("|"); } else { printf(" "); }
-			printf("%i", (int) bufData[i]);
+			printf("%d", (int) bufData[i]);
 	
 		}
 		printf("\n");
-		printf("apply rule %i\n", ruleIndex);
+		printf("apply rule %d\n", ruleIndex);
 		
 	}
 	
-	//printf("writepos: %i readpos: %i rule_length: %i\n", unit->m_write_pos, unit->m_read_pos, rule_length);
+	//printf("writepos: %d readpos: %ld rule_length: %ld\n", unit->m_write_pos, unit->m_read_pos, rule_length);
 
 	if (!inNumSamples) {
 		DbufTag_end(unit, 0, inNumSamples);
@@ -299,7 +299,7 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 	int v = (int) DEMANDINPUT(dtag_deletion_number);
 	
 	if(ruleIndex >= unit-> m_numRules || (ruleIndex < 0)) {
-		// printf("no rule found for value %i\n", ruleIndex);
+		// printf("no rule found for value %ld\n", ruleIndex);
 		OUT0(0) = NAN;  // no rule found
 		return;
 	} else {
@@ -377,7 +377,7 @@ void Dtag_initInputs(Dtag *unit, int argOffset, int size)
 	for(int i=0; i < size; i++) {
 		unit->m_rule_offsets[i] = position;
 		position += unit->m_rule_lengths[i];
-		// printf("m_rule_offsets[%i]: %i\n", i, unit->m_rule_offsets[i]);
+		// printf("m_rule_offsets[%ld]: %ld\n", i, unit->m_rule_offsets[i]);
 	}
 }
 
@@ -395,7 +395,7 @@ void Dtag_reset(Dtag *unit, int recycle)
 		// write axiom to tape
 		for(int i = 0; i < unit->m_axiom_size; i++) {
 			unit->m_tape[i] = (int) DEMANDINPUT(dtag_argoffset + i);
-		//	printf("axiom[%i] = %i\n", i, unit->m_tape[i]);
+		//	printf("axiom[%ld] = %ld\n", i, unit->m_tape[i]);
 		}
 	} else if (recycle < 0) {
 			// recycle < 0 - write_pos is left where it is, read_pos is offset by recycle value
@@ -429,7 +429,7 @@ void Dtag_end(Dtag *unit, int which_case) {
 		Dtag_reset(unit, recycle);
 		if(mode == 4) { 
 			printf("tag system was reset.\n");
-			if(recycle) { printf("recycling. axiom length: %i\n", recycle); }
+			if(recycle) { printf("recycling. axiom length: %ld\n", recycle); }
 		}
 		return;
 	}
@@ -451,16 +451,16 @@ void Dtag_end(Dtag *unit, int which_case) {
 		}
 		
 		if(recycle) {
-			printf("recycling. axiom length: %i\n", recycle);
+			printf("recycling. axiom length: %ld\n", recycle);
 			
 			Dtag_reset(unit, recycle);
 			
-			printf("new axiom (index %i..%i): ", unit->m_read_pos, unit->m_write_pos);
-			int n = unit->m_write_pos - unit->m_read_pos;
+			printf("new axiom (index %ld..%ld): ", unit->m_read_pos, unit->m_write_pos);
+			int32 n = unit->m_write_pos - unit->m_read_pos;
 			if(n < 0) { n = sc_wrap(n, 0, unit->m_tape_size - 1); }
-			for(int i=0; i < n; i++) {
-					int j = sc_wrap(unit->m_read_pos + i, 0, unit->m_tape_size - 1);
-					printf("%i ", unit->m_tape[j]);
+			for(int32 i=0; i < n; i++) {
+					int32 j = sc_wrap(unit->m_read_pos + i, 0, unit->m_tape_size - 1);
+					printf("%d ", (int)unit->m_tape[j]);
 			}
 			printf("\n");
 			
@@ -508,15 +508,15 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 	
 		// verbose print mode
 	if(IN0(dtag_mode) >= 5.f) {
-		int max = unit->m_tape_size;
+		int max = (int) unit->m_tape_size;
 		if(max > 32) { max = 32; }
 		for(int i=0; i<max; i++) {
 			if(i == write_pos) { printf(">"); } else if (i == read_pos) { printf("|"); } else { printf(" "); }
-			printf("%i", unit->m_tape[i]);
+			printf("%d", unit->m_tape[i]);
 	
 		}
 		printf("\n");
-		printf("apply rule %i\n", ruleIndex);
+		printf("apply rule %d\n", ruleIndex);
 	}
 	
 	
@@ -528,9 +528,9 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 	
 	int v = (int) DEMANDINPUT(dtag_deletion_number);
 	
-	//printf("ruleIndex: %i rulesize: %i\n", ruleIndex, unit->m_numRules);
+	//printf("ruleIndex: %d rulesize: %ld\n", ruleIndex, unit->m_numRules);
 	if(ruleIndex >= unit->m_numRules || (ruleIndex < 0)) {
-		// printf("no rule found for value %i rulesize: %i\n", ruleIndex, unit->m_numRules);
+		// printf("no rule found for value %d rulesize: %ld\n", ruleIndex, unit->m_numRules);
 		OUT0(0) = NAN;  // no rule found
 		return;
 	} else {

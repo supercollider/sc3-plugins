@@ -43,6 +43,14 @@
 	37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
+	37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {999, 8106}}";
+			sepNavSelRange = "{14182, 0}";
+			sepNavVisRect = "{{0, 7469}, {999, 637}}";
+			sepNavWindowFrame = "{{15, 107}, {1038, 766}}";
+		};
+	};
 	631417A30A203392007B9355 /* All */ = {
 		activeExec = 0;
 	};
@@ -66,6 +74,20 @@
 			sepNavVisRect = "{{0, 0}, {1030, 698}}";
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
+	};
+	F33FCABC0C95A28A001B00DF /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */;
+	};
+	F33FCAC10C95A28C001B00DF /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */;
+		name = "TagSystemUgens.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1235;
+		vrLoc = 0;
 	};
 	F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 		activeExec = 0;
@@ -411,7 +433,7 @@
 	};
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeTarget = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+		activeTarget = 631417A30A203392007B9355 /* All */;
 		addToTargets = (
 			F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */,
 		);
@@ -529,8 +551,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 211053582;
-			PBXWorkspaceStateSaveDate = 211053582;
+			PBXPerProjectTemplateStateSaveDate = 211133060;
+			PBXWorkspaceStateSaveDate = 211133060;
+		};
+		perUserProjectItems = {
+			F33FCABC0C95A28A001B00DF /* PBXBookmark */ = F33FCABC0C95A28A001B00DF /* PBXBookmark */;
+			F33FCAC10C95A28C001B00DF /* PBXTextBookmark */ = F33FCAC10C95A28C001B00DF /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
