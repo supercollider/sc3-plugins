@@ -8,7 +8,7 @@ DbufTag : UGen {
 	*convertRules { arg axiom, rules;
 		^[axiom.size, rules.size] ++ axiom ++ rules.collect(_.size) ++ rules.flatten(1)
 	}
-	allSymbols { // needs fixing..
+	allSymbols {
 		^Dseq([
 				Dseq(axiom), 
 				Dswitch(rules.collect { |x| Dseq(x) }, this)
