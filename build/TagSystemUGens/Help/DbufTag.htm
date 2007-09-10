@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.41">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 113.0px; text-indent: -113.0px; font: 12.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 113.0px; text-indent: -113.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {font: 9.0px Monaco}
+span.s3 {color: #1454d8}
+span.s4 {color: #0000bf}
+span.s5 {color: #000000}
+span.s6 {color: #bf0000}
+span.s7 {color: #007300}
+span.s8 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>DbufTag</b></span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>demand rate tag system on a buffer</b></p>
+<p class="p2"><br></p>
+<p class="p1">superclass: UGen</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*new(bufnum, v, axiom, rules, recycle, mode)</b></p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s2"><span class="Apple-tab-span">	</span></span><b>bufnum</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a 1-channel buffer - when its size is reached, the process ends (dependent on <b>mode</b>).<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Theoretically, tag systems have an infinite tape size - practically, one may want to try different finite sizes.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Any number of tag processes may run concurrently on a single buffer,<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>overwriting each other's output. While not very expressive, this may have interesting results.</p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>other arguments and more explanations, see [<a href="Dtag.htm"><span class="s3">Dtag</span></a>]</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Examples</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7">// for all the following examples: allocate a buffer.</p>
+<p class="p7">// deallocate later with : b.free</p>
+<p class="p6"><br></p>
+<p class="p8">b = <span class="s4">Buffer</span>.alloc(s, 11125, 1);</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// One of the examples by Emil Post</p>
+<p class="p7">// directly listen to the tag system output (audification)</p>
+<p class="p7">// when the tape is empty, the synth is freed (doneAction: 2)</p>
+<p class="p8">(</p>
+<p class="p8">{ </p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> tag, index, axiom, rules, dt;</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span>dt = </span><span class="s4">SampleDur</span><span class="s5">.ir; </span>// play with audio rate</p>
+<p class="p8"><span class="Apple-tab-span">	</span>axiom = [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>rules = [[1, 0], [1, 1, 0, 1]];</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// axiom = axiom.scramble.keep(rrand(4, 16)).postln; // vary the axiom</p>
+<p class="p8"><span class="Apple-tab-span">	</span>v = 3;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">DbufTag</span>(b.bufnum, v, axiom, rules);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">Duty</span>.ar(dt, 0, tag, doneAction: 2).dup * 0.1</p>
+<p class="p8">}.play;</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p7">// the above as a frequency input for a sine oscillator</p>
+<p class="p7">// repeating it after it ended, with varying deletion number</p>
+<p class="p7">// a little pause is inserted at each repetition.</p>
+<p class="p8">(</p>
+<p class="p8">{</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> tag, axiom, rules, index;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> freq = 15000;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> deletionNumber = <span class="s4">MouseX</span>.kr(1, 6);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>axiom = [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>rules = [[0, 1], [1, 1, 0, 1, 0]];</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">DbufTag</span>(b.bufnum, deletionNumber, axiom, rules);</p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">Dseq</span>([tag, <span class="s4">Dseq</span>([0], freq * 0.3)], <span class="s4">inf</span>); <span class="s6">// a 0.1 sec pause each overrun.</span></p>
+<p class="p6"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span>index = <span class="s4">Duty</span>.ar(1 / freq, <span class="s4">Dseq</span>([2], <span class="s4">inf</span>), tag, doneAction:2);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">SinOsc</span>.ar(index * 1200 + 400).dup * 0.1</p>
+<p class="p8">}.play;</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p7">// recycling tag system.</p>
+<p class="p8">(</p>
+<p class="p8">{ </p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> tag, axiom, rules, index;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> freq = 15000;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> recycle = <span class="s4">MouseY</span>.kr(1, 34);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> deletionNumber = <span class="s4">MouseX</span>.kr(1, 6);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>axiom = [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>rules = [[0, 1], [1, 1, 0, 1, 0]];</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">DbufTag</span>(b.bufnum, deletionNumber, axiom, rules, recycle, 4); <span class="s6">// mode 4: post info</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>index = <span class="s4">Duty</span>.ar(1 / freq, 0, tag);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">SinOsc</span>.ar(index * 1200 + 400 * <span class="s4">Rand</span>(1, 1.6)).dup * 0.1</p>
+<p class="p8">}.play;</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p7">// read some bit of the buffer</p>
+<p class="p8">b.getn(0, 50, {<span class="s4">|x|</span> x.join.postln })</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// Emil Post Big Beats</p>
+<p class="p7">// many processes with different write speeds on one string.</p>
+<p class="p6"><br></p>
+<p class="p8">(</p>
+<p class="p8"><span class="s4">SynthDef</span>(<span class="s7">\post</span>, { |bufnum, out|</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> tag, axiom, rules, index;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> freq = <span class="s4">Rand</span>(10000, 15000);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> deletionNumber = <span class="s4">MouseX</span>.kr(1, 6); <span class="s6">// modulate deletion number</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>axiom = [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>rules = [[0, 1], [1, 1, 0, 1, 0]];</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">DbufTag</span>(bufnum, deletionNumber, axiom, rules);</p>
+<p class="p6"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span>index = <span class="s4">Duty</span>.ar(1 / freq, 0, tag, doneAction:2);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">Out</span>.ar(</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>out,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Pan2</span>.ar(index * 0.1, <span class="s4">LFNoise1</span>.kr(1))</p>
+<p class="p8"><span class="Apple-tab-span">	</span>)</p>
+<p class="p8">}).send(s);</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p8">(</p>
+<p class="p8">fork {</p>
+<p class="p8"><span class="Apple-tab-span">	</span>loop {</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Synth</span>(<span class="s7">\post</span>, [<span class="s7">\bufnum</span>, b.bufnum]);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand(0.3, 0.6).wait;</p>
+<p class="p8"><span class="Apple-tab-span">	</span>}</p>
+<p class="p8">}</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// slowly play the classic example system by Emil Post</p>
+<p class="p6"><br></p>
+<p class="p8">(</p>
+<p class="p7"><span class="s5">b.zero; </span>// empty the buffer.</p>
+<p class="p8">{ </p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> tag, trig;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> deletionNumber = 2;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> axiom = [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1];</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> rules = [[0, 0], [1, 1, 0, 1]];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>tag = <span class="s4">DbufTag</span>(b.bufnum, deletionNumber, axiom, rules);</p>
+<p class="p8"><span class="Apple-tab-span">	</span>trig = <span class="s4">Impulse</span>.kr(1, 0.5);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>SinOsc<span class="s5">.ar(</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Demand</span>.kr(trig, 0, tag).poll(trig, <span class="s8">"rule index"</span>)</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>* 100 + 300 + <span class="s4">SinOsc</span>.kr([4, 4.1], 0, 5)</p>
+<p class="p8"><span class="Apple-tab-span">	</span>)<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>* 0.1 ! 2</p>
+<p class="p8">}.play;</p>
+<p class="p6"><br></p>
+<p class="p8">fork {</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s4">var</span> deletionNumber = 2, tag = 0;</p>
+<p class="p8"><span class="Apple-tab-span">	</span>0.1.wait;</p>
+<p class="p8"><span class="Apple-tab-span">	</span>loop {</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.getn(0, 70, {<span class="s4">|x|</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x = x.copy.insert(tag, <span class="s8">"|"</span>);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.join.postln;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>tag = tag + deletionNumber;</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}); </span>// post the first 70 symbols every second.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>1.wait;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>}</p>
+<p class="p8">}</p>
+<p class="p6"><br></p>
+<p class="p8">);</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">/*</p>
+<p class="p7">1 0 1 0 1 0 0 1 1 1 0 1 0 1 1 1 1 0 0 1</p>
+<p class="p7"><span class="Apple-converted-space">    </span>1 0 1 0 0 1 1 1 0 1 0 1 1 1 1 0 0 1 1 1 0 1</p>
+<p class="p7"><span class="Apple-converted-space">        </span>1 0 0 1 1 1 0 1 0 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1</p>
+<p class="p7"><span class="Apple-converted-space">            </span>0 1 1 1 0 1 0 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1</p>
+<p class="p7"><span class="Apple-converted-space">                </span>1 1 0 1 0 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1 0 0</p>
+<p class="p7"><span class="Apple-converted-space">                    </span>0 1 0 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1 0 0 1 1 0 1</p>
+<p class="p7"><span class="Apple-converted-space">                        </span>0 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1 0 0 1 1 0 1 0 0</p>
+<p class="p7"><span class="Apple-converted-space">                          </span>1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1 0 0 1 1 0 1 0 0 0 0 0</p>
+<p class="p7"><span class="Apple-converted-space">                              </span>1 0 0 1 1 1 0 1 1 1 0 1 1 1 0 1 0 0 1 1 0 1 0 0 0 0 0 1 1 0 1</p>
+<p class="p7"><span class="Apple-converted-space">                    <span class="Apple-tab-span">	</span></span>...</p>
+<p class="p10"><span class="Apple-converted-space">                    </span></p>
+<p class="p10"><span class="Apple-converted-space">              </span></p>
+<p class="p7">creating the series: 1 1 1 0 1 0 0 1 1 ... <span class="Apple-converted-space">                                 </span></p>
+<p class="p7">*/</p>
+</body>
+</html>
