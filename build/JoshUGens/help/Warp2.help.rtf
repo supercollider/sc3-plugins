@@ -60,15 +60,17 @@ Examples:\
 
 \f3\b0\fs18 \cf0 (\
 var winenv;\
-winenv = \cf2 Env\cf0 ([0, 1, 1, 0], [0.1, 0.8, 0.1], [5, 0, -5]).asSignal(1024);\
+winenv = \cf2 Env\cf0 ([0, 1, 0.8, 0], [0.1, 0.1, 0.8], [5, -5, -5]).asSignal(1024);\
 winenv.plot; // the window\
 s.sendMsg(\cf3 \\b_allocRead\cf0 , 0, \cf4 "sounds/a11wlk01.wav"\cf0 , 0, -1);\
 s.sendMsg(\cf3 \\b_alloc\cf0 , 1, 1024, 1, [\\b_setn, 1, 0, 1024] ++ winenv);\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf2 SynthDef\cf0 (\cf3 \\warp\cf0 , \{\cf2 arg\cf0  buffer = 0, winbuf = 1;\
 	\cf2 var\cf0  out, pointer, filelength, pitch, env, dir;\
 	pointer = Line.kr(0, 1, 15)\cf2 ;\
-	pitch = LFNoise2.ar(1).range(0.25, 4.0).midiratio.round(0.25);\
+	pitch = LFNoise2.kr(1).range(0.25, 4.0).round(0.25);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 	dir = \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 ([1, 1, -1, -1], [9.999, 0.001, 5]), doneAction: 0);\
 	env = \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 ([0.01, 1, 1, 0.01], [0.1, 14, 0.9], \cf3 'exp'\cf0 ), doneAction: 2);\
 	// control overlaps with MouseX\

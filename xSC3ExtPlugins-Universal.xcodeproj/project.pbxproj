@@ -66,7 +66,6 @@
 				373C2F0A0C94052100A3D3FD /* PBXTargetDependency */,
 				373C2F150C94054400A3D3FD /* PBXTargetDependency */,
 				F3D57D240B102BBC0034519F /* PBXTargetDependency */,
-				F3FE07690B0D76C600A29459 /* PBXTargetDependency */,
 				F3FE07830B0D771000A29459 /* PBXTargetDependency */,
 				F3949AAC0B0D832A0066FA8D /* PBXTargetDependency */,
 				F3D57D3E0B102D5C0034519F /* PBXTargetDependency */,
@@ -423,13 +422,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = F3564BD30B0E82A4008AFA51;
 			remoteInfo = "STKUGens (Upgraded)";
-		};
-		F3FE07680B0D76C600A29459 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3FE07510B0D767000A29459;
-			remoteInfo = "AmbisonicUGens (Upgraded)";
 		};
 		F3FE07820B0D771000A29459 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2699,11 +2691,6 @@
 			isa = PBXTargetDependency;
 			target = F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */;
 			targetProxy = F3D57D3D0B102D5C0034519F /* PBXContainerItemProxy */;
-		};
-		F3FE07690B0D76C600A29459 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */;
-			targetProxy = F3FE07680B0D76C600A29459 /* PBXContainerItemProxy */;
 		};
 		F3FE07830B0D771000A29459 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

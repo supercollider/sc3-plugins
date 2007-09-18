@@ -716,7 +716,7 @@ CtkBuffer : CtkObj {
 				(messages.size > 0).if({
 					server.sync(cond);
 					messages.do({arg me; 
-						msg = me[1].postln;
+						msg = me[1];
 						server.sendBundle(nil, msg);
 						server.sync(cond);
 						});

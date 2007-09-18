@@ -100,17 +100,18 @@ struct PV_EvenBin : PV_Unit {};
 
 struct PV_Invert : PV_Unit {};
 
-//struct SCComplexBuf 
-//{
-//	float dc, nyq;
-//	SCComplex bin[1];
-//};
-//
-//struct SCPolarBuf 
-//{
-//	float dc, nyq;
-//	SCPolar bin[1];
-//};
+const int MAXDELAYBUFS = 512;
+
+struct PV_BinDelay : PV_Unit 
+{
+    SCComplexBuf *m_databuf[MAXDELAYBUFS];
+    SndBuf *m_deltimes; // the buffer holding the delay ammounts
+    SndBuf *m_fb; // the biffer holding the fedback values
+    float m_deltimesbufnum, m_fbbufnum;
+    float m_srbins;
+    int m_numFrames, m_curFrame, m_elapsedFrames;
+    int dataFlag[MAXDELAYBUFS];
+};
 
 extern "C"
 {
@@ -151,7 +152,6 @@ extern "C"
 	void PV_MinMagN_Ctor(PV_MinMagN *unit);
 	void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples);
 
-
 	void PV_FreqBuffer_Ctor(PV_FreqBuffer *unit);
 	void PV_FreqBuffer_Dtor(PV_FreqBuffer *unit);
 	void PV_FreqBuffer_first(PV_FreqBuffer* unit, int inNumSamples);
@@ -169,6 +169,12 @@ extern "C"
 	
 	void PV_Invert_Ctor(PV_Invert *unit);
 	void PV_Invert_next(PV_Invert* unit, int inNumSamples);
+	
+	void PV_BinDelay_Ctor(PV_BinDelay *unit);
+	void PV_BinDelay_Dtor(PV_BinDelay *unit);
+	void PV_BinDelay_first(PV_BinDelay *unit, int inNumSamples);
+	void PV_BinDelay_empty(PV_BinDelay *unit, int inNumSamples);
+	void PV_BinDelay_next(PV_BinDelay *unit, int inNumSamples);
 
 }
 
@@ -1118,6 +1124,167 @@ void PV_Invert_next(PV_Invert* unit, int inNumSamples)
 	RPUT
 }
 
+/*
+While all the code below is mine, this UGen owes much conceptually to the Native Instruments SpektralDelay (which I haven't actually heard... but I imagine it sounds a bit like ...) some SynthDefs that William 'Pete' Moss <petemoss at petemoss dot org> and I coded to try and emulate said SpektralDelay (not using FFT) and a final kick to implement this after playing with Jesse Chappell's FreqTweak < jesse at essej dot net >. 
+*/
+
+void PV_BinDelay_Ctor(PV_BinDelay* unit)
+{
+    OUT0(0) = IN0(0);
+    unit->m_deltimesbufnum = -1e9f;
+    unit->m_fbbufnum = -1e9f;
+    unit->m_elapsedFrames = 0;
+    SETCALC(PV_BinDelay_first);
+}
+
+void PV_BinDelay_Dtor(PV_BinDelay* unit)
+{
+    for(int i = 0; i < unit->m_numFrames; i++){
+	RTFree(unit->mWorld, unit->m_databuf[i]);
+	}
+}
+
+#define SETUP_DELS_FB \
+    float fdeltimesbufnum = IN0(2); \
+    if(fdeltimesbufnum != unit->m_deltimesbufnum){ \
+	uint32 deltimesbufnum = (uint32)fdeltimesbufnum; \
+	World *world = unit->mWorld; \
+	if (deltimesbufnum >= world->mNumSndBufs) deltimesbufnum = 0; \
+	unit->m_deltimes = world->mSndBufs + deltimesbufnum; \
+	} \
+    SndBuf *deltimebuf = unit->m_deltimes; \
+    float *delbufData __attribute__((__unused__)) = deltimebuf->data; \
+    float *deltimes = delbufData; \
+    float ffbbufnum = IN0(3); \
+    if(ffbbufnum != unit->m_fbbufnum){ \
+	uint32 fbbufnum = (uint32)ffbbufnum; \
+	World *world = unit->mWorld; \
+	if (fbbufnum >= world->mNumSndBufs) fbbufnum = 0; \
+	unit->m_fb = world->mSndBufs + fbbufnum; \
+	} \
+    SndBuf *fbbuf = unit->m_fb; \
+    float *fbbufData __attribute__((__unused__)) = fbbuf->data; \
+    float *fb = fbbufData; \
+        
+
+void PV_BinDelay_first(PV_BinDelay* unit, int inNumSamples)
+{
+    int delframe;
+    // get the current buffer
+    PV_GET_BUF
+    
+    SCComplexBuf *p = ToComplexApx(buf);
+
+    // figure out the maxdelay in seconds
+    float maxdelay = IN0(1);
+
+    SETUP_DELS_FB
+    
+    // how many frames is that?
+    float srbins = unit->m_srbins = ((float)unit->mWorld->mSampleRate / numbins);
+    int numFrames = unit->m_numFrames = (int)(srbins * maxdelay) + 1;
+    // allocate the big buffer for the delay
+    for(int i = 0; i < numFrames; i++){
+	unit->m_databuf[i] = (SCComplexBuf*)RTAlloc(unit->mWorld, buf->samples * sizeof(float));
+	}
+    int curFrame = unit->m_curFrame = numFrames - 1;
+    SCComplexBuf *delFrame = unit->m_databuf[curFrame];
+    // write the current values into the delay frame
+    memcpy(delFrame->bin, p->bin, numbins * sizeof(SCComplex));
+
+    unit->m_databuf[curFrame] = delFrame;
+    
+    // loop through the delayed frame, and write those values to the current buffer
+    for(int i = 0; i < numbins; i++){
+	delframe = curFrame + (int)roundf(deltimes[i] * srbins);
+	if(delframe >= numFrames) {
+	    p->bin[i].real = 0.f;
+	    p->bin[i].imag = 0.f;
+	    } else {
+	    p->bin[i] = unit->m_databuf[delframe]->bin[i];
+	    SCPolar thisone = unit->m_databuf[delframe]->bin[i].ToPolar();	
+	    thisone.mag *= fb[i];	
+	    unit->m_databuf[delframe]->bin[i] = thisone.ToComplex();
+	    unit->m_databuf[curFrame]->bin[i] += unit->m_databuf[delframe]->bin[i];
+	    }
+	}
+
+    unit->m_elapsedFrames++;    
+    
+    SETCALC(PV_BinDelay_empty);
+}
+
+void PV_BinDelay_empty(PV_BinDelay* unit, int inNumSamples)
+{
+    int delframe;
+    PV_GET_BUF
+    SCComplexBuf *p = ToComplexApx(buf);
+    int curFrame = unit->m_curFrame - 1;
+    int numFrames = unit->m_numFrames;
+    if(curFrame < 0) curFrame += numFrames;
+    unit->m_curFrame = curFrame;
+    float srbins = unit->m_srbins;
+
+    SETUP_DELS_FB
+
+    SCComplexBuf *delFrame = unit->m_databuf[curFrame];
+
+    memcpy(delFrame->bin, p->bin, numbins * sizeof(SCComplex));
+
+    for(int i = 0; i < numbins; i++){
+	delframe = curFrame + (int)roundf(deltimes[i] * srbins);
+	if(delframe >= numFrames) {
+	    p->bin[i].real = 0.f;
+	    p->bin[i].imag = 0.f;
+	    } else {
+	    p->bin[i] = unit->m_databuf[delframe]->bin[i];
+	    SCPolar thisone = unit->m_databuf[delframe]->bin[i].ToPolar();	
+	    thisone.mag *= fb[i];	
+	    unit->m_databuf[delframe]->bin[i] = thisone.ToComplex();
+	    unit->m_databuf[curFrame]->bin[i] += unit->m_databuf[delframe]->bin[i];
+	    }
+	}
+	
+    unit->m_databuf[curFrame] = delFrame;
+    
+    unit->m_elapsedFrames++;
+    
+    if(unit->m_elapsedFrames == numFrames) {
+	SETCALC(PV_BinDelay_next);
+	}
+
+}
+
+void PV_BinDelay_next(PV_BinDelay* unit, int inNumSamples)
+{
+    int delframe;
+    PV_GET_BUF
+    SCComplexBuf *p = ToComplexApx(buf);
+    int curFrame = unit->m_curFrame - 1;
+    int numFrames = unit->m_numFrames;
+    if(curFrame < 0) curFrame += numFrames;
+    unit->m_curFrame = curFrame;
+    float srbins = unit->m_srbins;
+
+    SETUP_DELS_FB
+
+    SCComplexBuf *delFrame = unit->m_databuf[curFrame];
+
+    memcpy(delFrame->bin, p->bin, numbins * sizeof(SCComplex));
+
+    for(int i = 0; i < numbins; i++){
+	delframe = curFrame + (int)roundf(deltimes[i] * srbins);
+	if(delframe >= numFrames) delframe -= numFrames;
+	p->bin[i] = unit->m_databuf[delframe]->bin[i];
+	SCPolar thisone = unit->m_databuf[delframe]->bin[i].ToPolar();	
+	thisone.mag *= fb[i];	
+	unit->m_databuf[delframe]->bin[i] = thisone.ToComplex();
+	unit->m_databuf[curFrame]->bin[i] += unit->m_databuf[delframe]->bin[i];
+	}
+	
+    unit->m_databuf[curFrame] = delFrame;
+
+}
 
 void init_SCComplex(InterfaceTable *inTable);
 
@@ -1141,5 +1308,6 @@ void load(InterfaceTable *inTable)
 	DefinePVUnit(PV_OddBin);
 	DefinePVUnit(PV_EvenBin);
 	DefinePVUnit(PV_Invert);
+	DefineDtorUnit(PV_BinDelay);
 	}
 	

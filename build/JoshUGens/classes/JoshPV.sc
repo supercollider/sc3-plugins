@@ -56,6 +56,13 @@ PV_Invert : UGen
 		}
 }
 
+PV_BinDelay : UGen 
+{
+	*new {arg buffer, maxdelay, delaybuf, fbbuf;
+		^this.multiNew('control', buffer, maxdelay, delaybuf, fbbuf);
+		}
+}
+
 /* these aren't really working... hmmm ... maybe make some UGens that output Freq and Mag data
 but doesn't sort it... */
 /*
