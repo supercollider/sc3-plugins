@@ -113,6 +113,14 @@ struct PV_BinDelay : PV_Unit
     int dataFlag[MAXDELAYBUFS];
 };
 
+struct PV_Freeze : Unit
+{
+	int m_numbins;
+	float *m_mags, m_dc, m_nyq;
+	float *m_prevPhases, *m_difPhases;
+};
+
+
 extern "C"
 {
 	#include "fftlib.h"
@@ -175,6 +183,10 @@ extern "C"
 	void PV_BinDelay_first(PV_BinDelay *unit, int inNumSamples);
 	void PV_BinDelay_empty(PV_BinDelay *unit, int inNumSamples);
 	void PV_BinDelay_next(PV_BinDelay *unit, int inNumSamples);
+	
+	void PV_Freeze_Ctor(PV_Freeze *unit);
+	void PV_Freeze_next(PV_Freeze *unit, int inNumSamples);
+	void PV_Freeze_Dtor(PV_Freeze *unit);
 
 }
 
@@ -1286,6 +1298,67 @@ void PV_BinDelay_next(PV_BinDelay* unit, int inNumSamples)
 
 }
 
+
+//////////////////////
+
+void PV_Freeze_next(PV_Freeze *unit, int inNumSamples)
+{
+	float curphase;
+	
+	PV_GET_BUF
+	
+	if (!unit->m_mags) {
+		unit->m_mags = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+		unit->m_difPhases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+		unit->m_prevPhases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+		unit->m_numbins = numbins;
+	} else if (numbins != unit->m_numbins) return;
+
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	float freeze = ZIN0(1);
+	float *mags = unit->m_mags;
+	float *difPhases = unit->m_difPhases;
+	float *prevPhases = unit->m_prevPhases;
+	if (freeze > 0.f) {
+		for (int i=0; i<numbins; ++i) {
+			p->bin[i].mag = mags[i];
+			prevPhases[i] += difPhases[i];
+			while (prevPhases[i] > pi) /* unwrap the phase */ 
+			    prevPhases[i] -= twopi; 
+			while (prevPhases[i] < pi) 
+			    prevPhases[i] += twopi; 
+			p->bin[i].phase = prevPhases[i];
+		}
+		p->dc = unit->m_dc;
+		p->nyq = unit->m_nyq;
+	} else {
+		for (int i=0; i<numbins; ++i) {
+			mags[i] = p->bin[i].mag;
+			// store the difference in phase between the current and last frame
+			difPhases[i] = p->bin[i].phase - prevPhases[i];
+			prevPhases[i] = p->bin[i].phase;
+		}
+		unit->m_dc = p->dc;
+		unit->m_nyq = p->nyq;
+	}
+}
+
+
+void PV_Freeze_Ctor(PV_Freeze* unit)
+{
+	SETCALC(PV_Freeze_next);
+	ZOUT0(0) = ZIN0(0);
+	unit->m_mags = 0;
+}
+
+void PV_Freeze_Dtor(PV_Freeze* unit)
+{
+	RTFree(unit->mWorld, unit->m_mags);
+	RTFree(unit->mWorld, unit->m_difPhases);
+	RTFree(unit->mWorld, unit->m_prevPhases);
+}
+
 void init_SCComplex(InterfaceTable *inTable);
 
 #define DefinePVUnit(name) \
@@ -1309,5 +1382,6 @@ void load(InterfaceTable *inTable)
 	DefinePVUnit(PV_EvenBin);
 	DefinePVUnit(PV_Invert);
 	DefineDtorUnit(PV_BinDelay);
+	DefineDtorUnit(PV_Freeze);
 	}
 	

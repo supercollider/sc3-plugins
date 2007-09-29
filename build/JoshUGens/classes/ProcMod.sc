@@ -4,7 +4,7 @@ ProcMod {
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
 		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
-		<tempo = 1;
+		<tempo = 1, oldclocks;
 	classvar addActions;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
@@ -25,6 +25,7 @@ ProcMod {
 			});
 		clock = argClock;// ?? {uniqueClock = true; TempoClock.new};
 		oldgroups = [];
+		oldclocks = [];
 		}
 		
 	*play {arg env, amp = 1, id, group, addAction = 0, target = 1, function, 
@@ -174,7 +175,8 @@ ProcMod {
 			});
 		// if retriggerable... clear out group now
 		retrig.if({
-			oldgroups = oldgroups.add(group); 
+			oldgroups = oldgroups.add(group);
+			oldclocks = oldclocks.add(curclock);
 			group = nil; 
 			isRunning = false; 
 			isReleasing = true;
@@ -191,6 +193,7 @@ ProcMod {
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
 		// if a tempo clock was created for this procMod, clear it
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
+		oldclocks.do({arg me; me.clear; me.stop});
 		curproc.stop;
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
 		isRunning = false;
@@ -311,6 +314,9 @@ ProcEvents {
 		<eventButton, <killButton, <releaseButton, >starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
 		<bigNum = false, bigNumWindow;
+	// below are for timeline functionality. record timestamps of a performance, or playback
+	// according to timeStamps of a performance
+	var tlrec = false, tlplay = false, <timeLine, <currentTime, <isPlaying, <clock, cper;
 	classvar addActions;
 	
 	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
@@ -330,7 +336,7 @@ ProcEvents {
 		index = 0;
 		lag = arglag;
 		firstevent = true;
-		arginitmod.notNil.if({initmod = arginitmod;});
+		arginitmod.notNil.if({initmod = arginitmod});
 		argkillmod.notNil.if({killmod = argkillmod});
 		events.do{arg me, i;
 			#proc, release = me;
@@ -365,7 +371,7 @@ ProcEvents {
 	
 	index_ {arg nextIdx;
 		index = nextIdx;
-		gui.if({window.view.children[0].value_(nextIdx)});
+		gui.if(AppClock.sched(0.01, {window.view.children[0].value_(nextIdx)}));
 		}
 		
 	next {
@@ -395,6 +401,7 @@ ProcEvents {
 		releaseArray[event].do{arg me; eventDict[me].release;
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(0);
 			})};
+		tlrec.if({timeLine.postln; timeLine.put(event, this.now)});
 	}
 	
 	releaseAll {arg rel = true;
@@ -403,12 +410,15 @@ ProcEvents {
 			window.view.children[2].string_("No events currently running");
 			window.view.children[1].focus(true);
 			});
+		tlplay.if({this.stopTimeLine});
+		tlrec.if({this.stopRecordTimeLine});
 	}
 
 	reset {
 		this.releaseAll(false);
-		eventDict.do{arg me; me.isRunning.if({me.kill})};
+		eventDict.do({arg me; me.isRunning.if({me.kill})});
 		server.freeAll;
+		initmod.isKindOf(ProcMod).if({initmod.kill});
 		firstevent = true;
 		index = 0;
 		lag = 0.1;
@@ -417,7 +427,7 @@ ProcEvents {
 			window.view.children[0].value_(0);
 			});
 		starttime = nil;
-		eventDict.do{arg me; me.group = server.nextNodeID};
+		eventDict.do({arg me; me.group = server.nextNodeID});
 
 	}
 	
@@ -450,7 +460,7 @@ ProcEvents {
 	
 	killAll {
 		eventDict.do{arg me; me.isRunning.if({me.kill})};
-		killmod.notNil.if({killmod.value});
+		killmod.notNil.if({killmod.value; killmod.kill});
 		initmod.notNil.if({initmod.kill});
 		gui.if({window.close; gui = false; pracwindow.notNil.if({pracwindow.close})});
 		pedal.if({pedrespsetup.remove; pedresp.remove; pedalgui.notNil.if({pedalgui.close})});
@@ -773,6 +783,90 @@ ProcEvents {
 		^this
 		}
 	
+	/* add time line functionality */	
+	saveTimeLine {arg path;
+		var fil;
+		fil = File.new(path, "w");
+		fil.put(timeLine.asString);
+		fil.close;
+		}
+		
+	loadTimeLine {arg path;
+		var fil, tmp;
+		fil = File.new(path, "r");
+		tmp = fil.readAllString;
+		tmp = tmp.interpret.asFloat; // build some error handling in here;
+		timeLine = tmp;
+		}
+	
+	timeLine_ {arg timeLineArray;
+		timeLineArray.isKindOf(String).if({
+			this.loadTimeLine(timeLineArray)
+			}, {
+			timeLineArray.isKindOf(Array).if({
+				timeLine = timeLineArray;
+				}, {
+				"timeLines should be either a path to a file containing a timeLine, or an array of time stamps".warn})})
+			}
+		
+	withTimeLine {arg timeLineArray, timeLineStart = 0;
+		timeLineArray.notNil.if({this.timeLine_(timeLineArray)});
+		currentTime = timeLineStart;
+		this.index_(
+			timeLine.indexOf(currentTime) ?? {
+				(currentTime < timeLine.last).if({
+					timeLine.indexOfGreaterThan(currentTime)
+					}, {
+					"Current time must be less then the total time in the time line".warn;
+					0})
+				}
+			);
+		}
+		
+	playTimeLine {arg wait;
+		var numEvs;
+		tlrec.not.if({
+			tlplay = true;
+			numEvs = eventDict.size;
+			clock = clock ?? {TempoClock.new};
+			wait = wait ?? { timeLine[index] - currentTime };
+			cper.isNil.if({
+				cper = {this.stopTimeLine};
+				CmdPeriod.add(cper);
+				});
+			clock.sched(wait, {
+				{this.next;}.defer;
+				index = index + 1;
+				(index <= numEvs).if({
+					wait = timeLine[index] - currentTime;
+					this.playTimeLine(wait);
+					}, {
+					this.stopTimeLine
+					})
+				});
+			})
+		}
+		
+	stopTimeLine {
+		tlplay = false;
+		clock.stop;
+		clock = nil;
+		CmdPeriod.remove(cper);
+		}
+				
+	recordTimeLine {
+		tlplay.not.if({
+			timeLine.isNil.if({
+				timeLine = Array.newClear(eventDict.size);
+				});
+			tlrec = true;
+			})
+		}
+		
+	stopRecordTimeLine {
+		tlrec = false;
+		}
+		
 	*initClass {
 		addActions = IdentityDictionary[
 			\head -> 0,

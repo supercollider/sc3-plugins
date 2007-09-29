@@ -63,6 +63,13 @@ PV_BinDelay : UGen
 		}
 }
 
+PV_Freeze : UGen
+{
+	*new { arg buffer, freeze = 0.0;
+		^this.multiNew('control', buffer, freeze)
+	}
+}
+
 /* these aren't really working... hmmm ... maybe make some UGens that output Freq and Mag data
 but doesn't sort it... */
 /*

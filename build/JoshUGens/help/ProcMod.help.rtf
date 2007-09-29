@@ -176,7 +176,7 @@ responder_( OSCresponder)
 	\
 \cf4 // create a new proc mod, and assign a function to it\cf0 \
 a = \cf2 ProcMod\cf0 .new(\cf2 Env\cf0 ([0, 1, 0], [1, 1], \cf3 \\sin\cf0 , 1), server: s);\
-a.function_(\
+a.function_(\{\
 	\cf2 Task\cf0 (\{\
 		\cf2 inf\cf0 .do\{\
 			\cf4 // start a new synth... run it inside this ProcMod's group,\cf0 \
@@ -186,7 +186,7 @@ a.function_(\
 			0.5.wait;\
 			\}\
 		\});\
-	);\
+	\});\
 \cf4 \
 // play it\cf0 \
 a.play;\
