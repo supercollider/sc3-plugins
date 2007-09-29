@@ -51,7 +51,7 @@ struct Dtag : public Unit
 {
 	int *m_rule_offsets;
 	int *m_rule_lengths;
-	int *m_tape;
+	float *m_tape;
 	int32 m_tape_size;
 	int32 m_axiom_size;
 	int32 m_read_pos;
@@ -276,7 +276,7 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 	int ruleIndex = (int) value;
 	
 	// verbose print mode
-	if(IN0(dtag_mode) >= 5.f) {
+	if(!(IN0(dtag_mode) < 5.f)) {
 		int max = bufFrames;
 		if(max > 32) { max = 32; }
 		for(int i=0; i<max; i++) {
@@ -304,7 +304,7 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 		return;
 	} else {
 	
-		OUT0(0) = ruleIndex;
+		OUT0(0) = value;
 		
 		cur_rule_pos = unit->m_rule_offsets[ruleIndex];
 		rule_length = unit->m_rule_lengths[ruleIndex];
@@ -354,7 +354,7 @@ void Dtag_initInputs(Dtag *unit, int argOffset, int size)
 	
 	// allocate tape
 	int32 memtapesize = (int32) unit->m_tape_size * sizeof(int);
-	unit->m_tape = (int*)RTAlloc(unit->mWorld, memtapesize);
+	unit->m_tape = (float*)RTAlloc(unit->mWorld, memtapesize);
 	memset(unit->m_tape, 0, memtapesize);
 	
 	
@@ -394,7 +394,7 @@ void Dtag_reset(Dtag *unit, int recycle)
 		
 		// write axiom to tape
 		for(int i = 0; i < unit->m_axiom_size; i++) {
-			unit->m_tape[i] = (int) DEMANDINPUT(dtag_argoffset + i);
+			unit->m_tape[i] = DEMANDINPUT(dtag_argoffset + i);
 		//	printf("axiom[%ld] = %ld\n", i, unit->m_tape[i]);
 		}
 	} else if (recycle < 0) {
@@ -504,15 +504,19 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 	
 	int32 write_pos = unit->m_write_pos;
 	int32 read_pos = unit->m_read_pos;
-	int ruleIndex = unit->m_tape[read_pos];
+	int32 tape_size = unit->m_tape_size;
+	float *tape = unit->m_tape;
+	float tapeVal = tape[read_pos];
+	int ruleIndex = (int) tapeVal;
+	
 	
 		// verbose print mode
-	if(IN0(dtag_mode) >= 5.f) {
+	if(!(IN0(dtag_mode) < 5.f)) {
 		int max = (int) unit->m_tape_size;
 		if(max > 32) { max = 32; }
 		for(int i=0; i<max; i++) {
 			if(i == write_pos) { printf(">"); } else if (i == read_pos) { printf("|"); } else { printf(" "); }
-			printf("%d", unit->m_tape[i]);
+			printf("%d", (int) unit->m_tape[i]);
 	
 		}
 		printf("\n");
@@ -534,18 +538,18 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 		OUT0(0) = NAN;  // no rule found
 		return;
 	} else {
-		OUT0(0) = (float) ruleIndex;
+		OUT0(0) = tapeVal;
 		cur_rule_pos = unit->m_rule_offsets[ruleIndex];
 		rule_length = unit->m_rule_lengths[ruleIndex];
 		
 		for(int i=0; i < rule_length; i++) {
-			unit->m_tape[write_pos] = DEMANDINPUT(cur_rule_pos + i);
+			tape[write_pos] = DEMANDINPUT(cur_rule_pos + i);
 			write_pos += 1;
 			if(write_pos == read_pos) {
 				Dtag_end(unit, 1);
 				return;
 			}
-			if(write_pos == unit->m_tape_size) {
+			if(write_pos == tape_size) {
 				write_pos = 0;
 			}
 		}
@@ -555,7 +559,7 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 				Dtag_end(unit, 2);
 				return;
 			}
-			if(read_pos == unit->m_tape_size) {
+			if(read_pos == tape_size) {
 				read_pos = 0;
 			}
 		}
