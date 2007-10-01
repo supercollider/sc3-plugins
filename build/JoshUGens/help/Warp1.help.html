@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+    span.s1 {color: #007300}
+    span.s2 {color: #606060}
+    span.s3 {color: #0000bf}
+    span.s4 {color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Warp1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Warp a buffer with a time pointer</b></p>
+<p class="p2"><br></p>
+<p class="p3">Inspired by Chad Kirby's SuperCollider2 Warp1 class, which was inspired by Richard Karpen's sndwarp for CSound. A granular time strecher and pitchshifter.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Warp1.ar(buffer, pointer, freqScale, windowSize, overlaps, windowRandRatio, interp, mul, add)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>buffer</b> - the buffer number of a mono soundfile.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>pointer</b> - the position in the buffer.<span class="Apple-converted-space">  </span>The value should be between 0 and 1, with 0 being the begining</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>of the buffer, and 1 the end.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>freqScale</b>- the amount of frequency shift. 1.0 is normal, 0.5 is one octave down, 2.0 is one octave up.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Negative values play the soundfile backwards.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>windowSIze</b> - the size of each grain window</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>overlaps</b> - the number of overlaping windows.</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>windowRandRatio </b>- the amount of randomness to the windowing function.<span class="Apple-converted-space">  </span>Must be between 0 (no</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>randomness) to 1.0 (probably to random actually)</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>interp -<i> </i></b>the interpolation method used for pitchshifting grains. 1 = no interpolation. 2 = linear.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>4 = cubic interpolation (more computationally intensive).</p>
+<p class="p2"><b></b><br></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p3"><b>s.boot;</b></p>
+<p class="p4">(</p>
+<p class="p4">s.sendMsg(<span class="s1">\b_allocRead</span>, 0, <span class="s2">"sounds/a11wlk01.wav"</span>, 0, -1);</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="s3">SynthDef</span>(<span class="s1">\warp</span>, {<span class="s3">arg</span> buffer = 0;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">var</span> out, pointer, filelength, pitch, env, dir;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pointer = Line.kr(0, 1, 15)<span class="s3">;</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>pitch = LFNoise2.ar(1).range(0.25, 4.0).midiratio.round(0.25);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>dir = <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>([1, 1, -1, -1], [9.999, 0.001, 5]), doneAction: 0);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>env = <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>([0.01, 1, 1, 0.01], [0.1, 14, 0.9], <span class="s1">'exp'</span>), doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>out = <span class="s3">Warp1</span>.ar(buffer, pointer, pitch, 0.1, 8, 0.05, 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(0, out);</p>
+<p class="p4">}).send(s);</p>
+<p class="p5"><br></p>
+<p class="p4">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(<span class="s1">\s_new</span>, <span class="s1">\warp</span>, 1000, 0, 0, <span class="s1">\buffer</span>, 0);</p>
+<p class="p5"><br></p>
+<p class="p4">//Using Mouse Controls for freqshift and pointer arguments</p>
+<p class="p4">(</p>
+<p class="p4">s.sendMsg(<span class="s1">\b_allocRead</span>, 0, <span class="s2">"sounds/a11wlk01.wav"</span>, 0, -1);</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="s3">SynthDef</span>(<span class="s1">\warp</span>, {<span class="s3">arg</span> buffer = 0;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">var</span> out, pointer, filelength, env, dir, freq;</p>
+<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span>pointer = </span>MouseX.kr(0, 1);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>freq = MouseY.kr(0.5, 4);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>env = <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>([0.01, 1, 1, 0.01], [0.1, 14, 0.9], <span class="s1">'exp'</span>), doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>out = <span class="s3">Warp1</span>.ar(buffer, pointer, freq, 0.1, 8, 0.05, 1.0);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(0, out * env);</p>
+<p class="p4">}).send(s);</p>
+<p class="p5"><br></p>
+<p class="p4">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(<span class="s1">\s_new</span>, <span class="s1">\warp</span>, 1000, 0, 0, <span class="s1">\buffer</span>, 0);</p>
+<p class="p5"><br></p>
+</body>
+</html>

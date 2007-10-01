@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+    span.s1 {color: #000000}
+    span.s2 {color: #007300}
+    span.s3 {color: #0000bf}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>MonoGrain<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>granulates real-time input</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>MonoGrain.ar(in, winsize, grainrate, winrandpct, mul, add)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>in - </b>a mono input</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>winsize - </b>the window size in seconds</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>grainrate - </b>the rate of which new grains are created (in Hz)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>winrandpct - </b>a randomness factor for window size (as a percentage of the winsize)<b><span class="Apple-tab-span">	</span></b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p4">s.boot;</p>
+<p class="p5"><br></p>
+<p class="p4">(</p>
+<p class="p6"><span class="s1">s.sendMsg(</span><span class="s2">\b_allocRead</span><span class="s1">, 0, </span>"sounds/a11wlk01-44_1.aiff"<span class="s1">, 0, -1);</span></p>
+<p class="p5"><br></p>
+<p class="p4"><span class="s3">SynthDef</span>(<span class="s2">\monograin</span>, {<span class="s3">arg</span> buffer = 0;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">var</span> out, winsize, grainrate;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>winsize = MouseX.kr(0.1, 0.01);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>grainrate = MouseY.kr(10, 4);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>out = MonoGrain.ar(<span class="s3">PlayBuf</span>.ar(1, buffer, loop: 1), winsize, grainrate, 0);<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(0, out);</p>
+<p class="p4">}).send(s);</p>
+<p class="p5"><br></p>
+<p class="p4">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\monograin</span>, 1000, 0, 0, <span class="s2">\buffer</span>, 0);</p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(\n_free, 1000)</p>
+</body>
+</html>

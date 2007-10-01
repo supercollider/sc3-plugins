@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+    span.s1 {text-decoration: underline}
+    span.s2 {font: 9.0px Monaco}
+    span.s3 {font: 9.0px Monaco; color: #0000bf}
+    span.s4 {font: 9.0px Monaco; color: #007300}
+    span.s5 {color: #0000bf}
+    span.s6 {color: #007300}
+    span.s7 {color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>OverlapTexture<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>overlap events</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>OverlapTexture.new(synthdef, server)</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>synthdef - a valid synthdef (or an array of synthdefs). If the synthdef is an array of<span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>synthdefs, OverlapTexture will randomly choose which synthdef to play on each</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>new synth creation.</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>server - if not specified, will will use the default server</b></p>
+<p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p5"><span class="s1"><b>Usage</b></span></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b>Where OverlapTexture in SC2 was a Spawn wrapper, in SC3 OverlapTexture is a Task wrapper. To work properly, your synthdef MUST have arguments for \susdur and \transdur which control an envelope's attack, sustain and decay portions (e.g.<span class="Apple-converted-space"> </span></b><span class="s2"> </span><span class="s3">Env</span><span class="s2">([0, 1, 1, 0], [transdur, susdur, transdur], </span><span class="s4">\sin</span><span class="s2">) </span><b>). Values for these arguments will be passed into the Synth from the OverlapTexture class, and do not need to be included with the arguments.</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b>*play(overlaps, susdur, transdur, maxRepeats, addaction, target, args)</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>overlaps - the number of events that should occur at one time</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>susdur - the sustain portion of the synths envelope</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>transdur - the attack and decay portions of the the synths envelopes</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>maxRepeats - if an integer is specified here, then the function will create no more</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>then this number of synths.<span class="Apple-converted-space">  </span>Defaults to inf.</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>addaction<span class="Apple-converted-space">  </span>-<span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>0 - add the new node to the the head of the group specified by the add target ID.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>1 - add the new node to the the tail of the group specified by the add target ID.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>2 - add the new node just before the node specified by the add target ID.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>3 - add the new node just after the node specified by the add target ID.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>4 - the new node replaces the node specified by the add target ID.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>target<span class="Apple-converted-space">  </span>- a target ID</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>args - an array containing arguments to be passed to the synth (transdur<span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and susdur should be excluded). arg values can also be functions that</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>will be evaluated when the synth is called. Can also be an array of args</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>that correspond with the array of synthdefs.</b></p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s5">SynthDef</span>(<span class="s6">\sinetest</span>, {<span class="s5">arg</span> freq, amp = 0.2, susdur = 4, transdur = 1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> env, sound;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>env = <span class="s5">EnvGen</span>.kr(</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([0, 1, 1, 0], [transdur, susdur, transdur], <span class="s6">\sin</span>),</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>doneAction: 2);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>sound = <span class="s5">SinOsc</span>.ar(freq, 0, amp) * env;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(0, sound);</p>
+<p class="p7">}).load(s);</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p7">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p7">a = <span class="s5">OverlapTexture</span>.new(<span class="s6">\sinetest</span>, s);</p>
+<p class="p6"><br></p>
+<p class="p7">a.play(60, 1, 1, 200, args: [<span class="s6">\freq</span>, {440.rrand(880)}, <span class="s6">\amp</span>, 60.reciprocal])</p>
+<p class="p6"><br></p>
+<p class="p7">a.stop;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p8">// with a array of synthdefs</p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s5">SynthDef</span>(<span class="s6">\sinetest</span>, {<span class="s5">arg</span> freq, amp = 0.2, susdur = 4, transdur = 1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> env, sound;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>env = <span class="s5">EnvGen</span>.kr(</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([0, 1, 1, 0], [transdur, susdur, transdur], <span class="s6">\sin</span>),</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>doneAction: 2);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>sound = <span class="s5">SinOsc</span>.ar(freq, 0, amp) * env;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(0, <span class="s5">Pan2</span>.ar(sound, <span class="s5">Rand</span>.new(-1.0, 1.0)));</p>
+<p class="p7">}).load(s);</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s5">SynthDef</span>(<span class="s6">\noisetest</span>, {<span class="s5">arg</span> amp = 0.2, susdur = 4, transdur = 1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> env, sound, freq;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>env = <span class="s5">EnvGen</span>.kr(</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([0, 1, 1, 0], [transdur, susdur, transdur], <span class="s6">\sin</span>),</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>doneAction: 2);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>freq = 440.0.rrand(110.0).dup + [0, 5.0.rrand(50.0)];</p>
+<p class="p7"><span class="Apple-tab-span">	</span>sound = BPF.ar(<span class="s5">PinkNoise</span>.ar(amp), freq, 0.01.rrand(0.1)) * env ;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(0, sound);</p>
+<p class="p7">}).load(s);</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p7">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p9"><span class="s7">a = </span><span class="s5">OverlapTexture</span><span class="s7">.new([</span>\sinetest<span class="s7">, </span>\noisetest<span class="s7">], s);</span></p>
+<p class="p6"><br></p>
+<p class="p7">a.play(60, 1, 1, 200, args: [[<span class="s6">\freq</span>, {440.rrand(880)}, <span class="s6">\amp</span>, 60.reciprocal], [<span class="s6">\amp</span>, 10.reciprocal]])</p>
+<p class="p6"><br></p>
+<p class="p7">a.stop;</p>
+<p class="p6"><br></p>
+<p class="p7">a.isPlaying</p>
+</body>
+</html>

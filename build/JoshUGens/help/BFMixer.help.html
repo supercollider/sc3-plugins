@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #0000bf}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; min-height: 16.0px}
+    span.s1 {font: 12.0px Helvetica; color: #000000}
+    span.s2 {color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>BFMixer<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>A GUI class for mixing BFormat files together</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3">See a screenshot at http://students.washington.edu/joshp/BFMixer.jpg</p>
+<p class="p4"><br></p>
+<p class="p3">To pull up a new mixer, type:</p>
+<p class="p4"><br></p>
+<p class="p5"><span class="s1"><span class="Apple-tab-span">	</span></span>BFMixer<span class="s2">.new;</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p3">The BFMixer can handle up to ten BFormat Tracks at one time. In addition, each track can have independant amplitude and an envelope applied to it.<span class="Apple-converted-space">  </span>In addition, the final result has an overall amplitude and envelope control, as well as several output options.</p>
+<p class="p4"><br></p>
+<p class="p6"><b>The Tracks</b></p>
+<p class="p7"><b></b><br></p>
+<p class="p3">Each track needs to first have a file loaded into it. Press the load file button to select a soundfile. Once a file is selected, a few defaults are filled in.<span class="Apple-converted-space">  </span>The file is placed at theh begining of the mix (time 0), a default amplitude of 0dB is given, as well as a default envelope of [[0, 1, 1, 1], 1].</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Changing a tracks start-time in the overall mix: </b>enter a new time in the "File Start In Mix" number field.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Trimming a file: </b>to take time off the begining of the file, enter a value in the "Skip Time Into File" field. To trim from the end, enter a value in "Shorten File".</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Changing overall amplitude of a track: </b>Either adjust with the "Amp (in dB)" slider, or enter a value to the left of the slider. To mute a track, press the "mute" button.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Adjusting the tracks envelope: </b>Envelopes are in the following format: [[time1, value1, time2, value2 ... timeN, valueN], curve].<span class="Apple-converted-space">  </span>For envelopes, all times are scaled from 0 to 1 (0 is the begining of the track, 1 is the end). All values are in dB. A curve value of 1 produces linear breakpoints. &gt;1 produce concave curves, and values between 0 and 1 produce convex curves. If the base button is pushed (changing its value to exp) exponential curves are produced.<span class="Apple-converted-space">  </span>Beware of curves crossing 0 when using exponential envelopes.</p>
+<p class="p4"><br></p>
+<p class="p6"><b>The Mix as a whole</b></p>
+<p class="p4"><br></p>
+<p class="p3"><b>Adjusting tracks within the mix: </b>Each files duration is represented as a blue bar in the mixer.<span class="Apple-converted-space">  </span>This bar will adjust its placement and length according to the length of the track and its placement in relation to the rest of the files in the mix.<span class="Apple-converted-space">  </span>You can also move the soundfiles placement by ctrl-clicking the bar, and moving it.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Playing a mix: </b>Press the play button to start playing, press stop to stop.<span class="Apple-converted-space">  </span>You can also adjust the current start time by placing a value in the "Start Time In Mix"<span class="Apple-converted-space">  </span>number field. The output format can be adjusted to the following: BFormat (for mixing BFormat files into a new BFormat file), stereo, quad, UHJ (a two channel encoded file which can be decoded back to BFormat, the decoded to any other speaker configuration) and a 6 channel "5.1" mix.<span class="Apple-converted-space">  </span>The channel order in "5.1" is lf, cf, rf, rr, lr, low-pass. This is not a Dolby encoded signal! The individual tracks could be split into 6 mono tracks, however, and encoded using your favorite encoding software.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Writing a new soundfile: </b>Use the write file button to create a mixed soundfle in NRT mode.<span class="Apple-converted-space">  </span>Because NRT doesn't work with the localhost server running (this server is started for you by default, and a bug in Mac OS creates this problem), the server is quit, and the new file is written.<span class="Apple-converted-space">  </span>I know this is messy, and when I have some time, I will no longer limit the mixer to a specfic server, or kill anything for you... but for now, this is how it works. The file will be written with the output parameters selected.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Saving and loading a mix:<span class="Apple-converted-space"> </span></b> The parameters of a mix can be saved to a text file for later usage.<span class="Apple-converted-space">  </span>Select "Save Current Mix" and create a file.<span class="Apple-converted-space">  </span>"Load a Mix" will load a previously saved mix.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Close All: </b>Closes all.</p>
+</body>
+</html>

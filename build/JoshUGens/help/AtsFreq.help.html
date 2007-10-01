@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+    span.s1 {font: 18.0px Helvetica}
+    span.s2 {text-decoration: underline}
+    span.s3 {color: #0000bf}
+    span.s4 {color: #606060}
+    span.s5 {color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>AtsFreq / AtsAmp<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Use Freq and Amp data from a given partial</b></p>
+<p class="p1"><span class="s1"><b>AtsParInfo<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>One UGen to return both Amp and Freq info</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>AtsFreq.kr(atsbuffer partialNum, filePointer, mul, add);</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>- returns frequency information for a given partial</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>partialNumber - </b>the number of the partial to return frequency data for.<span class="Apple-converted-space">  </span>Partial 0 is the first partial.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>AtsAmp.kr(atsbuffer, partialNum, filePointer, mul, add);</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>- returns amplitude information for a given partial</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>partialNumber - </b>the number of the partial to return frequency data for.<span class="Apple-converted-space">  </span>Partial 0 is the first partial.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><b>AtsParInfo.kr(atsbuffer, partialNum, filePointer, mul, add);</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>- returns amplitude and freq information for a given partial</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>partialNumber - </b>the number of the partial to return frequency data for.<span class="Apple-converted-space">  </span>Partial 0 is the first partial.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="s2"><b>Usage</b></span></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p3">For resynthesis purposes, an ATS file needs to be loaded into a buffer.<span class="Apple-converted-space">  </span>When loading an ATS file, you need to supply a buffer number to store ATS data in.</p>
+<p class="p2"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p5">a = <span class="s3">AtsFile</span>.new(<span class="s4">"sounds/a11wlk01.ats"</span>).loadToBuffer;</p>
+<p class="p2"><b></b><br></p>
+<p class="p7"><span class="s5">( </span>//use freq and amp information for a filter ugen (just the first 30 partials)</p>
+<p class="p5">{</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> noise, freqs, amps, partials;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>partials = <span class="s3">Array</span>.series(30, 1, 1);</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// outputs an array of 30 freq values;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>freqs = <span class="s3">AtsFreq</span>.kr(a.buffer, partials, <span class="s3">MouseX</span>.kr(0, 1));</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// outputs an array of 30 amp values</p>
+<p class="p5"><span class="Apple-tab-span">	</span>amps = <span class="s3">AtsAmp</span>.kr(a.buffer, partials, <span class="s3">MouseX</span>.kr(0, 1));</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// feed these into a reson filter, mix down to one channel</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Mix</span>.ar(<span class="s3">Resonz</span>.ar(<span class="s3">WhiteNoise</span>.ar(20), freqs, 0.01, amps));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>}.play(s);</p>
+<p class="p3">);</p>
+<p class="p2"><br></p>
+<p class="p7"><span class="s5">( </span>//use freq and amp information for a filter ugen (just the first 30 partials)</p>
+<p class="p5">{</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> noise, freqs, amps, freqs1, amps1, partials, out;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>partials = <span class="s3">Array</span>.series(30, 1, 1);</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// outputs an array of 30 freq values;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>out = <span class="s3">AtsParInfo</span>.kr(a.buffer, partials, <span class="s3">MouseX</span>.kr(0, 1));</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// need to flop the array output</p>
+<p class="p5"><span class="Apple-tab-span">	</span>#amps, freqs = out.flop;</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// outputs an array of 30 amp values</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// feed these into a reson filter, mix down to one channel</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Mix</span>.ar(<span class="s3">Resonz</span>.ar(<span class="s3">WhiteNoise</span>.ar(20), freqs, 0.01, amps ));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>}.play(s);</p>
+<p class="p3">);</p>
+</body>
+</html>

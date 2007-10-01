@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #bf0000}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #606060}
+    span.s1 {color: #0000bf}
+    span.s2 {color: #007300}
+    span.s3 {color: #000000}
+    span.s4 {font: 15.0px Lucida Grande}
+    span.s5 {font: 15.0px Lucida Grande; color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1">// remap magnitudes to a new mag curve</p>
+<p class="p1">// a curve of Env([0, 1], [1]) will output the input</p>
+<p class="p1">// a curve of Env([1, 0], [1]) will output the inverse magnitudes (loud partials are quiet, quiet</p>
+<p class="p1">// partials are loud... and so on.<span class="Apple-converted-space">  </span>The Env times don't have to equal 1 (they are scaled internally</p>
+<p class="p1">// to 1 no matter what)</p>
+<p class="p2"><br></p>
+<p class="p3">{<span class="s1">PinkNoise</span>.ar(0.03) + <span class="s1">SinOsc</span>.ar(440, 0, 0.5)}.play(s)</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1">SynthDef</span>(<span class="s2">\magmap</span>, {<span class="s1">arg</span> fftbuf, envbuf;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, chain, out;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>in = <span class="s1">PinkNoise</span>.ar(0.03) + <span class="s1">SinOsc</span>.ar(440, 0, 0.5);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>chain = <span class="s1">FFT</span>(fftbuf, in);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>chain = <span class="s1">PV_MagMap</span>(chain, envbuf);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>out = <span class="s1">IFFT</span>(chain);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(1, out);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>}).load(s);</p>
+<p class="p2"><br></p>
+<p class="p3">s.boot;</p>
+<p class="p2"><br></p>
+<p class="p4">// the fft buf</p>
+<p class="p3">s.sendMsg(<span class="s2">\b_alloc</span>, 0, 2048);</p>
+<p class="p4">// the curve to map the sound onto</p>
+<p class="p3">a = <span class="s1">Env</span>([0, 1, 0], [0.05, 0.95], <span class="s2">\welch</span>).plot;</p>
+<p class="p4">// send the signal to a buffer</p>
+<p class="p3">s.sendBundle(0.1, [<span class="s2">\b_alloc</span>, 1, 256, 1, [<span class="s2">\b_setn</span>, 1, 0, 256] ++ a.asSignal(256)])</p>
+<p class="p4">// start the synth</p>
+<p class="p3">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\magmap</span>, z = s.nextNodeID, 0, 1, <span class="s2">\fftbuf</span>, 0, <span class="s2">\envbuf</span>, 1);</p>
+<p class="p2"><br></p>
+<p class="p4">// free it</p>
+<p class="p3">s.sendMsg(<span class="s2">\n_free</span>, z);</p>
+<p class="p2"><br></p>
+<p class="p3">a = <span class="s1">Env</span>([1, 0], [1]).plot;</p>
+<p class="p4">// send the signal to a buffer</p>
+<p class="p3">s.sendBundle(0.1, [<span class="s2">\b_alloc</span>, 1, 256, 1, [<span class="s2">\b_setn</span>, 1, 0, 256] ++ a.asSignal(256)])</p>
+<p class="p3">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\magmap</span>, z = s.nextNodeID, 0, 1, <span class="s2">\fftbuf</span>, 0, <span class="s2">\envbuf</span>, 1);</p>
+<p class="p4">// free it</p>
+<p class="p3">s.sendMsg(<span class="s2">\n_free</span>, z);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1">SynthDef</span>(<span class="s2">\magmap</span>, {<span class="s1">arg</span> fftbuf, envbuf, sndbuf;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, chain, out;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>in = <span class="s1">PlayBuf</span>.ar(1, sndbuf, <span class="s1">BufRateScale</span>.kr(sndbuf), loop: 1);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>chain = <span class="s1">FFT</span>(fftbuf, in);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>chain = <span class="s1">PV_MagMap</span>(chain, envbuf);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>out = <span class="s1">IFFT</span>(chain);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(1, out);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>}).load(s);</p>
+<p class="p2"><br></p>
+<p class="p3">s.boot;</p>
+<p class="p2"><br></p>
+<p class="p4">// the fft buf</p>
+<p class="p3">s.sendMsg(<span class="s2">\b_alloc</span>, 0, 2048);</p>
+<p class="p4">// the curve to map the sound onto</p>
+<p class="p3">a = Env([0, 1], [1], \lin); // get original back</p>
+<p class="p3">//a = <span class="s1">Env</span>([1, 0], [1], <span class="s2">\lin</span>); // noise partials are loudest</p>
+<p class="p3">//a = Env([0.1, 1, 0.1], [0.5, 0.5], \exp); // shape the sound!</p>
+<p class="p3">//a = Env([0.1, 1, 0.1], [0.8, 0.2], [\exp, \sin]);</p>
+<p class="p4">// send the signal to a buffer</p>
+<p class="p3">s.sendBundle(0.1, [<span class="s2">\b_alloc</span>, 1, 256, 1, [<span class="s2">\b_setn</span>, 1, 0, 256] ++ a.asSignal(256)],</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span>[</span><span class="s2">\b_allocRead</span><span class="s3">, 2, </span>"/Users/joshp/SND/<span class="s4">vln-g4.aiff"</span><span class="s5">]</span><span class="s3">)</span></p>
+<p class="p4">// start the synth</p>
+<p class="p3">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\magmap</span>, z = s.nextNodeID, 0, 1, <span class="s2">\fftbuf</span>, 0, <span class="s2">\envbuf</span>, 1, \sndbuf, 2);</p>
+<p class="p2"><br></p>
+<p class="p3">s.sendMsg(<span class="s2">\n_free</span>, z);</p>
+<p class="p3">s.quit</p>
+<p class="p2"><br></p>
+</body>
+</html>

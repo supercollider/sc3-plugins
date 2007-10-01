@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+    span.s1 {color: #0000bf}
+    span.s2 {color: #007300}
+    span.s3 {color: #606060}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Warp2<span class="Apple-tab-span">	</span>MC<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Warp a multi-channel buffer with a time pointer, with<span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>window control</b></p>
+<p class="p2"><br></p>
+<p class="p3">Inspired by Chad Kirby's SuperCollider2 Warp1 class, which was inspired by Richard Karpen's sndwarp for CSound. A granular time strecher and pitchshifter. A buffer containing a table to be used for the window must be passed in.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3"><b>Warp2MC.ar(numChannels, buffer, pointer, freqScale, windowSize, winBuf, overlaps, windowRandRatio,<span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>interp, mul, add)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>numChannels</b> - number of channels that the buffer will be.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>this must be a fixed integer. The architechture of the SynthDef</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cannot change after it is compiled.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>warning: if you supply a bufnum of a buffer that has a different</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>numChannels then you have specified to the Warp2MC, it will</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fail silently.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>buffer</b> - the buffer number of a mono soundfile.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>pointer</b> - the position in the buffer.<span class="Apple-converted-space">  </span>The value should be between 0 and 1, with 0 being the begining</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>of the buffer, and 1 the end.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>freqScale</b>- the amount of frequency shift. 1.0 is normal, 0.5 is one octave down, 2.0 is one octave up.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Negative values play the soundfile backwards.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>windowSIze</b> - the size of each grain window</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>winBuf</b> - a buffer containing a window table.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>overlaps</b> - the number of overlaping windows.</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>windowRandRatio </b>- the amount of randomness to the windowing function.<span class="Apple-converted-space">  </span>Must be between 0 (no</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>randomness) to 1.0 (probably to random actually)</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>interp -<i> </i></b>the interpolation method used for pitchshifting grains. 1 = no interpolation. 2 = linear.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>4 = cubic interpolation (more computationally intensive).</p>
+<p class="p2"><b></b><br></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p4">s.boot;</p>
+<p class="p2"><b></b><br></p>
+<p class="p4">(</p>
+<p class="p4">var winenv;</p>
+<p class="p4">winenv = <span class="s1">Env</span>([0, 1, 1, 0], [0.1, 0.8, 0.1], [5, 0, -5]).asSignal(1024);</p>
+<p class="p4">winenv.plot; // the window</p>
+<p class="p4">s.sendMsg(<span class="s2">\b_allocRead</span>, 0, <span class="s3">"sounds/test.aif"</span>, 0, -1);</p>
+<p class="p4">s.sendMsg(<span class="s2">\b_alloc</span>, 1, 1024, 1, [\b_setn, 1, 0, 1024] ++ winenv);</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="s1">SynthDef</span>(<span class="s2">\warp</span>, {<span class="s1">arg</span> buffer = 0, winbuf = 1;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">var</span> out, pointer, filelength, pitch, env, dir;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pointer = Line.kr(0, 1, 15)<span class="s1">;</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>pitch = LFNoise2.kr(1).range(0.25, 4.0).round(0.25).midiratio;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>dir = <span class="s1">EnvGen</span>.kr(<span class="s1">Env</span>([1, 1, -1, -1], [9.999, 0.001, 5]), doneAction: 0);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>env = <span class="s1">EnvGen</span>.kr(<span class="s1">Env</span>([0.01, 1, 1, 0.01], [0.1, 14, 0.9], <span class="s2">'exp'</span>), doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>// control overlaps with MouseX</p>
+<p class="p4"><span class="Apple-tab-span">	</span>out = <span class="s1">Warp2MC</span>.ar(2, buffer, pointer, pitch, 0.1, winbuf, MouseX.kr(1, 10), 0.05, 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(0, out);</p>
+<p class="p4">}).send(s);</p>
+<p class="p5"><br></p>
+<p class="p4">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\warp</span>, 1000, 0, 0, <span class="s2">\buffer</span>, 0, \winbuf, 1);</p>
+<p class="p5"><br></p>
+<p class="p4">s.sendMsg(\b_free, 0);</p>
+<p class="p4">s.sendMsg(\b_free, 1);</p>
+</body>
+</html>

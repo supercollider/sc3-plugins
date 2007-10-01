@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    span.s1 {text-decoration: underline}
+    span.s2 {color: #000000}
+    span.s3 {color: #0000bf}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Player<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>A soundfile player and BFormat Decoder</b></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><b>Player.new(soundfilepath, formatOut, starttime, outbus, amp)</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>all arguments are optional</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>soundfilepath</b> - the path (complete or relative) to a soundfile</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>formatOut </b>- a string. defaults to \straight which simply plays the soundfile directly to the output.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>If your file is a BFormat file (3 or 4 channel) you can choose:</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\stereo</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\uhj</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\quad</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>\hex</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>starttime</b> - an initial starttime for playback</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>outbus </b>- the starting outbus for playback</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>amp</b> - an initial amp value</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>xywz- </b>true or false.<span class="Apple-converted-space">  </span>This wil decode Ambsonic files recorded for middle side monitoring. (default is false)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>env- </b>any fixed duration envelope (Env, InterplEnv, InterplXYC) to be played over the soundfiles duration</p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>Player uses the internal server, and will boot it for you if it isn't already running</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p4"><span class="s1"><b>Instance Methods</b></span></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>play</b>-<b> </b>plays the soundfile.</p>
+<p class="p3"><b>pause</b>- pauses the soundfile.<span class="Apple-converted-space">  </span>Playback begins where the file is paused</p>
+<p class="p3"><b>stop</b> - stops the soundfile. Playback begins from starttime</p>
+<p class="p3"><b>formatOut</b> - changes the output format</p>
+<p class="p3"><b>starttime</b> - change the starttime</p>
+<p class="p3"><b>endtime</b> - change the endtime</p>
+<p class="p3"><b>gui</b> - create a GUI controller with optional scope</p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p5"><br></p>
+<p class="p6">// create a new player</p>
+<p class="p7"><span class="s2">a = </span><span class="s3">Player</span><span class="s2">.new(</span>"sounds/a11wlk01-44_1.aiff"<span class="s2">)</span></p>
+<p class="p5"><br></p>
+<p class="p6">// play it</p>
+<p class="p8">a.play;</p>
+<p class="p5"><br></p>
+<p class="p6">// pause it</p>
+<p class="p8">a.pause;</p>
+<p class="p5"><br></p>
+<p class="p6">// play it again</p>
+<p class="p8">a.play;</p>
+<p class="p5"><br></p>
+<p class="p6">// stop it</p>
+<p class="p8">a.stop;</p>
+<p class="p5"><br></p>
+<p class="p6">// create a GUI</p>
+<p class="p8">a.gui;</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+</body>
+</html>

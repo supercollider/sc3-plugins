@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 21.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 21.0px Helvetica; min-height: 25.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica; min-height: 18.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0000bf}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #bf0000}
+    span.s1 {color: #0000bf}
+    span.s2 {color: #007300}
+    span.s3 {color: #000000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>PV_MaxMagN<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>return the N strongest bins</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>PV_MaxMagN(buffer, numbins)</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s1">SynthDef</span>(<span class="s2">\maxmag</span>, {<span class="s1">arg</span> fftbuf;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, chain, out;</p>
+<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>in = </span>SinOsc.ar(440, 0, 0.5) + PinkNoise.ar * 0.5;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>chain = <span class="s1">FFT</span>(fftbuf, in);</p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span></span>// let the strongest (0 - 1023) partials through</p>
+<p class="p6"><span class="Apple-tab-span">	</span>chain = <span class="s1">PV_MaxMagN</span>(chain, MouseX.kr(0,1023));</p>
+<p class="p6"><span class="Apple-tab-span">	</span>out = <span class="s1">IFFT</span>(chain);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(0, out);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>}).load(s);</p>
+<p class="p5"><br></p>
+<p class="p6">s.boot;</p>
+<p class="p5"><br></p>
+<p class="p8">// the fft buf</p>
+<p class="p6">s.sendMsg(<span class="s2">\b_alloc</span>, 0, 2048);</p>
+<p class="p8">// start the synth</p>
+<p class="p6">s.sendMsg(<span class="s2">\s_new</span>, <span class="s2">\maxmag</span>, z = s.nextNodeID, 0, 1, <span class="s2">\fftbuf</span>, 0);</p>
+<p class="p8">// free it</p>
+<p class="p6">s.sendMsg(<span class="s2">\n_free</span>, z);</p>
+<p class="p6">s.sendMsg(\b_free, 0);</p>
+<p class="p5"><br></p>
+<p class="p6">s.quit</p>
+<p class="p5"><br></p>
+</body>
+</html>

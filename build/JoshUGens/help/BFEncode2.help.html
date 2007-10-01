@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+    span.s1 {color: #0000bf}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>BFEncode2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Ambisonic B format encoder</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>BFEncode2.ar(in, point_x, point_y, elevation, gain)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>in</b> - input signal</p>
+<p class="p3"><b>point_x </b>- a point in the x axis</p>
+<p class="p3"><b>point_y </b>- a point in the y axis</p>
+<p class="p3"><b>elevation</b> -<span class="Apple-converted-space">  </span>in radians, -0.5pi to +0.5pi</p>
+<p class="p3"><b>gain</b> - a control rate level input.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">x, y positions-</p>
+<p class="p3"><span class="Apple-tab-span">	</span>0 -1 behind</p>
+<p class="p3"><span class="Apple-tab-span">	</span>0 1 in front<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>-1 0 right</p>
+<p class="p3"><span class="Apple-tab-span">	</span>1 0 left</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p3">Output channels are in order W,X,Y,Z.</p>
+<p class="p2"><br></p>
+<p class="p5">s=Server.local.boot;</p>
+<p class="p6">// You'll only hear the first two channels on a stereo setup.</p>
+<p class="p5">play({<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>#w, x, y, z = <span class="s1">BFEncode2</span>.ar(<span class="s1">WhiteNoise</span>.ar, MouseX.kr(-2, 2), MouseY.kr(2, -2), 0, 0.3);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>//decode for 4 channels</p>
+<p class="p7"><span class="Apple-tab-span">	</span>DecodeB2.ar(4, w, x, y, 0.5);</p>
+<p class="p5">});</p>
+</body>
+</html>
