@@ -75,15 +75,19 @@
 			sepNavWindowFrame = "{{15, 46}, {1069, 827}}";
 		};
 	};
-	F351F8E30CA977BC00835A8E /* PBXTextBookmark */ = {
+	F33A1F380CB2988D0078AA72 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */;
+	};
+	F33A1F400CB29A8B0078AA72 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */;
-		name = "JoshPVUGens.cpp: 120";
-		rLen = 0;
-		rLoc = 2484;
+		name = srbins;
+		rLen = 6;
+		rLoc = 32718;
 		rType = 0;
-		vrLen = 1179;
-		vrLoc = 1795;
+		vrLen = 1831;
+		vrLoc = 32052;
 	};
 	F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 		activeExec = 0;
@@ -237,16 +241,6 @@
 		objects = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
 		);
-	};
-	F35942770CA9C43B0077B8B5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */;
-		name = "JoshPVUGens.cpp: 1339";
-		rLen = 0;
-		rLoc = 37127;
-		rType = 0;
-		vrLen = 1284;
-		vrLoc = 36256;
 	};
 	F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */ = {
 		activeExec = 0;
@@ -432,8 +426,8 @@
 	F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2588, 19432}}";
-			sepNavSelRange = "{37127, 0}";
-			sepNavVisRect = "{{0, 18372}, {1030, 698}}";
+			sepNavSelRange = "{36447, 0}";
+			sepNavVisRect = "{{0, 17698}, {1030, 698}}";
 			sepNavWindowFrame = "{{366, 51}, {1069, 827}}";
 		};
 	};
@@ -557,12 +551,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 212451681;
-			PBXWorkspaceStateSaveDate = 212451681;
+			PBXPerProjectTemplateStateSaveDate = 213031050;
+			PBXWorkspaceStateSaveDate = 213031050;
 		};
 		perUserProjectItems = {
-			F351F8E30CA977BC00835A8E /* PBXTextBookmark */ = F351F8E30CA977BC00835A8E /* PBXTextBookmark */;
-			F35942770CA9C43B0077B8B5 /* PBXTextBookmark */ = F35942770CA9C43B0077B8B5 /* PBXTextBookmark */;
+			F33A1F380CB2988D0078AA72 /* PBXBookmark */ = F33A1F380CB2988D0078AA72 /* PBXBookmark */;
+			F33A1F400CB29A8B0078AA72 /* PBXTextBookmark */ = F33A1F400CB29A8B0078AA72 /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
@@ -578,8 +572,8 @@
 	F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 2100}}";
-			sepNavSelRange = "{2400, 0}";
-			sepNavVisRect = "{{0, 1048}, {1030, 698}}";
+			sepNavSelRange = "{2353, 32}";
+			sepNavVisRect = "{{0, 905}, {1030, 698}}";
 			sepNavWindowFrame = "{{61, 4}, {1069, 827}}";
 		};
 	};

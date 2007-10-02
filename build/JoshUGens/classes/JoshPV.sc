@@ -58,8 +58,8 @@ PV_Invert : UGen
 
 PV_BinDelay : UGen 
 {
-	*new {arg buffer, maxdelay, delaybuf, fbbuf;
-		^this.multiNew('control', buffer, maxdelay, delaybuf, fbbuf);
+	*new {arg buffer, maxdelay, delaybuf, fbbuf, hop = 0.5;
+		^this.multiNew('control', buffer, maxdelay, delaybuf, fbbuf, hop);
 		}
 }
 
@@ -69,7 +69,22 @@ PV_Freeze : UGen
 		^this.multiNew('control', buffer, freeze)
 	}
 }
+/*
+PV_Record : UGen
+{
+	*new { arg buffer, recbuf, offset = 0.0, run = 0.0, loop = 0.0;
+		^this.multiNew('control', buffer, recbuf, offset, run, loop);
+	}
+}
 
+// pointer from 0-1
+PV_PlayBack : UGen
+{
+	*new { arg buffer, playbuf, pointer;
+		^this.multiNew('control', buffer, playbuf, pointer);
+	}
+}
+*/
 /* these aren't really working... hmmm ... maybe make some UGens that output Freq and Mag data
 but doesn't sort it... */
 /*

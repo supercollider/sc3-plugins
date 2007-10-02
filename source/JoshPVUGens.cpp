@@ -108,7 +108,7 @@ struct PV_BinDelay : PV_Unit
     SndBuf *m_deltimes; // the buffer holding the delay ammounts
     SndBuf *m_fb; // the biffer holding the fedback values
     float m_deltimesbufnum, m_fbbufnum;
-    float m_srbins;
+    float m_srbins, m_hop;
     int m_numFrames, m_curFrame, m_elapsedFrames;
     int dataFlag[MAXDELAYBUFS];
 };
@@ -1189,12 +1189,13 @@ void PV_BinDelay_first(PV_BinDelay* unit, int inNumSamples)
 
     // figure out the maxdelay in seconds
     float maxdelay = IN0(1);
+    float hop = unit->m_hop = 0.5 / IN0(4);
 
     SETUP_DELS_FB
     
     // how many frames is that?
     float srbins = unit->m_srbins = ((float)unit->mWorld->mSampleRate / numbins);
-    int numFrames = unit->m_numFrames = (int)(srbins * maxdelay) + 1;
+    int numFrames = unit->m_numFrames = (int)(srbins * maxdelay * hop) + 1;
     // allocate the big buffer for the delay
     for(int i = 0; i < numFrames; i++){
 	unit->m_databuf[i] = (SCComplexBuf*)RTAlloc(unit->mWorld, buf->samples * sizeof(float));
@@ -1229,13 +1230,14 @@ void PV_BinDelay_first(PV_BinDelay* unit, int inNumSamples)
 void PV_BinDelay_empty(PV_BinDelay* unit, int inNumSamples)
 {
     int delframe;
+    float hop = unit->m_hop;
     PV_GET_BUF
     SCComplexBuf *p = ToComplexApx(buf);
     int curFrame = unit->m_curFrame - 1;
     int numFrames = unit->m_numFrames;
     if(curFrame < 0) curFrame += numFrames;
     unit->m_curFrame = curFrame;
-    float srbins = unit->m_srbins;
+    float srbins = unit->m_srbins * hop;
 
     SETUP_DELS_FB
 
@@ -1276,7 +1278,7 @@ void PV_BinDelay_next(PV_BinDelay* unit, int inNumSamples)
     int numFrames = unit->m_numFrames;
     if(curFrame < 0) curFrame += numFrames;
     unit->m_curFrame = curFrame;
-    float srbins = unit->m_srbins;
+    float srbins = unit->m_srbins * unit->m_hop;
 
     SETUP_DELS_FB
 

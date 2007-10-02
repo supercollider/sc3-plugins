@@ -190,7 +190,7 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>F3A7DD2B0C9ECF81003E66D9</string>
+				<string>F33A1F3E0CB29A8B0078AA72</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>JoshPVUGens.cpp</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
@@ -198,16 +198,16 @@
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>F3A7DD2C0C9ECF81003E66D9</string>
+						<string>F33A1F3F0CB29A8B0078AA72</string>
 						<key>PBXProjectModuleLabel</key>
 						<string>JoshPVUGens.cpp</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>F35942770CA9C43B0077B8B5</string>
+						<string>F33A1F400CB29A8B0078AA72</string>
 						<key>history</key>
 						<array>
-							<string>F351F8E30CA977BC00835A8E</string>
+							<string>F33A1F380CB2988D0078AA72</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -260,8 +260,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -372,6 +370,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -408,9 +408,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>F35942750CA9C43B0077B8B5</string>
+				<string>F33A1F3C0CB29A8B0078AA72</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>F35942760CA9C43B0077B8B5</string>
+				<string>F33A1F3D0CB29A8B0078AA72</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -545,8 +545,8 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>F3FE07450B0D763800A29459</string>
+		<string>F33A1F3E0CB29A8B0078AA72</string>
 		<string>/Users/joshp/src/supercollider/sc3-plugins/xSC3ExtPlugins-Universal.xcodeproj</string>
-		<string>F3A7DD2B0C9ECF81003E66D9</string>
 	</array>
 	<key>WindowString</key>
 	<string>171 188 1001 625 0 0 1440 878 </string>
@@ -626,7 +626,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>F3FE07450B0D763800A29459</string>
-				<string>F35942780CA9C43B0077B8B5</string>
+				<string>F33A1F410CB29A8B0078AA72</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
