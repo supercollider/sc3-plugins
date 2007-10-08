@@ -1,24 +1,31 @@
 #! /bin/sh
+# blackrain at realizedsound dot net
+# Andrzej Kopec - akopec at chopin dot edu dot pl - Oct 07 2007
 
 svn export --force build Extensions
 
-mv AmbisonicUGens.so Extensions/AmbisonicUGens
+mv AmbisonicUGens.so Extensions/JoshUGens
 mv BEQSuiteUGens.so Extensions/BEQSuiteUGens
 mv BlackrainUGens.so Extensions/BlackrainUGens
-mv JoshPVUGens.so Extensions/JoshPVUGens
+mv JoshPVUGens.so Extensions/JoshUGens
 mv JoshUGens.so Extensions/JoshUGens
 mv ReverbUGens.so Extensions/ReverbUGens
-mv MCLD*.so Extensions/MCLD_UGens
+mv MCLD*.so AY*.so Extensions/MCLD_UGens
 mv LoopBuf.so Extensions/ljpclasses
 mv bhob*.so Bhob*.so Extensions/bhobUGens
+mv SymbolicMachines.so Extensions/SymbolicMachines
+mv TagSystemUgens.so Extensions/TagSystemUGens
+
 
 # for now disable this
 mkdir Extensions/MCLD_UGens/test
 mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/MCLD_UGens/test
 
-mkdir Extensions/test
-mv Extensions/StkUGens Extensions/test
+#mkdir Extensions/test
+#mv Extensions/StkUGens Extensions/test
 
 #mv StkUGens.so Extensions/StkUGens
 #cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
+
+
 
