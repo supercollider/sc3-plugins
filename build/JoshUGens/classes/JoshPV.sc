@@ -69,8 +69,8 @@ PV_Freeze : UGen
 		^this.multiNew('control', buffer, freeze)
 	}
 }
-/*
-PV_Record : UGen
+
+PV_RecordBuf : UGen
 {
 	*new { arg buffer, recbuf, offset = 0.0, run = 0.0, loop = 0.0;
 		^this.multiNew('control', buffer, recbuf, offset, run, loop);
@@ -78,13 +78,13 @@ PV_Record : UGen
 }
 
 // pointer from 0-1
-PV_PlayBack : UGen
+PV_PlayBuf : UGen
 {
-	*new { arg buffer, playbuf, pointer;
-		^this.multiNew('control', buffer, playbuf, pointer);
+	*new { arg buffer, playbuf, rate = 1.0, offset = 0.0, run = 0.0, loop = 0.0;
+		^this.multiNew('control', buffer, playbuf, rate, offset, run, loop);
 	}
 }
-*/
+
 /* these aren't really working... hmmm ... maybe make some UGens that output Freq and Mag data
 but doesn't sort it... */
 /*

@@ -11,13 +11,15 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0c319d}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #702b2a}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0e3499}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #672d2d}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0c319d}
+span.s2 {color: #0e3499}
 span.s3 {color: #000000}
-span.s4 {color: #586933}
-span.s5 {color: #702b2a}
+span.s4 {color: #5c6836}
+span.s5 {color: #672d2d}
+span.s6 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -72,12 +74,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">*/</p>
 <p class="p3"><br></p>
 <p class="p4">grainfun = {<span class="s2">arg</span> starttime, duration, ampenv, lowfreq, hifreq;</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> now, note;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> now, note, thisgroup;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>now = 0;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>ampenv.times = ampenv.times.normalizeSum * duration; <span class="s5">// scale the Env's time to the gestures</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>thisgroup = CtkGroup.new(starttime, duration + 2).addTo(score);</p>
 <p class="p4"><span class="Apple-tab-span">	</span>while({</p>
 <p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create a note... add it to the CtkScore</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note = scpn[<span class="s4">\test</span>].new(starttime + now, 0.1)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note = scpn[<span class="s4">\test</span>].new(starttime + now, 0.1, target: thisgroup)</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(lowfreq.rrand(hifreq))</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampenv[now])</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(0.1).addTo(score);</p>
@@ -118,11 +121,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">//score.play(s);</p>
 <p class="p3"><br></p>
 <p class="p6">// uncomment to write the score to a soundfile</p>
-<p class="p6">score.write("~/Desktop/test.aiff".standardizePath, 22,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>options: ServerOptions.new.numOutputBusChannels_(2));</p>
+<p class="p6">//score.write("~/Desktop/test.aiff".standardizePath, 22,<span class="Apple-converted-space"> </span></p>
+<p class="p6">//<span class="Apple-tab-span">	</span>options: ServerOptions.new.numOutputBusChannels_(2));</p>
 <p class="p3"><br></p>
 <p class="p6">// uncomment to save the CtkScore as a file</p>
-<p class="p6">//score.saveToFile("~/Desktop/test.sc".standardizePath);</p>
+<p class="p7">score.saveToFile(<span class="s6">"~/Desktop/test.sc"</span>.standardizePath);</p>
 <p class="p4">)</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
 <p class="p3"><br></p>

@@ -95,17 +95,21 @@ CtkScore {
 		idx = 0;
 		ascore = score.score;
 		while({
-//			(ascore[idx][0].round(0.00001) == ascore[idx+1][0].round(0.00001)).if({
-			(ascore[idx][0].fuzzyEqual(ascore[idx+1][0], 0.00001) > 0).if({				ascore[idx+1].removeAt(0);
+			(ascore[idx][0].fuzzyEqual(ascore[idx+1][0], 0.00001) > 0).if({
+				ascore[idx+1].removeAt(0);
 				ascore[idx+1].do({arg me;
-					ascore[idx] = ascore[idx].add(me);
+					(me[0] == \g_new).if({
+						ascore[idx] = ascore[idx].insert(1, me);
+						}, {
+						ascore[idx] = ascore[idx].add(me);
+						})
 					});
 				ascore.removeAt(idx+1);
 				}, {
 				idx = idx + 1;
 				});
-			idx < (ascore.size-1);
-			});		
+			idx < (ascore.size-1); 		
+			});
 		}
 		
 	play {arg server, clock, quant = 0.0;
@@ -394,7 +398,7 @@ CtkNote : CtkNode {
 	var <duration, <synthdefname,
 		<endtime, <args, <setnDict, <mapDict;
 			
-	*new {arg starttime, duration, addAction = 0, target = 1, server, synthdefname;
+	*new {arg starttime = 0.0, duration, addAction = 0, target = 1, server, synthdefname;
 		server = server ?? {Server.default};
 		^super.newCopyArgs(addAction, target, server).init(starttime, duration, synthdefname);
 		}
@@ -416,7 +420,7 @@ CtkNote : CtkNode {
 		synthdefname = argsynthdefname;
 		node = server.nextNodeID;
 		messages = Array.new;
-		(starttime.notNil && duration.notNil).if({
+		(duration.notNil && (duration != inf)).if({
 			endtime = starttime + duration;
 			});
 		setnDict = Dictionary.new;
@@ -561,7 +565,7 @@ CtkGroup : CtkNode {
 	var <endtime = nil, <duration, <isGroupPlaying = false;
 	
 	*new {arg starttime = 0.0, duration, node, addAction = 0, target = 1, server;
-		^super.newCopyArgs(addAction, target, server).init(starttime, duration);
+		^super.newCopyArgs(addAction, target, server, node).init(starttime, duration);
 		}
 		
 	*play {arg starttime = 0.0, duration, node, addAction = 0, target = 1, server;
@@ -706,11 +710,11 @@ CtkBuffer : CtkObj {
 		freeBundle = [\b_free, bufnum];			
 		}
 		
-	load {arg time = 0.0, sync = true;
+	load {arg time = 0.0, sync = true, cond;
 		SystemClock.sched(time, {
-			var cond;
 			Routine.run({
 				var msg;
+				cond = cond ?? {Condition.new};
 				server.sendBundle(nil, bundle);
 				// are there already messages to send? If yes... SYNC!, then send NOW
 				(messages.size > 0).if({
@@ -732,9 +736,15 @@ CtkBuffer : CtkObj {
 	
 	free {arg time = 0.0;
 		closeBundle.notNil.if({
-			SystemClock.sched(time, {server.sendBundle(nil, closeBundle, freeBundle)});
+			SystemClock.sched(time, {
+				server.sendBundle(nil, closeBundle, freeBundle);
+				server.bufferAllocator.free(bufnum);
+				});
 			}, {
-			SystemClock.sched(time, {server.sendBundle(nil, freeBundle)});
+			SystemClock.sched(time, {
+				server.sendBundle(nil, freeBundle);
+				server.bufferAllocator.free(bufnum);
+				});
 			});
 		isPlaying = false;
 		}

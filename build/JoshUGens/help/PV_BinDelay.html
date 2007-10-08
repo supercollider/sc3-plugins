@@ -12,13 +12,15 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #802e29}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #802e29; min-height: 12.0px}
-span.s1 {color: #002ca7}
-span.s2 {color: #3d6e19}
-span.s3 {color: #001eb3}
-span.s4 {color: #606060}
-span.s5 {color: #9d2122}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #76312d}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #76312d; min-height: 12.0px}
+span.s1 {color: #000000}
+span.s2 {color: #76312d}
+span.s3 {color: #0030a2}
+span.s4 {color: #486c1f}
+span.s5 {color: #0024ae}
+span.s6 {color: #606060}
+span.s7 {color: #8f2728}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -47,88 +49,91 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p5">s.boot;</p>
 <p class="p2"><br></p>
-<p class="p5">(</p>
-<p class="p2"><br></p>
-<p class="p6">// use as multislider - del time vals on top, feedback on the bottom</p>
-<p class="p6">// max delay time is 1 second, delaytime and fb are initialized to 0.0</p>
-<p class="p6">// and are controlled by the GUI. The multi-slider on the top controls<span class="Apple-converted-space"> </span></p>
-<p class="p6">// each bins delay time, the bottom controls FB.</p>
-<p class="p7"><br></p>
-<p class="p5"><span class="s1">var</span> size, awin, bsl, car, dar, fsl, maxdel, synth;</p>
-<p class="p2"><br></p>
-<p class="p5">size = 256;</p>
-<p class="p5">maxdel = 0.5;</p>
-<p class="p2"><br></p>
-<p class="p5">s.sendMsg(<span class="s2">\b_alloc</span>, b=s.bufferAllocator.alloc(1), size * 2);</p>
-<p class="p5">s.sendMsg(<span class="s2">\b_alloc</span>, c=s.bufferAllocator.alloc(1), size);</p>
-<p class="p5">s.sendMsg(<span class="s2">\b_alloc</span>, d=s.bufferAllocator.alloc(1), size);</p>
-<p class="p2"><br></p>
-<p class="p5">y = <span class="s3">Array</span>.fill(size, {0.0});</p>
-<p class="p5">s.sendBundle(0.1, [<span class="s2">\b_setn</span>, d, 0, size] ++ y);</p>
-<p class="p2"><br></p>
-<p class="p5">z = <span class="s3">Array</span>.fill(size, {<span class="s3">arg</span> i; 0.0});</p>
-<p class="p5">s.sendBundle(0.1, [<span class="s2">\b_setn</span>, c, 0, size] ++ z);</p>
-<p class="p2"><br></p>
-<p class="p5"><span class="s3">synth = SynthDef</span>(<span class="s4">"help-noopFFT"</span>, { <span class="s3">arg</span> inbus,out=0,bufnum=0, dels=0, fb=0;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>in = <span class="s3">Impulse</span>.ar(0.33);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in, 0.25);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_BinDelay</span>(chain, maxdel, dels, fb, 0.25);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(out,<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in + <span class="s3">IFFT</span>(chain) <span class="s5">// inverse FFT</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>);</p>
-<p class="p5">}).play(s,[<span class="s2">\out</span>,0,<span class="s2">\bufnum</span>,b,<span class="s2">\dels</span>, c, <span class="s2">\fb</span>, d, \inbus, s.options.numOutputBusChannels]);</p>
-<p class="p2"><br></p>
-<p class="p5">awin = <span class="s1">GUI.window.new</span>(<span class="s4">"test"</span>, <span class="s1">Rect</span>(200 , 450, 10 + (size * 1), 10 + (size * 2)));</p>
-<p class="p5">awin.view.decorator =<span class="Apple-converted-space">  </span><span class="s1">FlowLayout</span>(awin.view.bounds);</p>
-<p class="p2"><br></p>
-<p class="p5">bsl = <span class="s1">GUI.</span>multiSliderView.new(awin, <span class="s1">Rect</span>(0, 0, size * 1, size * 1));</p>
-<p class="p5">bsl.action = {<span class="s1">arg</span> xb; (<span class="s4">"Deltime index: "</span> ++ xb.index ++<span class="s4">" value: "</span> ++<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(xb.currentvalue * maxdel)).postln;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(\b_set, c, xb.index, xb.currentvalue * maxdel);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p2"><br></p>
-<p class="p5">fsl = <span class="s1">GUI.</span>multiSliderView.new(awin, <span class="s1">Rect</span>(0, 0, size * 1, size * 1));</p>
-<p class="p5">fsl.action = {<span class="s1">arg</span> xb; (<span class="s4">"FB index: "</span> ++ xb.index ++<span class="s4">" value: "</span> ++ xb.currentvalue).postln;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(\b_set, d, xb.index, xb.currentvalue);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p2"><br></p>
-<p class="p5">car = <span class="s1">Array</span>.new;</p>
-<p class="p5">size.do({<span class="s1">arg</span> i;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>car = car.add(0);</p>
-<p class="p5">});</p>
-<p class="p5">bsl.value_(car);</p>
-<p class="p2"><br></p>
-<p class="p5">dar = <span class="s1">Array</span>.new;</p>
-<p class="p5">size.do({<span class="s1">arg</span> i;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>dar = dar.add(0);</p>
-<p class="p5">});</p>
-<p class="p5">fsl.value_(car);</p>
-<p class="p2"><br></p>
-<p class="p5">bsl.xOffset_(5);</p>
-<p class="p5">bsl.thumbSize_(12.0);</p>
-<p class="p5">fsl.xOffset_(5);</p>
-<p class="p5">fsl.thumbSize_(12.0);</p>
-<p class="p2"><br></p>
-<p class="p6">// value axis size of each blip in pixels</p>
-<p class="p5">bsl.valueThumbSize_(15.0);</p>
-<p class="p6">// index axis size of each blip in pixels</p>
-<p class="p5">bsl.indexThumbSize_( bsl.bounds.width / car.size );</p>
-<p class="p5">bsl.gap = 0;</p>
-<p class="p2"><br></p>
-<p class="p6">// value axis size of each blip in pixels</p>
-<p class="p5">fsl.valueThumbSize_(15.0);</p>
-<p class="p6">// index axis size of each blip in pixels</p>
-<p class="p5">fsl.indexThumbSize_( fsl.bounds.width / dar.size );</p>
-<p class="p5">fsl.gap = 0;</p>
-<p class="p2"><br></p>
-<p class="p5">awin.front;</p>
-<p class="p2"><br></p>
-<p class="p5">awin.onClose_({</p>
-<p class="p5"><span class="Apple-tab-span">	</span>synth.free;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s2">\b_free</span>, b);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s2">\b_free</span>, c);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s2">\b_free</span>, d);</p>
+<p class="p5">(<span class="Apple-tab-span">	</span></p>
+<p class="p5">Routine.run({<span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span>// use as multislider - del time vals on top, feedback on the bottom</p>
+<p class="p6"><span class="Apple-tab-span">	</span>// max delay time is 1 second, delaytime and fb are initialized to 0.0</p>
+<p class="p6"><span class="Apple-tab-span">	</span>// and are controlled by the GUI. The multi-slider on the top controls<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>// each bins delay time, the bottom controls FB.</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span><span class="s3">var</span> size, awin, bsl, car, dar, fsl, maxdel, synth, cond;</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>size = 256;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>maxdel = 0.5;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>cond = Condition.new;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_alloc</span>, b=s.bufferAllocator.alloc(1), size * 2);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_alloc</span>, c=s.bufferAllocator.alloc(1), size);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_alloc</span>, d=s.bufferAllocator.alloc(1), size);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>y = <span class="s5">Array</span>.fill(size, {0.0});</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sendBundle(0.1, [<span class="s4">\b_setn</span>, d, 0, size] ++ y);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>z = <span class="s5">Array</span>.fill(size, {<span class="s5">arg</span> i; 0.0});</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sendBundle(0.1, [<span class="s4">\b_setn</span>, c, 0, size] ++ z);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>s.sync(cond);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s5">synth = SynthDef</span>(<span class="s6">"help-noopFFT"</span>, { <span class="s5">arg</span> inbus,out=0,bufnum=0, dels=0, fb=0;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">var</span> in, chain;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in = <span class="s5">Impulse</span>.ar(0.33);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>chain = <span class="s5">FFT</span>(bufnum, in, 0.25);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinDelay</span>(chain, maxdel, dels, fb, 0.25);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out,<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in + <span class="s5">IFFT</span>(chain) <span class="s7">// inverse FFT</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>}).play(s,[<span class="s4">\out</span>,0,<span class="s4">\bufnum</span>,b,<span class="s4">\dels</span>, c, <span class="s4">\fb</span>, d, \inbus, s.options.numOutputBusChannels]);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>{</p>
+<p class="p5"><span class="Apple-tab-span">	</span>awin = <span class="s3">GUI.window.new</span>(<span class="s6">"test"</span>, <span class="s3">Rect</span>(200 , 450, 10 + (size * 1), 10 + (size * 2)));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>awin.view.decorator =<span class="Apple-converted-space">  </span><span class="s3">FlowLayout</span>(awin.view.bounds);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl = <span class="s3">GUI.</span>multiSliderView.new(awin, <span class="s3">Rect</span>(0, 0, size * 1, size * 1));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl.action = {<span class="s3">arg</span> xb; (<span class="s6">"Deltime index: "</span> ++ xb.index ++<span class="s6">" value: "</span> ++<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(xb.currentvalue * maxdel)).postln;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(\b_set, c, xb.index, xb.currentvalue * maxdel);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl = <span class="s3">GUI.</span>multiSliderView.new(awin, <span class="s3">Rect</span>(0, 0, size * 1, size * 1));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl.action = {<span class="s3">arg</span> xb; (<span class="s6">"FB index: "</span> ++ xb.index ++<span class="s6">" value: "</span> ++ xb.currentvalue).postln;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(\b_set, d, xb.index, xb.currentvalue);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>car = <span class="s3">Array</span>.new;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>size.do({<span class="s3">arg</span> i;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>car = car.add(0);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>});</p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl.value_(car);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>dar = <span class="s3">Array</span>.new;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>size.do({<span class="s3">arg</span> i;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dar = dar.add(0);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>});</p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl.value_(car);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl.xOffset_(5);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl.thumbSize_(12.0);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl.xOffset_(5);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl.thumbSize_(12.0);</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span>// value axis size of each blip in pixels</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>bsl.valueThumbSize_(15.0);</p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span>// index axis size of each blip in pixels</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>bsl.indexThumbSize_( bsl.bounds.width / car.size );</p>
+<p class="p5"><span class="Apple-tab-span">	</span>bsl.gap = 0;</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span>// value axis size of each blip in pixels</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>fsl.valueThumbSize_(15.0);</p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span>// index axis size of each blip in pixels</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>fsl.indexThumbSize_( fsl.bounds.width / dar.size );</p>
+<p class="p5"><span class="Apple-tab-span">	</span>fsl.gap = 0;</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>awin.front;</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>awin.onClose_({</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>synth.free;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_free</span>, b);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_free</span>, c);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s4">\b_free</span>, d);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p5"><span class="Apple-tab-span">	</span>}.defer;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>})</p>
 <p class="p5">)</p>
 <p class="p2"><br></p>
