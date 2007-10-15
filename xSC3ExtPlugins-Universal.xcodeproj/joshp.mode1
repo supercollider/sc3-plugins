@@ -204,10 +204,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>F307BEC20CB898D9000E7EC3</string>
+						<string>F36B6D720CC02F11009BD221</string>
 						<key>history</key>
 						<array>
-							<string>F3FDD7800CB897A0003C385F</string>
+							<string>F336850C0CBC763100797B6E</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -223,7 +223,7 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>252 102 1069 771 0 0 1440 878 </string>
+				<string>415 237 1069 771 0 0 1680 1028 </string>
 			</dict>
 		</dict>
 	</array>
@@ -327,7 +327,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>219 217 1001 625 0 0 1440 878 </string>
+						<string>339 340 1001 625 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -364,7 +364,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {793, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>219 217 1001 625 0 0 1440 878 </string>
+								<string>339 340 1001 625 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -384,7 +384,7 @@
 								<key>Frame</key>
 								<string>{{0, 5}, {793, 579}}</string>
 								<key>RubberWindowFrame</key>
-								<string>219 217 1001 625 0 0 1440 878 </string>
+								<string>339 340 1001 625 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -408,9 +408,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>F307BEB90CB8980E000E7EC3</string>
+				<string>F36B6D700CC02F11009BD221</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>F307BEBA0CB8980E000E7EC3</string>
+				<string>F36B6D710CC02F11009BD221</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -544,12 +544,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>F3FE07450B0D763800A29459</string>
 		<string>/Users/joshp/src/supercollider/sc3-plugins/xSC3ExtPlugins-Universal.xcodeproj</string>
 		<string>F33A1F3E0CB29A8B0078AA72</string>
 	</array>
 	<key>WindowString</key>
-	<string>219 217 1001 625 0 0 1440 878 </string>
+	<string>339 340 1001 625 0 0 1680 1028 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -626,7 +625,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>F3FE07450B0D763800A29459</string>
-				<string>F307BEBC0CB8980E000E7EC3</string>
+				<string>F33684FA0CBC489B00797B6E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

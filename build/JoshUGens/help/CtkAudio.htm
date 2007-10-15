@@ -9,16 +9,17 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-span.s1 {font: 18.0px Helvetica; color: #0000bf}
-span.s2 {color: #0000bf}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0015b9}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1818}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0015b9}
 span.s3 {color: #000000}
-span.s4 {color: #007300}
-span.s5 {color: #bf0000}
+span.s4 {color: #2c7011}
+span.s5 {color: #ad1818}
 span.s6 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -26,20 +27,22 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><span class="s1"><b>CtkAudio</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>allocate an audio bus</b></p>
 <p class="p2"><br></p>
-<p class="p1"><span class="s2"><b>Part</b></span><b> of the </b><span class="s2"><b>CompositionToolKit</b></span><b> (</b><span class="s2"><b>Ctk</b></span><b>) system. </b><span class="s2"><b>See</b></span><b> </b><span class="s2"><b>Ctk</b></span><b> help for more details</b></p>
+<p class="p1"><b>Part of the CompositionToolKit (Ctk) system. See Ctk help for more details</b></p>
 <p class="p2"><br></p>
-<p class="p3"><b>Class</b><span class="s3"><b> </b></span><b>Methods</b></p>
+<p class="p1"><b>Class Methods</b></p>
 <p class="p2"><b><span class="Apple-converted-space">  </span></b></p>
 <p class="p1"><b>*new(numChans, bus, server)</b> -<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>numChans- the number of channels to allocate. <span class="s2">Defaults</span> to 1.<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>bus - the bus id to write values to. <span class="s2">Defaults</span> to <span class="s2">nil</span>, where an id will be allocated for you.</p>
-<p class="p1"><span class="Apple-tab-span">	</span>server - and instance of <span class="s2">Server</span> to allocate the audio bus from. <span class="s2">Defaults</span> to <span class="s2">Server</span>.default.</p>
+<p class="p1"><span class="Apple-tab-span">	</span>numChans- the number of channels to allocate. Defaults to 1.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>bus - the bus id to write values to. Defaults to nil, where an id will be allocated for you.</p>
+<p class="p1"><span class="Apple-tab-span">	</span>server - and instance of Server to allocate the audio bus from. Defaults to Server.default.</p>
 <p class="p2"><br></p>
-<p class="p1"><b>bus</b> - returns the id of the <span class="s2">CtkAudio</span> bus.</p>
+<p class="p1"><b>bus</b> - returns the id of the CtkAudio bus.</p>
+<p class="p3"><b>free </b>- returns the bus id to the allocation pool.</p>
 <p class="p2"><br></p>
-<p class="p1"><span class="s2">Unlike</span> <span class="s2">CtkControl</span>, <span class="s2">CtkAudio</span> object can be passed in straight to a <span class="s2">CtkNotes</span> <span class="s2">arg</span>. <span class="s2">The</span> bus id will be extracted for you.</p>
+<p class="p2"><br></p>
+<p class="p1">Unlike CtkControl, CtkAudio object can be passed in straight to a CtkNotes arg. The bus id will be extracted for you.</p>
 <p class="p4"><br></p>
-<p class="p1"><b>Examples:</b></p>
+<p class="p3"><b>Examples:</b></p>
 <p class="p4"><br></p>
 <p class="p5">s = <span class="s2">Server</span>.internal.boot;</p>
 <p class="p5"><span class="s2">Server</span>.default = s;</p>
@@ -129,9 +132,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>task.play;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>})</p>
 <p class="p5">)</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="s2"><b>Examples</b></span><b> that populate an instance of </b><span class="s2"><b>CtkScore</b></span><b>. </b><span class="s2"><b>The</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> can then be rendered in </b><span class="s2"><b>NRT</b></span><b>, played or saved as a file. </b><span class="s2"><b>See</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> for more examples.</b></p>
-<p class="p2"><br></p>
+<p class="p8"><br></p>
+<p class="p3"><span class="s2"><b>Examples</b></span><b> that populate an instance of </b><span class="s2"><b>CtkScore</b></span><b>. </b><span class="s2"><b>The</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> can then be rendered in </b><span class="s2"><b>NRT</b></span><b>, played or saved as a file. </b><span class="s2"><b>See</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> for more examples.</b></p>
+<p class="p8"><br></p>
 <p class="p5">(</p>
 <p class="p5"><span class="s2">var</span> pnotes, group, noisesynth, noisebus, filtbus, ampsynth, ampbus, task, env;</p>
 <p class="p5"><span class="s2">var</span> score, now;</p>

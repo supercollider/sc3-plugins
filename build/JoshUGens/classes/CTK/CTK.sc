@@ -264,9 +264,9 @@ CtkNoteObject {
 
 CtkSynthDef : CtkNoteObject {
 	*new {arg name, ugenGraphFunc, rates, prependArgs, variants;
-		var sd;
-		sd = SynthDef(name, ugenGraphFunc, rates, prependArgs, variants);
-		^super.new(sd);
+		var synthdef;
+		synthdef = SynthDef(name, ugenGraphFunc, rates, prependArgs, variants);
+		^super.new(synthdef);
 		}
 	}
 
@@ -863,6 +863,12 @@ CtkControl : CtkObj {
 		^this.new(numChans, initVal, 0.0, bus, server).play;
 		}
 	
+	// free the id for further use
+	free {
+		isPlaying = false;
+		server.controlBusAllocator.free(bus);
+		}
+	
 	init {
 		var bund;
 		server = server ?? {Server.default};
@@ -899,7 +905,12 @@ CtkAudio : CtkObj {
 	*new {arg bus, numChans = 1, server;
 		^this.newCopyArgs(server, bus, numChans).init;
 		}
-	
+
+	// free the id for further use
+	free {
+		server.audioBusAllocator.free(bus);
+		}
+			
 	init {
 		server = server ?? {Server.default};
 		bus = bus ?? {server.audioBusAllocator.alloc(numChans)};
@@ -908,8 +919,26 @@ CtkAudio : CtkObj {
 	asUGenInput {^bus}
 	}
 	
-/* this will be similar to ProcMod ... global envelope magic */
-CtkEvent : CtkObj {
+/* this will be similar to ProcMod ... global envelope magic 
 
+CtkEvent can return and play a CtkScore - individual group, envbus?
+
+with .play - needs to act like ProcMod
+with .write, needs to act like CtkScore
+with .addToScore - needs to act like .write, and return the CtkScore that is created, and append
+	them
+*/
+CtkEvent : CtkObj {
+	var srtarttime, duration, server;
+	var score;
+	
+	*new {arg starttime, duration, server;
+		super.newCopyArgs(starttime, duration).init(server);
+		}
+		
+	init {arg argserver;
+		server = argserver ?? {Server.default};
+//		score = CtkScore.new;
+		}
 	}
 

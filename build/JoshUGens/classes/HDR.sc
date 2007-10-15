@@ -4,7 +4,7 @@ HDR {
 		<reclevel, <channels, <bufnum, <isRecording = false, <server, <synthdef, <synthdefname, 
 		<>bufsize = 65536, cond, <node, <guiMode = false, <monitorMode = false, <monitorOut = 0,
 		<monitorNode, <scopeBufnum, <scopeNode, <numChannels, <bfMonitorMode = false, 
-		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor;
+		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor, cper;
 	
 	*new { arg server, channels, addAction = 1, target = 0, sessionPath, filename, 
 			headerFormat = "aiff", sampleFormat = "int16", reclevel = 1;
@@ -94,11 +94,14 @@ HDR {
 	closeFile {
 		server.sendMsg(\b_close, bufnum);
 		server.sendMsg(\b_free, bufnum);
+		server.bufferAllocator.free(bufnum);
 		}
 		
 	record {
 		isRecording.not.if({
 			isRecording = true;
+			cper = {this.stop; "Works".postln};
+			CmdPeriod.add(cper);
 			Routine.run({
 				this.allocBuf;
 				this.openFile;
@@ -114,9 +117,10 @@ HDR {
 		isRecording.if({
 			Routine.run({
 				server.sendMsg(\n_set, node, \gate, 0);
-				0.1.wait;
+				1.0.wait;
 				this.closeFile;
 				isRecording = false;
+				CmdPeriod.remove(cper);
 				})
 			}, {
 			"HDR is not recording".warn;
@@ -245,6 +249,7 @@ HDR {
 					});
 				server.sendMsg(\n_free, scopeNode);
 				server.sendMsg(\b_free, scopeBufnum);
+				server.bufferAllocator.free(scopeBufnum);
 				});
 	
 			guirout = Routine({

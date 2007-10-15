@@ -1,3 +1,14 @@
+/* TO ADD - 
+	Two things to add 
+	- ability to route output to a virtual bus, then back to a desired bus
+	- bility to record ONLY the output of a ProcMod from that virtual bus
+	
+- if there is routing or recording... should a second group be used? one to wrap the routeting and recording in? Then INSIDE that group, individual note creation? Id so, a ProcMod's group would be the big one to allow for the placing of other Procs before or after it, BUT the individual notes (or the group that is passed into the funciton) needs to be the second, inner group.
+
+WHY? For the first thing, allow multiple Proc to output, let's say, multiple stereo feeds that can
+be controlled at a mixer for live mixing of Procs. Second, for recording purposes.
+*/
+
 ProcMod {
 	var <amp, <>group, <addAction, <target, 
 		<timeScale, <lag, <>id, <>function, 
@@ -5,15 +16,31 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks;
+		/* add for new features */
+	var <isRouting = false, <routebus, <>procout, <isRecording = false, <notegroup, <numChannels, 
+		<>headerFormat = "aiff", <>sampleFormat = "int16", <hdr, oldhdrs;
+		/* end add */
 	classvar addActions;
 
+// if numChannels is not nil, enter routing mode 
+//	- unique audio bus (routebus) is passed into the function
+// 	- bus is allocated on .play, freed with releaseFunc
+// 	- procout tells the routing where to go
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
-			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
+			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server
+			/* begin add */
+			, numChannels = 0, procout = 0
+			/* end add */
+			;
 		^super.newCopyArgs(amp, group, addAction, target, timeScale, lag, id, function, 
-			releaseFunc, onReleaseFunc, responder).init(clock, server, env);
+			releaseFunc, onReleaseFunc, responder).init(clock, server, env 
+			/* begin add */
+			, numChannels, procout
+			/* end add */
+			);
 	}
-	
-	init {arg argClock, argServer, argEnv;
+		
+	init {arg argClock, argServer, argEnv, argNumChannels, argProcout;
 		server = argServer ?? {Server.default};
 		env = argEnv;
 		(env.notNil).if({
@@ -24,17 +51,30 @@ ProcMod {
 				})
 			});
 		clock = argClock;// ?? {uniqueClock = true; TempoClock.new};
+		/* add */
+		routebus = procout;
+		this.setupRouting(argNumChannels, argProcout);
+		/* end add */
 		oldgroups = [];
 		oldclocks = [];
+		oldhdrs = [];
 		}
-		
+				
 	*play {arg env, amp = 1, id, group, addAction = 0, target = 1, function, 
-			releaseFunc, onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;
+			releaseFunc, onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server
+			/* begin add */
+			, numChannels = 0, procout = 0, recpath
+			/* end add */
+			;
 		^this.new(env, amp, id, group, addAction, target, function, releaseFunc, onReleaseFunc,
-			responder, timeScale, lag, clock, server).play;
+			responder, timeScale, lag, clock, server
+			/* begin add */
+			, numChannels, procout
+			/* end add */
+			).play(recpath);
 		}
 
-	play {
+	play {arg recpath;
 		var thisfun;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({	
@@ -43,6 +83,9 @@ ProcMod {
 			responder.notNil.if({responder.add});
 			// create this Proc's group, and if there is an env, start it
 			// also, if there is no release node, schedule the Procs release
+			/* begin add */
+			notegroup = 
+			/* end add */
 			group = group ?? {server.nextNodeID};
 			env.isKindOf(Env).if({
 				envbus = server.controlBusAllocator.alloc(1);
@@ -60,10 +103,38 @@ ProcMod {
 				}, {
 				server.sendBundle(nil, [\g_new, group, addActions[addAction], target])
 				});
+			/* begin add */
+			isRouting.if({
+				notegroup = server.nextNodeID;
+				routebus = server.audioBusAllocator.alloc(numChannels);
+				routebus.notNil.if({
+					server.sendBundle(nil, 
+						[\g_new, notegroup, 0, group],
+						[\s_new, (\procmodroute_8723_ ++ numChannels).asSymbol, 
+							server.nextNodeID, 1, group, \inbus, routebus, \outbus, procout]);
+					}, {
+					"A unique audio bus couldn't be allocated for internal routing. This probably isn't what you wanted, and the resulting sound will probably be wrong. You should quite the server, and increase the number of audio busses with ServerOptions. Sorry... but there are limitations".warn;
+					});
+				});
+			recpath.notNil.if({
+				isRouting.if({
+//					isRecording = true;
+					hdr = HDR.new(server, Array.fill(numChannels, {arg i; routebus + i}), 3, 
+						group, "", recpath ++ id, headerFormat, sampleFormat, 1);
+					hdr.record;
+				}, {
+				"To record the output of a ProcMod, the number of channels must be specified... please see the ProcMod help file".warn;
+				})
+			});
+			/* end add */
 			starttime = Main.elapsedTime;
 			function.isKindOf(Function).if({
 				retrig = true;
-				thisfun = function.value(group, envbus, server);
+				thisfun = function.value(notegroup, envbus, server
+				/* begin add */
+				, routebus
+				/* end add */
+				);
 				(thisfun.isKindOf(Routine) || thisfun.isKindOf(Task)).if({
 					process = thisfun; this.processPlay;
 					})
@@ -72,7 +143,23 @@ ProcMod {
 				})
 			})
 		}
-	
+
+	setupRouting {arg argNumChannels, argProcout;
+		(argNumChannels > 0).if({
+			numChannels = argNumChannels;
+			isRouting = true;
+			procout = argProcout ?? {0};
+			});
+		}	
+		
+	numChannels_ {arg num;
+		(isRunning.not && isReleasing.not).if({
+			this.setupRouting(num);
+			}, {
+			"The number of channels to route can not be changed while a ProcMod is running or releasing".warn;
+			})
+		}
+			
 	tempo_ {arg newTempo;
 		tempo = newTempo;
 		clock.notNil.if({
@@ -91,8 +178,8 @@ ProcMod {
 		^Main.elapsedTime - starttime
 		}
 	
-	value {
-		this.play;
+	value {arg recpath;
+		this.play(recpath);
 	}
 	
 	amp_ {arg newamp;
@@ -143,12 +230,14 @@ ProcMod {
 		}
 		
 	release {arg reltime;
-		var curproc, curresp, curgroup, currelfunc, newrelval, curclock;
+		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute;
 		curproc = process;
 		curresp = responder;
 		responder = nil;
 		curgroup = group;
 		currelfunc = releaseFunc;
+		curhdr = hdr;
+		curroute = routebus;
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
 			onReleaseFunc.value;
@@ -158,7 +247,7 @@ ProcMod {
 					}, {
 					0
 					});
-				server.sendMsg(\n_set, group, \gate, newrelval);
+				server.sendMsg(\n_set, envnode, \gate, 0); //newrelval);
 				});
 			releasetime.notNil.if({
 				newrelval = reltime.notNil.if({
@@ -166,11 +255,22 @@ ProcMod {
 					}, {
 					releasetime
 					});
+				/* begin add */
+				oldhdrs = oldhdrs.add(curhdr);
+				/* end add */
 				curclock.sched(newrelval, {
-					this.clear(curproc, curresp, curgroup, currelfunc, curclock)
+					this.clear(curproc, curresp, curgroup, currelfunc, curclock
+					/* begin add */
+					, curhdr, curroute
+					/* end add */
+					)
 					})
 				}, {
-				this.clear(curproc, curresp, curgroup, currelfunc, curclock)
+				this.clear(curproc, curresp, curgroup, currelfunc, curclock
+					/* begin add */
+					, curhdr, curroute
+					/* end add */
+					)
 				});
 			});
 		// if retriggerable... clear out group now
@@ -184,18 +284,27 @@ ProcMod {
 		}
 	
 	kill {
-		var curproc, curresp, curgroup, currelfunc, oldclock;
+		var curproc, curresp, curgroup, currelfunc, oldclock, curhdr, curroute;
 		curproc = process;
 		curresp = responder;
 		curgroup = group;
 		currelfunc = releaseFunc;
+		curhdr = hdr;
+		curroute = routebus;
 		isRunning.if({server.sendMsg(\n_free, curgroup)});
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
 		// if a tempo clock was created for this procMod, clear it
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
 		oldclocks.do({arg me; me.clear; me.stop});
+		/* begin add */
+		oldhdrs.do({arg me; me.stop});
+		/* end add */
 		curproc.stop;
-		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
+		this.clear(curproc, curresp, curgroup, currelfunc, oldclock
+			/* begin add */
+			, curhdr, curroute
+			/* end add */
+			);
 		isRunning = false;
 
 	}
@@ -207,10 +316,23 @@ ProcMod {
 
 // need to check for TempoClock - old clocks need to be saved until 
 // they can be garbage collected
-	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock;
-		server.sendMsg(\n_free, oldgroup);
-		oldgroups.remove(oldgroup);
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute;
 		oldproc.notNil.if({this.stopprocess(oldproc)});
+	
+		/* begin add */
+		isRouting.if({
+			server.audioBusAllocator.free(oldroute);
+			});
+		oldhdr.notNil.if({
+//			isRecording = false;
+//			SystemClock.sched(0.5, {
+				oldhdr.stop;
+				oldhdrs.remove(oldhdr);
+//				})
+			});
+		/* end add */	
+		server.sendMsg(\n_free, oldgroup);
+		oldgroups.remove(oldgroup);	
 		oldrelfunc.notNil.if({
 			oldrelfunc.isKindOf(Function).if({
 				oldrelfunc.value;
@@ -297,6 +419,13 @@ ProcMod {
 					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
 			Out.kr(outbus, env);
 		}).writeDefFile;
+		/* begin add */
+		for(1, 16, {arg i;
+				SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus;
+					Out.ar(outbus, In.ar(inbus, i));
+				}).writeDefFile;	
+			})
+		/* end add */
 		}
 	}
 }
@@ -311,12 +440,15 @@ ProcEvents {
 	var <eventDict, <ampDict, <eventArray, <releaseArray, <timeArray, <index,
 		<id, gui = false, <window, <server, firstevent = false, initmod, killmod, <amp, <lag,
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
-		<eventButton, <killButton, <releaseButton, >starttime = nil, <pedal = false, 
+		<eventButton, <killButton, <releaseButton, starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
 		<bigNum = false, bigNumWindow;
 	// below are for timeline functionality. record timestamps of a performance, or playback
 	// according to timeStamps of a performance
-	var tlrec = false, tlplay = false, <timeLine, <currentTime, <isPlaying, <clock, cper;
+	var tlrec = false, tlplay = false, <timeLine, <currentTime, <timeOffset = 0.0, 
+		<isPlaying, <clock, cper;
+	/* begion add */
+	var <recordPM = false, recordpath;
 	classvar addActions;
 	
 	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
@@ -324,6 +456,12 @@ ProcEvents {
 		^super.new.init(events, amp, initmod, killmod, id, server, lag);
 	}
 	
+	starttime_ {arg newtime;
+		// if starttime is set from the outside:
+		starttime = newtime;
+		timeOffset = starttime; // for time stamping ProcMod output
+		}
+		
 	init {arg events, argamp, arginitmod, argkillmod, argid, argserver, arglag;
 		var proc, release, newproc, evid;
 		eventDict = Dictionary.new(events.flat.size);
@@ -371,7 +509,7 @@ ProcEvents {
 	
 	index_ {arg nextIdx;
 		index = nextIdx;
-		gui.if(AppClock.sched(0.01, {window.view.children[0].value_(nextIdx)}));
+		gui.if({AppClock.sched(0.01, {window.view.children[0].value_(nextIdx)})});
 		}
 		
 	next {
@@ -382,25 +520,40 @@ ProcEvents {
 			index = index + 1;			});
 	}
 	
+	record {arg path;
+		recordPM = true;
+		recordpath = path;
+		}
+		
+	stopRecord {
+		recordPM = false;
+		}
+		
 	play {arg event;
+		var path;	
 		firstevent.if({
-			"Play".postln;
-			// for some reason, asking for the first node ID sometimes throws a
-			// 'duplicate node' error. This avoids it
 			starttime.isNil.if({starttime = Main.elapsedTime});
-			initmod.notNil.if({initmod.value}); 
+			initmod.notNil.if({
+				recordPM.if({
+					path = recordpath ++ (timeOffset + this.now.round(0.001)) ++ initmod.id;
+					});
+				initmod.value(path);
+				}); 
 			server.sendMsg(\s_new, \procevoutenv6253, procampsynth = server.nextNodeID, 1,
 				0, \amp, amp, \lag, lag);
 			firstevent = false;
 			});
-		eventArray[event].do{arg me; 
+		eventArray[event].do({arg me;
 			timeArray.put(eventDict[me].id, Main.elapsedTime);
-			eventDict[me].value;
+			recordPM.if({
+				path = recordpath ++ (timeOffset + this.now.round(0.001)) ++ eventDict[me].id;
+				});
+			eventDict[me].value(path);
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(1);
-			})};
-		releaseArray[event].do{arg me; eventDict[me].release;
+			})});
+		releaseArray[event].do({arg me; eventDict[me].release;
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(0);
-			})};
+			})});
 		tlrec.if({timeLine.postln; timeLine.put(event, this.now)});
 	}
 	
@@ -811,34 +964,36 @@ ProcEvents {
 		
 	withTimeLine {arg timeLineArray, timeLineStart = 0;
 		timeLineArray.notNil.if({this.timeLine_(timeLineArray)});
-		currentTime = timeLineStart;
+		timeOffset = currentTime = timeLineStart;
 		this.index_(
 			timeLine.indexOf(currentTime) ?? {
 				(currentTime < timeLine.last).if({
-					timeLine.indexOfGreaterThan(currentTime)
+					(timeLine.indexOfGreaterThan(currentTime) - 1).max(0);
 					}, {
 					"Current time must be less then the total time in the time line".warn;
 					0})
 				}
 			);
+		timeLine = [0.0] ++ timeLine;
 		}
 		
 	playTimeLine {arg wait;
 		var numEvs;
 		tlrec.not.if({
 			tlplay = true;
-			numEvs = eventDict.size;
+			numEvs = eventArray.size - 1;
 			clock = clock ?? {TempoClock.new};
-			wait = wait ?? { timeLine[index] - currentTime };
+			wait = wait ?? { timeLine[index + 1] - currentTime };
 			cper.isNil.if({
 				cper = {this.stopTimeLine};
 				CmdPeriod.add(cper);
 				});
 			clock.sched(wait, {
-				{this.next;}.defer;
+				{this.next}.defer;
 				index = index + 1;
 				(index <= numEvs).if({
-					wait = timeLine[index] - currentTime;
+					currentTime = currentTime + wait;
+					wait = timeLine[index + 1] - currentTime;
 					this.playTimeLine(wait);
 					}, {
 					this.stopTimeLine

@@ -134,6 +134,7 @@ struct PV_PlayBuf : PV_Unit
 	SndBuf *m_databuf;
 	int m_numAvailFrames;
 	float *m_prevDatabuf;
+	bool first;
 
     };
     
@@ -1442,7 +1443,7 @@ void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
 	SETCALC(PV_PlayBuf_first);
 	OUT0(0) = IN0(0);
 	unit->m_frame = IN0(3);
-//	unit->
+	unit->first = true;
 }
 
 void WRAPPHASE(float& phase){
@@ -1451,6 +1452,45 @@ void WRAPPHASE(float& phase){
     while (phase < 0.) 
 	phase += twopi;
     }
+
+#define FILL_FFT \
+	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]); \
+	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]); \
+	    for(int i = 1, j = 0; i <= numbins; i++, j++){ \
+		itwo = i * 2; \
+		phase = databufData[iframeloc + itwo]; \
+		phasem1 = databufData[iframem1loc + itwo]; \
+		phasep1 = databufData[iframep1loc + itwo]; \
+		mag = databufData[iframeloc + itwo + 1]; \
+		magp1 = databufData[iframep1loc + itwo + 1]; \
+		while (phase < phasem1) \
+		    phase += twopi; \
+		while (phasep1 < phase) \
+		    phasep1 += twopi; \
+		phase1 = lininterp(framepct, phasem1, phase); \
+		phase2 = lininterp(framepct, phase, phasep1); \
+		phasedif = phase1 - phase2; \
+		if(unit->first) pd[j] = phasedif; \
+		    else { \
+			if(rate >= 0){ \
+			    if((unit->m_frame - rate) < 0 && bloop) \
+				pd[j] = phasedif; \
+				else \
+				pd[j] += phasedif; \
+			    } else { \
+			    if((unit->m_frame + rate) > numAvailFrames && bloop) \
+				pd[j] = phasedif; \
+				else \
+				pd[j] += phasedif; \
+			    } \
+			} \
+		\
+		WRAPPHASE(pd[j]); \
+		\
+		p->bin[j].phase = pd[j]; \
+		\
+		maginterp = lininterp(framepct, mag, magp1); \
+		p->bin[j].mag = maginterp; 
 
 void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 {
@@ -1505,46 +1545,15 @@ void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 	iframep1loc = iframep1 * frameskip;
 	    
 	SCPolarBuf *p = ToPolarApx(buf);
-//	Print("%3,3f, %3,3f\n", (float)buf->samples, (float)numbins); 
 	// this buffer will hold the previous output's frame data
 	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
 		
 	if((unit->m_frame < numAvailFrames) && (run > 0.f)){
-	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]);
-	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]);	
-	    for(int i = 1, j = 0; i <= numbins; i++, j++){
-		itwo = i * 2;
-		// we need two interped phase values... first
-		// figure out how much phase has to advance
-		phase = databufData[iframeloc + itwo];
-		phasem1 = databufData[iframem1loc + itwo];
-		phasep1 = databufData[iframep1loc + itwo];
-		mag = databufData[iframeloc + itwo + 1];
-		magp1 = databufData[iframep1loc + itwo + 1];	
-		
-		while (phase < phasem1)
-		    phase += twopi;
-		while (phasep1 < phase)
-		    phasep1 += twopi;
-//    		Print("%3,3f, %3,3f, %3,3f\n", phasem1,phase, phasep1);
-		// the phase a fraction frame ago
-		phase1 = lininterp(framepct, phasem1, phase);
-		// the phase a fraction ahead
-		phase2 = lininterp(framepct, phase, phasep1);
-		// the difference between the two phases
-		phasedif = phase2 - phase1; 
-		// add it to the previous output, and wrap the phase
-		    
-		pd[j] = phasedif;
-		WRAPPHASE(pd[j]);	
-		p->bin[j].phase = pd[j];
-
-		maginterp = lininterp(framepct, mag, magp1);
-		p->bin[j].mag = maginterp; 
-		}
-		
+	    FILL_FFT
+	    }
 	    unit->m_prevDatabuf = pd;
 	    unit->m_frame += rate;
+	    unit->first = false;
 	    }
 	    
 	SETCALC(PV_PlayBuf_next);
@@ -1590,7 +1599,7 @@ void PV_PlayBuf_next(PV_PlayBuf* unit, int inNumSamples)
 	if(bloop && (unit->m_frame < 0.f)) unit->m_frame +=numAvailFrames;
 		
 	iframe = (int)unit->m_frame;
-//	Print("%3,3f\n", unit->m_frame);
+//	Print("%3,3f\n", run);
 	iframem1 = iframe - 1;
 	iframep1 = iframe + 1;
 	if(iframem1 < 0) iframem1 = iframe;
@@ -1607,44 +1616,8 @@ void PV_PlayBuf_next(PV_PlayBuf* unit, int inNumSamples)
 	pd = unit->m_prevDatabuf;
 	
 	if((unit->m_frame < numAvailFrames) && (run > 0.f)){
-	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]);
-	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]);
-	    for(int i = 1, j = 0; i <= numbins; i++, j++){
-		itwo = i * 2;
-		// we need two interped phase values... first
-		// figure out how much phase has to advance
-		phase = databufData[iframeloc + itwo];
-		phasem1 = databufData[iframem1loc + itwo];
-		phasep1 = databufData[iframep1loc + itwo];
-		mag = databufData[iframeloc + itwo + 1];
-		magp1 = databufData[iframep1loc + itwo + 1];	
-			
-		while (phase < phasem1)
-		    phase += twopi;
-		while (phasep1 < phase)
-		    phasep1 += twopi;
-		phase1 = lininterp(framepct, phasem1, phase);
-		phase2 = lininterp(framepct, phase, phasep1);
-		phasedif = phase1 - phase2;
-		// check if the file has looped
-		if(rate >= 0){
-		    if((unit->m_frame - rate) < 0 && bloop)
-			pd[j] = phasedif;
-			else
-			pd[j] += phasedif;
-		    } else {
-		    if((unit->m_frame + rate) > numAvailFrames && bloop)
-			pd[j] = phasedif;
-			else
-			pd[j] += phasedif;
-		    }
-		
-		WRAPPHASE(pd[j]);	
-		p->bin[j].phase = pd[j];
-
-		maginterp = lininterp(framepct, mag, magp1);
-		p->bin[j].mag = maginterp; 
-		}
+	    FILL_FFT
+	    }
 		
 	    unit->m_prevDatabuf = pd;
 	    unit->m_frame += rate;
