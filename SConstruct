@@ -1,7 +1,12 @@
 # scons build script.
 # blackrain at realizedsound dot net - 11 2006
+#<<<<<<< .mine
+# vim:ft=python:
+#=======
 # Additions by Andrzej Kopec - akopec at chopin dot edu dot pl - Oct 07 2007
 # vim:ft=python:
+#>>>>>>> .r152
+
 
 # edit this to point to your SuperCollider3 source directory
 
@@ -28,9 +33,13 @@ plugs = [
 	'JoshGrainUGens',
 	'ReverbUGens',
 	'MCLDBufferUGens',
+	'MCLDFilterUGens',
+	'MCLDGetenvUGen',
 	'MCLDChaosUGens',
+	'MCLDDistortionUGens',
 	'MCLDTriggeredStatsUgens',
 	'LoopBuf',
+	'MoogFFUGen',
 	'SymbolicMachines',
 	'TagSystemUgens',
 	'bhobChaos',
@@ -47,7 +56,7 @@ for file in plugs :
         	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = '.so'
-	).SharedLibrary(file, 'source/' + file + '.cpp');
+	).SharedLibrary(file, 'source/' + file + '.cpp')
 
 
 
@@ -62,7 +71,7 @@ if build_stkugens == True:
        		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = '.so'
-	).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH=stklib_path);
+	).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH=stklib_path)
 
 
 ##############################################
@@ -82,22 +91,22 @@ FFT_Env = Environment(
 
 fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
 
-FFT_Env.SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base);
+FFT_Env.SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base)
 
 ##############################################
 # MCLDFFTTriggeredUGens
 
-FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']);
+FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c'])
 
 ##############################################
 # MCLDFFTUGens
 
-FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp']);
+FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'])
 
 ##############################################
 # bhobfft
 
-FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ]);
+FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ])
 
 ##############################################
 # AY
@@ -114,5 +123,6 @@ if build_ay == True:
 		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
 		SHLIBPREFIX = '',
 		SHLIBSUFFIX = '.so'
-	).SharedLibrary('AY_UGen', 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path);
+	).SharedLibrary('AY_UGen', 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
+
 
