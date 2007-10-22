@@ -7,19 +7,17 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.42">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0015b9}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1818}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0014ba}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #af1415}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0015b9}
+span.s2 {color: #0014ba}
 span.s3 {color: #000000}
-span.s4 {color: #2c7011}
-span.s5 {color: #ad1818}
+span.s4 {color: #2c700f}
+span.s5 {color: #af1415}
 span.s6 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -37,185 +35,185 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span>server - and instance of Server to allocate the audio bus from. Defaults to Server.default.</p>
 <p class="p2"><br></p>
 <p class="p1"><b>bus</b> - returns the id of the CtkAudio bus.</p>
-<p class="p3"><b>free </b>- returns the bus id to the allocation pool.</p>
+<p class="p1"><b>free </b>- returns the bus id to the allocation pool.</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p1">Unlike CtkControl, CtkAudio object can be passed in straight to a CtkNotes arg. The bus id will be extracted for you.</p>
-<p class="p4"><br></p>
-<p class="p3"><b>Examples:</b></p>
-<p class="p4"><br></p>
-<p class="p5">s = <span class="s2">Server</span>.internal.boot;</p>
-<p class="p5"><span class="s2">Server</span>.default = s;</p>
-<p class="p4"><br></p>
-<p class="p5">(</p>
-<p class="p5"><span class="s2">var</span> pnotes, group, noisesynth, noisebus, filtbus, ampsynth, ampbus, task, env;</p>
-<p class="p5"><span class="s2">var</span> cond;</p>
-<p class="p5">cond = <span class="s2">Condition</span>.new;</p>
-<p class="p6">Routine<span class="s3">.run({</span></p>
-<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>pnotes = </span>CtkProtoNotes<span class="s3">(</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\noise</span>, {<span class="s2">arg</span> outbus;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">WhiteNoise</span>.ar(1));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\filts</span>, {<span class="s2">arg</span> outbus, inbus, dur, freq, amp;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">BPF</span>.ar(<span class="s2">In</span>.ar(inbus), freq, 0.01);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">Pan2</span>.ar(src * envgen * amp, <span class="s2">Rand</span>(-1.0, 1.0)));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\dels</span>, {<span class="s2">arg</span> inbus, deltime, dur, amp;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">CombN</span>.ar(<span class="s2">In</span>.ar(inbus, 2), deltime, [deltime, <span class="s2">Rand</span>.new(0.01, deltime)]);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, src * envgen * amp);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\controlenv</span>, {<span class="s2">arg</span> gate = 1, outbus;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(outbus, <span class="s2">EnvGen</span>.kr(env, gate));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).load(s)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>s.sync(cond);</p>
-<p class="p4"><br></p>
-<p class="p5"><span class="Apple-tab-span">	</span>env = <span class="s2">Env</span>([0, 1, 0], [1, 4], [3, -4], 1);</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>group = <span class="s2">CtkGroup</span>.play;</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>noisebus = </span><span class="s2">CtkAudio</span><span class="s3">.new; </span>// allocate an audio bus to route noise</p>
-<p class="p5"><span class="Apple-tab-span">	</span>filtbus = <span class="s2">CtkAudio</span>.new(2); <span class="s5">// sends stereo</span></p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>ampbus = </span><span class="s2">CtkControl</span><span class="s3">.new; </span>// for global amp control</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>noisesynth = pnotes[<span class="s4">\noise</span>].new(addAction: <span class="s4">\head</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(noisebus) </span>// a CtkAudio! No need to call .bus</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>ampsynth = pnotes[<span class="s4">\controlenv</span>].new(addAction: <span class="s4">\head</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(ampbus.bus) </span>// a CtkControl... need to call .bus otherwise, it will map!</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(env)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>task = <span class="s2">Task</span>({</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> reltime, dur;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reltime = env.releaseTime;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dur = 10;</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// schedule the release of the global envelope</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SystemClock</span>.sched(dur - reltime, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group.release;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// schedule the release of the Task</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SystemClock</span>.sched(dur, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group.freeAll;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>task.stop;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>loop({</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// place the filter notes after the noisesynth</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\filts</span>].new(addAction: <span class="s4">\after</span>, target: noisesynth)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(filtbus) </span>// route output for the delays</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(noisebus) </span>// read in the noisebus</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(1200.rrand(2400))<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus)<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\dels</span>].new(addAction: <span class="s4">\tail</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(filtbus) </span>// read in the filtered noise</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.deltime_(0.01.rrand(0.03))</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1.5)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus) </span>// don't call .bus here... it will map the arg for you</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.5.wait;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>task.play;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>})</p>
-<p class="p5">)</p>
-<p class="p8"><br></p>
-<p class="p3"><span class="s2"><b>Examples</b></span><b> that populate an instance of </b><span class="s2"><b>CtkScore</b></span><b>. </b><span class="s2"><b>The</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> can then be rendered in </b><span class="s2"><b>NRT</b></span><b>, played or saved as a file. </b><span class="s2"><b>See</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> for more examples.</b></p>
-<p class="p8"><br></p>
-<p class="p5">(</p>
-<p class="p5"><span class="s2">var</span> pnotes, group, noisesynth, noisebus, filtbus, ampsynth, ampbus, task, env;</p>
-<p class="p5"><span class="s2">var</span> score, now;</p>
-<p class="p5">score = <span class="s2">CtkScore</span>.new;</p>
-<p class="p4"><br></p>
-<p class="p6"><span class="s3">pnotes = </span>CtkProtoNotes<span class="s3">(</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\noise</span>, {<span class="s2">arg</span> outbus;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">WhiteNoise</span>.ar(1));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\filts</span>, {<span class="s2">arg</span> outbus, inbus, dur, freq, amp;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">BPF</span>.ar(<span class="s2">In</span>.ar(inbus), freq, 0.01);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">Pan2</span>.ar(src * envgen * amp, <span class="s2">Rand</span>(-1.0, 1.0)));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\dels</span>, {<span class="s2">arg</span> inbus, deltime, dur, amp;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">CombN</span>.ar(<span class="s2">In</span>.ar(inbus, 2), deltime, [deltime, <span class="s2">Rand</span>.new(0.01, deltime)]);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, src * envgen * amp);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\controlenv</span>, {<span class="s2">arg</span> gate = 1, outbus;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(outbus, <span class="s2">EnvGen</span>.kr(env, gate));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).load(s)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>);</p>
-<p class="p4"><br></p>
-<p class="p5">env = <span class="s2">Env</span>([0, 1, 0], [1, 4], [3, -4], 1);</p>
-<p class="p4"><br></p>
-<p class="p5">group = <span class="s2">CtkGroup</span>.new.addTo(score);</p>
-<p class="p7"><span class="s3">noisebus = </span><span class="s2">CtkAudio</span><span class="s3">.new; </span>// allocate an audio bus to route noise</p>
-<p class="p5">filtbus = <span class="s2">CtkAudio</span>.new(2); <span class="s5">// sends stereo</span></p>
-<p class="p7"><span class="s3">ampbus = </span><span class="s2">CtkControl</span><span class="s3">.new; </span>// for global amp control</p>
-<p class="p4"><br></p>
-<p class="p5">noisesynth = pnotes[<span class="s4">\noise</span>].new(0.1, addAction: <span class="s4">\head</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>.outbus_(noisebus) </span>// a CtkAudio! No need to call .bus</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.addTo(score);</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p5">ampsynth = pnotes[<span class="s4">\controlenv</span>].new(1.0, 10, addAction: <span class="s4">\head</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>.outbus_(ampbus.bus) </span>// a CtkControl... need to call .bus!</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.env_(env)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.release(10 - env.releaseTime)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.addTo(score);</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5">now = 0.0;</p>
-<p class="p4"><br></p>
-<p class="p5">while({</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span></span>// place the filter notes after the noisesynth</p>
-<p class="p5"><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\filts</span>].new(1.0 + now, addAction: <span class="s4">\after</span>, target: noisesynth)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(filtbus) </span>// route output for the delays</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(noisebus) </span>// read in the noisebus</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(1200.rrand(2400))<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus)<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\dels</span>].new(1.0 + now, addAction: <span class="s4">\tail</span>, target: group)</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(filtbus) </span>// read in the filtered noise</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.deltime_(0.01.rrand(0.03))</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1.5)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
-<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus) </span>// don't call .bus here... it will map the arg for you</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>now = now + 0.5;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>now &lt; 10;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>});</p>
-<p class="p4"><br></p>
-<p class="p7">// uncomment to play the CtkScore you have created</p>
-<p class="p5">//score.play(s);</p>
-<p class="p4"><br></p>
-<p class="p7">// uncomment to write the score to a soundfile</p>
-<p class="p5">score.write(<span class="s6">"~/Desktop/test.aiff"</span>.standardizePath,<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>options: <span class="s2">ServerOptions</span>.new.numOutputBusChannels_(2));</p>
-<p class="p4"><br></p>
-<p class="p7">// uncomment to save the CtkScore as a file</p>
-<p class="p5">score.saveToFile(<span class="s6">"~/Desktop/test.sc"</span>.standardizePath);</p>
-<p class="p5">)</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
+<p class="p3"><br></p>
+<p class="p1"><b>Examples:</b></p>
+<p class="p3"><br></p>
+<p class="p4">s = <span class="s2">Server</span>.internal.boot;</p>
+<p class="p4"><span class="s2">Server</span>.default = s;</p>
+<p class="p3"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="s2">var</span> pnotes, group, noisesynth, noisebus, filtbus, ampsynth, ampbus, task, env;</p>
+<p class="p4"><span class="s2">var</span> cond;</p>
+<p class="p4">cond = <span class="s2">Condition</span>.new;</p>
+<p class="p5">Routine<span class="s3">.run({</span></p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span>pnotes = </span>CtkProtoNotes<span class="s3">(</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\noise</span>, {<span class="s2">arg</span> outbus;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">WhiteNoise</span>.ar(1));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\filts</span>, {<span class="s2">arg</span> outbus, inbus, dur, freq, amp;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">BPF</span>.ar(<span class="s2">In</span>.ar(inbus), freq, 0.01);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">Pan2</span>.ar(src * envgen * amp, <span class="s2">Rand</span>(-1.0, 1.0)));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\dels</span>, {<span class="s2">arg</span> inbus, deltime, dur, amp;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">CombN</span>.ar(<span class="s2">In</span>.ar(inbus, 2), deltime, [deltime, <span class="s2">Rand</span>.new(0.01, deltime)]);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, src * envgen * amp);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\controlenv</span>, {<span class="s2">arg</span> gate = 1, outbus;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(outbus, <span class="s2">EnvGen</span>.kr(env, gate));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).load(s)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>s.sync(cond);</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>env = <span class="s2">Env</span>([0, 1, 0], [1, 4], [3, -4], 1);</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>group = <span class="s2">CtkGroup</span>.play;</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>noisebus = </span><span class="s2">CtkAudio</span><span class="s3">.new; </span>// allocate an audio bus to route noise</p>
+<p class="p4"><span class="Apple-tab-span">	</span>filtbus = <span class="s2">CtkAudio</span>.new(2); <span class="s5">// sends stereo</span></p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>ampbus = </span><span class="s2">CtkControl</span><span class="s3">.new; </span>// for global amp control</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>noisesynth = pnotes[<span class="s4">\noise</span>].new(addAction: <span class="s4">\head</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(noisebus) </span>// a CtkAudio! No need to call .bus</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>ampsynth = pnotes[<span class="s4">\controlenv</span>].new(addAction: <span class="s4">\head</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(ampbus.bus) </span>// a CtkControl... need to call .bus otherwise, it will map!</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(env)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>task = <span class="s2">Task</span>({</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> reltime, dur;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reltime = env.releaseTime;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dur = 10;</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// schedule the release of the global envelope</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SystemClock</span>.sched(dur - reltime, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group.release;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// schedule the release of the Task</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SystemClock</span>.sched(dur, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group.freeAll;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>task.stop;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>loop({</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// place the filter notes after the noisesynth</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\filts</span>].new(addAction: <span class="s4">\after</span>, target: noisesynth)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(filtbus) </span>// route output for the delays</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(noisebus) </span>// read in the noisebus</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(1200.rrand(2400))<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus)<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\dels</span>].new(addAction: <span class="s4">\tail</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(filtbus) </span>// read in the filtered noise</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.deltime_(0.01.rrand(0.03))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1.5)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus) </span>// don't call .bus here... it will map the arg for you</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.play;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.5.wait;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>task.play;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>})</p>
+<p class="p4">)</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s2"><b>Examples</b></span><b> that populate an instance of </b><span class="s2"><b>CtkScore</b></span><b>. </b><span class="s2"><b>The</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> can then be rendered in </b><span class="s2"><b>NRT</b></span><b>, played or saved as a file. </b><span class="s2"><b>See</b></span><b> </b><span class="s2"><b>CtkScore</b></span><b> for more examples.</b></p>
+<p class="p2"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="s2">var</span> pnotes, group, noisesynth, noisebus, filtbus, ampsynth, ampbus, task, env;</p>
+<p class="p4"><span class="s2">var</span> score, now;</p>
+<p class="p4">score = <span class="s2">CtkScore</span>.new;</p>
+<p class="p3"><br></p>
+<p class="p5"><span class="s3">pnotes = </span>CtkProtoNotes<span class="s3">(</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\noise</span>, {<span class="s2">arg</span> outbus;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">WhiteNoise</span>.ar(1));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\filts</span>, {<span class="s2">arg</span> outbus, inbus, dur, freq, amp;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">BPF</span>.ar(<span class="s2">In</span>.ar(inbus), freq, 0.01);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(outbus, <span class="s2">Pan2</span>.ar(src * envgen * amp, <span class="s2">Rand</span>(-1.0, 1.0)));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\dels</span>, {<span class="s2">arg</span> inbus, deltime, dur, amp;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env, envgen, src;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>envgen = <span class="s2">EnvGen</span>.kr(env, timeScale: dur, doneAction: 2);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>src = <span class="s2">CombN</span>.ar(<span class="s2">In</span>.ar(inbus, 2), deltime, [deltime, <span class="s2">Rand</span>.new(0.01, deltime)]);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, src * envgen * amp);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}),<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">SynthDef</span>(<span class="s4">\controlenv</span>, {<span class="s2">arg</span> gate = 1, outbus;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> env;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env = <span class="s2">Control</span>.names([<span class="s4">\env</span>]).kr(<span class="s2">Env</span>.newClear(8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(outbus, <span class="s2">EnvGen</span>.kr(env, gate));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).load(s)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>);</p>
+<p class="p3"><br></p>
+<p class="p4">env = <span class="s2">Env</span>([0, 1, 0], [1, 4], [3, -4], 1);</p>
+<p class="p3"><br></p>
+<p class="p4">group = <span class="s2">CtkGroup</span>.new.addTo(score);</p>
+<p class="p6"><span class="s3">noisebus = </span><span class="s2">CtkAudio</span><span class="s3">.new; </span>// allocate an audio bus to route noise</p>
+<p class="p4">filtbus = <span class="s2">CtkAudio</span>.new(2); <span class="s5">// sends stereo</span></p>
+<p class="p6"><span class="s3">ampbus = </span><span class="s2">CtkControl</span><span class="s3">.new; </span>// for global amp control</p>
+<p class="p3"><br></p>
+<p class="p4">noisesynth = pnotes[<span class="s4">\noise</span>].new(0.1, addAction: <span class="s4">\head</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>.outbus_(noisebus) </span>// a CtkAudio! No need to call .bus</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">ampsynth = pnotes[<span class="s4">\controlenv</span>].new(1.0, 10, addAction: <span class="s4">\head</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>.outbus_(ampbus.bus) </span>// a CtkControl... need to call .bus!</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.env_(env)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.release(10 - env.releaseTime)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4">now = 0.0;</p>
+<p class="p3"><br></p>
+<p class="p4">while({</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span></span>// place the filter notes after the noisesynth</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\filts</span>].new(1.0 + now, addAction: <span class="s4">\after</span>, target: noisesynth)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.outbus_(filtbus) </span>// route output for the delays</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(noisebus) </span>// read in the noisebus</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.freq_(1200.rrand(2400))<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus)<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>pnotes[<span class="s4">\dels</span>].new(1.0 + now, addAction: <span class="s4">\tail</span>, target: group)</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.inbus_(filtbus) </span>// read in the filtered noise</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.deltime_(0.01.rrand(0.03))</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.dur_(1.5)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.env_(<span class="s2">Env</span>([0, 1, 0], [0.5, 0.5], <span class="s4">\sin</span>))</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.amp_(ampbus) </span>// don't call .bus here... it will map the arg for you</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.addTo(score);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>now = now + 0.5;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>now &lt; 10;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>});</p>
+<p class="p3"><br></p>
+<p class="p6">// uncomment to play the CtkScore you have created</p>
+<p class="p4">//score.play(s);</p>
+<p class="p3"><br></p>
+<p class="p6">// uncomment to write the score to a soundfile</p>
+<p class="p4">score.write(<span class="s6">"~/Desktop/test.aiff"</span>.standardizePath,<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>options: <span class="s2">ServerOptions</span>.new.numOutputBusChannels_(2));</p>
+<p class="p3"><br></p>
+<p class="p6">// uncomment to save the CtkScore as a file</p>
+<p class="p4">score.saveToFile(<span class="s6">"~/Desktop/test.sc"</span>.standardizePath);</p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 </body>
 </html>

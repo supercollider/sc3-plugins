@@ -283,6 +283,7 @@ CtkNode : CtkObj {
 
 	var <addAction, <target, <>server;
 	var <>node, <>messages, <>starttime, <>willFree = false;
+	var <isPaused = false;
 	
 	watch {
 		var thisidx;
@@ -367,7 +368,25 @@ CtkNode : CtkObj {
 				})
 			})
 		}
-		
+	
+	pause {
+		this.isPlaying.if({
+			isPaused.not.if({
+				server.sendMsg(\n_run, node, 0);
+				isPaused = true;
+				})
+			})
+		}
+
+	run {
+		this.isPlaying.if({
+			isPaused.if({
+				server.sendMsg(\n_run, node, 1);
+				isPaused = false;
+				})
+			})
+		}
+					
 	asUGenInput {^node}
 		
 	*initClass {
@@ -658,7 +677,7 @@ CtkGroup : CtkNode {
 CtkBuffer : CtkObj {
 	var <bufnum, <path, <size, <startFrame, <numFrames, <numChannels, <server, <bundle, 
 		<freeBundle, <closeBundle, <messages, <isPlaying = false, <isOpen = false;
-	var <duration;
+	var <duration, <sampleRate;
 	
 	*new {arg path, size, startFrame = 0, numFrames, numChannels, bufnum, server;
 		^this.newCopyArgs(bufnum, path, size, startFrame, numFrames, numChannels, server).init;
@@ -686,6 +705,7 @@ CtkBuffer : CtkObj {
 			sf.openRead;
 			numChannels = sf.numChannels;
 			duration = sf.duration;
+			sampleRate = sf.sampleRate;
 			sf.close;
 			});
 		case { // path, not size - load file with b_allocRead
@@ -709,7 +729,7 @@ CtkBuffer : CtkObj {
 			};
 		freeBundle = [\b_free, bufnum];			
 		}
-		
+	
 	load {arg time = 0.0, sync = true, cond;
 		SystemClock.sched(time, {
 			Routine.run({
@@ -732,8 +752,58 @@ CtkBuffer : CtkObj {
 				isPlaying = true;
 				})
 			});
-		}
+		} 
 	
+	
+	// if sync true AND no cond, create a Routine and sync it... if sync true and cond, no Routine
+	// needed
+	/*
+	load {arg time = 0.0, sync = true, cond;
+		var msg;
+		SystemClock.sched(time, {
+			sync.if({
+				(cond.isKindOf(Condition)).if({
+					server.sendBundle(nil, bundle);
+					server.sync(cond);
+					(messages.size > 0).if({
+						server.sync(cond);
+						messages.do({arg me; 
+							msg = me[1];
+							server.sendBundle(nil, msg);
+							server.sync(cond);
+							});
+						});
+					("CtkBuffer with bufnum id "++bufnum++" loaded").postln;
+					}, {
+					Routine.run({
+						cond = cond ?? {Condition.new};
+						server.sendBundle(nil, bundle);
+						server.sync(cond);
+						(messages.size > 0).if({
+							server.sync(cond);
+							messages.do({arg me; 
+								msg = me[1];
+								server.sendBundle(nil, msg);
+								server.sync(cond);
+								});
+							});
+						server.sync(cond);
+						("CtkBuffer with bufnum id "++bufnum++" loaded").postln;
+						});
+					})
+				}, {
+				server.sendBundle(nil, bundle);
+				(messages.size > 0).if({
+					messages.do({arg me; 
+						msg = me[1];
+						server.sendBundle(nil, msg);
+						});
+					});				
+				});
+			isPlaying = true;
+			});
+		}		
+	*/
 	free {arg time = 0.0;
 		closeBundle.notNil.if({
 			SystemClock.sched(time, {
@@ -927,6 +997,8 @@ with .play - needs to act like ProcMod
 with .write, needs to act like CtkScore
 with .addToScore - needs to act like .write, and return the CtkScore that is created, and append
 	them
+
+need to create a clock like object that will wait in tasks, advance time in .write situations
 */
 CtkEvent : CtkObj {
 	var srtarttime, duration, server;

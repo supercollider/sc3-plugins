@@ -4,51 +4,52 @@ HDR {
 		<reclevel, <channels, <bufnum, <isRecording = false, <server, <synthdef, <synthdefname, 
 		<>bufsize = 65536, cond, <node, <guiMode = false, <monitorMode = false, <monitorOut = 0,
 		<monitorNode, <scopeBufnum, <scopeNode, <numChannels, <bfMonitorMode = false, 
-		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor, cper;
+		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor, cper, timestamp;
 	
 	*new { arg server, channels, addAction = 1, target = 0, sessionPath, filename, 
-			headerFormat = "aiff", sampleFormat = "int16", reclevel = 1;
+			headerFormat = "aiff", sampleFormat = "int16", reclevel = 1, timestamp = true;
 		^super.newCopyArgs(addAction, target, sessionPath, filename, headerFormat, 
-			sampleFormat, reclevel).init(channels, server);
+			sampleFormat, reclevel).init(channels, server, timestamp);
 		}
 		
-	init {arg argChannels, argServer;
+	init {arg argChannels, argServer, argTimeStamp;
 		server = argServer ? Server.default;
 		server.serverRunning.not({
 			server.boot;
 			});
+		timestamp = argTimeStamp;
 		cond = Condition.new;
 		channels = argChannels.isKindOf(Array).not.if({argChannels.asArray}, {argChannels});
 		numChannels = channels.size;
 		server.waitForBoot({
 			synthdefname = this.hash.asString;
-			SynthDef(synthdefname, {arg gate = 1, buffer, reclevel = 1;
+			SynthDef(synthdefname, {arg hdrgate = 1, buffer, reclevel = 1;
 				var in;
 				in = [];
 				channels.do({arg me; in = in ++ In.ar(me, 1)});
 				in = in * EnvGen.kr(
 					Env([1, 1, 0], [0.1, 0.1], -10, 1),
-					gate, doneAction: 2) *
+					hdrgate, doneAction: 2) *
 					Lag2.kr(reclevel, 0.1);
 				DiskOut.ar(buffer, in);
 				}).send(server);
-			SynthDef(synthdefname++"monitor", {arg gate = 1, outbus, reclevel = 1;
+			SynthDef(synthdefname++"monitor", {arg mongate = 1, outbus, reclevel = 1;
 				var in;
 				in = [];
 				channels.do({arg me; in = in ++ In.ar(me, 1)});
 				in = in * EnvGen.kr(
 					Env([1, 1, 0], [0.1, 0.1], -10, 1),
-					gate, doneAction: 2) *
+					mongate, doneAction: 2) *
 					Lag2.kr(reclevel, 0.1);	
 				Out.ar(outbus, in);
 				}).send(server);
-			SynthDef(synthdefname++"scope", {arg gate = 1, buffer, reclevel = 1;
+			SynthDef(synthdefname++"scope", {arg scopegate = 1, buffer, reclevel = 1;
 				var in;
 				in = [];
 				channels.do({arg me; in = in ++ In.ar(me, 1)});
 				in = in * EnvGen.kr(
 					Env([1, 1, 0], [0.1, 0.1], -10, 1),
-					gate, doneAction: 2) * 
+					scopegate, doneAction: 2) * 
 					Lag2.kr(reclevel, 0.1);
 				ScopeOut.ar(in, buffer);
 				}).send(server);
@@ -86,7 +87,9 @@ HDR {
 	// should be run in a routine
 	openFile {
 		server.sendMsgSync(cond, \b_write, bufnum, sessionPath ++
-			filename ++ Date.getDate.stamp ++ "." ++ headerFormat, headerFormat, sampleFormat, 
+			filename ++ 
+				timestamp.if({Date.getDate.stamp}, {""}) ++ 
+				"." ++ headerFormat, headerFormat, sampleFormat, 
 				0, 0, 1);
 		}
 	
@@ -113,10 +116,11 @@ HDR {
 			});
 		}
 		
-	stop {
+	stop {arg waittime = 0.0;
 		isRecording.if({
 			Routine.run({
-				server.sendMsg(\n_set, node, \gate, 0);
+				waittime.wait;
+				server.sendMsg(\n_set, node, \hdrgate, 0);
 				1.0.wait;
 				this.closeFile;
 				isRecording = false;
@@ -144,7 +148,7 @@ HDR {
 	
 	stopMonitor {
 		monitorMode = false;
-		server.sendMsg(\n_set, monitorNode, \gate, 0);
+		server.sendMsg(\n_set, monitorNode, \mongate, 0);
 		}
 	
 	monitorOut_ {arg newbus;
@@ -296,41 +300,41 @@ BFMonitor {
 	play {
 		var players, w, x, y, z;
 		players = [
-			{arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
+			{arg playgate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
 				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
-					gate, doneAction: 2);
+					playgate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
 				Out.ar(out, [w, x, y, z] * env);
-			}, {arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
+			}, {arg playgate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
 				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
-					gate, doneAction: 2);		
+					playgate, doneAction: 2);		
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
 				Out.ar(out, B2Ster.ar(w, x, y) * env);
-			}, {arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
+			}, {arg playgate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;
 				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
-					gate, doneAction: 2);
+					playgate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
 				Out.ar(out, B2UHJ.ar(w, x, y) * env);
-			}, {arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;				var env;
+			}, {arg playgate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
-					gate, doneAction: 2);
+					playgate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
 				Out.ar(out, BFDecode1.ar(w, x, y, z, [0.25, -0.25, -0.75, -1.25] * pi) * env);
-			}, {arg gate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;				var env;
+			}, {arg playgate = 1, out, wmute = 1, xmute = 1, ymute = 1, zmute = 1, level = 1;				var env;
 				env = EnvGen.kr(
 					Env([0, 1, 0], [0.1, 0.1], \sin, 1),
-					gate, doneAction: 2);
+					playgate, doneAction: 2);
 				#w, x, y, z = In.ar([wbus, xbus, ybus, zbus], 1) *
 					[wmute, xmute, ymute, zmute] * level;
 				Out.ar(out, BFDecode1.ar(w, x, y, z, [0.1666, -0.1666, -0.5, -0.8333, 0.8333, 0.5]
@@ -356,7 +360,7 @@ BFMonitor {
 	stop {
 		isPlaying.if({
 			isPlaying = false;
-			server.sendMsg(\n_set, nodeID, \gate, 0);
+			server.sendMsg(\n_set, nodeID, \playgate, 0);
 			})
 		}
 		

@@ -24,6 +24,8 @@ plugs = [
 	'BEQSuiteUGens',
 	'BlackrainUGens',
 	'JoshUGens',
+	'JoshAmbiUGens',
+	'JoshGrainUGens',
 	'ReverbUGens',
 	'MCLDBufferUGens',
 	'MCLDChaosUGens',
