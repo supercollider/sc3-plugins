@@ -320,7 +320,7 @@ ProcMod {
 			3 -> 3,
 			4 -> 4
 			];	
-		StartUp.add {
+		StartUp.add({
 		SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;
 			var env;
 			env = EnvGen.kr(
@@ -328,7 +328,7 @@ ProcMod {
 					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
 			Out.kr(outbus, env);
 		}).writeDefFile;
-		}
+		})
 	}
 }
 

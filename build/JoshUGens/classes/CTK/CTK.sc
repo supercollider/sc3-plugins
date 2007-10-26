@@ -207,8 +207,16 @@ CtkProtoNotes {
 	// load and add to the dictionary
 	addToDict {arg sds;
 		sds.do({arg me;
-			dict.add(me.name -> CtkNoteObject.new(me));
-			});	
+			case
+				{me.isKindOf(SynthDef)}
+				{dict.add(me.name -> CtkNoteObject.new(me))}
+				{me.isKindOf(SynthDescLib)}
+				{me.read;
+				me.synthDescs.do({arg thissd;
+					dict.add(thissd.name -> CtkNoteObject.new(thissd.name.asSymbol))
+					});
+				}
+			})	
 		}
 	
 	at {arg id;
@@ -229,7 +237,74 @@ CtkNoteObject {
 		}
 		
 	init {
-		var sargs, sargsdefs;
+		var sargs, sargsdefs, sd, count, tmpar, namesAndPos, sdcontrols, tmpsize;
+		case
+			{
+			synthdef.isKindOf(SynthDef)
+			}{
+			this.buildControls;
+			}{
+			// if a string or symbol is passed in, check to see if SynthDescLib.global 
+			// has the SynthDef
+			(synthdef.isKindOf(String) || synthdef.isKindOf(Symbol) || 
+				synthdef.isKindOf(SynthDesc)) 
+			}{
+			synthdef.isKindOf(SynthDesc).if({
+				sd = synthdef;
+				}, {	
+				sd = SynthDescLib.global.at(synthdef);
+				});
+			sd.notNil.if({
+				// check if this is a SynthDef being read from disk... if it is, it
+				// has to be handled differently
+				sd.def.allControlNames.notNil.if({
+					synthdef = sd.def;
+					this.buildControls;
+					}, {
+					synthdef = sd.def;
+					args = Dictionary.new;
+					synthdefname = synthdef.name;
+					count = 0;
+					namesAndPos = [];
+					sd.controls.do({arg me, i;
+						(me.name != '?').if({
+							namesAndPos = namesAndPos.add([me.name, i]);
+							}); 
+						});
+					sdcontrols = namesAndPos.collect({arg me, i;
+						(i < (namesAndPos.size - 1)).if({
+							tmpsize = namesAndPos[i + 1][1] - me[1];
+							[me[0].asSymbol, (tmpsize > 1).if({
+								(me[1]..(namesAndPos[i+1][1] - 1)).collect({arg j;
+									sd.controls[j].defaultValue;
+									})
+								}, {
+								sd.controls[me[1]].defaultValue;
+								})]
+							}, {
+							tmpsize = sd.controls.size - 1 - me[1];
+							[me[0].asSymbol, (tmpsize > 1).if({
+								(me[1] .. (sd.controls.size) - 1).collect({arg j;
+									sd.controls[j].defaultValue;
+									}, {
+									sd.controls[me[1]].defaultValue;
+									})
+								})]
+							})
+						});
+					sdcontrols.do({arg me;
+						var name, def;
+						#name, def = me;
+						args.add(name -> def);
+						})
+					})
+				},{
+				"The SynthDef id you requested doesn't appear to be in your global SynthDescLib. Please .memStore your SynthDef, OR run SynthDescLib.global.read to read the SynthDesscs into memory".warn
+				})
+			}
+		}
+		
+	buildControls {
 		synthdef.load(server ?? {Server.default});
 		args = Dictionary.new;
 		synthdefname = synthdef.name;
@@ -243,9 +318,9 @@ CtkNoteObject {
 					})
 				};
 			args.add(name -> def);
-			})
+			})	
 		}
-	
+		
 	// create an CtkNote instance
 	new {arg starttime, duration, addAction = 0, target = 1, server;
 		^CtkNote.new(starttime, duration, addAction, target, server, synthdefname)
@@ -332,7 +407,7 @@ CtkNode : CtkObj {
 				server.sendBundle(nil, bund);
 				});
 			}, {
-			starttime = starttime ? {0.0};
+			starttime = starttime ?? {0.0};
 			messages = messages.add([starttime + time, bund]);
 			})
 		}
@@ -474,17 +549,8 @@ CtkNote : CtkNode {
 			server.sendBundle(nil, [\n_map, node, argname, newValue.bus])
 			}{
 			true
-//			newValue.isKindOf(CtkBuffer)
 			}{
 			server.sendBundle(nil, [\n_set, node, argname, newValue.asUGenInput])
-//			}{
-//			newValue.isKindOf(CtkAudio)
-//			}{
-//			server.sendBundle(nil, [\n_set, node, argname, newValue.bus])
-//			}{
-//			true
-//			}{
-//			server.sendBundle(nil, [\n_set, node, argname, newValue]);
 			};
 		}
 
@@ -519,17 +585,8 @@ CtkNote : CtkNode {
 				mapDict.add(key -> val.asUGenInput);
 				}{
 				true
-//				val.isKindOf(CtkBuffer)
 				}{
 				bundlearray = bundlearray ++ [key, val.asUGenInput];
-//				}{
-//				val.isKindOf(CtkAudio)
-//				}{
-//				bundlearray = bundlearray ++ [key, val.bus];
-//				}{
-//				true
-//				}{
-//				bundlearray = bundlearray ++ [key, val];
 				}
 			});
 		^bundlearray;		
@@ -549,20 +606,22 @@ CtkNote : CtkNode {
 			
 	// support playing and releasing notes ... not for use with scores
 	play {arg latency;
-		var bund;
+		var bund, start;
 		this.isPlaying.not.if({
-			bund = this.buildBundle;
-			server.sendBundle(latency, this.buildBundle);
-			setnDict.keysValuesDo({arg key, val;
-				server.sendBundle(latency, [\n_setn, node, key, val.size] ++ val);
-				});
-			mapDict.keysValuesDo({arg key, val;
-				server.sendBundle(latency, [\n_map, node, key, val]);
-				});
-			this.watch;
-			// if a duration is given... kill it
-			duration.notNil.if({
-				SystemClock.sched(duration, {this.free(addMsg: false)})
+			SystemClock.sched(starttime ?? {0.0}, {
+	//			bund = this.buildBundle;
+				server.sendBundle(latency, this.buildBundle);
+				setnDict.keysValuesDo({arg key, val;
+					server.sendBundle(latency, [\n_setn, node, key, val.size] ++ val);
+					});
+				mapDict.keysValuesDo({arg key, val;
+					server.sendBundle(latency, [\n_map, node, key, val]);
+					});
+				this.watch;
+				// if a duration is given... kill it
+				duration.notNil.if({
+					SystemClock.sched(duration, {this.free(addMsg: false)})
+					});
 				});
 			^this;
 			}, {
