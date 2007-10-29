@@ -595,8 +595,8 @@ GuidoArticulation : GuidoMark {
 	}
 	
 GuidoArt {
-	*new {arg tag;
-		^GuidoArticulation.new(tag);
+	*new {arg tag, val;
+		^GuidoArticulation.new(tag, val);
 		}
 	}
 

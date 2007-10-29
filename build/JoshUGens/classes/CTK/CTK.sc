@@ -44,6 +44,10 @@ CtkScore {
 						})
 					});
 				} {
+				event.isKindOf(CtkEvent)
+				} {
+				this.merge(event.score, 0.0)
+				} {
 				true;
 				} {
 				event.messages.do({arg me;
@@ -322,7 +326,7 @@ CtkNoteObject {
 		}
 		
 	// create an CtkNote instance
-	new {arg starttime, duration, addAction = 0, target = 1, server;
+	new {arg starttime = 0.0, duration, addAction = 0, target = 1, server;
 		^CtkNote.new(starttime, duration, addAction, target, server, synthdefname)
 			.args_(args.deepCopy);
 		}
@@ -980,7 +984,7 @@ CtkBuffer : CtkObj {
 	}
 		
 CtkControl : CtkObj {
-	var server, <numChans, <bus, value, starttime, <messages, isPlaying = false, <endtime = 0.0;
+	var server, <numChans, <bus, value, <>starttime, <messages, isPlaying = false, <endtime = 0.0;
 	
 	*new {arg numChans = 1, initVal = 0.0, starttime = 0.0, bus, server;
 		^this.newCopyArgs(server, numChans, bus, initVal, starttime).init;
@@ -1059,17 +1063,231 @@ with .addToScore - needs to act like .write, and return the CtkScore that is cre
 
 need to create a clock like object that will wait in tasks, advance time in .write situations
 */
-CtkEvent : CtkObj {
-	var srtarttime, duration, server;
-	var score;
+
+/* CtkTimer needs to be a TempoClock when played, a timekeeper when used for NRT */
+
+CtkTimer {
+	var starttime, <curtime, <clock, ttempo, rtempo, isPlaying = false, <next = nil;
 	
-	*new {arg starttime, duration, server;
-		super.newCopyArgs(starttime, duration).init(server);
+	*new {arg starttime = 0.0;
+		^super.newCopyArgs(starttime, starttime);
+		}
+	
+	play {arg tempo = 1;
+		isPlaying.not.if({
+			clock = TempoClock.new;
+			clock.tempo_(ttempo = tempo);
+			rtempo = ttempo.reciprocal;
+			isPlaying = true;
+			}, {
+			"This CtkClock is already playing".warn
+			});
 		}
 		
-	init {arg argserver;
-		server = argserver ?? {Server.default};
-//		score = CtkScore.new;
+	free {
+		isPlaying.if({
+			clock.stop;
+			isPlaying = false;
+			})
 		}
+	
+	now {
+		isPlaying.if({
+			^clock.elapsedBeats;
+			}, {
+			^curtime - starttime;
+			})
+		}
+		
+	wait {arg inval;
+		isPlaying.if({
+			(inval*rtempo).yield;
+			}, {
+			curtime = curtime + inval
+			});
+		}
+		
+	next_ {arg inval;
+		isPlaying.if({
+			next = inval;
+			}, {
+			curtime = curtime + inval;
+			})
+		}
+	}
+	
+CtkEvent : CtkObj {
+	classvar envsd;
+	var starttime, <>condition, server, addAction, target;
+	var isPlaying = false, isReleasing = false, releaseTime = 0.0, timer, clock, 
+		<function, envbus, inc, group, for = 0, by = 1, envsynth, envbus, playinit;
+	
+	*new {arg starttime = 0.0, condition, addAction = 0, target = 1, server;
+		^super.newCopyArgs(starttime, condition, server, addAction, target).init;
+		}
+		
+	init {
+		server = server ?? {Server.default};
+		timer = CtkTimer.new(starttime);
+		inc = 0;
+		playinit = true;
+		}
+		
+	function_ {arg newfunction;
+		function = newfunction;
+		}
+	
+	play {
+		var notes, loopif, initVal;
+		server.serverRunning.if({
+			isPlaying.not.if({
+				isPlaying = true;
+				timer.play;
+				this.setup;
+				clock.sched(starttime, {
+					var now;
+					now = timer.now;
+					playinit.if({
+						playinit = false;
+						condition.isKindOf(Env).if({
+							condition.releaseNode.isNil.if({
+								clock.sched(condition.times.sum + 0.1, {this.clear});
+								})
+							});
+						[group, envbus, envsynth].do({arg me; me.notNil.if({me.play})});
+						});
+					notes = function.value(group, envbus, timer, inc, server);
+					notes.asArray.do({arg me;
+						me.play;
+						});
+					inc = inc + by;
+					this.checkCond.if({
+						timer.next;
+						}, {
+						nil
+						});
+					})
+				})
+			}, {
+			"Please boot the Server before trying to play an instance of CtkEvent".warn;
+			})
+		}
+	
+	setup {
+		var thisdur;
+		clock = timer.clock;
+		group = CtkGroup.new(addAction: addAction, target: target, server: server);
+		condition.isKindOf(Env).if({
+			envbus = CtkControl.new(initVal: 0.0, server: server);
+			thisdur = condition.releaseNode.isNil.if({condition.times.sum}, {nil});
+			envsynth = envsd.new(duration: thisdur, target: group, server: server)
+				.outbus_(envbus.bus).evenv_(condition);
+			}, {
+			envbus = CtkControl.new(initVal: 1.0, server: server);
+			});
+		}
+	
+	free {
+		this.clear;
+		}
+	
+	release {
+		isPlaying.if({
+			condition.isKindOf(Env).if({
+				condition.releaseNode.notNil.if({
+					envsynth.release(key: \evgate);
+					this.releaseSetup(condition.releaseTime);
+					}, {
+					"The envelope for this CtkEvent doesn't have a releaseNode. Use .free instead".warn;})
+				}, {
+				"This CtkEvent doesn't use an Env as a condition control. Use .free instead".warn
+				})
+			}, {
+			"This CtkEvent is not playing".warn
+			});
+		}
+		
+	releaseSetup {arg reltime;
+		clock.sched(reltime, {this.clear});
+		}
+		
+	clear {
+		clock.stop;
+		group.free;
+		envbus.free;
+		isPlaying = false;
+		this.init;
+		}
+			
+	checkCond {
+		case
+			{
+			condition.isKindOf(Boolean) || condition.isKindOf(Function)
+			} {
+			^condition.value(timer, inc)
+			} {
+			condition.isKindOf(SimpleNumber)
+			} {
+//			^timer.now < condition
+			^inc < condition
+			} {
+			condition.isKindOf(Env)
+			} {
+			^condition.releaseNode.isNil.if({
+				timer.now < condition.times.sum;
+				}, {
+				(isReleasing || (releaseTime < condition.releaseTime))
+				})
+			} {
+			true
+			} {
+			^false
+			}
+		}
+		
+	score {
+		var notes, score, curtime;
+		// check first to make sure the condition, if it is an Env, has a definite duration
+		condition.isKindOf(Env).if({
+			condition.releaseNode.notNil.if({
+				"Sorry, the Env you are using as a condition has a releaseNode. This will cause an infinite loop while rendering a CtkScore. Please, for the love of all things good (and to keep you from emailing me about what seems like a bug), don't do this! Actually, I won't even allow it...".warn;
+				^nil;
+				})
+			});
+		score = CtkScore.new;
+		this.setup;
+		[group, envbus, envsynth].do({arg me; 
+			me.notNil.if({me.starttime_(starttime);
+			score.add(me)
+			})
+		});
+		while({
+			curtime = timer.curtime;
+			notes = function.value(group, envbus, timer, inc, server);
+			notes.asArray.do({arg me;
+				me.starttime_(curtime);
+				score.add(me);
+				});
+			inc = inc + by;
+			this.checkCond;
+			})
+		^score;
+		}
+	
+	*initClass {
+		StartUp.add({
+		envsd = CtkNoteObject(
+			SynthDef(\ctkeventenv_2561, {arg evgate = 1, outbus, amp = 1, timeScale = 1, 
+					lag = 0.01;
+				var evenv;
+				evenv = EnvGen.kr(
+					Control.names(\evenv).kr(Env.newClear(30)), evgate, 
+						1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+				Out.kr(outbus, evenv);
+				})
+			);
+			})	
+		}
+		
 	}
 
