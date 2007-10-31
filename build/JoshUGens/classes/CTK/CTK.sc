@@ -1108,22 +1108,23 @@ CtkTimer {
 		}
 		
 	next_ {arg inval;
-		isPlaying.if({
-			next = inval;
-			}, {
+		next = inval;
+		isPlaying.not.if({
 			curtime = curtime + inval;
 			})
 		}
 	}
 	
 CtkEvent : CtkObj {
-	classvar envsd;
-	var starttime, <>condition, server, addAction, target;
+	classvar envsd, addActions;
+	var starttime, <>condition, <function, amp, server, addAction, target, isRecording = false;
 	var isPlaying = false, isReleasing = false, releaseTime = 0.0, timer, clock, 
-		<function, envbus, inc, group, for = 0, by = 1, envsynth, envbus, playinit;
+		envbus, inc, group, <>for = 0, <>by = 1, envsynth, envbus, playinit, notes, 
+		score;
 	
-	*new {arg starttime = 0.0, condition, addAction = 0, target = 1, server;
-		^super.newCopyArgs(starttime, condition, server, addAction, target).init;
+	*new {arg starttime = 0.0, condition, amp = 1, function, addAction = 0, target = 1, server;
+		^super.newCopyArgs(starttime, condition, function, amp, server, addActions[addAction],
+			target).init;
 		}
 		
 	init {
@@ -1131,14 +1132,22 @@ CtkEvent : CtkObj {
 		timer = CtkTimer.new(starttime);
 		inc = 0;
 		playinit = true;
+		notes = [];
 		}
 		
 	function_ {arg newfunction;
 		function = newfunction;
 		}
 	
+	record {
+		score = CtkScore.new;
+		isRecording = true;
+		this.play;
+		^score;
+		}
+		
 	play {
-		var notes, loopif, initVal;
+		var loopif, initVal;
 		server.serverRunning.if({
 			isPlaying.not.if({
 				isPlaying = true;
@@ -1154,12 +1163,32 @@ CtkEvent : CtkObj {
 								clock.sched(condition.times.sum + 0.1, {this.clear});
 								})
 							});
-						[group, envbus, envsynth].do({arg me; me.notNil.if({me.play})});
+						[group, envbus, envsynth].do({arg me; 
+							me.notNil.if({
+								isRecording.if({
+									score.add(me)
+									});	
+								me.play
+								})
+							});
 						});
-					notes = function.value(group, envbus, timer, inc, server);
+					function.value(this, group, envbus, inc, server);
 					notes.asArray.do({arg me;
-						me.play;
+						me.starttime.isNil.if({
+							isRecording.if({score.add(me.copy.starttime_(timer.now))});
+							me.play;
+							}, {
+							clock.sched(me.starttime, {
+								isPlaying.if({
+									isRecording.if({
+										score.add(me.copy.starttime_(timer.now))
+										});
+									me.play
+									});
+								})
+							});
 						});
+					notes = [];
 					inc = inc + by;
 					this.checkCond.if({
 						timer.next;
@@ -1178,13 +1207,15 @@ CtkEvent : CtkObj {
 		clock = timer.clock;
 		group = CtkGroup.new(addAction: addAction, target: target, server: server);
 		condition.isKindOf(Env).if({
-			envbus = CtkControl.new(initVal: 0.0, server: server);
+			envbus = CtkControl.new(initVal: condition.levels[0], server: server);
 			thisdur = condition.releaseNode.isNil.if({condition.times.sum}, {nil});
 			envsynth = envsd.new(duration: thisdur, target: group, server: server)
-				.outbus_(envbus.bus).evenv_(condition);
+				.outbus_(envbus.bus).evenv_(condition).amp_(amp);
 			}, {
-			envbus = CtkControl.new(initVal: 1.0, server: server);
+			envbus = CtkControl.new(initVal: amp, server: server);
 			});
+		(target.isKindOf(CtkNote) || target.isKindOf(CtkGroup)).if({
+			target = target.node});
 		}
 	
 	free {
@@ -1212,23 +1243,37 @@ CtkEvent : CtkObj {
 		}
 		
 	clear {
+		clock.clear;
 		clock.stop;
 		group.free;
 		envbus.free;
 		isPlaying = false;
+		isRecording = false;
 		this.init;
 		}
-			
+	
+	next_ {arg inval;
+		timer.next_(inval);
+		}
+	
+	curtime {
+		^timer.curtime;
+		}
+		
+	
 	checkCond {
 		case
 			{
+			timer.next == nil
+			} {
+			^false
+			} {
 			condition.isKindOf(Boolean) || condition.isKindOf(Function)
 			} {
 			^condition.value(timer, inc)
 			} {
 			condition.isKindOf(SimpleNumber)
 			} {
-//			^timer.now < condition
 			^inc < condition
 			} {
 			condition.isKindOf(Env)
@@ -1244,15 +1289,25 @@ CtkEvent : CtkObj {
 			^false
 			}
 		}
+	
+	collect {arg ... ctkevents;
+		notes = (notes ++ ctkevents).flat;
+		}
 		
-	score {
-		var notes, score, curtime;
+	score {arg sustime = 0;
+		var curtime,idx;
 		// check first to make sure the condition, if it is an Env, has a definite duration
 		condition.isKindOf(Env).if({
 			condition.releaseNode.notNil.if({
-				"Sorry, the Env you are using as a condition has a releaseNode. This will cause an infinite loop while rendering a CtkScore. Please, for the love of all things good (and to keep you from emailing me about what seems like a bug), don't do this! Actually, I won't even allow it...".warn;
-				^nil;
-				})
+				// use sustime to convert it to a finite Env
+				idx = condition.releaseNode;
+				condition.times = condition.times.insert(idx, sustime);
+				condition.levels = condition.levels.insert(idx, condition.levels[idx]);
+				condition.curves.isArray.if({
+					condition.curves = condition.curves.insert(idx, \lin)
+					});
+				condition.releaseNode_(nil);
+				});
 			});
 		score = CtkScore.new;
 		this.setup;
@@ -1263,18 +1318,36 @@ CtkEvent : CtkObj {
 		});
 		while({
 			curtime = timer.curtime;
-			notes = function.value(group, envbus, timer, inc, server);
+			function.value(this, group, envbus, inc, server);
 			notes.asArray.do({arg me;
-				me.starttime_(curtime);
+				me.starttime.isNil.if({
+					me.starttime_(curtime)
+					}, {
+					me.starttime_(me.starttime + curtime);
+					});
 				score.add(me);
 				});
+			notes = [];
 			inc = inc + by;
 			this.checkCond;
-			})
+			});
+		this.clear;
 		^score;
 		}
 	
 	*initClass {
+		addActions = IdentityDictionary[
+			\head -> 0,
+			\tail -> 1,
+			\before -> 2,
+			\after -> 3,
+			\replace -> 4,
+			0 -> 0,
+			1 -> 1,
+			2 -> 2,
+			3 -> 3,
+			4 -> 4
+			];
 		StartUp.add({
 		envsd = CtkNoteObject(
 			SynthDef(\ctkeventenv_2561, {arg evgate = 1, outbus, amp = 1, timeScale = 1, 
