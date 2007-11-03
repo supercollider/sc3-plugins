@@ -10,7 +10,7 @@ InsideOut : Filter {
 	*kr { arg in = 0.0, mul = 1.0, add = 0.0;
 		^this.multiNew('control', in).madd(mul, add)
 	}
-	*categories {	^ #["Filters>Nonlinear"]	}
+	*categories {	^ #["UGens>Filters>Nonlinear"]	}
 }
 
 WaveLoss : Filter {
@@ -21,7 +21,7 @@ WaveLoss : Filter {
 	*kr { |in=0.0, drop=20, outof=40, mode=1, mul=1.0, add=0.0|
 		^this.multiNew('control', in, drop, outof, mode).madd(mul, add)
 	}
-	*categories {	^ #["Filters>Nonlinear"]	}
+	*categories {	^ #["UGens>Filters>Nonlinear"]	}
 }
 Squiz : UGen {	
 	*ar { 
@@ -32,5 +32,5 @@ Squiz : UGen {
 		|in, pitchratio=2, zcperchunk=1, memlen=0.1, mul=1, add=0|
 		^this.multiNew('control', in, pitchratio, zcperchunk, memlen).madd(mul, add)
 	}
-	*categories {	^ #["Filters>Nonlinear"]	}
+	*categories {	^ #["UGens>Filters>Nonlinear"]	}
 }
