@@ -1456,6 +1456,7 @@ void WRAPPHASE(float& phase){
 #define FILL_FFT \
 	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]); \
 	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]); \
+	    bool phasedecision = (unit->first || (((unit->m_frame - rate) < 0) && bloop) || (((unit->m_frame + rate) > numAvailFrames) && bloop)); \
 	    for(int i = 1, j = 0; i <= numbins; i++, j++){ \
 		itwo = i * 2; \
 		phase = databufData[iframeloc + itwo]; \
@@ -1469,26 +1470,19 @@ void WRAPPHASE(float& phase){
 		    phasep1 += twopi; \
 		phase1 = lininterp(framepct, phasem1, phase); \
 		phase2 = lininterp(framepct, phase, phasep1); \
-		phasedif = phase1 - phase2; \
-		if(unit->first) pd[j] = phasedif; \
+		phasedif = phase2 - phase1; \
+		if(phasedecision) pd[j] = phasedif; \
 		    else { \
 			if(rate >= 0){ \
-			    if((unit->m_frame - rate) < 0 && bloop) \
-				pd[j] = phasedif; \
-				else \
-				pd[j] += phasedif; \
+			    pd[j] += phasedif; \
 			    } else { \
-			    if((unit->m_frame + rate) > numAvailFrames && bloop) \
-				pd[j] = phasedif; \
-				else \
-				pd[j] += phasedif; \
+			    pd[j] -= phasedif; \
 			    } \
 			} \
 		\
 		WRAPPHASE(pd[j]); \
 		\
 		p->bin[j].phase = pd[j]; \
-		\
 		maginterp = lininterp(framepct, mag, magp1); \
 		p->bin[j].mag = maginterp; 
 

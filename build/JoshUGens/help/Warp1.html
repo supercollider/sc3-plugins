@@ -5,17 +5,17 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0015b9}
-span.s1 {color: #2c7011}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001db6}
+span.s1 {color: #3f6e14}
 span.s2 {color: #606060}
-span.s3 {color: #0015b9}
+span.s3 {color: #001db6}
 span.s4 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -48,7 +48,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s3">SynthDef</span>(<span class="s1">\warp</span>, {<span class="s3">arg</span> buffer = 0;</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s3">var</span> out, pointer, filelength, pitch, env, dir;</p>
 <p class="p4"><span class="Apple-tab-span">	</span>pointer = Line.kr(0, 1, 15)<span class="s3">;</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>pitch = LFNoise2.ar(1).range(0.25, 4.0).midiratio.round(0.25);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>pitch = LFNoise2.kr(1).range(0.25, 4.0).midiratio.round(0.25);</p>
 <p class="p4"><span class="Apple-tab-span">	</span>dir = <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>([1, 1, -1, -1], [9.999, 0.001, 5]), doneAction: 0);</p>
 <p class="p4"><span class="Apple-tab-span">	</span>env = <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>([0.01, 1, 1, 0.01], [0.1, 14, 0.9], <span class="s1">'exp'</span>), doneAction: 2);</p>
 <p class="p4"><span class="Apple-tab-span">	</span>out = <span class="s3">Warp1</span>.ar(buffer, pointer, pitch, 0.1, 8, 0.05, 2);</p>

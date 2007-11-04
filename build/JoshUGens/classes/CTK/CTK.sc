@@ -99,7 +99,8 @@ CtkScore {
 		idx = 0;
 		ascore = score.score;
 		while({
-			(ascore[idx][0].fuzzyEqual(ascore[idx+1][0], 0.00001) > 0).if({
+			((ascore[idx][0].fuzzyEqual(ascore[idx+1][0], 0.00001) > 0) and: 
+					{ascore[idx].bundleSize < 1024}).if({
 				ascore[idx+1].removeAt(0);
 				ascore[idx+1].do({arg me;
 					(me[0] == \g_new).if({
@@ -191,6 +192,7 @@ CtkScore {
 	merge {arg newScore, newScoreOffset = 0;
 		var addScore;
 		addScore = newScore.score.deepCopy;
+		addScore.removeAt(0); // remove the \g_new
 		addScore = this.prOffset(addScore, newScoreOffset);
 		score.score = score.score ++ addScore;
 		}
@@ -1204,6 +1206,8 @@ CtkEvent : CtkObj {
 	
 	setup {
 		var thisdur;
+		group.notNil.if({group.free});
+		envbus.notNil.if({envbus.free});
 		clock = timer.clock;
 		group = CtkGroup.new(addAction: addAction, target: target, server: server);
 		condition.isKindOf(Env).if({
@@ -1251,7 +1255,17 @@ CtkEvent : CtkObj {
 		isRecording = false;
 		this.init;
 		}
-	
+
+	scoreClear {
+		clock.clear;
+		clock.stop;
+		//group.free;
+		//envbus.free;
+		isPlaying = false;
+		isRecording = false;
+		this.init;
+		}
+			
 	next_ {arg inval;
 		timer.next_(inval);
 		}
@@ -1331,7 +1345,7 @@ CtkEvent : CtkObj {
 			inc = inc + by;
 			this.checkCond;
 			});
-		this.clear;
+		this.scoreClear;
 		^score;
 		}
 	
