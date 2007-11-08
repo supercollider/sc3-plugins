@@ -12,19 +12,17 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #782727}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #792626}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #556b17}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-span.s1 {color: #0536ef}
-span.s2 {color: #0428b3}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #c20000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #566b15}
+span.s1 {color: #0036f1}
+span.s2 {color: #0028b4}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
-span.s5 {color: #0000bf}
-span.s6 {color: #007300}
+span.s5 {color: #0000c0}
+span.s6 {color: #007400}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -107,20 +105,20 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p6">// play your analysis back ... see the playback UGens listed above for more examples.</p>
 <p class="p7">(</p>
-<p class="p11"><span class="s5">SynthDef</span>(<span class="s4">"pvplay"</span>, { <span class="s5">arg</span> out=0, bufnum=0, recBuf=1, playbuf, clear = 0.0;</p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="s5">var</span> in, chain;</p>
-<p class="p11"><span class="Apple-tab-span">	</span>chain = <span class="s5">FFT</span>(bufnum, <span class="s5">PlayBuf</span>.ar(1, playbuf, <span class="s5">BufRateScale</span>.kr(playbuf), loop: 1));</p>
+<p class="p7"><span class="s5">SynthDef</span>(<span class="s4">"pvplay"</span>, { <span class="s5">arg</span> out=0, bufnum=0, recBuf=1, playbuf, clear = 0.0;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> in, chain;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">FFT</span>(bufnum, <span class="s5">PlayBuf</span>.ar(1, playbuf, <span class="s5">BufRateScale</span>.kr(playbuf), loop: 1));</p>
 <p class="p9"><span class="s3"><span class="Apple-tab-span">	</span></span>// start at bin 10, skip 3, resynth 50 - replace these bins. MouseX controls rate</p>
-<p class="p11"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.8, 0.8), 0, 10, 3, 50, 1, clear);</p>
-<p class="p11"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">IFFT</span>(chain, 1).dup);</p>
-<p class="p11"><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.8, 0.8), 0, 10, 10, 50, 1, clear);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">IFFT</span>(chain, 1).dup);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
 <p class="p7">);</p>
 <p class="p5"><br></p>
 <p class="p9">// analyze and resynth soundfile AND replace selected bins with PV_BinPlayBuf data<span class="Apple-converted-space"> </span></p>
-<p class="p11">b = <span class="s5">Synth</span>(<span class="s4">"pvplay"</span>, [<span class="s6">\out</span>, 0, <span class="s6">\bufnum</span>, x, <span class="s6">\recBuf</span>, y, <span class="s6">\playbuf</span>, z]);</p>
-<p class="p12"><br></p>
+<p class="p7">b = <span class="s5">Synth</span>(<span class="s4">"pvplay"</span>, [<span class="s6">\out</span>, 0, <span class="s6">\bufnum</span>, x, <span class="s6">\recBuf</span>, y, <span class="s6">\playbuf</span>, z, \clear, 0]);</p>
+<p class="p5"><br></p>
 <p class="p9">// stop the synth</p>
-<p class="p11">b.free;</p>
+<p class="p7">b.free;</p>
 <p class="p5"><br></p>
 <p class="p7">// clear out the bins that PV_BinPlayBuf doesn't touch</p>
 <p class="p7">b = <span class="s5">Synth</span>(<span class="s4">"pvplay"</span>, [<span class="s6">\out</span>, 0, <span class="s6">\bufnum</span>, x, <span class="s6">\recBuf</span>, y, <span class="s6">\playbuf</span>, z, \clear, 1.0]);</p>
@@ -134,8 +132,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> in, chain;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">FFT</span>(bufnum, <span class="s5">PlayBuf</span>.ar(1, playbuf, <span class="s5">BufRateScale</span>.kr(playbuf), loop: 1));</p>
 <p class="p9"><span class="s3"><span class="Apple-tab-span">	</span></span>// start at bin 10, skip 3, resynth 50 - replace these bins. MouseX controls rate</p>
-<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.8, 0.8), 0, 10, 3, 50, 1, clear);</p>
-<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.2, 0.2), 1, 10, 3, 50, 1, clear);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.8, 0.8), 0, 10, 3, 200, 1, clear);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s5">PV_BinPlayBuf</span>(chain, recBuf, MouseX.kr(-0.2, 0.2), 1, 10, 3, 200, 1, 0.0);</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">IFFT</span>(chain, 1).dup);</p>
 <p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
 <p class="p7">);</p>

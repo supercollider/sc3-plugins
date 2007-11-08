@@ -1607,10 +1607,8 @@ void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
 	float *databufData __attribute__((__unused__)) = databuf->data; 
 
 	int numSamples = unit->mWorld->mFullRate.mBufLength;
-//	float dataHopSize = databufData[1];
 	unit->m_numPeriods = unit->m_periodsRemain = (int)((databufData[0] * databufData[1]) / numSamples) - 1; 
 	
-	SCPolarBuf *p = ToPolarApx(buf);
 	buf->coord = coord_Polar;
 }
 
@@ -1668,7 +1666,7 @@ void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 	iframep1loc = iframep1 * frameskip + 3;
 
 	SCPolarBuf *p = ToPolarApx(buf);
-	
+
 	// this buffer will hold the previous output's frame data
 	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
 	
@@ -1740,7 +1738,6 @@ void PV_PlayBuf_next(PV_PlayBuf* unit, int inNumSamples)
 	iframep1loc = iframep1 * frameskip + 3;
 	
 	SCPolarBuf *p = ToPolarApx(buf);
-//	buf->coord = coord_Polar;
 
 	pd = unit->m_prevDatabuf;
 	
@@ -1969,7 +1966,7 @@ void PV_BufRd_Ctor(PV_BufRd* unit)
 	SndBuf *databuf = unit->m_databuf; 
 	
 	if(!databuf) { 
-		ClearUnitOutputs(unit, 1); 
+		OUT0(0) = -1; //ClearUnitOutputs(unit, 1); 
 		return; 
 	} 
 	float *databufData __attribute__((__unused__)) = databuf->data; 
@@ -1978,7 +1975,7 @@ void PV_BufRd_Ctor(PV_BufRd* unit)
 //	float dataHopSize = databufData[1];
 	unit->m_numPeriods = unit->m_periodsRemain = (int)((databufData[0] * databufData[1]) / numSamples) - 1; 
 	
-	SCPolarBuf *p = ToPolarApx(buf);
+//	SCPolarBuf *p = ToPolarApx(buf);
 	buf->coord = coord_Polar;
 }
 
@@ -2036,13 +2033,7 @@ void PV_BufRd_first(PV_BufRd* unit, int inNumSamples)
 	iframem1loc = iframem1 * frameskip + 3;
 	iframep1loc = iframep1 * frameskip + 3;
 	    
-//	int numSamples = unit->mWorld->mFullRate.mBufLength;
-//	int dataFFTSize = databufData[0];
-//	float dataHopSize = databufData[1];
-//	unit->m_numPeriods = unit->m_periodsRemain = (int)((dataFFTSize * dataHopSize) / numSamples) - 1; 
-		
 	SCPolarBuf *p = ToPolarApx(buf);
-//	buf->coord = coord_Polar;
 
 	// this buffer will hold the previous output's frame data
 	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));

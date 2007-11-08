@@ -54,6 +54,16 @@
 	631417A30A203392007B9355 /* All */ = {
 		activeExec = 0;
 	};
+	F3019D480CE36E5B0040EF48 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */;
+		name = "JoshPVUGens.cpp: 1610";
+		rLen = 0;
+		rLoc = 45013;
+		rType = 0;
+		vrLen = 1663;
+		vrLoc = 40141;
+	};
 	F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
@@ -293,6 +303,16 @@
 	F37FF7F10B86BEA6006B0AA3 /* bhobNoise (Upgraded) */ = {
 		activeExec = 0;
 	};
+	F38D65AA0CE370E9003EC9CD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */;
+		name = "JoshPVUGens.cpp: 1610";
+		rLen = 0;
+		rLoc = 45013;
+		rType = 0;
+		vrLen = 1449;
+		vrLoc = 43965;
+	};
 	F3949A960B0D81EA0066FA8D /* ReverbUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -409,8 +429,8 @@
 	F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {886, 32382}}";
-			sepNavSelRange = "{45585, 0}";
-			sepNavVisRange = "{64123, 1032}";
+			sepNavSelRange = "{45013, 0}";
+			sepNavVisRange = "{43965, 1449}";
 			sepNavVisRect = "{{0, 20258}, {1030, 698}}";
 			sepNavWindowFrame = "{{313, 65}, {945, 813}}";
 		};
@@ -535,8 +555,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 216166410;
-			PBXWorkspaceStateSaveDate = 216166410;
+			PBXPerProjectTemplateStateSaveDate = 216231820;
+			PBXWorkspaceStateSaveDate = 216231820;
+		};
+		perUserProjectItems = {
+			F3019D480CE36E5B0040EF48 /* PBXTextBookmark */ = F3019D480CE36E5B0040EF48 /* PBXTextBookmark */;
+			F38D65AA0CE370E9003EC9CD /* PBXTextBookmark */ = F38D65AA0CE370E9003EC9CD /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {
