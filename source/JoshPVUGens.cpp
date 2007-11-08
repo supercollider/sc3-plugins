@@ -137,18 +137,45 @@ struct PV_RecordBuf : PV_Unit
 	float m_fdatabufnum;
 	SndBuf *m_databuf;
 	int m_frame, m_numAvailFrames;
+	bool first;
 };
 
 struct PV_PlayBuf : PV_Unit
 {
 	float m_fdatabufnum, m_frame;
 	SndBuf *m_databuf;
+	int m_numAvailFrames, m_numPeriods, m_periodsRemain;
+	float *m_prevDatabuf;
+	bool first;
+    };
+    
+struct PV_BinPlayBuf : PV_Unit
+{
+	float m_fdatabufnum, m_frame;
+	SndBuf *m_databuf;
 	int m_numAvailFrames;
 	float *m_prevDatabuf;
 	bool first;
-
     };
-    
+
+struct PV_BufRd : PV_Unit
+{
+	float m_fdatabufnum;
+	SndBuf *m_databuf;
+	int m_numAvailFrames, m_numPeriods, m_periodsRemain;
+	float *m_prevDatabuf;
+	bool first;
+    };
+
+struct PV_BinBufRd : PV_Unit
+{
+	float m_fdatabufnum;
+	SndBuf *m_databuf;
+	int m_numAvailFrames;
+	float *m_prevDatabuf;
+	bool first;
+    };
+            
 extern "C"
 {
 	#include "fftlib.h"
@@ -223,6 +250,22 @@ extern "C"
 	void PV_PlayBuf_Dtor(PV_PlayBuf *unit);
 	void PV_PlayBuf_next(PV_PlayBuf *unit, int inNumSamples);
 	void PV_PlayBuf_first(PV_PlayBuf *unit, int inNumSamples);
+
+	void PV_BinPlayBuf_Ctor(PV_BinPlayBuf *unit);
+	void PV_BinPlayBuf_Dtor(PV_BinPlayBuf *unit);
+	void PV_BinPlayBuf_next(PV_BinPlayBuf *unit, int inNumSamples);
+	void PV_BinPlayBuf_first(PV_BinPlayBuf *unit, int inNumSamples);
+
+	void PV_BufRd_Ctor(PV_BufRd *unit);
+	void PV_BufRd_Dtor(PV_BufRd *unit);
+	void PV_BufRd_next(PV_BufRd *unit, int inNumSamples);
+	void PV_BufRd_first(PV_BufRd *unit, int inNumSamples);
+
+	void PV_BinBufRd_Ctor(PV_BinBufRd *unit);
+	void PV_BinBufRd_Dtor(PV_BinBufRd *unit);
+	void PV_BinBufRd_next(PV_BinBufRd *unit, int inNumSamples);
+	void PV_BinBufRd_first(PV_BinBufRd *unit, int inNumSamples);	
+    
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -1390,6 +1433,7 @@ void PV_RecordBuf_Ctor(PV_RecordBuf* unit)
 	SETCALC(PV_RecordBuf_next);
 	OUT0(0) = IN0(0);
 	unit->m_frame = (int)IN0(2);
+	unit->first = true;
 }
 
 void PV_RecordBuf_next(PV_RecordBuf* unit, int inNumSamples)
@@ -1410,6 +1454,7 @@ void PV_RecordBuf_next(PV_RecordBuf* unit, int inNumSamples)
 		unit->m_databuf = world->mSndBufs + databufnum; 
 		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / buf->samples);
 	} 
+	
 	SndBuf *databuf = unit->m_databuf; 
 	if(!databuf) { 
 		ClearUnitOutputs(unit, inNumSamples); 
@@ -1417,12 +1462,19 @@ void PV_RecordBuf_next(PV_RecordBuf* unit, int inNumSamples)
 	} 
 	float *databufData __attribute__((__unused__)) = databuf->data; 
     	numAvailFrames = unit->m_numAvailFrames;
-
+	
+	if(unit->first){
+	    databufData[0] = buf->samples;
+	    databufData[1] = IN0(5); // hop
+	    databufData[2] = IN0(6); // wintype
+	    unit->first = false;
+	    }
+	    
 	SCPolarBuf *p = ToPolarApx(buf);
 	if((loop > 0.f) && (unit->m_frame >= numAvailFrames)) unit->m_frame -=numAvailFrames;
 	
 	if((unit->m_frame < numAvailFrames) && (run > 0.f)){
-	    frameadd = (unit->m_frame * buf->samples);
+	    frameadd = (unit->m_frame * buf->samples) + 3;
 	    databufData[frameadd] = p->dc;
 	    databufData[frameadd + 1] = p->nyq;
 	    for(int i = 1, j = 0; i <= numbins; i++, j++){
@@ -1435,17 +1487,6 @@ void PV_RecordBuf_next(PV_RecordBuf* unit, int inNumSamples)
 	    }
 }
 
-// PV_PlayBuf
-
-void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
-{
-	unit->m_fdatabufnum = -1e9f;
-	SETCALC(PV_PlayBuf_first);
-	OUT0(0) = IN0(0);
-	unit->m_frame = IN0(3);
-	unit->first = true;
-}
-
 void WRAPPHASE(float& phase){
     while (phase > twopi) 
 	phase -= twopi; 
@@ -1456,7 +1497,7 @@ void WRAPPHASE(float& phase){
 #define FILL_FFT \
 	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]); \
 	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]); \
-	    bool phasedecision = (unit->first || (((unit->m_frame - rate) < 0) && bloop) || (((unit->m_frame + rate) > numAvailFrames) && bloop)); \
+	    bool phasedecision = (unit->first || (((frame - rate) < 0) && bloop) || (((frame + rate) > numAvailFrames) && bloop)); \
 	    for(int i = 1, j = 0; i <= numbins; i++, j++){ \
 		itwo = i * 2; \
 		phase = databufData[iframeloc + itwo]; \
@@ -1471,20 +1512,107 @@ void WRAPPHASE(float& phase){
 		phase1 = lininterp(framepct, phasem1, phase); \
 		phase2 = lininterp(framepct, phase, phasep1); \
 		phasedif = phase2 - phase1; \
-		if(phasedecision) pd[j] = phasedif; \
-		    else { \
-			if(rate >= 0){ \
-			    pd[j] += phasedif; \
-			    } else { \
-			    pd[j] -= phasedif; \
-			    } \
-			} \
+		if(phasedecision) \
+		    pd[j] = phasedif; \
+		    else \
+		    pd[j] += phasedif; \
 		\
 		WRAPPHASE(pd[j]); \
 		\
 		p->bin[j].phase = pd[j]; \
 		maginterp = lininterp(framepct, mag, magp1); \
 		p->bin[j].mag = maginterp; 
+
+#define FILL_FFT_BINS \
+	    p->dc = lininterp(framepct, databufData[iframeloc], databufData[iframep1loc]); \
+	    p->nyq = lininterp(framepct, databufData[iframeloc + 1], databufData[iframep1loc + 1]); \
+	    bool phasedecision = (unit->first || (((frame - rate) < 0) && bloop) || (((frame + rate) > numAvailFrames) && bloop)); \
+	    for(int i = 1, j = 0; i <= numbins; i++, j++){ \
+		if(bins[j] > 0.0){ \
+		    itwo = i * 2; \
+		    phase = databufData[iframeloc + itwo]; \
+		    phasem1 = databufData[iframem1loc + itwo]; \
+		    phasep1 = databufData[iframep1loc + itwo]; \
+		    mag = databufData[iframeloc + itwo + 1]; \
+		    magp1 = databufData[iframep1loc + itwo + 1]; \
+		    while (phase < phasem1) \
+			phase += twopi; \
+		    while (phasep1 < phase) \
+			phasep1 += twopi; \
+		    phase1 = lininterp(framepct, phasem1, phase); \
+		    phase2 = lininterp(framepct, phase, phasep1); \
+		    phasedif = phase2 - phase1; \
+		    if(phasedecision) \
+			pd[j] = phasedif; \
+			else \
+			pd[j] += phasedif; \
+		    \
+		    WRAPPHASE(pd[j]); \
+		    \
+		    p->bin[j].phase = pd[j]; \
+		    maginterp = lininterp(framepct, mag, magp1); \
+		    p->bin[j].mag = maginterp; \
+		    } else { \
+		    if(clear)p->bin[j].mag = 0.f; \
+		    }
+		    
+// for operation on one buffer
+#define PV_GET_BUF_INIT \
+	float fbufnum = ZIN0(0); \
+	if (unit->m_periodsRemain > 0) { ZOUT0(0) = -1.f; unit->m_periodsRemain--; return; } \
+	unit->m_periodsRemain = unit->m_numPeriods; \
+	ZOUT0(0) = fbufnum; \
+	uint32 ibufnum = (uint32)fbufnum; \
+	World *world = unit->mWorld; \
+	if (ibufnum >= world->mNumSndBufs) ibufnum = 0; \
+	SndBuf *buf = world->mSndBufs + ibufnum; \
+	int numbins = buf->samples - 2 >> 1;
+	
+// PV_PlayBuf
+
+void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
+{
+	unit->m_fdatabufnum = -1e9f;
+	SETCALC(PV_PlayBuf_first);
+	OUT0(0) = IN0(0);
+	unit->m_frame = IN0(3);
+	unit->first = true;
+	
+	World *world = unit->mWorld;
+
+	uint32 bufnum = (uint32)IN0(0);
+	//Print("FFTBase_Ctor: bufnum is %i\n", bufnum);
+	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	SndBuf *buf = world->mSndBufs + bufnum; 
+
+	int frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	
+	if(!databuf) { 
+		ClearUnitOutputs(unit, 1); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+
+	int numSamples = unit->mWorld->mFullRate.mBufLength;
+//	float dataHopSize = databufData[1];
+	unit->m_numPeriods = unit->m_periodsRemain = (int)((databufData[0] * databufData[1]) / numSamples) - 1; 
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	buf->coord = coord_Polar;
+}
 
 void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 {
@@ -1495,10 +1623,9 @@ void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 	PV_GET_BUF
 	
 	float rate = IN0(2);
-	float run = IN0(4);
-	float loop = IN0(5);
+	float loop = IN0(4);
 	bool bloop = loop > 0.;
-	
+
 	float *pd;
 
 	frameskip = buf->samples;
@@ -1524,32 +1651,40 @@ void PV_PlayBuf_first(PV_PlayBuf* unit, int inNumSamples)
 	
     	numAvailFrames = unit->m_numAvailFrames;
 	if(bloop && (unit->m_frame >= numAvailFrames)) unit->m_frame -=numAvailFrames;
+	
+	float frame = unit->m_frame;
 		
-	iframe = (int)unit->m_frame;
+	iframe = (int)frame;
 	
 	iframem1 = iframe - 1;
 	iframep1 = iframe + 1;
 	if(iframem1 < 0) iframem1 = iframe;
 	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
 	    
-	framepct = unit->m_frame - (float)iframe;
+	framepct = frame - (float)iframe;
 	    	    
-	iframeloc = iframe * frameskip;
-	iframem1loc = iframem1 * frameskip;
-	iframep1loc = iframep1 * frameskip;
-	    
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+
 	SCPolarBuf *p = ToPolarApx(buf);
+	
 	// this buffer will hold the previous output's frame data
 	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
-		
-	if((unit->m_frame < numAvailFrames) && (run > 0.f)){
+	
+	if((databufData[0] != buf->samples)){
+	    Print("WARNING: There is a mismatch between the PV databuffer you are using and this instance of PV_PlayBuf\n"); 
+	    Print("FFT size of databuf: %5,3f\n", (float)databufData[0]);
+	    Print("FFT size of current process: %5,3f\n", (float) buf->samples);
+	    }
+	    
+	if(frame < numAvailFrames){
 	    FILL_FFT
 	    }
 	    unit->m_prevDatabuf = pd;
-	    unit->m_frame += rate;
+	    unit->m_frame = frame + rate;
 	    unit->first = false;
 	    }
-	    
 	SETCALC(PV_PlayBuf_next);
 }
 
@@ -1558,11 +1693,10 @@ void PV_PlayBuf_next(PV_PlayBuf* unit, int inNumSamples)
 	int itwo, iframeloc, iframem1loc, iframep1loc, numAvailFrames, iframe, iframem1, iframep1, frameskip;
 	float phasedif, framepct, phase, phasem1, phasep1, phase1, phase2, mag, magp1, maginterp;
 	
-	PV_GET_BUF
+	PV_GET_BUF_INIT
 	
 	float rate = IN0(2);
-	float run = IN0(4);
-	float loop = IN0(5);
+	float loop = IN0(4);
 	bool bloop = loop > 0.;
 	float *pd;
 
@@ -1590,34 +1724,588 @@ void PV_PlayBuf_next(PV_PlayBuf* unit, int inNumSamples)
     	numAvailFrames = unit->m_numAvailFrames;
 	if(bloop && (unit->m_frame >= numAvailFrames)) unit->m_frame -=numAvailFrames;
 	if(bloop && (unit->m_frame < 0.f)) unit->m_frame +=numAvailFrames;
+	
+	float frame = unit->m_frame;
 		
-	iframe = (int)unit->m_frame;
-// Print("%3,3f\n", (float)fbufnum);
+	iframe = (int)frame;
 	iframem1 = iframe - 1;
 	iframep1 = iframe + 1;
 	if(iframem1 < 0) iframem1 = iframe;
 	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
 	    
-	framepct = unit->m_frame - (float)iframe;
+	framepct = frame - (float)iframe;
 	    	    
-	iframeloc = iframe * frameskip;
-	iframem1loc = iframem1 * frameskip;
-	iframep1loc = iframep1 * frameskip;
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+//	buf->coord = coord_Polar;
+
+	pd = unit->m_prevDatabuf;
+	
+	if(unit->m_frame < numAvailFrames){
+	    FILL_FFT
+	    }
+		
+	    unit->m_prevDatabuf = pd;
+	    unit->m_frame = frame + rate;
+	    }
+}
+
+void PV_PlayBuf_Dtor(PV_PlayBuf* unit)
+{
+    RTFree(unit->mWorld, unit->m_prevDatabuf);
+}
+
+// PV_BinPlayBuf
+
+void PV_BinPlayBuf_Ctor(PV_BinPlayBuf* unit)
+{
+	unit->m_fdatabufnum = -1e9f;
+	SETCALC(PV_BinPlayBuf_first);
+	OUT0(0) = IN0(0);
+	unit->m_frame = IN0(3);
+	unit->first = true;
+}
+
+void PV_BinPlayBuf_first(PV_BinPlayBuf* unit, int inNumSamples)
+{
+	int itwo, iframe, iframem1, iframep1, frameskip, iframeloc, iframem1loc, iframep1loc, numAvailFrames;
+	float framepct;
+	float phase, phasem1, phasep1, mag, magp1, phase1, phase2, phasedif, maginterp;
+	
+	PV_GET_BUF
+	
+	float rate = IN0(2);
+	float loop = IN0(4);
+	bool bloop = loop > 0.;
+	
+	int binStart = (int)IN0(5);
+	int binSkip = (int)IN0(6);
+	int numBins = (int)IN0(7);
+	bool clear = (IN0(8) > 0.0);
+
+
+	if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+	
+	float bins[numbins];
+	
+	for(int i = 0; i < numbins; i++) bins[i] = 0.f;
+	for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
+
+	float *pd;
+
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+	
+    	numAvailFrames = unit->m_numAvailFrames;
+	if(bloop && (unit->m_frame >= numAvailFrames)) unit->m_frame -=numAvailFrames;
+	
+	float frame = unit->m_frame;
+		
+	iframe = (int)frame;
+	
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+	    
+	framepct = frame - (float)iframe;
+	    	    
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+	    
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	// this buffer will hold the previous output's frame data
+	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+	
+	if(databufData[0] != buf->samples){
+	    Print("WARNING: There is a mismatch between the PV databuffer you are using and this instance of PV_BinPlayBuf\n"); 
+	    Print("FFT size of databuf: %5,3f\n", (float)databufData[0]);
+	    Print("FFT size of current process: %5,3f\n", (float) buf->samples);
+	    }
+	if(frame < numAvailFrames){
+	    FILL_FFT_BINS
+	    }
+	    unit->m_prevDatabuf = pd;
+	    unit->m_frame = frame + rate;
+	    unit->first = false;
+	    }
+	    
+	SETCALC(PV_BinPlayBuf_next);
+}
+
+void PV_BinPlayBuf_next(PV_BinPlayBuf* unit, int inNumSamples)
+{
+	int itwo, iframeloc, iframem1loc, iframep1loc, numAvailFrames, iframe, iframem1, iframep1, frameskip;
+	float phasedif, framepct, phase, phasem1, phasep1, phase1, phase2, mag, magp1, maginterp;
+	
+	PV_GET_BUF
+	
+	float rate = IN0(2);
+	float loop = IN0(4);
+	bool bloop = loop > 0.;
+	float *pd;
+
+	int binStart = (int)IN0(5);
+	int binSkip = (int)IN0(6);
+	int numBins = (int)IN0(7);
+	bool clear = (IN0(8) > 0.0);
+
+	if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+	
+	float bins[numbins];
+	
+	for(int i = 0; i < numbins; i++) bins[i] = 0.f;
+	for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
+
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+    
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+		
+    	numAvailFrames = unit->m_numAvailFrames;
+	if(bloop && (unit->m_frame >= numAvailFrames)) unit->m_frame -=numAvailFrames;
+	if(bloop && (unit->m_frame < 0.f)) unit->m_frame +=numAvailFrames;
+	
+	float frame = unit->m_frame;
+		
+	iframe = (int)frame;
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+	    
+	framepct = frame - (float)iframe;
+	    	    
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
 	
 	SCPolarBuf *p = ToPolarApx(buf);
 
 	pd = unit->m_prevDatabuf;
 	
-	if((unit->m_frame < numAvailFrames) && (run > 0.f)){
+	if(unit->m_frame < numAvailFrames){
+	    FILL_FFT_BINS
+	    }
+		
+	    unit->m_prevDatabuf = pd;
+	    unit->m_frame = frame + rate;
+	    }
+}
+
+void PV_BinPlayBuf_Dtor(PV_BinPlayBuf* unit)
+{
+    RTFree(unit->mWorld, unit->m_prevDatabuf);
+}
+
+// PV_BufRd
+
+void PV_BufRd_Ctor(PV_BufRd* unit)
+{
+	unit->m_fdatabufnum = -1e9f;
+	SETCALC(PV_BufRd_first);
+	OUT0(0) = IN0(0);
+	unit->first = true;
+	
+	World *world = unit->mWorld;
+
+	uint32 bufnum = (uint32)IN0(0);
+	//Print("FFTBase_Ctor: bufnum is %i\n", bufnum);
+	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	SndBuf *buf = world->mSndBufs + bufnum; 
+
+	int frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	
+	if(!databuf) { 
+		ClearUnitOutputs(unit, 1); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+
+	int numSamples = unit->mWorld->mFullRate.mBufLength;
+//	float dataHopSize = databufData[1];
+	unit->m_numPeriods = unit->m_periodsRemain = (int)((databufData[0] * databufData[1]) / numSamples) - 1; 
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	buf->coord = coord_Polar;
+}
+
+void PV_BufRd_first(PV_BufRd* unit, int inNumSamples)
+{
+	int itwo, iframe, iframem1, iframep1, frameskip, iframeloc, iframem1loc, iframep1loc, numAvailFrames;
+	float framepct;
+	float phase, phasem1, phasep1, mag, magp1, phase1, phase2, phasedif, maginterp;
+	
+	PV_GET_BUF
+	
+	float point = IN0(2);
+	bool bloop = true; //loop > 0.;
+	float rate = 1.; // this helps with logic in FFT fill
+	
+	float *pd;
+
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+	
+    	numAvailFrames = unit->m_numAvailFrames;
+	
+	while(point > 1.0) point -= 1.0;
+	while(point < 0.0) point += 1.0;
+	
+	float frame = point * numAvailFrames;
+		
+	iframe = (int)frame;
+	framepct = frame - (float)iframe;
+	
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+	    
+//	int numSamples = unit->mWorld->mFullRate.mBufLength;
+//	int dataFFTSize = databufData[0];
+//	float dataHopSize = databufData[1];
+//	unit->m_numPeriods = unit->m_periodsRemain = (int)((dataFFTSize * dataHopSize) / numSamples) - 1; 
+		
+	SCPolarBuf *p = ToPolarApx(buf);
+//	buf->coord = coord_Polar;
+
+	// this buffer will hold the previous output's frame data
+	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+	
+	if(databufData[0] != buf->samples){
+	    Print("WARNING: There is a mismatch between the PV databuffer you are using and this instance of PV_BufRd\n"); 
+	    Print("FFT size of databuf: %5,3f\n", (float)databufData[0]);
+	    Print("FFT size of current process: %5,3f\n", (float) buf->samples);
+	    }
+	if(frame < numAvailFrames){
+	    FILL_FFT
+	    }
+	    unit->m_prevDatabuf = pd;
+	    unit->first = false;
+	    }
+	    
+	SETCALC(PV_BufRd_next);
+}
+
+void PV_BufRd_next(PV_BufRd* unit, int inNumSamples)
+{
+	int itwo, iframeloc, iframem1loc, iframep1loc, numAvailFrames, iframe, iframem1, iframep1, frameskip;
+	float phasedif, framepct, phase, phasem1, phasep1, phase1, phase2, mag, magp1, maginterp;
+	
+	PV_GET_BUF_INIT
+	
+	float point = IN0(2);
+	bool bloop = true; //loop > 0.;
+	float *pd;
+	float rate = 1.; // this helps with logic in FFT fill
+	
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+    
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+		
+    	numAvailFrames = unit->m_numAvailFrames;
+
+	while(point > 1.0) point -= 1.0;
+	while(point < 0.0) point += 1.0;
+	
+	float frame = point * numAvailFrames;
+		
+	iframe = (int)frame;
+	framepct = frame - (float)iframe;
+
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+	    	    	    
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	pd = unit->m_prevDatabuf;
+	
+	if(frame < numAvailFrames){
 	    FILL_FFT
 	    }
 		
 	    unit->m_prevDatabuf = pd;
-	    unit->m_frame += rate;
+//	    unit->m_frame += rate;
 	    }
 }
 
-void PV_PlayBuf_Dtor(PV_PlayBuf* unit)
+void PV_BufRd_Dtor(PV_BufRd* unit)
+{
+    RTFree(unit->mWorld, unit->m_prevDatabuf);
+}
+
+
+// PV_BinBufRd
+
+void PV_BinBufRd_Ctor(PV_BinBufRd* unit)
+{
+	unit->m_fdatabufnum = -1e9f;
+	SETCALC(PV_BinBufRd_first);
+	OUT0(0) = IN0(0);
+	unit->first = true;
+}
+
+void PV_BinBufRd_first(PV_BinBufRd* unit, int inNumSamples)
+{
+	int itwo, iframe, iframem1, iframep1, frameskip, iframeloc, iframem1loc, iframep1loc, numAvailFrames;
+	float framepct;
+	float phase, phasem1, phasep1, mag, magp1, phase1, phase2, phasedif, maginterp;
+	
+	PV_GET_BUF
+	
+	float point = IN0(2);
+	bool bloop = true; //loop > 0.;
+	float rate = 1.; // this helps with logic in FFT fill
+	
+	int binStart = (int)IN0(3);
+	int binSkip = (int)IN0(4);
+	int numBins = (int)IN0(5);
+	bool clear = (IN0(6) > 0.0);
+
+	if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+	
+	float bins[numbins];
+	
+	for(int i = 0; i < numbins; i++) bins[i] = 0.f;
+	for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
+		
+	float *pd;
+
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+	
+    	numAvailFrames = unit->m_numAvailFrames;
+	
+	while(point > 1.0) point -= 1.0;
+	while(point < 0.0) point += 1.0;
+	
+	float frame = point * numAvailFrames;
+		
+	iframe = (int)frame;
+	framepct = frame - (float)iframe;
+	
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	// this buffer will hold the previous output's frame data
+	pd = unit->m_prevDatabuf = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+	
+	if(databufData[0] != buf->samples){
+	    Print("WARNING: There is a mismatch between the PV databuffer you are using and this instance of PV_BufRd\n"); 
+	    Print("FFT size of databuf: %5,3f\n", (float)databufData[0]);
+	    Print("FFT size of current process: %5,3f\n", (float) buf->samples);
+	    }
+	if(frame < numAvailFrames){
+	    FILL_FFT_BINS
+	    }
+	    unit->m_prevDatabuf = pd;
+	    unit->first = false;
+	    }
+	    
+	SETCALC(PV_BinBufRd_next);
+}
+
+void PV_BinBufRd_next(PV_BinBufRd* unit, int inNumSamples)
+{
+	int itwo, iframeloc, iframem1loc, iframep1loc, numAvailFrames, iframe, iframem1, iframep1, frameskip;
+	float phasedif, framepct, phase, phasem1, phasep1, phase1, phase2, mag, magp1, maginterp;
+	
+	PV_GET_BUF
+	
+	float point = IN0(2);
+	bool bloop = true; //loop > 0.;
+	float *pd;
+	float rate = 1.; // this helps with logic in FFT fill
+	
+	int binStart = (int)IN0(3);
+	int binSkip = (int)IN0(4);
+	int numBins = (int)IN0(5);
+	bool clear = (IN0(6) > 0.0);	
+
+	if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+	
+	float bins[numbins];
+	
+	for(int i = 0; i < numbins; i++) bins[i] = 0.f;
+	for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
+		
+	frameskip = buf->samples;
+
+	// get the buffer to store data in 
+	float fdatabufnum = IN0(1); 
+    
+	if (fdatabufnum != unit->m_fdatabufnum) { 
+		unit->m_fdatabufnum = fdatabufnum;
+		uint32 databufnum = (uint32)fdatabufnum; 
+		World *world = unit->mWorld; 
+		if (databufnum >= world->mNumSndBufs) databufnum = 0; 
+		unit->m_databuf = world->mSndBufs + databufnum; 
+		unit->m_numAvailFrames = (int)(unit->m_databuf->frames / frameskip);
+	} 
+	
+	SndBuf *databuf = unit->m_databuf; 
+	if(!databuf) { 
+		ClearUnitOutputs(unit, inNumSamples); 
+		return; 
+	} 
+	float *databufData __attribute__((__unused__)) = databuf->data; 
+		
+    	numAvailFrames = unit->m_numAvailFrames;
+
+	while(point > 1.0) point -= 1.0;
+	while(point < 0.0) point += 1.0;
+	
+	float frame = point * numAvailFrames;
+		
+	iframe = (int)frame;
+	framepct = frame - (float)iframe;
+
+	iframem1 = iframe - 1;
+	iframep1 = iframe + 1;
+	if(iframem1 < 0) iframem1 = iframe;
+	if(iframep1 >= numAvailFrames) iframep1 = iframe;	    
+	    	    	    
+	iframeloc = iframe * frameskip + 3;
+	iframem1loc = iframem1 * frameskip + 3;
+	iframep1loc = iframep1 * frameskip + 3;
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	pd = unit->m_prevDatabuf;
+	
+	if(frame < numAvailFrames){
+	    FILL_FFT_BINS
+	    }
+		
+	    unit->m_prevDatabuf = pd;
+	    }
+}
+
+void PV_BinBufRd_Dtor(PV_BinBufRd* unit)
 {
     RTFree(unit->mWorld, unit->m_prevDatabuf);
 }
@@ -1648,5 +2336,8 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(PV_Freeze);
 	DefinePVUnit(PV_RecordBuf);
 	DefineDtorUnit(PV_PlayBuf);
+	DefineDtorUnit(PV_BinPlayBuf);
+	DefineDtorUnit(PV_BufRd);
+	DefineDtorUnit(PV_BinBufRd);
 	}
 	
