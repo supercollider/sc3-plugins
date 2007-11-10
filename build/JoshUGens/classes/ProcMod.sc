@@ -16,6 +16,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks;
+	var recordPM, <>recordpath;
 	classvar addActions;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
@@ -32,6 +33,7 @@ ProcMod {
 				env.isKindOf(Number).if({releasetime = env})
 				})
 			});
+		recordPM = false;
 		clock = argClock;
 		oldgroups = [];
 		oldclocks = [];
@@ -360,6 +362,7 @@ ProcModR : ProcMod {
 				})
 			});
 		clock = argClock;
+		recordPM = false;
 		this.setupRouting(argNumChannels, argProcout);
 		oldgroups = [];
 		oldclocks = [];
@@ -374,6 +377,11 @@ ProcModR : ProcMod {
 			).play(recpath);
 		}
 
+	recordPM {arg path;
+		recordPM = true;
+		recordpath = path;
+		}
+		
 	play {arg recpath, timestamp = true;
 		var thisfun;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
@@ -406,6 +414,9 @@ ProcModR : ProcMod {
 					});
 				}, {
 				"A unique audio bus couldn't be allocated for internal routing. This probably isn't what you wanted, and the resulting sound will probably be wrong. You should quit the server, and increase the number of audio busses with ServerOptions. Sorry... but there are limitations".warn;
+				});
+			recordPM.if({
+				recpath = recpath ?? {recordpath}
 				});
 			recpath.notNil.if({
 				hdr = HDR.new(server, Array.fill(numChannels, {arg i; routebus + i}), 3, 
@@ -1172,6 +1183,80 @@ ProcEvents {
 	stopRecordTimeLine {
 		tlrec = false;
 		}
+	
+	// procdict is a dictionary of procmods, tolerance will group events together within
+	// a certain time frame, paths are strings for files to load
+	*buildFromFile {arg procdict, tolerance ... paths;
+		var tmptl = [], fil, events, timeLine, incDict, time, ev, start, rel, idx, thisStart;
+		incDict = Dictionary.new;
+		timeLine = [];
+		events = [];
+		paths.do({arg me;
+			fil = File.new(me, "rb");
+			tmptl = tmptl ++ fil.readAllString.interpret;
+			fil.close;
+			});
+		tmptl.sort({arg a, b; a[0] <= b[0]});
+		tmptl.do({arg me, i;
+			#time, start, rel = me.flat;
+			(timeLine.size > 0).if({
+				((time - tolerance) < timeLine[timeLine.size - 1]).if({
+					idx = events.size - 1;
+					events[idx][0].notNil.if({
+						start.notNil.if({
+							thisStart = procdict[start].copy;
+							incDict[start].isNil.if({
+								incDict.put(start, 0)
+								}, {
+								incDict[start] = incDict[start] + 1
+								});
+							thisStart.id_((start ++ "_" ++ incDict[start]).asSymbol);
+							events[idx][0] = events[idx][0].asArray.add(thisStart);
+							})
+						});
+					events[idx][1].notNil.if({
+						rel.notNil.if({
+							events[idx][1] = events[idx][1].asArray.add(
+								(rel ++ "_" ++ incDict[rel]).asSymbol)
+							})
+						});
+					}, {
+					start.notNil.if({
+						thisStart = procdict[start].copy;
+						incDict[start].isNil.if({
+							incDict.put(start, 0)
+							}, {
+							incDict[start] = incDict[start] + 1;
+							});
+						thisStart.id_((start ++ "_" ++ incDict[start]).asSymbol);
+						}, {
+						thisStart = nil;
+						});
+					rel.notNil.if({
+						rel = (rel ++ "_" ++ incDict[rel]).asSymbol;
+						});
+					events = events.add([thisStart, rel]);
+					})
+				}, {
+				start.notNil.if({
+					thisStart = procdict[start].copy;
+					incDict[start].isNil.if({
+						incDict.put(start, 0)
+						}, {
+						incDict[start] = incDict[start] + 1;
+						});
+					thisStart.id_((start ++ "_" ++ incDict[start]).asSymbol);
+					}, {
+					thisStart = nil;
+					});
+				rel.notNil.if({
+					rel = (rel ++ "_" ++ incDict[rel]).asSymbol;
+					});
+				events = events.add([thisStart, rel]);
+				});
+			});			
+		^this.new(events, 1, {}, {});
+		}
 		
 	*initClass {
 		addActions = IdentityDictionary[
@@ -1212,16 +1297,21 @@ ProcEvents {
 /* this is predominantly a GUI class that stores ProcMods and displays them in a GUI. The GUI has 
 * two parts. A window that shows ProcMods in GUI mode, and a DragSink that takes ProcMods, places
 * them in the GUI, and can save them to a file as an archive
+* INCORPORATE THE STARTPIECE BUTTON ACTION IF A BUTTON IS PUSHED ON THE MAIN SCREEN - POSSIBLY REMOVE FROM 
+* SIDE BAR.
 */
 
 ProcSink {
 	var <name, initmod, killmod, server, <sinkWindow, <sinkBounds, <procWindow, <bounds, <numProcs,
-		<screenWidth, <screenHeight, <procMods, gui = false, <columns, rows, baseheight,
-		<>starttime, firstProc = true;
+		<screenWidth, <screenHeight, <procMods, <procModButtons, <procModsN, gui = false, 
+		<columns, rows, baseheight, <>starttime, firstProc = true, startbutton;
+	var <recordPM, <recordPath, <>offset = 0.0;
+	var saveProcEv = false, procEvTimeLine, saveProcEvToPath;
 
 	*new {arg name, sinkBounds, bounds, columns = 3, initmod, killmod, server, parent;
 		server = server ?? {Server.default};
-		^super.newCopyArgs(name, initmod, killmod, server).init(sinkBounds, bounds, columns, parent);
+		^super.newCopyArgs(name, initmod, killmod, server).init(sinkBounds, bounds, columns,
+		 	parent);
 	}
 	
 	*loadFromFile {arg path;
@@ -1229,7 +1319,9 @@ ProcSink {
 		}
 	
 	init {arg argSinkBounds, argBounds, argColumns, argParent;
-		procMods = Array.new;
+		procMods = IdentityDictionary.new;
+		procModsN = IdentityDictionary.new;
+		procModButtons = IdentityDictionary.new;
 		numProcs = 0;
 		columns = argColumns;
 		rows = 1;
@@ -1242,8 +1334,8 @@ ProcSink {
 			.action_({arg me;
 				this.add(me.object)
 				});
-		GUI.button.new(sinkWindow, Rect(5, sinkBounds.height * 0.7, sinkBounds.width - 10,
-				sinkBounds.height * 0.3 - 10))
+		startbutton = GUI.button.new(sinkWindow, Rect(5, sinkBounds.height * 0.7, 
+				sinkBounds.width - 10, sinkBounds.height * 0.3 - 10))
 			.states_([
 				["Start piece", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
 				["Stop piece", Color.black, Color(0.7, 0.3, 0.3, 0.3)],
@@ -1252,15 +1344,16 @@ ProcSink {
 				var actions;
 				actions = [
 					{this.kill},
-					{this.start}
+					{this.start; }
 					];
 				actions[me.value].value;
 				});
 		sinkWindow.onClose_({this.kill});
 		sinkWindow.view.children[1].focus(true);
 		bounds = argBounds ?? {Rect(screenWidth * 0.1, screenHeight * 0.9, 
-			screenWidth * 0.9, screenHeight * 0.1)};
+			screenWidth * 0.9, screenHeight * 0.05)};
 		baseheight = bounds.height;
+		recordPM = false;
 		this.gui(argParent);
 		}
 	
@@ -1273,9 +1366,13 @@ ProcSink {
 		}
 		
 	start {
-		procWindow.front;
-		initmod.notNil.if({initmod.play});
-		starttime = Main.elapsedTime;
+		firstProc.if({
+			procWindow.front;
+			initmod.notNil.if({initmod.play});
+			starttime = Main.elapsedTime;
+			firstProc = false;
+			(startbutton.value != 1).if(startbutton.value_(1));
+			})
 		}
 	
 	now {
@@ -1283,26 +1380,101 @@ ProcSink {
 		}
 		
 	kill {
+		var fil;
 		{
 			procWindow.isClosed.not.if({procWindow.close});
 			sinkWindow.isClosed.not.if({sinkWindow.close});
 		}.defer;
 		procMods.do({arg me; (me.isRunning).if({ me.kill })});
 		killmod.notNil.if({killmod.play});
+		saveProcEv.if({
+			fil = File.new(saveProcEvToPath, "w");
+			fil.putString(procEvTimeLine.asCompileString);
+			fil.close;
+			})
 		}
 		
 	add {arg proc, upperLevel = 6, lowerLevel = -inf; 
+		var thisWidth, thisHeight, actions, spec, slide, num, fullpath;
 		numProcs = numProcs + 1;
-		procMods = procMods.add(proc);
+		procMods = procMods.put(proc.id, proc);
 		rows = (numProcs / columns).ceil;
 		{
 		procWindow.bounds_(Rect(procWindow.bounds.left, procWindow.bounds.top, 
-			procWindow.bounds.width, rows * baseheight - procWindow.view.decorator.gap.x));
-		proc.gui(Rect(0, 0, procWindow.bounds.width / columns, baseheight), upperLevel, 
-			lowerLevel, procWindow)}.defer;
+			procWindow.bounds.width, rows * (baseheight * 1.3) + 
+				(procWindow.view.decorator.gap.x * 2)));
+		thisHeight = baseheight;
+		thisWidth = (procWindow.bounds.width / columns) - (procWindow.view.decorator.gap.x * 4);
+		actions = [
+			{
+				proc.release;
+				saveProcEv.if({
+					procEvTimeLine = procEvTimeLine.add([
+						(Main.elapsedTime - starttime).round(0.001) + offset,
+						[nil, proc.id]
+						])
+					});
+			},
+			{	
+				arg path; 
+					recordPM.if({fullpath = recordPath ++ path; proc.play(fullpath)
+					}, {
+					proc.play;
+					});
+					saveProcEv.if({
+						procEvTimeLine = procEvTimeLine.add([
+							(Main.elapsedTime - starttime).round(0.001) + offset, 
+							[proc.id, nil]
+							]);
+						})
+					}
+			];
+		spec = [lowerLevel, upperLevel, \db].asSpec;
+		
+		procModButtons.put(proc.id, 
+			GUI.button.new(procWindow, Rect(0, 0, thisWidth * 0.25, thisHeight))
+				.states_([
+					[proc.id, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
+					[proc.id, Color.black, Color(0.7, 0.3, 0.3, 0.3)]
+					])
+				.action_({arg me;
+					this.start;
+					actions[me.value].value((Main.elapsedTime - starttime + 
+						offset).round(0.001));
+					});
+				);
+		slide = GUI.slider.new(procWindow, Rect(0, 0, thisWidth * 0.55, thisHeight))
+			.value_(spec.unmap(proc.amp.ampdb).round(0.01))
+			.action_({arg me; 
+				var newamp;
+				newamp = spec.map(me.value);
+				num.value_(newamp.round(0.01));
+				proc.amp = newamp.dbamp;
+				});
+		num = GUI.numberBox.new(procWindow, Rect(0, 0, thisWidth * 0.20, thisHeight))
+			.value_(proc.amp.ampdb.round(0.01))
+			.action_({arg me;
+				var newamp;
+				newamp = me.value;
+				proc.amp = newamp.dbamp;
+				slide.value_(spec.unmap(newamp));
+				});
+		}.defer;
 		// why does this need to be contiually reset?
 		procWindow.onClose_({this.kill});
-	}
+		}
+		
+	record {arg path, timeoffset;
+		recordPM = true;
+		recordPath = path;
+		offset = timeoffset ?? {0.0}; 
+		}
+		
+	saveToProcEvents {arg path;
+		saveProcEvToPath = path;
+		saveProcEv = true;
+		procEvTimeLine = [];
+		}
 			
 
 }
