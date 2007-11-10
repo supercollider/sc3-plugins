@@ -14,11 +14,37 @@ sc3_source = '../'
 
 # enable this to build the StkUGens
 
-build_stkugens = False
-stklib_path = '/path/to/libstk.a'
+#build_stkugens = False
+#stklib_path = '/path/to/libstk.a'
 
-build_ay = True
+#build_ay = True
 ay_path = 'source/AY_libayemu/'
+
+opts = Options('scache.conf', ARGUMENTS)
+opts.AddOptions(
+    BoolOption('STK',
+               'Build with STK plugins', 0),
+    PathOption('STKPATH',
+               'STK libary path', '/usr/lib'),
+    BoolOption('AY',
+               'Build with AY plugins', 0)
+)
+
+env = Environment(options = opts)
+
+if env['STK']:
+	build_stkugens = True
+	stklib_path = env['STKPATH']
+else:
+	build_stkugens = False
+
+if env['AY']:
+	build_ay = True
+	ay_path = 'source/AY_libayemu/'
+else:
+	build_ay = False
+
+
 
 ##############################################
 # simple ugens

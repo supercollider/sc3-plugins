@@ -32,6 +32,7 @@ The compiled UGens, Classes and Helpfiles, will be placed into a new 'Extensions
 
 You can add a sub dir named 'test' inside this Extensions directory and move folders in there to disable a particular ugen pack.
 
+------------
 The StkUGens
 ------------
 If you are planning to build the StkUGens you will need the stklib. This is provided in the file release area of the sourceforge project site at:
@@ -46,19 +47,24 @@ $ ./configure
 $ cd src
 $ make
 
-- Edit SConstruct to enable building the StkUGens and set the path to point to the new built libstk.a:
-# enable this to build the StkUGens
+Or, if your distribution features the stklib, install the development version.
 
-build_stkugens = True
-stklib_path = '/path/to/libstk.a'
+To build, execute scons as follows:
 
-- Save the changes, execute scons and export the compiled UGens to a new 'Extensions' folder:
+$ scons STK=yes STKPATH=/path/to_stklib/
 
-$ scons
+- export the compiled UGens to a new 'Extensions' folder:
 $ ./distro_linux
 
 - For the StkUGens to work and boot scsynth succesfully if this ugen pack was installed, the rawwaves folder needs to be installed at the same level of scsynth as noted on the UGens Pack directory. a sylink works fine for this.
 
+------------
+The AY Ugens
+------------
+
+Execute:
+$ scons AY=yes
+$ ./distro_linux
 
 questions - blackrain at realizedsound dot net
 
