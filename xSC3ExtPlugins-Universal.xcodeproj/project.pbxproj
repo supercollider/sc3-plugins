@@ -23,6 +23,7 @@
 				373C2EED0C9404EB00A3D3FD /* PBXTargetDependency */,
 				373C2EEB0C9404EB00A3D3FD /* PBXTargetDependency */,
 				373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */,
+				37046F9F0CF0852500254768 /* PBXTargetDependency */,
 			);
 			name = MCLDUGens;
 			productName = MCLDUGensUB;
@@ -77,6 +78,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		37046FA10CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37046FA00CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp */; };
 		370E4CAD0C92DAE5000AE1EF /* MCLDDistortionUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */; };
 		370E4CC70C92DB65000AE1EF /* MCLDFilterUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA70C92DAB6000AE1EF /* MCLDFilterUGens.cpp */; };
 		370E4CD60C92DB68000AE1EF /* MoogFFUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370E4CA80C92DAB6000AE1EF /* MoogFFUGen.cpp */; };
@@ -234,6 +236,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		37046F9E0CF0852500254768 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */;
+			remoteInfo = "MCLDTriggeredStatsUGens (Upgraded)";
+		};
 		373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -433,6 +442,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		37046F9B0CF084B500254768 /* MCLDTriggeredStatsUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDTriggeredStatsUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		37046FA00CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MCLDTriggeredStatsUgens.cpp; path = source/MCLDTriggeredStatsUgens.cpp; sourceTree = "<group>"; };
 		370E4CA20C92DA53000AE1EF /* MCLDDistortionUgensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDDistortionUgensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		370E4CA50C92DAB6000AE1EF /* AY_UGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AY_UGen.cpp; sourceTree = "<group>"; };
 		370E4CA60C92DAB6000AE1EF /* MCLDDistortionUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDDistortionUGens.cpp; sourceTree = "<group>"; };
@@ -606,6 +617,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		37046F940CF084B500254768 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		370E4C9B0C92DA53000AE1EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -855,6 +873,7 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
+				37046FA00CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp */,
 				F50D05D902E69B6B01CA2799 /* fftlib.c */,
 				F50D05E202E69B6B01CA2799 /* SCComplex.cpp */,
 				F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */,
@@ -1037,6 +1056,7 @@
 				F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */,
 				F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */,
 				373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */,
+				37046F9B0CF084B500254768 /* MCLDTriggeredStatsUGensUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1062,6 +1082,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		37046F910CF084B500254768 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		370E4C980C92DA53000AE1EF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1348,6 +1375,26 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens (Upgraded)" */;
+			buildPhases = (
+				37046F910CF084B500254768 /* Headers */,
+				37046F920CF084B500254768 /* Sources */,
+				37046F940CF084B500254768 /* Frameworks */,
+				37046F950CF084B500254768 /* Rez */,
+				37046F960CF084B500254768 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MCLDTriggeredStatsUGens (Upgraded)";
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 37046F9B0CF084B500254768 /* MCLDTriggeredStatsUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */;
@@ -1875,12 +1922,10 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
@@ -1912,11 +1957,19 @@
 				373C2EE70C9404DC00A3D3FD /* MCLDUGens */,
 				373C2EFE0C94051000A3D3FD /* bhobUGens */,
 				373C2F0B0C94053300A3D3FD /* JoshUGens */,
+				37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXRezBuildPhase section */
+		37046F950CF084B500254768 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		370E4C9C0C92DA53000AE1EF /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -2102,6 +2155,15 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		37046F960CF084B500254768 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
 		370E4C9D0C92DA53000AE1EF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2339,6 +2401,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		37046F920CF084B500254768 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37046FA10CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		370E4C990C92DA53000AE1EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2559,6 +2629,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		37046F9F0CF0852500254768 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */;
+			targetProxy = 37046F9E0CF0852500254768 /* PBXContainerItemProxy */;
+		};
 		373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */;
@@ -2702,6 +2777,103 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		37046F980CF084B500254768 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		37046F990CF084B500254768 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		37046F9A0CF084B500254768 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		370E4C9F0C92DA53000AE1EF /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5415,6 +5587,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37046F980CF084B500254768 /* Development */,
+				37046F990CF084B500254768 /* Deployment */,
+				37046F9A0CF084B500254768 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
 		370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
