@@ -5,15 +5,15 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0024ad}
-span.s3 {color: #466d24}
+span.s2 {color: #0024ae}
+span.s3 {color: #466d23}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -35,7 +35,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p4"><span class="s2">SynthDef</span>(<span class="s3">\fm_grain_test</span>, {<span class="s2">arg</span> gate = 1, amp = 1;</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0,</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMGrain</span>.ar(<span class="s2">Impulse</span>.kr(10), 0.2, <span class="s2">WhiteNoise</span>.kr.range(440, 880), 200,<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMGrain</span>.ar(<span class="s2">Impulse</span>.ar(20), 0.2, 440, 200,<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>LFNoise1.kr(1).range(1, 10),</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">EnvGen</span>.kr(</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Env</span>([0, 1, 0], [1, 1], <span class="s3">\sin</span>, 1),</p>
@@ -46,7 +46,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
 <p class="p4"><span class="Apple-tab-span">	</span>}).load(s);</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
-<p class="p4">s.sendMsg(<span class="s3">\s_new</span>, <span class="s3">\fm_grain_test</span>, a=s.nextNodeID, 0, 1, <span class="s3">\amp</span>, 0.2);</p>
+<p class="p4">s.sendMsg(<span class="s3">\s_new</span>, <span class="s3">\fm_grain_test</span>, a=s.nextNodeID, 0, 1, <span class="s3">\amp</span>, 0.1);</p>
 <p class="p4">s.sendMsg(<span class="s3">\n_set</span>, a, <span class="s3">\gate</span>, 0);</p>
 </body>
 </html>

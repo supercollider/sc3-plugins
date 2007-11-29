@@ -5,17 +5,17 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #143596}
-span.s3 {color: #5d6739}
-span.s4 {color: #042ba5}
-span.s5 {color: #516b2c}
+span.s2 {color: #1a3794}
+span.s3 {color: #5f663a}
+span.s4 {color: #0d2ea2}
+span.s5 {color: #576a2e}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -52,8 +52,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
 <p class="p4"><span class="Apple-tab-span">	</span>}).load(s);</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
-<p class="p4">y = <span class="s4">Env</span>([0, 1, 0], [1, 1], <span class="s5">\sin</span>).asSignal;</p>
-<p class="p4">z = <span class="s4">Env</span>([0, 1, 0], [1, 1], [10, -10]).asSignal;</p>
+<p class="p4">y = <span class="s4">Env</span>([0, 1, 0], [1, 1], <span class="s5">\sin</span>).asSignal(1024);</p>
+<p class="p4">z = <span class="s4">Env</span>([0, 1, 0], [1, 1], [10, -10]).asSignal(1024);</p>
 <p class="p4">s.sendMsg(<span class="s5">\b_alloc</span>, b = s.bufferAllocator.alloc(1), 1024, 1, [<span class="s5">\b_setn</span>, b, 0, 1024] ++ y)</p>
 <p class="p4">s.sendMsg(<span class="s5">\b_alloc</span>, c = s.bufferAllocator.alloc(1), 1024, 1, [<span class="s5">\b_setn</span>, c, 0, 1024] ++ z)</p>
 <p class="p4">s.sendMsg(<span class="s5">\s_new</span>, <span class="s5">\fm_grain_test</span>, a=s.nextNodeID, 0, 1, <span class="s5">\amp</span>, 0.2, <span class="s5">\envbuf1</span>, b, <span class="s5">\envbuf2</span>, c);</p>
