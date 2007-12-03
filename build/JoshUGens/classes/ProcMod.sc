@@ -10,8 +10,7 @@ be controlled at a mixer for live mixing of Procs. Second, for recording purpose
 */
 
 ProcMod {
-	var <amp, <>group, <addAction, <target, 
-		<timeScale, <lag, <>id, <>function, 
+	var <amp, <>group, <addAction, <target, <timeScale, <lag, <>id, <>function, 
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
 		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
@@ -435,7 +434,9 @@ ProcModR : ProcMod {
 				})
 			})
 		}
-
+	
+	now { "This works".postln; starttime.postln; ^Main.elapsedTime - starttime }
+	
 	setupRouting {arg argNumChannels, argProcout;
 		(argNumChannels > 0).if({
 			numChannels = argNumChannels;
@@ -1255,7 +1256,7 @@ ProcEvents {
 				events = events.add([thisStart, rel]);
 				});
 			});			
-		^this.new(events, 1, {}, {});
+		^this.new(events, 1, ProcMod.new.function_({"starts".postln}), {"ends".postln});
 		}
 		
 	*initClass {
