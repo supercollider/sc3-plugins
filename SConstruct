@@ -51,7 +51,6 @@ else:
 headers = sc3_source + 'Headers'
 
 plugs = [
-	'AmbisonicUGens',
 	'BEQSuiteUGens',
 	'BlackrainUGens',
 	'JoshUGens',
