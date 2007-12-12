@@ -1,7 +1,7 @@
 LPCFile : File {
-	var <header, <numFrames, <sndDur, <buffer, <>coefs, <server;
+	var <header, <sndDur, <buffer, <>coefs, <server;
 	var <headerSize, <magicNum, <numPoles, <nvals, <frameRate, <srate, <nframes, <data;
-	var <resrms, <origrms, <nrmerr, <pchcps, <len, <signal;	
+	var <>resrms, <>origrms, <>nrmerr, <>pchcps, <len, <signal, <restOfHeader;	
 	
 	*new {arg path, buffer, server;
 		server = server ? Server.default;
@@ -16,7 +16,7 @@ LPCFile : File {
 		}
 		
 	readHeader {
-		var restOfHeader, rest;
+		var rest;
 		len = this.length /  4;
 		headerSize = this.getInt32;
 		magicNum = this.getInt32 == 999;
@@ -69,6 +69,7 @@ LPCFile : File {
 			
 		}
 	
+	// saves in a format that SC can use as a Buffer
 	saveToFile { arg path;
 		var data, sndfile, collection, startFrame;
 		collection = signal;
@@ -124,16 +125,38 @@ LPCFile : File {
 				};
 
 			tmp = Buffer.loadCollection(this.server, signal);
-			buffer = tmp.bufnum;
-			//				
-//			this.server.sendMsgSync(c, \b_alloc, this.buffer, size);
-//			
-//			numcycles.do{arg i;
-//				this.server.listSendMsg([\b_setn, this.buffer, 512*i, 512] ++
-//					signal[(512*i)..((512*i)+511)])};
-//			
+			buffer = tmp.bufnum;		
 			("LPC data loaded to buffer "++ buffer.asString).postln;
 			}
+		}
+		
+	saveLPCFile {arg path;
+		var fil;
+		fil = File.new(path, "wb");
+		
+		fil.putInt32(headerSize);
+		fil.putInt32(magicNum);
+		fil.putInt32(numPoles);
+		fil.putInt32(nvals);
+		fil.putFloat(frameRate);
+		fil.putFloat(srate);
+		fil.putFloat(sndDur);
+		
+		restOfHeader.do({arg me;
+			fil.putFloat(me);
+			});
+		
+		nframes.do({arg i;
+			fil.putFloat(resrms[i]);
+			fil.putFloat(origrms[i]);
+			fil.putFloat(nrmerr[i]);
+			fil.putFloat(pchcps[i]);
+			coefs.do({arg me, j;
+				fil.putFloat(me[i]);
+				});
+			});
+				
+		fil.close;
 		}
 	}
 	

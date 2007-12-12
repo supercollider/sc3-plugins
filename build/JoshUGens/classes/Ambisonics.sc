@@ -93,7 +93,7 @@ BFDecode1 : UGen {
 			add = 0, scaleflag = 1;
 		var dist, scaler;
 		dist = ((maxDist - distance) / 345);
-		scaler = if(scaleflag, 1/((distance/maxDist)**1.5), 1);
+		scaler = if((scaleflag == 1), 1/((distance/maxDist)**1.5), 1);
 		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
 	}
 	
@@ -121,7 +121,7 @@ BFManipulate : Panner {
 Rotate : Panner {
 	*ar {arg w, x, y, z, rotate;
 		var xout, yout;
-		#xout, yout = Rotate2.ar(x, y, rotate / 2pi);
+		#xout, yout = Rotate2.ar(x, y, rotate * -0.31830988618379);
 		^[w, xout, yout, z];
 		}
 		
@@ -138,7 +138,7 @@ Rotate : Panner {
 Tilt : Panner {
 	*ar {arg w, x, y, z, tilt;
 		var xout, zout;
-		#xout, zout = Rotate2.ar(x, z, tilt / 2pi);
+		#xout, zout = Rotate2.ar(x, z, tilt * -0.31830988618379);
 		^[w, xout, y, zout];
 		}
 		
@@ -155,7 +155,7 @@ Tilt : Panner {
 Tumble : Panner {
 	*ar {arg w, x, y, z, tilt;
 		var yout, zout;
-		#yout, zout = Rotate2.ar(y, z, tilt / 2pi);
+		#yout, zout = Rotate2.ar(y, z, tilt * -0.31830988618379);
 		^[w, x, yout, zout];
 		}
 		
