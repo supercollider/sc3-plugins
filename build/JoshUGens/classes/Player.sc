@@ -453,10 +453,13 @@ Player {
 				{isScope = false; scope.window.close; window.front},
 				{isScope = true; 
 				(formatOut == \straight).if({numout = numchan}, {numout = numouts[formatOut]});
-				scope = server.scope(numout, outbus); scope.size_(400); 
+					scope = server.scope(numout, outbus); 
+					scope.size_(400); 
 					scope.window.view.children[0].waveColors_(
 						Array.fill(numout, {rgb(0, 255, 0)}));
-					window.front}
+					scope.window.userCanClose_(false);
+					window.front
+					}
 				];
 				
 			timestart = {arg startvar;

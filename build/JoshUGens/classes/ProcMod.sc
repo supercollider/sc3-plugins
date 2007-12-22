@@ -167,7 +167,9 @@ ProcMod {
 					}, {
 					0
 					});
-				server.sendMsg(\n_set, envnode, \pgate, 0);
+				envnode.notNil.if({
+					server.sendMsg(\n_set, envnode, \pgate, 0);
+					})
 				});
 			releasetime.notNil.if({
 				newrelval = reltime.notNil.if({
