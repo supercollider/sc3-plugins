@@ -72,7 +72,7 @@ ProcMod {
 			starttime = Main.elapsedTime;
 			function.isKindOf(Function).if({
 				retrig = true;
-				thisfun = function.value(group, envbus, server);
+				thisfun = function.value(group, envbus, server, this);
 				(thisfun.isKindOf(Routine) || thisfun.isKindOf(Task)).if({
 					process = thisfun; this.processPlay;
 					})
@@ -100,8 +100,8 @@ ProcMod {
 		^Main.elapsedTime - starttime
 		}
 	
-	value {arg recpath;
-		this.play(recpath);
+	value {arg recpath, timestamp, headerFormat, sampleFormat;
+		this.play(recpath, timestamp, headerFormat, sampleFormat);
 	}
 	
 	amp_ {arg newamp;
@@ -336,7 +336,7 @@ ProcMod {
 }
 
 ProcModR : ProcMod {
-	var <routebus, <>procout, <isRecording = false, <notegroup, <numChannels, 
+	var <routebus, <procout, <isRecording = false, <notegroup, <numChannels, 
 		<>headerFormat = "aiff", <>sampleFormat = "int16", <hdr, oldhdrs;
 	classvar addActions;
 
@@ -377,13 +377,20 @@ ProcModR : ProcMod {
 			releaseFunc, onReleaseFunc, responder, timeScale, lag, clock, server
 			).play(recpath);
 		}
-
+	
+	procout_ {arg newbus;
+		procout = newbus;
+		isRunning.if({
+			server.sendMsg(\n_set, envnode, \outbus, newbus)
+			});
+		}
+		
 	recordPM {arg path;
 		recordPM = true;
 		recordpath = path;
 		}
 		
-	play {arg recpath, timestamp = true;
+	play {arg recpath, timestamp = true, argHeaderFormat, argSampleFormat;
 		var thisfun;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({	
@@ -411,7 +418,8 @@ ProcModR : ProcMod {
 					server.sendBundle(nil, 
 						[\g_new, notegroup, 0, group],
 						[\s_new, (\procmodroute_8723_ ++ numChannels).asSymbol, 
-							server.nextNodeID, 1, group, \inbus, routebus, \outbus, procout]);
+							envnode = server.nextNodeID, 1, group, \inbus, routebus, 
+							\outbus, procout]);
 					});
 				}, {
 				"A unique audio bus couldn't be allocated for internal routing. This probably isn't what you wanted, and the resulting sound will probably be wrong. You should quit the server, and increase the number of audio busses with ServerOptions. Sorry... but there are limitations".warn;
@@ -421,13 +429,14 @@ ProcModR : ProcMod {
 				});
 			recpath.notNil.if({
 				hdr = HDR.new(server, Array.fill(numChannels, {arg i; routebus + i}), 3, 
-					group, "", recpath ++ id, headerFormat, sampleFormat, 1, timestamp);
+					group, "", recpath ++ id, argHeaderFormat ?? {headerFormat}, 
+					argSampleFormat ?? {sampleFormat}, 1, timestamp);
 				hdr.record;
 			});
 			starttime = Main.elapsedTime;
 			function.isKindOf(Function).if({
 				retrig = true;
-				thisfun = function.value(notegroup, routebus, server);
+				thisfun = function.value(notegroup, routebus, server, this);
 				(thisfun.isKindOf(Routine) || thisfun.isKindOf(Task)).if({
 					process = thisfun; this.processPlay;
 					})
@@ -596,7 +605,9 @@ ProcEvents {
 	var tlrec = false, tlplay = false, <timeLine, <currentTime, <timeOffset = 0.0, 
 		<isPlaying, <clock, cper;
 	/* begion add */
-	var <recordPM = false, recordpath;
+	var <recordPM = false, recordpath, <>timeStamp, <>headerFormat, <>sampleFormat;
+	var <>onEvent;
+	
 	classvar addActions;
 	
 	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
@@ -668,9 +679,12 @@ ProcEvents {
 			index = index + 1;			});
 	}
 	
-	record {arg path;
+	record {arg path, argTimeStamp = true, argHeaderFormat = 'aiff', argSampleFormat = 'int16';
 		recordPM = true;
 		recordpath = path;
+		timeStamp = argTimeStamp;
+		headerFormat = argHeaderFormat;
+		sampleFormat = argSampleFormat;
 		}
 		
 	stopRecord {
@@ -691,12 +705,13 @@ ProcEvents {
 				0, \amp, amp, \lag, lag);
 			firstevent = false;
 			});
+		onEvent.value(event);
 		eventArray[event].do({arg me;
 			timeArray.put(eventDict[me].id, Main.elapsedTime);
 			recordPM.if({
 				path = recordpath ++ (timeOffset + this.now.round(0.001)) ++ eventDict[me].id;
 				});
-			eventDict[me].value(path);
+			eventDict[me].value(path, timeStamp, headerFormat, sampleFormat);
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(1);
 			})});
 		releaseArray[event].do({arg me; eventDict[me].release;
@@ -705,6 +720,14 @@ ProcEvents {
 		tlrec.if({timeLine.postln; timeLine.put(event, this.now)});
 	}
 	
+//	onEvent_ {arg aFunction;
+//		aFunction.isKindOf(Function).if({
+//			onEvent = aFunction;
+//			}, {
+//			"onEvent should be a Function to execute on each event
+//			})
+//		}
+		
 	releaseAll {arg rel = true;
 		rel.if({eventDict.do{arg me; me.isRunning.if({me.release})}});
 		gui.if({
@@ -831,23 +854,23 @@ ProcEvents {
 						});
 					});
 				
-				pedrespsetup = OSCresponderNode(server.addr, '/tr', {arg time, resp, msg;
-					(msg[2] == testid).if({
-						(testinc < numlevels).if({
-							("Pedal setup on bus: " ++ pedalbus ++ " turn: " ++
-								 testinc).postln;
-							testlevel = testlevel + msg[3];
-							testinc = testinc + 1;
-							}, {
-							server.sendMsg(\n_free, testnode);
-							// calc the trig level, and give it some headroom
-							testlevel = ((testlevel + msg[3]) / numlevels);
-							// start the pedal listening at the head of 0
+//				pedrespsetup = OSCresponderNode(server.addr, '/tr', {arg time, resp, msg;//
+//					(msg[2] == testid).if({//
+//						(testinc < numlevels).if({//
+//							("Pedal setup on bus: " ++ pedalbus ++ " turn: " ++//
+//								 testinc).postln;//
+//							testlevel = testlevel + msg[3];//
+//							testinc = testinc + 1;//
+//							}, {//
+//							server.sendMsg(\n_free, testnode);//
+//							// calc the trig level, and give it some headroom//
+//							testlevel = ((testlevel + msg[3]) / numlevels);//
+//							// start the pedal listening at the head of 0//
 							server.sendMsg(\s_new, \procevtrig2343, pedalnode, 
 								addActions[addAction],
-							 	target, \pedalin, pedalbus, \id, pedalid, \level, testlevel,
+							 	target, \pedalin, pedalbus, \id, pedalid,// \level, testlevel,
 								\trigwindow, trigwindow, \headroom, headroom);
-							// add the pedresp responder
+//							// add the pedresp responder
 							"Pedal ready".postln;
 							pedresp.add;
 							{
@@ -894,14 +917,14 @@ ProcEvents {
 										});
 								gui.if({window.front});
 							}.defer;
-							// remove this repsonder
-							pedrespsetup.remove;
-							})
-						})
-					}).add;
+//							// remove this repsonder//
+//							pedrespsetup.remove;//
+//							})//
+//						})//
+//					}).add;
 				
-				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addActions[addAction],
-					target, \pedalin, pedalbus, \id, testid);
+//				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addActions[addAction],
+//					target, \pedalin, pedalbus, \id, testid);
 
 			}, {"Server isn't booted, pedal trig can't be loaded".warn})
 		}
@@ -1284,13 +1307,20 @@ ProcEvents {
 					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
 					SendTrig.ar(Impulse.ar(10), id, ped);
 				}).writeDefFile;
-				
-			SynthDef(\procevtrig2343, {arg pedalin, id, level = 1, headroom = 1, trigwindow = 1,
+			SynthDef(\procevtrig2343, {arg pedalin = 2, id, headroom = 6, trigwindow = 1, 
 					mute = 1;
-				var ped;
-				ped = In.ar(pedalin) * mute;
-				SendTrig.ar(Trig1.ar(ped > (level * headroom), trigwindow), id, 1);
-				}).writeDefFile;	
+				var in, delay, trig;
+				in = Amplitude.kr(In.ar(pedalin)) * mute;
+				delay = DelayN.ar(in, 0.01, 0.01);
+				trig = (in / delay.max(0.00001)) > headroom.dbamp;
+				SendTrig.ar(Trig1.ar(trig, trigwindow), id, 1);
+				}).writeDefFile;//
+//			SynthDef(\procevtrig2343, {arg pedalin, id, level = 1, headroom = 1, trigwindow = 1,//
+//					mute = 1;//
+//				var ped;//
+//				ped = In.ar(pedalin) * mute;//
+//				SendTrig.ar(Trig1.ar(ped > (level * headroom), trigwindow), id, 1);//
+//				}).writeDefFile;	
 			
 			}
 	}
