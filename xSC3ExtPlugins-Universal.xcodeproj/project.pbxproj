@@ -448,6 +448,7 @@
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		B97F2D380D47833300B652BB /* SymbolicMachines.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolicMachines.cpp; sourceTree = "<group>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SKINI.tbl; path = source/StkUGens/include/SKINI.tbl; sourceTree = SOURCE_ROOT; };
@@ -985,6 +986,7 @@
 				F37FF7EE0B86BE9D006B0AA3 /* bhobGrain.cpp */,
 				F37FF7DD0B86BE60006B0AA3 /* BhobFilt.cpp */,
 				37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */,
+				B97F2D380D47833300B652BB /* SymbolicMachines.cpp */,
 			);
 			path = source;
 			sourceTree = "<group>";
@@ -1828,7 +1830,6 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
