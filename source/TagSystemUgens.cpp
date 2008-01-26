@@ -163,7 +163,7 @@ void DbufTag_reset(DbufTag *unit, int recycle, int inNumSamples)
 		}
 		// write axiom to tape
 		for(int i = 0; i < unit->m_write_pos; i++) {
-			bufData[i] = (float) DEMANDINPUT(dtag_argoffset + i);
+			bufData[i] = (float) DEMANDINPUT_A(dtag_argoffset + i, inNumSamples);
 			// printf("axiom[%d] = %d\n", i, (int) bufData[i]);
 		}
 	} else if (recycle < 0) {
@@ -186,7 +186,7 @@ void DbufTag_reset(DbufTag *unit, int recycle, int inNumSamples)
 
 void DbufTag_end(DbufTag *unit, int which_case, int inNumSamples) {
 	
-	int recycle = (int) DEMANDINPUT(dtag_recycle);
+	int recycle = (int) DEMANDINPUT_A(dtag_recycle, inNumSamples);
 	int mode = (int) IN0(dtag_mode);
 	
 	if(which_case == 0) {
@@ -296,7 +296,7 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 		return;
 	}
 	
-	int v = (int) DEMANDINPUT(dtag_deletion_number);
+	int v = (int) DEMANDINPUT_A(dtag_deletion_number, inNumSamples);
 	
 	if(ruleIndex >= unit-> m_numRules || (ruleIndex < 0)) {
 		// printf("no rule found for value %ld\n", ruleIndex);
@@ -311,7 +311,7 @@ void DbufTag_next(DbufTag *unit, int inNumSamples)
 		
 		for(int i=0; i < rule_length; i++) {
 			// copy production rule.
-			bufData[write_pos] = DEMANDINPUT(cur_rule_pos + i);
+			bufData[write_pos] = DEMANDINPUT_A(cur_rule_pos + i, inNumSamples);
 			write_pos += 1;
 			if(write_pos == read_pos) {
 				DbufTag_end(unit, 1, inNumSamples);
@@ -382,7 +382,7 @@ void Dtag_initInputs(Dtag *unit, int argOffset, int size)
 }
 
 
-void Dtag_reset(Dtag *unit, int recycle)
+void Dtag_reset(Dtag *unit, int recycle, int inNumSamples)
 {
 	
 	RESETINPUT(dtag_deletion_number); // reset deletion number
@@ -394,7 +394,7 @@ void Dtag_reset(Dtag *unit, int recycle)
 		
 		// write axiom to tape
 		for(int i = 0; i < unit->m_axiom_size; i++) {
-			unit->m_tape[i] = DEMANDINPUT(dtag_argoffset + i);
+			unit->m_tape[i] = DEMANDINPUT_A(dtag_argoffset + i, inNumSamples);
 		//	printf("axiom[%ld] = %ld\n", i, unit->m_tape[i]);
 		}
 	} else if (recycle < 0) {
@@ -420,13 +420,13 @@ void Dtag_reset(Dtag *unit, int recycle)
 	}
 
 
-void Dtag_end(Dtag *unit, int which_case) {
+void Dtag_end(Dtag *unit, int which_case, int inNumSamples) {
 	
-	int recycle = (int) DEMANDINPUT(dtag_recycle);
+	int recycle = (int) DEMANDINPUT_A(dtag_recycle, inNumSamples);
 	int mode = (int) IN0(dtag_mode);
 	
 	if(which_case == 0) {
-		Dtag_reset(unit, recycle);
+		Dtag_reset(unit, recycle, inNumSamples);
 		if(mode == 4) { 
 			printf("tag system was reset.\n");
 			if(recycle) { printf("recycling. axiom length: %ld\n", recycle); }
@@ -436,7 +436,7 @@ void Dtag_end(Dtag *unit, int which_case) {
 	
 	if((mode == 0) || (mode == which_case)) {
 		if(recycle) {
-			Dtag_reset(unit, recycle);
+			Dtag_reset(unit, recycle, inNumSamples);
 		} else {
 			OUT0(0) = NAN;
 		}
@@ -453,7 +453,7 @@ void Dtag_end(Dtag *unit, int which_case) {
 		if(recycle) {
 			printf("recycling. axiom length: %ld\n", recycle);
 			
-			Dtag_reset(unit, recycle);
+			Dtag_reset(unit, recycle, inNumSamples);
 			
 			printf("new axiom (index %ld..%ld): ", unit->m_read_pos, unit->m_write_pos);
 			int32 n = unit->m_write_pos - unit->m_read_pos;
@@ -483,7 +483,7 @@ void Dtag_Ctor(Dtag *unit)
 
 	// initialise and reset
 	Dtag_initInputs(unit, dtag_argoffset + unit->m_axiom_size, unit->m_numRules);
-	Dtag_reset(unit, 0);
+	Dtag_reset(unit, 0, 1);
 	
 	OUT0(0) = 0.f;
 }
@@ -526,11 +526,11 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 	
 	
 	if (!inNumSamples) {
-		Dtag_end(unit, 0);
+		Dtag_end(unit, 0, 1);
 		return;
 	}
 	
-	int v = (int) DEMANDINPUT(dtag_deletion_number);
+	int v = (int) DEMANDINPUT_A(dtag_deletion_number, inNumSamples);
 	
 	//printf("ruleIndex: %d rulesize: %ld\n", ruleIndex, unit->m_numRules);
 	if(ruleIndex >= unit->m_numRules || (ruleIndex < 0)) {
@@ -543,10 +543,10 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 		rule_length = unit->m_rule_lengths[ruleIndex];
 		
 		for(int i=0; i < rule_length; i++) {
-			tape[write_pos] = DEMANDINPUT(cur_rule_pos + i);
+			tape[write_pos] = DEMANDINPUT_A(cur_rule_pos + i, inNumSamples);
 			write_pos += 1;
 			if(write_pos == read_pos) {
-				Dtag_end(unit, 1);
+				Dtag_end(unit, 1, inNumSamples);
 				return;
 			}
 			if(write_pos == tape_size) {
@@ -556,7 +556,7 @@ void Dtag_next(Dtag *unit, int inNumSamples)
 		for(int j=0; j < v; j++) {
 			read_pos += 1;
 			if(write_pos == read_pos) {
-				Dtag_end(unit, 2);
+				Dtag_end(unit, 2, inNumSamples);
 				return;
 			}
 			if(read_pos == tape_size) {
@@ -639,7 +639,7 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	
 	////////////////////// embedding mode /////////////////////////
 	if(unit->m_count > 0.f) {
-		outval = DEMANDINPUT(current_state_offset); // this will have to switch behaviour, depending on slotRepeats
+		outval = DEMANDINPUT_A(current_state_offset, inNumSamples); // this will have to switch behaviour, depending on slotRepeats
 		if(sc_isnan(outval)) {
 			
 			if(unit->m_end) {
@@ -668,7 +668,7 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	////////////////////// init count /////////////////////////
 		
 	// get new count
-	unit->m_count = DEMANDINPUT(0) - 1.f; // offset: first value is embedded below.
+	unit->m_count = DEMANDINPUT_A(0, inNumSamples) - 1.f; // offset: first value is embedded below.
 		
 	if(sc_isnan(unit->m_count)) {  // terminate and reset
 					RESETINPUT(0);
@@ -687,7 +687,7 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	
 	if(unit->m_current_state >= unit->m_num_states) {
 		unit->m_current_state_offset = state_offset;
-		outval = DEMANDINPUT(unit->m_current_state_offset); // get first state, which is the packed termination state
+		outval = DEMANDINPUT_A(unit->m_current_state_offset, inNumSamples); // get first state, which is the packed termination state
 		OUT0(0) = outval;
 		// // printf("going to exit state (1): %d end\n", unit->m_current_state);
 		// // printf("output: %f\n", outval);
@@ -699,7 +699,7 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	float size = (float) unit->m_nextstate_sizes[unit->m_current_state];
 	
 	// get random value and generate random offset (0..size)
-	float rand = DEMANDINPUT(1);
+	float rand = DEMANDINPUT_A(1, inNumSamples);
 	choice = (int) sc_max(0.f, rand * size - 0.5);
 	
 	// look up the nextstate index
@@ -720,14 +720,14 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	
 	
 	// get first value
-	outval = DEMANDINPUT(current_state_offset);
+	outval = DEMANDINPUT_A(current_state_offset, inNumSamples);
 	if(sc_isnan(outval)) {
 			// // printf("(1) resetting input %d\n", current_state_offset);
 			if(unit->m_end) {
 				outval = NAN;
 			} else {
 				RESETINPUT(current_state_offset);
-				outval = DEMANDINPUT(current_state_offset);
+				outval = DEMANDINPUT_A(current_state_offset, inNumSamples);
 			}
 	}
 	OUT0(0) = outval;
