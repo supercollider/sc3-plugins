@@ -1,4 +1,4 @@
-DbufTag : UGen {
+DbufTag : DUGen {
 	var <>axiom, <>rules; 
 	*new { arg bufnum, v, axiom, rules, recycle=0, mode=0;
 		^this.multiNewList(['demand', bufnum, v, recycle, mode] 
