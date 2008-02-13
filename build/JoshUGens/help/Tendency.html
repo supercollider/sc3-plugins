@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.27">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bc1818}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p16 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #0514c1}
+span.s4 {font: 12.0px Helvetica}
+span.s5 {color: #0000bf}
+span.s6 {color: #007300}
+span.s7 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>Tendency<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>creates dynamic random number distributions</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p3"><br></p>
+<p class="p1"><b>Tendency</b> stores data for creating random values where the parameters for the random number generation occur over time.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Some Important Issues Regarding Tendency<span class="Apple-converted-space"> </span></b></p>
+<p class="p2"><br></p>
+<p class="p1">Though the parameters 'high' and 'low' (see *new method below) are gnerally used to describe bounds over time, in certain distributions, these actual parameters may control other aspects of a random distribution. See the descriptions of the \cauchy, \gauss and \poisson distributions for more details.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>Creation / Class Methods</b></p>
+<p class="p5"><br></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>*new (high, low, parA, parB)</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Creates a new Tendency object. Any of the values below may be a SimpleNumber, Env or Function. If a Function is used, the current time will be passed into the Function.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>high </b>- For the most common usage, describes the upper bounds of the distribution. Default value is 1.0.<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>low </b>- For the most common usage, describes the upper bounds of the distribution.. Default value is 0.0.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>parA </b>- For some distributions, the control of a specific parameter. Default value is 0.1</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>parB </b>-<span class="Apple-converted-space">  </span>For some distributions, the control of a specific parameter. Default value is 0.1.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// inline example</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s3">Tendency</span>.new(1.0, 0.0);<span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><b>Using Tendency</b></p>
+<p class="p12"><br></p>
+<p class="p6">The basic usage of Tendency will be through the 'at' method. A random value wll be calculated according to the<span class="Apple-converted-space">  </span>state of 'high' and 'low' at 'time' for a specific 'dist'.</p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>at (time, dist)</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Short prose description of method.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>time </b>- The time to calculate a random number for. Default value is 0.0.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dist </b>- The distribution to use. Default value is \uniform. The kind of distribution may change the meaning of some of the initial args (e.g., 'high' may be treated as a 'mean').</p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// basic Example.</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([1.0, 0.5, 1.0], [0.5, 0.5]),<span class="Apple-converted-space"> </span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([0.9, 0.0, 0.9], [0.8, 0.2], [-10, 5]));</p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n = 500; </span>// get 500 samples</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i)});<span class="Apple-converted-space"> </span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// using different distributions</p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// mean (or band pass) distribution</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\meanRand</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// low pass distribution</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\lpRand</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// hi pass distribution</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\hpRand</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// exponential distribution</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\expRand</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>/* The following distributions are special cases! high and low do not act the same as in previous cases */</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// cauchy - with this distribution, 'high' is the mean of the distribution</p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and 'low' is the spread</p>
+<p class="p16"><br></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([1.0, 5.0], [1]), <span class="s7">// move the mean</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.1);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\cauchy</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// gaussian - 'high' is the mean, 'low' is the deviation</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([1.0, 5.0], [1]), <span class="s7">// move the mean</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.1);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\gauss</span>)});</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><br></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// poisson - 'high' is the mean</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Env</span>([1.0, 5.0], [1])); <span class="s7">// move the mean</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\poisson</span>)});</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p16"><span class="Apple-tab-span">	</span></p>
+<p class="p15"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>/* \beta uses the parA and parB arguments to describe where the likelihood that a random value will occur near high or low. For example, if parA &lt; 1, values are more likely to<span class="Apple-converted-space"> </span></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>occur close to high. if parA is 1, the distribution is uniform. &gt; 1, and you get a bounded gaussian like distribution */</p>
+<p class="p16"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(1.0, 0.0, Env([0.01, 2.0], [1], \sin), Env([0.01, 2.0], [1], \sin));</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o = n.collect({<span class="s5">arg</span> i; i = i / n; g.at(i, <span class="s6">\betaRand</span>)});</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o.plot(discrete: <span class="s5">true</span>);</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>asStream (dist)</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">SynthDef</span>(<span class="s6">\tendency</span>, {<span class="s5">arg</span> freq;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(0, <span class="s5">SinOsc</span>.ar(freq, 0, <span class="s5">XLine</span>.kr(0.1, 0.0001, 1, doneAction: 2)));</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Routine</span>.run({</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">Tendency</span>.new(1760.0, 440.0, <span class="s5">Env</span>([0.01, 2.0], [10], <span class="s6">\sin</span>), <span class="s5">Env</span>([0.01, 2.0], [10], <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\sin</span>)).asStream(<span class="s6">\betaRand</span>);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>t = <span class="s5">Main</span>.elapsedTime;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>while({</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Synth</span>(<span class="s6">\tendency</span>, [<span class="s6">\freq</span>, g.next]);</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.02.wait;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(<span class="s5">Main</span>.elapsedTime - t) &lt; 10;</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p14"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+</body>
+</html>
