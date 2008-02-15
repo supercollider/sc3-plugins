@@ -11,9 +11,9 @@ OnsetsDS : UGen {
 *kr { |in, fftbuf, trackbuf, thresh=0.5, type=\power,
    extchain=false, relaxtime=0.1, floor=0.1, smear=0, mingap=0.05, medianspan=11|
 
-	"OnsetsDS is deprecated and will be removed. Use 'Onsets.kr' instead.".error;
-
 var chain, odf, onsets;
+
+	"OnsetsDS is deprecated and will be removed. Use 'Onsets.kr' instead.".error;
 
 ^{
 // Perform FFT, if needed
