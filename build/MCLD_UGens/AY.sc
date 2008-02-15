@@ -16,6 +16,7 @@ AY : UGen {
 
 	*freqtotone { |freq|
 		// Approximate empirical...
-		^(109300 / (freq - 3.70727))
+		//^(109300 / (freq - 3.70727))
+		^(110300 / (freq - 0.5))
 	}
 }

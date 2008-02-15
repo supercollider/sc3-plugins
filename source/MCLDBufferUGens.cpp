@@ -10,6 +10,8 @@ struct Logger : public Unit
 	// Also the Buffer stuff used by BufWr
 	float m_fbufnum;
 	SndBuf *m_buf;
+	
+	bool m_maypost;
 };
 
 struct ListTrig : public Unit
@@ -35,24 +37,24 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////
 
-#define GET_BUF \
-	float fbufnum  = ZIN0(0); \
-	bool justInitialised = false; \
-	if (fbufnum != unit->m_fbufnum) { \
-		uint32 bufnum = (int)fbufnum; \
-		World *world = unit->mWorld; \
-		if (bufnum >= world->mNumSndBufs) bufnum = 0; \
-		unit->m_fbufnum = fbufnum; \
-		unit->m_buf = world->mSndBufs + bufnum; \
-		justInitialised = true; \
-	} \
-	SndBuf *buf = unit->m_buf; \
-	float *bufData __attribute__((__unused__)) = buf->data; \
-	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
-	uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
-	uint32 bufFrames = buf->frames; \
-	int mask __attribute__((__unused__)) = buf->mask; \
-	int guardFrame __attribute__((__unused__)) = bufFrames - 2; 
+#define GET_BUF_ALTERED \
+       float fbufnum  = ZIN0(0); \
+       bool justInitialised = false; \
+       if (fbufnum != unit->m_fbufnum) { \
+               uint32 bufnum = (int)fbufnum; \
+               World *world = unit->mWorld; \
+               if (bufnum >= world->mNumSndBufs) bufnum = 0; \
+               unit->m_fbufnum = fbufnum; \
+               unit->m_buf = world->mSndBufs + bufnum; \
+               justInitialised = true; \
+       } \
+       SndBuf *buf = unit->m_buf; \
+       float *bufData __attribute__((__unused__)) = buf->data; \
+       uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
+       uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
+       uint32 bufFrames = buf->frames; \
+       int mask __attribute__((__unused__)) = buf->mask; \
+       int guardFrame __attribute__((__unused__)) = bufFrames - 2; 
 
 #define CHECK_BUF \
 	if (!bufData) { \
@@ -84,6 +86,8 @@ void Logger_Ctor(Logger* unit)
 	unit->m_prevreset = 0.f;
 	unit->m_writepos = 0;
 	
+	unit->m_maypost = (unit->mWorld->mVerbosity >= 0);
+	
 	//Logger_next(unit, 1);
 	ClearUnitOutputs(unit, 1);
 }
@@ -100,7 +104,7 @@ void Logger_next(Logger *unit, int inNumSamples)
 	float out = 0.f;
 	
 	// Stuff a la BufWr - NB I have modified GET_BUF slightly
-	GET_BUF
+	GET_BUF_ALTERED
 	CHECK_BUF
 	SETUP_IN(3)
 	
@@ -114,7 +118,7 @@ void Logger_next(Logger *unit, int inNumSamples)
 	
 	// Now check for trigger
 	if(trig > 0.f && prevtrig <= 0.f){
-		if(writepos == bufChannels * bufFrames){
+		if(unit->m_maypost && writepos == bufChannels * bufFrames){
 			Print("Logger.kr warning: Buffer full, dropped values: first channel %g\n", *in[0]);
 		}else{
 			for(uint32 i=0; i<numInputs; ++i){

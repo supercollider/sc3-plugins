@@ -1,7 +1,7 @@
 /*
 
 FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
-(c) Dan Stowell 2006.
+(c) Dan Stowell 2006-2008.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@ FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
 struct FFTAnalyser_Unit : Unit
 {
 	float outval;
+	
+	// Not always used: multipliers which convert from bin indices to freq vals, and vice versa.
+	// See also the macros for deriving these.
+	float m_bintofreq, m_freqtobin;
 };
 
 struct FFTAnalyser_OutOfPlace : FFTAnalyser_Unit
@@ -99,6 +103,24 @@ struct PV_Whiten : Unit {
 	int m_bindownsample;
 };
 
+struct FFTRumble : FFTAnalyser_Unit
+{
+	int m_binpos; // The bin index corresponding to the supplied pitch. We'll round DOWN so as to avoid the fundamental contaminating.
+};
+
+struct FFTSubbandFlatness : FFTAnalyser_Unit
+{
+	int m_numbands;
+			int *m_cutoffs; // Will hold bin indices corresponding to frequencies
+	float *m_outvals;
+	bool m_cutoff_inited;
+};
+struct FFTCrest : FFTAnalyser_Unit
+{
+	int m_frombin; // Will hold bin index
+	int m_tobinp1; // Will hold bin index
+	bool m_cutoffneedsinit;
+};
 
 
 // for operation on one buffer
@@ -145,6 +167,17 @@ struct PV_Whiten : Unit {
 		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, buf->samples * sizeof(float)); \
 		unit->m_numbins = numbins; \
 	} else if (numbins != unit->m_numbins) return; 
+
+#define GET_BINTOFREQ \
+	if(unit->m_bintofreq==0.f){ \
+		unit->m_bintofreq = world->mFullRate.mSampleRate / buf->samples; \
+	} \
+	float bintofreq = unit->m_bintofreq;
+#define GET_FREQTOBIN \
+	if(unit->m_freqtobin==0.f){ \
+		unit->m_freqtobin = buf->samples / world->mFullRate.mSampleRate; \
+	} \
+	float freqtobin = unit->m_freqtobin;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -206,6 +239,17 @@ extern "C"
 	
 	void PV_Whiten_Ctor(PV_Whiten *unit);
 	void PV_Whiten_next(PV_Whiten *unit, int inNumSamples);
+	
+	void FFTRumble_Ctor(FFTRumble *unit);
+	void FFTRumble_next(FFTRumble *unit, int inNumSamples);
+	
+	void FFTSubbandFlatness_Ctor(FFTSubbandFlatness *unit);
+	void FFTSubbandFlatness_next(FFTSubbandFlatness *unit, int inNumSamples);
+	void FFTSubbandFlatness_Dtor(FFTSubbandFlatness *unit);
+	
+	void FFTCrest_Ctor(FFTCrest *unit);
+	void FFTCrest_next(FFTCrest *unit, int inNumSamples);
+	
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -218,6 +262,7 @@ SCPolarBuf* ToPolarApx(SndBuf *buf)
 		}
 		buf->coord = coord_Polar;
 	}
+
 	return (SCPolarBuf*)buf->data;
 }
 
@@ -248,6 +293,7 @@ void FFTPower_next(FFTPower *unit, int inNumSamples)
 	if(normfactor == 0.f){
 		unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
 	}
+
 
 //	SCComplexBuf *p = ToComplexApx(buf);
 	SCPolarBuf *p = ToPolarApx(buf);
@@ -1169,7 +1215,7 @@ void PV_Whiten_next(PV_Whiten *unit, int inNumSamples){
 	float relaxcoef = (relax == 0.0f) ? 0.0f : exp(log1/(relax * SAMPLERATE));
 	float floor = ZIN0(3);
 	float smear = ZIN0(4);
-	unsigned int bindownsample = (int)ZIN0(5);
+//	unsigned int bindownsample = (int)ZIN0(5);
 	
 	float val,oldval;
 	////////////////////// Now for each bin, update the record of the peak value /////////////////////
@@ -1227,8 +1273,236 @@ void PV_Whiten_next(PV_Whiten *unit, int inNumSamples){
 	
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+void FFTRumble_next(FFTRumble *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	GET_FREQTOBIN
+	
+	float pitch = ZIN0(1);
+	bool sqrmode = ZIN0(2) == 1.f;
+	bool normalise = ZIN0(3) > 0.f;
+	
+	int binpos = unit->m_binpos;
+	if(binpos==0){
+		binpos = unit->m_binpos = (int)floorf(pitch * freqtobin);
+	}
+	
+	float total = 0.f;
+	if(sqrmode){
+		for (int i=0; i<binpos; ++i) {
+			total += p->bin[i].mag * p->bin[i].mag;
+		}
+	}else{
+		for (int i=0; i<binpos; ++i) {
+			total += p->bin[i].mag;
+		}
+	}
+	
+	if(normalise){
+		float denom = total;
+		if(sqrmode){
+			for (int i=binpos; i<numbins; ++i) {
+				denom += p->bin[i].mag * p->bin[i].mag;
+			}
+		}else{
+			for (int i=binpos; i<numbins; ++i) {
+				denom += p->bin[i].mag;
+			}
+		}
+		if(denom!=0.f){
+			total /= denom;
+		}
+	}
+	
+	ZOUT0(0) = unit->outval = total;
+}
+
+void FFTRumble_Ctor(FFTRumble *unit)
+{
+	SETCALC(FFTRumble_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_freqtobin = 0.f;
+	unit->m_binpos = 0.f;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTSubbandFlatness_next(FFTSubbandFlatness *unit, int inNumSamples)
+{
+	int numbands = unit->m_numbands;
+	int numcutoffs = numbands - 1;
+	
+	
+	// Multi-output equiv of FFTAnalyser_GET_BUF
+	float fbufnum = ZIN0(0);
+	if (fbufnum < 0.f) {
+		for(int i=0; i<numbands; i++){
+			ZOUT0(i) = unit->m_outvals[i];
+		}
+		return;
+	}
+	uint32 ibufnum = (uint32)fbufnum;
+	World *world = unit->mWorld;
+	if (ibufnum >= world->mNumSndBufs) ibufnum = 0;
+	SndBuf *buf = world->mSndBufs + ibufnum;
+	int numbins = buf->samples - 2 >> 1;
+	// End: Multi-output equiv of FFTAnalyser_GET_BUF
+	
+	// Now we create the integer lookup list, if it doesn't already exist
+	int * cutoffs = unit->m_cutoffs;
+	if(!unit->m_cutoff_inited){
+		
+		float srate = world->mFullRate.mSampleRate;
+		for(int i=0; i < numcutoffs; i++) {
+			cutoffs[i] = (int)(buf->samples * ZIN0(2 + i) / srate);
+			//Print("Allocated bin cutoff #%d, at bin %d\n", i, cutoffs[i]);
+		}
+		
+		unit->m_cutoff_inited = true;
+	}
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+
+	// Now we can actually calculate the bandwise stuff
+	int binaddcount = 0; // Counts how many bins contributed to the current band
+	int curband = 0;
+	float * outvals = unit->m_outvals;
+	
+	double geommean = 0.0, arithmean = 0.0;
+	
+	for (int i=0; i<numbins; ++i) {
+		if(i == cutoffs[curband]){
+			// Finish off the mean calculations
+			geommean = exp(geommean / binaddcount);
+			arithmean /= binaddcount;
+			outvals[curband] = (float)(geommean / arithmean);
+			curband++;
+			geommean = arithmean = 0.0;
+			binaddcount = 0;
+		}
+		
+		float mag = (p->bin[i].mag);
+		geommean += log(mag);
+		arithmean += mag;
+		
+		binaddcount++;
+	}
+
+	// Remember to output the very last (highest) band
+	// Do the nyquist
+	geommean += log(sc_abs(p->nyq));
+	arithmean += sc_abs(p->nyq);
+	binaddcount++;
+	// Finish off the mean calculations
+	geommean = exp(geommean / binaddcount);
+	arithmean /= binaddcount;
+	outvals[curband] = (float)(geommean / arithmean);
+
+	// Now we can output the vals
+	for(int i=0; i<numbands; i++) {
+		ZOUT0(i) = outvals[i];
+	}
+}
+
+void FFTSubbandFlatness_Ctor(FFTSubbandFlatness *unit)
+{
+	SETCALC(FFTSubbandFlatness_next);
+	
+	// ZIN0(1) tells us how many cutoffs we're looking for
+	int numcutoffs = (int)ZIN0(1);
+	int numbands = numcutoffs+1;
+	
+	float * outvals = (float*)RTAlloc(unit->mWorld, numbands * sizeof(float));
+	for(int i=0; i<numbands; i++) {
+		outvals[i] = 0.f;
+	}
+	unit->m_outvals = outvals;
+	
+	unit->m_cutoffs = (int*)RTAlloc(unit->mWorld, 
+			numcutoffs * sizeof(int)
+		);
+	
+	unit->m_cutoff_inited = false;
+	
+	unit->m_numbands = numbands;
+	ZOUT0(0) = unit->outval = 0.;
+}
+
+void FFTSubbandFlatness_Dtor(FFTSubbandFlatness *unit)
+{
+	RTFree(unit->mWorld, unit->m_cutoffs);
+	RTFree(unit->mWorld, unit->m_outvals);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTCrest_Ctor(FFTCrest *unit)
+{
+	SETCALC(FFTCrest_next);
+	
+	unit->m_cutoffneedsinit = true;
+	unit->m_freqtobin = 0.f;
+	
+	ZOUT0(0) = unit->outval = 1.f;
+}
+
+void FFTCrest_next(FFTCrest *unit, int inNumSamples)
+{
+	float freqlo = IN0(1);
+	float freqhi = IN0(2);
+	
+	FFTAnalyser_GET_BUF
+	
+	//SCPolarBuf *p = ToPolarApx(buf); // Seems buggy...?
+	SCComplexBuf *p = ToComplexApx(buf);
+	
+	GET_FREQTOBIN
+	
+	if(unit->m_cutoffneedsinit){
+		// Get desired range, convert to bin index
+		unit->m_frombin = (int)(freqtobin * freqlo);
+		unit->m_tobinp1 = (int)(freqtobin * freqhi);
+		if(unit->m_frombin < 0)
+			unit->m_frombin = 0;
+		if(unit->m_tobinp1 > numbins)
+			unit->m_tobinp1 = numbins;
+		
+		unit->m_cutoffneedsinit = false;
+	}
+	int frombin = unit->m_frombin;
+	int tobinp1 = unit->m_tobinp1;
+	
+	float total = 0.f, scf, sqrmag, peak=0.f;
+	for (int i=frombin; i<tobinp1; ++i) {
+		//sqrmag = p->bin[i].mag * p->bin[i].mag;
+		sqrmag = (p->bin[i].real * p->bin[i].real) + (p->bin[i].imag * p->bin[i].imag);
+		// (1) Check if it's the peak
+		if(sqrmag >= peak){
+			peak = sqrmag;
+		}
+		// (2) Add to subtotal
+		total = total + sqrmag;
+	}
+	
+	// SCF defined as peak val divided by mean val; in other words, peak * count / total
+	if(total == 0.f)
+		scf = 1.f; // If total==0, peak==0, so algo output is indeterminate; but 1 indicates a perfectly flat spectrum, so we use that
+	else
+		scf = peak * ((float)(tobinp1 - frombin - 1)) / total;
+	
+	// Store the val for output in future calls
+	unit->outval = scf;
+	
+	ZOUT0(0) = unit->outval;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
 {
@@ -1253,4 +1527,8 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(FFTMKL);
 
 	DefineSimpleUnit(PV_Whiten);
+	
+	DefineSimpleUnit(FFTRumble);
+	DefineSimpleUnit(FFTCrest);
+	DefineDtorUnit(FFTSubbandFlatness);
 }

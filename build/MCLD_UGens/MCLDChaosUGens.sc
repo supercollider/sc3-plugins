@@ -6,6 +6,7 @@ Released under the GNU Public License.
 */
 
 MCLDChaosGen : UGen {
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
 
 // Rossler attractor

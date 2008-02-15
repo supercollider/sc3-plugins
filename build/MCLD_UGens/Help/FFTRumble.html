@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {text-decoration: underline}
+span.s2 {color: #000ebe}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.s5 {font: 12.0px Lucida Grande}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>FFTRumble<span class="Apple-tab-span">	</span>Measure the power below a given pitch</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>FFTRumble.kr(chain, pitch)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Given an FFT <b>chain</b>, this measures the amount of energy/power below a specified <b>pitch</b>. This pitch can vary dynamically - typically you would use the output from a pitch-tracker such as [<span class="s1">Pitch</span>] or [<span class="s1">Tartini</span>]. The UGen measures the amount of energy below the fundamental frequency, which you might call a measure of "growl" or "rumble". DC energy is not included.</p>
+<p class="p2"><br></p>
+<p class="p3">The optional third argument <b>mode</b> can specify whether the linear (mode=0) or squared (mode=1) magnitudes should be summed.</p>
+<p class="p2"><br></p>
+<p class="p3">The optional fourth argument <b>normalise</b> can specify whether the power is normalised, by dividing by the power for the whole spectrum.</p>
+<p class="p2"><br></p>
+<p class="p3">You may wish to normalise this against the overall spectral power, using [<span class="s1">FFTPower</span>].</p>
+<p class="p2"><br></p>
+<p class="p3">You may also wish to decrease the frequency argument a little (e.g. multiply by 0.9 as in the example below), to avoid accuracy- and bandwidth-related issues with the fundamental.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Example</b></p>
+<p class="p2"><br></p>
+<p class="p4">// Very artificial example - we'll combine some home-made "rumble" with a sine wave</p>
+<p class="p5">s.boot;</p>
+<p class="p5">b = <span class="s2">Buffer</span>.alloc(s, 512, 1);</p>
+<p class="p5">b = <span class="s2">Buffer</span>.alloc(s, 1024, 1);</p>
+<p class="p5">b = <span class="s2">Buffer</span>.alloc(s, 2048, 1);</p>
+<p class="p5">(</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="s2">var</span> in, chain, freq, addamount, rumble;</p>
+<p class="p6"><br></p>
+<p class="p4">//freq = LFPar.kr(0.3).exprange(100, 1000);</p>
+<p class="p5">freq = <span class="s2">MouseY</span>.kr(1000, 100, 1);</p>
+<p class="p5">addamount = <span class="s2">MouseX</span>.kr(0, 1);</p>
+<p class="p6"><br></p>
+<p class="p5">in = <span class="s2">SinOsc</span>.ar(freq) + <span class="s2">LPF</span>.ar(<span class="s2">WhiteNoise</span>.ar(2), freq, addamount);</p>
+<p class="p6"><br></p>
+<p class="p5">chain = <span class="s2">FFT</span>(b.bufnum, in);</p>
+<p class="p6"><br></p>
+<p class="p5">rumble = <span class="s2">FFTRumble</span>.kr(chain, freq * 0.9, 0);</p>
+<p class="p6"><br></p>
+<p class="p5"><span class="s2">Out</span>.ar(0, in.dup * 0.1);</p>
+<p class="p5">rumble.poll(10);</p>
+<p class="p5">}.play(s);</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p5">x.free;</p>
+<p class="p7"><br></p>
+<p class="p5">c = <span class="s3">Buffer</span>.read(s, <span class="s3">Local</span>.soundsamples ++ <span class="s4">"voqual/</span><span class="s5">mbfstrppbr.wav</span><span class="s4">"</span>);</p>
+<p class="p5">c = <span class="s3">Buffer</span>.read(s, <span class="s3">Local</span>.soundsamples ++ <span class="s4">"ybd1</span><span class="s5">.wav</span><span class="s4">"</span>);</p>
+<p class="p8">(</p>
+<p class="p8">x = {</p>
+<p class="p8"><span class="s3">var</span> in, chain, pitch, clarity, rumble, pow, ratio;</p>
+<p class="p7"><br></p>
+<p class="p8">in = <span class="s3">PlayBuf</span>.ar(1, c.bufnum);</p>
+<p class="p7"><br></p>
+<p class="p8">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p7"><br></p>
+<p class="p8"># pitch, clarity = <span class="s3">Tartini</span>.kr(in);</p>
+<p class="p8">pitch = <span class="s3">OctCorr</span>.kr(chain, pitch);</p>
+<p class="p7"><br></p>
+<p class="p8">rumble = <span class="s3">FFTRumble</span>.kr(chain, pitch * 0.9, 0, 1);</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s3">Out</span>.ar(0, in.dup * 0.8);</p>
+<p class="p8">rumble.poll(10);</p>
+<p class="p8"><span class="s3">K2A</span>.ar((rumble * (clarity&gt;0) + 1).log)</p>
+<p class="p9">//}.play(s); //{</p>
+<p class="p8">}.plot(c.numFrames / c.sampleRate, s, minval:0, maxval: <span class="s3">nil</span>)</p>
+<p class="p8">)</p>
+<p class="p7"><br></p>
+<p class="p8">x.free;</p>
+</body>
+</html>

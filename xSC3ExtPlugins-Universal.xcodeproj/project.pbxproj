@@ -1834,7 +1834,6 @@
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,

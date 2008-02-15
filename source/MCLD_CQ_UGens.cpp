@@ -155,7 +155,7 @@ void CQ_Diff_Ctor(CQ_Diff* unit)
 	
 	SndBuf *buf = world->mSndBufs + bufnum; 
 	
-	int bufsize = buf->samples;
+//	int bufsize = buf->samples;
 	
 	//printf("bufnum %d size %d\n",bufnum, bufsize);			
 	
