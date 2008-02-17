@@ -78,7 +78,7 @@ Player {
 		xywz = argxywz;
 		allocfun = {bufnum = server.bufferAllocator.alloc(numchan)};
 		// I don't like this... should be optional?
-		server = (Main.new.platform.name == \osx).if({
+		server = (thisProcess.platform.name == \osx).if({
 			Server.internal
 			}, {
 			Server.local
