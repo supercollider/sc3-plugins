@@ -16,6 +16,13 @@ Tendency {
 			{dist == \gauss} {this.gaussRandAt(time)}
 			{dist == \poisson} {this.poissonRandAt(time)}
 			{dist == \expRand} {this.expRandAt(time)}
+			{dist == \exponential} {this.expAt(time)}
+			{dist == \gamma} {this.gammaAt(time)}
+			{dist == \laplace} {this.laplaceAt(time)}
+			{dist == \alaplace} {this.alaplaceAt(time)}
+			{dist == \hcos} {this.hcosAt(time)}
+			{dist == \logistic} {this.logisticAt(time)}
+			{dist == \arcsin} {this.arcsinAt(time)}
 			{true} {this.uniformAt(time)};		
 	}
 	
@@ -66,18 +73,36 @@ Tendency {
 		}
 
 	// high = mean, low = spread
-	cauchyRandAt {|time|
-		var tmp;
-		while ({
-			tmp = 1.0.rand;
-			tmp == 0.5;
-			});
-		^(this.lowAt(time) * tan(tmp * pi)) + this.highAt(time);
-		}
+//	cauchyRandAt {|time|
+//		var tmp;
+//		while ({
+//			tmp = 1.0.rand;
+//			tmp == 0.5;
+//			});
+//		^(this.lowAt(time) * tan(tmp * pi)) + this.highAt(time);
+//		}
 	
+	// cauchy
+	// high = spread, parA=1 => positive half only
+	cauchyRandAt {|time|
+		var u;
+		u = 1.0.rand;
+		(this.parA == 1).if{ u = u * 0.5 };
+		u = pi * u;
+		^( this.highAt(time) * tan(u) + this.lowAt(time) );
+	}
+
 	// high = mean, low = dev
+//	gaussRandAt {|time|
+//		^(((-2 * log(1.0.rand)).sqrt * sin(2pi.rand)) * this.lowAt(time)) + this.highAt(time);
+//		}
+
+	// high = dev
 	gaussRandAt {|time|
-		^(((-2 * log(1.0.rand)).sqrt * sin(2pi.rand)) * this.lowAt(time)) + this.highAt(time);
+		var a, b;
+		a = 1.0.rand;
+		b = 1.0.rand;
+		^((-2 * log(1 - a)).sqrt * cos(2pi * b) * this.highAt(time) + this.lowAt(time));
 		}
 	
 	// high = mean	
@@ -97,7 +122,82 @@ Tendency {
 	expRandAt {|time|
 		^exprand(this.lowAt(time), this.highAt(time));
 		}
+
+	// exponential with high = density
+	expAt {|time|
+		var xs, us;
+		xs = log(1.0.rand).neg;
+		^((xs/this.highAt(time)) + this.lowAt(time))
+		}
+
+	// gamma distribution, high = mean	
+	gammaAt { |time|
+		var sum;
+		sum = 1.0;
+		for(1, this.highAt(time), { sum = sum * (1 - 1.0.rand) });
+		^(log(sum).neg + this.lowAt(time));
+	}
 	
+	// laplace
+	// high = dispersion or spread
+	laplaceAt { |time|
+		var u, val;
+		u = 1.0.rand * 2.0;
+		(u > 1.0).if({
+			u =  2.0 - u;
+			val = this.highAt(time).neg * log(u);
+			},{
+			val = this.highAt(time) * log(u)  ;
+			});
+		^(val + this.lowAt(time))
+	}
+
+	// alaplace
+	// special case of laplace (returns exp(u) instead of log(u)
+	// high = dispersion or spread
+	alaplaceAt { |time|
+		var u, val;
+		u = 1.0.rand * 2.0;
+		(u > 1.0).if({
+			u =  2.0 - u;
+			val = this.highAt(time).neg * exp(u);
+			},{
+			val = this.highAt(time) * exp(u)  ;
+			});
+		^(val + this.lowAt(time))
+	}
+
+	// hcos
+	// hyperbolic cosine distribution
+	hcosAt { |time|	
+		var u, val;
+		u = 1.0.rand;
+		val = log(tan(0.5pi * u));
+		^(this.highAt(time) * val + this.lowAt(time))
+	}
+
+
+	// logistic
+	// logistic distribution
+	// high = dispersion (beta)
+	// we keep alpha as 1 for simplicity
+	logisticAt { |time|	
+		var u, val;
+		u = 1.0.rand;
+		val = log(u.reciprocal - 1);
+		^(this.highAt(time).neg * val + this.lowAt(time))
+	}
+
+	// arcsin
+	// arcsin distribution
+	arcsinAt { |time|	
+		var u, val;
+		u = 1.0.rand;
+		val = (1 - sin(pi * (u - 0.5))) * 0.5;
+		^(this.highAt(time) * val + this.lowAt(time))
+	}
+
+
 	// may be broken		
 	embedInStream {| inval, dist |
 		var startTime, thisVal, thisTime;
