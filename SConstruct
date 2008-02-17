@@ -7,6 +7,7 @@
 # vim:ft=python:
 #>>>>>>> .r152
 
+import os.path
 
 # edit this to point to your SuperCollider3 source directory
 
@@ -19,6 +20,16 @@ sc3_source = '../'
 
 #build_ay = True
 ay_path = 'source/AY_libayemu/'
+
+
+if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
+	if os.path.exists(sc3_source + '../Headers/plugin_interface/SC_Unit.h'):
+		print 'Automatically adjusted sc3_source path, one folder higher'
+		sc3_source += '../'
+	else:
+		print 'Couldn\'t find SuperCollider plugin interface! Is "sc3_source" set correctly in your SConstruct file?'
+		Exit(1)
+
 
 opts = Options('scache.conf', ARGUMENTS)
 opts.AddOptions(
