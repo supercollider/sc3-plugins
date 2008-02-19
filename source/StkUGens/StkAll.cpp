@@ -1431,7 +1431,7 @@ void StkStifKarp_Dtor(StkStifKarp* unit)
 
 void StkTubeBell_Ctor(StkTubeBell* unit)
 {
-	Stk :: setRawwavePath("/Users/paul/stk-4.1.3/rawwaves");
+//	Stk :: setRawwavePath("/Users/paul/stk-4.1.3/rawwaves");
 
 	unit->tubebell = new TubeBell();
 	unit->tubebell->noteOn(IN0(0) ,1);

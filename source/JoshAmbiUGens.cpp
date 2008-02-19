@@ -1409,7 +1409,7 @@ void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
     unit->m_X_amp = cosa * cosb * levelsinint; \
     unit->m_Y_amp = sina * cosb * levelsinint; \
     unit->m_Z_amp = sinb * levelsinint; \
-    unit->m_R_amp = 1.5 * sinbsq - 0.5 * levelsinint; \
+    unit->m_R_amp = (1.5 * sinbsq - 0.5) * levelsinint; \
     unit->m_S_amp = cosa * sinelevationtimes2 * levelsinint * twodivsqrt3; \
     unit->m_T_amp = sina * sinelevationtimes2 * levelsinint * twodivsqrt3; \
     unit->m_U_amp = cos(azimuthtimes2) * cosbsq * levelsinint * twodivsqrt3; \
