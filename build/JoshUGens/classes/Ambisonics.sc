@@ -208,7 +208,7 @@ FMHDecode1 : UGen {
 		zero = K2A.ar(0);
 		^this.ar(w, x, y, z, r, s, t, u, v, 
 			[0] ++ Array.series(10, 0.2, -0.4) ++ [0],
-			[0.5pi] ++ 0.16666pi.dup(5) ++ -0.16666pi.dup(6) ++ [-0.5pi],
+			[0.5pi] ++ 0.16666pi.dup(5) ++ -0.16666pi.dup(5) ++ [-0.5pi],
 			mul, add)
 		}	
 				

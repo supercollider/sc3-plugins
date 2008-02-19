@@ -11,14 +11,12 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #961e1e}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #961e1e; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #782727; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000bf}
+span.s2 {color: #001cb9}
 span.s3 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -54,16 +52,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0.25pi,0.25pi,0.25pi,0.25pi,-0.25pi,-0.25pi,-0.25pi,-0.25pi]);</p>
 <p class="p3">}.scope(8);</p>
 <p class="p3">)</p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p1"><b>ar1(w, x, y, z, r, s, t, u, v, azimuth, elevation, maxDist, distance, scaleflag, mul, add)</b></p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p1"><b>maxDist - </b>the distance (in meters) to the furthest speaker from center (this allocates the delay size)</p>
 <p class="p1"><b>distance</b> - the distance (in meteres) to each speaker.</p>
 <p class="p1"><b>scaleflag</b> - if 1, apply amplitude scaling to the closest signals to match more distant speakers</p>
 <p class="p2"><br></p>
 <p class="p1">The following are some common speaker rigs, with the appropriate components zeroed out</p>
 <p class="p6"><br></p>
-<p class="p1"><b>stereo(w, x, mul, add)</b></p>
+<p class="p1"><b>stereo(w, y, mul, add)</b></p>
 <p class="p6"><br></p>
 <p class="p1"><b>square(w, x, y, v, mul, add) - stereo pairs - lf, rf, lr, rr</b></p>
 <p class="p1"><b>quad(w, x, y, v, mul, add) - clockwise - lf, rf, rr, lr</b></p>
@@ -74,26 +72,50 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b>cube(w, x, y, z, s, t, v, mul, add) - lfu, rfu, rru, lru, lfd, rfd, rrd, lrd</b></p>
 <p class="p1"><b>doubleHex(w, x, y, z, s, t, u, v, mul, add) - lfu, rfu, ru, rru, lru, lu, lfd, rfd, rd, rrd, lrd, ld</b></p>
 <p class="p1"><b>dodecahedron(w, x, y, z, r, s, t, u, v, mul, add) - top, fu, rfu, rru, lru, lfu, fd, rfd, rrd, lrd, lfd, bottom</b></p>
-<p class="p2"><b></b><br></p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
 <p class="p6"><br></p>
 <p class="p7">s=Server.internal.boot;</p>
 <p class="p8"><br></p>
-<p class="p9">(</p>
-<p class="p9">{<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
-<p class="p9"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(<span class="s2">WhiteNoise</span>.ar,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.cube(w, x, y, z, s, t, v);</p>
-<p class="p9">}.scope(8));</p>
-<p class="p10"><br></p>
-<p class="p10"><br></p>
+<p class="p7">(</p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(W<span class="s2">hiteNoise.ar</span>,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.stereo(w, y);</p>
+<p class="p7">}.scope(5));</p>
+<p class="p8"><br></p>
+<p class="p7">(</p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(W<span class="s2">hiteNoise.ar</span>,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.pentagon(w, x, y, u, v);</p>
+<p class="p7">}.scope(5));</p>
+<p class="p8"><br></p>
 <p class="p7">(</p>
 <p class="p7">{<span class="Apple-converted-space"> </span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(<span class="s2">WhiteNoise</span>.ar,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.cube(w, x, y, z, s, t, v);</p>
+<p class="p7">}.scope(8));</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(<span class="s2">SinOsc</span>.ar,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.doubleHex(w, x, y, z, s, t, u, v);</p>
+<p class="p7">}.scope(12));</p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">var</span> w, x, y, z, r, s, t, u, v;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>#w, x, y, z, r, s, t, u, v =<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">FMHEncode1</span>.ar(<span class="s2">WhiteNoise</span>.ar,<span class="s2">MouseX</span>.kr(0, 2pi), <span class="s2">MouseY</span>.kr(-0.5pi, 0.5pi), 1, 0.3);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">FMHDecode1</span>.dodecahedron(w, x, y, z, r, s, t, u, v);</p>
 <p class="p7">}.scope(12));</p>
 <p class="p6"><br></p>
 </body>
