@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949">
+<meta name="CocoaVersion" content="949.27">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
@@ -13,11 +13,11 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #a91616}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #782727}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0014bc}
-span.s3 {color: #a91616}
+span.s2 {color: #0027b3}
+span.s3 {color: #782727}
 span.s4 {color: #000000}
 span.s5 {font: 10.0px Monaco}
 span.Apple-tab-span {white-space:pre}
@@ -29,9 +29,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>BFDecode1.ar(w, x, y, z, azimuth, elevation)</b></p>
 <p class="p4"><br></p>
 <p class="p3">Decode a two dimensional ambisonic B-format signal for any speaker arrangement</p>
-<p class="p3"><b>w, x, y, z</b> - the B-format signals.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><b>w, x, y, z</b> - the B-format signals. All of these MUST be audio rate signals. If you want to zero one out, use</p>
+<p class="p3"><span class="Apple-tab-span">	</span>K2A.ar(0).</p>
 <p class="p3"><b>azimuth</b> - the angle from 0pi front and center of the speaker.<span class="Apple-converted-space">  </span>Can be an array of angles.</p>
 <p class="p3"><b>elevation </b>- the angle from 0pi center of the speaker.<span class="Apple-converted-space">  </span>Can be an array of angles.</p>
+<p class="p4"><br></p>
+<p class="p3">Because of the way the W component is scaled, it is recommended that you only decode with BFEncode signals with BFDecode1 and it's methods.</p>
 <p class="p4"><br></p>
 <p class="p3">s=Server.internal.boot;</p>
 <p class="p5">(</p>
@@ -64,6 +67,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>elevation </b>- the angle from 0pi center of the speaker.<span class="Apple-converted-space">  </span>Can be an array of angles.</p>
 <p class="p3"><b>maxDist - </b>the distance (in meters) to the furthest speaker from center (this allocates the delay size)</p>
 <p class="p3"><b>distance</b> - the distance (in meteres) to each speaker.</p>
+<p class="p3"><b>scaleflag</b> - if 1, apply amplitude scaling to the closest signals to match more distant speakers</p>
 <p class="p4"><br></p>
 <p class="p3">s=Server.internal.boot;</p>
 <p class="p5">(</p>

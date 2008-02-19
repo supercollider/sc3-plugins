@@ -97,8 +97,132 @@ BFDecode1 : UGen {
 		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
 	}
 	
+
+ 	checkInputs {
+ 		inputs[0..3].do({arg input, i; 	
+ 			if (rate !== input.rate) { 
+ 				^("input " + i + "is not" + rate + "rate: " + input + input.rate);
+ 			};
+ 			})
+ 		^this.checkValidInputs 
+ 	}
+	
 }
 
+/* follows Furse / Malham conventions with some tweaking (W is scaled according to x, y, z, r, s, t, u, and v. s, t, u and v are scaled by 2/3.sqrt */
+
+FMHDecode1 : UGen {
+	*ar {arg w, x, y, z, r, s, t, u, v, azimuth = 0, elevation = 0, mul = 1, add = 0;
+		^this.multiNew('audio', w, x, y, z, r, s, t, u, v, azimuth, elevation).madd(mul, add);
+		}
+	
+	*ar1 {arg w, x, y, z, r, s, t, u, v, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, 
+			mul = 1, add = 0, scaleflag = 1;
+		var dist, scaler;
+		dist = ((maxDist - distance) / 345);
+		scaler = if((scaleflag == 1), 1/((distance/maxDist)**1.5), 1);
+		^DelayN.ar(this.multiNew('audio', w, x, y, z, r, s, t, u, v, azimuth, elevation ), 
+			dist, dist, scaler.reciprocal).madd(mul, add);
+	}
+	/* 
+	* some common speaker configs, with the appropriate components zeroed out
+	* see http://www.muse.demon.co.uk/ref/speakers.html
+	* for more information
+	*/
+	
+	*stereo {arg w, y, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, zero, y, zero, zero, zero, zero, zero, zero, [0.25pi, -0.25pi], 0, mul, add)
+		}
+	
+	// stereo pairs
+	*square {arg w, x, y, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, zero, v, [0.25pi, -0.25pi, 0.75pi, -0.75pi], 
+			0, mul, add)
+		}
+
+	// quad clockwise
+	*quad {arg w, x, y, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, zero, v, Array.series(4, 0.25pi, -0.5pi), 
+			0, mul, add)
+		}
+	
+	// point front first
+	*pentagon {arg w, x, y, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, u, v, Array.series(5, 0, -0.4pi),
+			0, mul, add)
+		}
+		
+	*hexagon {arg w, x, y, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, u, v, 
+			Array.series(6, 0.16666pi, -0.333333pi),
+			0, mul, add)
+		}
+
+	// front bisects a side
+	*octagon1 {arg w, x, y, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, u, v, 
+			Array.series(8, 0.125pi, -0.25pi), 
+			0, mul, add)
+		}
+	
+	// front is a vertex
+	*octagon2 {arg w, x, y, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, zero, zero, zero, zero, u, v, 
+			Array.series(8, 0, -0.25pi), 
+			0, mul, add)
+		}
+		
+	*cube {arg w, x, y, z, s, t, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, z, zero, s, t, zero, v, 
+			Array.series(8, 0.25pi, -0.5pi), 
+			-0.25pi.dup(4) ++ 0.25pi.dup(4), mul, add)
+		}	
+	
+	// top, then bottom
+	*doubleHex {arg w, x, y, z, s, t, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, z, zero, s, t, u, v, 
+			Array.series(12, 0.16666pi, -0.33333pi), 
+			0.16666pi.dup(6) ++ -0.166666pi.dup(6), mul, add)
+		}											
+	// top, pentagonup, pentagondown, bottom
+	*dodecahedron {arg w, x, y, z, r, s, t, u, v, mul = 1, add = 0;
+		var zero;
+		zero = K2A.ar(0);
+		^this.ar(w, x, y, z, r, s, t, u, v, 
+			[0] ++ Array.series(10, 0.2, -0.4) ++ [0],
+			[0.5pi] ++ 0.16666pi.dup(5) ++ -0.16666pi.dup(6) ++ [-0.5pi],
+			mul, add)
+		}	
+				
+ 	checkInputs {
+ 		inputs[0..8].do({arg input, i; 	
+ 			if (rate !== input.rate) { 
+ 				^("input " + i + "is not" + rate + "rate: " + input + input.rate);
+ 			};
+ 			})
+ 		^this.checkValidInputs 
+ 	}
+		
+	}
+		
 BFManipulate : Panner {
 	
 	*ar { arg w, x, y, z, rotate = 0, tilt = 0, tumble = 0;
