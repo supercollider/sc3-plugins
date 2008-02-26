@@ -1,8 +1,8 @@
 Tendency {
-	var <>high, <>low, <>parA, <>parB;
+	var <>parX, <>parY, <>parA, <>parB;
 	
-	*new {|high = 1.0, low = 0.0, parA = 0.1, parB = 0.1|
-		^super.newCopyArgs(high, low, parA, parB);
+	*new {|parX = 1.0, parY = 0.0, parA = 0.1, parB = 0.1|
+		^super.newCopyArgs(parX, parY, parA, parB);
 		}
 		
 	at {|time = 0.0, dist = \uniform|
@@ -27,15 +27,15 @@ Tendency {
 	}
 	
 	uniformAt {|time|
-		^this.highAt(time).rrand(this.lowAt(time))
+		^this.parXAt(time).rrand(this.parYAt(time))
 		}
 		
-	highAt {|time|
-		^this.valAt(high.value(time), time);
+	parXAt {|time|
+		^this.valAt(parX.value(time), time);
 		}
 		
-	lowAt {|time|
-		^this.valAt(low.value(time), time);
+	parYAt {|time|
+		^this.valAt(parY.value(time), time);
 		}
 	
 	valAt {|obj, time|
@@ -55,13 +55,13 @@ Tendency {
 		}
 		
 	betaRandAt {|time|
-		var sum, rprob1, rprob2, temp, curlow, curhigh, i;
+		var sum, rprob1, rprob2, temp, curparY, curparX, i;
 		sum = 2;
 		i = 0;
 		rprob1 = this.valAt(parA, time).reciprocal;
 		rprob2 = this.valAt(parB, time).reciprocal;
-		curhigh = this.highAt(time);
-		curlow = this.lowAt(time);
+		curparX = this.parXAt(time);
+		curparY = this.parYAt(time);
 		while ({
 			(sum > 1) && (i < 10) 
 			}, {
@@ -69,47 +69,47 @@ Tendency {
 			sum = temp + (1.0.rand ** rprob2);
 			i = i + 1;
 			});
-		^((temp / sum) * (curhigh - curlow) + curlow)
+		^((temp / sum) * (curparX - curparY) + curparY)
 		}
 
-	// high = mean, low = spread
+	// parX = mean, parY = spread
 //	cauchyRandAt {|time|
 //		var tmp;
 //		while ({
 //			tmp = 1.0.rand;
 //			tmp == 0.5;
 //			});
-//		^(this.lowAt(time) * tan(tmp * pi)) + this.highAt(time);
+//		^(this.parYAt(time) * tan(tmp * pi)) + this.parXAt(time);
 //		}
 	
 	// cauchy
-	// high = spread, parA=1 => positive half only
+	// parX = spread, parA=1 => positive half only
 	cauchyRandAt {|time|
 		var u;
 		u = 1.0.rand;
 		(this.parA == 1).if{ u = u * 0.5 };
 		u = pi * u;
-		^( this.highAt(time) * tan(u) + this.lowAt(time) );
+		^( this.parXAt(time) * tan(u) + this.parYAt(time) );
 	}
 
-	// high = mean, low = dev
+	// parX = mean, parY = dev
 //	gaussRandAt {|time|
-//		^(((-2 * log(1.0.rand)).sqrt * sin(2pi.rand)) * this.lowAt(time)) + this.highAt(time);
+//		^(((-2 * log(1.0.rand)).sqrt * sin(2pi.rand)) * this.parYAt(time)) + this.parXAt(time);
 //		}
 
-	// high = dev
+	// parX = dev
 	gaussRandAt {|time|
 		var a, b;
 		a = 1.0.rand;
 		b = 1.0.rand;
-		^((-2 * log(1 - a)).sqrt * cos(2pi * b) * this.highAt(time) + this.lowAt(time));
+		^((-2 * log(1 - a)).sqrt * cos(2pi * b) * this.parXAt(time) + this.parYAt(time));
 		}
 	
-	// high = mean	
+	// parX = mean	
 	poissonRandAt {|time|
 		var count = -1, ranVal, tmp;
 		ranVal = 1.0.rand;
-		tmp = exp(this.highAt(time).neg);
+		tmp = exp(this.parXAt(time).neg);
 		while({
 			count = count + 1;
 			ranVal = ranVal * 1.0.rand;
@@ -120,51 +120,51 @@ Tendency {
 	
 	// don't cross 0! don't do it!
 	expRandAt {|time|
-		^exprand(this.lowAt(time), this.highAt(time));
+		^exprand(this.parYAt(time), this.parXAt(time));
 		}
 
-	// exponential with high = density
+	// exponential with parX = density
 	expAt {|time|
 		var xs, us;
 		xs = log(1.0.rand).neg;
-		^((xs/this.highAt(time)) + this.lowAt(time))
+		^((xs/this.parXAt(time)) + this.parYAt(time))
 		}
 
-	// gamma distribution, high = mean	
+	// gamma distribution, parX = mean	
 	gammaAt { |time|
 		var sum;
 		sum = 1.0;
-		for(1, this.highAt(time), { sum = sum * (1 - 1.0.rand) });
-		^(log(sum).neg + this.lowAt(time));
+		for(1, this.parXAt(time), { sum = sum * (1 - 1.0.rand) });
+		^(log(sum).neg + this.parYAt(time));
 	}
 	
 	// laplace
-	// high = dispersion or spread
+	// parX = dispersion or spread
 	laplaceAt { |time|
 		var u, val;
 		u = 1.0.rand * 2.0;
 		(u > 1.0).if({
 			u =  2.0 - u;
-			val = this.highAt(time).neg * log(u);
+			val = this.parXAt(time).neg * log(u);
 			},{
-			val = this.highAt(time) * log(u)  ;
+			val = this.parXAt(time) * log(u)  ;
 			});
-		^(val + this.lowAt(time))
+		^(val + this.parYAt(time))
 	}
 
 	// alaplace
 	// special case of laplace (returns exp(u) instead of log(u)
-	// high = dispersion or spread
+	// parX = dispersion or spread
 	alaplaceAt { |time|
 		var u, val;
 		u = 1.0.rand * 2.0;
 		(u > 1.0).if({
 			u =  2.0 - u;
-			val = this.highAt(time).neg * exp(u);
+			val = this.parXAt(time).neg * exp(u);
 			},{
-			val = this.highAt(time) * exp(u)  ;
+			val = this.parXAt(time) * exp(u)  ;
 			});
-		^(val + this.lowAt(time))
+		^(val + this.parYAt(time))
 	}
 
 	// hcos
@@ -173,19 +173,19 @@ Tendency {
 		var u, val;
 		u = 1.0.rand;
 		val = log(tan(0.5pi * u));
-		^(this.highAt(time) * val + this.lowAt(time))
+		^(this.parXAt(time) * val + this.parYAt(time))
 	}
 
 
 	// logistic
 	// logistic distribution
-	// high = dispersion (beta)
+	// parX = dispersion (beta)
 	// we keep alpha as 1 for simplicity
 	logisticAt { |time|	
 		var u, val;
 		u = 1.0.rand;
 		val = log(u.reciprocal - 1);
-		^(this.highAt(time).neg * val + this.lowAt(time))
+		^(this.parXAt(time).neg * val + this.parYAt(time))
 	}
 
 	// arcsin
@@ -194,7 +194,7 @@ Tendency {
 		var u, val;
 		u = 1.0.rand;
 		val = (1 - sin(pi * (u - 0.5))) * 0.5;
-		^(this.highAt(time) * val + this.lowAt(time))
+		^(this.parXAt(time) * val + this.parYAt(time))
 	}
 
 
@@ -215,4 +215,3 @@ Tendency {
 	}
 			
 }
-
