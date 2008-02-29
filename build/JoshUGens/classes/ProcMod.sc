@@ -699,7 +699,7 @@ ProcEvents {
 				recordPM.if({
 					path = recordpath ++ (timeOffset + this.now.round(0.001)) ++ initmod.id;
 					});
-				initmod.value(path);
+				initmod.value(path, timeStamp, headerFormat, sampleFormat);
 				}); 
 			server.sendMsg(\s_new, \procevoutenv6253, procampsynth = server.nextNodeID, 1,
 				0, \amp, amp, \lag, lag);
