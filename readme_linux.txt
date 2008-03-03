@@ -1,34 +1,20 @@
 
 linux build instructions
 ------------------------
-The sc3-plugins svn checkout is expect live inside the supercollider source tree.
-
-The directory tree will look something like this:
-
-    supercollider\     -   supercollider source tree
-       build\
-       headers\
-       source\
-       etc...
-       sc3-plugins\    -   sc3-plugins source tree
-	   build\
-	   compat\
-	   lib\
-	   etc...
-    stk-4.2.1\         -   the stklib
-       stk lib stuff
-
-
 building sc3-plugins
 --------------------
 
-$ cd supercollider/sc3-plugins
 $ scons
 $ ./distro_linux
 
-where supercollider is the name of the supercollider source tree.
+The SuperCollider source is expected to be at ../ but you can set the path by passing an argument to scons:
+
+$ scons SC3PATH=/my/path/to/supercollider_source
+$ ./distro_linux
 
 The compiled UGens, Classes and Helpfiles, will be placed into a new 'Extensions' directory in sc3-plugins. This can be moved or better yet, create a symlink to it from your extensions folder.
+
+$ ln -s /my/path/to_sc3-plugins/Extensions /myhome/share/SuperCollider/Extensions/sc3-plugins
 
 You can add a sub dir named 'test' inside this Extensions directory and move folders in there to disable a particular ugen pack.
 

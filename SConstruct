@@ -1,35 +1,11 @@
 # scons build script.
 # blackrain at realizedsound dot net - 11 2006
-#<<<<<<< .mine
-# vim:ft=python:
 #=======
 # Additions by Andrzej Kopec - akopec at chopin dot edu dot pl - Oct 07 2007
-# vim:ft=python:
-#>>>>>>> .r152
+#=======
+# Additions by Marije Baalman - nescivi at gmail dot com - Mar 03 2008
 
 import os.path
-
-# edit this to point to your SuperCollider3 source directory
-
-sc3_source = '../'
-
-# enable this to build the StkUGens
-
-#build_stkugens = False
-#stklib_path = '/path/to/libstk.a'
-
-#build_ay = True
-ay_path = 'source/AY_libayemu/'
-
-
-if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
-	if os.path.exists(sc3_source + '../Headers/plugin_interface/SC_Unit.h'):
-		print 'Automatically adjusted sc3_source path, one folder higher'
-		sc3_source += '../'
-	else:
-		print 'Couldn\'t find SuperCollider plugin interface! Is "sc3_source" set correctly in your SConstruct file?'
-		Exit(1)
-
 
 opts = Options('scache.conf', ARGUMENTS)
 opts.AddOptions(
@@ -38,10 +14,22 @@ opts.AddOptions(
     PathOption('STKPATH',
                'STK libary path', '/usr/lib'),
     BoolOption('AY',
-               'Build with AY plugins', 0)
+               'Build with AY plugins', 0),
+	PathOption('SC3PATH', 'SuperCollider source path', '../' )
 )
 
 env = Environment(options = opts)
+
+sc3_source = env['SC3PATH']
+print 'SuperCollider 3 source is at: ' + sc3_source
+
+if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
+	if os.path.exists(sc3_source + '../Headers/plugin_interface/SC_Unit.h'):
+		print 'Automatically adjusted sc3_source path, one folder higher'
+		sc3_source += '../'
+	else:
+		print 'Couldn\'t find SuperCollider plugin interface! Is "sc3_source" set correctly in your SConstruct file?'
+		Exit(1)
 
 if env['STK']:
 	build_stkugens = True
@@ -54,7 +42,6 @@ if env['AY']:
 	ay_path = 'source/AY_libayemu/'
 else:
 	build_ay = False
-
 
 
 ##############################################
