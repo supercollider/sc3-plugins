@@ -6,23 +6,38 @@
 # Additions by Marije Baalman - nescivi at gmail dot com - Mar 03 2008
 
 import os.path
+import platform
 
 opts = Options('scache.conf', ARGUMENTS)
 opts.AddOptions(
     BoolOption('STK',
                'Build with STK plugins', 0),
-    PathOption('STKPATH',
-               'STK libary path', '/usr/lib'),
     BoolOption('AY',
-               'Build with AY plugins', 0),
-	PathOption('SC3PATH', 'SuperCollider source path', '../' )
-)
+               'Build with AY plugins', 0)
+	)
+
+print 'Building for ' + platform.system()
+if platform.system() == 'Linux':
+	opts.AddOptions(
+		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
+    	PathOption('STKPATH', 'STK libary path', '/usr/lib')
+	)
+if platform.system() == 'Windows':
+	opts = Options('scache.conf', ARGUMENTS)
+	opts.AddOptions(
+    	PathOption('STKPATH',
+        	       'STK libary path', 'C:'),
+		PathOption('SC3PATH', 'SuperCollider source path', 'C:' ),
+		PathOption('PTHREADSPATH', 'pthreads path', 'C:' )
+	)
 
 env = Environment(options = opts)
 
+########################################
+# Configure for all platforms
+ 
 sc3_source = env['SC3PATH']
 print 'SuperCollider 3 source is at: ' + sc3_source
-
 if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
 	if os.path.exists(sc3_source + '../Headers/plugin_interface/SC_Unit.h'):
 		print 'Automatically adjusted sc3_source path, one folder higher'
@@ -43,6 +58,33 @@ if env['AY']:
 else:
 	build_ay = False
 
+########################################
+# Configure for Windows 
+
+if platform.system() == 'Windows':
+	pthreads = env['PTHREADSPATH']
+	print 'pthreads source is at: ' + pthreads
+	if not os.path.exists(pthreads + '/pthread.h'):
+		print 'Couldn\'t find pthreads! Is "pthreads" set correctly in your SConstruct file?'
+		Exit(1)
+	export_helper = sc3_source + '/windows/PlugIns/ExportHelper.cpp'
+	if not os.path.exists(export_helper):
+		print 'Couldn\'t find ExportHelper.cpp! Check your SuperCollider directory.'
+		Exit(1)
+	platform_CPPDEFINES = ['SC_WIN32', '__GCC__']
+	platform_SOURCES = [ export_helper ]
+	platform_HEADERS = [ sc3_source + '/libsndfile', pthreads ]
+	platform_SHLIBSUFFIX = '.scx'
+	
+########################################
+# Configure for Linux 
+
+if platform.system() == 'Linux':
+	platform_CPPDEFINES = ['SC_LINUX']
+	platform_SOURCES = [ ]
+	platform_HEADERS = [ ]
+	platform_SHLIBSUFFIX = '.so'
+	
 
 ##############################################
 # simple ugens
@@ -68,15 +110,17 @@ plugs = [
 	'BhobNoise'
 ]
 
-for file in plugs :
-	Environment(
-        	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server'],
-        	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+Basic_Env = Environment(
+        	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server'],
+        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
         	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
-        	SHLIBSUFFIX = '.so'
-	).SharedLibrary(file, 'source/' + file + '.cpp')
+        	SHLIBSUFFIX = platform_SHLIBSUFFIX
+);
+
+for file in plugs :
+	Basic_Env.SharedLibrary('build/' + file, ['source/' + file + '.cpp'] + platform_SOURCES )
 
 
 
@@ -85,25 +129,25 @@ for file in plugs :
 
 if build_stkugens == True:
 	Environment(
-        	CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
-        	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+       		CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
        		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
-        	SHLIBSUFFIX = '.so'
-	).SharedLibrary('StkUGens', 'source/StkUGens/StkAll.cpp', LIBS='libstk.a', LIBPATH=stklib_path)
+        	SHLIBSUFFIX = platform_SHLIBSUFFIX
+	).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS='libstk.a', LIBPATH=stklib_path)
 
 
 ##############################################
 # base FFT Envirnonment
 
 FFT_Env = Environment(
-       	CPPPATH = [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
-       	CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+       	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
+       	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
        	CCFLAGS = ['-Wno-unknown-pragmas'],
        	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
        	SHLIBPREFIX = '',
-       	SHLIBSUFFIX = '.so'
+       	SHLIBSUFFIX = platform_SHLIBSUFFIX
 )
 
 ##############################################
@@ -111,22 +155,22 @@ FFT_Env = Environment(
 
 fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
 
-FFT_Env.SharedLibrary('JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base)
+FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base  + platform_SOURCES)
 
 ##############################################
 # MCLDFFTTriggeredUGens
 
-FFT_Env.SharedLibrary('MCLDFFTTriggeredUGen.cpp', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c'])
+FFT_Env.SharedLibrary('build/' + 'MCLDFFTTriggeredUGen', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']  + platform_SOURCES)
 
 ##############################################
 # MCLDFFTUGens
 
-FFT_Env.SharedLibrary('MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'])
+FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp']  + platform_SOURCES)
 
 ##############################################
 # bhobfft
 
-FFT_Env.SharedLibrary('bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ])
+FFT_Env.SharedLibrary('build/' + 'bhobfft', ['source/bhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ] + platform_SOURCES)
 
 ##############################################
 # AY
