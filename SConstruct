@@ -23,7 +23,6 @@ if platform.system() == 'Linux':
     	PathOption('STKPATH', 'STK libary path', '/usr/lib')
 	)
 if platform.system() == 'Windows':
-	opts = Options('scache.conf', ARGUMENTS)
 	opts.AddOptions(
     	PathOption('STKPATH',
         	       'STK libary path', 'C:'),
