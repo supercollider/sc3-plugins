@@ -7,8 +7,11 @@ PV_DiffMags : UGen
 
 FFTPower : UGen
 {
-	*kr { arg buffer;
-		^this.multiNew('control', buffer)
+	*kr { arg buffer, square=true;
+		if(square.isKindOf(Boolean)){
+			square = square.binaryValue
+		};
+		^this.multiNew('control', buffer, square)
 	}
 }
 
@@ -65,10 +68,10 @@ FFTSubbandPower : MultiOutUGen {
 	
 	var <numbands;
 	
-	*kr { arg chain, cutfreqs, incdc=1;
-		cutfreqs.sort;
+	*kr { arg chain, cutfreqs, square=1;
+		cutfreqs = cutfreqs.copy.sort;
 		// Note the extra arg inserted so the UGen knows how many freqs to expect
-		^this.multiNew('control', chain, cutfreqs.size, incdc, *cutfreqs)
+		^this.multiNew('control', chain, cutfreqs.size, square, *cutfreqs)
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
@@ -133,6 +136,13 @@ PV_Whiten : UGen
 	}
 }
 
+FFTCentroid : UGen
+{
+	*kr { | buffer |
+		^this.multiNew('control', buffer)
+	}
+}
+
 FFTRumble : UGen
 {
 	*kr { | buffer, pitch=440, mode=0, normalise=0 |
@@ -160,5 +170,12 @@ FFTCrest : UGen
 {
 	*kr { | buffer, freqlo=0, freqhi=999999999 |
 		^this.multiNew('control', buffer, freqlo, freqhi)
+	}
+}
+
+FFTSpread : UGen
+{
+	*kr { | buffer, centroid |
+		^this.multiNew('control', buffer, centroid ?? { SpecCentroid.kr(buffer) } )
 	}
 }

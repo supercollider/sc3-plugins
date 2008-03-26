@@ -73,15 +73,18 @@ struct FFTFlatnessSplitPercentile_Unit : FFTPercentile_Unit
 struct FFTPower : FFTAnalyser_Unit
 {
 	float m_normfactor;
+	bool m_square;
 };
 
 struct FFTSubbandPower : FFTAnalyser_Unit
 {
+	float m_normfactor;
+	bool m_square;
+	
 	int m_numbands;
-			int *m_cutoffs; // Will hold bin indices corresponding to frequencies
+	int *m_cutoffs; // Will hold bin indices corresponding to frequencies
 	float *m_outvals;
 	bool m_cutoff_inited;
-	bool m_inc_dc;
 };
 
 struct FFTPhaseDev : FFTAnalyser_OutOfPlace
@@ -121,6 +124,10 @@ struct FFTCrest : FFTAnalyser_Unit
 	int m_tobinp1; // Will hold bin index
 	bool m_cutoffneedsinit;
 };
+struct FFTSpread : FFTAnalyser_Unit
+{
+};
+
 
 
 // for operation on one buffer
@@ -250,6 +257,9 @@ extern "C"
 	void FFTCrest_Ctor(FFTCrest *unit);
 	void FFTCrest_next(FFTCrest *unit, int inNumSamples);
 	
+	void FFTSpread_Ctor(FFTSpread *unit);
+	void FFTSpread_next(FFTSpread *unit, int inNumSamples);
+	
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -285,28 +295,52 @@ void init_SCComplex(InterfaceTable *inTable);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+void FFTPower_Ctor(FFTPower *unit)
+{
+	SETCALC(FFTPower_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_square = ZIN0(1) > 0.f;
+	unit->m_normfactor = 0.f;
+}
+
 void FFTPower_next(FFTPower *unit, int inNumSamples)
 {
 	FFTAnalyser_GET_BUF
 
 	float normfactor = unit->m_normfactor;
+	bool square = unit->m_square;
 	if(normfactor == 0.f){
-		unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
+		if(square)
+			unit->m_normfactor = normfactor = 1.f / powf(numbins + 2.f, 1.5f);
+		else
+			unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
 	}
 
 
-//	SCComplexBuf *p = ToComplexApx(buf);
-	SCPolarBuf *p = ToPolarApx(buf);
+	SCComplexBuf *p = ToComplexApx(buf);
+//	SCPolarBuf *p = ToPolarApx(buf);
 	
-	float total = sc_abs(p->dc) + sc_abs(p->nyq);
-	
-//	for (int i=0; i<numbins; ++i) {
-//		float rabs = (p->bin[i].real);
-//		float iabs = (p->bin[i].imag);
-//		total += sqrt((rabs*rabs) + (iabs*iabs));
-//	}
-	for (int i=0; i<numbins; ++i) {
-		total += sc_abs(p->bin[i].mag);
+	float total;
+	if(square){
+		total = sc_abs(p->dc) * sc_abs(p->dc) + sc_abs(p->nyq) *  sc_abs(p->nyq);
+		
+		for (int i=0; i<numbins; ++i) {
+			float rabs = (p->bin[i].real);
+			float iabs = (p->bin[i].imag);
+			total += (rabs*rabs) + (iabs*iabs);
+		}
+	}else{
+		total = sc_abs(p->dc) + sc_abs(p->nyq);
+		
+		for (int i=0; i<numbins; ++i) {
+			float rabs = (p->bin[i].real);
+			float iabs = (p->bin[i].imag);
+			total += sqrt((rabs*rabs) + (iabs*iabs));
+		}
+	//	for (int i=0; i<numbins; ++i) {
+	//		total += sc_abs(p->bin[i].mag);
+	//	}
 	}
 
 	// Store the val for output in future calls
@@ -315,21 +349,36 @@ void FFTPower_next(FFTPower *unit, int inNumSamples)
 	ZOUT0(0) = unit->outval;
 }
 
-void FFTPower_Ctor(FFTPower *unit)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTSubbandPower_Ctor(FFTSubbandPower *unit)
 {
-	SETCALC(FFTPower_next);
+	SETCALC(FFTSubbandPower_next);
 	ZOUT0(0) = unit->outval = 0.;
 	
+	unit->m_square = ZIN0(2) > 0.f;
 	unit->m_normfactor = 0.f;
+	
+	// ZIN0(1) tells us how many cutoffs we're looking for
+	int numcutoffs = (int)ZIN0(1);
+	int numbands = numcutoffs+1;
+	
+	float * outvals = (float*)RTAlloc(unit->mWorld, numbands * sizeof(float));
+	for(int i=0; i<numbands; i++) {
+		outvals[i] = 0.f;
+	}
+	unit->m_outvals = outvals;
+	
+	unit->m_cutoffs = (int*)RTAlloc(unit->mWorld, numcutoffs * sizeof(int));
+	unit->m_cutoff_inited = false;
+	
+	unit->m_numbands = numbands;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 {
 	int numbands = unit->m_numbands;
 	int numcutoffs = numbands - 1;
-	
 	
 	// Multi-output equiv of FFTAnalyser_GET_BUF
 	float fbufnum = ZIN0(0);
@@ -346,6 +395,15 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	int numbins = buf->samples - 2 >> 1;
 	// End: Multi-output equiv of FFTAnalyser_GET_BUF
 	
+	float normfactor = unit->m_normfactor;
+	bool square = unit->m_square;
+	if(normfactor == 0.f){
+		if(square)
+			unit->m_normfactor = normfactor = 1.f / powf(numbins + 2.f, 1.5f);
+		else
+			unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
+	}
+		
 	// Now we create the integer lookup list, if it doesn't already exist
 	int * cutoffs = unit->m_cutoffs;
 	if(!unit->m_cutoff_inited){
@@ -360,61 +418,42 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	}
 	
 	SCComplexBuf *p = ToComplexApx(buf);
-
+	
 	// Now we can actually calculate the bandwise subtotals
-	float total = unit->m_inc_dc ? sc_abs(p->dc) : 0;
-	int binaddcount = unit->m_inc_dc ? 1 : 0; // Counts how many bins contributed to the current band (1 because of the DC value)
+	float total = sc_abs(p->dc);
+	if(square){
+		total *= total; // square the DC val
+	}
 	int curband = 0;
 	float * outvals = unit->m_outvals;
-	
+	float magsq;
 	for (int i=0; i<numbins; ++i) {
 		if(i == cutoffs[curband]){
-			outvals[curband] = total / binaddcount;
+			outvals[curband] = total * normfactor;
 			curband++;
 			total = 0.f;
-			binaddcount = 0;
 		}
 		
 		float rabs = (p->bin[i].real);
 		float iabs = (p->bin[i].imag);
-		total += sqrt((rabs*rabs) + (iabs*iabs));
-		binaddcount++;
+		magsq = ((rabs*rabs) + (iabs*iabs));
+		if(square)
+			total += magsq;
+		else
+			total += sqrt(magsq);
 	}
-
 	// Remember to output the very last (highest) band
-	total += sc_abs(p->nyq);
-	outvals[curband] = total / (binaddcount + 1); // Plus one because of the nyq value
+	if(square)
+		total += p->nyq * p->nyq;
+	else
+		total += sc_abs(p->nyq);
+	// Pop the last one onto the end of the lovely list
+	outvals[curband] = total * normfactor;
 
 	// Now we can output the vals
 	for(int i=0; i<numbands; i++) {
 		ZOUT0(i) = outvals[i];
 	}
-}
-
-void FFTSubbandPower_Ctor(FFTSubbandPower *unit)
-{
-	SETCALC(FFTSubbandPower_next);
-	
-	// ZIN0(1) tells us how many cutoffs we're looking for
-	int numcutoffs = (int)ZIN0(1);
-	int numbands = numcutoffs+1;
-	
-	float * outvals = (float*)RTAlloc(unit->mWorld, numbands * sizeof(float));
-	for(int i=0; i<numbands; i++) {
-		outvals[i] = 0.f;
-	}
-	unit->m_outvals = outvals;
-	
-	unit->m_cutoffs = (int*)RTAlloc(unit->mWorld, 
-			numcutoffs * sizeof(int)
-		);
-	
-	unit->m_cutoff_inited = false;
-
-	unit->m_inc_dc = ZIN0(2) > 0.f;
-	
-	unit->m_numbands = numbands;
-	ZOUT0(0) = unit->outval = 0.;
 }
 
 void FFTSubbandPower_Dtor(FFTSubbandPower *unit)
@@ -1502,6 +1541,41 @@ void FFTCrest_next(FFTCrest *unit, int inNumSamples)
 	ZOUT0(0) = unit->outval;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTSpread_Ctor(FFTSpread *unit)
+{
+	SETCALC(FFTSpread_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_bintofreq = 0.f;
+}
+
+void FFTSpread_next(FFTSpread *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	GET_BINTOFREQ
+	
+	float centroid = ZIN0(1);
+	
+	float  distance = ((numbins + 1) * bintofreq) - centroid;
+	float  mag      = sc_abs(p->nyq);
+	double num      = mag * distance * distance;
+	double denom    = mag;
+	for (int i=0; i<numbins; ++i) {
+		distance = ((i+1) * bintofreq) - centroid;
+		mag      = sc_abs(p->bin[i].mag);
+		num     += mag * distance * distance;
+		denom   += mag;
+	}
+	
+	ZOUT0(0) = unit->outval = (float) (num/denom);
+	
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -1530,5 +1604,6 @@ void load(InterfaceTable *inTable)
 	
 	DefineSimpleUnit(FFTRumble);
 	DefineSimpleUnit(FFTCrest);
+	DefineSimpleUnit(FFTSpread);
 	DefineDtorUnit(FFTSubbandFlatness);
 }

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.44">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; min-height: 15.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad2108}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {color: #001bfd}
+span.s2 {color: #002dfa}
+span.s3 {color: #0021ba}
+span.s4 {font: 10.0px Monaco}
+span.s5 {font: 10.0px Monaco; color: #606060}
+span.s6 {color: #000000}
+span.s7 {font: 9.0px Monaco; color: #0021ba}
+span.s8 {font: 9.0px Monaco}
+span.s9 {color: #606060}
+span.s10 {color: #000ebe}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>FFTPower<span class="Apple-tab-span">	</span>Instantaneous spectral power</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>FFTPower.kr(chain, square=true)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Outputs a power measurement (sum of squared magnitudes) taken from an <a href="SC://FFT"><span class="s1">FFT</span></a> chain. It can be used for similar purposes as the <a href="SC://Amplitude"><span class="s2">Amplitude</span></a> UGen but has different characteristics since it operates on the frequency-domain rather than time-domain representation.</p>
+<p class="p2"><br></p>
+<p class="p3">The output is scaled by dividing by a factor related to the number of bins, meaning that output values occupy a similar dynamic range irrespective of the FFT frame size. To scale the power (e.g.) to lie between 0 and 1, you'll need to find an empirical value that suits the application - note the multipliers used in the examples below.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Note: </b>The first implementation of this UGen summed the magnitudes <i>without</i> squaring them, which is not the ordinary definition of spectral power (it will behave in similar ways for some applications, but will have different characteristics e.g. the effect of noise). By default the UGen <i>does</i> now square the magnitudes, but you can achieve the old behaviour by setting the second "square" argument to false. For most uses you are recommended to leave this at its default.</p>
+<p class="p4"><br></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">Server</span>.default = s = <span class="s3">Server</span>.internal.boot;</p>
+<p class="p6">b = <span class="s3">Buffer</span>.alloc(s, 2048, 1);</p>
+<p class="p5"><br></p>
+<p class="p6">(</p>
+<p class="p6">{</p>
+<p class="p6"><span class="s3">var</span> in, chain;</p>
+<p class="p6">in = <span class="s3">WhiteNoise</span>.ar(<span class="s3">MouseX</span>.kr(0,1));</p>
+<p class="p6">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p6"><span class="s3">Out</span>.ar(0, in * 0.1);</p>
+<p class="p6"><span class="s3">Out</span>.kr(0, (<span class="s3">FFTPower</span>.kr(chain) * 0.05955912289792).poll(<span class="s4">label:</span><span class="s5">"Noise power"</span>));</p>
+<p class="p6">}.scope;</p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p6">(</p>
+<p class="p7"><span class="s6">{ </span>// Sine - note how the peak measured power changes with frequency</p>
+<p class="p6"><span class="s3">var</span> in, chain;</p>
+<p class="p6">in = <span class="s3">SinOsc</span>.ar(<span class="s3">MouseY</span>.kr(100, 1000, 1), 0, <span class="s3">MouseX</span>.kr(0,1));</p>
+<p class="p6">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p6"><span class="s3">Out</span>.ar(0, in * 0.1);</p>
+<p class="p8"><span class="s7">Out</span><span class="s8">.kr(0, (</span><span class="s3">FFTPower</span>.kr(chain) * 0.66667).poll(label:<span class="s9">"Sine power"</span>)<span class="s8">);</span></p>
+<p class="p6">}.scope;</p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p7">// Let's graph the power of a soundfile</p>
+<p class="p9"><span class="s6">c = </span><span class="s3">Buffer</span><span class="s6">.read(s, </span>"sounds/a11wlk01.wav"<span class="s6">);</span></p>
+<p class="p6">(</p>
+<p class="p6">{</p>
+<p class="p6"><span class="s10">var</span> in, chain;</p>
+<p class="p6">in = <span class="s10">PlayBuf</span>.ar(1, c);</p>
+<p class="p6">chain = <span class="s10">FFT</span>(b.bufnum, in);</p>
+<p class="p6"><span class="s10">Out</span>.ar(0, in * 0.1);</p>
+<p class="p6">[<span class="s10">K2A</span>.ar(<span class="s10">FFTPower</span>.kr(chain) * 0.2), in]</p>
+<p class="p6">}.plot(5);</p>
+<p class="p6">)</p>
+</body>
+</html>
