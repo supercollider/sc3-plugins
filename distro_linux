@@ -9,16 +9,16 @@ else
   cp -uR build Extensions
 fi
 
-mv BEQSuiteUGens.so Extensions/BEQSuiteUGens
-mv bhob*.so Bhob*.so Extensions/bhobUGens
-mv BlackrainUGens.so Extensions/BlackrainUGens
-mv Josh*.so Extensions/JoshUGens
-mv LoopBuf.so Extensions/ljpclasses
-mv MCLD*.so Extensions/MCLD_UGens
-mv TagSystemUgens.so Extensions/TagSystemUGens
+mv build/BEQSuiteUGens.so Extensions/BEQSuiteUGens
+mv build/bhob*.so build/Bhob*.so Extensions/bhobUGens
+mv build/BlackrainUGens.so Extensions/BlackrainUGens
+mv build/Josh*.so Extensions/JoshUGens
+mv build/LoopBuf.so Extensions/ljpclasses
+mv build/MCLD*.so Extensions/MCLD_UGens
+mv build/TagSystemUgens.so Extensions/TagSystemUGens
 
 if [ -f AY*.so ]; then
-  mv AY*.so Extensions/MCLD_UGens
+  mv build/AY*.so Extensions/MCLD_UGens
 fi
 
 # for now disable this

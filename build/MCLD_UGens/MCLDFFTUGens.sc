@@ -168,7 +168,7 @@ FFTSubbandFlatness : MultiOutUGen {
 
 FFTCrest : UGen
 {
-	*kr { | buffer, freqlo=0, freqhi=999999999 |
+	*kr { | buffer, freqlo=0, freqhi=50000 |
 		^this.multiNew('control', buffer, freqlo, freqhi)
 	}
 }
