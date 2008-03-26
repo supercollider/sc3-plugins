@@ -1367,7 +1367,7 @@ void FFTRumble_Ctor(FFTRumble *unit)
 	ZOUT0(0) = unit->outval = 0.;
 	
 	unit->m_freqtobin = 0.f;
-	unit->m_binpos = 0.f;
+	unit->m_binpos = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

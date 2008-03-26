@@ -101,7 +101,7 @@ void SOM_Ctor_base(SOMUnit* unit, int inputsOffset)
 {
 	int netsize = (int)ZIN0(1);
 	int numdims = (int)ZIN0(2);
-	int numnodes = pow(netsize, numdims);
+	int numnodes = (int)pow(netsize, numdims);
 	
 	// Infer the size of the "inputs" array which has been tagged on to the end of the arguments list.
 	int numinputdims = unit->mNumInputs - inputsOffset;
