@@ -123,6 +123,11 @@ for file in plugs :
 	Basic_Env.SharedLibrary('build/' + file, ['source/' + file + '.cpp'] + platform_SOURCES )
 
 
+##############################################
+# MembraneUGens
+
+Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.h', 'source/Membrane_shape.c', 'source/MembraneUGens.cpp'] + platform_SOURCES )
+
 
 ##############################################
 # StkUGens

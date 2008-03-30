@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.47">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>MembraneCircle, MembraneHexagonal<span class="Apple-tab-span">	</span></b></span><b>Waveguide mesh physical models of drum membranes<span class="Apple-converted-space"> </span></b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>MembraneCircle.ar(excitation, tension, loss)</b></p>
+<p class="p2"><br></p>
+<p class="p3">MembraneCircle and MembraneHexagonal are rather similar, being triangular waveguide meshes of a drum-like membrane.<span class="Apple-converted-space">  </span>You input some excitation, such as a pulse of noise, and can adjust the tension and loss while it plays.</p>
+<p class="p2"><br></p>
+<p class="p3">They're named after the shape made out of triangular meshes. Obviously you can't make a circle out of triangles, but it tries.<span class="Apple-converted-space">  </span>At the moment MembraneCircle is a bit bigger than MembraneHexagon, using more waveguides and therefore more CPU.</p>
+<p class="p4"><br></p>
+<p class="p5">// Change MembraneCircle to MembraneHexagonal for a different shaped</p>
+<p class="p5">// circular drum head<span class="Apple-converted-space"> </span></p>
+<p class="p6">s.boot;</p>
+<p class="p6">s.reboot;</p>
+<p class="p6">(</p>
+<p class="p6">{ <span class="s2">var</span> excitation = <span class="s2">EnvGen</span>.kr(<span class="s2">Env</span>.perc,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">                        </span><span class="s2">MouseButton</span>.kr(0, 1),<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-converted-space">                             </span>timeScale: 0.1, doneAction: 0</p>
+<p class="p6"><span class="Apple-converted-space">                            </span>) * <span class="s2">PinkNoise</span>.ar(0.4);</p>
+<p class="p6"><span class="Apple-converted-space">  </span><span class="s2">var</span> tension = <span class="s2">MouseX</span>.kr(0.01, 0.1);</p>
+<p class="p6"><span class="Apple-converted-space">  </span><span class="s2">var</span> loss = <span class="s2">MouseY</span>.kr(0.999999, 0.999, 1);</p>
+<p class="p6"><span class="Apple-converted-space">  </span><span class="s2">MembraneCircle</span>.ar(excitation, tension, loss);</p>
+<p class="p6">}.play;</p>
+<p class="p6">)</p>
+<p class="p2"><br></p>
+<p class="p3">These UGens are by Alex McLean (c) 2008.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><b>More info</b></p>
+<p class="p2"><br></p>
+<p class="p3">My stuff is here:</p>
+<p class="p3"><span class="Apple-converted-space">  </span>http://doc.gold.ac.uk/~ma503am/</p>
+<p class="p2"><br></p>
+<p class="p3">I also recommend the following thesis:</p>
+<p class="p3"><span class="Apple-converted-space">  </span>The Physical Modelling of Drums Using Digital Waveguides</p>
+<p class="p3"><span class="Apple-converted-space">  </span>JA Laird, University of Bristol - 2001 - University of Bristol</p>
+<p class="p2"><br></p>
+<p class="p3">this book:</p>
+<p class="p3"><span class="Apple-converted-space">  </span>Real Sound Synthesis for Interactive Applications, Perry R. Cook</p>
+<p class="p3"><span class="Apple-converted-space">  </span>http://books.google.co.uk/books?id=20p7Jg_ZdkMC</p>
+<p class="p2"><br></p>
+<p class="p3">and these websites:</p>
+<p class="p3"><span class="Apple-converted-space">  </span>http://ccrma.stanford.edu/~jos/wg.html</p>
+<p class="p3"><span class="Apple-converted-space">  </span>http://www-ccrma.stanford.edu/~be/drum/drum.htm</p>
+</body>
+</html>
