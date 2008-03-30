@@ -126,7 +126,7 @@ for file in plugs :
 ##############################################
 # MembraneUGens
 
-Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.h', 'source/Membrane_shape.c', 'source/MembraneUGens.cpp'] + platform_SOURCES )
+Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.c', 'source/Membrane.cpp'] + platform_SOURCES )
 
 
 ##############################################
