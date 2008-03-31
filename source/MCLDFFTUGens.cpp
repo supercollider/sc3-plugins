@@ -85,6 +85,8 @@ struct FFTSubbandPower : FFTAnalyser_Unit
 	int *m_cutoffs; // Will hold bin indices corresponding to frequencies
 	float *m_outvals;
 	bool m_cutoff_inited;
+	
+	int m_scalemode;
 };
 
 struct FFTPhaseDev : FFTAnalyser_OutOfPlace
@@ -363,6 +365,8 @@ void FFTSubbandPower_Ctor(FFTSubbandPower *unit)
 	int numcutoffs = (int)ZIN0(1);
 	int numbands = numcutoffs+1;
 	
+	unit->m_scalemode = (int)ZIN0(3);
+	
 	float * outvals = (float*)RTAlloc(unit->mWorld, numbands * sizeof(float));
 	for(int i=0; i<numbands; i++) {
 		outvals[i] = 0.f;
@@ -395,6 +399,8 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	int numbins = buf->samples - 2 >> 1;
 	// End: Multi-output equiv of FFTAnalyser_GET_BUF
 	
+	int scalemode = unit->m_scalemode;
+
 	float normfactor = unit->m_normfactor;
 	bool square = unit->m_square;
 	if(normfactor == 0.f){
@@ -403,14 +409,14 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 		else
 			unit->m_normfactor = normfactor = 1.f / (numbins + 2.f);
 	}
-		
+	
 	// Now we create the integer lookup list, if it doesn't already exist
 	int * cutoffs = unit->m_cutoffs;
 	if(!unit->m_cutoff_inited){
 		
 		float srate = world->mFullRate.mSampleRate;
 		for(int i=0; i < numcutoffs; i++) {
-			cutoffs[i] = (int)(buf->samples * ZIN0(3 + i) / srate);
+			cutoffs[i] = (int)(buf->samples * ZIN0(4 + i) / srate);
 			//Print("Allocated bin cutoff #%d, at bin %d\n", i, cutoffs[i]);
 		}
 		
@@ -424,14 +430,23 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	if(square){
 		total *= total; // square the DC val
 	}
+	int binaddcount = 1; // Counts how many bins contributed to the current band (1 because of the DC value)
 	int curband = 0;
 	float * outvals = unit->m_outvals;
 	float magsq;
 	for (int i=0; i<numbins; ++i) {
-		if(i == cutoffs[curband]){
-			outvals[curband] = total * normfactor;
+		if(i >= cutoffs[curband]){
+			if(scalemode==1){
+				outvals[curband] = total * normfactor;
+			}else{
+				if(square)
+					outvals[curband] = total / powf((float)binaddcount, 1.5f);
+				else
+					outvals[curband] = total / binaddcount;
+			}
 			curband++;
 			total = 0.f;
+			binaddcount = 0;
 		}
 		
 		float rabs = (p->bin[i].real);
@@ -441,6 +456,7 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 			total += magsq;
 		else
 			total += sqrt(magsq);
+		binaddcount++;
 	}
 	// Remember to output the very last (highest) band
 	if(square)
@@ -448,7 +464,14 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	else
 		total += sc_abs(p->nyq);
 	// Pop the last one onto the end of the lovely list
-	outvals[curband] = total * normfactor;
+	if(scalemode==1){
+		outvals[curband] = total * normfactor;
+	}else{
+		if(square)
+			outvals[curband] = total / powf((float)binaddcount + 1.f, 1.5f); // Plus one because of the nyq value
+		else
+			outvals[curband] = total / (binaddcount + 1); // Plus one because of the nyq value
+	}
 
 	// Now we can output the vals
 	for(int i=0; i<numbands; i++) {
@@ -1367,7 +1390,7 @@ void FFTRumble_Ctor(FFTRumble *unit)
 	ZOUT0(0) = unit->outval = 0.;
 	
 	unit->m_freqtobin = 0.f;
-	unit->m_binpos = 0;
+	unit->m_binpos = 0.f;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

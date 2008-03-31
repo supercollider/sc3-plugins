@@ -68,10 +68,10 @@ FFTSubbandPower : MultiOutUGen {
 	
 	var <numbands;
 	
-	*kr { arg chain, cutfreqs, square=1;
+	*kr { arg chain, cutfreqs, square=1, scalemode=1;
 		cutfreqs = cutfreqs.copy.sort;
 		// Note the extra arg inserted so the UGen knows how many freqs to expect
-		^this.multiNew('control', chain, cutfreqs.size, square, *cutfreqs)
+		^this.multiNew('control', chain, cutfreqs.size, square, scalemode, *cutfreqs)
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
