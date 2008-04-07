@@ -13,7 +13,7 @@ Vocode {
 					freqArray[i] + bwArray[i])[0]}
 			);
 		#pch, haspch = Pitch.kr(src, 100, 60, 440);
-		haspch = Lag2.kr(haspch, 0.005);
+		haspch = Lag2.kr(haspch, 0.01);
 		sigout = (harm * haspch) + (noise * (1 - haspch)) ;
 		^(Resonz.ar(sigout, freqs * freqmul, outbw) * amps).sum.madd(mul, add);
 	}

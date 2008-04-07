@@ -1,7 +1,7 @@
 LPCFile : File {
 	var <header, <sndDur, <buffer, <>coefs, <server;
 	var <headerSize, <magicNum, <numPoles, <nvals, <frameRate, <srate, <nframes, <data;
-	var <>resrms, <>origrms, <>nrmerr, <>pchcps, <len, <signal, <restOfHeader;	
+	var <>resrms, <>origrms, <>nrmerr, <>pchcps, <len, <signal, <restOfHeader, <le;	
 	
 	*new {arg path, buffer, server;
 		server = server ? Server.default;
@@ -19,16 +19,36 @@ LPCFile : File {
 		var rest;
 		len = this.length /  4;
 		headerSize = this.getInt32;
-		magicNum = this.getInt32 == 999;
+		magicNum = ((this.getInt32 == 999) or: {
+			(this.pos_(4); this.getInt32LE == 999).if({
+				le = true;
+				this.pos_(0);
+				headerSize = this.getInt32LE;
+				this.pos_(8);
+				true
+				}, {
+				false
+				});
+			});
 		magicNum.if({
 			magicNum = 999;
-			numPoles = this.getInt32;
-			nvals = this.getInt32;
-			frameRate = this.getFloat;
-			srate = this.getFloat;
-			sndDur = this.getFloat;
-			rest = (headerSize - 28) / 4;
-			restOfHeader = Array.fill(rest, {this.getFloat});
+			le.if({
+				numPoles = this.getInt32LE;
+				nvals = this.getInt32LE;
+				frameRate = this.getFloatLE;
+				srate = this.getFloatLE;
+				sndDur = this.getFloatLE;
+				rest = (headerSize - 28) / 4;
+				restOfHeader = Array.fill(rest, {this.getFloatLE});
+				}, {
+				numPoles = this.getInt32;
+				nvals = this.getInt32;
+				frameRate = this.getFloat;
+				srate = this.getFloat;
+				sndDur = this.getFloat;
+				rest = (headerSize - 28) / 4;
+				restOfHeader = Array.fill(rest, {this.getFloat});
+				});
 			header = [headerSize, magicNum, numPoles, nvals, frameRate, srate, sndDur] ++ 
 				restOfHeader;
 			nframes = (len - header.size) / nvals;
@@ -41,7 +61,11 @@ LPCFile : File {
 		var datalen;
 		datalen = (this.length - headerSize);
 		this.pos_(headerSize);
-		data = Array.fill(datalen, {this.getFloat});
+		le.if({
+			data = Array.fill(datalen, {this.getFloatLE});
+			}, {
+			data = Array.fill(datalen, {this.getFloat});
+			});
 		this.close;
 		}
 		

@@ -12,7 +12,7 @@ be controlled at a mixer for live mixing of Procs. Second, for recording purpose
 ProcMod {
 	var <amp, <>group, <addAction, <target, <timeScale, <lag, <>id, <>function, 
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
-		<starttime, <window, gui = false, <button, <process, retrig = false, isReleasing = false,
+		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks;
 	var recordPM, <>recordpath;
@@ -599,7 +599,8 @@ ProcEvents {
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
 		<eventButton, <killButton, <releaseButton, starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
-		<bigNum = false, bigNumWindow;
+		<bigNum = false, bigNumWindow, <>preKill;
+	var <buttonHeight, <buttonWidth;
 	// below are for timeline functionality. record timestamps of a performance, or playback
 	// according to timeStamps of a performance
 	var tlrec = false, tlplay = false, <timeLine, <currentTime, <timeOffset = 0.0, 
@@ -783,6 +784,7 @@ ProcEvents {
 	}
 	
 	killAll {
+		preKill.value;
 		eventDict.do{arg me; me.isRunning.if({me.kill})};
 		killmod.notNil.if({killmod.value; killmod.kill});
 		initmod.notNil.if({initmod.kill});
@@ -853,18 +855,6 @@ ProcEvents {
 							});
 						});
 					});
-				
-//				pedrespsetup = OSCresponderNode(server.addr, '/tr', {arg time, resp, msg;//
-//					(msg[2] == testid).if({//
-//						(testinc < numlevels).if({//
-//							("Pedal setup on bus: " ++ pedalbus ++ " turn: " ++//
-//								 testinc).postln;//
-//							testlevel = testlevel + msg[3];//
-//							testinc = testinc + 1;//
-//							}, {//
-//							server.sendMsg(\n_free, testnode);//
-//							// calc the trig level, and give it some headroom//
-//							testlevel = ((testlevel + msg[3]) / numlevels);//
 //							// start the pedal listening at the head of 0//
 							server.sendMsg(\s_new, \procevtrig2343, pedalnode, 
 								addActions[addAction],
@@ -917,14 +907,6 @@ ProcEvents {
 										});
 								gui.if({window.front});
 							}.defer;
-//							// remove this repsonder//
-//							pedrespsetup.remove;//
-//							})//
-//						})//
-//					}).add;
-				
-//				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addActions[addAction],
-//					target, \pedalin, pedalbus, \id, testid);
 
 			}, {"Server isn't booted, pedal trig can't be loaded".warn})
 		}
@@ -1011,7 +993,7 @@ ProcEvents {
 		}
 		
 	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
-		var buttonheight, buttonwidth;
+//		var buttonheight, buttonWidth;
 		bounds = GUI.window.screenBounds;	
 		
 		guiBounds = guiBounds ?? {Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
@@ -1021,19 +1003,19 @@ ProcEvents {
 		
 		window = GUI.window.new(id.asString, guiBounds);
 		
-		buttonheight = guiBounds.height * 0.15;
-		buttonwidth = guiBounds.width * 0.5;
+		buttonHeight = guiBounds.height * 0.15;
+		buttonWidth = guiBounds.width * 0.5;
 		
-		GUI.numberBox.new(window, Rect(10 + buttonwidth, 10, buttonwidth * 0.9, 
-				buttonheight * 0.9))
+		GUI.numberBox.new(window, Rect(10 + buttonWidth, 10, buttonWidth * 0.9, 
+				buttonHeight * 0.9))
 			.value_(index)
 			.font_(Font("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) + 1].focus(true);
 				});
 			
-		eventButton = GUI.button.new(window, Rect(10, 10, buttonwidth * 0.9, 
-				buttonheight * 0.9))
+		eventButton = GUI.button.new(window, Rect(10, 10, buttonWidth * 0.9, 
+				buttonHeight * 0.9))
 			.states_([
 				["Next Event:", Color.black, buttonColor]
 				])
@@ -1055,13 +1037,13 @@ ProcEvents {
 					})
 				});
 						
-		GUI.staticText.new(window, Rect(10, 10 + buttonheight, buttonwidth * 1.8, 
-				buttonheight * 0.9))
+		GUI.staticText.new(window, Rect(10, 10 + buttonHeight, buttonWidth * 1.8, 
+				buttonHeight * 0.9))
 			.font_(Font("Arial", 24))
 			.string_("No events currently running");
 
-		GUI.button.new(window, Rect(10, 10 + (buttonheight * 2), buttonwidth * 0.9, 
-				buttonheight * 0.9))
+		GUI.button.new(window, Rect(10, 10 + (buttonHeight * 2), buttonWidth * 0.9, 
+				buttonHeight * 0.9))
 			.states_([
 				["Reset", Color.black, buttonColor]
 				])
@@ -1071,8 +1053,8 @@ ProcEvents {
 				this.reset;
 				});				 
 
-		releaseButton = GUI.button.new(window, Rect(10, 10 + (buttonheight * 3), buttonwidth * 0.9, 
-				buttonheight * 0.9))
+		releaseButton = GUI.button.new(window, Rect(10, 10 + (buttonHeight * 3), buttonWidth * 0.9, 
+				buttonHeight * 0.9))
 			.states_([
 				["Release All", Color.black, buttonColor]
 				])
@@ -1082,19 +1064,20 @@ ProcEvents {
 				this.releaseAll;
 				});
 
-		killButton = GUI.button.new(window, Rect(10, 10 + (buttonheight * 4), buttonwidth * 0.9, 
-				buttonheight * 0.9))
+		killButton = GUI.button.new(window, Rect(10, 10 + (buttonHeight * 4), buttonWidth * 0.9, 
+				buttonHeight * 0.9))
 			.states_([
 				["Kill All", Color.black, buttonColor]
 				])
 			.font_(Font("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) - 4].focus(true);
-				this.killAll;
+				//this.killAll;
+				window.close;
 				});
 		
-		GUI.slider.new(window, Rect(buttonwidth + 10, 5 + buttonheight * 2, buttonwidth * 0.2,
-				buttonheight * 3))
+		GUI.slider.new(window, Rect(buttonWidth + 10, 5 + buttonHeight * 2, buttonWidth * 0.2,
+				buttonHeight * 3))
 			.value_(ControlSpec(-90, 6, \db).unmap(amp.ampdb))
 			.action_({arg me;
 				var val;
@@ -1102,8 +1085,8 @@ ProcEvents {
 				this.amp_(val.dbamp);
 				});
 				
-		GUI.numberBox.new(window, Rect((buttonwidth * 1.3) + 10, 5 + buttonheight * 2, 
-				buttonwidth * 0.4, buttonheight * 0.9))
+		GUI.numberBox.new(window, Rect((buttonWidth * 1.3) + 10, 5 + buttonHeight * 2, 
+				buttonWidth * 0.4, buttonHeight * 0.9))
 			.value_(amp.ampdb)
 			.font_(Font("Arial", 24))
 			.action_({arg me;
