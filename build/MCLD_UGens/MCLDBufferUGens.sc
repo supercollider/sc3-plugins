@@ -13,3 +13,11 @@ ListTrig : UGen {
 		^this.multiNewList(['control', bufnum, reset, offset, numframes])
 	}
 }
+
+ListTrig2 : UGen {
+	
+	*kr { arg bufnum=0, reset=0, numframes;
+		if(numframes.isNil, {numframes = BufFrames.kr(bufnum)});
+		^this.multiNewList(['control', bufnum, reset, numframes])
+	}
+}

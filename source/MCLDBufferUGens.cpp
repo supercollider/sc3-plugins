@@ -24,6 +24,17 @@ struct ListTrig : public Unit
 	SndBuf *m_buf;
 };
 
+struct ListTrig2 : public Unit
+{
+	float m_prevreset;
+	unsigned int m_bufpos;
+	double m_timepos, m_timeincrement;
+	
+	float m_fbufnum;
+	SndBuf *m_buf;
+};
+
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
@@ -33,6 +44,10 @@ extern "C"
 	
 	void ListTrig_Ctor(ListTrig* unit);
 	void ListTrig_next(ListTrig *unit, int inNumSamples);
+
+	void ListTrig2_Ctor(ListTrig2* unit);
+	void ListTrig2_next(ListTrig2 *unit, int inNumSamples);
+
 };
 
 //////////////////////////////////////////////////////////////////
@@ -199,6 +214,72 @@ void ListTrig_next(ListTrig *unit, int inNumSamples)
 	ZOUT0(0) = out;
 }
 
+////////////////////////////////////////////////////////////////////
+
+/** ListTrig2 by nescivi
+Does the same as ListTrig but instead of absolute times the buffer contains intervals
+*/
+
+void ListTrig2_Ctor(ListTrig2* unit)
+{
+	SETCALC(ListTrig2_next);
+	
+	unit->m_fbufnum = -1e9f;
+	
+	unit->m_prevreset = 0.f;
+	unit->m_bufpos = 0;
+	unit->m_timepos = 0.0;
+	unit->m_timeincrement = (double)BUFDUR;
+	
+	//Print("ListTrig: time increment set to %g, i.e. freq of %g/s", unit->m_timeincrement, 1.0/unit->m_timeincrement);
+	
+	ClearUnitOutputs(unit, 1);
+}
+
+void ListTrig2_next(ListTrig2 *unit, int inNumSamples)
+{
+	float reset = ZIN0(1);
+	unsigned int numframes = (unsigned int)ZIN0(2);
+	
+	float prevreset = unit->m_prevreset;
+	unsigned int bufpos = unit->m_bufpos; // The readback position
+	double timepos = unit->m_timepos;
+	double timeinc = unit->m_timeincrement;
+	
+	float out = 0.f;
+	
+	// Stuff a la BufWr - NB I have modified GET_BUF slightly
+	GET_BUF
+	CHECK_BUF
+	
+	// First, handle reset
+	if(reset > 0.f && prevreset <= 0.f){
+		bufpos = 0;
+		timepos = 0.0;
+	}
+	
+	if(bufpos<numframes){
+		float* table0 = bufData + bufpos;
+		
+		if(table0[0] <= (float)timepos){
+			out = 1.f;
+			// reset timepos to zero
+			timepos = 0.f;
+			// Also increment buffer read position until we're either at the end of the buffer, or we've found a "future" value
+			if( bufpos<numframes ){
+				bufpos++;
+			}
+		}
+	}
+	
+	// Store state
+	unit->m_prevreset = reset;
+	unit->m_bufpos = bufpos;
+	unit->m_timepos = timepos + timeinc; // Shift time on to what it will be on the next go
+	
+	ZOUT0(0) = out;
+}
+
 //////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -207,4 +288,5 @@ void load(InterfaceTable *inTable)
 
 	DefineSimpleUnit(Logger);
 	DefineSimpleUnit(ListTrig);
+	DefineSimpleUnit(ListTrig2);
 }
