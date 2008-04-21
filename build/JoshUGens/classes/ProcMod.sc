@@ -161,6 +161,7 @@ ProcMod {
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
 			onReleaseFunc.value;
+			server.sendMsg(\n_set, curgroup, \gate, 0);
 			env.notNil.if({
 				newrelval = reltime.notNil.if({
 					reltime.neg - 1;
@@ -473,6 +474,7 @@ ProcModR : ProcMod {
 		curhdr = hdr;
 		curroute = routebus;
 		uniqueClock.if({curclock = clock; clock = nil});
+		server.sendMsg(\n_set, curgroup, \gate, 0);
 		isRunning.if({
 			onReleaseFunc.value;
 			env.notNil.if({
@@ -566,8 +568,9 @@ ProcModR : ProcMod {
 			];
 		StartUp.add {
 			for(1, 16, {arg i;
-					SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus;
-						Out.ar(outbus, In.ar(inbus, i));
+					SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus, amp = 1,
+							lag = 0.01;
+						Out.ar(outbus, In.ar(inbus, i) * Lag2.kr(amp, lag));
 					}).writeDefFile;	
 				});
 			for(1, 16, {arg i;
