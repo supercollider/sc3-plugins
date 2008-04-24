@@ -84,38 +84,6 @@ struct WinGrainI
 
 const int kMaxGrains = 64;
 
-//struct Warp1 : public Unit
-//{
-//	int mNumActive;
-//	int mNextGrain;
-//	Grain mGrains[kMaxGrains];
-//};
-//
-//struct Warp2 : public Unit
-//{
-//	int mNumActive;
-//	int mNextGrain, mWindowSize;
-//	WinGrain mGrains[kMaxGrains];
-//};
-//
-//struct Warp1MC : public Unit
-//{
-//	int m_fbufnum;
-//	SndBuf* m_buf;
-//	int mNumActive[16];
-//	int mNextGrain[16];
-//	Grain mGrains[16][kMaxGrains];
-//};
-//
-//struct Warp2MC : public Unit
-//{
-//	int m_fbufnum;
-//	SndBuf* m_buf;
-//	int mNumActive[16];
-//	int mNextGrain[16];
-//	WinGrain mGrains[16][kMaxGrains];
-//};
-
 const int kMaxSynthGrains = 512;
 
 struct MonoGrain : public Unit
@@ -311,21 +279,21 @@ struct BufGrain : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	Grain mGrains[kMaxGrains];
+	Grain mGrains[kMaxSynthGrains];
 };
 
 struct BufGrainB : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	WinGrain mGrains[kMaxGrains];
+	WinGrain mGrains[kMaxSynthGrains];
 };
 
 struct BufGrainI : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	WinGrainI mGrains[kMaxGrains];
+	WinGrainI mGrains[kMaxSynthGrains];
 };
 
 ///////////////////// Ambisonic versions of grain UGens ////////////////////
@@ -545,21 +513,21 @@ struct BufGrainBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	GrainBF mGrains[kMaxGrains];
+	GrainBF mGrains[kMaxSynthGrains];
 };
 
 struct BufGrainBBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	WinGrainBF mGrains[kMaxGrains];
+	WinGrainBF mGrains[kMaxSynthGrains];
 };
 
 struct BufGrainIBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
-	WinGrainIBF mGrains[kMaxGrains];
+	WinGrainIBF mGrains[kMaxSynthGrains];
 };
 
 /// for standard SC Dist ///////
@@ -627,25 +595,9 @@ struct GrainBuf : public Unit
 {
 	int mNumActive, m_channels;
 	float curtrig;
-	GrainBufG mGrains[kMaxGrains];
+	GrainBufG mGrains[kMaxSynthGrains];
 };
 
-struct WarpWinGrain
-{
-	double phase, rate;
-	double winPos, winInc, b1, y1, y2, curamp; // tells the grain where to look in the winBuf for an amp value
-	int counter, bufnum, interp;
-	float winType;
-};
-
-struct Warp1 : public Unit
-{
-	int m_fbufnum;
-	SndBuf* m_buf;
-	int mNumActive[16];
-	int mNextGrain[16];
-	WarpWinGrain mGrains[16][kMaxGrains];
-};
 //////////// end add //////////////////////
 
 ////////////////////////////////////////////////////////////////////////
@@ -653,19 +605,7 @@ struct Warp1 : public Unit
 extern "C"
 {
 	void load(InterfaceTable *inTable);
-	/*
-	void Warp1_next(Warp1 *unit, int inNumSamples);
-	void Warp1_Ctor(Warp1* unit);
 
-	void Warp2_next(Warp2 *unit, int inNumSamples);
-	void Warp2_Ctor(Warp2* unit);
-
-	void Warp1MC_next(Warp1MC *unit, int inNumSamples);
-	void Warp1MC_Ctor(Warp1MC* unit);
-
-	void Warp2MC_next(Warp2MC *unit, int inNumSamples);
-	void Warp2MC_Ctor(Warp2MC* unit);
-	*/
 	void MonoGrain_next(MonoGrain *unit, int inNumSamples);
 	void MonoGrain_Ctor(MonoGrain* unit);
 
@@ -786,9 +726,6 @@ extern "C"
 	void GrainBuf_Ctor(GrainBuf* unit);
 	void GrainBuf_next_a(GrainBuf *unit, int inNumSamples);
 	void GrainBuf_next_k(GrainBuf *unit, int inNumSamples);
-
-	void Warp1_next(Warp1 *unit, int inNumSamples);
-	void Warp1_Ctor(Warp1* unit);
 		
 	// end //
 }
