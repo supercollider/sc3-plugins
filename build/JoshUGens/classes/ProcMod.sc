@@ -474,8 +474,8 @@ ProcModR : ProcMod {
 		curhdr = hdr;
 		curroute = routebus;
 		uniqueClock.if({curclock = clock; clock = nil});
-		server.sendMsg(\n_set, curgroup, \gate, 0);
 		isRunning.if({
+			server.sendMsg(\n_set, curgroup, \gate, 0);
 			onReleaseFunc.value;
 			env.notNil.if({
 				newrelval = reltime.notNil.if({
