@@ -79,6 +79,14 @@ extern "C"
 		int* bestcoords = unit->m_bestcoords; \
 		int netsize = unit->m_netsize;
 
+// This constant affects the "shape" of the updating neighbourhood.
+// When set at 0.0 the updating is "flat" - all units in the neighbourhood are updated to the same extent.
+// When set at 1.0 the updating is "triangular" - update strength tails off linearly towards the edge of the neighbourhood.
+// A compromise allows for plenty of learning but still concentrating the learning more strongly at the centre.
+// #define LRNSCALE 0.0
+#define LRNSCALE 0.6
+// #define LRNSCALE 1.0
+
 //////////////////////////////////////////////////////////////////
 
 inline double SOM_findnearest_1d(float *bufData, float *inputdata, int *bestcoords, int netsize, int numinputdims);
@@ -440,18 +448,21 @@ inline double SOM_findnearest_getdist(float *celldata, int numinputdims, float *
 
 inline void SOMTrain_updatenodes_1d(float *bufData, float *inputdata, int *bestcoords, int netsize, int numinputdims, double alpha, int nhoodi, int nhoodisq){
 	float* celldata;
+	int distsq;
 	SOMTrain_UN_INITFORDIM(0)
 	
 	// Foreach cell in the NN's neighbourhood:
 	// NB "lo0" is the starting point but "hi0" is never reached
 	for(i0 = lo0; i0 < hi0; ++i0){
 		// NB for 1D, we don't need to narrow down from hypercubic region to hyperspherical region - they're the same
-		celldata = SOM_GETFRAME_1D(i0); // a float-pointer to the desired frame
-		SOMTrain_updatenodes_update(celldata, numinputdims, alpha, inputdata);
+		distsq = (i0-bestcoords[0]) * (i0-bestcoords[0]);
+			celldata = SOM_GETFRAME_1D(i0); // a float-pointer to the desired frame
+			SOMTrain_updatenodes_update(celldata, numinputdims, alpha * (1.0 - LRNSCALE * sqrt((double)distsq/nhoodisq)), inputdata);
 	}
 }
 inline void SOMTrain_updatenodes_2d(float *bufData, float *inputdata, int *bestcoords, int netsize, int numinputdims, double alpha, int nhoodi, int nhoodisq){
 	float* celldata;
+	int distsq;
 	SOMTrain_UN_INITFORDIM(0)
 	SOMTrain_UN_INITFORDIM(1)
 	
@@ -459,15 +470,16 @@ inline void SOMTrain_updatenodes_2d(float *bufData, float *inputdata, int *bestc
 	// NB "lo0" is the starting point but "hi0" is never reached
 	for(i0 = lo0; i0 < hi0; ++i0){
 	for(i1 = lo1; i1 < hi1; ++i1){
-		if((i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1]) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
+		if((distsq = (i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1])) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
 			celldata = SOM_GETFRAME_2D(i0, i1); // a float-pointer to the desired frame
-			SOMTrain_updatenodes_update(celldata, numinputdims, alpha, inputdata);
+			SOMTrain_updatenodes_update(celldata, numinputdims, alpha * (1.0 - LRNSCALE * sqrt((double)distsq/nhoodisq)), inputdata);
 		}
 	}
 	}
 }
 inline void SOMTrain_updatenodes_3d(float *bufData, float *inputdata, int *bestcoords, int netsize, int numinputdims, double alpha, int nhoodi, int nhoodisq){
 	float* celldata;
+	int distsq;
 	SOMTrain_UN_INITFORDIM(0)
 	SOMTrain_UN_INITFORDIM(1)
 	SOMTrain_UN_INITFORDIM(2)
@@ -477,9 +489,9 @@ inline void SOMTrain_updatenodes_3d(float *bufData, float *inputdata, int *bestc
 	for(i0 = lo0; i0 < hi0; ++i0){
 	for(i1 = lo1; i1 < hi1; ++i1){
 	for(i2 = lo2; i2 < hi2; ++i2){
-		if((i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1]) + (i2-bestcoords[2])*(i2-bestcoords[2]) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
+		if((distsq = (i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1]) + (i2-bestcoords[2])*(i2-bestcoords[2])) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
 			celldata = SOM_GETFRAME_3D(i0, i1, i2); // a float-pointer to the desired frame
-			SOMTrain_updatenodes_update(celldata, numinputdims, alpha, inputdata);
+			SOMTrain_updatenodes_update(celldata, numinputdims, alpha * (1.0 - LRNSCALE * sqrt((double)distsq/nhoodisq)), inputdata);
 		}
 	}
 	}
@@ -487,6 +499,7 @@ inline void SOMTrain_updatenodes_3d(float *bufData, float *inputdata, int *bestc
 }
 inline void SOMTrain_updatenodes_4d(float *bufData, float *inputdata, int *bestcoords, int netsize, int numinputdims, double alpha, int nhoodi, int nhoodisq){
 	float* celldata;
+	int distsq;
 	SOMTrain_UN_INITFORDIM(0)
 	SOMTrain_UN_INITFORDIM(1)
 	SOMTrain_UN_INITFORDIM(2)
@@ -498,9 +511,9 @@ inline void SOMTrain_updatenodes_4d(float *bufData, float *inputdata, int *bestc
 	for(i1 = lo1; i1 < hi1; ++i1){
 	for(i2 = lo2; i2 < hi2; ++i2){
 	for(i3 = lo3; i3 < hi3; ++i3){
-		if((i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1]) + (i2-bestcoords[2])*(i2-bestcoords[2]) + (i3-bestcoords[3])*(i3-bestcoords[3]) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
+		if((distsq = (i0-bestcoords[0])*(i0-bestcoords[0]) + (i1-bestcoords[1])*(i1-bestcoords[1]) + (i2-bestcoords[2])*(i2-bestcoords[2]) + (i3-bestcoords[3])*(i3-bestcoords[3])) < nhoodisq){ // Narrow down from hypercubic region to hyperspherical region
 			celldata = SOM_GETFRAME_4D(i0, i1, i2, i3); // a float-pointer to the desired frame
-			SOMTrain_updatenodes_update(celldata, numinputdims, alpha, inputdata);
+			SOMTrain_updatenodes_update(celldata, numinputdims, alpha * (1.0 - LRNSCALE * sqrt((double)distsq/nhoodisq)), inputdata);
 		}
 	}
 	}
