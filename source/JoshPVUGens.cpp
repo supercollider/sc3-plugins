@@ -102,7 +102,14 @@ struct PV_MagBuffer : PV_Unit
     SndBuf *m_databuf;
     float m_fdatabufnum;
     int m_numloops;
+};
 
+struct BinData : PV_Unit
+{
+    int m_bin, m_firstflag;
+    float m_lastPhase, m_centerfreq, m_curfreq, m_curmag, m_srOverTwopi, m_rNumbins, m_overlaps, m_rNumPeriodsPerValue;
+    float m_freqinc, m_maginc;
+    int elapsedSamps;
 };
 
 struct PV_OddBin : PV_Unit {};
@@ -223,7 +230,10 @@ extern "C"
 	void PV_MagBuffer_Ctor(PV_MagBuffer *unit);
 	void PV_MagBuffer_first(PV_MagBuffer* unit, int inNumSamples);
 	void PV_MagBuffer_next(PV_MagBuffer* unit, int inNumSamples);
-	    
+	
+	void BinData_Ctor(BinData *unit);
+	void BinData_next(BinData *unit, int inNumSamples);
+	
 	void PV_OddBin_Ctor(PV_OddBin *unit);
 	void PV_OddBin_next(PV_OddBin* unit, int inNumSamples);
 	
@@ -1146,6 +1156,92 @@ void PV_MagBuffer_next(PV_MagBuffer *unit, int inNumSamples)
 	    unit->m_numloops -= 1;
 	    }
 }
+
+void BinData_Ctor(BinData *unit)
+{
+    unit->m_bin = (int)IN0(1);
+    unit->m_overlaps = IN0(2);
+    unit->m_curfreq = 0.;
+    unit->m_curmag = 0.;
+    unit->m_freqinc = 0.;
+    unit->m_maginc = 0.;
+    unit->m_firstflag = -1;
+    unit->elapsedSamps = 0;
+    float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
+    unit->m_srOverTwopi = sr / twopi;
+    SETCALC(BinData_next);
+    ClearUnitOutputs(unit, 1);
+}
+
+void BinData_next(BinData *unit, int inNumSamples)
+{
+	float fbufnum = IN0(0); 
+	float *freqOut = OUT(0);
+	float *magOut = OUT(1);
+	if(fbufnum >= 0.f){
+//	    Print("%3,3f\n", (float)unit->elapsedSamps);
+//	    unit->elapsedSamps = 0;
+	    uint32 ibufnum = (uint32)fbufnum; 
+	    World *world = unit->mWorld; 
+	    if (ibufnum >= world->mNumSndBufs) ibufnum = 0; 
+	    SndBuf *buf = world->mSndBufs + ibufnum; 
+	    float fnumbins = (float)(buf->samples - 2 >> 1);
+	    int bin = unit->m_bin;
+	    SCPolarBuf *p = ToPolarApx(buf);
+	    
+	    // These calculations only have to be done the first time FFT data comes in.
+	    // Sorry - for now, can't change FFT buffer
+	    if(unit->m_firstflag < 0){
+		float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
+		float rInNumSamples = 1. / (float)inNumSamples;
+		unit->m_firstflag = 1;
+		// initilaize the curfreq slot to the centerfreq
+		unit->m_curfreq = unit->m_centerfreq = bin * (sr / (fnumbins * 2.));
+		unit->m_rNumbins = 1. / fnumbins;
+		unit->m_lastPhase = 0.;
+		// to determine how big the increment between output values between FFT frames, a number of
+		// things need to be taken into account - is BinData running at k-rate or a-rate?
+		// how many overlaps in the FFT? what is the FFT size? This figures that out, and stores
+		// it to the struct so we NEVER HAVE TO DO THIS NASTY DIVISION AGAIN!!!
+		unit->m_rNumPeriodsPerValue = (1. / (((float)buf->samples * unit->m_overlaps) / 
+		    ((float)unit->mWorld->mBufLength))) * rInNumSamples;
+		}
+	    
+	    /* look for change in phase, wrap between 0 and two pi, calculate the freq */
+	    float curphase = p->bin[bin].phase;
+	    float phasedif = curphase - unit->m_lastPhase;
+	    while (phasedif > twopi)
+		phasedif -=twopi;
+	    while (phasedif < 0.)
+		phasedif += twopi;
+	    float nextfreq = unit->m_centerfreq + (unit->m_srOverTwopi * (phasedif / fnumbins));
+	    unit->m_lastPhase = curphase;
+	    
+	    // find the amount to change freq and mag over each sample OR control period (depending on if BinData is ar or kr
+	    unit->m_maginc = (p->bin[bin].mag - unit->m_curmag) * unit->m_rNumPeriodsPerValue;
+	    unit->m_freqinc = (nextfreq - unit->m_curfreq) * unit->m_rNumPeriodsPerValue;
+	    
+// 	    Print("Next values! %3,3f, %3,3f, %3,3f\n", unit->m_curmag, p->bin[bin].mag, unit->m_maginc);
+
+	    } //else {
+//	    unit->elapsedSamps += inNumSamples;
+//	    }
+	
+	// check if there is even data that is ready yet. If not, clear the outputs
+	if(unit->m_firstflag < 0) {
+	    ClearUnitOutputs(unit, inNumSamples);
+	    } else {
+	    // otherwise, output the current freq and mag. If a-rate, these values will be inc'd 
+	    // sample by sample. If not, they will increase every k-rate
+	    for(int i = 0; i < inNumSamples; i++){
+		freqOut[i] = unit->m_curfreq;
+		magOut[i] = unit->m_curmag;
+		unit->m_curfreq += unit->m_freqinc;
+		unit->m_curmag += unit->m_maginc;
+		}
+	    }
+//		
+	}
 
 void PV_OddBin_Ctor(PV_OddBin *unit)
 {
@@ -2330,5 +2426,6 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(PV_BinPlayBuf);
 	DefineDtorUnit(PV_BufRd);
 	DefineDtorUnit(PV_BinBufRd);
+	DefineSimpleCantAliasUnit(BinData);
 	}
 	
