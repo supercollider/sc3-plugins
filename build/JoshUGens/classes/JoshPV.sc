@@ -111,6 +111,22 @@ PV_BinBufRd : PV_ChainUGen
 	}
 }
 
+BinData : MultiOutUGen 
+{
+	*ar {arg buffer, bin, overlaps = 0.5;
+		^this.multiNew('audio', buffer, bin, overlaps);
+		}
+		
+	*kr {arg buffer, bin, overlaps = 0.5;
+		^this.multiNew('control', buffer, bin, overlaps);
+		}
+	
+	init { arg ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(2, rate);
+	}
+}
+
 + SimpleNumber {
 	calcPVRecSize {arg frameSize, hop, sampleRate;
 		var rawsize, tmp;
