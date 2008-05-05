@@ -2739,6 +2739,7 @@ void BufGrain_next_k(BufGrain *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -2791,6 +2792,7 @@ void BufGrain_next_k(BufGrain *unit, int inNumSamples)
 			uint32 bufnum = (uint32)IN0(2);
 			
 			GRAIN_BUF
+			CHECK_BUF
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
@@ -2876,6 +2878,7 @@ void BufGrainB_next_a(BufGrainB *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -2934,7 +2937,10 @@ void BufGrainB_next_a(BufGrainB *unit, int inNumSamples)
 			uint32 bufnum = (uint32)IN_AT(unit, 2, i);
 			if (bufnum >= numBufs) continue;
 			float winSize = IN_AT(unit, 1, i);
+
 			GRAIN_BUF
+			CHECK_BUF
+
 			
 			if (bufChannels != 1) continue;
 
@@ -3013,6 +3019,7 @@ void BufGrainB_next_k(BufGrainB *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -3071,6 +3078,8 @@ void BufGrainB_next_k(BufGrainB *unit, int inNumSamples)
 			float winSize = IN0(1);
 			
 			GRAIN_BUF
+			CHECK_BUF
+
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
@@ -3162,6 +3171,7 @@ void BufGrainI_next_a(BufGrainI *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -3223,7 +3233,9 @@ void BufGrainI_next_a(BufGrainI *unit, int inNumSamples)
 			uint32 bufnum = (uint32)IN_AT(unit, 2, i);
 			if (bufnum >= numBufs) continue;
 			float winSize = IN_AT(unit, 1, i);
+
 			GRAIN_BUF
+			CHECK_BUF
 			
 			if (bufChannels != 1) continue;
 
@@ -3307,6 +3319,7 @@ void BufGrainI_next_k(BufGrainI *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -3367,7 +3380,9 @@ void BufGrainI_next_k(BufGrainI *unit, int inNumSamples)
 			} else {
 			uint32 bufnum = (uint32)IN0(2);
 			float winSize = IN0(1);
+
 			GRAIN_BUF
+			CHECK_BUF
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
@@ -5911,6 +5926,8 @@ void BufGrainBF_next_a(BufGrainBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
+
 		GET_BF_AMPS
 		
 		if (bufChannels != 1) {
@@ -5967,6 +5984,8 @@ void BufGrainBF_next_a(BufGrainBF *unit, int inNumSamples)
 			if (bufnum >= numBufs) continue;
 			
 			GRAIN_BUF
+			CHECK_BUF
+
 			
 			if (bufChannels != 1) continue;
 
@@ -6053,6 +6072,7 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -6110,6 +6130,7 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 			uint32 bufnum = (uint32)ZIN0(2);
 			
 			GRAIN_BUF
+			CHECK_BUF
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
@@ -6211,6 +6232,7 @@ void BufGrainBBF_next_a(BufGrainBBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -6274,7 +6296,9 @@ void BufGrainBBF_next_a(BufGrainBBF *unit, int inNumSamples)
 			uint32 bufnum = (uint32)IN_AT(unit, 2, i);
 			if (bufnum >= numBufs) continue;
 			float winSize = IN_AT(unit, 1, i);
+
 			GRAIN_BUF
+			CHECK_BUF
 			
 			if (bufChannels != 1) continue;
 
@@ -6368,6 +6392,7 @@ void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -6430,6 +6455,7 @@ void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
 			float winSize = IN0(1);
 			
 			GRAIN_BUF
+			CHECK_BUF
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
@@ -6537,6 +6563,7 @@ void BufGrainIBF_next_a(BufGrainIBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -6603,7 +6630,9 @@ void BufGrainIBF_next_a(BufGrainIBF *unit, int inNumSamples)
 			uint32 bufnum = (uint32)IN_AT(unit, 2, i);
 			if (bufnum >= numBufs) continue;
 			float winSize = IN_AT(unit, 1, i);
+
 			GRAIN_BUF
+			CHECK_BUF
 			
 			if (bufChannels != 1) continue;
 
@@ -6703,6 +6732,8 @@ void BufGrainIBF_next_k(BufGrainIBF *unit, int inNumSamples)
 		uint32 bufnum = grain->bufnum;
 		
 		GRAIN_BUF
+		CHECK_BUF
+
 		
 		if (bufChannels != 1) {
 			 ++i;
@@ -6766,7 +6797,9 @@ void BufGrainIBF_next_k(BufGrainIBF *unit, int inNumSamples)
 			} else {
 			uint32 bufnum = (uint32)IN0(2);
 			float winSize = IN0(1);
+
 			GRAIN_BUF
+			CHECK_BUF
 			
 			float bufSampleRate = buf->samplerate;
 			float bufRateScale = bufSampleRate * SAMPLEDUR;
