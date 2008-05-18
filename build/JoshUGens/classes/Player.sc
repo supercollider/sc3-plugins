@@ -555,8 +555,11 @@ Player {
 			// The clock // 4 //
 			GUI.staticText.new(window, Rect(390,4,120,30))
 				.string_(starttime.asTimeString);
-			window.view.children[4].font = Font(\Helvetica, 24);
-			
+			(GUI.id == \cocoa).if({	
+				window.view.children[4].font = GUI.font.new(\Helvetica, 24);
+				}, {
+				window.view.children[4].font = GUI.font.new(\Arial, 20);
+				});			
 			// The Range Slider and Slider for time control // 5 //
 			
 			GUI.slider.new(window, Rect(10, 100, 500, 10))

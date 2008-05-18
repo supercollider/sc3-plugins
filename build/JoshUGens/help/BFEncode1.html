@@ -11,8 +11,8 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a91616}
-span.s1 {color: #0013bc}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #970012}
+span.s1 {color: #0000ae}
 span.s2 {color: #000000}
 span.s3 {font: 6.0px Monaco}
 span.Apple-tab-span {white-space:pre}
@@ -21,7 +21,7 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><b>BFEncode1<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Ambisonic B format encoder</b></p>
 <p class="p2"><br></p>
-<p class="p3"><b>BFEncode1.ar(in, azimuth, elevation, rho, gain)</b></p>
+<p class="p3"><b>BFEncode1.ar(in, azimuth, elevation, rho, gain, wComp)</b></p>
 <p class="p2"><br></p>
 <p class="p3"><b>in</b> - input signal</p>
 <p class="p3"><b>azimuth</b> -<span class="Apple-converted-space">  </span>in radians, -pi to pi</p>
@@ -29,6 +29,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>rho</b> - the speaker radius (1 places shound at the radius, &lt;1 within the radius, &gt;1 is outside the radius)</p>
 <p class="p3"><span class="Apple-tab-span">	</span>beyond the radius, a distance scaling is applied (no filtering is done).</p>
 <p class="p3"><b>gain</b> - a control rate level input.</p>
+<p class="p3"><b>wComp</b> - chooses how the W channels is scaled. If 0, a scaler of 0.707 is used. If 1, W is varied according to the scaling of the X, Y and Z channels. 1 is the default.</p>
 <p class="p2"><br></p>
 <p class="p3">Output channels are in order W,X,Y,Z.</p>
 <p class="p3">Because of the way the W component is scaled, it is recommended that you only decode with BFDecode1 and it's methods.</p>

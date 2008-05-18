@@ -8,8 +8,8 @@
 
 BFEncode1 : Panner {
 	
-	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1;
-		^this.multiNew('audio', in, azimuth, elevation, rho, gain )
+	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
+		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp)
 	}
 	
 	init { arg ... theInputs;
@@ -22,8 +22,8 @@ BFEncode1 : Panner {
 
 BFEncodeSter : Panner {
 
-	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1;
-		^this.multiNew('audio', l, r, azimuth, width, elevation, rho, gain )
+	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1, wComp = 1;
+		^this.multiNew('audio', l, r, azimuth, width, elevation, rho, gain, wComp )
 	}
 	
 	init { arg ... theInputs;
@@ -36,8 +36,8 @@ BFEncodeSter : Panner {
 
 BFEncode2 : Panner {
 	
-	*ar { arg in, point_x = 1, point_y = 1, elevation=0, gain=1;
-		^this.multiNew('audio', in, point_x, point_y, elevation, gain )
+	*ar { arg in, point_x = 1, point_y = 1, elevation=0, gain=1, wComp = 1;
+		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp )
 	}
 
 	init { arg ... theInputs;
@@ -49,10 +49,27 @@ BFEncode2 : Panner {
 } 
 
 // second order encoder
+FMHEncode0 : Panner {
+	
+	*ar { arg in, azimuth=0, elevation=0, gain=1;
+		^this.multiNew('audio', in, azimuth, elevation, gain )
+	}
+	
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3),
+					OutputProxy(\audio,this,4), OutputProxy(\audio,this,5),
+					OutputProxy(\audio,this,6), OutputProxy(\audio,this,7),
+					OutputProxy(\audio,this,8) ];
+		^channels
+	}
+}
+
 FMHEncode1 : Panner {
 	
-	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1;
-		^this.multiNew('audio', in, azimuth, elevation, rho, gain )
+	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
+		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp )
 	}
 	
 	init { arg ... theInputs;
@@ -68,8 +85,8 @@ FMHEncode1 : Panner {
 
 FMHEncode2 : Panner {
 	
-	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1;
-		^this.multiNew('audio', in, point_x, point_y, elevation, gain)
+	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1, wComp = 1;
+		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp)
 	}
 	
 	init { arg ... theInputs;
