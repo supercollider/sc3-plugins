@@ -29,8 +29,13 @@ if platform.system() == 'Windows':
 		PathOption('SC3PATH', 'SuperCollider source path', 'C:' ),
 		PathOption('PTHREADSPATH', 'pthreads path', 'C:' )
 	)
-
-env = Environment(options = opts)
+	
+# Configure base environment for the current platform
+if platform.system() == 'Windows':
+	# Use mingw
+	env = Environment(options = opts, tools = ['mingw'])
+else:
+	env = Environment(options = opts)
 
 ########################################
 # Configure for all platforms
@@ -110,7 +115,7 @@ plugs = [
 	'BhobNoise'
 ]
 
-Basic_Env = Environment(
+Basic_Env = env.Clone(
         	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server'],
         	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
@@ -133,7 +138,7 @@ Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.c', 'sour
 # StkUGens
 
 if build_stkugens == True:
-	Environment(
+	env.Clone(
        		CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
         	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
@@ -146,7 +151,7 @@ if build_stkugens == True:
 ##############################################
 # base FFT Envirnonment
 
-FFT_Env = Environment(
+FFT_Env = env.Clone(
        	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
        	CCFLAGS = ['-Wno-unknown-pragmas'],
@@ -180,12 +185,12 @@ FFT_Env.SharedLibrary('build/' + 'bhobfft', ['source/bhobFFT.cpp', 'source/FFT2I
 ##############################################
 # AY
 if build_ay == True:
-	Environment(
+	env.Clone(
 		CPPPATH = ['include', ay_path + 'include' ],
 		CCFLAGS = ['-Wno-unknown-pragmas'],
 		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
 	).StaticLibrary(ay_path + 'AY', [ay_path + 'src/ay8912.c'])
-	Environment(
+	env.Clone(
 		CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', ay_path + 'include'],
 		CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
 		CCFLAGS = ['-Wno-unknown-pragmas'],
