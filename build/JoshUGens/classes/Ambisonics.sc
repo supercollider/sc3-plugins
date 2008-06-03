@@ -5,8 +5,15 @@
 // B2Ster equations from 
 // http://www.cyber.rdg.ac.uk/P.Sharkey/WWW/icdvrat/WWW96/Papers/keating.htm
 
+BFPanner : Panner {
+	*categories {^#["UGens>Multichannel>Ambisonics"]}
+	}
 
-BFEncode1 : Panner {
+BFDecoder : UGen {
+	*categories {^#["UGens>Multichannel>Ambisonics"]}
+	}
+	
+BFEncode1 : BFPanner {
 	
 	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
 		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp)
@@ -20,7 +27,7 @@ BFEncode1 : Panner {
 	}
 }
 
-BFEncodeSter : Panner {
+BFEncodeSter : BFPanner {
 
 	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1, wComp = 1;
 		^this.multiNew('audio', l, r, azimuth, width, elevation, rho, gain, wComp )
@@ -34,7 +41,7 @@ BFEncodeSter : Panner {
 	}
 }
 
-BFEncode2 : Panner {
+BFEncode2 : BFPanner {
 	
 	*ar { arg in, point_x = 1, point_y = 1, elevation=0, gain=1, wComp = 1;
 		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp )
@@ -49,7 +56,7 @@ BFEncode2 : Panner {
 } 
 
 // second order encoder
-FMHEncode0 : Panner {
+FMHEncode0 : BFPanner {
 	
 	*ar { arg in, azimuth=0, elevation=0, gain=1;
 		^this.multiNew('audio', in, azimuth, elevation, gain )
@@ -66,7 +73,7 @@ FMHEncode0 : Panner {
 	}
 }
 
-FMHEncode1 : Panner {
+FMHEncode1 : BFPanner {
 	
 	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
 		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp )
@@ -83,7 +90,7 @@ FMHEncode1 : Panner {
 	}
 }
 
-FMHEncode2 : Panner {
+FMHEncode2 : BFPanner {
 	
 	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1, wComp = 1;
 		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp)
@@ -100,7 +107,7 @@ FMHEncode2 : Panner {
 	}
 }
 
-BFDecode1 : UGen {
+BFDecode1 : BFDecoder {
 	
 	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, mul = 1, add = 0;
 		^this.multiNew('audio', w, x, y, z, azimuth, elevation ).madd(mul, add);
@@ -128,7 +135,7 @@ BFDecode1 : UGen {
 
 /* follows Furse / Malham conventions with some tweaking (W is scaled according to x, y, z, r, s, t, u, and v. s, t, u and v are scaled by 2/3.sqrt */
 
-FMHDecode1 : UGen {
+FMHDecode1 : BFDecoder {
 	*ar {arg w, x, y, z, r, s, t, u, v, azimuth = 0, elevation = 0, mul = 1, add = 0;
 		^this.multiNew('audio', w, x, y, z, r, s, t, u, v, azimuth, elevation).madd(mul, add);
 		}
@@ -240,7 +247,7 @@ FMHDecode1 : UGen {
 		
 	}
 		
-BFManipulate : Panner {
+BFManipulate : BFPanner {
 	
 	*ar { arg w, x, y, z, rotate = 0, tilt = 0, tumble = 0;
 		^this.multiNew('audio', w, x, y, z, rotate, tilt, tumble);
@@ -259,7 +266,7 @@ BFManipulate : Panner {
 
 // Rotate tilt and tumble classes, built from Rotate2.  Allows w, x, y and z to be passed in, and 
 // returns the new w, x, y, and z
-Rotate : Panner {
+Rotate : BFPanner {
 	*ar {arg w, x, y, z, rotate;
 		var xout, yout;
 		#xout, yout = Rotate2.ar(x, y, rotate * -0.31830988618379);
@@ -276,7 +283,7 @@ Rotate : Panner {
  	checkInputs { ^this.checkNInputs(4) }
 }	 
 
-Tilt : Panner {
+Tilt : BFPanner {
 	*ar {arg w, x, y, z, tilt;
 		var xout, zout;
 		#xout, zout = Rotate2.ar(x, z, tilt * -0.31830988618379);
@@ -293,7 +300,7 @@ Tilt : Panner {
  	checkInputs { ^this.checkNInputs(4) }
 }	
 
-Tumble : Panner {
+Tumble : BFPanner {
 	*ar {arg w, x, y, z, tilt;
 		var yout, zout;
 		#yout, zout = Rotate2.ar(y, z, tilt * -0.31830988618379);
@@ -310,7 +317,7 @@ Tumble : Panner {
  	checkInputs { ^this.checkNInputs(4) }
 }	
 
-A2B : Panner {
+A2B : BFPanner {
 	
 	*ar { arg a, b, c, d;
 		^this.multiNew('audio', a, b, c, d);
@@ -327,7 +334,7 @@ A2B : Panner {
 
 }
 
-B2A : Panner {
+B2A : BFPanner {
 	
 	*ar { arg w, x, y, z;
 		^this.multiNew('audio', w, x, y, z);
@@ -344,7 +351,7 @@ B2A : Panner {
 
 }
 
-B2Ster : Panner {
+B2Ster : BFPanner {
 	*ar {arg w, x, y, mul = 1, add = 0;
 		^this.multiNew('audio', w, x, y).madd(mul, add);
 		}
@@ -360,7 +367,7 @@ B2Ster : Panner {
 
 // takes w, x, and y from a BF sig, returns a 2 channel UHJ file
 
-B2UHJ : Panner {
+B2UHJ : BFPanner {
 	*ar {arg w, x, y;
 		^this.multiNew('audio', w, x, y);
 		}
@@ -377,7 +384,7 @@ B2UHJ : Panner {
 // takes the left signal (ls) and right signal (rs) of a UHJ signal, 
 // and returns w, x, and y of a BF signal
 
-UHJ2B : Panner {
+UHJ2B : BFPanner {
 	*ar {arg ls, rs;
 		^this.multiNew('audio', ls, rs);
 		}

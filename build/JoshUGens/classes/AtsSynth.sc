@@ -1,5 +1,8 @@
-
-AtsSynth : UGen {
+AtsUGen : UGen {
+	*categories {^#["UGens>Analysis:Synthesis"]}
+	}
+	
+AtsSynth : AtsUGen {
 	*ar { 
 		arg atsbuffer, numPartials = 0, partialStart = 0, partialSkip = 1,
 			filePointer = 0, freqMul = 1.0, freqAdd = 0.0, mul=1.0, add=0.0;
@@ -9,7 +12,7 @@ AtsSynth : UGen {
 }
 
   
-AtsNoiSynth : UGen {
+AtsNoiSynth : AtsUGen {
 	*ar { 
 		arg atsbuffer, numPartials = 0, partialStart = 0, partialSkip = 1,
 			filePointer = 0, sinePct = 1.0, noisePct = 1.0, freqMul = 1.0, freqAdd = 0.0, 
@@ -20,7 +23,7 @@ AtsNoiSynth : UGen {
 	}
 }
 
-AtsFreq : UGen {
+AtsFreq : AtsUGen {
 	*ar {
 		arg atsbuffer, partialNum = 0, filePointer = 0, mul = 1, add = 0;
 		^this.multiNew('audio', atsbuffer, partialNum, filePointer).madd(mul, add)
@@ -33,7 +36,7 @@ AtsFreq : UGen {
 }
 
 
-AtsAmp : UGen {
+AtsAmp : AtsUGen {
 	*ar {
 		arg atsbuffer, partialNum = 0, filePointer = 0, mul = 1, add = 0;
 		^this.multiNew('audio', atsbuffer, partialNum, filePointer).madd(mul, add)
@@ -44,7 +47,7 @@ AtsAmp : UGen {
 		}
 }
 
-AtsNoise : UGen {
+AtsNoise : AtsUGen {
 	*ar {
 		arg atsbuffer, bandNum = 0, filePointer = 0, mul = 1, add = 0;
 		^this.multiNew('audio', atsbuffer, bandNum, filePointer).madd(mul, add)
@@ -56,6 +59,8 @@ AtsNoise : UGen {
 }
 
 AtsParInfo : MultiOutUGen {
+	*categories {^#["UGens>Analysis:Synthesis"]}
+
 	*ar {
 		arg atsbuffer, partialNum = 0, filePointer = 0, mul = 1, add = 0;
 		^this.multiNew('audio', atsbuffer, partialNum, filePointer).madd(mul, add)

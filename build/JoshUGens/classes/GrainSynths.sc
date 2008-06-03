@@ -1,10 +1,23 @@
-MonoGrain : UGen {
+JoshGrain : UGen {
+	*categories {^#["UGens>GranularSynthesis"]}
+	}
+
+JoshMultiChannelGrain : Panner {
+	*categories {^#["UGens>GranularSynthesis"]}
+	}
+
+JoshMultiOutGrain : MultiOutUGen {
+	*categories {^#["UGens>GranularSynthesis"]}
+	}
+
+
+MonoGrain : JoshGrain {
 	*ar { arg in, winsize = 0.1, grainrate = 10, winrandpct = 0, mul = 1, add = 0;
 		^this.multiNew('audio', in, winsize, grainrate, winrandpct).madd(mul, add);
 	}
 }
 
-MonoGrainBF : Panner {
+MonoGrainBF : JoshMultiChannelGrain {
 	*ar { arg in, winsize = 0.1, grainrate = 10, winrandpct = 0, azimuth = 0, azrand = 0, 
 			elevation = 0, elrand = 0, rho = 1, mul = 1, add = 0;
 		^this.multiNew('audio', in, winsize, grainrate, winrandpct, azimuth, azrand, elevation,
@@ -21,38 +34,38 @@ MonoGrainBF : Panner {
 
 /* other granular synths */
 
-SinGrain : UGen {
+SinGrain : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq).madd(mul, add);
 		}
 	}
 		
-SinGrainB : UGen {
+SinGrainB : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq, envbuf).madd(mul, add);
 		}
 	}		
 
-SinGrainI : UGen {
+SinGrainI : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf1, envbuf2, ifac = 0.5, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq, envbuf1, envbuf2, ifac).madd(mul, add);
 		}
 	}	
 	
-FMGrain : UGen {
+FMGrain : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index).madd(mul, add);
 		}
 	}
 
-FMGrainB : UGen {
+FMGrainB : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf, mul = 1, 
 			add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf).madd(mul, add);
 		}
 	}
 
-FMGrainI : UGen {
+FMGrainI : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf1, envbuf2, 
 			ifac = 0.5, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf1, envbuf2, ifac)
@@ -60,20 +73,20 @@ FMGrainI : UGen {
 		}
 	}
 	
-BufGrain : UGen {
+BufGrain : JoshGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, interp = 2, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp).madd(mul, add);
 		}
 	}
 		
-BufGrainB : UGen {
+BufGrainB : JoshGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, envbuf, interp = 2, mul = 1, 
 			add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf).madd(mul, add);
 		}
 	}
 	
-BufGrainI : UGen {
+BufGrainI : JoshGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  envbuf1, envbuf2, 
 			ifac = 0.5, interp = 2, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf1, envbuf2,
@@ -81,19 +94,19 @@ BufGrainI : UGen {
 		}
 	}
 	
-InGrain : UGen {
+InGrain : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, in, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, in).madd(mul, add);
 		}
 	}
 		
-InGrainB : UGen {
+InGrainB : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, in, envbuf, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, in, envbuf).madd(mul, add);
 		}
 	}		
 
-InGrainI : UGen {
+InGrainI : JoshGrain {
 	*ar	{ arg trigger = 0, dur = 1, in, envbuf1, envbuf2, ifac = 0.5, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, in, envbuf1, envbuf2, ifac).madd(mul, add);
 		}
@@ -101,7 +114,7 @@ InGrainI : UGen {
 	
 /* Ambisonic Versions */
 
-BFGrainPanner : MultiOutUGen {
+BFGrainPanner : JoshMultiOutGrain {
 	checkNInputs { arg n;
 		if (rate == 'audio') {
 			n.do {| i |
@@ -119,7 +132,7 @@ BFGrainPanner : MultiOutUGen {
 
 /* other granular synths */
 
-SinGrainBF : MultiOutUGen {
+SinGrainBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, azimuth = 0, elevation = 0, rho = 1, mul = 1, 
 			add = 0;
 		^this.multiNew('audio', trigger, dur, freq, azimuth, elevation, rho).madd(mul, add);
@@ -133,7 +146,7 @@ SinGrainBF : MultiOutUGen {
 		}
 	}
 		
-SinGrainBBF : MultiOutUGen {
+SinGrainBBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf, azimuth = 0, elevation = 0, rho = 1,
 			mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq, envbuf, azimuth, elevation, rho)
@@ -148,7 +161,7 @@ SinGrainBBF : MultiOutUGen {
 		}
 	}
 
-SinGrainIBF : MultiOutUGen {
+SinGrainIBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf1, envbuf2, ifac = 0.5, azimuth = 0, 
 			elevation = 0, rho = 1,mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq, envbuf1, envbuf2, ifac, azimuth, 
@@ -163,7 +176,7 @@ SinGrainIBF : MultiOutUGen {
 		}
 	}
 	
-FMGrainBF : MultiOutUGen {
+FMGrainBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, azimuth = 0, 
 			elevation = 0, rho = 1,mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index,
@@ -178,7 +191,7 @@ FMGrainBF : MultiOutUGen {
 		}
 	}
 
-FMGrainBBF : MultiOutUGen {
+FMGrainBBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf, azimuth = 0, 
 			elevation = 0, rho = 1, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf, 
@@ -193,7 +206,7 @@ FMGrainBBF : MultiOutUGen {
 		}
 	}
 
-FMGrainIBF : MultiOutUGen {
+FMGrainIBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf1, envbuf2, 
 			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf1, envbuf2, ifac,
@@ -208,7 +221,7 @@ FMGrainIBF : MultiOutUGen {
 		}
 	}
 	
-BufGrainBF : MultiOutUGen {
+BufGrainBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  
 			azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, azimuth, elevation, 
@@ -223,7 +236,7 @@ BufGrainBF : MultiOutUGen {
 		}
 	}
 		
-BufGrainBBF : MultiOutUGen {
+BufGrainBBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, envbuf,  
 			azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf, azimuth,
@@ -238,7 +251,7 @@ BufGrainBBF : MultiOutUGen {
 		}
 	}
 	
-BufGrainIBF : MultiOutUGen {
+BufGrainIBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  envbuf1, envbuf2, 
 			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf1, envbuf2,

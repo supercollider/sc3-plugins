@@ -1,5 +1,9 @@
 
-BLowPass : UGen {
+BEQSuite : UGen {
+	*categories {^#["UGens>Filters"] }
+	}
+
+BLowPass : BEQSuite {
 	*ar { arg in, freq = 1200.0, rq = 1.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rq).madd(mul, add);
 	}
@@ -19,7 +23,7 @@ BLowPass : UGen {
 	}
 }
 
-BHiPass : UGen {
+BHiPass : BEQSuite {
 	*ar { arg in, freq = 1200.0, rq = 1.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rq).madd(mul, add);
 	}
@@ -39,7 +43,7 @@ BHiPass : UGen {
 	}
 }
 
-BAllPass : UGen {
+BAllPass : BEQSuite {
 	*ar { arg in, freq = 1200.0, rq = 1.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rq).madd(mul, add);
 	}
@@ -56,7 +60,7 @@ BAllPass : UGen {
 	}
 }
 
-BBandPass : UGen {
+BBandPass : BEQSuite {
 	*ar {arg in, freq = 1200.0, bw = 1.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, bw).madd(mul, add);
 	}
@@ -76,7 +80,7 @@ BBandPass : UGen {
 	}
 }
 
-BBandStop : UGen {
+BBandStop : BEQSuite {
 	*ar {arg in, freq = 1200.0, bw = 1.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, bw).madd(mul, add);
 	}
@@ -95,7 +99,7 @@ BBandStop : UGen {
 	}
 }
 
-BPeakEQ : UGen {
+BPeakEQ : BEQSuite {
 	*ar {arg in, freq = 1200.0, rq = 1.0, db = 0.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rq, db).madd(mul, add);
 	}
@@ -115,7 +119,7 @@ BPeakEQ : UGen {
 	}
 }
 
-BLowShelf : UGen {
+BLowShelf : BEQSuite {
 	*ar {arg in, freq = 1200.0, rs = 1.0, db = 0.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rs, db).madd(mul, add);
 	}
@@ -141,7 +145,7 @@ BLowShelf : UGen {
 	}
 }
 
-BHiShelf : UGen {
+BHiShelf : BEQSuite {
 	*ar {arg in, freq = 1200.0, rs = 1.0, db = 0.0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, rs, db).madd(mul, add);
 	}
