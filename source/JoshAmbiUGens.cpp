@@ -77,6 +77,11 @@ struct BFEncode2 : public Unit
 	float m_point_x, m_point_y, m_elevation, m_level, m_W_amp, m_X_amp, m_Y_amp, m_Z_amp;
 }; 
 
+struct FMHEncode0 : public Unit
+{
+	float m_azimuth, m_elevation, m_rho, m_level, m_W_amp, m_X_amp, m_Y_amp, m_Z_amp, m_R_amp, m_S_amp, m_T_amp, m_U_amp, m_V_amp;
+};
+
 struct FMHEncode1 : public Unit
 {
 	float m_azimuth, m_elevation, m_rho, m_level, m_W_amp, m_X_amp, m_Y_amp, m_Z_amp, m_R_amp, m_S_amp, m_T_amp, m_U_amp, m_V_amp;
@@ -139,6 +144,9 @@ extern "C"
 	void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples);
 	void BFEncodeSter_Ctor(BFEncodeSter* unit);
 
+	void FMHEncode0_next(FMHEncode0 *unit, int inNumSamples);
+	void FMHEncode0_Ctor(FMHEncode0* unit);
+	
 	void FMHEncode1_next(FMHEncode1 *unit, int inNumSamples);
 	void FMHEncode1_Ctor(FMHEncode1* unit);
 
@@ -700,7 +708,12 @@ void B2Ster_next(B2Ster *unit, int inNumSamples)
 // vary w according to x, y and z
 #define BF_VALS_OUT \
 	z = in[i]; \
-	Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp))))); \
+	if(wComp > 0.){ \
+	    wScale = (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp))))); \
+	    } else { \
+	    wScale = 0.707 * W_amp; \
+	    } \
+	Wout[i] = z * wScale; \
 	Xout[i] = z * X_amp; \
 	Yout[i] = z * Y_amp; \
 	Zout[i] = z * Z_amp; \
@@ -776,6 +789,7 @@ void BFEncode2_next_kkk(BFEncode2 *unit, int inNumSamples)
 	float point_y = IN0(2);
 	float elevation = IN0(3);
 	float level = IN0(4);
+	float wComp = IN0(5);
 
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
@@ -785,6 +799,7 @@ void BFEncode2_next_kkk(BFEncode2 *unit, int inNumSamples)
 	float last_Y_amp = Y_amp = unit->m_Y_amp;
 	float last_Z_amp = Z_amp = unit->m_Z_amp;
 	
+	float wScale;
 	
 	if (point_x != unit->m_point_x || point_y != unit->m_point_y ||elevation != unit->m_elevation || level != unit->m_level) {
 		unit->m_point_x = point_x;
@@ -891,6 +906,8 @@ void BFEncode1_next_kkk(BFEncode1 *unit, int inNumSamples)
 	float elevation = IN0(2);
 	float rho = IN0(3);
 	float level = IN0(4);
+	float wComp = IN0(5);
+	float wScale;
 	
 	float last_W_amp = W_amp = unit->m_W_amp;
 	float last_X_amp = X_amp = unit->m_X_amp;
@@ -955,7 +972,9 @@ void BFEncode1_next_aaa(BFEncode1 *unit, int inNumSamples)
 	float newlevel = IN0(4);
 	float level = unit->m_level;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;
+		
 	if(newlevel != unit->m_level){
 	    levelslope = CALCSLOPE(newlevel, unit->m_level);
 	    }
@@ -997,7 +1016,8 @@ void BFEncode1_next_akk(BFEncode1 *unit, int inNumSamples)
 	float elslope = 0.f;
 	float rhoslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newelevation != unit->m_elevation || newrho != unit->m_rho || newlevel != unit->m_level){
 	    elslope = CALCSLOPE(newelevation, unit->m_elevation);
 	    rhoslope = CALCSLOPE(newrho, unit->m_rho);
@@ -1040,7 +1060,8 @@ void BFEncode1_next_aak(BFEncode1 *unit, int inNumSamples)
 	float level = unit->m_level;
 	float rhoslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newrho != unit->m_rho || newlevel != unit->m_level){
 	    rhoslope = CALCSLOPE(newrho, unit->m_rho);
 	    levelslope = CALCSLOPE(newlevel, unit->m_level);
@@ -1081,7 +1102,8 @@ void BFEncode1_next_aka(BFEncode1 *unit, int inNumSamples)
 	float level = unit->m_level;
 	float elslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newelevation != unit->m_elevation || newlevel != unit->m_level){
 	    elslope = CALCSLOPE(newelevation, unit->m_elevation);
 	    levelslope = CALCSLOPE(newlevel, unit->m_level);
@@ -1122,7 +1144,8 @@ void BFEncode1_next_kaa(BFEncode1 *unit, int inNumSamples)
 	float level = unit->m_level;
 	float azslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newazimuth != unit->m_azimuth || newlevel != unit->m_level){
 	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
 	    levelslope = CALCSLOPE(newlevel, unit->m_level);
@@ -1166,7 +1189,8 @@ void BFEncode1_next_kak(BFEncode1 *unit, int inNumSamples)
 	float azslope = 0.f;
 	float rhoslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newazimuth != unit->m_azimuth || newrho != unit->m_rho || newlevel != unit->m_level){
 	    rhoslope = CALCSLOPE(newrho, unit->m_rho);
 	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
@@ -1211,7 +1235,8 @@ void BFEncode1_next_kka(BFEncode1 *unit, int inNumSamples)
 	float azslope = 0.f;
 	float elslope = 0.f;
 	float levelslope = 0.f;
-	
+	float wComp = IN0(5);
+	float wScale;	
 	if(newazimuth != unit->m_azimuth || newelevation != unit->m_elevation || newlevel != unit->m_level){
 	    elslope = CALCSLOPE(newelevation, unit->m_elevation);
 	    azslope = CALCSLOPE(newazimuth, unit->m_azimuth);
@@ -1253,7 +1278,8 @@ void BFEncodeSter_Ctor(BFEncodeSter *unit)
 	float width2 = width * 0.5;
 	float azplus = azimuth + width2;
 	float azminus = azimuth - width2;
-	
+	float wComp = IN0(7);
+	float wScale;	
 	float sinal = sin(azplus);
 	float sinar = sin(azminus);
 	float sinb= sin(elevation);
@@ -1302,6 +1328,8 @@ void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
 	float elevation = IN0(4);
 	float rho = IN0(5);
 	float level = IN0(6);
+	float wComp = IN0(7);
+	float wScaleL, wScaleR;	
 
 	float W_ampL = unit->m_W_ampL;
 	float X_ampL = unit->m_X_ampL;
@@ -1365,8 +1393,14 @@ void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
 			y = l[i];
 			z = r[i];
 			// vary w according to x, y and z
-			Wout[i] = (y * (W_ampL * (1 - (0.293 * ((X_ampL * X_ampL) + (Y_ampL * Y_ampL) + (Z_ampL * Z_ampL)))))) +
-			    (z * (W_ampR * (1 - (0.293 * ((X_ampR * X_ampR) + (Y_ampR * Y_ampR) + (Z_ampR * Z_ampR))))));			
+			if(wComp > 0.){ 
+			    wScaleL = (W_ampL * (1 - (0.293 * ((X_ampL * X_ampL) + (Y_ampL * Y_ampL) + (Z_ampL * Z_ampL))))); 
+			    wScaleR = (W_ampR * (1 - (0.293 * ((X_ampR * X_ampR) + (Y_ampR * Y_ampR) + (Z_ampR * Z_ampR))))); 
+			    } else { 
+			    wScaleL = 0.707 * W_ampL; 
+			    wScaleR = 0.707 * W_ampR; 
+			    } 
+			Wout[i] = (y * wScaleL) + (z * wScaleR);
 			Xout[i] = (y * X_ampL) + (z * X_ampR);
 			Yout[i] = (y * Y_ampL) + (z * Y_ampR);
 			Zout[i] = (y * Z_ampL) + (z * Z_ampR);
@@ -1393,8 +1427,14 @@ void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
 		    y = l[i];
 		    z = r[i];
 		    // vary w according to x, y and z
-		    Wout[i] = (y * (W_ampL * (1 - (0.293 * ((X_ampL * X_ampL) + (Y_ampL * Y_ampL) + (Z_ampL * Z_ampL)))))) +
-			(z * (W_ampR * (1 - (0.293 * ((X_ampR * X_ampR) + (Y_ampR * Y_ampR) + (Z_ampR * Z_ampR))))));			
+		    if(wComp > 0.){ 
+			wScaleL = (W_ampL * (1 - (0.293 * ((X_ampL * X_ampL) + (Y_ampL * Y_ampL) + (Z_ampL * Z_ampL))))); 
+			wScaleR = (W_ampR * (1 - (0.293 * ((X_ampR * X_ampR) + (Y_ampR * Y_ampR) + (Z_ampR * Z_ampR))))); 
+			} else { 
+			wScaleL = 0.707 * W_ampL; 
+			wScaleR = 0.707 * W_ampR; 
+			} 
+		    Wout[i] = (y * wScaleL) + (z * wScaleR);		
 		    Xout[i] = (y * X_ampL) + (z * X_ampR);
 		    Yout[i] = (y * Y_ampL) + (z * Y_ampR);
 		    Zout[i] = (y * Z_ampL) + (z * Z_ampR);
@@ -1415,6 +1455,16 @@ void BFEncodeSter_next(BFEncodeSter *unit, int inNumSamples)
     unit->m_U_amp = cos(azimuthtimes2) * cosbsq * levelsinint * twodivsqrt3; \
     unit->m_V_amp = sin(azimuthtimes2) * cosbsq * levelsinint * twodivsqrt3; \
 
+#define CALC_STANDARD_FMH_COEFS \
+    unit->m_W_amp = level * 0.707; \
+    unit->m_X_amp = cosa * cosb * level; \
+    unit->m_Y_amp = sina * cosb * level; \
+    unit->m_Z_amp = sinb * level; \
+    unit->m_R_amp = (1.5 * sinbsq - 0.5) * level; \
+    unit->m_S_amp = cosa * sinelevationtimes2 * level * twodivsqrt3; \
+    unit->m_T_amp = sina * sinelevationtimes2 * level * twodivsqrt3; \
+    unit->m_U_amp = cos(azimuthtimes2) * cosbsq * level * twodivsqrt3; \
+    unit->m_V_amp = sin(azimuthtimes2) * cosbsq * level * twodivsqrt3; \
     
 void FMHEncode1_Ctor(FMHEncode1 *unit)
 {
@@ -1475,6 +1525,8 @@ void FMHEncode1_next(FMHEncode1 *unit, int inNumSamples)
 	float elevation = IN0(2);
 	float rho = IN0(3);
 	float level = IN0(4);
+	float wComp = IN0(5);
+	float wScale;	
 
 	float W_amp = unit->m_W_amp;
 	float X_amp = unit->m_X_amp;
@@ -1529,9 +1581,14 @@ void FMHEncode1_next(FMHEncode1 *unit, int inNumSamples)
 				
 		for(int i = 0; i < inNumSamples; i++){
 			z = in[i];
+			if(wComp > 0){
+			    wScale = (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
+			    (T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));
+			    } else {
+			    wScale = 0.707 * W_amp;
+			    }
 			// vary w according to x, y and z
-			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
-			    (T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));			
+			Wout[i] = z * wScale;			
 			Xout[i] = z * X_amp;
 			Yout[i] = z * Y_amp;
 			Zout[i] = z * Z_amp;
@@ -1556,8 +1613,137 @@ void FMHEncode1_next(FMHEncode1 *unit, int inNumSamples)
 	    for(int i = 0; i < inNumSamples; i++)
 		{ 
 		    z = in[i];
-		    Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
-			(T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));			
+		    if(wComp > 0){
+			wScale = (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
+			(T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));
+			} else {
+			wScale = 0.707 * W_amp;
+			}
+		    // vary w according to x, y and z
+		    Wout[i] = z * wScale;			
+		    Xout[i] = z * X_amp;
+		    Yout[i] = z * Y_amp;
+		    Zout[i] = z * Z_amp;
+		    Rout[i] = z * R_amp;
+		    Sout[i] = z * S_amp;
+		    Tout[i] = z * T_amp;
+		    Uout[i] = z * U_amp;
+		    Vout[i] = z * V_amp;
+		}
+	}
+}
+
+void FMHEncode0_Ctor(FMHEncode0 *unit)
+{
+	SETCALC(FMHEncode0_next);
+	float azimuth = unit->m_azimuth = IN0(1);
+	float elevation = unit->m_elevation = IN0(2);
+	float level = unit->m_level = IN0(3);
+	
+	float azimuthtimes2 = azimuth * 2.;
+	float elevationtimes2 = elevation * 2.;
+	float sina = sin(azimuth);
+	float sinb = sin(elevation);
+	
+	float cosa = cos(azimuth);
+	float cosb = cos(elevation);
+	
+	float cosbsq = cosb * cosb;
+	float sinbsq = sinb * sinb;
+	float sinelevationtimes2 = sin(elevationtimes2);
+	
+	CALC_STANDARD_FMH_COEFS
+	
+	FMHEncode0_next(unit, 1);
+}
+
+
+    
+void FMHEncode0_next(FMHEncode0 *unit, int inNumSamples)
+{       
+	float z = 0.0;
+	float *Wout = OUT(0);
+	float *Xout = OUT(1);
+	float *Yout = OUT(2);
+	float *Zout = OUT(3);
+	float *Rout = OUT(4);
+	float *Sout = OUT(5);
+	float *Tout = OUT(6);
+	float *Uout = OUT(7);
+	float *Vout = OUT(8);
+	
+	float *in = IN(0);
+	float azimuth = IN0(1);
+	float elevation = IN0(2);
+	float level = IN0(3);
+
+	float W_amp = unit->m_W_amp;
+	float X_amp = unit->m_X_amp;
+	float Y_amp = unit->m_Y_amp;
+	float Z_amp = unit->m_Z_amp;
+	float R_amp = unit->m_R_amp;
+	float S_amp = unit->m_S_amp;
+	float T_amp = unit->m_T_amp;
+	float U_amp = unit->m_U_amp;
+	float V_amp = unit->m_V_amp;
+	
+	if (azimuth != unit->m_azimuth || elevation != unit->m_elevation || level != unit->m_level) {
+		unit->m_azimuth = azimuth;
+		unit->m_elevation = elevation;
+		unit->m_level = level;
+		float azimuthtimes2 = azimuth * 2.;
+		float elevationtimes2 = elevation * 2.;
+		float sina = sin(azimuth);
+		float sinb = sin(elevation);
+		
+		float cosa = cos(azimuth);
+		float cosb = cos(elevation);
+		
+		float cosbsq = cosb * cosb;
+		float sinbsq = sinb * sinb;
+		float sinelevationtimes2 = sin(elevationtimes2);
+		
+		CALC_STANDARD_FMH_COEFS
+				
+		float W_slope = CALCSLOPE(unit->m_W_amp, W_amp);
+		float X_slope = CALCSLOPE(unit->m_X_amp, X_amp);
+		float Y_slope = CALCSLOPE(unit->m_Y_amp, Y_amp);
+		float Z_slope = CALCSLOPE(unit->m_Z_amp, Z_amp);
+		float R_slope = CALCSLOPE(unit->m_R_amp, R_amp);
+		float S_slope = CALCSLOPE(unit->m_S_amp, S_amp);
+		float T_slope = CALCSLOPE(unit->m_T_amp, T_amp);
+		float U_slope = CALCSLOPE(unit->m_U_amp, U_amp);
+		float V_slope = CALCSLOPE(unit->m_V_amp, V_amp);
+				
+		for(int i = 0; i < inNumSamples; i++){
+			z = in[i];
+			// vary w according to x, y and z
+			Wout[i] = z * W_amp;			
+			Xout[i] = z * X_amp;
+			Yout[i] = z * Y_amp;
+			Zout[i] = z * Z_amp;
+			Rout[i] = z * R_amp;
+			Sout[i] = z * S_amp;
+			Tout[i] = z * T_amp;
+			Uout[i] = z * U_amp;
+			Vout[i] = z * V_amp;			
+						
+			W_amp += W_slope;
+			X_amp += X_slope;
+			Y_amp += Y_slope;
+			Z_amp += Z_slope;
+			R_amp += R_slope;
+			S_amp += S_slope;
+			T_amp += T_slope;
+			U_amp += U_slope;
+			V_amp += V_slope;
+
+		    }
+	    } else {
+	    for(int i = 0; i < inNumSamples; i++)
+		{ 
+		    z = in[i];
+		    Wout[i] = z * W_amp;			
 		    Xout[i] = z * X_amp;
 		    Yout[i] = z * Y_amp;
 		    Zout[i] = z * Z_amp;
@@ -1580,7 +1766,8 @@ void FMHEncode2_Ctor(FMHEncode2 *unit)
 	float point_y = unit->m_point_y = IN0(2);
 	float elevation = unit->m_elevation = IN0(3);
 	float level = unit->m_level = IN0(4);
-
+	float wComp = IN0(5);
+	
 	azimuth = atan2(point_x, point_y);
 	rho = hypot(point_x, point_y);
 	
@@ -1632,7 +1819,8 @@ void FMHEncode2_next(FMHEncode2 *unit, int inNumSamples)
 	float point_y = IN0(2);
 	float elevation = unit->m_elevation = IN0(3);
 	float level = unit->m_level = IN0(4);
-
+	float wComp = IN0(5);
+	float wScale;
 
 	float W_amp = unit->m_W_amp;
 	float X_amp = unit->m_X_amp;
@@ -1691,6 +1879,14 @@ void FMHEncode2_next(FMHEncode2 *unit, int inNumSamples)
 		
 		for(int i = 0; i < inNumSamples; i++){
 			z = in[i];
+			if(wComp > 0){
+			    wScale = (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
+			    (T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));
+			    } else {
+			    wScale = 0.707 * W_amp;
+			    }
+			// vary w according to x, y and z
+			Wout[i] = z * wScale;	
 			// vary w according to x, y, z, r and weighted  s, t, u, v
 			Wout[i] = z * (W_amp * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp) + (R_amp * R_amp) + (S_amp * S_amp) +
 			    (T_amp * T_amp) + (U_amp * U_amp) + (V_amp * V_amp)))));			
@@ -1934,6 +2130,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(BFEncode1);
 	DefineSimpleUnit(BFEncode2);
 	DefineSimpleUnit(BFEncodeSter);
+	DefineSimpleUnit(FMHEncode0);
 	DefineSimpleUnit(FMHEncode1);
 	DefineSimpleUnit(FMHEncode2);
 	DefineSimpleCantAliasUnit(BFDecode1);

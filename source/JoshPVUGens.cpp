@@ -107,7 +107,7 @@ struct PV_MagBuffer : PV_Unit
 struct BinData : PV_Unit
 {
     int m_bin, m_firstflag;
-    float m_lastPhase, m_centerfreq, m_curfreq, m_curmag, m_srOverTwopi, m_rNumbins, m_overlaps, m_rNumPeriodsPerValue;
+    float m_lastPhase, m_lastPhasedif, m_centerfreq, m_curfreq, m_curmag, m_srOverTwopi, m_rNumbins, m_overlaps, m_rNumPeriodsPerValue;
     float m_freqinc, m_maginc;
     int elapsedSamps;
 };
@@ -1167,6 +1167,7 @@ void BinData_Ctor(BinData *unit)
     unit->m_maginc = 0.;
     unit->m_firstflag = -1;
     unit->elapsedSamps = 0;
+    unit->m_lastPhasedif = 0.;
     float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
     unit->m_srOverTwopi = sr / twopi;
     SETCALC(BinData_next);
@@ -1188,11 +1189,11 @@ void BinData_next(BinData *unit, int inNumSamples)
 	    float fnumbins = (float)(buf->samples - 2 >> 1);
 	    int bin = unit->m_bin;
 	    SCPolarBuf *p = ToPolarApx(buf);
+	    float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
 	    
 	    // These calculations only have to be done the first time FFT data comes in.
 	    // Sorry - for now, can't change FFT buffer
 	    if(unit->m_firstflag < 0){
-		float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
 		float rInNumSamples = 1. / (float)inNumSamples;
 		unit->m_firstflag = 1;
 		// initilaize the curfreq slot to the centerfreq
@@ -1209,12 +1210,19 @@ void BinData_next(BinData *unit, int inNumSamples)
 	    
 	    /* look for change in phase, wrap between 0 and two pi, calculate the freq */
 	    float curphase = p->bin[bin].phase;
-	    float phasedif = curphase - unit->m_lastPhase;
-	    while (phasedif > twopi)
+	    float phasedif = curphase - unit->m_lastPhase; //lastPhasedif - curPhasedif;
+	    while (phasedif > pi)
 		phasedif -=twopi;
-	    while (phasedif < 0.)
+	    while (phasedif < -pi)
 		phasedif += twopi;
-	    float nextfreq = unit->m_centerfreq + (unit->m_srOverTwopi * (phasedif / fnumbins));
+//	    float nextfreq = unit->m_centerfreq + (unit->m_srOverTwopi * (phasedif / fnumbins));
+/*
+freq = (SR / frameSize) * (bin(i) + ((phase(i) * overlapFactor) / twopi))
+
+(44100 / 512) * (256 + ((0.5pi * 0.5) / 2pi))
+*/
+	    float nextfreq = (sr / (fnumbins * 2)) * (bin + ((phasedif * (1 / unit->m_overlaps)) / twopi));
+	    //(  unit->m_curfreq + (unit->m_srOverTwopi * (phasedif / fnumbins));
 	    unit->m_lastPhase = curphase;
 	    
 	    // find the amount to change freq and mag over each sample OR control period (depending on if BinData is ar or kr

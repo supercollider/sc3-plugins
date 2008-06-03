@@ -31,6 +31,8 @@
 
 #define ATS_BAND_WIDTH { 100.0, 100.0, 100.0, 100.0, 110.0, 120.0, 140.0, 150.0, 160.0, 190.0, 210.0, 240.0, 280.0, 320.0, 380.0, 450.0, 550.0, 700.0, 900.0, 1100.0, 1300.0, 1800.0, 2500.0, 3500.0, 4500.0}
 #define ATS_CENTER_FREQ {50.0, 150.0, 250.0, 350.0, 455.0, 570.0, 700.0, 845.0, 1000.0, 1175.0, 1375.0, 1600.0, 1860.0, 2160.0, 2510.0, 2925.0, 3425.0, 4050.0, 4850.0, 5850.0, 7050.0, 8600.0, 10750.0, 13750.0, 17750.0} 
+#define ATS_OFFSET1 {0, 2, 3, 2, 3}
+#define ATS_OFFSET2 {0, 1, 1, 26, 26};
 
 // band edges from atsa
 //{ 0.0, 100.0, 200.0, 300.0, 400.0, 510.0, 630.0, 770.0, 920.0,  1080.0, 1270.0, 1480.0, 1720.0, 2000.0, 2320.0, 2700.0, 3150.0, 3700.0, 4400.0, 5300.0, 6400.0, 7700.0, 9500.0, 12000.0, 15500.0, 20000.0}
@@ -72,77 +74,85 @@ struct LPCSynth : public Unit
 
 
 };
+
 struct AtsSynth : public Unit
 {
 	int32 *m_phase; 
+	float *m_lastfreq;
+	float *m_lastamp;
 	int32 m_phaseoffset, m_lomask;
-	int m_numPartials, m_partialStart, m_partialSkip;
-	float m_sinePct, m_noisePct, m_freqShift;
-	float m_fbufnum, m_framestart;
+	int m_numPartials, m_partialStart, m_partialSkip, phaseinit, m_totalPartials;
+	float m_fbufnum, m_freqMul, m_freqAdd; 
 	double m_cpstoinc, m_radtoinc;
-	int phaseinit;
+	int *m_partials;
 	SndBuf *m_buf;
 };
 
+// I know this looks like I am still being lazy... BUT - these really do share a struct.
 struct PVSynth : AtsSynth
 {
 };
 
 struct PVInfo : public Unit
 {
-	float m_partialNum;
-	int m_numPartials, m_partialStart, m_partialSkip;
-	float m_fbufnum, m_framestart;
+	float m_lastfreq, m_lastamp;
+	float m_fbufnum;
+	int m_partial, m_phaseinit;
 	SndBuf *m_buf;
 };
 
 struct AtsNoiSynth : public Unit
 {
 	int32 *m_phase; 
+	float *m_lastfreq;
+	float *m_lastamp;
+	float *m_lastnoise;
+	float *m_tempNoise;
 	int32  m_lomask;
-	int m_numPartials, m_partialStart, m_partialSkip;
-	int m_numBands, m_bandStart, m_bandSkip;
-	float m_sinePct, m_noisePct, m_freqShift;
-	float m_fbufnum,  m_framestart;
+	float m_rScale, m_freqMul, m_freqAdd;;
+	int m_numPartials, m_partialStart, m_partialSkip, m_totalPartials;
+	int m_numBands, m_bandStart, m_bandSkip, m_totalBands;
+	float m_sinePct, m_noisePct;
+	float m_fbufnum;
 	double m_cpstoinc, m_radtoinc;
-	// for noise resynth
 	int32 m_sinphase[25];
-	int32 m_sinphaseoffset, m_sinlomask;
 	double m_sincpstoinc, m_sinradtoinc;
 	float m_atsBandFreq[25]; 
-	float m_atsCenterFreq[25];
+	int32 m_atsCenterFreq[25];
 	float m_level[25];
 	float m_slope[25];
 	int32 m_counter[25];
-	SndBuf *m_buf;	
+	SndBuf *m_buf;
+	int *m_partials;
+	int *m_bands;	
 	int phaseinit;
 };
 
 struct AtsFreq : public Unit
 {
-	int m_partialNum;
-	float m_fbufnum, m_framestart;
+	int m_init, m_partial;
+	float m_fbufnum, m_lastfreq;
 	SndBuf *m_buf;
 };
 
 struct AtsAmp : public Unit
 {
-	int m_partialNum;
-	float m_fbufnum, m_framestart;
-	SndBuf *m_buf;
-};
-
-struct AtsNoise : public Unit
-{
-	int m_bandNum;
-	float m_fbufnum, m_framestart;
+	int m_init, m_partial;
+	float m_fbufnum, m_lastamp;
 	SndBuf *m_buf;
 };
 
 struct AtsParInfo : public Unit
 {
-	int m_partialNum;
-	float m_fbufnum, m_framestart;
+	int m_init, m_partial;
+	float m_fbufnum, m_lastfreq, m_lastamp;
+	SndBuf *m_buf;
+};
+
+struct AtsNoise : public Unit
+{
+	int m_init, m_band;
+	float m_fbufnum, m_lastnoise;
 	SndBuf *m_buf;
 };
 
@@ -213,21 +223,22 @@ extern "C"
 	void Maxamp_Ctor(Maxamp* unit);
 	
 	// being a little lazy for the time being... treat PVSynth as
-	// a type 1 ATS file
+	// a type 1 ATS file ... HAH! Not anymore! Laziness be gone!
 	
-	void PVSynth_Ctor(AtsSynth* unit);
-	void PVSynth_Dtor(AtsSynth* unit);
+	void PVSynth_next(PVSynth *unit, int inNumSamples);
+	void PVSynth_Ctor(PVSynth* unit);
+	void PVSynth_Dtor(PVSynth* unit);
 	
-	void PVInfo_next(AtsParInfo *unit, int inNumSamples);
-	void PVInfo_Ctor(AtsParInfo* unit);
+	void PVInfo_next(PVInfo *unit, int inNumSamples);
+	void PVInfo_Ctor(PVInfo* unit);
 	
 	void AtsSynth_next(AtsSynth *unit, int inNumSamples);
 	void AtsSynth_Ctor(AtsSynth* unit);
 	void AtsSynth_Dtor(AtsSynth* unit);
-	
+
 	void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples);
 	void AtsNoiSynth_Ctor(AtsNoiSynth* unit);
-	void AtsNoiSynth_Dtor(AtsNoiSynth* unit);
+	void AtsNoiSynth_Dtor(AtsNoiSynth* unit);	
 	
 	void AtsFreq_next(AtsFreq *unit, int inNumSamples);
 	void AtsFreq_Ctor(AtsFreq* unit);
@@ -240,7 +251,7 @@ extern "C"
 	
 	void AtsParInfo_next(AtsParInfo *unit, int inNumSamples);
 	void AtsParInfo_Ctor(AtsParInfo* unit);
-			    
+
 	void SinTone_next(SinTone *unit, int inNumSamples);
 	void SinTone_Ctor(SinTone* unit);
 	
@@ -680,56 +691,68 @@ void Maxamp_next(Maxamp *unit, int inNumSamples)
 //////////////////////////////// Ats and PV UGens ///////////////////////////////
 	
 
-////////////////////////////////////////////////////////////////////////////////////
+#define ADD_SIN_PARTIALS \
+	newamp = lininterp(framePct, amp1, amp2); \
+	newfreq = ((lininterp(framePct, freq1, freq2) * freqMul) + freqAdd); \
+	amp = unit->m_lastamp[i]; \
+	freq = unit->m_lastfreq[i]; \
+	ampslope = CALCSLOPE(newamp, amp); \
+	freqslope = CALCSLOPE(newfreq, freq); \
+	phase = unit->m_phase[i]; \
+	for (int j = 0; j < inNumSamples; ++j){ \
+	    ifreq = (int32)(unit->m_cpstoinc * freq); \
+	    out[j] += (lookupi1(table0, table1, phase, lomask) * amp); \
+	    phase += ifreq; \
+	    freq += freqslope; \
+	    amp += ampslope; \
+	    freqMul += freqMulSlope; \
+	    freqAdd += freqAddSlope; \
+	}; \
+	unit->m_lastfreq[i] = freq; \
+	unit->m_lastamp[i] = amp; \
+	unit->m_phase[i] = phase; \
 
-void PVSynth_Ctor(AtsSynth* unit)
-{
-	SETCALC(AtsSynth_next);
-	int tableSizeSin = ft->mSineSize;
-	unit->m_numPartials = (int)ZIN0(1);
-	unit->m_partialStart = (int)ZIN0(2);
-	unit->m_partialSkip = (int)ZIN0(3);
-	int numPartials = unit->m_numPartials;
-	unit->m_lomask = (tableSizeSin - 1) << 3; 
-	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
-	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.; 
+#define GET_ATS_BUF \
+	if (fbufnum != unit->m_fbufnum) { \
+		uint32 bufnum = (int)fbufnum; \
+		World *world = unit->mWorld; \
+		if (bufnum >= world->mNumSndBufs) bufnum = 0; \
+		unit->m_fbufnum = fbufnum; \
+		unit->m_buf = world->mSndBufs + bufnum; \
+	    } \
+	SndBuf *buf = unit->m_buf; \
+	float *bufData __attribute__((__unused__)) = buf->data; \
+	if (!bufData) { \
+                unit->mDone = true; \
+		return; \
+		}; \
+	int fileType = (int)bufData[9]; \
+	int fileNumPartials = (int)bufData[4]; \
+	int fileNumFrames = (int)bufData[5]; \
+	float* atsData = bufData + 11; \
 	
-	unit->m_phase = (int32*)RTAlloc(unit->mWorld, numPartials * sizeof(int32));
-	unit->phaseinit = 1;
-	unit->m_fbufnum = -1e9f;
-
-	ClearUnitOutputs(unit, 1);
-
-}
-
-void PVSynth_Dtor(AtsSynth* unit)
-{	
-	RTFree(unit->mWorld, unit->m_phase);
-}
-
-void PVInfo_Ctor(AtsParInfo* unit)
-{
-	SETCALC(AtsParInfo_next);
-	unit->m_partialNum = ZIN0(1);
-	unit->m_framestart = ZIN0(2);
-	unit->m_fbufnum = -1e9f;
-	ClearUnitOutputs(unit, 1);
-
-}
-
-
+#define CALC_FRAME_OFFSETS \
+	int iFrame1 = (int)frame; \
+	int iFrame2 = iFrame1 + 1; \
+	float framePct = frame - (float)iFrame1; \
+	if(iFrame2 >= fileNumFrames){ \
+	    iFrame2 = iFrame1; \
+	    framePct = 0.; \
+	    } \
+	    
+	    
 void AtsSynth_Ctor(AtsSynth* unit)
 {
 	SETCALC(AtsSynth_next);
 	int tableSizeSin = ft->mSineSize;
-	unit->m_numPartials = (int)ZIN0(1);
-	unit->m_partialStart = (int)ZIN0(2);
-	unit->m_partialSkip = (int)ZIN0(3);
-	unit->m_framestart = ZIN0(4);
+	unit->m_numPartials = (int)IN0(1);
+	unit->m_partialStart = (int)IN0(2);
+	unit->m_partialSkip = (int)IN0(3);
 	unit->m_lomask = (tableSizeSin - 1) << 3; 
 	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
-	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
-	unit->m_phase = (int32*)RTAlloc(unit->mWorld, unit->m_numPartials * sizeof(int32));
+	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;
+	unit->m_freqMul = IN0(5);
+	unit->m_freqAdd = IN0(6);    
 	unit->phaseinit = 1;
 	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
@@ -738,697 +761,889 @@ void AtsSynth_Ctor(AtsSynth* unit)
 void AtsSynth_Dtor(AtsSynth* unit)
 {	
 	RTFree(unit->mWorld, unit->m_phase);
+	RTFree(unit->mWorld, unit->m_lastamp);
+	RTFree(unit->mWorld, unit->m_lastfreq);
+	RTFree(unit->mWorld, unit->m_partials);
 }
 
 
 void AtsSynth_next(AtsSynth *unit, int inNumSamples)
 {
-	if(unit->phaseinit > 0)
-	{
-	for (int i = 0; i < unit->m_numPartials; i++){
-	    unit->m_phase[i] = 0;
-	    }
-	unit->phaseinit = -1;
-	}
+	ClearUnitOutputs(unit, inNumSamples); 
+	// get the buffer that stores the ATS data 
 	float fbufnum = IN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	}
-	SndBuf *buf = unit->m_buf;
-	float *bufData __attribute__((__unused__)) = buf->data; 
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
 	float *out = OUT(0);
-	float freqMul = IN0(5);
-	float freqAdd = IN0(6);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	int ampDataStart = 4;
-	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	//leaving phase out for now
-//	int phaseDataStart = (((int)filePartials[0] * (int)fileFrames[0]) * 2) + 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * (numFrames - 1);
-	float frame = IN0(4);
-	float frameend = frame * (numFrames - 1);
-	// get the frame vals for the freq data
-	int frameround1 = (int)frameend;
-	int frameround2 = 1;
-	// get frames vals for amp data (interpolated over the k-rate)
-	int startframeround1 = (int)framestart;
-	int startframeround2 = 1;
+
+	// get the requested frames and other inputs
+	float frame = sc_mod(IN0(4), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+	float nextFreqMul = IN0(5);
+	float nextFreqAdd = IN0(6);
 	
-	float framepct = frameend - (float)frameround1;
-	float startframepct = framestart - (float)startframeround1;
+	float freqMul = unit->m_freqMul;
+	float freqAdd = unit->m_freqAdd;
+	float freqMulSlope = CALCSLOPE(nextFreqMul, freqMul);
+	float freqAddSlope = CALCSLOPE(nextFreqAdd, freqAdd);
 	
-	int numPartials = unit->m_numPartials;
-	int partialStart = unit->m_partialStart;
-	int partialSkip = unit->m_partialSkip;
-	int totalPartials = numPartials;
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	CALC_FRAME_OFFSETS
 
-	int *partials = new int[numPartials]; //this will be the partials to synthesize
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+		
+	int thisPartial, dataPos1, dataPos2, partialOffset;
+	float amp1, amp2, freq1, freq2, amp, freq, newamp, newfreq, ampslope, freqslope;
+	int32 ifreq, phase;
+
+	// if this is the first time through the next function, allocate the phase pointer, and zero it out, fill the initial amp and freq data
+	if(unit->phaseinit > 0){
+
+	    unit->m_totalPartials = unit->m_numPartials;
+	    for (int j = 0; j < unit->m_numPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		if (aPartial > fileNumPartials) 
+		    --unit->m_totalPartials;
+	    }   
+
+	    unit->m_phase = (int32*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int32));
+	    unit->m_lastamp = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_lastfreq = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_partials = (int*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int));
+
+	    for (int j = 0; j < unit->m_totalPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		unit->m_partials[j] = aPartial;
+	    }   
+	    
+	    for (int i = 0; i < unit->m_totalPartials; i++){
+		thisPartial = unit->m_partials[i];
+		unit->m_phase[i] = 0.;
+		partialOffset = (thisPartial * offset1);
+		dataPos1 = block1 + partialOffset;
+		dataPos2 = block2 + partialOffset;
+		freq1 = atsData[dataPos1 + 1];
+		freq2 = atsData[dataPos2 + 1];
+		unit->m_lastfreq[i] = (lininterp(framePct, freq1, freq2) * freqMul) + freqAdd;
+		amp1 = atsData[dataPos1];
+		amp2 = atsData[dataPos2];
+		unit->m_lastamp[i] = lininterp(framePct, amp1, amp2);
+		}
+	    unit->phaseinit = -1;
+	}
 	
-	startframeround2 = 1;
-
-	if ((frameround1 + 1) > numFrames) frameround2 = 0;	
-
-	if ((startframeround1 + 1) > numFrames) startframeround2 = 0;
-
-	if (!bufData) { 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
+	int *partials = unit->m_partials;
 	
-	//fill partials with the correct partials, check if partials requested are actually present
-	
-	for (int j = 0; j < numPartials; ++j){
-	    int aPartial = partialStart + (partialSkip * j);
-	    if (aPartial < filePartials[0]) 
-		partials[j] = aPartial;
-		else
-		--totalPartials;
-	}    
-
-	ClearUnitOutputs(unit, inNumSamples);
-
+	// the sine table
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
 	int32 lomask = unit->m_lomask;
-	
-	int ampData, freqData;
-	float startampin, endampin, ampslope, freqin;
-	int32 freq, phase;
-	float* startatsAmp1;
-	float* endatsAmp1;
-	float* atsFreq1;
-	
+
 	// this loop calulates the partial sample values for the each of the sins, stores them in an array
-	for (int i = 0; i< totalPartials; ++i){
-	    ampData = ampDataStart + (numFrames * partials[i]);
-	    freqData = freqDataStart + (numFrames * partials[i]);
+	for (int i = 0; i< unit->m_totalPartials; i++){
+	    thisPartial = partials[i];
+	    partialOffset = (thisPartial * offset1);
+	    dataPos1 = block1 + partialOffset;
+	    dataPos2 = block2 + partialOffset;
+	    amp1 = atsData[dataPos1];
+	    amp2 = atsData[dataPos2];
+	    freq1 = atsData[dataPos1 + 1];
+	    freq2 = atsData[dataPos2 + 1];
+	    freqMul = unit->m_freqMul; //grab the original value from the struct
+	    freqAdd = unit->m_freqAdd; 
 	    
-	    startatsAmp1 = bufData + (ampData + startframeround1); //this is the position in the file of the amp
-
-	    endatsAmp1 = bufData + (ampData + frameround1); 
-	    	    
-	    startampin = lininterp(startframepct, startatsAmp1[0], startatsAmp1[startframeround2]); 
-	    endampin = lininterp(framepct, endatsAmp1[0], endatsAmp1[frameround2]); 
-	    ampslope = CALCSLOPE(endampin, startampin);
+	    ADD_SIN_PARTIALS
 	    
-	    atsFreq1 = bufData + (freqData + frameround1); //this is the position in the file of the freq
-
-	    freqin = (lininterp(framepct, atsFreq1[0], atsFreq1[frameround2]) * freqMul) + freqAdd; 
-	    freq = (int32)(unit->m_cpstoinc * freqin);
-	    
-	    phase = unit->m_phase[i];
-	
-	    for (int j = 0; j < inNumSamples; ++j){
-		out[j] += (lookupi1(table0, table1, phase, lomask) * startampin);
-		phase += freq;
-		startampin += ampslope;
-	    };
-	    unit->m_phase[i] = phase;
 	    }
-	
-	unit->m_framestart = frame;
-
-	delete [] partials;
+	unit->m_freqMul = freqMul;
+	unit->m_freqAdd = freqAdd;
 }
 
-
-/////////////////////////////////////////////////////////////////
+///////////// New AtsNoiSynth
 
 void AtsNoiSynth_Ctor(AtsNoiSynth* unit)
 {
 	SETCALC(AtsNoiSynth_next);
-	int i;
 	int tableSizeSin = ft->mSineSize;
-	int numPartials = unit->m_numPartials = (int)ZIN0(1);
-	unit->m_partialStart = (int)ZIN0(2);
-	unit->m_partialSkip = (int)ZIN0(3);
-	unit->m_framestart = ZIN0(4);
-	unit->m_numBands = (int)ZIN0(9);
-	unit->m_bandStart = (int)ZIN0(10);
-	unit->m_bandSkip = (int)ZIN0(11);
-	//int numBands = (int)unit->m_numBands;
+	unit->m_numPartials = (int)IN0(1);
+	unit->m_partialStart = (int)IN0(2);
+	unit->m_partialSkip = (int)IN0(3);
+	unit->m_sinePct = IN0(5);
+	unit->m_noisePct = IN0(6);
+	unit->m_freqMul = IN0(7);
+	unit->m_freqAdd = IN0(8);
+	unit->m_numBands = (int)IN0(9);
+	unit->m_bandStart = (int)IN0(10);
+	unit->m_bandSkip = (int)IN0(11);
 	unit->m_lomask = (tableSizeSin - 1) << 3; 
 	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
-	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.; 
-	
-	// this allocates space to save phase data for each partial... 
-	
-	unit->m_phase = (int32*)RTAlloc(unit->mWorld, numPartials * sizeof(int32));
-	unit->phaseinit = 1;
-	unit->m_fbufnum = -1e9f;
+	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
 
 	float atsBandFreq[25] = ATS_BAND_WIDTH;
 	float atsCenterFreq[25] = ATS_CENTER_FREQ;
-
-	for (i = 0; i < 25; i++){
+	RGET
+	for (int i = 0; i < 25; i++){
 	    unit->m_atsBandFreq[i] = atsBandFreq[i];
-	    unit->m_atsCenterFreq[i] = atsCenterFreq[i];
+	    unit->m_atsCenterFreq[i] = (int32)(unit->m_cpstoinc * atsCenterFreq[i]);
 	    unit->m_counter[i] = 0;
 	    unit->m_level[i] = unit->mParent->mRGen->frand2();
 	    unit->m_slope[i] = 0.f;
 	    }
-		
-	unit->m_sinlomask = (tableSizeSin - 1) << 3; 
-	unit->m_sinradtoinc = tableSizeSin * (rtwopi * 65536.); 
-	unit->m_sincpstoinc = tableSizeSin * SAMPLEDUR * 65536.; 
-	
+	RPUT
+	unit->phaseinit = 1;
+	unit->m_fbufnum = -1e9f;
 	ClearUnitOutputs(unit, 1);
-
 }
 
 void AtsNoiSynth_Dtor(AtsNoiSynth* unit)
 {	
 	RTFree(unit->mWorld, unit->m_phase);
+	RTFree(unit->mWorld, unit->m_lastamp);
+	RTFree(unit->mWorld, unit->m_lastfreq);
+	RTFree(unit->mWorld, unit->m_lastnoise);
+	RTFree(unit->mWorld, unit->m_partials);
+	RTFree(unit->mWorld, unit->m_bands);
+	RTFree(unit->mWorld, unit->m_tempNoise);
 }
+
 
 void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 {
-	if(unit->phaseinit > 0)
-	{
-	    for (int i = 0; i < unit->m_numPartials; i++){
+	int thisPartial, dataPos1, dataPos2, partialOffset;
+	float rScale, amp1, amp2, freq1, freq2, noise1, noise2, amp, freq, noise, newamp, newfreq, ampslope, freqslope, noiseslope;
+	int32 ifreq, phase;
+	
+	ClearUnitOutputs(unit, inNumSamples); 
+	// get the buffer that stores the ATS data 
+	float fbufnum = IN0(0);
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
+	float *out = OUT(0);
+	
+	// get the requested frames and other inputs 
+	float frame = sc_mod(IN0(4), 1.0f) * (float)fileNumFrames; // frame should be between 0 and 1	
+
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames 
+	CALC_FRAME_OFFSETS
+
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+	
+	float nextSinePct = IN0(5);
+	float nextNoisePct = IN0(6);
+	
+	float sinePct = unit->m_sinePct;
+	float noisePct = unit->m_noisePct;
+	float sinePctSlope = CALCSLOPE(nextSinePct, sinePct);
+	float noisePctSlope = CALCSLOPE(nextNoisePct, noisePct);
+	
+	float nextFreqMul = IN0(7);
+	float nextFreqAdd = IN0(8);
+
+	float freqMul = unit->m_freqMul;
+	float freqAdd = unit->m_freqAdd;
+	float freqMulSlope = CALCSLOPE(nextFreqMul, freqMul);
+	float freqAddSlope = CALCSLOPE(nextFreqAdd, freqAdd);
+
+	// if this is the first time through the 'next' function, allocate the pointers, and zero out if needed, fill the initial data 
+	if(unit->phaseinit > 0){
+	    unit->m_totalPartials = unit->m_numPartials;
+	    for (int j = 0; j < unit->m_numPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		if (aPartial > fileNumPartials) 
+		    --unit->m_totalPartials;
+	    }   
+
+	    unit->m_totalBands = unit->m_numBands;
+	    for (int i = 0; i < unit->m_numBands; ++i){
+		int aBand = unit->m_bandStart + (unit->m_bandSkip * i);
+		if (aBand > 25) 
+		    --unit->m_totalBands;
+	    }    
+
+	    unit->m_phase = (int32*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int32));
+	    unit->m_lastamp = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_lastfreq = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_lastnoise = (float*)RTAlloc(unit->mWorld, unit->m_totalBands * sizeof(float));
+	    unit->m_partials = (int*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int));
+	    unit->m_bands = (int*)RTAlloc(unit->mWorld, unit->m_totalBands * sizeof(int));
+	    unit->m_tempNoise = (float*)RTAlloc(unit->mWorld, inNumSamples * sizeof(float));
+
+	    for (int j = 0; j < unit->m_totalPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		unit->m_partials[j] = aPartial;
+	    }   
+
+	    for (int i = 0; i < unit->m_totalBands; ++i){
+		int aBand = unit->m_bandStart + (unit->m_bandSkip * i);
+		unit->m_bands[i] = aBand;
+	    } 
+
+	    unit->m_rScale = rScale = 1 / (bufData[3] * 0.33166610955984); 
+	    for (int i = 0; i < unit->m_totalPartials; i++){
+		thisPartial = unit->m_partials[i];
 		unit->m_phase[i] = 0.;
+		partialOffset = (thisPartial * offset1);
+		dataPos1 = block1 + partialOffset;
+		dataPos2 = block2 + partialOffset;
+		freq1 = atsData[dataPos1 + 1];
+		freq2 = atsData[dataPos2 + 1];
+		unit->m_lastfreq[i] = (lininterp(framePct, freq1, freq2) * freqMul) + freqAdd;
+		amp1 = atsData[dataPos1]; 
+		amp2 = atsData[dataPos2];
+		unit->m_lastamp[i] = lininterp(framePct, amp1, amp2);
+		}
+	    for (int i = 0; i < unit->m_totalBands; i++) {
+		int bandnum = unit->m_bands[i];
+		int dataOffset = (fileNumPartials * offset1) + bandnum;
+		noise1 = atsData[block1 + dataOffset]; // 1 + 10 slots of header
+		noise2 = atsData[block2 + dataOffset];
+		unit->m_lastnoise[i] = sqrt(lininterp(framePct, noise1, noise2) * rScale);
 		}
 	    unit->phaseinit = -1;
 	}
-	float fbufnum  = ZIN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	}
-	SndBuf *buf = unit->m_buf;
-	float *bufData __attribute__((__unused__)) = buf->data; 
-	float *out = OUT(0);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	float* winSize = bufData + 3;
-	int ampDataStart = 4;
-	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	// leave phase out for now
-	//int phaseDataStart = (((int)filePartials[0] * (int)fileFrames[0]) * 2) + 4;
-	int noiseDataStart = (((int)filePartials[0] * (int)fileFrames[0]) * 3) + 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * (numFrames - 1);
-	float frame = IN0(4);
-	float frameend = frame * (numFrames - 1);
-	// get the frame vals for the freq data
-	int frameround1 = (int)frameend;
-	int frameround2 = 1;
-	// get frames vals for amp data (interpolated over the k-rate)
-	int startframeround1 = (int)framestart;
-	int startframeround2 = 1;
-	
-	float framepct = frameend - (float)frameround1;
-	float startframepct = framestart - (float)startframeround1;
-	
-	int numPartials = unit->m_numPartials;
-	int partialStart = unit->m_partialStart;
-	int partialSkip = unit->m_partialSkip;
-	int numBands = unit->m_numBands;
-	int bandStart = unit->m_bandStart;
-	int bandSkip = unit->m_bandSkip;
-	float sinePct = IN0(5);
-	float noisePct = IN0(6);
-	float freqMul = IN0(7);
-	float freqAdd = IN0(8);
-	int totalPartials = numPartials;
-	int totalBands = numBands;
-	
-	int *partials = new int[totalPartials]; //this will be the partials to synthesize
-	int *bands = new int[totalBands]; //this will be the bands to synthesize
-	
-	//frameround2 = frameround1 + 1;
-	//startframeround2 = startframeround1 + 1;
 
-	if ((frameround1 + 1) > numFrames) frameround2 = 0;	
-	if ((startframeround1 + 1) > numFrames) startframeround2 = 0;
+	int *partials = unit->m_partials;
+	int totalPartials = unit->m_totalPartials;
+	int *bands = unit->m_bands;
+	int totalBands = unit->m_totalBands;
 	
-	if (!bufData) { 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-		
-	//fill partials with the correct partials, check if partials requested are actually present
-	
-	for (int i = 0; i < numPartials; ++i){
-	    int aPartial = partialStart + (partialSkip * i);
-	    if (aPartial < (int)filePartials[0]) 
-		partials[i] = aPartial;
-		else
-		--totalPartials;
-	}    
-	
-    	ClearUnitOutputs(unit, inNumSamples);
-
+	// the sine table 
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
 	int32 lomask = unit->m_lomask;
-	    
-	// this loop calulates the partial sample values for the sins, stores them in an array
+
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
 	for (int i = 0; i< totalPartials; ++i){
+	    thisPartial = partials[i];
+	    partialOffset = (thisPartial * offset1);
+	    dataPos1 = block1 + partialOffset;
+	    dataPos2 = block2 + partialOffset;
+	    amp1 = atsData[dataPos1];
+	    amp2 = atsData[dataPos2];
+	    freq1 = atsData[dataPos1 + 1];
+	    freq2 = atsData[dataPos2 + 1];
+	    freqMul = unit->m_freqMul; //grab the original value from the struct
+	    freqAdd = unit->m_freqAdd; 
 	    
-	    int ampData = ampDataStart + (numFrames * partials[i]);
-	    int freqData = freqDataStart + (numFrames * partials[i]);
+	    ADD_SIN_PARTIALS
 	    
-	    float* startatsAmp1 = bufData + (int)(ampData + startframeround1); //this is the position in the file of the amp
-
-	    float* endatsAmp1 = bufData + (int)(ampData + frameround1); 
-	    	    
-	    float startampin = lininterp(startframepct, startatsAmp1[0], startatsAmp1[startframeround2]) * sinePct;
-	    float endampin = lininterp(framepct, endatsAmp1[0], endatsAmp1[frameround2]) * sinePct;
-	    float ampslope = CALCSLOPE(endampin, startampin);
-	    
-	    float* atsFreq1 = bufData + (int)(freqData + frameround1); //this is the position in the file of the freq
-
-	    float freqin = ((lininterp(framepct, atsFreq1[0], atsFreq1[frameround2]) * freqMul) + freqAdd);
-	    int32 freq = (int32)(unit->m_cpstoinc * freqin);
-	    
-	    int32 phase = unit->m_phase[i];
-	
-	    for (int j = 0; j < inNumSamples; ++j){
-		out[j] += (lookupi1(table0, table1, phase, lomask) * startampin);
-		phase += freq;
-		startampin += ampslope;
-	    };
-	    unit->m_phase[i] = phase;
 	    }
+	unit->m_freqMul = freqMul;
+	unit->m_freqAdd = freqAdd;
+	    
+	rScale = unit->m_rScale;
 	
-	for (int i = 0; i < numBands; ++i){
-	    int aBand = bandStart + (bandSkip * i);
-	    if (aBand < 25) 
-		bands[i] = aBand;
-		else
-		--totalBands;
-	}    
+	RGET
 	
-	float scale = (winSize[0] * 0.33166610955984); 
-	
+	float *tempNoise = unit->m_tempNoise;
 	//calculate the noise
-	for (int i = 0; i < totalBands; i++){
-	    int bandnum = bands[i];
+	if(fileType > 2) {
+	    for (int i = 0; i < inNumSamples; i++) tempNoise[i] = 0.f;
+	    for (int i = 0; i < totalBands; i++){
+		int bandnum = bands[i];
+		float noiseStart = unit->m_lastnoise[i];
+		int dataOffset = (fileNumPartials * offset1) + bandnum;
+		noise1 = atsData[block1 + dataOffset]; 
+		noise2 = atsData[block2 + dataOffset];
+		unit->m_lastnoise[i] = noise = sqrt(lininterp(framePct, noise1, noise2) * rScale);
+		noiseslope = CALCSLOPE(noise, noiseStart);
 		
-	    int noiseData = noiseDataStart + ((int)numFrames * bandnum);
-	    float* startatsnoise1 = bufData + (int)(noiseData + startframeround1); //this is the position in the file of the noise
-	    float* endatsnoise1 = bufData + (int)(noiseData + frameround1); 
-	    float startnoisein = sqrt((lininterp(startframepct, startatsnoise1[0], startatsnoise1[startframeround2]) * noisePct) / scale);
-	    float endnoisein = sqrt((lininterp(framepct, endatsnoise1[0], endatsnoise1[frameround2]) * noisePct) / scale);
-	    float noiseslope = CALCSLOPE(endnoisein, startnoisein); 
-	    
-	    int32 sinphase = unit->m_sinphase[i];
-		
-	    float noisefreq = unit->m_atsBandFreq[bandnum];
-	    float sinfreq = unit->m_atsCenterFreq[bandnum];
-	    int32 freq = (int32)(unit->m_sincpstoinc * sinfreq); 
+		int32 sinphase = unit->m_sinphase[i];
+		    
+		float noisefreq = unit->m_atsBandFreq[bandnum];
+		int32 freq = unit->m_atsCenterFreq[bandnum];
 
-	    float level = unit->m_level[i];
-	    float slope = unit->m_slope[i];
-	    int32 counter = unit->m_counter[i];
-		
-	    RGET
-		
-	    for (int j = 0; j < inNumSamples; j++){
-		if (counter<=0) {
-		    counter = (int32)(unit->mRate->mSampleRate / sc_max(noisefreq, .001f));
-		    counter = sc_max(1, counter);
-		    float nextlevel = frand2(s1, s2, s3);
-		    slope = (nextlevel - level) / counter;
-		} else --counter;
-		out[j] += lookupi1(table0, table1, sinphase, lomask) * startnoisein * level;
-		startnoisein += noiseslope;
-		level += slope;
-    		sinphase += freq;
+		float level = unit->m_level[i];
+		float slope = unit->m_slope[i];
+		int32 counter = unit->m_counter[i];
+		float nextlevel = 0.;
+		for (int j = 0; j < inNumSamples; j++){
+		    if (counter<=0) {
+			counter = (int32)(unit->mRate->mSampleRate / sc_max(noisefreq, .001f));
+			counter = sc_max(1, counter);
+			nextlevel = frand2(s1, s2, s3);
+			slope = (nextlevel - level) / counter;
+		    } else --counter;
+		    tempNoise[j] += lookupi1(table0, table1, sinphase, lomask) * level * noiseStart;
+		    noiseStart += noiseslope;
+		    level += slope;
+		    sinphase += freq;
+		    }
+		unit->m_level[i] = level;
+		unit->m_slope[i] = slope;
+		unit->m_counter[i] = counter;
+		unit->m_sinphase[i] = sinphase;
 		}
-		
-	    RPUT
-	    unit->m_level[i] = level;
-	    unit->m_slope[i] = slope;
-	    unit->m_counter[i] = counter;
-	    unit->m_sinphase[i] = sinphase;
+	    } else {
+	    Print("This ATS file doesn't appear to have noise data. Use AtsSynth\n");
 	    }
+	   
+	RPUT
 	
-    	unit->m_framestart = frame;
-		delete [] partials;
-		delete [] bands;
+	// NOW - scale by the sinPct and noisePct (saves TONS of multiplies and adds this way)
+	
+	for (int i = 0; i < inNumSamples; i++){
+	    out[i] = (out[i] * sinePct) + (tempNoise[i] * noisePct);
+	    sinePct += sinePctSlope;
+	    noisePct += noisePctSlope;
+	    }
+	unit->m_sinePct = sinePct;
+	unit->m_noisePct = noisePct;
 }
-
-/////////////////////////////////////////////////////////////////
 
 void AtsFreq_Ctor(AtsFreq* unit)
 {
 	SETCALC(AtsFreq_next);
-	unit->m_partialNum = (int)ZIN0(1);
 	unit->m_fbufnum = -1e9f;
-	unit->m_framestart = ZIN0(2);
-	ClearUnitOutputs(unit, 1);
-
+	unit->m_init = -1;
+	unit->m_partial = IN0(1);
+	AtsFreq_next(unit, 1);
 }
+
 
 void AtsFreq_next(AtsFreq *unit, int inNumSamples)
 {
-
-	float fbufnum  = ZIN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	    }
-	SndBuf *buf = unit->m_buf;
-	float *bufData __attribute__((__unused__)) = buf->data; 
+	// get the buffer that stores the ATS data 
+	float fbufnum = IN0(0);
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
 	float *out = OUT(0);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * (numFrames - 1);
-	float frame = IN0(2);
-	float frameend = frame * (numFrames - 1);
-	int startframeround1 = (int)framestart;
-	int startframeround2;
-	float startframepct = framestart-(float)startframeround1;
-	int endframeround1 = (int)frameend;
-	int endframeround2;
-	float endframepct = frameend-(float)endframeround1;
+	
+	// get the requested frames and other inputs
+	float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+	
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	CALC_FRAME_OFFSETS
+
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
 		
-	int partialNum = unit->m_partialNum;
+	int dataPos1, dataPos2, partialOffset;
+	float freq1, freq2, freq, freqslope, nextFreq;
 	
-	startframeround2 = startframeround1 + 1;
-	endframeround2 = endframeround1 + 1;
-	
-	if (partialNum >= filePartials[0]){ 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-	    
-	if (startframeround2 > numFrames) startframeround2 = startframeround1;
-	if (endframeround2 > numFrames) endframeround2 = endframeround1;
-	
-	if (!bufData) { 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-	
-	int freqData = freqDataStart + (numFrames * partialNum);
-	int startfreqData1 = freqData + startframeround1;
-	int startfreqData2 = freqData  + startframeround2;
-	float* startatsFreq1 = bufData + startfreqData1; //this is the position in the file of the freq
-	float* startatsFreq2 = bufData + startfreqData2;
-	float startfreqin = (startatsFreq1[0] + ((startatsFreq2[0] - startatsFreq1[0]) * startframepct));
-	
-	int endfreqData1 = freqData + endframeround1;
-	int endfreqData2 = freqData + endframeround2;
-	float* endatsFreq1 = bufData + endfreqData1; //this is the position in the file of the freq
-	float* endatsFreq2 = bufData + endfreqData2;
-	float endfreqin = (endatsFreq1[0] + ((endatsFreq2[0] - endatsFreq1[0]) * endframepct));
-		
-	float freqslope = CALCSLOPE(endfreqin, startfreqin);
-	
-	for (int j = 0; j < inNumSamples; ++ j){
-	    out[j] = startfreqin;
-	    startfreqin += freqslope;
+	if(unit->m_init < 0){
+	    partialOffset = (unit->m_partial * offset1);
+	    dataPos1 = block1 + partialOffset;
+	    dataPos2 = block2 + partialOffset;	
+	    freq1 = atsData[dataPos1 + 1];
+	    freq2 = atsData[dataPos2 + 1];
+	    unit->m_lastfreq = lininterp(framePct, freq1, freq2);
+	    unit->m_init = 1;
 	    }
-	
-	unit->m_framestart = frame;
+
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
+
+	partialOffset = (unit->m_partial * offset1);
+	dataPos1 = block1 + partialOffset;
+	dataPos2 = block2 + partialOffset;
+	freq1 = atsData[dataPos1 + 1];
+	freq2 = atsData[dataPos2 + 1];
+	freq = unit->m_lastfreq;
+	nextFreq = lininterp(framePct, freq1, freq2);
+	freqslope = CALCSLOPE(nextFreq, freq);
+	for(int i = 0; i < inNumSamples; i++){
+	    out[i] = freq;
+	    freq += freqslope;
+	    }
+	unit->m_lastfreq = freq;
+
 }
-/////////////////////////////////////////////////////////////////
 
 void AtsAmp_Ctor(AtsAmp* unit)
 {
 	SETCALC(AtsAmp_next);
-	unit->m_partialNum = (int)ZIN0(1);
 	unit->m_fbufnum = -1e9f;
-	ClearUnitOutputs(unit, 1);
-	unit->m_framestart = ZIN0(2);
-
+	unit->m_init = -1;
+	unit->m_partial = IN0(1);
+	AtsAmp_next(unit, 1);
 }
+
 
 void AtsAmp_next(AtsAmp *unit, int inNumSamples)
 {
-
-	float fbufnum  = ZIN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	}
-	SndBuf *buf = unit->m_buf;
-	float *bufData __attribute__((__unused__)) = buf->data; 
+	// get the buffer that stores the ATS data 
+	float fbufnum = IN0(0);
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
 	float *out = OUT(0);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	int ampDataStart = 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * ((int)numFrames - 1);
-	float frame = IN0(2);
-	float frameend = frame * ((int)numFrames - 1);
-	int startframeround1 = (int)framestart;
-	int startframeround2;
-	float startframepct = framestart-(float)startframeround1;
-	int endframeround1 = (int)frameend;
-	int endframeround2;
-	float endframepct = frameend - (float)endframeround1;
-	int partialNum = unit->m_partialNum;
+	
+	// get the requested frames and other inputs
+	float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+	
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	CALC_FRAME_OFFSETS
 
-	
-	startframeround2 = startframeround1 + 1;
-	endframeround2 = endframeround1 + 1;
-	
-	if (partialNum >= filePartials[0]){ 
-		unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
 		
-	if (startframeround2 > numFrames) startframeround2 = startframeround1;
-	if (endframeround2 > numFrames) endframeround2 = endframeround1;
+	int dataPos1, dataPos2, partialOffset;
+	float amp1, amp2, amp, ampslope, nextAmp;
 	
-	if (!bufData) { 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-		
-	int ampData = ampDataStart + (numFrames * partialNum);
-	int startampData1 = ampData + startframeround1;
-	int startampData2 = ampData + startframeround2;
-	float* startatsAmp1 = bufData + startampData1; //this is the position in the file of the amp
-	float* startatsAmp2 = bufData + startampData2;
-	float startampin = (startatsAmp1[0] + ((startatsAmp2[0]- startatsAmp1[0]) * startframepct));
-
-	int endampData1 = ampData + endframeround1;
-	int endampData2 = ampData + endframeround2;
-	float* endatsAmp1 = bufData + endampData1; //this is the position in the file of the amp
-	float* endatsAmp2 = bufData + endampData2;
-	float endampin = (endatsAmp1[0] + ((endatsAmp2[0]- endatsAmp1[0]) * endframepct));
-		   
-	float ampin = startampin;
-	float ampslope = CALCSLOPE(endampin, startampin);
-	for (int j = 0; j < inNumSamples; ++ j){
-	    out[j] = ampin;
-	    ampin += ampslope;
+	if(unit->m_init < 0){
+	    partialOffset = (unit->m_partial * offset1);
+	    dataPos1 = block1 + partialOffset;
+	    dataPos2 = block2 + partialOffset;	
+	    amp1 = atsData[dataPos1];
+	    amp2 = atsData[dataPos2];
+	    unit->m_lastamp = lininterp(framePct, amp1, amp2);
+	    unit->m_init = 1;
 	    }
-	
-	unit->m_framestart = frame;
-}
 
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
 
-void AtsNoise_Ctor(AtsNoise* unit)
-{
-	SETCALC(AtsNoise_next);
-	unit->m_bandNum = (int)IN0(1);
-	unit->m_fbufnum = -1e9f;
-	ClearUnitOutputs(unit, 1);
-	unit->m_framestart = IN0(2);
-
-}
-
-void AtsNoise_next(AtsNoise *unit, int inNumSamples)
-{
-
-	float fbufnum  = ZIN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	}
-	SndBuf *buf = unit->m_buf;
-	float *bufData __attribute__((__unused__)) = buf->data; 
-	float *out = OUT(0);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	int noiseDataStart = (((int)filePartials[0] * (int)fileFrames[0]) * 3) + 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * (numFrames - 1);
-	float frame = IN0(2);
-	float frameend = frame * (numFrames - 1);
-	int startframeround1 = (int)framestart;
-	int startframeround2;
-	float startframepct = framestart-(float)startframeround1;
-	int endframeround1 = (int)frameend;
-	int endframeround2;
-	float endframepct = frameend - (float)endframeround1;
-	int bandNum = unit->m_bandNum;
-
-	
-	startframeround2 = startframeround1 + 1;
-	endframeround2 = endframeround1 + 1;
-	
-	if (bandNum >= 25){ 
-		unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-		
-	if (startframeround2 > numFrames) startframeround2 = startframeround1;
-	if (endframeround2 > numFrames) endframeround2 = endframeround1;
-	
-	if (!bufData) { 
-                unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-	
-	int noiseData = noiseDataStart + (numFrames * bandNum);		
-	int startnoiseData1 =  noiseData + startframeround1;
-	int startnoiseData2 = noiseData + startframeround2;
-	float* startatsnoise1 = bufData + startnoiseData1; //this is the position in the file of the noise
-	float* startatsnoise2 = bufData + startnoiseData2;
-	float startnoisein = (startatsnoise1[0] + ((startatsnoise2[0]- startatsnoise1[0]) * startframepct));
-
-	int endnoiseData1 = noiseData + endframeround1;
-	int endnoiseData2 = noiseData + endframeround2;
-	float* endatsnoise1 = bufData + endnoiseData1; //this is the position in the file of the noise
-	float* endatsnoise2 = bufData + endnoiseData2;
-	float endnoisein = (endatsnoise1[0] + ((endatsnoise2[0]- endatsnoise1[0]) * endframepct));
-		   
-	float noisein = startnoisein;
-	float noiseslope = CALCSLOPE(endnoisein, startnoisein);
-	for (int j = 0; j < inNumSamples; ++ j){
-	    out[j] = noisein;
-	    noisein += noiseslope;
+	partialOffset = (unit->m_partial * offset1);
+	dataPos1 = block1 + partialOffset;
+	dataPos2 = block2 + partialOffset;
+	amp1 = atsData[dataPos1];
+	amp2 = atsData[dataPos2];
+	amp = unit->m_lastamp;
+	nextAmp = lininterp(framePct, amp1, amp2);
+	ampslope = CALCSLOPE(nextAmp, amp);
+	for(int i = 0; i < inNumSamples; i++){
+	    out[i] = amp;
+	    amp += ampslope;
 	    }
-	
-	unit->m_framestart = frame;
+	unit->m_lastamp = amp;
+
 }
 
 
 void AtsParInfo_Ctor(AtsParInfo* unit)
 {
 	SETCALC(AtsParInfo_next);
-	unit->m_partialNum = (int)ZIN0(1);
-	unit->m_framestart = ZIN0(2);
 	unit->m_fbufnum = -1e9f;
-	ClearUnitOutputs(unit, 1);
-
+	unit->m_init = -1;
+	unit->m_partial = IN0(1);
+	AtsParInfo_next(unit, 1);
 }
+
 
 void AtsParInfo_next(AtsParInfo *unit, int inNumSamples)
 {
+	// get the buffer that stores the ATS data 
+	float fbufnum = IN0(0);
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
+	float *ampOut = OUT(0);
+	float *freqOut = OUT(1);
+	
+	// get the requested frames and other inputs
+	float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+	
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	CALC_FRAME_OFFSETS
 
-	float fbufnum  = ZIN0(0);
-	if (fbufnum != unit->m_fbufnum) {
-		uint32 bufnum = (int)fbufnum;
-		World *world = unit->mWorld;
-		if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		unit->m_fbufnum = fbufnum;
-		unit->m_buf = world->mSndBufs + bufnum;
-	}
-	SndBuf *buf = unit->m_buf;
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+		
+	int dataPos1, dataPos2, partialOffset;
+	float amp1, amp2, amp, ampslope, nextAmp;
+	float freq1, freq2, freq, freqslope, nextFreq;
+	
+	if(unit->m_init < 0){
+	    partialOffset = (unit->m_partial * offset1);
+	    dataPos1 = block1 + partialOffset;
+	    dataPos2 = block2 + partialOffset;	
+	    amp1 = atsData[dataPos1];
+	    amp2 = atsData[dataPos2];
+	    unit->m_lastamp = lininterp(framePct, amp1, amp2);
+	    freq1 = atsData[dataPos1 + 1];
+	    freq2 = atsData[dataPos2 + 1];
+	    unit->m_lastfreq = lininterp(framePct, freq1, freq2);
+	    unit->m_init = 1;
+	    }
+
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
+
+	partialOffset = (unit->m_partial * offset1);
+	dataPos1 = block1 + partialOffset;
+	dataPos2 = block2 + partialOffset;
+	amp1 = atsData[dataPos1];
+	amp2 = atsData[dataPos2];
+	amp = unit->m_lastamp;
+	nextAmp = lininterp(framePct, amp1, amp2);
+	ampslope = CALCSLOPE(nextAmp, amp);
+	freq1 = atsData[dataPos1 + 1];
+	freq2 = atsData[dataPos2 + 1];
+	freq = unit->m_lastfreq;
+	nextFreq = lininterp(framePct, freq1, freq2);
+	freqslope = CALCSLOPE(nextFreq, freq);
+
+	for(int i = 0; i < inNumSamples; i++){
+	    ampOut[i] = amp;
+	    freqOut[i] = freq;	    
+	    amp += ampslope;
+	    freq += freqslope;
+	    }
+	unit->m_lastamp = amp;
+	unit->m_lastfreq = freq;
+
+}
+
+void AtsNoise_Ctor(AtsNoise* unit)
+{
+	SETCALC(AtsAmp_next);
+	unit->m_fbufnum = -1e9f;
+	unit->m_init = -1;
+	unit->m_band = IN0(1);
+	AtsNoise_next(unit, 1);
+}
+
+
+void AtsNoise_next(AtsNoise *unit, int inNumSamples)
+{
+	// get the buffer that stores the ATS data 
+	float fbufnum = IN0(0);
+	
+	GET_ATS_BUF
+	
+	// calculate offsets based on file type 
+	int offset1 = 2;
+	int offset2 = 1;
+	if((fileType == 2) || (fileType == 4)) offset1 = 3;
+	if(fileType >2) offset2 = 26;
+	
+	// set-up the output pointer 
+	float *out = OUT(0);
+	
+	// get the requested frames and other inputs
+	float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+	
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	CALC_FRAME_OFFSETS
+
+	int block = ((fileNumPartials * offset1) + offset2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+		
+	int dataPos1, dataPos2, dataOffset;
+	float noise1, noise2, noise, noiseslope, nextNoise;
+
+	if(unit->m_init < 0){
+	    dataOffset = (fileNumPartials * offset1) + unit->m_band;
+	    dataPos1 = block1 + dataOffset;
+	    dataPos2 = block2 + dataOffset;	
+	    noise1 = atsData[dataPos1];
+	    noise2 = atsData[dataPos2];
+	    unit->m_lastnoise = lininterp(framePct, noise1, noise2);
+	    unit->m_init = 1;
+	    }
+
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
+
+	dataOffset = (fileNumPartials * offset1) + unit->m_band;
+	dataPos1 = block1 + dataOffset;
+	dataPos2 = block2 + dataOffset;	
+	noise1 = atsData[dataPos1];
+	noise2 = atsData[dataPos2];
+	noise = unit->m_lastnoise;
+	nextNoise = lininterp(framePct, noise1, noise2);
+	noiseslope = CALCSLOPE(nextNoise, noise);
+	for(int i = 0; i < inNumSamples; i++){
+	    out[i] = noise;
+	    noise += noiseslope;
+	    }
+	unit->m_lastnoise = noise;
+
+}
+
+void PVSynth_Ctor(PVSynth* unit)
+{
+	SETCALC(PVSynth_next);
+	int tableSizeSin = ft->mSineSize;
+	unit->m_numPartials = (int)IN0(1);
+	unit->m_partialStart = (int)IN0(2);
+	unit->m_partialSkip = (int)IN0(3);
+	unit->m_lomask = (tableSizeSin - 1) << 3; 
+	unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
+	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
+	unit->phaseinit = 1;
+	unit->m_fbufnum = -1e9f;
+	unit->m_freqMul = IN0(5);
+	unit->m_freqAdd = IN0(6);
+	ClearUnitOutputs(unit, 1);
+	PVSynth_next(unit, 1);
+}
+
+void PVSynth_Dtor(PVSynth* unit)
+{	
+	RTFree(unit->mWorld, unit->m_phase);
+	RTFree(unit->mWorld, unit->m_lastamp);
+	RTFree(unit->mWorld, unit->m_lastfreq);
+	RTFree(unit->mWorld, unit->m_partials);
+}
+
+
+void PVSynth_next(PVSynth *unit, int inNumSamples)
+{
+	ClearUnitOutputs(unit, inNumSamples); 
+	// get the buffer that stores the PV data 
+	float fbufnum = IN0(0);
+
+	if (fbufnum != unit->m_fbufnum) { 
+		uint32 bufnum = (int)fbufnum; 
+		World *world = unit->mWorld; 
+		if (bufnum >= world->mNumSndBufs) bufnum = 0; 
+		unit->m_fbufnum = fbufnum; 
+		unit->m_buf = world->mSndBufs + bufnum; 
+	    } 
+	SndBuf *buf = unit->m_buf; 
 	float *bufData __attribute__((__unused__)) = buf->data; 
-	float *out1 = OUT(0);
-	float *out2 = OUT(1);
-	float* filePartials = bufData + 1;
-	float* fileFrames = bufData + 2;
-	int ampDataStart = 4;
-	int freqDataStart = ((int)filePartials[0] * (int)fileFrames[0]) + 4;
-	int numFrames = (int)fileFrames[0];
-	float framestart = unit->m_framestart * ((int)numFrames - 1);
-	float frame = IN0(2);
-	float frameend = frame * ((int)numFrames - 1);
-	int startframeround1 = (int)framestart;
-	int startframeround2;
-	float startframepct = framestart-(float)startframeround1;
-
-	int endframeround1 = (int)frameend;
-	int endframeround2;
-	float endframepct = frameend-(float)endframeround1;
-		
-	int partialNum = unit->m_partialNum;
-
-	
-	startframeround2 = startframeround1 + 1;
-	endframeround2 = endframeround1 + 1;
-	
-	if (partialNum >= filePartials[0]){ 
-		unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-		
-	if (startframeround2 > numFrames) startframeround2 = startframeround1;
-	if (endframeround2 > numFrames) endframeround2 = endframeround1;
-	
 	if (!bufData) { 
                 unit->mDone = true; 
-		ClearUnitOutputs(unit, inNumSamples); 
-		return;
-		};
-	
-	int partialFrame = numFrames * partialNum;
-	int startampData1 = ampDataStart + (partialFrame + startframeround1);
-	int startampData2 = ampDataStart + (partialFrame + startframeround2);
-	float* startatsAmp1 = bufData + startampData1; //this is the position in the file of the amp
-	float* startatsAmp2 = bufData + startampData2;
-	float startampin = (startatsAmp1[0] + ((startatsAmp2[0] - startatsAmp1[0]) * startframepct));
+		return; 
+		}; 
+	float frameBSize = bufData[8];
+	int nBins = (int)(bufData[6] * 0.5) + 1; //(int)frameBSize >> 3;
+	float fileSize = bufData[2]; 
+	int nFrames = (int)(fileSize / frameBSize) - 1;
+	float* pvData = bufData + 13; //headerOffset; 
 
-	int endampData1 = ampDataStart + (partialFrame + endframeround1);
-	int endampData2 = ampDataStart + (partialFrame + endframeround2);
-	float* endatsAmp1 = bufData + endampData1; //this is the position in the file of the amp
-	float* endatsAmp2 = bufData + endampData2;
-	float endampin = (endatsAmp1[0] + ((endatsAmp2[0] - endatsAmp1[0]) * endframepct));
+	// set-up the output pointer 
+	float *out = OUT(0);
+	// get the requested frames and other inputs
 	
-	float ampslope = CALCSLOPE(endampin, startampin);
+	float frame = sc_mod(IN0(4), 1.0f) * (float)nFrames; // frame input should be between 0 and 1	
+	float nextFreqMul = IN0(5);
+	float nextFreqAdd = IN0(6);
 	
-	int startfreqData1 = freqDataStart + (partialFrame + startframeround1);
-	int startfreqData2 = freqDataStart + (partialFrame + startframeround2);
-	float* startatsFreq1 = bufData + startfreqData1; //this is the position in the file of the amp
-	float* startatsFreq2 = bufData + startfreqData2;
-	float startfreqin = (startatsFreq1[0] + ((startatsFreq2[0] - startatsFreq1[0]) * startframepct));
-
-	int endfreqData1 = freqDataStart + (partialFrame + endframeround1);
-	int endfreqData2 = freqDataStart + (partialFrame + endframeround2);
-	float* endatsFreq1 = bufData + endfreqData1; //this is the position in the file of the amp
-	float* endatsFreq2 = bufData + endfreqData2;
-	float endfreqin = (endatsFreq1[0] + ((endatsFreq2[0]- endatsFreq1[0]) * endframepct));
-			   
-	float freqslope = CALCSLOPE(endfreqin, startfreqin);
+	float freqMul = unit->m_freqMul;
+	float freqAdd = unit->m_freqAdd;
+	float freqMulSlope = CALCSLOPE(nextFreqMul, freqMul);
+	float freqAddSlope = CALCSLOPE(nextFreqAdd, freqAdd);
 	
-	for (int j = 0; j < inNumSamples; ++ j){
-	    out1[j] = startampin;
-	    out2[j] = startfreqin;
-	    startampin += ampslope;
-	    startfreqin += freqslope;
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	int iFrame1 = (int)frame;
+	int iFrame2 = iFrame1 + 1; 
+	float framePct = frame - (float)iFrame1; 
+	if(iFrame2 >= nFrames){ 
+	    iFrame2 = iFrame1; 
+	    framePct = 0.; 
 	    }
+	int block = (nBins * 2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+		
+	int thisPartial, dataPos1, dataPos2, partialOffset;
+	float amp1, amp2, freq1, freq2, amp, freq, newamp, newfreq, ampslope, freqslope;
+	int32 ifreq, phase;
+
+	// if this is the first time through the next function, allocate the phase pointer, and zero it out, fill the initial amp and freq data
+	if(unit->phaseinit > 0){
+
+	    unit->m_totalPartials = unit->m_numPartials;
+	    for (int j = 0; j < unit->m_numPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		if (aPartial > nBins) 
+		    --unit->m_totalPartials;
+	    }   
+
+	    unit->m_phase = (int32*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int32));
+	    unit->m_lastamp = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_lastfreq = (float*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(float));
+	    unit->m_partials = (int*)RTAlloc(unit->mWorld, unit->m_totalPartials * sizeof(int));
+
+	    for (int j = 0; j < unit->m_totalPartials; ++j){
+		int aPartial = unit->m_partialStart + (unit->m_partialSkip * j);
+		unit->m_partials[j] = aPartial;
+	    }   
+	    
+	    for (int i = 0; i < unit->m_totalPartials; i++){
+		thisPartial = unit->m_partials[i];
+		partialOffset = thisPartial * 2;
+		unit->m_phase[i] = 0.;
+		dataPos1 = block1 + thisPartial;
+		dataPos2 = block2 + thisPartial;
+		freq1 = pvData[block1 + partialOffset + 1];
+		freq2 = pvData[block2 + partialOffset + 1];
+		unit->m_lastfreq[i] = (lininterp(framePct, freq1, freq2) * freqMul) + freqAdd;
+		amp1 = pvData[block1 + partialOffset];
+		amp2 = pvData[block2 + partialOffset];
+		unit->m_lastamp[i] = lininterp(framePct, amp1, amp2);
+		}
+	    unit->phaseinit = -1;
+	}
 	
-	unit->m_framestart = frame;
+	int *partials = unit->m_partials;
+	
+	// the sine table
+	float *table0 = ft->mSineWavetable;
+	float *table1 = table0 + 1;
+	int32 lomask = unit->m_lomask;
+
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
+	for (int i = 0; i< unit->m_totalPartials; i++){
+	    thisPartial = partials[i];
+	    partialOffset = thisPartial * 2;
+	    dataPos1 = block1 + thisPartial;
+	    dataPos2 = block2 + thisPartial;
+	    
+	    amp1 = pvData[block1 + partialOffset];
+	    amp2 = pvData[block2 + partialOffset];
+	    freq1 = pvData[block1 + partialOffset + 1];
+	    freq2 = pvData[block2 + partialOffset + 1];
+	    freqMul = unit->m_freqMul; //grab the original value from the struct
+	    freqAdd = unit->m_freqAdd; 
+	    
+	    ADD_SIN_PARTIALS
+	    
+	    }
+	unit->m_freqMul = freqMul;
+	unit->m_freqAdd = freqAdd;
 }
+
+///////////// PVInfo
+
+void PVInfo_Ctor(PVInfo* unit)
+{
+	SETCALC(PVInfo_next);
+	unit->m_partial = (int)IN0(1);
+	unit->m_phaseinit = 1;
+	unit->m_fbufnum = -1e9f;
+	ClearUnitOutputs(unit, 1);
+	PVInfo_next(unit, 1);
+}
+
+
+void PVInfo_next(PVInfo *unit, int inNumSamples)
+{
+	ClearUnitOutputs(unit, inNumSamples); 
+	// get the buffer that stores the PV data 
+	float fbufnum = IN0(0);
+
+	if (fbufnum != unit->m_fbufnum) { 
+		uint32 bufnum = (int)fbufnum; 
+		World *world = unit->mWorld; 
+		if (bufnum >= world->mNumSndBufs) bufnum = 0; 
+		unit->m_fbufnum = fbufnum; 
+		unit->m_buf = world->mSndBufs + bufnum; 
+	    } 
+	SndBuf *buf = unit->m_buf; 
+	float *bufData __attribute__((__unused__)) = buf->data; 
+	if (!bufData) { 
+                unit->mDone = true; 
+		return; 
+		}; 
+	float frameBSize = bufData[8];
+	int nBins = (int)(bufData[6] * 0.5) + 1; //(int)frameBSize >> 3;
+	float fileSize = bufData[2]; 
+	int nFrames = (int)(fileSize / frameBSize) - 1;
+	float* pvData = bufData + 13; //headerOffset; 
+
+	// set-up the output pointer 
+	float *ampOut = OUT(0);
+	float *freqOut = OUT(1);
+	// get the requested frames and other inputs
+	
+	float frame = sc_mod(IN0(2), 1.0f) * (float)nFrames; // frame input should be between 0 and 1	
+	
+	// to get current data, we will need to interpolate values between frames - figure out the bounding frames
+	int iFrame1 = (int)frame;
+	int iFrame2 = iFrame1 + 1; 
+	float framePct = frame - (float)iFrame1; 
+	if(iFrame2 >= nFrames){ 
+	    iFrame2 = iFrame1; 
+	    framePct = 0.; 
+	    }
+	int block = (nBins * 2);
+	int block1 = iFrame1 * block;
+	int block2 = iFrame2 * block;
+		
+	int thisPartial, dataPos1, dataPos2, partialOffset;
+	float amp1, amp2, freq1, freq2, amp, freq, newamp, newfreq, ampslope, freqslope;
+
+	// if this is the first time through the next function, allocate the phase pointer, and zero it out, fill the initial amp and freq data
+	if(unit->m_phaseinit > 0){
+	    
+	    thisPartial = unit->m_partial;
+	    partialOffset = thisPartial * 2;
+	    dataPos1 = block1 + thisPartial;
+	    dataPos2 = block2 + thisPartial;
+	    freq1 = pvData[block1 + partialOffset + 1];
+	    freq2 = pvData[block2 + partialOffset + 1];
+	    unit->m_lastfreq = lininterp(framePct, freq1, freq2);
+	    amp1 = pvData[block1 + partialOffset];
+	    amp2 = pvData[block2 + partialOffset];
+	    unit->m_lastamp = lininterp(framePct, amp1, amp2);
+
+	    unit->m_phaseinit = -1;
+	}
+	
+	// this loop calulates the partial sample values for the each of the sins, stores them in an array
+	thisPartial = unit->m_partial;
+	partialOffset = thisPartial * 2;
+	dataPos1 = block1 + thisPartial;
+	dataPos2 = block2 + thisPartial;
+	
+	amp1 = pvData[block1 + partialOffset];
+	amp2 = pvData[block2 + partialOffset];
+	newamp = lininterp(framePct, amp1, amp2);
+	amp = unit->m_lastamp;
+	freq1 = pvData[block1 + partialOffset + 1];
+	freq2 = pvData[block2 + partialOffset + 1];
+	newfreq = lininterp(framePct, freq1, freq2);
+	freq = unit->m_lastfreq;
+	
+	ampslope = CALCSLOPE(newamp, amp);
+	freqslope = CALCSLOPE(newfreq, freq);
+	
+	for(int i = 0; i < inNumSamples; i++)
+	    {
+		ampOut[i] = amp;
+		freqOut[i] = freq;
+		amp += ampslope;
+		freq += freqslope;
+	    }
+	unit->m_lastamp = newamp;
+	unit->m_lastfreq = newfreq;
+}
+
 
 
 /////////////////////////////////////////////////////////////////
@@ -1458,7 +1673,6 @@ void SinTone_next(SinTone *unit, int inNumSamples)
 }
 
 
-/*
 void Balance_Ctor(Balance* unit)
 {
 	unit->m_scaler = 0.f;
@@ -1467,21 +1681,8 @@ void Balance_Ctor(Balance* unit)
 	    } else {
 	    SETCALC(Balance_next_k);
 	    }
-	unit->m_scaler = 0.f;
-	ClearUnitOutputs(unit, 1);
-}
-*/
-
-void Balance_Ctor(Balance* unit)
-{
-	unit->m_scaler = 0.f;
-	if (INRATE(1) == calc_FullRate) {
-	    SETCALC(Balance_next_a);
-	    } else {
-	    SETCALC(Balance_next_k);
-	    }
-	unit->m_hp = IN0(2); // 10.; // these are the csound defaults
-	unit->m_stor = IN0(3); // 0.; 
+	unit->m_hp = IN0(2);
+	unit->m_stor = IN0(3);
 	float b = 2.0 - cos(unit->m_hp * (twopi/SAMPLERATE));
 	unit->m_coef2 = b - sqrt(b*b - 1.0);
 	unit->m_coef1 = 1.0 - unit->m_coef2;
@@ -1549,74 +1750,6 @@ void Balance_next_k(Balance* unit, int inNumSamples)
 	}
     unit->m_preva = preva;
 }
-
-//void Balance_next_a(Balance* unit, int inNumSamples)
-//{
-//	float* insig = IN(0);
-//	float* testsig = IN(1);
-//	float* out = OUT(0);
-//	float insum = 0.f;
-//	float testsum = 0.f;
-//	float scaler = unit->m_scaler;
-//	float newscale, levelinc;
-//	
-//	for(int i = 0; i < inNumSamples; i++){
-//	    insum += powf(insig[i], 2);
-//	    testsum += powf(testsig[i], 2);
-//	    }
-//	
-//	float newinrms = sqrt(insum/inNumSamples);
-//	float newtestrms = sqrt(testsum /inNumSamples);
-//		
-//	// protect a divide by zero... perhaps there is a better way to do this
-//	if(newinrms <= 0.f) {
-//	    newscale = 0.f; levelinc = 0.f;
-//	    } else {
-//	    newscale = newtestrms / newinrms;
-//	    levelinc = CALCSLOPE(newscale, scaler);
-//	    }
-//		
-//	for(int i = 0; i < inNumSamples; i++){
-//	    out[i] = insig[i] * scaler;
-//	    // overwrite old data with new data
-//	    scaler += levelinc;
-//	    }
-//	    
-//	unit->m_scaler = scaler;	
-//}
-//
-//void Balance_next_k(Balance* unit, int inNumSamples)
-//{
-//	float* insig = IN(0);
-//	float testsig = IN0(1);
-//	float* out = OUT(0);
-//	float insum = 0.f;
-//	float scaler = unit->m_scaler;
-//	float newscale, levelinc;
-//	
-//	for(int i = 0; i < inNumSamples; i++){
-//	    insum += powf(insig[i], 2);
-//	    }
-//	
-//	float newinrms = sqrt(insum/inNumSamples);
-//	float newtestrms = sqrt(powf(testsig, 2));
-//	// protect a divide by zero... perhaps there is a better way to do this
-//	if(newinrms <= 0.f) {
-//	    newscale = 0.f; levelinc = 0.f;
-//	    } else {
-//	    newscale = newtestrms / newinrms;
-//	    levelinc = CALCSLOPE(newscale, scaler);
-//	    }
-//		
-//	for(int i = 0; i < inNumSamples; i++){
-//	    out[i] = insig[i] * scaler;
-//	    // overwrite old data with new data
-//	    scaler += levelinc;
-//	    }
-//	    
-//	unit->m_scaler = scaler;	
-//}
-
 
 /*
 
@@ -2850,14 +2983,14 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(AtsFreq);
 	DefineSimpleUnit(AtsAmp);
 	DefineSimpleUnit(AtsNoise);
-	DefineSimpleUnit(AtsParInfo);
+	DefineSimpleCantAliasUnit(AtsParInfo);
 	DefineSimpleUnit(SinTone);
 	DefineSimpleCantAliasUnit(Maxamp);
 
 	DefineSimpleUnit(LPCSynth);
 	DefineSimpleUnit(LPCVals);
 	DefineSimpleUnit(AudioMSG);
-	DefineDtorUnit(PVSynth);
+	DefineDtorCantAliasUnit(PVSynth);
 	DefineSimpleUnit(PVInfo);
 	DefineSimpleCantAliasUnit(Balance);
 	DefineSimpleUnit(MoogVCF);
