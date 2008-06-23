@@ -129,6 +129,9 @@ struct FFTCrest : FFTAnalyser_Unit
 struct FFTSpread : FFTAnalyser_Unit
 {
 };
+struct FFTSlope : FFTAnalyser_Unit
+{
+};
 
 
 
@@ -261,6 +264,9 @@ extern "C"
 	
 	void FFTSpread_Ctor(FFTSpread *unit);
 	void FFTSpread_next(FFTSpread *unit, int inNumSamples);
+	
+	void FFTSlope_Ctor(FFTSlope *unit);
+	void FFTSlope_next(FFTSlope *unit, int inNumSamples);
 	
 }
 
@@ -1599,6 +1605,50 @@ void FFTSpread_next(FFTSpread *unit, int inNumSamples)
 	
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTSlope_Ctor(FFTSlope *unit)
+{
+	SETCALC(FFTSlope_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_bintofreq = 0.f;
+}
+
+void FFTSlope_next(FFTSlope *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	GET_BINTOFREQ
+	
+	// This is a straightforward linear regression slope on the magnitudes.
+	
+	// These vars accumulate as we iter the bins. We start by putting in their values from the DC & Nyquist oddities.
+	double sumx  = (numbins+1) * bintofreq;
+	double sumx2 = sumx * sumx;
+	double sumxy = sumx * sc_abs(p->nyq);
+	double sumy  = sc_abs(p->dc) + sc_abs(p->nyq);
+	double mag, freq;
+	
+	for(int i=0; i<numbins; ++i){
+	  mag = p->bin[i].mag;
+	  freq = (i+1) * bintofreq;
+	  
+	  sumxy += (freq * mag);
+	  sumx  += freq;
+	  sumy  += mag;
+	  sumx2 += (freq*freq);
+	};
+	
+	float slope = (float)((numbins * sumxy - sumx * sumy) 
+	   / (numbins * sumx2 - sumx * sumx));
+	
+	ZOUT0(0) = unit->outval = slope;
+	
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -1628,5 +1678,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(FFTRumble);
 	DefineSimpleUnit(FFTCrest);
 	DefineSimpleUnit(FFTSpread);
+	DefineSimpleUnit(FFTSlope);
+	
 	DefineDtorUnit(FFTSubbandFlatness);
 }

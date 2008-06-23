@@ -179,3 +179,10 @@ FFTSpread : UGen
 		^this.multiNew('control', buffer, centroid ?? { SpecCentroid.kr(buffer) } )
 	}
 }
+
+FFTSlope : UGen
+{
+	*kr { | buffer |
+		^this.multiNew('control', buffer)
+	}
+}
