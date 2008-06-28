@@ -989,7 +989,7 @@ ProcEvents {
 		bigNumWindow.onClose_({bigNum = false});
 		GUI.staticText.new(bigNumWindow, Rect(0, 0, bigNumBounds.width, bigNumBounds.height))
 			.string_("No event")
-			.font_(Font("Arial", fontSize))
+			.font_(GUI.font.new("Arial", fontSize))
 			.align_(\center);
 		gui.if({window.front});
 		^this;
@@ -1012,7 +1012,7 @@ ProcEvents {
 		GUI.numberBox.new(window, Rect(10 + buttonWidth, 10, buttonWidth * 0.9, 
 				buttonHeight * 0.9))
 			.value_(index)
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) + 1].focus(true);
 				});
@@ -1022,7 +1022,7 @@ ProcEvents {
 			.states_([
 				["Next Event:", Color.black, buttonColor]
 				])
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				var numbox, numboxval;
 				numbox = window.view.children.indexOf(me)-1;
@@ -1042,7 +1042,7 @@ ProcEvents {
 						
 		GUI.staticText.new(window, Rect(10, 10 + buttonHeight, buttonWidth * 1.8, 
 				buttonHeight * 0.9))
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.string_("No events currently running");
 
 		GUI.button.new(window, Rect(10, 10 + (buttonHeight * 2), buttonWidth * 0.9, 
@@ -1050,7 +1050,7 @@ ProcEvents {
 			.states_([
 				["Reset", Color.black, buttonColor]
 				])
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) - 2].focus(true);
 				this.reset;
@@ -1061,7 +1061,7 @@ ProcEvents {
 			.states_([
 				["Release All", Color.black, buttonColor]
 				])
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) - 3].focus(true);
 				this.releaseAll;
@@ -1072,7 +1072,7 @@ ProcEvents {
 			.states_([
 				["Kill All", Color.black, buttonColor]
 				])
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				window.view.children[window.view.children.indexOf(me) - 4].focus(true);
 				//this.killAll;
@@ -1091,7 +1091,7 @@ ProcEvents {
 		GUI.numberBox.new(window, Rect((buttonWidth * 1.3) + 10, 5 + buttonHeight * 2, 
 				buttonWidth * 0.4, buttonHeight * 0.9))
 			.value_(amp.ampdb)
-			.font_(Font("Arial", 24))
+			.font_(GUI.font.new("Arial", 24))
 			.action_({arg me;
 				var val;
 				val = me.value.dbamp;

@@ -2,7 +2,7 @@ PVFile : File {
 	var <header, <nFrames, <nBins, <sndDur, <buffer, <server, <data;
 	var <magicNum, <headerSize, <fileSize, <fileFormat, <sr, <numChannels, <windowSize, 
 			<hopSize, <frameBSize, <pvpvoc, <minFreq, <maxFreq, <spacing;
-	var <len, <signal, <le, <path, filepath, <loaded;	
+	var <len, <signal, <le, <path, filepath, <loaded, <magScale;	
 	
 	*new {arg path, server;
 		server = server ? Server.default;
@@ -58,6 +58,7 @@ PVFile : File {
 			sndDur = (nFrames * hopSize) / sr;
 			this.readData;
 			this.close;
+			this.calcMagScale;
 			}, {"This does not appear to be an PV file".warn})
 			
 		}
@@ -173,7 +174,7 @@ PVFile : File {
 		^Array.fill(nBins, {arg i; this.getBinMags(i)});
 		}
 		
-	magScale {
-		^(this.mags.flat.mean * nBins).reciprocal;
+	calcMagScale {
+		magScale = (this.mags.flat.mean * nBins).reciprocal;
 		}
 }
