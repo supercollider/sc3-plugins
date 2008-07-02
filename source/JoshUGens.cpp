@@ -215,6 +215,19 @@ struct CombLP : public FeedbackDelay
 	long m_inputsamps;
 };
 
+struct DelTapWr : public Unit 
+{
+	SndBuf *m_buf;
+	float m_fbufnum;
+	int32 m_phase;
+};
+
+struct DelTapRd : public Unit
+{
+	SndBuf *m_buf;
+	float m_fbufnum, m_delTime;
+};
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
@@ -289,7 +302,18 @@ extern "C"
 	void CombLP_next_ka_z(CombLP *unit, int inNumSamples);
 	void CombLP_next_ak(CombLP *unit, int inNumSamples);
 	void CombLP_next_ak_z(CombLP *unit, int inNumSamples);
+    
+	void DelTapWr_Ctor(DelTapWr* unit);
+	void DelTapWr_next(DelTapWr *unit, int inNumSamples);
+	void DelTapWr_first(DelTapWr *unit, int inNumSamples);
 	
+	void DelTapRd_Ctor(DelTapRd* unit);
+	void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples);
+	void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples);
+	void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples);
+	void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
+	void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
+	void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
 }
 
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
@@ -2972,6 +2996,297 @@ void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 }
 
 
+#define DELTAP_BUF \
+	World *world = unit->mWorld;\
+	SndBuf *bufs = world->mSndBufs;\
+	SndBuf *buf = bufs + bufnum; \
+	float *bufData __attribute__((__unused__)) = buf->data; \
+	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
+	uint32 bufSamples = buf->samples; \
+	uint32 bufFrames = buf->frames; \
+	int guardFrame __attribute__((__unused__)) = bufFrames - 2; \
+	double loopMax = (double)bufSamples; \
+
+
+#define CHECK_DELTAP_BUF \
+	if ((!bufData) || (bufChannels != 1)) { \
+                unit->mDone = true; \
+		ClearUnitOutputs(unit, inNumSamples); \
+		return; \
+	}
+
+void DelTapWr_Ctor(DelTapWr *unit)
+{
+	SETCALC(DelTapWr_first);
+	unit->m_phase = 0;
+	unit->m_fbufnum = -1e9f;
+	DelTapWr_first(unit, 1);
+}
+
+void DelTapWr_first(DelTapWr *unit, int inNumSamples)
+{
+	SETCALC(DelTapWr_next);
+    
+	float fbufnum  = IN0(0);
+	uint32 bufnum = (uint32)fbufnum;
+	float* in = IN(1);
+	float* out = OUT(0);
+	
+	uint32 phase = unit->m_phase;
+	
+	DELTAP_BUF
+	CHECK_DELTAP_BUF
+	
+	// zero out the buffer!
+	for(uint32 i = 0; i < bufSamples; i++){
+	    bufData[i] = 0.f;
+	    }
+	    
+	for(int i = 0; i < inNumSamples; i++){
+	    out[i] = (float)phase;
+	    bufData[phase] = in[i];
+	    phase++;
+	    if(phase == bufSamples) phase -= bufSamples;
+	    }
+	
+	unit->m_phase = phase;
+}
+
+void DelTapWr_next(DelTapWr *unit, int inNumSamples)
+{
+	float fbufnum  = IN0(0);
+	uint32 bufnum = (uint32)fbufnum;
+	float* in = IN(1);
+	float* out = OUT(0);
+	
+	uint32 phase = unit->m_phase;
+	
+	DELTAP_BUF
+	CHECK_DELTAP_BUF
+
+	for(int i = 0; i < inNumSamples; i++){
+	    out[i] = (float)phase;
+	    bufData[phase] = in[i];
+	    phase++;
+	    if(phase == bufSamples) phase -= bufSamples;
+	    }
+	
+	unit->m_phase = phase;
+}
+
+#define SETUP_TAPDELK \
+	float delTime = unit->m_delTime; \
+	float newDelTime = IN0(2); \
+	float delTimeInc = CALCSLOPE(newDelTime, delTime); \
+	double phaseIn = (double)IN0(1); \
+	double phase, curDelTimeSamps; \
+	int32 iphase; \
+	float fbufnum  = IN0(0); \
+	uint32 bufnum = (uint32)fbufnum; \
+	float* out = OUT(0); \
+	    
+#define SETUP_TAPDELA \
+	float* delTime = IN(2); \
+	double phaseIn = (double)IN0(1); \
+	double phase, curDelTimeSamps; \
+	int32 iphase; \
+	float fbufnum  = IN0(0); \
+	uint32 bufnum = (uint32)fbufnum; \
+	float* out = OUT(0); \
+	    
+void DelTapRd_Ctor(DelTapRd *unit)
+{
+    unit->m_fbufnum = -1e9f;
+    unit->m_delTime = IN0(2);
+    int interp = (int)IN0(3);
+    if(INRATE(2) == calc_FullRate){
+	if(interp == 2){
+	    SETCALC(DelTapRd_next2_a);
+	    DelTapRd_next2_a(unit, 1);
+	    } else if(interp == 4){
+		SETCALC(DelTapRd_next4_a);
+		DelTapRd_next4_a(unit, 1);
+		} else {
+		SETCALC(DelTapRd_next1_a);
+		DelTapRd_next1_a(unit, 1);
+		}
+	    } else {
+	if(interp == 2){
+	    SETCALC(DelTapRd_next2_k);
+	    DelTapRd_next2_k(unit, 1);
+	    } else if(interp == 4){
+		SETCALC(DelTapRd_next4_k);
+		DelTapRd_next4_k(unit, 1);
+		} else {
+		SETCALC(DelTapRd_next1_k);
+		DelTapRd_next1_k(unit, 1);
+		}
+	    }
+}
+
+
+void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples)
+{
+    SETUP_TAPDELA
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >=loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    out[i] = bufData[iphase];
+	    phaseIn += 1.;;
+	}
+}
+
+void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples)
+{
+    SETUP_TAPDELK
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >=loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    out[i] = bufData[iphase]; 
+	    delTime += delTimeInc;
+	    phaseIn += 1.;;
+	}
+    unit->m_delTime = delTime;
+}
+
+void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples)
+{
+    int32 iloopMax, iphase1;
+    SETUP_TAPDELK
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    iloopMax = (int32)loopMax;
+    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >= loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    iphase1 = iphase + 1; 
+	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
+	    float fracphase = phase - (double)iphase; 
+	    float b = bufData[iphase]; 
+	    float c = bufData[iphase1]; 
+	    out[i] = (b + fracphase * (c - b));
+	    delTime += delTimeInc;
+	    phaseIn += 1.;;
+	}
+    unit->m_delTime = delTime;
+}
+
+void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples)
+{
+    int32 iloopMax, iphase1;
+    SETUP_TAPDELA
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    iloopMax = (int32)loopMax;
+    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >= loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    iphase1 = iphase + 1; 
+	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
+	    float fracphase = phase - (double)iphase; 
+	    float b = bufData[iphase]; 
+	    float c = bufData[iphase1]; 
+	    out[i] = (b + fracphase * (c - b));
+	    phaseIn += 1.;;
+	}
+}
+
+void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
+{
+    int32 iloopMax, iphase1, iphase2, iphase0;
+    SETUP_TAPDELK
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    iloopMax = (int32)loopMax;
+	    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >= loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    iphase0 = iphase - 1;
+	    iphase1 = iphase + 1;
+	    iphase2 = iphase + 2;
+	    
+	    if(iphase0 < 0) iphase0 += iloopMax;
+	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
+	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
+
+	    float fracphase = (float)phase - (float)iphase;
+	    float a = bufData[iphase0]; 
+	    float b = bufData[iphase]; 
+	    float c = bufData[iphase1]; 
+	    float d = bufData[iphase2]; 
+	    out[i] = cubicinterp(fracphase, a, b, c, d);
+	    delTime += delTimeInc;
+	    phaseIn += 1.;;
+	}
+    unit->m_delTime = delTime;
+}
+
+void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples)
+{
+    int32 iloopMax, iphase1, iphase2, iphase0;
+    SETUP_TAPDELA
+    DELTAP_BUF
+    CHECK_DELTAP_BUF
+    
+    iloopMax = (int32)loopMax;
+	    
+    for(int i = 0; i < inNumSamples; i++)
+	{
+	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
+	    phase = phaseIn - curDelTimeSamps; 
+	    if(phase < 0.) phase += loopMax; 
+	    if(phase >= loopMax) phase -= loopMax; 
+	    iphase = (int32)phase; 
+	    iphase0 = iphase - 1;
+	    iphase1 = iphase + 1;
+	    iphase2 = iphase + 2;
+	    
+	    if(iphase0 < 0) iphase0 += iloopMax;
+	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
+	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
+
+	    float fracphase = (float)phase - (float)iphase;
+	    float a = bufData[iphase0]; 
+	    float b = bufData[iphase]; 
+	    float c = bufData[iphase1]; 
+	    float d = bufData[iphase2]; 
+	    out[i] = cubicinterp(fracphase, a, b, c, d);
+	    phaseIn += 1.;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -2995,6 +3310,9 @@ void load(InterfaceTable *inTable)
 	DefineSimpleCantAliasUnit(Balance);
 	DefineSimpleUnit(MoogVCF);
 	DefineSimpleUnit(PosRatio);
+	
+	DefineSimpleCantAliasUnit(DelTapWr);
+	DefineSimpleCantAliasUnit(DelTapRd);
     
 #define DefineDelayUnit(name) \
     (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
