@@ -3046,7 +3046,7 @@ void DelTapWr_first(DelTapWr *unit, int inNumSamples)
 	    out[i] = (float)phase;
 	    bufData[phase] = in[i];
 	    phase++;
-	    if(phase == bufSamples) phase -= bufSamples;
+	    if(phase == loopMax) phase -= loopMax;
 	    }
 	
 	unit->m_phase = phase;
@@ -3068,7 +3068,7 @@ void DelTapWr_next(DelTapWr *unit, int inNumSamples)
 	    out[i] = (float)phase;
 	    bufData[phase] = in[i];
 	    phase++;
-	    if(phase == bufSamples) phase -= bufSamples;
+	    if(phase == loopMax) phase -= loopMax;
 	    }
 	
 	unit->m_phase = phase;
@@ -3076,10 +3076,10 @@ void DelTapWr_next(DelTapWr *unit, int inNumSamples)
 
 #define SETUP_TAPDELK \
 	float delTime = unit->m_delTime; \
-	float newDelTime = IN0(2); \
+	float newDelTime = IN0(2) * SAMPLERATE; \
 	float delTimeInc = CALCSLOPE(newDelTime, delTime); \
-	double phaseIn = (double)IN0(1); \
-	double phase, curDelTimeSamps; \
+	float phaseIn = IN0(1); \
+	float phase; \
 	int32 iphase; \
 	float fbufnum  = IN0(0); \
 	uint32 bufnum = (uint32)fbufnum; \
@@ -3087,8 +3087,8 @@ void DelTapWr_next(DelTapWr *unit, int inNumSamples)
 	    
 #define SETUP_TAPDELA \
 	float* delTime = IN(2); \
-	double phaseIn = (double)IN0(1); \
-	double phase, curDelTimeSamps; \
+	float phaseIn = IN0(1); \
+	float phase, curDelTimeSamps; \
 	int32 iphase; \
 	float fbufnum  = IN0(0); \
 	uint32 bufnum = (uint32)fbufnum; \
@@ -3097,7 +3097,7 @@ void DelTapWr_next(DelTapWr *unit, int inNumSamples)
 void DelTapRd_Ctor(DelTapRd *unit)
 {
     unit->m_fbufnum = -1e9f;
-    unit->m_delTime = IN0(2);
+    unit->m_delTime = IN0(2) * SAMPLERATE;
     int interp = (int)IN0(3);
     if(INRATE(2) == calc_FullRate){
 	if(interp == 2){
@@ -3139,7 +3139,7 @@ void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples)
 	    if(phase >=loopMax) phase -= loopMax; 
 	    iphase = (int32)phase; 
 	    out[i] = bufData[iphase];
-	    phaseIn += 1.;;
+	    phaseIn += 1.;
 	}
 }
 
@@ -3151,14 +3151,13 @@ void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples)
     
     for(int i = 0; i < inNumSamples; i++)
 	{
-	    curDelTimeSamps = delTime * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
+	    phase = phaseIn - delTime;
 	    if(phase < 0.) phase += loopMax; 
 	    if(phase >=loopMax) phase -= loopMax; 
 	    iphase = (int32)phase; 
 	    out[i] = bufData[iphase]; 
 	    delTime += delTimeInc;
-	    phaseIn += 1.;;
+	    phaseIn += 1.;
 	}
     unit->m_delTime = delTime;
 }
@@ -3166,6 +3165,8 @@ void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples)
 void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples)
 {
     int32 iloopMax, iphase1;
+    float fracphase, b, c;
+    
     SETUP_TAPDELK
     DELTAP_BUF
     CHECK_DELTAP_BUF
@@ -3174,19 +3175,18 @@ void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples)
     
     for(int i = 0; i < inNumSamples; i++)
 	{
-	    curDelTimeSamps = delTime * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
+	    phase = phaseIn - delTime;
 	    if(phase < 0.) phase += loopMax; 
 	    if(phase >= loopMax) phase -= loopMax; 
 	    iphase = (int32)phase; 
 	    iphase1 = iphase + 1; 
 	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
-	    float fracphase = phase - (double)iphase; 
-	    float b = bufData[iphase]; 
-	    float c = bufData[iphase1]; 
+	    fracphase = phase - (float)iphase; 
+	    b = bufData[iphase]; 
+	    c = bufData[iphase1]; 
 	    out[i] = (b + fracphase * (c - b));
 	    delTime += delTimeInc;
-	    phaseIn += 1.;;
+	    phaseIn += 1.;
 	}
     unit->m_delTime = delTime;
 }
@@ -3194,6 +3194,8 @@ void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples)
 void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples)
 {
     int32 iloopMax, iphase1;
+    float fracphase, b, c;
+
     SETUP_TAPDELA
     DELTAP_BUF
     CHECK_DELTAP_BUF
@@ -3209,18 +3211,21 @@ void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples)
 	    iphase = (int32)phase; 
 	    iphase1 = iphase + 1; 
 	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
-	    float fracphase = phase - (double)iphase; 
-	    float b = bufData[iphase]; 
-	    float c = bufData[iphase1]; 
+	    fracphase = phase - (float)iphase; 
+	    b = bufData[iphase]; 
+	    c = bufData[iphase1]; 
 	    out[i] = (b + fracphase * (c - b));
-	    phaseIn += 1.;;
+	    phaseIn += 1.;
 	}
 }
 
 void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
 {
     int32 iloopMax, iphase1, iphase2, iphase0;
-    SETUP_TAPDELK
+    float fracphase, a, b, c, d;
+    
+
+    SETUP_TAPDELK    
     DELTAP_BUF
     CHECK_DELTAP_BUF
     
@@ -3228,8 +3233,7 @@ void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
 	    
     for(int i = 0; i < inNumSamples; i++)
 	{
-	    curDelTimeSamps = delTime * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
+	    phase = phaseIn - delTime;
 	    if(phase < 0.) phase += loopMax; 
 	    if(phase >= loopMax) phase -= loopMax; 
 	    iphase = (int32)phase; 
@@ -3241,14 +3245,14 @@ void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
 	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
 	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
 
-	    float fracphase = (float)phase - (float)iphase;
-	    float a = bufData[iphase0]; 
-	    float b = bufData[iphase]; 
-	    float c = bufData[iphase1]; 
-	    float d = bufData[iphase2]; 
+	    fracphase = phase - (float)iphase;
+	    a = bufData[iphase0]; 
+	    b = bufData[iphase]; 
+	    c = bufData[iphase1]; 
+	    d = bufData[iphase2]; 
 	    out[i] = cubicinterp(fracphase, a, b, c, d);
 	    delTime += delTimeInc;
-	    phaseIn += 1.;;
+	    phaseIn += 1.;
 	}
     unit->m_delTime = delTime;
 }
@@ -3256,6 +3260,8 @@ void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
 void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples)
 {
     int32 iloopMax, iphase1, iphase2, iphase0;
+    float fracphase, a, b, c, d;
+
     SETUP_TAPDELA
     DELTAP_BUF
     CHECK_DELTAP_BUF
@@ -3277,11 +3283,11 @@ void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples)
 	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
 	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
 
-	    float fracphase = (float)phase - (float)iphase;
-	    float a = bufData[iphase0]; 
-	    float b = bufData[iphase]; 
-	    float c = bufData[iphase1]; 
-	    float d = bufData[iphase2]; 
+	    fracphase = phase - (float)iphase;
+	    a = bufData[iphase0]; 
+	    b = bufData[iphase]; 
+	    c = bufData[iphase1]; 
+	    d = bufData[iphase2]; 
 	    out[i] = cubicinterp(fracphase, a, b, c, d);
 	    phaseIn += 1.;
 	}
