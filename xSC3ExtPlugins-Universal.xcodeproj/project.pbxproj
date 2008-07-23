@@ -71,6 +71,7 @@
 				F3D57D3E0B102D5C0034519F /* PBXTargetDependency */,
 				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
 				372742850DA027AB00287F98 /* PBXTargetDependency */,
+				F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -194,6 +195,8 @@
 		F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6D0B0E8493008AFA51 /* WvIn.h */; };
 		F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6E0B0E8493008AFA51 /* WvOut.h */; };
 		F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3564CF70B0E8736008AFA51 /* libstk.a */; };
+		F35F00AF0E34451900ACCCC6 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F35F00B80E34454800ACCCC6 /* RMEQSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */; };
 		F36FC3EE0C936C0E0055E368 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F36FC3FD0C936C2D0055E368 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F36FC4080C936C5A0055E368 /* JoshGrainUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */; };
@@ -248,7 +251,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3727424D0DA024ED00287F98 /* MembraneUGens */;
+			remoteGlobalIDString = 3727424D0DA024ED00287F98;
 			remoteInfo = MembraneUGens;
 		};
 		373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
@@ -419,6 +422,13 @@
 			remoteGlobalIDString = F3A8FA430B73DCD600296CCA;
 			remoteInfo = "LoopBuf (Upgraded)";
 		};
+		F3B0AB4D0E36E5CE00BE1079 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */;
+			remoteInfo = RMEQSuiteUGens;
+		};
 		F3D57D230B102BBC0034519F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -576,6 +586,8 @@
 		F3564C6D0B0E8493008AFA51 /* WvIn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvIn.h; path = source/StkUGens/include/WvIn.h; sourceTree = SOURCE_ROOT; };
 		F3564C6E0B0E8493008AFA51 /* WvOut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvOut.h; path = source/StkUGens/include/WvOut.h; sourceTree = SOURCE_ROOT; };
 		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = lib/libstk.a; sourceTree = "<group>"; };
+		F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RMEQSuiteUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RMEQSuite.cpp; sourceTree = "<group>"; };
 		F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshGrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshAmbiUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F36FC4070C936C5A0055E368 /* JoshGrainUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshGrainUGens.cpp; sourceTree = "<group>"; };
@@ -682,6 +694,14 @@
 			files = (
 				F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */,
 				F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F35F00AE0E34451900ACCCC6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F35F00AF0E34451900ACCCC6 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -997,6 +1017,7 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */,
 				37046FA00CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp */,
 				37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */,
 				F36FC40B0C936C850055E368 /* JoshAmbiUGens.cpp */,
@@ -1061,6 +1082,7 @@
 				37046F9B0CF084B500254768 /* MCLDTriggeredStatsUGensUB.scx */,
 				37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */,
 				372742580DA024ED00287F98 /* MembraneUGens.scx */,
+				F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1248,6 +1270,13 @@
 				F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */,
 				F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */,
 				F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F35F00AB0E34451900ACCCC6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1558,6 +1587,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F35F00B20E34451900ACCCC6 /* Build configuration list for PBXNativeTarget "RMEQSuiteUGens" */;
+			buildPhases = (
+				F35F00AB0E34451900ACCCC6 /* Headers */,
+				F35F00AC0E34451900ACCCC6 /* Sources */,
+				F35F00AE0E34451900ACCCC6 /* Frameworks */,
+				F35F00B00E34451900ACCCC6 /* Rez */,
+				F35F00B10E34451900ACCCC6 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RMEQSuiteUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */ = {
@@ -1927,10 +1976,12 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
@@ -1963,6 +2014,7 @@
 				37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */,
 				37FEEBFE0D9AA7630043C418 /* MCLDSOMUGens */,
 				3727424D0DA024ED00287F98 /* MembraneUGens */,
+				F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2025,6 +2077,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3564BDC0B0E82A4008AFA51 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F35F00B00E34451900ACCCC6 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2233,6 +2292,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		F3564BDD0B0E82A4008AFA51 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		F35F00B10E34451900ACCCC6 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2477,6 +2545,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3564C050B0E83FD008AFA51 /* StkAll.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F35F00AC0E34451900ACCCC6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F35F00B80E34454800ACCCC6 /* RMEQSuite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2764,6 +2840,11 @@
 			isa = PBXTargetDependency;
 			target = F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */;
 			targetProxy = F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */;
+		};
+		F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */;
+			targetProxy = F3B0AB4D0E36E5CE00BE1079 /* PBXContainerItemProxy */;
 		};
 		F3D57D240B102BBC0034519F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3833,6 +3914,103 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = STKUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		F35F00B30E34451900ACCCC6 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F35F00B40E34451900ACCCC6 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = RMEQSuiteUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F35F00B50E34451900ACCCC6 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -5729,6 +5907,16 @@
 				F3564BDF0B0E82A4008AFA51 /* Development */,
 				F3564BE00B0E82A4008AFA51 /* Deployment */,
 				F3564BE10B0E82A4008AFA51 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F35F00B20E34451900ACCCC6 /* Build configuration list for PBXNativeTarget "RMEQSuiteUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F35F00B30E34451900ACCCC6 /* Development */,
+				F35F00B40E34451900ACCCC6 /* Deployment */,
+				F35F00B50E34451900ACCCC6 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
