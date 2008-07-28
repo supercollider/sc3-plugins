@@ -1,7 +1,7 @@
 WarpOverlap {
-	*ar {arg buffer, overlaps = 4, starttime = 0, stretch = 1, harm = 1, windowsize = 6,
-			step = 1, warpwindowsize = 0.11, warpwindowoverlaps = 8, warpwindowran = 0.1, mul = 1,
-			add = 0;
+	*ar {arg numChans = 1, buffer, overlaps = 4, starttime = 0, stretch = 1, harm = 1, 
+			windowsize = 6, step = 1, warpwindowsize = 0.11, warpwindowoverlaps = 8, 
+			warpwindowran = 0.1, mul = 1, add = 0;
 		var tris, saws, counter, trigger, pointers, warps, warpharm, harmarray,
 			warpwindowsizearray, warpwindowoverlapsarray, warpwindowranarray;
 		trigger = Impulse.kr(windowsize.reciprocal, 
@@ -37,8 +37,8 @@ WarpOverlap {
 			}, {
 			warpwindowran
 			});
-		warps = Warp1.ar(buffer, pointers, harmarray, warpwindowsizearray, 
-			warpwindowoverlapsarray, warpwindowranarray);
+		warps = Warp1.ar(numChans, buffer, pointers, harmarray, warpwindowsizearray, 
+			-1, warpwindowoverlapsarray, warpwindowranarray);
 		^(warps * tris).sum.madd(mul, add);
 		}	
 }
