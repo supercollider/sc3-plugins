@@ -1055,7 +1055,7 @@ void PV_FreqBuffer_next(PV_FreqBuffer *unit, int inNumSamples)
 	} 
 	float *databufData __attribute__((__unused__)) = databuf->data; 
 	
-	if(unit->m_numloops == 0){
+
 		if(unit->m_firstflag == 0){
 		    /* create buffers to store data in */
 		    unit->m_phases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
@@ -1084,10 +1084,10 @@ void PV_FreqBuffer_next(PV_FreqBuffer *unit, int inNumSamples)
 			/* store the current phases to the buffer */  
 			unit->m_phases[i] = p->bin[i].phase; 
 			} 
-		    unit->m_numloops = numloops =  (int)(numbins / (sr / BUFRATE));
+		    
 		}
-	    } else (unit->m_numloops -= 1);
-}
+	    }
+
 
 void PV_MagBuffer_Ctor(PV_MagBuffer *unit)
 {
