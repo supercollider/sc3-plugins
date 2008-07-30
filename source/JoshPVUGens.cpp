@@ -1019,7 +1019,6 @@ void PV_FreqBuffer_Ctor(PV_FreqBuffer *unit)
 	ZOUT0(0) = ZIN0(0);
 	unit->m_fdatabufnum = -1e9f;
 	SETCALC(PV_FreqBuffer_next);
-	unit->m_numloops = 0;
 	unit->m_firstflag = 0;
 	PV_FreqBuffer_next(unit, 1);
 
@@ -1034,7 +1033,6 @@ void PV_FreqBuffer_Dtor(PV_FreqBuffer *unit)
 void PV_FreqBuffer_next(PV_FreqBuffer *unit, int inNumSamples)
 {
 	float sr = (float)unit->mWorld->mSampleRate; 
-	int numloops = unit->m_numloops;
 	PV_GET_BUF
 	
 	SCPolarBuf *p = ToPolarApx(buf);
@@ -1117,8 +1115,6 @@ void PV_MagBuffer_first(PV_MagBuffer *unit, int inNumSamples)
 		return; 
 	} 
 	float *databufData __attribute__((__unused__)) = databuf->data; 
-	float sr = (float)unit->mWorld->mSampleRate; 
-	unit->m_numloops = (int)(numbins / (sr / BUFRATE)) - 1;
 	for(int i = 0; i < numbins; i++){
 		    databufData[i] = 0.f; // zero out the initial data in the buffer (until the FFT buffer is filled)
 		}	
@@ -1146,14 +1142,9 @@ void PV_MagBuffer_next(PV_MagBuffer *unit, int inNumSamples)
 	} 
 	float *databufData __attribute__((__unused__)) = databuf->data; 
 	
-	if(unit->m_numloops <= 0){
-	    for(int i = 0; i < numbins; i++){
-		databufData[i] = p->bin[i].mag;
-		}
-	    float sr = (float)unit->mWorld->mSampleRate; 
-	    unit->m_numloops = (int)(numbins / (sr / BUFRATE));
-	    } else {
-	    unit->m_numloops -= 1;
+
+	for(int i = 0; i < numbins; i++){
+	    databufData[i] = p->bin[i].mag;
 	    }
 }
 
