@@ -13,4 +13,5 @@ Getenv : UGen {
  		// store the inputs as an array
  		inputs = theInputs;
  	}
+ 	*categories {	^ #["UGens>InfoUGens"]	}
 }

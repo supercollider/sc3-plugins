@@ -19,6 +19,7 @@ RosslerL : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
 	}
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
 RosslerResL : MCLDChaosGen {
 	const <equation="x' = -y-z\ny' = x + ay\nz' = b + z(x - c)";
@@ -45,6 +46,7 @@ FincoSprottL : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
 	}
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
 // Ditto "M" system - N.B. the parameter A is negative, compared to the online version
 FincoSprottM : MultiOutUGen {
@@ -56,6 +58,7 @@ FincoSprottM : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
 	}
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
 // Ditto "S" system
 FincoSprottS : MultiOutUGen {
@@ -67,6 +70,7 @@ FincoSprottS : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
 	}
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
 
 /*
@@ -88,4 +92,5 @@ RMAFoodChainL : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
 	}
+	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }

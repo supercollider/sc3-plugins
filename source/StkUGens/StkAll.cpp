@@ -393,7 +393,7 @@ void StkBandedWG_Ctor(StkBandedWG* unit)
         SETCALC(StkBandedWG_next);
         StkBandedWG_next(unit, 1);
 
-printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
+//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
 }
             
 void StkBandedWG_next(StkBandedWG *unit, int inNumSamples)
@@ -405,7 +405,7 @@ void StkBandedWG_next(StkBandedWG *unit, int inNumSamples)
 				unit->bandedWG->noteOff( 0);
 				//unit->bandedWG->clear();
 			    unit->bandedWG->noteOn(IN0(0) ,1);
-printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
+//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
 		  							   
 				if(unit->instr != IN0(1))  unit->bandedWG->controlChange((int)16,unit->instr = IN0(1));     
 				if(unit->bowpressure != IN0(2)) unit->bandedWG->controlChange((int)2,unit->bowpressure = IN0(2));

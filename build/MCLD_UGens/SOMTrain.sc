@@ -13,27 +13,87 @@ SOMTrain : MultiOutUGen {
 		inputs = theInputs;
 		^this.initOutputs(2, rate);
 	}
+	*categories {	^ #["UGens>Analysis"]	}
 	
 	// Conveniences
-	*allocBuf { |server, netsize, numdims, numinputchannels|
-		^Buffer.alloc(server ? Server.default, netsize ** numdims, numinputchannels)
+	*allocBuf { |server, netsize, numdims, numinputchannels, init|
+		var buf;
+		buf = Buffer.alloc(server ? Server.default, netsize ** numdims, numinputchannels);
+		if(init.notNil){
+			Task{
+				server.sync;
+				init.switch(
+					\rand,
+						{ this.initBufRand(buf) },
+					\gridrand, 
+						{ this.initBufGridRand(buf, netsize, numdims) }
+				)
+			}.play(AppClock);
+		};
+		^buf;
 	}
 	
-	*initBufRand { |buf, minval, maxval|
+	*initBufRand { |buf, minval = -1, maxval = 1|
 		
 		if(minval.isArray.not){
-			minval = (minval ? -1).dup(buf.numChannels)
+			minval = minval.dup(buf.numChannels)
 		};
 		if(maxval.isArray.not){
-			maxval = (maxval ?  1).dup(buf.numChannels)
-		};
-		
+			maxval = maxval.dup(buf.numChannels)
+		};		
 		
 		buf.loadCollection({
 			buf.numChannels.collect{|index| 
 				1.0.rand.linlin(0, 1, minval[index], maxval[index])
 			}
 		}.dup(buf.numFrames).flat);
+	}
+	
+	// spinmatrix is an array of buf.numChannels vectors, each of which has "numdims" entries
+	*initBufGrid { |buf, netsize, numdims, spinmatrix, offsets = 0, scales = 1|
+		var step, array, row, norm, minval = -1, maxval = 1;
+		
+		step = (maxval - minval) / (netsize - 1);
+		array = this.pr_makegrid(minval, step, maxval, numdims);
+		
+		if(offsets.isArray.not){ offsets = offsets.dup(buf.numChannels) };
+		if( scales.isArray.not){  scales =  scales.dup(buf.numChannels) };
+		
+		// Apply the rotation
+		array = array.collect{|point|
+			spinmatrix.collect{|spincol, scindex|
+				(point * spincol).sum * scales[scindex] + offsets[scindex]
+			}
+		};
+		
+		array = array.flat;
+		
+		buf.loadCollection(array);
+	}
+	
+	*initBufGridRand { |buf, netsize, numdims, offsets = 0, scales = 1|
+		var step, array, spinmatrix, row, norm, minval = -1, maxval = 1;
+		
+		// Create a random orientation into the higher-dimensional feature-space
+		spinmatrix = numdims.collect{
+			row = buf.numChannels.collect{|chanindex| 3.0.sum3rand}; // 3.0.sum3rand creates quasi-gaussian with stdDev of about 1.0
+			norm = row.sum{|val| val.squared}.sqrt;
+			row / norm
+		}.flop;
+		// So spinmatrix is an array of buf.numChannels vectors, each of which has "numdims" entries
+		
+		this.initBufGrid(buf, netsize, numdims, spinmatrix, offsets, scales);
+	}
+	
+	// Generates a an array, each one containing co-ordinates for a point in a grid
+	*pr_makegrid { |from, step, to, dims|
+		var less;
+		^if(dims == 1){
+			(from, from+step .. to).collect(_.asArray)
+		}{
+			less = this.pr_makegrid(from, step, to, dims-1);
+			(from, from+step .. to).collect{|val| less.collect{|lval| lval ++ val} }.flatten
+		}
 	}
 }
 
@@ -71,4 +131,30 @@ SOMRd : MultiOutUGen {
 					+ (coords[3] * (netsize * netsize * netsize))}
 			);
 	}
+	
+	// And the reverse, in case you need it:
+	*bufIndexToCoords { |bufindex, netsize=10, numdims=3|
+		bufindex = bufindex.asInteger;
+		netsize  = netsize.asInteger;
+		numdims  = numdims.asInteger;
+		^numdims.switch(
+			1, { bufindex },
+			2, { [bufindex.mod(netsize), (bufindex/netsize).floor] },
+			3, { [bufindex.mod(netsize), (bufindex/netsize).floor.mod(netsize), (bufindex/(netsize*netsize)).floor] },
+			4, { [bufindex.mod(netsize), (bufindex/netsize).floor.mod(netsize), 
+					(bufindex/(netsize*netsize)).floor.mod(netsize), (bufindex/(netsize*netsize*netsize)).floor] }
+		)
+	}
+	/*
+	Tests:
+	9.collect{|val| SOMRd.bufIndexToCoords(val, 3, 2) }
+	
+	27.collect{|val| SOMRd.bufIndexToCoords(val, 3, 3) }.do(_.postln);""
+	27.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 3), 3) }
+	27.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 3), 3) } == (0..26)
+	
+	81.collect{|val| SOMRd.bufIndexToCoords(val, 3, 4) }.do(_.postln);""
+	81.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 4), 3) }
+	81.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 4), 3) } == (0..80)
+	*/
 }

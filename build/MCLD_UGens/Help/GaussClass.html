@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad140d}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #0000bf}
+span.s4 {color: #001bb9}
+span.s5 {color: #606060}
+span.s6 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>GaussClass<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Gaussian classifier</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>GaussClass.kr(in, bufnum, gate)</b></p>
+<p class="p2"><br></p>
+<p class="p3">A Gaussian classifier, which classifies an input vector as belonging to one of the gaussian distributions defined in a specially-formatted Buffer.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>in</b> - input signal, a multichannel signal specifying a co-ordinate in the space (i.e. a vector).</p>
+<p class="p3"><b>bufnum</b> - the buffer in which the shapes and weights of the gaussian components are specified.</p>
+<p class="p3"><b>gate</b> - the classifier is only active when this is greater than 0 (otherwise, previous value is held constant). Its default value is 1.</p>
+<p class="p2"><br></p>
+<p class="p3">The Buffer should be single-channel. Its exact format is specified towards the bottom of this file. If you have the MathLib quark installed then you can use the convenience function <b>GaussClass.classesToFloatArray()</b> to create a FloatArray suitable for loading to a Buffer.</p>
+<p class="p2"><br></p>
+<p class="p3">The following example creates two-dimensional data with three classes:</p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p4">~classes = [</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span>[<span class="Apple-tab-span">	</span></span>// First class's mean, covariance, weight:</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[2, 8], <span class="Apple-converted-space">  </span>[[1, 0], [0, 1]], <span class="Apple-converted-space">  </span>0.3</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span>],[<span class="Apple-tab-span">	</span></span>// Second class's mean, covariance, weight:</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[8, 2], <span class="Apple-converted-space">  </span>[[1, 0], [0, 1]], <span class="Apple-converted-space">  </span>0.3</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span>],[<span class="Apple-tab-span">	</span></span>// Third class's mean, covariance, weight:</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[8, 8], <span class="Apple-converted-space">  </span>[[0.75, 0.5], [0.5, 0.75]], <span class="Apple-converted-space">  </span>0.4</p>
+<p class="p4"><span class="Apple-tab-span">	</span>]</p>
+<p class="p4">];</p>
+<p class="p4">~serialised = <span class="s3">GaussClass</span>.classesToFloatArray(~classes);</p>
+<p class="p3">)</p>
+<p class="p2"><br></p>
+<p class="p6">// Now let's use it:</p>
+<p class="p3">s.boot;</p>
+<p class="p3">b = <span class="s4">Buffer</span>.loadCollection(s, ~serialised);</p>
+<p class="p3">(</p>
+<p class="p4">x = {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">var</span> rate = 20, input, result, gate;</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>//input = {LFNoise2.kr(rate).range(0, 10)}.dup(2); // Our "query point" wanders around in space</p>
+<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span>input = [</span><span class="s3">MouseX</span><span class="s2">.kr(0, 10), </span><span class="s3">MouseY</span><span class="s2">.kr(0, 10)]; </span>// Or you can wander yourself using the mouse</p>
+<p class="p4"><span class="Apple-tab-span">	</span>gate = <span class="s3">Impulse</span>.kr(rate);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>result = <span class="s3">GaussClass</span>.kr(input, b, gate);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>input.poll(gate, <span class="s5">"input"</span>);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>result.poll(gate, <span class="s5">"result"</span>);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(0, <span class="s3">SinOsc</span>.ar(result.linexp(0, ~classes.size-1, 440, 880), 0, 0.1).dup); <span class="s6">// sonify</span></p>
+<p class="p4">}.play(s)</p>
+<p class="p3">)</p>
+<p class="p3">x.free;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">________________________________</p>
+<p class="p3"><b>THE FORMAT OF THE BUFFER:</b></p>
+<p class="p2"><br></p>
+<p class="p3">The Buffer should be single-channel and hold data in the following order, once for each class:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-converted-space"> </span>- <i>N</i> floats:<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the <b>mean</b> vector;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-converted-space"> </span>- <i>N</i>*<i>N</i> floats:<span class="Apple-tab-span">	</span>the <b>inverse of the covariance</b> matrix; and</p>
+<p class="p3"><span class="Apple-converted-space"> </span>- 1 float:<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the <b>weight</b> of the component divided by the <b>square root of the determinant of the covariance</b> matrix.</p>
+<p class="p2"><br></p>
+<p class="p3"><i>N</i> is the dimensionality of the data space. The length of the Buffer is therefore C * (N*N + N + 1). GaussClass.kr will determine the number of classes from the size of the Buffer.</p>
+</body>
+</html>

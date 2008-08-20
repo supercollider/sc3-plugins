@@ -11,12 +11,13 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d1c12}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0026b4}
+span.s2 {color: #001bb9}
 span.s3 {color: #000000}
+span.s4 {color: #ad140d}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -60,10 +61,57 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4">(</p>
 <p class="p4">x = {</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> sig;</p>
-<p class="p4"><span class="Apple-tab-span">	</span>sig = <span class="s2">PlayBuf</span>.ar(1, b.bufnum, <span class="s2">BufRateScale</span>.kr(b.bufnum), loop: 1);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>sig = <span class="s2">PlayBuf</span>.ar(1, b.bufnum, <span class="s2">BufRateScale</span>.kr(b.bufnum) * 0.5, startPos: 92898, loop: 1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="s2">Squiz</span>.ar(sig, <span class="s2">MouseX</span>.kr(1, 100, 1), zcperchunk: <span class="s2">MouseY</span>.kr(1, 10), mul:0.5).dup</p>
 <p class="p4">}.play(s);</p>
 <p class="p4">)</p>
+<p class="p4">x.free;</p>
+<p class="p4">b.free;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p5">// Let's make it a bit more complicated. By analysing the signal we can change the Squiz sound algorithmically.</p>
+<p class="p4">s.boot;</p>
+<p class="p7"><span class="s3">b = </span><span class="s2">Buffer</span><span class="s3">.read(s,</span>"sounds/amenfast.wav"<span class="s3">);</span></p>
+<p class="p4">c = <span class="s2">Buffer</span>.alloc(s, 512);</p>
+<p class="p4">(</p>
+<p class="p4">x = {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> sig, chain, centroid, hicent, locent, fraccent, fraccentl, heaviness, heaviness2, kick2trig, kick2;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>sig = <span class="s2">PlayBuf</span>.ar(1, b.bufnum, <span class="s2">BufRateScale</span>.kr(b.bufnum) * 0.5, <span class="s4">/*startPos: 92898, */</span>loop: 1);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>// kick2 to emphasise the main downbeats</p>
+<p class="p4"><span class="Apple-tab-span">	</span>kick2trig = <span class="s2">Impulse</span>.kr(<span class="s2">BufDur</span>.kr(b.bufnum).reciprocal * 4);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>kick2 = SinOsc.ar(50 + EnvGen.ar(Env.perc(0.001, 0.01, 1000, -10), kick2trig));</p>
+<p class="p4"><span class="Apple-tab-span">	</span>kick2 = <span class="s2">EnvGen</span>.ar(<span class="s2">Env</span>.perc, kick2trig) * kick2 * 0.3;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>chain = <span class="s2">FFT2</span>(c.bufnum, sig);</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>//centroid = FFTCentroid.kr(chain).log.max(0.000001);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>centroid = <span class="s2">FFTPercentile</span>.kr(chain, 0.9);<span class="s4">//.log.max(0.000001);</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>hicent = <span class="Apple-converted-space">    </span><span class="s2">Amplitude</span>.kr(centroid, 0, 10);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>locent = 10000 - <span class="s2">Amplitude</span>.kr(10000 - centroid, 0, 10);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>fraccent = ((centroid - locent) / (hicent - locent)).min(1).max(0);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>fraccentl = <span class="s2">Latch</span>.kr(fraccent, <span class="s2">OnsetsDS2</span>.kr(chain));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.kr(0, fraccentl);</p>
+<p class="p5">//<span class="Apple-tab-span">	</span>fraccent.poll;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>//heaviness = MouseX.kr(0,1);</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>//heaviness2 = MouseY.kr(0,1);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>heaviness<span class="Apple-converted-space">  </span>= <span class="s2">LFPar</span>.kr(0.016, 0, 0.5, 0.5);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>heaviness2 = <span class="s2">LFPar</span>.kr(0.016, 1, 0.5, 0.5);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>// we don't go really mental until we've got going</p>
+<p class="p4"><span class="Apple-tab-span">	</span># heaviness, heaviness2 = [heaviness, heaviness2] * <span class="s2">Line</span>.kr(0.1, 1, 100);</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>kick2 + <span class="s2">Squiz</span>.ar(sig,<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>( <span class="Apple-converted-space">  </span>fraccentl<span class="Apple-converted-space">  </span>* <span class="s2">LFNoise2</span>.kr(0.1).exprange(1, 100) * heaviness) +<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>((1-fraccentl) * <span class="s2">LFNoise2</span>.kr(0.1).exprange(1, 100) * heaviness2) +</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.8,<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>zcperchunk: <span class="s2">LFNoise2</span>.kr(0.1).range(1, 10), mul:0.5).dup</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span></span>//sig</p>
+<p class="p4">}.play(s);</p>
+<p class="p4">)</p>
+<p class="p5">//s.scope5</p>
 <p class="p4">x.free;</p>
 <p class="p4">b.free;</p>
 </body>

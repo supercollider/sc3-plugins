@@ -7,136 +7,131 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.47">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; color: #000000}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #606060}
-span.s1 {color: #0000bf}
-span.s2 {color: #bf0000}
-span.s3 {color: #606060}
-span.s4 {color: #000000}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad140d}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #606060}
+span.s1 {text-decoration: underline ; color: #003fd9}
+span.s2 {color: #001bb9}
+span.s3 {color: #000000}
+span.s4 {color: #606060}
 span.s5 {font: 12.0px Helvetica}
-span.s6 {color: #007300}
+span.s6 {color: #ad140d}
+span.s7 {color: #2c7014}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>SOMTrain two-dimensional example</b></p>
 <p class="p2"><br></p>
-<p class="p3">In this example of <a href="SOMTrain.html">SOMTrain</a> in action, we create a 2D neural net and fit it to a data set which is a 2D surface in a 3D space - it should be quite straightforward for a 2D SOM to fit to the hills and valleys. See also <a href="SOMTrain_3D_example.html">SOMTrain_3D_example</a></p>
-<p class="p4"><br></p>
-<p class="p5"><i>Hint:</i> self-organising maps work best when the training dimensions have a similar dynamic range (e.g. similar variance), so in this example we normalise the ranges of the input data. You should probably do a similar thing.</p>
-<p class="p4"><br></p>
+<p class="p3">In this example of <a href="SOMTrain.html"><span class="s1">SOMTrain</span></a> in action, we create a 2D neural net and fit it to a data set which is a 2D surface in a 3D space - it should be quite straightforward for a 2D SOM to fit to the hills and valleys. See also <a href="SOMTrain_3D_example.html"><span class="s1">SOMTrain_3D_example</span></a></p>
+<p class="p2"><br></p>
+<p class="p3"><i>Hint:</i> self-organising maps work best when the training dimensions have a similar dynamic range (e.g. similar variance), so in this example we normalise the ranges of the input data. You should probably do a similar thing.</p>
+<p class="p2"><br></p>
 <p class="p3">s.boot;</p>
 <p class="p3">~numnodes = 20;</p>
 <p class="p3">~traindur = 100000;</p>
 <p class="p3">~dataspacelength = 100;</p>
 <p class="p3">~dataspacechanwidth = 10;</p>
-<p class="p6">// First create the data</p>
-<p class="p3">~dataspace = <span class="s1">Buffer</span>.alloc(s, ~dataspacelength, ~dataspacechanwidth);</p>
-<p class="p3">~data = ~dataspacechanwidth.collect{<span class="s1">|index|</span> ((0..~dataspacelength)*2*pi/~dataspacelength).sin * ((8 * index/~dataspacechanwidth).sin) }</p>
-<p class="p6">//~data.heatMap(title: "training data (array)"); // You need the "heatMap" quark to run this line - visualises the data nicely</p>
+<p class="p4">// First create the data</p>
+<p class="p3">~dataspace = <span class="s2">Buffer</span>.alloc(s, ~dataspacelength, ~dataspacechanwidth);</p>
+<p class="p3">~data = ~dataspacechanwidth.collect{<span class="s2">|index|</span> ((0..~dataspacelength)*2*pi/~dataspacelength).sin * ((8 * index/~dataspacechanwidth).sin) }</p>
+<p class="p4">//~data.heatMap(title: "training data (array)"); // You need the "heatMap" quark to run this line - visualises the data nicely</p>
 <p class="p3">~dataspace.loadCollection(~data.flop.flatten);</p>
-<p class="p6">//~dataspace.heatMap(title: "training data (buffer)");</p>
-<p class="p6">// Allocate space for the SOM, and initialise it</p>
-<p class="p3">~som = <span class="s1">SOMTrain</span>.allocBuf(s, ~numnodes, 2, 3);</p>
-<p class="p6">// 3 examples of how to intiailise the nodes. Note that random init can lead to maps with twists in.</p>
-<p class="p3"><span class="s1">SOMTrain</span>.initBufRand(~som); <span class="s2">// -1 to 1 random</span></p>
-<p class="p3"><span class="s1">SOMTrain</span>.initBufRand(~som, [0, 0, -1], [~dataspacelength-1, ~dataspacechanwidth-1, 1]); <span class="s2">// Randomness to match the data range</span></p>
-<p class="p3">~som.loadCollection( ~numnodes.collect{<span class="s1">|index1|</span> ~numnodes.collect{<span class="s1">|index2|</span> [index1 * ~dataspacelength/~numnodes, index2 * ~dataspacechanwidth/~numnodes, 0]<span class="Apple-converted-space">  </span>} }.flat<span class="Apple-converted-space">  </span>); <span class="s2">// Flat init</span></p>
-<p class="p3">~som.loadCollection( ~numnodes.collect{<span class="s1">|index1|</span> ~numnodes.collect{<span class="s1">|index2|</span> [index1 * (~dataspacelength/~numnodes) * 0.02 - 1, index2 * (~dataspacechanwidth/~numnodes) * 0.2 - 1, 0]<span class="Apple-converted-space">  </span>} }.flat<span class="Apple-converted-space">  </span>); <span class="s2">// Flat init in +-1 range</span></p>
-<p class="p6">//~som.plot(minval:nil.dup(3), maxval: nil.dup(3));</p>
-<p class="p6">// Also, just for demonstration purposes, we're going to write the error values to a buffer so we can see how they evolve</p>
-<p class="p3">~errorvals = <span class="s1">Buffer</span>.alloc(s, ~traindur);</p>
-<p class="p6">// Now train the SOM. To train it with data "randomly sampled" from the data buffer, we just wiggle the phase around and feed [phase, val] to the SOM.</p>
+<p class="p4">//~dataspace.heatMap(title: "training data (buffer)");</p>
+<p class="p4">// Allocate space for the SOM, and initialise it</p>
+<p class="p3">~som = <span class="s2">SOMTrain</span>.allocBuf(s, ~numnodes, 2, 3);</p>
+<p class="p4"><span class="s2">SOMTrain</span><span class="s3">.initBufGridRand(~som, ~numnodes, 2, scales: 3); </span>// Grid init - a 2D grid is randomly oriented in the target space (which here is 3D)</p>
+<p class="p4">//~som.plot(minval:nil.dup(3), maxval: nil.dup(3));</p>
+<p class="p4">// Also, just for demonstration purposes, we're going to write the error values to a buffer so we can see how they evolve</p>
+<p class="p3">~errorvals = <span class="s2">Buffer</span>.alloc(s, ~traindur);</p>
+<p class="p4">// Now train the SOM. To train it with data "randomly sampled" from the data buffer, we just wiggle the phase around and feed [phase, val] to the SOM.</p>
 <p class="p3">(</p>
 <p class="p3">x = {</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">var</span> phase1, phase2, val, remain, err, trig;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s2">var</span> phase1, phase2, val, remain, err, trig;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>trig = 1;</p>
-<p class="p3"><span class="Apple-tab-span">	</span>phase1 = <span class="s1">WhiteNoise</span>.kr.range(0, ~dataspace.numFrames-1);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>phase2 = <span class="s1">WhiteNoise</span>.kr.range(0, ~dataspace.numChannels);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>val = <span class="s1">Select</span>.kr(phase2.floor, <span class="s1">BufRd</span>.kr(~dataspace.numChannels, ~dataspace, phase1, 1));</p>
-<p class="p3"><span class="Apple-tab-span">	</span>phase1.poll(trig, label: <span class="s3">"phase1"</span>);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>phase2.poll(trig, label: <span class="s3">"phase2"</span>);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>val.poll(trig, label: <span class="s3">"val"</span>);</p>
-<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>// Here the ranges are reshaped to be +-1</p>
-<p class="p3"><span class="Apple-tab-span">	</span># remain, err = <span class="s1">SOMTrain</span>.kr(~som, [phase1 * 0.02 - 1, phase2 * 0.2 - 1, val], ~numnodes, 2, ~traindur, nhood: 0.5, gate: trig, initweight: 0.5);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>remain.poll(trig, label: <span class="s3">"remain"</span>);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>err.poll(trig, label: <span class="s3">"err"</span>);</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">BufWr</span>.kr(err.sqrt, ~errorvals, ~traindur-remain);</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(0, <span class="s1">Pan2</span>.ar(<span class="s1">K2A</span>.ar(val) * 0.01));</p>
+<p class="p3"><span class="Apple-tab-span">	</span>phase1 = <span class="s2">WhiteNoise</span>.kr.range(0, ~dataspace.numFrames-1);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>phase2 = <span class="s2">WhiteNoise</span>.kr.range(0, ~dataspace.numChannels);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>val = <span class="s2">Select</span>.kr(phase2.floor, <span class="s2">BufRd</span>.kr(~dataspace.numChannels, ~dataspace, phase1, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span>phase1.poll(trig, label: <span class="s4">"phase1"</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>phase2.poll(trig, label: <span class="s4">"phase2"</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>val.poll(trig, label: <span class="s4">"val"</span>);</p>
+<p class="p4"><span class="s3"><span class="Apple-tab-span">	</span></span>// Here the ranges are reshaped to be +-1</p>
+<p class="p3"><span class="Apple-tab-span">	</span># remain, err = <span class="s2">SOMTrain</span>.kr(~som, [phase1 * 0.02 - 1, phase2 * 0.2 - 1, val], ~numnodes, 2, ~traindur, nhood: 0.75, gate: trig, initweight: 1);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>remain.poll(trig, label: <span class="s4">"remain"</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>err.poll(trig, label: <span class="s4">"err"</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s2">BufWr</span>.kr(err.sqrt, ~errorvals, ~traindur-remain);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(0, <span class="s2">Pan2</span>.ar(<span class="s2">K2A</span>.ar(val) * 0.01));</p>
 <p class="p3">}.play</p>
 <p class="p3">)</p>
-<p class="p6">// Once the training is finished...</p>
+<p class="p4">// Once the training is finished...</p>
 <p class="p3">x.free;</p>
 <p class="p2"><br></p>
-<p class="p6">// How do the errors look? Should be a very noisy curve gradually decreasing, but won't necessarily stabilise</p>
-<p class="p3">~errorvals.plot(maxval: <span class="s1">nil</span>, minval: <span class="s1">nil</span>);</p>
+<p class="p4">// How do the errors look? Should be a very noisy curve gradually decreasing, but won't necessarily stabilise</p>
+<p class="p3">~errorvals.plot(maxval: <span class="s2">nil</span>, minval: <span class="s2">nil</span>);</p>
 <p class="p2"><br></p>
-<p class="p6">// Now let's look at the mesh of points represented by the SOM. Do they fit the training data?</p>
-<p class="p6">// Here's a pure SC plot, the colouring of the points representing the third dimension - you should be able to see the undulation</p>
+<p class="p4">// Now let's look at the mesh of points represented by the SOM. Do they fit the training data?</p>
+<p class="p4">// Here's a pure SC plot, the colouring of the points representing the third dimension - you should be able to see the undulation</p>
 <p class="p3">(</p>
-<p class="p7"><span class="s5">~cols = </span>(1, 0.99 .. 0).collect{<span class="s1">|cold|</span> <span class="s1">Color</span>(0, cold * 0.1, cold)} ++ (0.01, 0.02 .. 1).collect{<span class="s1">|hot|</span> <span class="s1">Color</span>(hot, 0, 0)};</p>
-<p class="p3">~som.loadToFloatArray(action: {<span class="s1">|arr|</span> {</p>
-<p class="p3"><span class="Apple-tab-span">	</span>w = <span class="s1">GUI</span>.window.new(<span class="s3">"SOM nodes"</span>, <span class="s1">Rect</span>(200, 800, 600, 600)); <span class="s2">// SCWindow</span></p>
-<p class="p3"><span class="Apple-tab-span">	</span>(0,3..arr.size-1).do{<span class="s1">|index|</span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">GUI</span>.staticText.new(w, <span class="s1">Rect</span>(</p>
+<p class="p5"><span class="s5">~cols = </span>(1, 0.99 .. 0).collect{<span class="s2">|cold|</span> <span class="s2">Color</span>(0, cold * 0.1, cold)} ++ (0.01, 0.02 .. 1).collect{<span class="s2">|hot|</span> <span class="s2">Color</span>(hot, 0, 0)};</p>
+<p class="p3">~som.loadToFloatArray(action: {<span class="s2">|arr|</span> {</p>
+<p class="p3"><span class="Apple-tab-span">	</span>w = <span class="s2">GUI</span>.window.new(<span class="s4">"SOM nodes"</span>, <span class="s2">Rect</span>(200, 800, 600, 600)); <span class="s6">// SCWindow</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>(0,3..arr.size-1).do{<span class="s2">|index|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">GUI</span>.staticText.new(w, <span class="s2">Rect</span>(</p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(arr[index]<span class="Apple-converted-space">      </span>+1 * 300 ),<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(arr[index+1] +1 * 300 ),<span class="Apple-converted-space"> </span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>20, 20)).string_(<span class="s3">"x"</span>).background_(~cols[arr[index+2].linlin(-1, 1, 0, ~cols.size-1)]) <span class="s2">// SCStaticText</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>20, 20)).string_(<span class="s4">"x"</span>).background_(~cols[arr[index+2].linlin(-1, 1, 0, ~cols.size-1)]) <span class="s6">// SCStaticText</span></p>
 <p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>};</p>
 <p class="p3"><span class="Apple-tab-span">	</span>w.front;</p>
 <p class="p3">}.defer})</p>
 <p class="p3">)</p>
 <p class="p2"><br></p>
-<p class="p6">// Or if you have OctaveSC you can plot a very nice 3D mesh:</p>
-<p class="p3">o = <span class="s1">OctaveSC</span>.new;</p>
+<p class="p4">// Or if you have OctaveSC you can plot a very nice 3D mesh:</p>
+<p class="p3">o = <span class="s2">OctaveSC</span>.new;</p>
 <p class="p3">o.init;</p>
 <p class="p3">(</p>
-<p class="p3">~som.loadToFloatArray(action: {<span class="s1">|arr|</span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">var</span> x, y, z;</p>
+<p class="p3">~som.loadToFloatArray(action: {<span class="s2">|arr|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s2">var</span> x, y, z;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>x = arr[0,3..];</p>
 <p class="p3"><span class="Apple-tab-span">	</span>y = arr[1,4..];</p>
 <p class="p3"><span class="Apple-tab-span">	</span>z = arr[2,5..];</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"x range: % to %"</span>.format(x.minItem, x.maxItem).postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"y range: % to %"</span>.format(y.minItem, y.maxItem).postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"z range: % to %"</span>.format(z.minItem, z.maxItem).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"x range: % to %"</span>.format(x.minItem, x.maxItem).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"y range: % to %"</span>.format(y.minItem, y.maxItem).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"z range: % to %"</span>.format(z.minItem, z.maxItem).postln;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>x = x.clump(~numnodes);</p>
 <p class="p3"><span class="Apple-tab-span">	</span>y = y.clump(~numnodes);</p>
 <p class="p3"><span class="Apple-tab-span">	</span>z = z.clump(~numnodes);</p>
-<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s6">\xtemp</span>] = x;</p>
-<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s6">\ytemp</span>] = y;</p>
-<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s6">\ztemp</span>] = z;</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>o.(</span>"figure; hold off"<span class="s4">);</span></p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>o.(</span>"mesh(xtemp, ytemp, ztemp)"<span class="s4">);</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\xtemp</span>] = x;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\ytemp</span>] = y;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\ztemp</span>] = z;</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>o.(</span>"figure; hold off"<span class="s3">);</span></p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>o.(</span>"mesh(xtemp, ytemp, ztemp)"<span class="s3">);</span></p>
 <p class="p3">});</p>
 <p class="p3">);</p>
 <p class="p3">(</p>
-<p class="p3">~dataspace.loadToFloatArray(action: {<span class="s1">|arr|</span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">var</span> x, y, z;</p>
+<p class="p3">~dataspace.loadToFloatArray(action: {<span class="s2">|arr|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s2">var</span> x, y, z;</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>arr = arr.clump(~dataspace.numChannels);</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>x = (0..arr.size-1).dup(~dataspace.numChannels).flop;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>y = (0..~dataspace.numChannels-1).dup(arr.size);</p>
 <p class="p3"><span class="Apple-tab-span">	</span>z = arr;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"x size: [%, %]"</span>.format(x.size, x[0].size).postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"y size: [%, %]"</span>.format(y.size, y[0].size).postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s3">"z size: [%, %]"</span>.format(z.size, z[0].size).postln;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>o[<span class="s6">\xtemp</span>] = x;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>o[<span class="s6">\ytemp</span>] = y;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>o[<span class="s6">\ztemp</span>] = z;</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span></span><span class="s1">o</span><span class="s4">.(</span>"figure; hold off"<span class="s4">);</span></p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span></span><span class="s1">o</span><span class="s4">.(</span>"mesh(xtemp, ytemp, ztemp)"<span class="s4">);</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"x size: [%, %]"</span>.format(x.size, x[0].size).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"y size: [%, %]"</span>.format(y.size, y[0].size).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s4">"z size: [%, %]"</span>.format(z.size, z[0].size).postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\xtemp</span>] = x;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\ytemp</span>] = y;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>o[<span class="s7">\ztemp</span>] = z;</p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>o.(</span>"figure; hold off"<span class="s3">);</span></p>
+<p class="p6"><span class="s3"><span class="Apple-tab-span">	</span>o.(</span>"mesh(xtemp, ytemp, ztemp)"<span class="s3">);</span></p>
 <p class="p3">});</p>
 <p class="p3">);</p>
 <p class="p2"><br></p>
-<p class="p6">// Dump the xyz coordinates:</p>
-<p class="p3">~som.loadToFloatArray(action: {<span class="s1">|arr|</span> <span class="Apple-converted-space">  </span>arr.clump(3).do(<span class="s1">_</span>.postln) <span class="Apple-converted-space">  </span>});</p>
+<p class="p4">// Dump the xyz coordinates:</p>
+<p class="p3">~som.loadToFloatArray(action: {<span class="s2">|arr|</span> <span class="Apple-converted-space">  </span>arr.clump(3).do(<span class="s2">_</span>.postln) <span class="Apple-converted-space">  </span>});</p>
 </body>
 </html>

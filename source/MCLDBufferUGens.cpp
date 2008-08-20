@@ -34,6 +34,17 @@ struct ListTrig2 : public Unit
 	SndBuf *m_buf;
 };
 
+struct GaussClass : public Unit
+{
+	int m_numdims, m_numclasses, m_numnumsperclass;
+	
+	float *m_indata; 
+	float *m_centred; // data after mean-removal
+	
+	float m_result, m_fbufnum;
+	SndBuf *m_buf;
+};
+
 
 extern "C"
 {
@@ -44,9 +55,13 @@ extern "C"
 	
 	void ListTrig_Ctor(ListTrig* unit);
 	void ListTrig_next(ListTrig *unit, int inNumSamples);
-
+	
 	void ListTrig2_Ctor(ListTrig2* unit);
 	void ListTrig2_next(ListTrig2 *unit, int inNumSamples);
+
+	void GaussClass_Ctor(GaussClass* unit);
+	void GaussClass_next(GaussClass *unit, int inNumSamples);
+	void GaussClass_Dtor(GaussClass* unit);
 
 };
 
@@ -85,7 +100,7 @@ extern "C"
 		ClearUnitOutputs(unit, inNumSamples); \
 		return; \
 	} \
-	float *in[16]; \
+	float *in[64]; \
 	for (uint32 i=0; i<numInputs; ++i) in[i] = ZIN(i+offset); 
 
 //////////////////////////////////////////////////////////////////
@@ -280,6 +295,120 @@ void ListTrig2_next(ListTrig2 *unit, int inNumSamples)
 	ZOUT0(0) = out;
 }
 
+////////////////////////////////////////////////////////////////////
+
+void GaussClass_Ctor(GaussClass* unit)
+{
+	SETCALC(GaussClass_next);
+	
+	// The dimensionality is specified by the dimensionality of inputs, appended to params
+	int numdims = unit->mNumInputs - 2;
+	unit->m_numdims = numdims;
+	unit->m_numclasses = 0; // This will be filled in when the buffer first arrives
+	unit->m_numnumsperclass = numdims*numdims + numdims + 1;
+	
+	unit->m_indata  = (float*)RTAlloc(unit->mWorld, numdims * sizeof(float));
+	unit->m_centred = (float*)RTAlloc(unit->mWorld, numdims * sizeof(float));
+	
+	unit->m_result = 0.f;
+	unit->m_fbufnum = -1e9f;
+	
+	ClearUnitOutputs(unit, 1);
+}
+
+// Exponent for any Gaussian PDF. The (inverted) covariance matrix is in row-first order.
+inline double GaussClass_exponent(const int numdims, const float *centred, const float *invcov);
+inline double GaussClass_exponent(const int numdims, const float *centred, const float *invcov){
+	int covpos = -1;
+	double sum=0., partial;
+	for(int i=0; i<numdims; ){
+		partial=0.;
+		for(int j=0; j<numdims; ){
+			partial += centred[j++] * invcov[++covpos];
+		}
+		sum += partial * centred[i++];
+	}
+	return sum * -0.5;
+}
+void GaussClass_next(GaussClass *unit, int inNumSamples)
+{
+	if(ZIN0(1)>0.f){ // If gate>0
+		
+		int numdims = unit->m_numdims;
+		int numnumsperclass  = unit->m_numnumsperclass;
+		
+		// Do the GET_BUF-like bit
+		float fbufnum  = ZIN0(0);
+		if (fbufnum != unit->m_fbufnum) {
+			uint32 bufnum = (int)fbufnum;
+			World *world = unit->mWorld;
+			if (bufnum >= world->mNumSndBufs) bufnum = 0;
+			unit->m_fbufnum = fbufnum;
+			unit->m_buf = world->mSndBufs + bufnum;
+			uint32 bufFrames = unit->m_buf->frames;
+			
+			if(unit->m_buf->channels != 1 && world->mVerbosity > -1){
+				Print("GaussClass: warning, Buffer should be single-channel\n");
+			}
+			// Infer the number of classes:
+			unit->m_numclasses = bufFrames / numnumsperclass;
+		}
+		SndBuf *buf = unit->m_buf;
+		float *bufData = buf->data;
+		
+		CHECK_BUF
+		
+		int numclasses  = unit->m_numclasses;
+		float *indata   = unit->m_indata;
+		float *centred  = unit->m_centred;
+		
+		// Grab  the input data
+		for(int i=0; i<numdims; ++i){
+			indata[i] = ZIN0(i + 2);
+		}
+				
+		// Locations of the (first) class's data, these will be incremented
+		float *mean                 = bufData;
+		float *invcov               = bufData + numdims;
+		float *weightoversqrtdetcov = bufData + numnumsperclass - 1;
+		
+		// Iterate the classes, calculating the score
+		int winningclass=0;
+		double winningclassscore=0.;
+		double curscore;
+		for(int i=0; i<numclasses; ++i){
+			// Centre the input data on the current gaussian
+			for(int j=0; j<numdims; ++j){
+				centred[j] = indata[j] - mean[j];
+			}
+			
+			// Now calculate the score, see if we've won
+			curscore = (*weightoversqrtdetcov)
+					* exp(GaussClass_exponent(numdims, centred, invcov));
+			if(curscore > winningclassscore){
+				winningclassscore = curscore;
+				winningclass      = i;
+			}
+			
+			// Increment pointers for the next class
+			mean                 += numnumsperclass;
+			invcov               += numnumsperclass;
+			weightoversqrtdetcov += numnumsperclass;
+		}
+		
+		// Store the winner
+		unit->m_result = (float)winningclass;
+		
+	} // end gate check
+	
+	ZOUT0(0) = unit->m_result;
+}
+void GaussClass_Dtor(GaussClass* unit)
+{
+	RTFree(unit->mWorld, unit->m_indata );
+	RTFree(unit->mWorld, unit->m_centred);
+}
+
 //////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -289,4 +418,5 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(Logger);
 	DefineSimpleUnit(ListTrig);
 	DefineSimpleUnit(ListTrig2);
+	DefineDtorUnit(GaussClass);
 }

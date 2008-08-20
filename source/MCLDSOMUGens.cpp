@@ -37,8 +37,9 @@ struct SOMUnit : public Unit
 };
 struct SOMTrain : public SOMUnit
 {
-	int m_traindur, m_traincountdown;
-	double m_nhood, m_nhooddelta, m_alpha, m_alphadelta;
+	int m_traindur, m_traincountdown, m_traincountup;
+	double m_nhood, m_nhooddelta/* , m_alpha, m_alphadelta*/;
+	float m_mfactor, m_weightfactor;
 };
 struct SOMRd : public SOMUnit
 {
@@ -84,7 +85,7 @@ extern "C"
 // When set at 1.0 the updating is "triangular" - update strength tails off linearly towards the edge of the neighbourhood.
 // A compromise allows for plenty of learning but still concentrating the learning more strongly at the centre.
 // #define LRNSCALE 0.0
-#define LRNSCALE 0.6
+#define LRNSCALE 0.3
 // #define LRNSCALE 1.0
 
 //////////////////////////////////////////////////////////////////
@@ -165,16 +166,31 @@ void SOMTrain_Ctor(SOMTrain* unit)
 	// The reason we halve it is for convenience: we look nhood/2 in positive direction, nhood/2 in negative direction.
 	double nhooddelta = nhood / traindur; // This is how much it decrements by, each occasion.
 	
-	double alpha = ZIN0(6); // How much the node "bends" towards the datum
-	double alphadelta = alpha / traindur; // This is how much it decrements by, each occasion.
+	float weightfactor = ZIN0(6); // Scaling factor for how much the node "bends" towards the datum
+	//RM double alpha = ZIN0(6); // How much the node "bends" towards the datum
+	//RM double alphadelta = alpha / traindur; // This is how much it decrements by, each occasion.
+	
+	/*
+	int totalnumnodes = (int)powf(ZIN0(2), ZIN0(3));
+	float mfactor = ((float)(traindur - totalnumnodes)) / (float)(totalnumnodes * (traindur - 1));
+	if(mfactor<=0.f){
+		if(unit->mWorld->mVerbosity > -1)
+			Print("SOMTrain warning: training weight factor \"m\" not positive - probably more nodes than training moments. Consider longer training!\n");
+		mfactor = 1.f / (float)(traindur - 1); // if numnodes were traindur/2, this would be what you'd get...
+	}
+	*/
+	float mfactor = traindur * 0.25f; // Empirical scaling - weight falls to half of its value after 0.25 of the training
 	
 	// initialize the unit generator state variables.
 	unit->m_traindur   = traindur;
 	unit->m_traincountdown = traincountdown;
+	unit->m_traincountup   = 0;
 	unit->m_nhood      = nhood;
 	unit->m_nhooddelta = nhooddelta;
-	unit->m_alpha      = alpha;
-	unit->m_alphadelta = alphadelta;
+	unit->m_weightfactor   = weightfactor;
+	unit->m_mfactor   = mfactor;
+	//RM unit->m_alpha      = alpha;
+	//RM unit->m_alphadelta = alphadelta;
 	
 	// calculate one sample of output.
 	ZOUT0(0) = 0.f;
@@ -196,7 +212,11 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 		}
 		
 		// Get state from struct
-		float alpha = (float)unit->m_alpha;
+		float mfactor = unit->m_mfactor;
+		float weightfactor = unit->m_weightfactor;
+		
+		//RM float alpha = (float)unit->m_alpha;
+		
 		// get "nhood" as an integer, NB use ceil to make sure the neighbourhood errs on side of bigness
 		int nhoodi = (int)ceil(unit->m_nhood);
 		// squared distance comparisons are used in the neighbourhood-update function. The "plus one" is done so we can use "<" rather than "<=" later
@@ -211,6 +231,9 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 		}
 				
 		if(traincountdown != 0){
+			//float alpha = weightfactor / (mfactor * unit->m_traincountup + 1.f); // mulier's approach
+			float alpha = weightfactor * mfactor / (mfactor + unit->m_traincountup); // dan's empirical approach
+		//	Print("alpha2: %g\n", alpha);
 			// UPDATE THE NODES
 			switch(numdims){
 				case 1: SOMTrain_updatenodes_1d(bufData, inputdata, bestcoords, netsize, numinputdims, alpha, nhoodi, nhoodisq); break;
@@ -222,7 +245,8 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 			// Save state to struct.
 			// NB Update "alpha" and "nhood" (both shrink slightly) 
 			unit->m_nhood = unit->m_nhood - unit->m_nhooddelta;
-			unit->m_alpha = unit->m_alpha - unit->m_alphadelta;
+			//RM unit->m_alpha = unit->m_alpha - unit->m_alphadelta;
+			++(unit->m_traincountup);
 			unit->m_traincountdown = traincountdown = traincountdown - 1;
 			if(traincountdown==0){
 				unit->mDone = true;

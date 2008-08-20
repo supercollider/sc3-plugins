@@ -14,6 +14,8 @@ AY : UGen {
 				chiptype).madd(mul, add)
 	}
 
+	*categories { ^ #["UGens>Oscillators"] }
+
 	*freqtotone { |freq|
 		// Approximate empirical...
 		//^(109300 / (freq - 3.70727))

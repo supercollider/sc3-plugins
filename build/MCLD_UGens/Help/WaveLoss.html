@@ -11,10 +11,11 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001bb9}
+span.s2 {color: #0000bf}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
 span.Apple-tab-span {white-space:pre}
@@ -40,10 +41,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>sig = [<span class="s2">SinOsc</span>.ar, <span class="s2">PinkNoise</span>.ar].mean;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>mode = <span class="s2">MouseY</span>.kr(1,2).round;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s2">WaveLoss</span>.ar(sig, <span class="s2">MouseX</span>.kr(0, 40), 40, mode: mode, mul: 0.1);</p>
-<p class="p5">}.play(s);</p>
+<p class="p5">}.play;</p>
 <p class="p5">)</p>
 <p class="p5">x.free;</p>
-<p class="p4"><br></p>
+<p class="p7"><br></p>
 <p class="p6">// Plotting shows quite clearly what's going on:</p>
 <p class="p5">(</p>
 <p class="p5">{</p>
@@ -52,8 +53,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>[sig, <span class="s2">WaveLoss</span>.ar(sig, 20, 40, mode: 2)];</p>
 <p class="p5">}.plot(0.15);</p>
 <p class="p5">)</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
 <p class="p6">// A stereo example, evolves over a couple of minutes - specify a breakbeat loop sample below, sounds good</p>
 <p class="p6"><span class="s3">b = </span><span class="s2">Buffer</span><span class="s3">.read(s,</span><span class="s4">"sounds/amenfast.wav"</span><span class="s3">); </span>// remember to free the buffer later.</p>
 <p class="p5">(</p>
@@ -68,7 +69,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>200, mode: 2, mul: 0.4);</p>
 <p class="p5"><span class="Apple-tab-span">	</span>}.dup;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>woo = (woo * 0.9) + (woo.reverse * 0.1);</p>
-<p class="p5">}.play(s);</p>
+<p class="p5">}.play;</p>
 <p class="p5">)</p>
 <p class="p5">x.free;</p>
 <p class="p5">b.free;</p>
