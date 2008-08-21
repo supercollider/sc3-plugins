@@ -11,7 +11,7 @@ struct Logger : public Unit
 	float m_fbufnum;
 	SndBuf *m_buf;
 	
-	bool m_maypost;
+	bool m_maypost, m_notfull;
 };
 
 struct ListTrig : public Unit
@@ -131,8 +131,6 @@ void Logger_next(Logger *unit, int inNumSamples)
 	float prevreset = unit->m_prevreset;
 	unsigned int writepos = unit->m_writepos; // The write position (takes account of num channels)
 	
-	float out = 0.f;
-	
 	// Stuff a la BufWr - NB I have modified GET_BUF slightly
 	GET_BUF_ALTERED
 	CHECK_BUF
@@ -143,19 +141,22 @@ void Logger_next(Logger *unit, int inNumSamples)
 	// First, handle reset
 	if(justInitialised || (reset > 0.f && prevreset <= 0.f)){
 		writepos = 0;
+		unit->m_notfull = true;
 		memset(bufData, 0, bufChannels * bufFrames * sizeof(float));
 	}
 	
 	// Now check for trigger
-	if(trig > 0.f && prevtrig <= 0.f){
-		if(unit->m_maypost && writepos == bufChannels * bufFrames){
-			Print("Logger.kr warning: Buffer full, dropped values: first channel %g\n", *in[0]);
+	if(unit->m_notfull && trig > 0.f && prevtrig <= 0.f){
+		if(writepos == bufChannels * bufFrames){
+			unit->m_notfull = false;
+			if(unit->m_maypost){
+				Print("Logger.kr warning: Buffer full, dropped values: first channel %g\n", *in[0]);
+			}
 		}else{
 			for(uint32 i=0; i<numInputs; ++i){
 				table0[i] = *++(in[i]);
 			}
 			writepos += numInputs;
-			out = 1.0f;
 		}
 	}
 	
@@ -164,7 +165,7 @@ void Logger_next(Logger *unit, int inNumSamples)
 	unit->m_prevreset = reset;
 	unit->m_writepos = writepos;
 	
-	ZOUT0(0) = out;
+	ZOUT0(0) = unit->m_notfull ? 1.f : 0.f;
 }
 
 ////////////////////////////////////////////////////////////////////

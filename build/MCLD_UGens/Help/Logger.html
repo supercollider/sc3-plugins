@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0000ff}
+span.s3 {color: #0000bf}
+span.s4 {color: #000000}
+span.s5 {color: #007300}
+span.s6 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>Logger</b></span><b><span class="Apple-tab-span">	</span>Store values to a buffer, whenever triggered</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>Logger.kr(in, trig, bufnum, reset)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Writes a series of (control-rate) values to a <a href="SC://Buffer"><span class="s2">Buffer</span></a>, storing them strictly sequentially. Whenever <b>trig</b> crosses from non-positive to positive,<span class="Apple-converted-space">  </span>the current value of the input will be written to the buffer. Storage starts at the buffer beginning and increments the write position until the buffer is full. If <b>reset</b> crosses from non-positive to positive, then the buffer will be zero'ed (all values set to zero) and the next write will begin again at the first entry.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>in</b> can be an array - it should be of the same size as the number of channels in the buffer.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>NB: </b>Logger <b>zeroes the buffer upon first instantiation</b>, to ensure that out-of-date data is not confused with new data. So it will definitely clobber any data you may have had in the buffer before it runs. It makes no sense to use multiple instances of Logger on the same buffer, since data will be overwritten.</p>
+<p class="p4"><br></p>
+<p class="p3">Output is 1 in normal operation, then changes to 0 if triggers are received but there's no more space in the Buffer. (Flips back to 1 if you reset it.)</p>
+<p class="p4"><br></p>
+<p class="p3"><b>Examples</b></p>
+<p class="p4"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p5">b = <span class="s3">Buffer</span>.alloc(s, 100);</p>
+<p class="p5">(</p>
+<p class="p6">// This example simply stores values regularly sampled from an oscillator.</p>
+<p class="p6">// With such a small buffer, it doesn't take long to fill up.</p>
+<p class="p6">// Note what happens when full.</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> source;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>source = <span class="s3">LFCub</span>.kr(10, 0, <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>.linen(1, 2, 1), doneAction:2));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Logger</span>.kr(source, <span class="s3">Impulse</span>.kr(49), b.bufnum);</p>
+<p class="p5">}.play(s);</p>
+<p class="p5">)</p>
+<p class="p5">x.free;</p>
+<p class="p5">b.plot;</p>
+<p class="p2"><br></p>
+<p class="p5">b = <span class="s3">Buffer</span>.alloc(s, 100, 3);</p>
+<p class="p5">(</p>
+<p class="p6">// The same but multi-channel.</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> source;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>source = <span class="s3">LFCub</span>.kr(10, 0, <span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>.linen(1, 2, 1), doneAction:2));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Logger</span>.kr([source, source * 0.5, source + WhiteNoise.kr(0.3)], <span class="s3">Impulse</span>.kr(49), b.bufnum);</p>
+<p class="p5">}.play(s);</p>
+<p class="p5">)</p>
+<p class="p5">x.free;</p>
+<p class="p5">b.plot;</p>
+<p class="p2"><br></p>
+<p class="p5">b = <span class="s3">Buffer</span>.alloc(s, 100);</p>
+<p class="p5">(</p>
+<p class="p6">// This time we'll trigger something to create and store random values, and recall them later.</p>
+<p class="p7"><span class="s4">x = { </span>|t_trig=0, t_reset=0|</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> source;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>source = <span class="s3">LFNoise0</span>.kr(10);</p>
+<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>source.poll(t_trig, </span>"Storing this random value"<span class="s4">);</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Logger</span>.kr(source, t_trig, b.bufnum, t_reset);</p>
+<p class="p5">}.play(s);</p>
+<p class="p5">)</p>
+<p class="p6"><span class="s4">x.set(</span><span class="s5">\t_trig</span><span class="s4">, 1); </span>// Call this a few times</p>
+<p class="p5">b.loadToFloatArray(action:{<span class="s3">|ar|</span> ar.postcs}) <span class="s6">// Dump the values</span></p>
+<p class="p6"><span class="s4">x.set(</span><span class="s5">\t_reset</span><span class="s4">, 1); </span>// When you want to start from scratch</p>
+</body>
+</html>
