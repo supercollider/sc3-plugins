@@ -72,6 +72,7 @@
 				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
 				372742850DA027AB00287F98 /* PBXTargetDependency */,
 				F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */,
+				4603009F0E6F45F000ABDB31 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -93,6 +94,13 @@
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
+		4650ABFF0E78623A0012CFCF /* libfftw3f-312-ub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */; };
+		4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */; };
+		4650AC5E0E788D4E0012CFCF /* AutoTrackfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */; };
+		4650AC5F0E788D4E0012CFCF /* Concatfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC550E788D4E0012CFCF /* Concatfftw.cpp */; };
+		4650AC600E788D4E0012CFCF /* MLfftwUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC570E788D4E0012CFCF /* MLfftwUGens.cpp */; };
+		4650AC610E788D4E0012CFCF /* Qitchfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC590E788D4E0012CFCF /* Qitchfftw.cpp */; };
+		4650AC620E788D4E0012CFCF /* Tartini.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC5B0E788D4E0012CFCF /* Tartini.cpp */; };
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
 		F3271C4A0C20F375007DE8F1 /* PV_ThirdParty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */; };
 		F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -408,6 +416,13 @@
 			remoteGlobalIDString = 37FEEBFE0D9AA7630043C418;
 			remoteInfo = MCLDSOMUGens;
 		};
+		4603009E0E6F45F000ABDB31 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4603006E0E6F42EC00ABDB31;
+			remoteInfo = MachineListening;
+		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -482,6 +497,20 @@
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
 		37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDSOMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDSOMUGens.cpp; sourceTree = "<group>"; };
+		4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MLfftwUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfftw3f-312-ub.a"; path = "/usr/local/lib/libfftw3f-312-ub.a"; sourceTree = "<absolute>"; };
+		4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AnalyseEvents2fftw.cpp; path = MLfftwUGens/AnalyseEvents2fftw.cpp; sourceTree = "<group>"; };
+		4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AnalyseEvents2fftw.h; path = ../../MLfftwUGens/AnalyseEvents2fftw.h; sourceTree = "<group>"; };
+		4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AutoTrackfftw.cpp; path = MLfftwUGens/AutoTrackfftw.cpp; sourceTree = "<group>"; };
+		4650AC540E788D4E0012CFCF /* AutoTrackfftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AutoTrackfftw.h; path = ../../MLfftwUGens/AutoTrackfftw.h; sourceTree = "<group>"; };
+		4650AC550E788D4E0012CFCF /* Concatfftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Concatfftw.cpp; path = MLfftwUGens/Concatfftw.cpp; sourceTree = "<group>"; };
+		4650AC560E788D4E0012CFCF /* Concatfftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Concatfftw.h; path = ../../MLfftwUGens/Concatfftw.h; sourceTree = "<group>"; };
+		4650AC570E788D4E0012CFCF /* MLfftwUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MLfftwUGens.cpp; path = MLfftwUGens/MLfftwUGens.cpp; sourceTree = "<group>"; };
+		4650AC580E788D4E0012CFCF /* MLfftwUGens.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MLfftwUGens.h; path = ../../MLfftwUGens/MLfftwUGens.h; sourceTree = "<group>"; };
+		4650AC590E788D4E0012CFCF /* Qitchfftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Qitchfftw.cpp; path = MLfftwUGens/Qitchfftw.cpp; sourceTree = "<group>"; };
+		4650AC5A0E788D4E0012CFCF /* Qitchfftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Qitchfftw.h; path = ../../MLfftwUGens/Qitchfftw.h; sourceTree = "<group>"; };
+		4650AC5B0E788D4E0012CFCF /* Tartini.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Tartini.cpp; path = MLfftwUGens/Tartini.cpp; sourceTree = "<group>"; };
+		4650AC5C0E788D4E0012CFCF /* Tartini.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Tartini.h; path = ../../MLfftwUGens/Tartini.h; sourceTree = "<group>"; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
@@ -685,6 +714,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460300740E6F42EC00ABDB31 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4650ABFF0E78623A0012CFCF /* libfftw3f-312-ub.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -909,6 +946,12 @@
 		F50D054502E69B6B01CA2799 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */,
+				4650AC540E788D4E0012CFCF /* AutoTrackfftw.h */,
+				4650AC560E788D4E0012CFCF /* Concatfftw.h */,
+				4650AC580E788D4E0012CFCF /* MLfftwUGens.h */,
+				4650AC5A0E788D4E0012CFCF /* Qitchfftw.h */,
+				4650AC5C0E788D4E0012CFCF /* Tartini.h */,
 				F33A46670B0EC50D00E05136 /* SKINI.tbl */,
 				370E4D160C92DFA1000AE1EF /* AY_libayemu */,
 				F318855B0B0EAAE10016AAA6 /* STKAlloc.h */,
@@ -1017,6 +1060,12 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */,
+				4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */,
+				4650AC550E788D4E0012CFCF /* Concatfftw.cpp */,
+				4650AC570E788D4E0012CFCF /* MLfftwUGens.cpp */,
+				4650AC590E788D4E0012CFCF /* Qitchfftw.cpp */,
+				4650AC5B0E788D4E0012CFCF /* Tartini.cpp */,
 				F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */,
 				37046FA00CF0853D00254768 /* MCLDTriggeredStatsUgens.cpp */,
 				37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */,
@@ -1083,6 +1132,7 @@
 				37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */,
 				372742580DA024ED00287F98 /* MembraneUGens.scx */,
 				F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */,
+				4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1090,6 +1140,7 @@
 		F50D069402E6A1C601CA2799 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */,
 				F5D127DE03383D340164B34C /* libsndfile.a */,
 				F3564CF70B0E8736008AFA51 /* libstk.a */,
 				F5499A1103A3023A01BA7E76 /* vecLib.framework */,
@@ -1569,6 +1620,25 @@
 			productReference = 37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		4603006E0E6F42EC00ABDB31 /* MLfftwUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 460300770E6F42EC00ABDB31 /* Build configuration list for PBXNativeTarget "MLfftwUGens" */;
+			buildPhases = (
+				460300710E6F42EC00ABDB31 /* Sources */,
+				460300740E6F42EC00ABDB31 /* Frameworks */,
+				460300750E6F42EC00ABDB31 /* Rez */,
+				460300760E6F42EC00ABDB31 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MLfftwUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens (Upgraded)" */;
@@ -2013,6 +2083,7 @@
 				37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */,
 				3727424D0DA024ED00287F98 /* MembraneUGens */,
 				F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
+				4603006E0E6F42EC00ABDB31 /* MLfftwUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2068,6 +2139,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		37FEEC030D9AA7630043C418 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460300750E6F42EC00ABDB31 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2281,6 +2359,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		37FEEC040D9AA7630043C418 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		460300760E6F42EC00ABDB31 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2535,6 +2622,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460300710E6F42EC00ABDB31 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */,
+				4650AC5E0E788D4E0012CFCF /* AutoTrackfftw.cpp in Sources */,
+				4650AC5F0E788D4E0012CFCF /* Concatfftw.cpp in Sources */,
+				4650AC600E788D4E0012CFCF /* MLfftwUGens.cpp in Sources */,
+				4650AC610E788D4E0012CFCF /* Qitchfftw.cpp in Sources */,
+				4650AC620E788D4E0012CFCF /* Tartini.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2828,6 +2928,11 @@
 			isa = PBXTargetDependency;
 			target = 37FEEBFE0D9AA7630043C418 /* MCLDSOMUGens */;
 			targetProxy = 37FEEC100D9AA7F80043C418 /* PBXContainerItemProxy */;
+		};
+		4603009F0E6F45F000ABDB31 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4603006E0E6F42EC00ABDB31 /* MLfftwUGens */;
+			targetProxy = 4603009E0E6F45F000ABDB31 /* PBXContainerItemProxy */;
 		};
 		F3A15D040B5D8C0B00D75043 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3714,6 +3819,103 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		460300780E6F42EC00ABDB31 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MLfftwUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		460300790E6F42EC00ABDB31 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MLfftwUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		4603007A0E6F42EC00ABDB31 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MLfftwUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -5875,6 +6077,16 @@
 				37FEEC060D9AA7630043C418 /* Development */,
 				37FEEC070D9AA7630043C418 /* Deployment */,
 				37FEEC080D9AA7630043C418 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		460300770E6F42EC00ABDB31 /* Build configuration list for PBXNativeTarget "MLfftwUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				460300780E6F42EC00ABDB31 /* Development */,
+				460300790E6F42EC00ABDB31 /* Deployment */,
+				4603007A0E6F42EC00ABDB31 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
