@@ -94,7 +94,7 @@
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
-		4650ABFF0E78623A0012CFCF /* libfftw3f-312-ub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */; };
+		4650ABFF0E78623A0012CFCF /* libfftw3f-UB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4650ABFE0E78623A0012CFCF /* libfftw3f-UB.a */; };
 		4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */; };
 		4650AC5E0E788D4E0012CFCF /* AutoTrackfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */; };
 		4650AC5F0E788D4E0012CFCF /* Concatfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC550E788D4E0012CFCF /* Concatfftw.cpp */; };
@@ -499,7 +499,7 @@
 		37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDSOMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDSOMUGens.cpp; sourceTree = "<group>"; };
 		4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MLfftwUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfftw3f-312-ub.a"; path = "/usr/local/lib/libfftw3f-312-ub.a"; sourceTree = "<absolute>"; };
+		4650ABFE0E78623A0012CFCF /* libfftw3f-UB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfftw3f-UB.a"; path = "lib/libfftw3f-UB.a"; sourceTree = "<group>"; };
 		4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AnalyseEvents2fftw.cpp; path = MLfftwUGens/AnalyseEvents2fftw.cpp; sourceTree = "<group>"; };
 		4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AnalyseEvents2fftw.h; path = ../../MLfftwUGens/AnalyseEvents2fftw.h; sourceTree = "<group>"; };
 		4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AutoTrackfftw.cpp; path = MLfftwUGens/AutoTrackfftw.cpp; sourceTree = "<group>"; };
@@ -722,7 +722,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4650ABFF0E78623A0012CFCF /* libfftw3f-312-ub.a in Frameworks */,
+				4650ABFF0E78623A0012CFCF /* libfftw3f-UB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1142,7 +1142,7 @@
 		F50D069402E6A1C601CA2799 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4650ABFE0E78623A0012CFCF /* libfftw3f-312-ub.a */,
+				4650ABFE0E78623A0012CFCF /* libfftw3f-UB.a */,
 				F5D127DE03383D340164B34C /* libsndfile.a */,
 				F3564CF70B0E8736008AFA51 /* libstk.a */,
 				F5499A1103A3023A01BA7E76 /* vecLib.framework */,
