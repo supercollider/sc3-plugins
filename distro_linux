@@ -17,6 +17,7 @@ mv build/LoopBuf.so Extensions/ljpclasses
 mv build/MCLD*.so Extensions/MCLD_UGens
 mv build/TagSystemUgens.so Extensions/TagSystemUGens
 mv build/MembraneUGens.so Extensions/MembraneUGens
+mv build/MLfftwUGens.so Extensions/MLfftwUGens
 
 if [ -f AY*.so ]; then
   mv build/AY*.so Extensions/MCLD_UGens

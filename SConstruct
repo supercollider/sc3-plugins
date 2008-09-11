@@ -135,6 +135,11 @@ Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.c', 'sour
 
 
 ##############################################
+# MLfftwUGens
+
+Basic_Env.SharedLibrary('build/MLfftwUGens', ['source/MLfftwUGens/AnalyseEvents2fftw.cpp', 'source/MLfftwUGens/AutoTrackfftw.cpp', 'source/MLfftwUGens/Concatfftw.cpp', 'source/MLfftwUGens/MLfftwUGens.cpp', 'source/MLfftwUGens/Qitchfftw.cpp', 'source/MLfftwUGens/Tartini.cpp'  ] + platform_SOURCES , LIBS='fftw3f')
+
+##############################################
 # StkUGens
 
 if build_stkugens == True:
