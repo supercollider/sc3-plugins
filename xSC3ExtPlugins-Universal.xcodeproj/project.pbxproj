@@ -495,6 +495,7 @@
 		373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDGetenvUGen.cpp; sourceTree = "<group>"; };
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
+		37EC44AA0E78F45000090462 /* fftw3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftw3.h; path = include/fftw3.h; sourceTree = SOURCE_ROOT; };
 		37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDSOMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDSOMUGens.cpp; sourceTree = "<group>"; };
 		4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MLfftwUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -946,6 +947,7 @@
 		F50D054502E69B6B01CA2799 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				37EC44AA0E78F45000090462 /* fftw3.h */,
 				4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */,
 				4650AC540E788D4E0012CFCF /* AutoTrackfftw.h */,
 				4650AC560E788D4E0012CFCF /* Concatfftw.h */,
