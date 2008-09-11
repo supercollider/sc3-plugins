@@ -94,7 +94,6 @@
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
-		4650ABFF0E78623A0012CFCF /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4650ABFE0E78623A0012CFCF /* libfftw3f.a */; };
 		4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */; };
 		4650AC5E0E788D4E0012CFCF /* AutoTrackfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */; };
 		4650AC5F0E788D4E0012CFCF /* Concatfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC550E788D4E0012CFCF /* Concatfftw.cpp */; };
@@ -722,7 +721,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4650ABFF0E78623A0012CFCF /* libfftw3f.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
