@@ -1,7 +1,6 @@
 #! /bin/sh
 
 svn export --force build Extensions
-cp build/AY*.scx Extensions/MCLD_UGens
 cp build/BEQSuite*.scx Extensions/BEQSuiteUGens
 cp build/bhob*.scx Extensions/bhobUGens
 cp build/BlackrainUGens*.scx Extensions/BlackrainUGens
