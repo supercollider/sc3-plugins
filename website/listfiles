@@ -1,0 +1,2 @@
+find ../build -name "*.rtf" -or -name "*.html" | sed s:..\/build\/:: > filelist.txt
+
