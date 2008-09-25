@@ -110,6 +110,7 @@ plugs = [
 	'MCLDGetenvUGen',
 	'MCLDChaosUGens',
 	'MCLDDistortionUGens',
+	'MCLDOscUGens',
 	'MCLDSOMUGens',
 	'MCLDTriggeredStatsUgens',
 	'LoopBuf',

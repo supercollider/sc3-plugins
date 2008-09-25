@@ -24,6 +24,7 @@
 				373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */,
 				37046F9F0CF0852500254768 /* PBXTargetDependency */,
 				37FEEC110D9AA7F80043C418 /* PBXTargetDependency */,
+				3751D6BF0E8C1FC600B5AC2F /* PBXTargetDependency */,
 			);
 			name = MCLDUGens;
 			productName = MCLDUGensUB;
@@ -92,6 +93,7 @@
 		372742610DA0252800287F98 /* Membrane_shape.c in Sources */ = {isa = PBXBuildFile; fileRef = 3727425E0DA0252800287F98 /* Membrane_shape.c */; };
 		372742620DA0252800287F98 /* Membrane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3727425F0DA0252800287F98 /* Membrane.cpp */; };
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
+		3751D6BA0E8C1FBA00B5AC2F /* MCLDOscUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
 		4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */; };
@@ -408,6 +410,13 @@
 			remoteGlobalIDString = 373C2F0B0C94053300A3D3FD;
 			remoteInfo = JoshUGens;
 		};
+		3751D6BE0E8C1FC600B5AC2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */;
+			remoteInfo = MCLDOscUGens;
+		};
 		37FEEC100D9AA7F80043C418 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -492,6 +501,8 @@
 		3727425F0DA0252800287F98 /* Membrane.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Membrane.cpp; sourceTree = "<group>"; };
 		373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDGetenvUGenUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDGetenvUGen.cpp; sourceTree = "<group>"; };
+		3751D6B60E8C1F6300B5AC2F /* MCLDOscUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDOscUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDOscUGens.cpp; sourceTree = "<group>"; };
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
 		37EC44AA0E78F45000090462 /* fftw3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftw3.h; path = include/fftw3.h; sourceTree = SOURCE_ROOT; };
@@ -697,6 +708,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		373C2ED90C94048F00A3D3FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3751D6AF0E8C1F6300B5AC2F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1060,6 +1078,7 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */,
 				4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */,
 				4650AC530E788D4E0012CFCF /* AutoTrackfftw.cpp */,
 				4650AC550E788D4E0012CFCF /* Concatfftw.cpp */,
@@ -1133,6 +1152,7 @@
 				372742580DA024ED00287F98 /* MembraneUGens.scx */,
 				F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */,
 				4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */,
+				3751D6B60E8C1F6300B5AC2F /* MCLDOscUGens.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1199,6 +1219,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		373C2ED60C94048F00A3D3FD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3751D6AC0E8C1F6300B5AC2F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1578,6 +1605,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3751D6B20E8C1F6300B5AC2F /* Build configuration list for PBXNativeTarget "MCLDOscUGens" */;
+			buildPhases = (
+				3751D6AC0E8C1F6300B5AC2F /* Headers */,
+				3751D6AD0E8C1F6300B5AC2F /* Sources */,
+				3751D6AF0E8C1F6300B5AC2F /* Frameworks */,
+				3751D6B00E8C1F6300B5AC2F /* Rez */,
+				3751D6B10E8C1F6300B5AC2F /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MCLDOscUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 3751D6B60E8C1F6300B5AC2F /* MCLDOscUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
@@ -2084,6 +2131,7 @@
 				3727424D0DA024ED00287F98 /* MembraneUGens */,
 				F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
 				4603006E0E6F42EC00ABDB31 /* MLfftwUGens */,
+				3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2125,6 +2173,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		373C2EDA0C94048F00A3D3FD /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3751D6B00E8C1F6300B5AC2F /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2341,6 +2396,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		373C2EDB0C94048F00A3D3FD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		3751D6B10E8C1F6300B5AC2F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2606,6 +2670,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3751D6AD0E8C1F6300B5AC2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3751D6BA0E8C1FBA00B5AC2F /* MCLDOscUGens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2923,6 +2995,11 @@
 			isa = PBXTargetDependency;
 			target = 373C2F0B0C94053300A3D3FD /* JoshUGens */;
 			targetProxy = 373C2F140C94054400A3D3FD /* PBXContainerItemProxy */;
+		};
+		3751D6BF0E8C1FC600B5AC2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */;
+			targetProxy = 3751D6BE0E8C1FC600B5AC2F /* PBXContainerItemProxy */;
 		};
 		37FEEC110D9AA7F80043C418 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3633,6 +3710,103 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = JoshUGens;
+			};
+			name = Default;
+		};
+		3751D6B30E8C1F6300B5AC2F /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDOscUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		3751D6B40E8C1F6300B5AC2F /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDOscUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		3751D6B50E8C1F6300B5AC2F /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDOscUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
 			};
 			name = Default;
 		};
@@ -6057,6 +6231,16 @@
 				373C2F210C94059100A3D3FD /* Development */,
 				373C2F220C94059100A3D3FD /* Deployment */,
 				373C2F230C94059100A3D3FD /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		3751D6B20E8C1F6300B5AC2F /* Build configuration list for PBXNativeTarget "MCLDOscUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3751D6B30E8C1F6300B5AC2F /* Development */,
+				3751D6B40E8C1F6300B5AC2F /* Deployment */,
+				3751D6B50E8C1F6300B5AC2F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
