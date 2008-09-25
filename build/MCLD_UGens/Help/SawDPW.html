@@ -8,15 +8,15 @@
 <meta name="CocoaVersion" content="824.48">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad2100; min-height: 12.0px}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a92500; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad2100}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a92500}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #002aff}
-span.s3 {color: #0041bf}
-span.s4 {color: #ad2100}
+span.s2 {color: #003dff}
+span.s3 {color: #0049bf}
+span.s4 {color: #a92500}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -40,15 +40,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">s.scope</p>
 <p class="p4"><br></p>
 <p class="p6">// Amplitude will be polled, move mouse to change frequency</p>
-<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">MX</span>(50, 2000, 1));<span class="s3">Amplitude</span>.ar(x, 0.2, 0.2).poll; x.m(0.1).dup}.play</p>
-<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">K2A</span>.ar(<span class="s3">MX</span>(50, 2000, 1)));<span class="s3">Amplitude</span>.ar(x, 0.2, 0.2).poll; x.m(0.1).dup}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">MouseX.kr</span>(50, 2000, 1));<span class="s3">Amplitude</span>.ar(x, 0.2, 0.2).poll; x.madd(0.1).dup}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">K2A</span>.ar(<span class="s3">MouseX.kr</span>(50, 2000, 1)));<span class="s3">Amplitude</span>.ar(x, 0.2, 0.2).poll; x.madd(0.1).dup}.play</p>
 <p class="p4"><br></p>
 <p class="p6">// Listen to these to compare aliasing characteristics</p>
-<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">MX</span>(50, 10000, 1).poll); x.m(0.1).dup}.play</p>
-<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">Saw</span> <span class="Apple-converted-space">  </span>.ar(<span class="s3">MX</span>(50, 10000, 1).poll); x.m(0.1).dup}.play</p>
-<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">LFSaw</span> .ar(<span class="s3">MX</span>(50, 10000, 1).poll); x.m(0.1).dup}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">SawDPW</span>.ar(<span class="s3">MouseX.kr</span>(50, 10000, 1).poll); x.madd(0.1).dup}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">Saw</span> <span class="Apple-converted-space">  </span>.ar(<span class="s3">MouseX.kr</span>(50, 10000, 1).poll); x.madd(0.1).dup}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = <span class="s3">LFSaw</span> .ar(<span class="s3">MouseX.kr</span>(50, 10000, 1).poll); x.madd(0.1).dup}.play</p>
 <p class="p4"><br></p>
-<p class="p5">{<span class="s3">var</span> x; x = [<span class="s3">SawDPW</span>, <span class="s3">Saw</span>].collect(<span class="s3">_</span>.ar(<span class="s3">K2A</span>.ar(<span class="s3">MX</span>(10, 20000, 1).poll))); <span class="s3">Amplitude</span>.ar(x[0], 0.2, 0.2).poll; x.m(0.1)}.play</p>
+<p class="p5">{<span class="s3">var</span> x; x = [<span class="s3">SawDPW</span>, <span class="s3">Saw</span>].collect(<span class="s3">_</span>.ar(<span class="s3">K2A</span>.ar(<span class="s3">MouseX.kr</span>(10, 20000, 1).poll))); <span class="s3">Amplitude</span>.ar(x[0], 0.2, 0.2).poll; x.madd(0.1)}.play</p>
 <p class="p4"><br></p>
 <p class="p6">// Efficiency comparisons:</p>
 <p class="p5">~num = 100;</p>
