@@ -13,7 +13,8 @@ opts.AddOptions(
     BoolOption('STK',
                'Build with STK plugins', 0),
     BoolOption('AY',
-               'Build with AY plugins', 0)
+               'Build with AY plugins', 0),
+		('CXXFLAGS', 'C++ compiler flags'),
 	)
 
 print 'Building for ' + platform.system()
@@ -36,6 +37,10 @@ if platform.system() == 'Windows':
 	env = Environment(options = opts, tools = ['mingw'])
 else:
 	env = Environment(options = opts)
+
+
+env.Append(CXXFLAGS = ['-Wno-deprecated', '-O3'])
+
 
 ########################################
 # Configure for all platforms
@@ -119,7 +124,6 @@ Basic_Env = env.Clone(
         	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server'],
         	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
-        	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = platform_SHLIBSUFFIX
 );
@@ -147,7 +151,6 @@ if build_stkugens == True:
        		CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
         	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
         	CCFLAGS = ['-Wno-unknown-pragmas'],
-       		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = platform_SHLIBSUFFIX
 	).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS='libstk.a', LIBPATH=stklib_path)
@@ -160,7 +163,6 @@ FFT_Env = env.Clone(
        	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
        	CCFLAGS = ['-Wno-unknown-pragmas'],
-       	CXXFLAGS =  ['-Wno-deprecated', '-O3'],
        	SHLIBPREFIX = '',
        	SHLIBSUFFIX = platform_SHLIBSUFFIX
 )
@@ -193,15 +195,15 @@ if build_ay == True:
 	env.Clone(
 		CPPPATH = ['include', ay_path + 'include' ],
 		CCFLAGS = ['-Wno-unknown-pragmas'],
-		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
 	).StaticLibrary(ay_path + 'AY', [ay_path + 'src/ay8912.c'])
 	env.Clone(
 		CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', ay_path + 'include'],
 		CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
 		CCFLAGS = ['-Wno-unknown-pragmas'],
-		CXXFLAGS =  ['-Wno-deprecated', '-O3'],
 		SHLIBPREFIX = '',
 		SHLIBSUFFIX = '.so'
 	).SharedLibrary('AY_UGen', 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
 
+opts.Save('scache.conf', env)
+Help(opts.GenerateHelpText(env))
 
