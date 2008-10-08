@@ -409,7 +409,7 @@ void FLoopBuf_next(FLoopBuf *unit, int inNumSamples)
 	CHECK_BUF
 	SETUP_OUT
 	
-	uint32 intsPerFrame = 4294967295/bufFrames;
+	uint32 intsPerFrame = 4294967295UL/bufFrames;
 	double fintsPerFrame = (double)intsPerFrame;
 	double framesPerInt = 1.f / fintsPerFrame;
 	uint32 phaseInc = (uint32)(fintsPerFrame * rate);
@@ -427,7 +427,7 @@ void FLoopBuf_next(FLoopBuf *unit, int inNumSamples)
 	
 	if(loopFrames == 0){   // the loop needs to be at least 1 frame
 		loopFrames = intsPerFrame;
-		if(endLoop >= 4294967295 - intsPerFrame)
+		if(endLoop >= 4294967295UL - intsPerFrame)
 			startLoop = endLoop - intsPerFrame;
 		else endLoop = startLoop + intsPerFrame;
 	}
@@ -449,7 +449,7 @@ void FLoopBuf_next(FLoopBuf *unit, int inNumSamples)
 	
 //	if(isPlayingForward){
 		if( unit->m_playThrough )
-			endLoop = 4294967295;
+			endLoop = 4294967295UL;
 		
 		for (int i=0; i<inNumSamples; ++i) {
 			//IWRAP_PHASE_FWD
@@ -493,19 +493,19 @@ void FLoopBuf_next(FLoopBuf *unit, int inNumSamples)
 			}
 			phase += phaseInc;
 			
-//		float* table1 = bufData + iphase * bufChannels; \
-//		float* table2 = table1 + bufChannels; \
-//		if (iphase > guardFrame) { \
-//			table2 -= bufSamples; \
-//		} \
-//		int32 index = 0; \
-//		float fracphase = phase - (double)iphase; \
-//		for (uint32 i=0; i<numOutputs; ++i) { \
-//			float b = table1[index]; \
-//			float c = table2[index]; \
-//			*++(out[i]) = b + fracphase * (c - b); \
-//			index++; \
-//		}\
+//		float* table1 = bufData + iphase * bufChannels;
+//		float* table2 = table1 + bufChannels;
+//		if (iphase > guardFrame) {
+//			table2 -= bufSamples;
+//		}
+//		int32 index = 0;
+//		float fracphase = phase - (double)iphase;
+//		for (uint32 i=0; i<numOutputs; ++i) {
+//			float b = table1[index];
+//			float c = table2[index];
+//			*++(out[i]) = b + fracphase * (c - b);
+//			index++;
+//		}
 //		phase += rate;
 		}
 		
