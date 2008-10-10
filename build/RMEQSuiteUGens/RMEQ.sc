@@ -27,12 +27,24 @@ RMShelf : RMEQSuite {
 	}
 }
 
-/* Not yet */
-/*
 RMShelf2 : RMEQSuite {
 	*ar {arg in, freq = 440.0, k = 0, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', in, freq, k).madd(mul, add);
 	}
 }
-	
-*/	
+
+
+Spreader : Panner {
+	*ar {arg in, theta = 1.5707963267949, filtsPerOctave = 8, mul = 1, add = 0;
+		^this.multiNew('audio', in, theta, filtsPerOctave).madd(mul, add);
+		}
+		
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ 
+			OutputProxy(rate, this, 0), 
+			OutputProxy(rate, this, 1) 
+		];
+		^channels
+	}
+	}

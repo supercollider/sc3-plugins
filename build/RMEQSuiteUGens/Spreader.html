@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; min-height: 15.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; color: #a91616}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; color: #606060}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; color: #307109}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0013bc}
+span.s3 {color: #307109}
+span.s4 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>Spreader<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>spreads a mono signal into stereo space by dividing the spectrum</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>Spreader.ar(in, theta, filtsPerOctave, mul, add)</b></p>
+<p class="p4"><br></p>
+<p class="p3">Spreader uses all pass filters to internally alter the phase of different spectral components of 'in', then outputs a version of this to a stereo field, sending alternating bands to a different speaker. Thta gives a 'width' to the new image. 0 allows the original to pass through to both speakers, 0.5pi represents the widest difference, pi basically gives you an inverted signal between the two speakers. filtsPerOctave tells the UGen how to split the spectrum across 10 octaves of spectral space. A value here of '8' (the default) results in 80 Allpass1 filters.</p>
+<p class="p5"><br></p>
+<p class="p3"><b>WARNING: this can be computationally quite expensive.</b></p>
+<p class="p4"><br></p>
+<p class="p3">based on a SynthDef created by Joe Anderson and Juan Pampin, using Regalia-Mitra based allpass filters.</p>
+<p class="p4"><br></p>
+<p class="p6">s=<span class="s2">Server</span>.internal.boot;</p>
+<p class="p6">s.scope;</p>
+<p class="p4"><br></p>
+<p class="p6">(</p>
+<p class="p7">// bpo is 'bands per octave'.</p>
+<p class="p7">// This parameter is read only at init (so you can't modulate it)</p>
+<p class="p6"><span class="s2">SynthDef</span>(<span class="s3">\mono_orban</span>,{ <span class="s2">arg</span> in_bus, buffer, bpo = 8, out_bus=0, theta = 1.57;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">var</span> in, out;</p>
+<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>// read in mono</p>
+<p class="p7">//<span class="Apple-tab-span">	</span>in = LeakDC.ar(SoundIn.ar(in_bus));<span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>in = <span class="s2">PlayBuf</span>.ar(1, buffer, loop: 1);</p>
+<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>// sweep through with a mono sin tone... see how the sound moves?</p>
+<p class="p7">//<span class="Apple-tab-span">	</span>in = SinOsc.ar(MouseX.kr(40, 4000), 0, 0.1);</p>
+<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>// decorrelated PinkNoise</p>
+<p class="p7">//<span class="Apple-tab-span">	</span>in = PinkNoise.ar(0.2);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>out = <span class="s2">Spreader</span>.ar(in, theta, bpo);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(out_bus, out);</p>
+<p class="p6">}).send(s);</p>
+<p class="p4"><br></p>
+<p class="p6">)</p>
+<p class="p4"><br></p>
+<p class="p8"><span class="s4">z = </span><span class="s2">Buffer</span><span class="s4">.read(s, </span>"sounds/a11wlk01.wav"<span class="s4">);</span></p>
+<p class="p9"><span class="s4">b = </span><span class="s2">Synth</span><span class="s4">(</span>\mono_orban<span class="s4">, [</span>\buffer<span class="s4">, z]);</span></p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0.2])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0.5pi])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, pi])</p>
+<p class="p6">b.free;</p>
+<p class="p4"><br></p>
+<p class="p7">// less bands</p>
+<p class="p9"><span class="s4">b = </span><span class="s2">Synth</span><span class="s4">(</span>\mono_orban<span class="s4">, [</span>\buffer<span class="s4">, z, </span>\bpo<span class="s4">, 4]);</span></p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0.2])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, 0.5pi])</p>
+<p class="p6">b.set([<span class="s3">\theta</span>, pi])</p>
+<p class="p6">b.free;</p>
+</body>
+</html>
