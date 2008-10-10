@@ -112,6 +112,26 @@ struct B2Ster : public Unit
 {
 };
 
+struct BFFreeVerb : public Unit
+{   // the delay line and filter coefs from FreeVerb... we need 4 of these!
+    float *m_dline0[4];
+    float *m_dline1[4];
+    float *m_dline2[4];
+    float *m_dline3[4];
+    float *m_dline4[4];
+    float *m_dline5[4];
+    float *m_dline6[4];
+    float *m_dline7[4];
+    float *m_dline8[4];
+    float *m_dline9[4];
+    float *m_dline10[4];
+    float *m_dline11[4];
+    float *m_iota[4];
+    float *m_r0[4];
+    float *m_r1[4];
+    bool first;
+};
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
@@ -165,6 +185,9 @@ extern "C"
 	void B2Ster_next(B2Ster *unit, int inNumSamples);
 	void B2Ster_Ctor(B2Ster* unit);
 	
+	void BFFreeVerb_next(BFFreeVerb *unit, int inNumSamples);
+	void BFFreeVerb_Ctor(BFFreeVerb *unit);
+	void BFFreeVerb_Dtor(BFFreeVerb *unit);
 }
 
 
@@ -2121,6 +2144,113 @@ void FMHDecode1_next(FMHDecode1 *unit, int inNumSamples)
 	    }
 }
 
+void BFFreeVerb_next(BFFreeVerb *unit, int inNumSamples){
+    int i, j;
+    float* in_W = IN(0);
+    float* in_X = IN(1);
+    float* in_Y = IN(2);
+    float* in_Z = IN(3);
+    float* out_W = OUT(0);
+    float* out_X = OUT(1);
+    float* out_Y = OUT(2);
+    float* out_Z = OUT(3);   
+    if(unit->first){
+	Print("Creating memory\n");
+	int floatSize = sizeof(float);
+	for(i = 0; i < 4; i++){
+	    unit->m_dline0[i] = (float*)RTAlloc(unit->mWorld, floatSize * 225);
+	    unit->m_dline1[i] = (float*)RTAlloc(unit->mWorld, floatSize * 341);
+	    unit->m_dline2[i] = (float*)RTAlloc(unit->mWorld, floatSize * 441);
+	    unit->m_dline3[i] = (float*)RTAlloc(unit->mWorld, floatSize * 556);
+	    unit->m_dline4[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1617);
+	    unit->m_dline5[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1557);
+	    unit->m_dline6[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1491);
+	    unit->m_dline7[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1422);
+	    unit->m_dline8[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1277);
+	    unit->m_dline9[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1116);
+	    unit->m_dline10[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1188);
+	    unit->m_dline11[i] = (float*)RTAlloc(unit->mWorld, floatSize * 1356);
+	    unit->m_iota[i] = (float*)RTAlloc(unit->mWorld, floatSize * 12);
+	    unit->m_r0[i] = (float*)RTAlloc(unit->mWorld, floatSize * 20);
+	    unit->m_r1[i] = (float*)RTAlloc(unit->mWorld, floatSize * 4);
+	    }
+	Print("Zeroing out data\n");
+	for(i = 0; i < 4; i++){
+	    for(j = 0; j < 255; j++) unit->m_dline0[i][j] = 0.f;
+	    for(j = 0; j < 341; j++) unit->m_dline1[i][j] = 0.f;
+	    for(j = 0; j < 441; j++) unit->m_dline2[i][j] = 0.f;
+	    for(j = 0; j < 556; j++) unit->m_dline3[i][j] = 0.f;
+	    for(j = 0; j < 1617; j++) unit->m_dline4[i][j] = 0.f;
+	    for(j = 0; j < 1557; j++) unit->m_dline5[i][j] = 0.f;
+	    for(j = 0; j < 1491; j++) unit->m_dline6[i][j] = 0.f;
+	    for(j = 0; j < 1422; j++) unit->m_dline7[i][j] = 0.f;
+	    for(j = 0; j < 1277; j++) unit->m_dline8[i][j] = 0.f;
+	    for(j = 0; j < 1116; j++) unit->m_dline9[i][j] = 0.f;
+	    for(j = 0; j < 1188; j++) unit->m_dline10[i][j] = 0.f;
+	    for(j = 0; j < 1356; j++) unit->m_dline11[i][j] = 0.f;
+	    for(j = 0; j < 12; j++) unit->m_iota[i][j] = 0.f;
+	    for(j = 0; j < 20; j++) unit->m_r0[i][i] = 0.f;
+	    for(j = 0; j < 4; j++) unit->m_r1[i][j] = 0.f;
+	    }
+	Print("Zeroing out data - done!\n");
+	unit->first = false;
+	}
+    
+    for(i = 0; i < inNumSamples; i++){
+	out_W[i] = 0.f;
+	out_X[i] = 0.f;
+	out_Y[i] = 0.f;
+	out_Z[i] = 0.f;
+	}
+    
+    }
+
+/*
+    float* m_dline0[4];
+    float* m_dline1[4];
+    float* m_dline2[4];
+    float* m_dline3[4];
+    float* m_dline4[4];
+    float* m_dline5[4];
+    float* m_dline6[4];
+    float* m_dline7[4];
+    float* m_dline8[4];
+    float* m_dline9[4];
+    float* m_dline10[4];
+    float* m_dline11[4];
+    float* m_iota[4];
+    float* m_r0[4];
+    float* m_r1[4];
+*/
+void BFFreeVerb_Ctor(BFFreeVerb *unit){
+    SETCALC(BFFreeVerb_next);
+    unit->first = true;
+    OUT0(0) = 0.f;
+    OUT0(1) = 0.f;
+    OUT0(2) = 0.f;
+    OUT0(3) = 0.f;
+    }
+
+void BFFreeVerb_Dtor(BFFreeVerb *unit){
+    for(int i = 0; i < 4; i++){
+	RTFree(unit->mWorld, unit->m_dline0[i]);
+	RTFree(unit->mWorld, unit->m_dline1[i]);
+	RTFree(unit->mWorld, unit->m_dline2[i]);
+	RTFree(unit->mWorld, unit->m_dline3[i]);
+	RTFree(unit->mWorld, unit->m_dline4[i]);
+	RTFree(unit->mWorld, unit->m_dline5[i]);
+	RTFree(unit->mWorld, unit->m_dline6[i]);
+	RTFree(unit->mWorld, unit->m_dline7[i]);
+	RTFree(unit->mWorld, unit->m_dline8[i]);
+	RTFree(unit->mWorld, unit->m_dline9[i]);
+	RTFree(unit->mWorld, unit->m_dline10[i]);
+	RTFree(unit->mWorld, unit->m_dline11[i]);
+	RTFree(unit->mWorld, unit->m_iota[i]);
+	RTFree(unit->mWorld, unit->m_r0[i]);
+	RTFree(unit->mWorld, unit->m_r1[i]);
+	}
+    }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -2141,6 +2271,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(B2A);
 	DefineSimpleUnit(UHJ2B);
 	DefineSimpleUnit(B2UHJ);
+//	DefineDtorCantAliasUnit(BFFreeVerb);
 
 	
 }

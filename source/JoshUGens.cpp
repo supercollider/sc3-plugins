@@ -2998,8 +2998,19 @@ void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 
 #define DELTAP_BUF \
 	World *world = unit->mWorld;\
-	SndBuf *bufs = world->mSndBufs;\
-	SndBuf *buf = bufs + bufnum; \
+	if (bufnum >= world->mNumSndBufs) { \
+		int localBufNum = bufnum - world->mNumSndBufs; \
+		Graph *parent = unit->mParent; \
+		if(localBufNum <= parent->localBufNum) { \
+			unit->m_buf = parent->mLocalSndBufs + localBufNum; \
+		} else { \
+			bufnum = 0; \
+			unit->m_buf = world->mSndBufs + bufnum; \
+		} \
+	} else { \
+		unit->m_buf = world->mSndBufs + bufnum; \
+	} \
+	SndBuf *buf = unit->m_buf; \
 	float *bufData __attribute__((__unused__)) = buf->data; \
 	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
 	uint32 bufSamples = buf->samples; \

@@ -26,14 +26,25 @@
 	rgen.s3 = s3;
 
 // for operation on one buffer
-#define PV_GET_BUF \
+//#define PV_GET_BUF \
 	float fbufnum = ZIN0(0); \
 	if (fbufnum < 0.f) { ZOUT0(0) = -1.f; return; } \
 	ZOUT0(0) = fbufnum; \
-	uint32 ibufnum = (uint32)fbufnum; \
+	uint32 bufnum = (uint32)fbufnum; \
 	World *world = unit->mWorld; \
-	if (ibufnum >= world->mNumSndBufs) ibufnum = 0; \
-	SndBuf *buf = world->mSndBufs + ibufnum; \
+		if (bufnum >= world->mNumSndBufs) { \
+			int localBufNum = bufnum - world->mNumSndBufs; \
+			Graph *parent = unit->mParent; \
+			if(localBufNum <= parent->localBufNum) { \
+				unit->m_buf = parent->mLocalSndBufs + localBufNum; \
+			} else { \
+				bufnum = 0; \
+				unit->m_buf = world->mSndBufs + bufnum; \
+			} \
+		} else { \
+			unit->m_buf = world->mSndBufs + bufnum; \
+		} \
+	SndBuf *buf = unit->m_buf; \
 	int numbins = buf->samples - 2 >> 1;
 	
 InterfaceTable *ft;	
@@ -50,6 +61,7 @@ struct PV_NoiseSynthP : PV_Unit
     float *m_phases;
     float *m_phasedifs;
     float *m_prevphasedifs;
+    SndBuf *m_buf;
 };
 
 struct PV_PartialSynthP : PV_Unit
@@ -58,6 +70,7 @@ struct PV_PartialSynthP : PV_Unit
     float *m_phases;
     float *m_phasedifs;
     float *m_prevphasedifs;
+    SndBuf *m_buf;
 };
 
 struct PV_PartialSynthF : PV_Unit
@@ -66,6 +79,7 @@ struct PV_PartialSynthF : PV_Unit
     float *m_phases;
     float *m_freqs;
     float *m_centerfreqs;
+    SndBuf *m_buf;
     };
 
 struct PV_NoiseSynthF : PV_Unit
@@ -74,6 +88,7 @@ struct PV_NoiseSynthF : PV_Unit
     float *m_phases;
     float *m_freqs;
     float *m_centerfreqs;
+    SndBuf *m_buf;
     };
     
 struct PV_MagMap : PV_Unit
@@ -81,11 +96,18 @@ struct PV_MagMap : PV_Unit
     // contains a buffer with mag rescaling
     float m_fmagbufnum;
     SndBuf *m_magbuf;
+    SndBuf *m_buf;
     };
     
-struct PV_MaxMagN : PV_Unit { };
+struct PV_MaxMagN : PV_Unit 
+{ 
+    SndBuf *m_buf;    
+};
 
-struct PV_MinMagN : PV_Unit { };
+struct PV_MinMagN : PV_Unit 
+{ 
+    SndBuf *m_buf;
+};
 
 struct PV_FreqBuffer : PV_Unit 
 {
@@ -95,6 +117,7 @@ struct PV_FreqBuffer : PV_Unit
     float *m_phases;
     float *m_centerfreqs;
     float *m_freqs;
+    SndBuf *m_buf;
 };
 
 struct PV_MagBuffer : PV_Unit 
@@ -102,6 +125,7 @@ struct PV_MagBuffer : PV_Unit
     SndBuf *m_databuf;
     float m_fdatabufnum;
     int m_numloops;
+    SndBuf *m_buf;
 };
 
 struct BinData : PV_Unit
@@ -110,13 +134,26 @@ struct BinData : PV_Unit
     float m_lastPhase, m_lastPhasedif, m_centerfreq, m_curfreq, m_curmag, m_srOverTwopi, m_rNumbins, m_overlaps, m_rNumPeriodsPerValue;
     float m_freqinc, m_maginc;
     int elapsedSamps;
+    SndBuf *m_buf;
 };
 
-struct PV_OddBin : PV_Unit {};
 
-struct PV_EvenBin : PV_Unit {};
+struct PV_OddBin : PV_Unit 
+{
+    SndBuf *m_buf;
+};
 
-struct PV_Invert : PV_Unit {};
+struct PV_EvenBin : PV_Unit
+{
+    SndBuf *m_buf;
+};
+
+
+struct PV_Invert : PV_Unit
+{
+    SndBuf *m_buf;
+};
+
 
 const int MAXDELAYBUFS = 512;
 
@@ -129,6 +166,7 @@ struct PV_BinDelay : PV_Unit
 	float m_srbins, m_hop;
 	int m_numFrames, m_curFrame, m_elapsedFrames;
 	int dataFlag[MAXDELAYBUFS];
+	SndBuf *m_buf;
 };
 
 struct PV_Freeze : PV_Unit
@@ -136,6 +174,7 @@ struct PV_Freeze : PV_Unit
 	int m_numbins;
 	float *m_mags, m_dc, m_nyq;
 	float *m_prevPhases, *m_difPhases;
+	SndBuf *m_buf;
 };
 
 // write values to a buffer
@@ -145,6 +184,7 @@ struct PV_RecordBuf : PV_Unit
 	SndBuf *m_databuf;
 	int m_frame, m_numAvailFrames;
 	bool first;
+	SndBuf *m_buf;
 };
 
 struct PV_PlayBuf : PV_Unit
@@ -154,6 +194,7 @@ struct PV_PlayBuf : PV_Unit
 	int m_numAvailFrames, m_numPeriods, m_periodsRemain;
 	float *m_prevDatabuf;
 	bool first;
+	SndBuf *m_buf;
     };
     
 struct PV_BinPlayBuf : PV_Unit
@@ -163,6 +204,7 @@ struct PV_BinPlayBuf : PV_Unit
 	int m_numAvailFrames;
 	float *m_prevDatabuf;
 	bool first;
+        SndBuf *m_buf;
     };
 
 struct PV_BufRd : PV_Unit
@@ -172,6 +214,7 @@ struct PV_BufRd : PV_Unit
 	int m_numAvailFrames, m_numPeriods, m_periodsRemain;
 	float *m_prevDatabuf;
 	bool first;
+        SndBuf *m_buf;
     };
 
 struct PV_BinBufRd : PV_Unit
@@ -181,6 +224,7 @@ struct PV_BinBufRd : PV_Unit
 	int m_numAvailFrames;
 	float *m_prevDatabuf;
 	bool first;
+        SndBuf *m_buf;
     };
             
 extern "C"
@@ -1657,10 +1701,21 @@ void WRAPPHASE(float& phase){
 	if (unit->m_periodsRemain > 0) { ZOUT0(0) = -1.f; unit->m_periodsRemain--; return; } \
 	unit->m_periodsRemain = unit->m_numPeriods; \
 	ZOUT0(0) = fbufnum; \
-	uint32 ibufnum = (uint32)fbufnum; \
+	uint32 bufnum = (uint32)fbufnum; \
 	World *world = unit->mWorld; \
-	if (ibufnum >= world->mNumSndBufs) ibufnum = 0; \
-	SndBuf *buf = world->mSndBufs + ibufnum; \
+	if (bufnum >= world->mNumSndBufs) { \
+		int localBufNum = bufnum - world->mNumSndBufs; \
+		Graph *parent = unit->mParent; \
+		if(localBufNum <= parent->localBufNum) { \
+			unit->m_buf = parent->mLocalSndBufs + localBufNum; \
+		} else { \
+			bufnum = 0; \
+			unit->m_buf = world->mSndBufs + bufnum; \
+		} \
+	} else { \
+		unit->m_buf = world->mSndBufs + bufnum; \
+	} \
+	SndBuf *buf = unit->m_buf; \
 	int numbins = buf->samples - 2 >> 1;
 	
 // PV_PlayBuf
