@@ -287,7 +287,7 @@ void Allpass1_next_a(Allpass1* unit, int inNumSamples)
 	a1 = unit->m_a1;
 	b1 = unit->m_b1;
 	
-	float y1 = unit->m_y1;
+	double y1 = unit->m_y1;
 	LOOP(inNumSamples,
 	
 		if(unit->m_freq != (curfreq = ZXP(freq))){
@@ -778,6 +778,344 @@ void RMShelf_next_k(RMShelf* unit, int inNumSamples)
 
 }
 
+/* RMShelf2 */
+
+
+struct RMShelf2 : public Unit
+{
+	double m_y1, m_y1_2, m_a0, m_a1, m_b1;
+	float m_freq, m_k, m_ksign, m_kabs;
+};
+
+extern "C" 
+{
+	void RMShelf2_next_k(RMShelf2 *unit, int inNumSamples);
+	void RMShelf2_next_a(RMShelf2 *unit, int inNumSamples);
+	void RMShelf2_Ctor(RMShelf2 *unit);	
+}
+
+void RMShelf2_Ctor(RMShelf2* unit)
+{	
+	if (INRATE(1) == calc_FullRate) {
+		SETCALC(RMShelf2_next_a);
+	    } else {
+		SETCALC(RMShelf2_next_k);
+	    }
+	    
+	unit->m_freq = ZIN0(1);
+	unit->m_k = ZIN0(2);
+	if(unit->m_k >=0)
+	    unit->m_ksign = 1.0;
+	    else
+	    unit->m_ksign = -1.0;
+	unit->m_kabs = fabs(unit->m_k);
+	unit->m_y1 = 0.f;
+	unit->m_y1_2 = 0.f;
+	double wc = pi * (double)unit->m_freq * SAMPLEDUR;
+	double b1 = (1. - wc) / (1. + wc);
+	unit->m_a0 = -b1;
+	unit->m_a1 = 1.f;
+	unit->m_b1 = b1;
+	ZOUT0(0) = 0.f;
+}
+
+void RMShelf2_next_a(RMShelf2* unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *in = ZIN(0);
+	float *freq = ZIN(1);
+	float *k = ZIN(2);
+	float curfreq, curk, ksign, kabs, y0, y0_2, sum, curin, allpass1, allpass2;
+	double wc, a0, a1, b1;
+	a0 = unit->m_a0;
+	a1 = unit->m_a1;
+	b1 = unit->m_b1;
+	ksign = unit->m_ksign;
+	kabs = unit->m_kabs;
+	
+	double y1 = unit->m_y1;
+	double y1_2 = unit->m_y1_2;
+
+	LOOP(inNumSamples,
+	
+		if(unit->m_freq != (curfreq = ZXP(freq))){
+		    wc = pi * (double)curfreq * SAMPLEDUR;
+		    b1 = (1. - wc) / (1. + wc);
+		    a0 = -b1;
+		    }
+		    
+		if(unit->m_k != (curk = ZXP(k))){
+		    if(curk >= 0.) 
+			ksign = 1.;  
+			else  
+			ksign = -1.; 
+		    kabs = fabs(curk); 
+		    unit->m_k = curk; 
+		    }
+		     
+		y0 = (curin = ZXP(in)) + b1 * y1; 
+		allpass1 = a0 * y0 + a1 * y1;
+		y1 = y0;
+		
+		y0_2 = allpass1 + b1 * y1_2;
+		allpass2 = a0 * y0_2 + a1 * y1;
+		y1_2 = y0_2;
+		
+		sum = 0.5 * ksign * (curin + allpass2);
+		
+		ZXP(out) = (0.5 * (allpass1 + sum + (kabs * (allpass1 - sum))));
+	);
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_y1_2 = zapgremlins(y1_2);
+	unit->m_a0 = a0;
+	unit->m_b1 = b1;
+	unit->m_ksign = ksign;
+	unit->m_kabs = kabs;
+
+}
+
+void RMShelf2_next_k(RMShelf2* unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *in = ZIN(0);
+	float next_freq = ZIN0(1);
+	float next_k = ZIN0(2);
+	
+	double y1 = unit->m_y1;
+	double y1_2 = unit->m_y1_2;
+	float k = unit->m_k;
+	float ksign = unit->m_ksign;
+	float kabs = unit->m_kabs;
+	
+	double a0 = unit->m_a0;
+	double a1 = unit->m_a1;
+	double b1 = unit->m_b1;
+	double a0_slope, b1_slope;
+	double y0, y0_2;
+	float kslope, allpass1, allpass2, sum, curin;
+	
+	if(next_freq != unit->m_freq){
+	    double wc = pi * (double)next_freq * SAMPLEDUR;
+	    double next_b1 = (1. - wc) / (1. + wc);
+	    double next_a0 = -next_b1;
+	    a0_slope = CALCSLOPE(next_a0, a0);
+	    b1_slope = CALCSLOPE(next_b1, b1);
+	    } else {
+	    a0_slope = 0.;
+	    b1_slope = 0.;
+	    }
+	
+	if(next_k != k){
+	    kslope = CALCSLOPE(next_k, k);
+	    } else {
+	    kslope = 0.;
+	    }
+	    
+	LOOP(inNumSamples,
+		y0 = (curin = ZXP(in)) + b1 * y1; 
+		allpass1 = a0 * y0 + a1 * y1;
+		y1 = y0;
+		
+		y0_2 = allpass1 + b1 * y1_2;
+		allpass2 = a0 * y0_2 + a1 * y1;
+		y1_2 = y0_2;
+		
+		sum = 0.5 * (curin + allpass2) * ksign;
+		
+		ZXP(out) = (0.5 * (allpass1 + sum + (kabs * (allpass1 - sum))));
+
+		a0 += a0_slope;
+		b1 += b1_slope;
+		
+		if(next_k != unit->m_k){
+		    k += kslope;
+		    if(k >= 0)
+			ksign = 1.;
+			else
+			ksign = -1.;
+		    kabs = fabs(k);
+		    }
+	);
+	
+	unit->m_freq = next_freq;
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_a0 = a0;
+	unit->m_b1 = b1;
+	if(next_k != unit->m_k){
+	    unit->m_k = k;
+	    unit->m_kabs = kabs;
+	    unit->m_ksign = ksign;
+	    }
+
+}
+
+
+/* Spreader */
+
+struct Spreader : public Unit
+{
+	double* m_y1;
+	double* m_a0;
+//	double* m_a1;
+	double* m_b1;
+	float* m_freq;
+	int m_numFilts;
+	float m_theta, m_theta2, m_cosTheta2, m_sinTheta2, m_nSinTheta2;
+};
+
+extern "C" 
+{
+	void Spreader_next_k(Spreader *unit, int inNumSamples);
+	void Spreader_next_a(Spreader *unit, int inNumSamples);
+	void Spreader_Ctor(Spreader *unit);	
+}
+
+void Spreader_Ctor(Spreader* unit)
+{	
+	if (INRATE(1) == calc_FullRate) {
+		SETCALC(Spreader_next_a);
+	    } else {
+		SETCALC(Spreader_next_k);
+	    }
+	unit->m_theta = ZIN0(1);
+	unit->m_theta2 = unit->m_theta * 0.5;
+	unit->m_cosTheta2 = cos(unit->m_theta2);
+	unit->m_sinTheta2 = sin(unit->m_theta2);
+	unit->m_nSinTheta2 = unit->m_sinTheta2 * -1.;
+	
+	float filtsPerOct = ZIN0(2);
+	float rFiltsPerOct = 1. / filtsPerOct;
+	unit->m_numFilts = (int)filtsPerOct * 10;
+	float freq = 0.0;
+	double wc;
+
+	unit->m_freq = (float*)RTAlloc(unit->mWorld, unit->m_numFilts * sizeof(float));
+	unit->m_y1 = (double*)RTAlloc(unit->mWorld, unit->m_numFilts * sizeof(double));
+	unit->m_a0 = (double*)RTAlloc(unit->mWorld, unit->m_numFilts * sizeof(double));
+	unit->m_b1 = (double*)RTAlloc(unit->mWorld, unit->m_numFilts * sizeof(double));
+	
+	for(int i = 0; i < unit->m_numFilts; i ++){
+	    unit->m_y1[i] = 0.0;
+	    unit->m_freq[i] = sc_octcps(freq);
+	    freq += rFiltsPerOct;
+	    wc = pi * (double)(unit->m_freq[i]) * SAMPLEDUR;
+	    unit->m_b1[i] = (1. - wc) / (1. + wc);
+	    unit->m_a0[i] = -unit->m_b1[i];
+	    }
+
+	ZOUT0(0) = 0.f;
+	ZOUT0(1) = 0.f;
+}
+
+void Spreader_Dtor(Spreader* unit)
+{
+    	RTFree(unit->mWorld, unit->m_freq);
+    	RTFree(unit->mWorld, unit->m_y1);
+    	RTFree(unit->mWorld, unit->m_a0);
+    	RTFree(unit->mWorld, unit->m_b1);
+}
+void Spreader_next_a(Spreader* unit, int inNumSamples)
+{
+	float *outl = OUT(0);
+	float *outr = OUT(1);
+	float *in = IN(0);
+	float *theta = IN(1);
+	float sig;
+	float curIn, cosIn, curTheta, cosTheta2, sinTheta2, theta2;
+	
+	cosTheta2 = unit->m_cosTheta2;
+	sinTheta2 = unit->m_sinTheta2;
+	
+	for(int j = 0; j < inNumSamples; j++){
+		sig = curIn = in[j];
+		if((curTheta = theta[j]) != unit->m_theta){
+		    unit->m_theta = curTheta;
+		    theta2 = curTheta * 0.5;
+		    unit->m_cosTheta2 = cos(theta2);
+		    unit->m_sinTheta2 = sin(theta2);
+		    }		    
+		for(int i = 0; i < unit->m_numFilts; i ++){
+		    float y0 = sig + unit->m_b1[i] * unit->m_y1[i]; 
+		    sig = unit->m_a0[i] * y0 + 1. * unit->m_y1[i];
+		    unit->m_y1[i] = y0;
+		    }
+		
+		cosIn = (unit->m_cosTheta2 * curIn);
+		outl[j] = cosIn + (unit->m_sinTheta2 * sig);
+		outr[j] = cosIn + (-1. * unit->m_sinTheta2 * sig);
+
+	    };
+	for(int i = 0; i < unit->m_numFilts; i ++){
+	    unit->m_y1[i] = zapgremlins(unit->m_y1[i]);
+	    }
+
+}
+
+void Spreader_next_k(Spreader* unit, int inNumSamples)
+{
+	float *outl = OUT(0);
+	float *outr = OUT(1);
+	float *in = IN(0);
+	float theta = IN0(1);
+	float sig;
+	float curIn, cosIn, curTheta, cosTheta2, sinTheta2, theta2, nSinTheta2;
+	
+	cosTheta2 = unit->m_cosTheta2;
+	sinTheta2 = unit->m_sinTheta2;
+	nSinTheta2 = unit->m_nSinTheta2;
+
+	if(theta != unit->m_theta){
+	    unit->m_theta = curTheta;
+	    theta2 = curTheta * 0.5;
+	    unit->m_cosTheta2 = cos(theta2);
+	    unit->m_sinTheta2 = sin(theta2);
+	    unit->m_nSinTheta2 = unit->m_sinTheta2 * -1.;
+	    float cosTheta2Slope = CALCSLOPE(unit->m_cosTheta2, cosTheta2);
+	    float sinTheta2Slope = CALCSLOPE(unit->m_sinTheta2, sinTheta2);
+	    float nSinTheta2Slope = CALCSLOPE(unit->m_nSinTheta2, nSinTheta2);
+	    
+	    for(int j = 0; j < inNumSamples; j++){
+		    sig = curIn = in[j];
+		
+		    for(int i = 0; i < unit->m_numFilts; i ++){
+			float y0 = sig + unit->m_b1[i] * unit->m_y1[i]; 
+			sig = unit->m_a0[i] * y0 + 1. * unit->m_y1[i];
+			unit->m_y1[i] = y0;
+			}
+		    
+		    cosIn = (cosTheta2 * curIn);
+		    outl[j] = cosIn + (sinTheta2 * sig);
+		    outr[j] = cosIn + (nSinTheta2 * sig);
+		    
+		    cosTheta2 += cosTheta2Slope;
+		    sinTheta2 += sinTheta2Slope;
+		    nSinTheta2 += nSinTheta2Slope;
+		};
+			    
+	    } else {
+		
+	    for(int j = 0; j < inNumSamples; j++){
+		    sig = curIn = in[j];
+		
+		    for(int i = 0; i < unit->m_numFilts; i ++){
+			float y0 = sig + unit->m_b1[i] * unit->m_y1[i]; 
+			sig = unit->m_a0[i] * y0 + 1. * unit->m_y1[i];
+			unit->m_y1[i] = y0;
+			}
+		    
+		    cosIn = (cosTheta2 * curIn);
+		    outl[j] = cosIn + (sinTheta2 * sig);
+		    outr[j] = cosIn + (nSinTheta2 * sig);
+		};
+	    }
+	    
+	for(int i = 0; i < unit->m_numFilts; i ++){
+	    unit->m_y1[i] = zapgremlins(unit->m_y1[i]);
+	    }
+
+}
+	
+	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -788,7 +1126,8 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(Allpass1);
 	DefineSimpleUnit(RMEQ);
 	DefineSimpleUnit(RMShelf);
-
+	DefineSimpleUnit(RMShelf2);
+	DefineDtorCantAliasUnit(Spreader);
 /*
 #define DefineDelayUnit(name) \
     (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
