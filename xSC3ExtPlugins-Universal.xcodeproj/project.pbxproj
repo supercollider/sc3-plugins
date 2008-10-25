@@ -74,6 +74,7 @@
 				372742850DA027AB00287F98 /* PBXTargetDependency */,
 				F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */,
 				4603009F0E6F45F000ABDB31 /* PBXTargetDependency */,
+				3727B6790EB369B60002FAA0 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -263,6 +264,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3727424D0DA024ED00287F98;
 			remoteInfo = MembraneUGens;
+		};
+		3727B6780EB369B60002FAA0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46434A730EB36587008F1E42 /* SLUGens */;
+			remoteInfo = SLUGens;
 		};
 		373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2954,6 +2962,11 @@
 			isa = PBXTargetDependency;
 			target = 3727424D0DA024ED00287F98 /* MembraneUGens */;
 			targetProxy = 372742840DA027AB00287F98 /* PBXContainerItemProxy */;
+		};
+		3727B6790EB369B60002FAA0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46434A730EB36587008F1E42 /* SLUGens */;
+			targetProxy = 3727B6780EB369B60002FAA0 /* PBXContainerItemProxy */;
 		};
 		373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
