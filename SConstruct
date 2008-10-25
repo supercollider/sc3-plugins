@@ -114,6 +114,7 @@ plugs = [
 	'MCLDSOMUGens',
 	'MCLDTriggeredStatsUgens',
 	'LoopBuf',
+	'SLUGens',
 	'TagSystemUgens',
 	'bhobChaos',
 	'BhobFilt',

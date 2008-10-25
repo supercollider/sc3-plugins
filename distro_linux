@@ -18,6 +18,7 @@ mv build/MCLD*.so Extensions/MCLD_UGens
 mv build/TagSystemUgens.so Extensions/TagSystemUGens
 mv build/MembraneUGens.so Extensions/MembraneUGens
 mv build/MLfftwUGens.so Extensions/MLfftwUGens
+mv build/SLUGens.so Extensions/SLUGens
 
 if [ -f AY*.so ]; then
   mv build/AY*.so Extensions/MCLD_UGens
