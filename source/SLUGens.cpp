@@ -2008,7 +2008,7 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 		
 		//bool check= true; 
 		
-		numcrossterms = buf[0]; 
+		numcrossterms = (int)buf[0]; 
 		
 		bufdone= 1; 
 		
@@ -2016,13 +2016,13 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 		
 		float product = buf[bufdone]; 
 		
-		int numbinproduct = buf[bufdone+1];
+		int numbinproduct = (int)buf[bufdone+1];
 		
 		bufdone +=2; 
 		
 		for (i=0; i<numbinproduct; ++i) {
 		
-			index= buf[bufdone];
+			index= (int)buf[bufdone];
 			//coefficient= buf[bufdone+1];
 			exponent= buf[bufdone+1];
 	
@@ -2039,13 +2039,13 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 		
 		}
 		
-		int numainproduct = buf[bufdone];
+		int numainproduct = (int)buf[bufdone];
 		
 		bufdone +=1; 
 		
 		for (i=0; i<numainproduct; ++i) {
 		
-			index= buf[bufdone];
+			index= (int)buf[bufdone];
 			//coefficient= buf[bufdone+1];
 			exponent= buf[bufdone+1];
 	
