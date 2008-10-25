@@ -11,6 +11,7 @@ cp build/Membrane*.scx Extensions/MembraneUGens
 cp build/MLfftw*.scx Extensions/MLfftwUGens
 # cp build/ReverbUGens/*.scx Extensions/ReverbUGens
 cp build/RMEQSuite*.scx Extensions/RMEQSuiteUGens
+cp build/SLUGens*.scx Extensions/SLUGens
 cp build/STK*.scx Extensions/StkUGens
 # cp build/TagSystemUGens/*.scx Extensions/TagSystemUGens
 
