@@ -100,7 +100,6 @@ if platform.system() == 'Linux':
 headers = sc3_source + 'Headers'
 
 plugs = [
-	'BEQSuiteUGens',
 	'BlackrainUGens',
 	'JoshUGens',
 	'JoshAmbiUGens',
