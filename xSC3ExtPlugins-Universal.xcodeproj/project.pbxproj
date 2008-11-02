@@ -68,7 +68,6 @@
 				373C2F0A0C94052100A3D3FD /* PBXTargetDependency */,
 				373C2F150C94054400A3D3FD /* PBXTargetDependency */,
 				F3D57D240B102BBC0034519F /* PBXTargetDependency */,
-				F3FE07830B0D771000A29459 /* PBXTargetDependency */,
 				F3D57D3E0B102D5C0034519F /* PBXTargetDependency */,
 				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
 				372742850DA027AB00287F98 /* PBXTargetDependency */,
@@ -242,8 +241,6 @@
 		F3FE073E0B0D760C00A29459 /* JoshUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */; };
 		F3FE07590B0D767000A29459 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3FE07640B0D76AC00A29459 /* AmbisonicUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3FE07630B0D76AC00A29459 /* AmbisonicUGens.cpp */; };
-		F3FE07760B0D76E400A29459 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
-		F3FE07810B0D770D00A29459 /* BEQSuiteUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3FE07800B0D770D00A29459 /* BEQSuiteUGens.cpp */; };
 		F3FE07900B0D775500A29459 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3FE079B0B0D777E00A29459 /* JoshPVUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */; };
 		F3FE07A60B0D77F400A29459 /* fftlib.c in Sources */ = {isa = PBXBuildFile; fileRef = F50D05D902E69B6B01CA2799 /* fftlib.c */; };
@@ -269,7 +266,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 46434A730EB36587008F1E42 /* SLUGens */;
+			remoteGlobalIDString = 46434A730EB36587008F1E42;
 			remoteInfo = SLUGens;
 		};
 		373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
@@ -475,13 +472,6 @@
 			remoteGlobalIDString = F3564BD30B0E82A4008AFA51;
 			remoteInfo = "STKUGens (Upgraded)";
 		};
-		F3FE07820B0D771000A29459 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3FE076E0B0D76E400A29459;
-			remoteInfo = "BEQSuiteUGens (Upgraded)";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -672,8 +662,6 @@
 		F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshUGens.cpp; sourceTree = "<group>"; };
 		F3FE07600B0D767000A29459 /* AmbisonicUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = AmbisonicUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3FE07630B0D76AC00A29459 /* AmbisonicUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AmbisonicUGens.cpp; sourceTree = "<group>"; };
-		F3FE077D0B0D76E400A29459 /* BEQSuiteUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BEQSuiteUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3FE07800B0D770D00A29459 /* BEQSuiteUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BEQSuiteUGens.cpp; sourceTree = "<group>"; };
 		F3FE07970B0D775500A29459 /* JoshPVUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshPVUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshPVUGens.cpp; sourceTree = "<group>"; };
 		F50D05D902E69B6B01CA2799 /* fftlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = fftlib.c; path = ../Source/common/fftlib.c; sourceTree = SOURCE_ROOT; };
@@ -902,14 +890,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F3FE07750B0D76E400A29459 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3FE07760B0D76E400A29459 /* vecLib.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F3FE078F0B0D775500A29459 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1124,7 +1104,6 @@
 				F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */,
 				F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */,
 				F3A15CB10B5D6D9200D75043 /* MCLDFFTTriggeredUGen.cpp */,
-				F3FE07800B0D770D00A29459 /* BEQSuiteUGens.cpp */,
 				F3FE07630B0D76AC00A29459 /* AmbisonicUGens.cpp */,
 				F3FE073D0B0D760C00A29459 /* JoshUGens.cpp */,
 				F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */,
@@ -1144,7 +1123,6 @@
 			children = (
 				F3FE07360B0D759000A29459 /* JoshUGensUB.scx */,
 				F3FE07600B0D767000A29459 /* AmbisonicUGensUB.scx */,
-				F3FE077D0B0D76E400A29459 /* BEQSuiteUGensUB.scx */,
 				F3FE07970B0D775500A29459 /* JoshPVUGensUB.scx */,
 				F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */,
 				F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */,
@@ -1491,13 +1469,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3FE07520B0D767000A29459 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F3FE076F0B0D76E400A29459 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2094,26 +2065,6 @@
 			productReference = F3FE07600B0D767000A29459 /* AmbisonicUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F3FE07790B0D76E400A29459 /* Build configuration list for PBXNativeTarget "BEQSuiteUGens (Upgraded)" */;
-			buildPhases = (
-				F3FE076F0B0D76E400A29459 /* Headers */,
-				F3FE07730B0D76E400A29459 /* Sources */,
-				F3FE07750B0D76E400A29459 /* Frameworks */,
-				F3FE07770B0D76E400A29459 /* Rez */,
-				F3FE07780B0D76E400A29459 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "BEQSuiteUGens (Upgraded)";
-			productInstallPath = /usr/local/lib;
-			productName = BinaryOpUGens;
-			productReference = F3FE077D0B0D76E400A29459 /* BEQSuiteUGensUB.scx */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3FE07930B0D775500A29459 /* Build configuration list for PBXNativeTarget "JoshPVUGens (Upgraded)" */;
@@ -2140,10 +2091,12 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				373C2EFE0C94051000A3D3FD /* bhobUGens */,
@@ -2171,7 +2124,6 @@
 				F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */,
 				F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */,
 				F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */,
-				F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */,
 				F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */,
 				F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */,
 				37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */,
@@ -2382,13 +2334,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3FE075A0B0D767000A29459 /* Rez */ = {
-			isa = PBXRezBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F3FE07770B0D76E400A29459 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2666,15 +2611,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
-		F3FE07780B0D76E400A29459 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
-		};
 		F3FE07920B0D775500A29459 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2932,14 +2868,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F3FE07730B0D76E400A29459 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3FE07810B0D770D00A29459 /* BEQSuiteUGens.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F3FE078D0B0D775500A29459 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3112,11 +3040,6 @@
 			isa = PBXTargetDependency;
 			target = F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */;
 			targetProxy = F3D57D3D0B102D5C0034519F /* PBXContainerItemProxy */;
-		};
-		F3FE07830B0D771000A29459 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F3FE076E0B0D76E400A29459 /* BEQSuiteUGens (Upgraded) */;
-			targetProxy = F3FE07820B0D771000A29459 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4303,6 +4226,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -6122,103 +6046,6 @@
 			};
 			name = Default;
 		};
-		F3FE077A0B0D76E400A29459 /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = scx;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
-				GENERATE_MASTER_OBJECT_FILE = YES;
-				LIBRARY_SEARCH_PATHS = "";
-				LIBRARY_STYLE = BUNDLE;
-				MACH_O_TYPE = mh_bundle;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = BEQSuiteUGensUB;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		F3FE077B0B0D76E400A29459 /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = scx;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
-				GENERATE_MASTER_OBJECT_FILE = YES;
-				LIBRARY_SEARCH_PATHS = "";
-				LIBRARY_STYLE = BUNDLE;
-				MACH_O_TYPE = mh_bundle;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = BEQSuiteUGensUB;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-		F3FE077C0B0D76E400A29459 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = scx;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
-				GENERATE_MASTER_OBJECT_FILE = YES;
-				LIBRARY_SEARCH_PATHS = "";
-				LIBRARY_STYLE = BUNDLE;
-				MACH_O_TYPE = mh_bundle;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = BEQSuiteUGensUB;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = NO;
-			};
-			name = Default;
-		};
 		F3FE07940B0D775500A29459 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6655,16 +6482,6 @@
 				F3FE075D0B0D767000A29459 /* Development */,
 				F3FE075E0B0D767000A29459 /* Deployment */,
 				F3FE075F0B0D767000A29459 /* Default */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
-		};
-		F3FE07790B0D76E400A29459 /* Build configuration list for PBXNativeTarget "BEQSuiteUGens (Upgraded)" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F3FE077A0B0D76E400A29459 /* Development */,
-				F3FE077B0B0D76E400A29459 /* Deployment */,
-				F3FE077C0B0D76E400A29459 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
