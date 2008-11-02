@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.27">
+<meta name="CocoaVersion" content="949.33">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
@@ -14,13 +14,13 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #a91616}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #961e1e}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0013bc}
-span.s3 {color: #606060}
-span.s4 {color: #000000}
-span.s5 {font: 10.0px Monaco}
+span.s2 {color: #000000}
+span.s3 {color: #001cb9}
+span.s4 {font: 10.0px Monaco}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -48,40 +48,40 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p6">s.boot;</p>
 <p class="p7"><br></p>
-<p class="p6">a = <span class="s2">AtsFile</span>.new(<span class="s3">"sounds/a11wlk01.ats"</span>).loadToBuffer;</p>
+<p class="p8"><span class="s2">a = </span><span class="s3">AtsFile</span><span class="s2">.new(</span>"sounds/a11wlk01.ats"<span class="s2">).load;</span></p>
 <p class="p7"><br></p>
-<p class="p8"><span class="s4">( </span>//play just the resynth, with LFSaw pointing into the file</p>
+<p class="p9"><span class="s2">( </span>//play just the resynth, with LFSaw pointing into the file</p>
 <p class="p6">{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">AtsSynth</span>.ar(a.buffer, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s2">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s5">, mul: 1)</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">AtsSynth</span>.ar(a.bufnum, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s3">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s4">, mul: 1)</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>}.play(s);</p>
 <p class="p3">);</p>
 <p class="p4"><br></p>
-<p class="p8"><span class="s4">( </span>//multiply frequencies by 1.5</p>
+<p class="p9"><span class="s2">( </span>//multiply frequencies by 1.5</p>
 <p class="p6">{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">AtsSynth</span>.ar(a.buffer, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s2">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s5">, freqMul: 1.5, mul: 1)</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">AtsSynth</span>.ar(a.bufnum, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s3">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s4">, freqMul: 1.5, mul: 1)</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>}.play(s);</p>
 <p class="p3">);</p>
 <p class="p4"><br></p>
-<p class="p8"><span class="s4">( </span>//add 100 to all frequencies</p>
+<p class="p9"><span class="s2">( </span>//add 100 to all frequencies</p>
 <p class="p6">{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">AtsSynth</span>.ar(a.buffer, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s2">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s5">, freqAdd: 100.0, mul: 1)</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">AtsSynth</span>.ar(a.bufnum, a.numPartials, 0, 1,<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s3">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s4">, freqAdd: 100.0, mul: 1)</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>}.play(s);</p>
 <p class="p3">);</p>
 <p class="p4"><br></p>
-<p class="p8"><span class="s4">( </span>//resynthesize every third partial only (partial skip)</p>
+<p class="p9"><span class="s2">( </span>//resynthesize every third partial only (partial skip)</p>
 <p class="p6">{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">AtsSynth</span>.ar(a.buffer, a.numPartials * 0.3, 0, 3,<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s2">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s5">, mul: 1)</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">AtsSynth</span>.ar(a.bufnum, a.numPartials * 0.3, 0, 3,<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s3">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s4">, mul: 1)</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>}.play(s);</p>
 <p class="p3">);</p>
 <p class="p4"><br></p>
-<p class="p8"><span class="s4">( </span>//resynthesize only the top half of the partials</p>
+<p class="p9"><span class="s2">( </span>//resynthesize only the top half of the partials</p>
 <p class="p6">{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">AtsSynth</span>.ar(a.buffer, a.numPartials * 0.5, a.numPartials * 0.5, 1,<span class="Apple-converted-space"> </span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s2">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s5">, mul: 1)</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">AtsSynth</span>.ar(a.bufnum, a.numPartials * 0.5, a.numPartials * 0.5, 1,<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filePointer: </span><span class="s3">LFSaw</span>.kr(a.sndDur.reciprocal, 1, 0.5, 0.5)<span class="s4">, mul: 1)</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>}.play(s);</p>
 <p class="p3">);</p>
 </body>

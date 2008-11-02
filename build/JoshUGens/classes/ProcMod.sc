@@ -14,7 +14,7 @@ ProcMod {
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
-		<tempo = 1, oldclocks;
+		<tempo = 1, oldclocks, <composite;
 	var recordPM, <>recordpath;
 	classvar addActions;
 
@@ -23,7 +23,7 @@ ProcMod {
 			releaseFunc, onReleaseFunc, responder).initThisClass(clock, server, env);	}
 		
 	initThisClass {arg argClock, argServer, argEnv, argNumChannels, argProcout;
-		server = argServer ?? {Server.default};
+		server = argServer ?? {Server.default}; //
 		env = argEnv;
 		(env.notNil).if({
 			env.isKindOf(Env).if({
@@ -207,6 +207,7 @@ ProcMod {
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
 		oldclocks.do({arg me; me.clear; me.stop});
 		curproc.stop;
+		gui.if({window.close});
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
 		isRunning = false;
 
@@ -247,17 +248,17 @@ ProcMod {
 		var slider, numbox, winw, winh, dbspec, xspace, yspace, trigstr;
 		gui = true;
 		trigstr = trig.notNil.if({"("++trig++")"}, {""});
-		window = parent ?? {GUI.window.new(this.id, bounds)};
+		window = parent ?? {GUI.window.new(this.id, bounds).front};
+		composite = GUI.compositeView.new(window, parent.notNil.if({bounds}, {Rect(0, 0, bounds.width, bounds.height)}));
 		winh = bounds.height;
 		winw = bounds.width;
-		window.view.decorator.isNil.if({
-			window.view.decorator = FlowLayout( window.view.bounds, Point(10, 10), Point(10, 10));
+		composite.decorator.isNil.if({
+			composite.decorator = FlowLayout( composite.bounds, Point(10, 10), Point(10, 10));
 			});
-		xspace = window.view.decorator.gap.x * 1.5;
-		yspace = window.view.decorator.gap.y * 1.5;
-		window.front;
+		xspace = composite.decorator.gap.x * 1.5;
+		yspace = composite.decorator.gap.y * 1.5;
 		window.onClose_({gui = false; (isRunning || isReleasing).if({this.kill})});
-		button = GUI.button.new(window, Rect(0, 0, winw * 0.3 - xspace, winh * 0.8 - yspace))
+		button = GUI.button.new(composite, Rect(0, 0, winw * 0.3 - xspace, winh * 0.8 - yspace))
 			.states_([
 				["start " ++ this.id ++ trigstr, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
 				["stop " ++ this.id ++ trigstr, Color.black, Color(0.7, 0.3, 0.3, 0.3)],
@@ -272,7 +273,7 @@ ProcMod {
 				actions[me.value].value;
 				});
 		dbspec = [lowerLevel, upperLevel, \db].asSpec;
-		slider = GUI.slider.new(window, Rect(winw * 0.3, 0, winw * 0.5 - xspace, 
+		slider = GUI.slider.new(composite, Rect(winw * 0.3, 0, winw * 0.5 - xspace, 
 				winh * 0.8 - yspace))
 			.value_(dbspec.unmap(amp.ampdb).quantize(0.01))
 			.action_({arg me;
@@ -281,7 +282,7 @@ ProcMod {
 				this.amp_(ampval.dbamp);
 				numbox.value_(ampval.quantize(0.01));
 				});
-		numbox = GUI.numberBox.new(window, Rect(winw * 0.8, 0, winw * 0.2 - xspace, 
+		numbox = GUI.numberBox.new(composite, Rect(winw * 0.8, 0, winw * 0.2 - xspace, 
 				winh * 0.8- yspace))
 			.value_(amp.ampdb.quantize(0.01))
 			.action_({arg me;
@@ -387,8 +388,10 @@ ProcModR : ProcMod {
 		}
 		
 	recordPM {arg path;
-		recordPM = true;
-		recordpath = path;
+		path.notNil.if({
+			recordPM = true;
+			recordpath = path;
+			});
 		}
 		
 	play {arg recpath, timestamp = true, argHeaderFormat, argSampleFormat;
@@ -604,9 +607,11 @@ ProcEvents {
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
 		<bigNum = false, bigNumWindow, <>preKill;
 	var <buttonHeight, <buttonWidth;
+	var <>showPMGUIs = false, columns = 2, rows = 15, column = 0, row = 0;
+	
 	// below are for timeline functionality. record timestamps of a performance, or playback
 	// according to timeStamps of a performance
-	var tlrec = false, tlplay = false, <timeLine, <currentTime, <timeOffset = 0.0, 
+	var tlrec = false, tlplay = false, <timeLine, <currentTime, <>timeOffset = 0.0, 
 		<isPlaying, <clock, cper;
 	/* begion add */
 	var <recordPM = false, recordpath, <>timeStamp, <>headerFormat, <>sampleFormat;
@@ -631,12 +636,14 @@ ProcEvents {
 		eventArray = Array.fill(events.size, {Array.new});
 		releaseArray = Array.fill(events.size, {Array.new});
 		timeArray = Dictionary.new(events.flat.size);
+		bounds = GUI.window.screenBounds;
 		id = argid;
 		server = argserver;
 		amp = argamp;
 		index = 0;
 		lag = arglag;
 		firstevent = true;
+		isPlaying = false;
 		arginitmod.notNil.if({initmod = arginitmod});
 		argkillmod.notNil.if({killmod = argkillmod});
 		events.do{arg me, i;
@@ -698,6 +705,7 @@ ProcEvents {
 	play {arg event;
 		var path;	
 		firstevent.if({
+			isPlaying = true;
 			starttime.isNil.if({starttime = Main.elapsedTime});
 			initmod.notNil.if({
 				recordPM.if({
@@ -716,9 +724,28 @@ ProcEvents {
 				path = recordpath ++ (timeOffset + this.now.round(0.001)) ++ eventDict[me].id;
 				});
 			eventDict[me].value(path, timeStamp, headerFormat, sampleFormat);
+			showPMGUIs.if({
+				row = row + 1;
+				(row == rows).if({
+					row = 1;
+					column = (column + 1) % columns;
+					});
+				eventDict[me].gui(
+					Rect(bounds.width * (0.33 * (column + gui.if({1}, {0}))),
+						bounds.height - (bounds.height * (0.06 * (row + 1))),
+						bounds.width * 0.3,
+						bounds.height * 0.045));
+				gui.if({window.front});
+				});
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(1);
-			})});
-		releaseArray[event].do({arg me; eventDict[me].release;
+			})
+		});
+		releaseArray[event].do({arg me; 
+			eventDict[me].release;
+			showPMGUIs.if({AppClock.sched(eventDict[me].releasetime, {
+				eventDict[me].window.close
+				})
+			});
 			pracmode.if({pracwindow.view.children[pracdict[me]].valueAction_(0);
 			})});
 		tlrec.if({timeLine.postln; timeLine.put(event, this.now)});
@@ -788,7 +815,7 @@ ProcEvents {
 	
 	killAll {
 		preKill.value;
-		eventDict.do{arg me; me.isRunning.if({me.kill})};
+		eventDict.do{arg me; me.isRunning.if({me.kill; showPMGUIs.if({me.window.close})})};
 		killmod.notNil.if({killmod.value; killmod.kill});
 		initmod.notNil.if({initmod.kill});
 		gui.if({window.close; gui = false; pracwindow.notNil.if({pracwindow.close})});
@@ -826,17 +853,17 @@ ProcEvents {
 			})
 		}
 		
-	pedalTrig {arg pedalbus, headroom = 2, trigwindow = 0.5, testdur = 2, guiBounds,
+	pedalTrig {arg pedalbus, trigwindow = 0.5, testdur = 2, guiBounds,
 				addAction = 1, target = 0;
 			var pedlevel = 0, numlevels, testlevel = 0, 
-				testinc = 0;
-			var testnode, testid, pedalid, headspec;
-			headspec = ControlSpec.new(0, headroom * 10, \lin);
+				testinc = 0, scale = 1;
+			var testnode, testid, pedalid; //, headspec;
+//			headspec = ControlSpec.new(0, headroom * 10, \lin);
 			guiBounds = guiBounds ?? {gui.if({
 				Rect(window.bounds.left + window.bounds.width + 10, 
 					window.bounds.top,window.bounds.width * 0.3, 
-					window.bounds.height * 0.7);
-					}, {Rect(10, 10, 144, 288)})};
+					window.bounds.height * 0.3);
+					}, {Rect(10, 10, 144, 144)})};
 			server.serverRunning.if({
 				pedal = true;
 				// poll every 0.1 seconds
@@ -858,20 +885,36 @@ ProcEvents {
 							});
 						});
 					});
-//							// start the pedal listening at the head of 0//
+				pedrespsetup = OSCresponderNode(server.addr, '/tr', {arg time, resp, msg;
+					(msg[2] == testid).if({
+						(testinc < numlevels).if({
+							("Pedal setup on bus: " ++ pedalbus ++ " turn: " ++
+								 testinc).postln;
+							testlevel = testlevel + msg[3];
+							testinc = testinc + 1;
+							}, {
+							server.sendMsg(\n_free, testnode);
+
+							// calc the trig level, and give it some headroom
+
+							testlevel = ((testlevel + msg[3]) / numlevels);
+							scale = -90.dbamp / testlevel;
+							("Pedal will be scaled by: "++scale.ampdb).postln;
+							// start the pedal listening at the head of 0
+////
 							server.sendMsg(\s_new, \procevtrig2343, pedalnode, 
-								addActions[addAction],
-							 	target, \pedalin, pedalbus, \id, pedalid,// \level, testlevel,
-								\trigwindow, trigwindow, \headroom, headroom);
+								addActions[addAction], target, \scale, scale,
+							 	\pedalin, pedalbus, \id, pedalid,// \level, testlevel,
+								\trigwindow, trigwindow); //, \headroom, headroom);
 //							// add the pedresp responder
 							"Pedal ready".postln;
 							pedresp.add;
 							{
 								pedalgui = GUI.window.new("pedal", guiBounds).front;
 								GUI.button.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
-										pedalgui.bounds.height * 0.02, 
+										pedalgui.bounds.height * 0.1, 
 										pedalgui.bounds.width * 0.8, 
-										pedalgui.bounds.height * 0.2))
+										pedalgui.bounds.height * 0.8))
 									.states_([
 										["Mute Trig", Color.black, 
 											Color(0.7, 0.3, 0.3, 0.3)],
@@ -882,6 +925,7 @@ ProcEvents {
 										server.sendMsg(\n_set, pedalnode, 
 											\mute, (me.value - 1).abs);
 										});
+								/*
 								GUI.slider.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
 										pedalgui.bounds.height * 0.3,
 										pedalgui.bounds.width * 0.3, 
@@ -908,8 +952,17 @@ ProcEvents {
 											\headroom, me.value); 
 
 										});
+								*/
 								gui.if({window.front});
 							}.defer;
+							// remove this repsonder
+							pedrespsetup.remove;
+							})
+						})
+					}).add;
+				
+				server.sendMsg(\s_new, \procevtesttrig76234, testnode, addActions[addAction],
+					target, \pedalin, pedalbus, \id, testid);
 
 			}, {"Server isn't booted, pedal trig can't be loaded".warn})
 		}
@@ -997,7 +1050,6 @@ ProcEvents {
 		
 	perfGUI {arg guiBounds, buttonColor = Color(0.3, 0.7, 0.3, 0.7);
 //		var buttonheight, buttonWidth;
-		bounds = GUI.window.screenBounds;	
 		
 		guiBounds = guiBounds ?? {Rect(10, bounds.height * 0.5, bounds.width * 0.3, 
 				bounds.height * 0.3)};
@@ -1290,23 +1342,23 @@ ProcEvents {
 			
 			SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;
 					var ped;
-					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
+//					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
+					ped = Amplitude.kr(In.ar(pedalin));
 					SendTrig.ar(Impulse.ar(10), id, ped);
 				}).writeDefFile;
-			SynthDef(\procevtrig2343, {arg pedalin = 2, id, headroom = 6, trigwindow = 1, 
-					mute = 1;
-				var in, delay, trig;
-				in = Amplitude.kr(In.ar(pedalin)) * mute;
-				delay = DelayN.ar(in, 0.01, 0.01);
-				trig = (in / delay.max(0.00001)) > headroom.dbamp;
-				SendTrig.ar(Trig1.ar(trig, trigwindow), id, 1);
-				}).writeDefFile;//
-//			SynthDef(\procevtrig2343, {arg pedalin, id, level = 1, headroom = 1, trigwindow = 1,//
-//					mute = 1;//
-//				var ped;//
-//				ped = In.ar(pedalin) * mute;//
-//				SendTrig.ar(Trig1.ar(ped > (level * headroom), trigwindow), id, 1);//
-//				}).writeDefFile;	
+			SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
+					mute = 1, scale = 1;
+				var in, delay, trig, pitch, hasPitch;
+//				in = Amplitude.kr(In.ar(pedalin)) * mute;
+				in = In.ar(pedalin) * scale * mute;
+//				[in, in*scale, scale, mute].poll;
+//				delay = DelayN.ar(in, 0.01, 0.01);
+//				trig = (in / delay.max(0.00001)) > headroom.dbamp;
+				#pitch, hasPitch = 
+					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
+//				[pitch, hasPitch].poll;
+				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
+				}).writeDefFile;
 			
 			}
 	}
@@ -1388,10 +1440,10 @@ ProcSink {
 		firstProc.if({
 			procWindow.front;
 			initmod.notNil.if({initmod.play});
-			starttime = Main.elapsedTime;
 			firstProc = false;
 			(startbutton.value != 1).if(startbutton.value_(1));
-			})
+			starttime = Main.elapsedTime;
+			});
 		}
 	
 	now {

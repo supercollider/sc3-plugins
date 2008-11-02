@@ -202,7 +202,7 @@ Player {
 						var out, envpoint, envstartpoint;
 						envstartpoint = start - initstarttime;
 						envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);
-						out = DiskIn.ar(numchan, bufnum);
+						out = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum));
 						if(numchan == 1, {out = [out, out]});
 						Out.ar(outbus, out * IEnvGen.ar(env, envpoint, amp) *
 							EnvGen.kr(Env.asr(0.05, 1, 0.05), gate, doneAction: 2))
@@ -214,16 +214,18 @@ Player {
 					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);
 					xywz.if({
 						(numchan == 3).if({
-							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
-							z = 0.0},{
-							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
-								[mute_x, mute_y, mute_w, mute_z];
+							#x, y, w = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) *
+								[mute_x, mute_y, mute_w];
+							z = K2A.ar(0.0)},{
+							#x, y, w, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum))
+								* [mute_x, mute_y, mute_w, mute_z];
 							})},{
-						(numchan == 4).if({
-							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
-							z = 0.0},{
-							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
-								[mute_w, mute_x, mute_y, mute_z]
+						(numchan == 3).if({
+							#w, x, y = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_w, mute_x, mute_y];
+							z = K2A.ar(0.0)},{
+							#w, x, y, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum))
+								* [mute_w, mute_x, mute_y, mute_z]
 							})});
 					decode = B2Ster.ar(w, x, y);
 					Out.ar(outbus, decode * IEnvGen.kr(env, envpoint, amp) *
@@ -235,16 +237,18 @@ Player {
 					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);
 					xywz.if({
 						(numchan == 3).if({
-							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
-							z = 0.0},{
-							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
-								[mute_x, mute_y, mute_w, mute_z];
+							#x, y, w = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_x, mute_y, mute_w];
+							z = K2A.ar(0.0)},{
+							#x, y, w, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_x, mute_y, mute_w, mute_z];
 							})},{
-						(numchan == 4).if({
-							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
-							z = 0.0},{
-							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
-								[mute_w, mute_x, mute_y, mute_z]
+						(numchan == 3).if({
+							#w, x, y = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_w, mute_x, mute_y];
+							z = K2A.ar(0.0)},{
+							#w, x, y, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum))
+								* [mute_w, mute_x, mute_y, mute_z]
 							})});
 					decode = B2UHJ.ar(w, x, y);
 					Out.ar(outbus, decode * IEnvGen.kr(env, envpoint, amp) *
@@ -255,16 +259,18 @@ Player {
 					envstartpoint = start - initstarttime;
 					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);					xywz.if({
 						(numchan == 3).if({
-							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
-							z = 0.0},{
-							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
-								[mute_x, mute_y, mute_w, mute_z];
+							#x, y, w = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_x, mute_y, mute_w];
+							z = K2A.ar(0.0)},{
+							#x, y, w, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_x, mute_y, mute_w, mute_z];
 							})},{
-						(numchan == 4).if({
-							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
-							z = 0.0},{
-							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
-								[mute_w, mute_x, mute_y, mute_z]
+						(numchan == 3).if({
+							#w, x, y = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_w, mute_x, mute_y];
+							z = K2A.ar(0.0)},{
+							#w, x, y, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_w, mute_x, mute_y, mute_z]
 							})});
 					decode = BFDecode1.ar(w, x, y, z, [0.25pi, -0.25pi, -0.75pi, -1.25pi]);
 					Out.ar(outbus, decode * IEnvGen.kr(env, envpoint, amp) *
@@ -275,16 +281,18 @@ Player {
 					envstartpoint = start - initstarttime;
 					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);					xywz.if({
 						(numchan == 3).if({
-							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
-							z = 0.0},{
-							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
-								[mute_x, mute_y, mute_w, mute_z];
+							#x, y, w = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_x, mute_y, mute_w];
+							z = K2A.ar(0.0)},{
+							#x, y, w, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_x, mute_y, mute_w, mute_z];
 							})},{
-						(numchan == 4).if({
-							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
-							z = 0.0},{
-							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
-								[mute_w, mute_x, mute_y, mute_z]
+						(numchan == 3).if({
+							#w, x, y = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_w, mute_x, mute_y];
+							z = K2A.ar(0.0)},{
+							#w, x, y, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_w, mute_x, mute_y, mute_z]
 							})});
 					decode = BFDecode1.ar(w, x, y, z, [0.1666pi, -0.16666pi, -0.5pi, 
 						-0.83333pi, 0.83333pi, 0.5pi ]);
@@ -296,16 +304,18 @@ Player {
 					envstartpoint = start - initstarttime;
 					envpoint = Line.ar(envstartpoint, envstartpoint + dur, dur);					xywz.if({
 						(numchan == 3).if({
-							#x, y, w = DiskIn.ar(numchan, bufnum) * [mute_x, mute_y, mute_w];
-							z = 0.0},{
-							#x, y, w, z = DiskIn.ar(numchan, bufnum) * 
-								[mute_x, mute_y, mute_w, mute_z];
+							#x, y, w = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) *
+								[mute_x, mute_y, mute_w];
+							z = K2A.ar(0.0)},{
+							#x, y, w, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_x, mute_y, mute_w, mute_z];
 							})},{
-						(numchan == 4).if({
-							#w, x, y = DiskIn.ar(numchan, bufnum) * [mute_w, mute_x, mute_y];
-							z = 0.0},{
-							#w, x, y, z = DiskIn.ar(numchan, bufnum) *
-								[mute_w, mute_x, mute_y, mute_z]
+						(numchan == 3).if({
+							#w, x, y = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) * 
+								[mute_w, mute_x, mute_y];
+							z = K2A.ar(0.0)},{
+							#w, x, y, z = VDiskIn.ar(numchan, bufnum, BufRateScale.kr(bufnum)) 
+								* [mute_w, mute_x, mute_y, mute_z]
 							})});
 					decode = BFDecode1.ar(w, x, y, z, [0.125pi, -0.125pi, -0.375pi, -0.625pi, 
 						-0.875pi, 0.875pi, 0.625pi, 0.375 ]);

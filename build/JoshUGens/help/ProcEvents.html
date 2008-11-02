@@ -5,27 +5,28 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949">
+<meta name="CocoaVersion" content="949.35">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #5b6828; min-height: 16.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #616727; min-height: 16.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0c2daa}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #722d2e}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0031aa}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #6a2c2e}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #1130a5}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #683031}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0033a5}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #623233}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Helvetica; min-height: 19.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #623233; min-height: 16.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0c2daa}
-span.s3 {color: #586922}
+span.s2 {color: #0031aa}
+span.s3 {color: #5f6822}
 span.s4 {color: #000000}
-span.s5 {color: #1130a5}
-span.s6 {color: #5b6828}
-span.s7 {color: #683031}
+span.s5 {color: #0033a5}
+span.s6 {color: #616727}
+span.s7 {color: #623233}
 span.s8 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -108,7 +109,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>lag_( val ) -<span class="Apple-converted-space"> </span></b> If there is an envelope controlling the overall amplitude of events, set the lag time for changes of<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>amplitude to take effect (with the amp_ instance method)</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
-<p class="p3"><b>data_( Association ) -<span class="Apple-converted-space"> </span><i> </i></b>places the Association into a Dictionary for later access. Any Association may be<span class="Apple-converted-space"> </span></p>
+<p class="p3"><b>saveToData( Association ) -<span class="Apple-converted-space"> </span><i> </i></b>places the Association into a Dictionary for later access. Any Association may be<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>stored.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
 <p class="p3"><b>Examples:</b></p>
@@ -394,14 +395,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event9"</span>.postln}, <span class="s5">nil</span>]</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], 1, <span class="s5">nil</span>, <span class="s5">nil</span>, <span class="s8">"test"</span>, s);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// .pedalTrig(pedalbus, tolerance, testdur)</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// we'll make the pedalbus the inbus of the pedal</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// pedalTrig will listen for the average amount of noise on the bus</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// then looks for triggers above noise * headroom</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// 5 might be high... but it is handy for using the internal mic for a test</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// this really depends on the noise floor of your pedal (I've used values in<span class="Apple-converted-space"> </span></p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// the hundreds even)</p>
-<p class="p6"><span class="Apple-tab-span">	</span>a.pedalTrig(s.options.numOutputBusChannels, 6, 1);</p>
+<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// .pedalTrig(pedalbus, testdur)</p>
+<p class="p13"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span>a.pedalTrig(s.options.numOutputBusChannels, 1.0);</p>
 <p class="p9"><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>a.perfGUI;</p>
 <p class="p6"><span class="Apple-tab-span">	</span>})</p>

@@ -398,7 +398,53 @@ UHJ2B : BFPanner {
  	checkInputs { ^this.checkNInputs(2) }
 
 	}
+
+BFFreeVerb {
+	*ar {arg w, x, y, z, mix = 1.0, room = 0.5, damp = 0.5, diffuse = 0.1, mul = 1.0, add = 0.0;
+		var a, b, c, d;
+		#a, b, c, d = B2A.ar(w, x, y, z);
+		#a, b, c, d = FreeVerb.ar([a, b, c, d], mix, room, damp, mul, add);
+		a = a + (b + c * diffuse);
+		b = b + (c + d * diffuse);
+		c = c + (d + a * diffuse);
+		d = d + (a + b * diffuse);
+		^A2B.ar(a, b, c, d);
+		}
+	}
+
+BFGVerb {
+	*ar {arg w, x, y, z, diffuse = 0.0, roomsize = 10, revtime = 3, damping = 0.5, 
+			inputbw = 0.5, drylevel = 0.0, earlyreflevel = 0.7, taillevel = 0.5, 
+			maxroomsize = 300, mul = 1, add = 0;
+		var a, b, c, d, al, ar, bl, br, cl, cr, dl, dr;
+		#a, b, c, d = B2A.ar(w, x, y, z);
+		#ar, al = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+			earlyreflevel, taillevel, maxroomsize, mul);
+		#br, bl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+			earlyreflevel, taillevel, maxroomsize, mul);
+		#cr, cl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+			earlyreflevel, taillevel, maxroomsize, mul);
+		#dr, dl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+			earlyreflevel, taillevel, maxroomsize, mul);
+		a = ar + al + (br + cl * diffuse);
+		b = br + bl + (cr + dl * diffuse);
+		c = cr + cl + (dr + al * diffuse);
+		d = dr + dl = (ar + bl * diffuse);
+		^A2B.ar(a, b, c, d) + add;
+		}
+	}
 		
+		
+//	init { arg ... theInputs;
+//		inputs = theInputs;		
+//		channels = [ OutputProxy(\audio,this,0), OutputProxy(\audio,this,1),
+//					OutputProxy(\audio,this,2), OutputProxy(\audio,this,3) ];
+//		^channels
+//	}
+//	
+// 	checkInputs { ^this.checkNInputs(4) }
+ 	
+ 	
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Classes from SuperCollider 2 are in the file AmbisonicsSC2
 //////////////////////////////////////////////////////////////////////////////////////////////
