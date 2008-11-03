@@ -24,6 +24,24 @@ struct SmoothDecimator  : public Unit
   int mBufferPos;
 };
 
+
+struct Decimator : public Unit
+{
+  float mCount;
+  float mLastOut;
+};
+
+struct SineShaper : public Unit
+{
+  // anything needed ?
+};
+
+struct Disintegrator : public Unit
+{
+  float mLastInput;
+  bool mActive;
+};
+
 //---------------------------------------------------------- 
 
 extern "C"
@@ -31,18 +49,59 @@ extern "C"
 {
   void load(InterfaceTable *inTable);
   
+
+  // from ladspa-util.h - should me make an extra header file for this?
+  static inline float f_clamp(float x, float a, float b);
+  static inline float cube_interp(const float fr, const float inm1, 
+				  const float in, const float inp1, const float inp2);
+  
   // Crossover Distortion
   void CrossoverDistortion_next(CrossoverDistortion *unit, int inNumSamples);
   void CrossoverDistortion_Ctor(CrossoverDistortion* unit);
 
   // Smooth Decimator
   void SmoothDecimator_next(SmoothDecimator *unit, int inNumSamples);
-  static inline float f_clamp(float x, float a, float b);
-  static inline float cube_interp(const float fr, const float inm1, 
-				  const float in, const float inp1, const float inp2);
   void SmoothDecimator_Ctor(SmoothDecimator* unit);
   void SmoothDecimator_Dtor(SmoothDecimator* unit);
+
+  // Decimator
+  void Decimator_next(Decimator *unit, int inNumSamples);
+  void Decimator_Ctor(Decimator* unit);
+
+  // SineShaper
+  void SineShaper_next(SineShaper *unit, int inNumSamples);
+  void SineShaper_Ctor(SineShaper* unit);
+
+  // Disintegrator
+  void Disintegrator_next(Disintegrator *unit, int inNumSamples);
+  void Disintegrator_Ctor(Disintegrator* unit);
 };
+
+//---------------------------------------------------------- 
+// utilities
+//---------------------------------------------------------- 
+
+// from ladspa-util.h
+static inline float f_clamp(float x, float a, float b)
+{
+	const float x1 = fabs(x - a);
+	const float x2 = fabs(x - b);
+
+	x = x1 + a + b;
+	x -= x2;
+	x *= 0.5;
+
+	return x;
+}
+
+// from ladspa-util.h
+static inline float cube_interp(const float fr, const float inm1, 
+				const float in, const float inp1, const float inp2)
+{
+  return in + 0.5f * fr * (inp1 - inm1 +
+			   fr * (4.0f * inp1 + 2.0f * inm1 - 5.0f * in - inp2 +
+				 fr * (3.0f * (in - inp1) - inm1 + inp2)));
+}
 
 //---------------------------------------------------------- 
 
@@ -69,6 +128,33 @@ void SmoothDecimator_Ctor(SmoothDecimator* unit)
 void SmoothDecimator_Dtor(SmoothDecimator* unit)
 {
   RTFree(unit->mWorld,unit->mBuffer);
+}
+
+// Decimator
+void Decimator_Ctor(Decimator* unit)
+{
+  unit->mCount = 0.0f;
+  unit->mLastOut = 0.0f;
+
+  SETCALC(Decimator_next);
+  Decimator_next(unit,1);
+}
+
+// SineShaper
+void SineShaper_Ctor(SineShaper* unit)
+{
+  SETCALC(SineShaper_next);
+  SineShaper_next(unit,1);
+}
+
+// Disintegrator
+void Disintegrator_Ctor(Disintegrator* unit)
+{
+  unit->mLastInput = 0.0f;
+  unit->mActive = false;
+
+  SETCALC(Disintegrator_next);
+  Disintegrator_next(unit,1);
 }
 
 //---------------------------------------------------------- 
@@ -137,26 +223,6 @@ void CrossoverDistortion_next(CrossoverDistortion *unit, int inNumSamples)
     }
 }
 
-// from ladspa-util.h
-static inline float f_clamp(float x, float a, float b)
-{
-	const float x1 = fabs(x - a);
-	const float x2 = fabs(x - b);
-
-	x = x1 + a + b;
-	x -= x2;
-	x *= 0.5;
-
-	return x;
-}
-
-// from ladspa-util.h
-static inline float cube_interp(const float fr, const float inm1, const float in, const float inp1, const float inp2)
-{
-  return in + 0.5f * fr * (inp1 - inm1 +
-			   fr * (4.0f * inp1 + 2.0f * inm1 - 5.0f * in - inp2 +
-				 fr * (3.0f * (in - inp1) - inm1 + inp2)));
-}
 
 void SmoothDecimator_next(SmoothDecimator *unit, int inNumSamples)
 {
@@ -191,6 +257,84 @@ void SmoothDecimator_next(SmoothDecimator *unit, int inNumSamples)
   unit->mBufferPos = buffer_pos;
 }
 
+void Decimator_next(Decimator *unit, int inNumSamples)
+{
+  float *in = IN(0);
+  float *out = OUT(0);
+  float rate = IN0(1);
+  float bits = IN0(2);
+  
+  float count = unit->mCount;
+  float last_out = unit->mLastOut;
+  long sample_rate = fSampleRate;
+  float step, stepr, delta, ratio;
+  double dummy;
+
+  if (bits >= 31.0f || bits < 1.0f) {
+    step = 0.0f;
+    stepr = 1.0f;
+  } else {
+    step = pow(0.5f, bits - 0.999f);
+    stepr = 1/step;
+  }
+	
+  if (rate >= sample_rate) {
+    ratio = 1.0f;
+  } else {
+    ratio = rate/sample_rate;
+  }
+
+  for (int pos = 0; pos < inNumSamples; pos++) {
+    count += ratio;
+	
+    if (count >= 1.0f) {
+      count -= 1.0f;
+      delta = modf((in[pos] + (in[pos]<0?-1.0:1.0)*step*0.5) * stepr, &dummy) * step;
+      last_out = in[pos] - delta;
+      out[pos] = last_out;
+    } else {
+      out[pos] = last_out;
+    }
+  }
+	
+  unit->mLastOut = last_out;
+  unit->mCount = count;
+}
+
+void SineShaper_next(SineShaper *unit, int inNumSamples)
+{
+  float *in = IN(0);
+  float *out = OUT(0);
+  float limit = IN0(1);
+  
+  float oneOverLimit = 1.f / limit;
+  for(int i = 0; i < inNumSamples; i++)
+    {
+      out[i] = limit * sin(in[i] * oneOverLimit);
+    }
+}
+
+void Disintegrator_next(Disintegrator *unit, int inNumSamples)
+{
+  float *in = IN(0);
+  float *out = OUT(0);
+  float prob = IN0(1);
+  float mult = IN0(2);
+
+  for(int i = 0; i < inNumSamples; i++)
+    {
+      if( (unit->mLastInput>0 && in[i]<0) || (unit->mLastInput<0 && in[i]>0))
+	unit->mActive = rand() < prob*RAND_MAX;
+      
+      unit->mLastInput = in[i];
+      
+      if(unit->mActive)
+	out[i] = in[i] * mult;
+      else
+	out[i] = in[i];
+    }
+}
+
 
 //---------------------------------------------------------- 
 
@@ -200,4 +344,7 @@ void load(InterfaceTable *inTable)
 
   DefineSimpleUnit(CrossoverDistortion);
   DefineSimpleUnit(SmoothDecimator);
+  DefineSimpleUnit(Decimator);
+  DefineSimpleUnit(SineShaper);
+  DefineSimpleUnit(Disintegrator);
 }
