@@ -431,6 +431,31 @@
 			sepNavWindowFrame = "{{15, 55}, {1228, 818}}";
 		};
 	};
+	F3B10AF80EBEC870001ABFAC /* LadspaUGens */ = {
+		activeExec = 0;
+	};
+	F3B10B050EBEC8B0001ABFAC /* LadspaUGens */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1012, 3136}}";
+			sepNavSelRange = "{1450, 0}";
+			sepNavVisRange = "{1171, 1079}";
+			sepNavWindowFrame = "{{15, 149}, {1071, 724}}";
+		};
+	};
+	F3B10B070EBEC8B1001ABFAC /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = F3B10B050EBEC8B0001ABFAC /* LadspaUGens */;
+	};
+	F3B10B1A0EBECFA3001ABFAC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F3B10B050EBEC8B0001ABFAC /* LadspaUGens */;
+		name = "LadspaUGens: 55";
+		rLen = 0;
+		rLoc = 1450;
+		rType = 0;
+		vrLen = 1079;
+		vrLoc = 1171;
+	};
 	F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */ = {
 		activeExec = 0;
 	};
@@ -493,9 +518,9 @@
 	};
 	F50D04F702E68E8201CA2799 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeTarget = 631417A30A203392007B9355 /* All */;
+		activeTarget = F3B10AF80EBEC870001ABFAC /* LadspaUGens */;
 		addToTargets = (
-			F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
+			F3B10AF80EBEC870001ABFAC /* LadspaUGens */,
 		);
 		breakpoints = (
 			F316C9B10B120A2C00B59FF4 /* StkAll.cpp:4 */,
@@ -610,8 +635,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 247295376;
-			PBXWorkspaceStateSaveDate = 247295376;
+			PBXPerProjectTemplateStateSaveDate = 247384136;
+			PBXWorkspaceStateSaveDate = 247384136;
+		};
+		perUserProjectItems = {
+			F3B10B070EBEC8B1001ABFAC /* PBXBookmark */ = F3B10B070EBEC8B1001ABFAC /* PBXBookmark */;
+			F3B10B1A0EBECFA3001ABFAC /* PBXTextBookmark */ = F3B10B1A0EBECFA3001ABFAC /* PBXTextBookmark */;
 		};
 		sourceControlManager = F3FE07250B0D758200A29459 /* Source Control */;
 		userBuildSettings = {

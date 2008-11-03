@@ -118,7 +118,8 @@ plugs = [
 	'bhobChaos',
 	'BhobFilt',
 	'bhobGrain',
-	'BhobNoise'
+	'BhobNoise',
+	'LadspaUGens'
 ]
 
 Basic_Env = env.Clone(
