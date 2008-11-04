@@ -1,7 +1,21 @@
+/**
+* Lots of FFT-based ugens for SC
+* (c) 2006-2008 Dan Stowell, all rights reserved.
+* Released under the GPL, v2 or later.
+*/
 PV_DiffMags : PV_ChainUGen
 {
-	*new { arg bufferA, bufferB;
-		^this.multiNew('control', bufferA, bufferB)
+	*new { |bufferA, bufferB|
+		"PV_DiffMags has changed name to PV_MagSubtract. 'PV_DiffMags' will be removed in future".warn;
+		^PV_MagSubtract(bufferA, bufferB)
+	}
+	*categories { ^ nil }
+}
+
+PV_MagSubtract : PV_ChainUGen
+{
+	*new { |bufferA, bufferB, zerolimit=0|
+		^this.multiNew('control', bufferA, bufferB, zerolimit)
 	}
 }
 
@@ -216,3 +230,30 @@ PV_Conj : PV_ChainUGen
 	*categories { ^ #["UGens>FFT"] }
 }
 
+FFTPeak : MultiOutUGen
+{
+	*kr { | buffer, freqlo=0, freqhi=50000 |
+		^this.multiNew('control', buffer, freqlo, freqhi)
+	}
+	init { arg ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(2, rate);
+	}
+	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
+}
+
+PV_MagSmooth : PV_ChainUGen 
+{
+	*new { arg buffer, factor=0.1;
+		^this.multiNew('control', buffer, factor)
+	}
+	*categories { ^ #["UGens>FFT"] }
+}
+
+FFTMutInf : UGen
+{
+	*kr { | buffer, minfreq=50, maxfreq=1000, numframes=5 |
+		^this.multiNew('control', buffer, minfreq, maxfreq, numframes)
+	}
+	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
+}

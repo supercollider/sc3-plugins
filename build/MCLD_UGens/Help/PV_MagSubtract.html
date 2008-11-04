@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Arial; min-height: 15.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Arial}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d1c12}
+span.s1 {color: #0000ff}
+span.s2 {color: #0026b4}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>PV_MagSubtract<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Spectral subtraction (difference of magnitudes)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>chain = PV_MagSubtract(chain1, chain2, zerolimit)</b></p>
+<p class="p2"><br></p>
+<p class="p4">Subtracts the magnitudes in <b>chain2</b> away from the magnitudes in <b>chain1</b>. In other words, the output consists of an FFT chain with the phases of chain1, and magnitudes corresponding to (chain1.mags - chain2.mags).</p>
+<p class="p5"><br></p>
+<p class="p4">The <b>zerolimit</b> option, if greater than 0, tells the unit to hard-limit the magnitudes to zero, never going lower.<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p4">See <a href="PV_MagSmooth.html"><span class="s1">PV_MagSmooth</span></a> for a nice example of using this for <b><i>spectral subtraction</i></b> noise removal.</p>
+<p class="p4">Also <a href="FFTDiffMags.help.rtf"><span class="s1">FFTDiffMags</span></a> which performs a similar calculation but sums the differences to form a single control-rate output.</p>
+<p class="p5"><br></p>
+<p class="p4"><b>Example</b></p>
+<p class="p2"><br></p>
+<p class="p6">s.boot;</p>
+<p class="p6">b = <span class="s2">Buffer</span>.alloc(s, 1024);</p>
+<p class="p6">c = <span class="s2">Buffer</span>.alloc(s, 1024);</p>
+<p class="p7"><br></p>
+<p class="p6">(</p>
+<p class="p6">x = {</p>
+<p class="p6"><span class="s2">var</span> sig1, sig2, chain1, chain2, chainOut, out;</p>
+<p class="p7"><br></p>
+<p class="p6">sig1 = <span class="s2">Saw</span>.ar(440);</p>
+<p class="p6">sig2 = <span class="s2">Saw</span>.ar(660);</p>
+<p class="p6">chain1 = <span class="s2">FFT</span>(b.bufnum, sig1);</p>
+<p class="p6">chain2 = <span class="s2">FFT</span>(c.bufnum, sig2);</p>
+<p class="p6">chainOut = <span class="s2">PV_MagSubtract</span>(chain1, chain2);</p>
+<p class="p7"><br></p>
+<p class="p6">out = <span class="s2">IFFT</span>(chainOut);</p>
+<p class="p7"><br></p>
+<p class="p8">// You hear a sequence: sig1 for 1 sec, sig2 for 1 sec,<span class="Apple-converted-space"> </span></p>
+<p class="p8">//<span class="Apple-converted-space">  </span>then the difference for 2 secs.</p>
+<p class="p6">(<span class="s2">Select</span>.ar(<span class="s2">LFSaw</span>.kr(0.25).range(0, 4), [sig1, sig2, out, out]) * 0.1).dup</p>
+<p class="p7"><br></p>
+<p class="p6">}.play;</p>
+<p class="p6">)</p>
+<p class="p6">x.free;</p>
+<p class="p6">b.free; c.free;</p>
+</body>
+</html>

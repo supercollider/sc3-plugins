@@ -57,6 +57,9 @@ struct FFTPercentile_Unit : FFTAnalyser_OutOfPlace
 	bool m_interpolate;
 };
 
+struct PV_MagSubtract : Unit {
+};
+
 struct FFTFlux_Unit : FFTAnalyser_OutOfPlace 
 {
 	float m_yesternorm;
@@ -131,6 +134,26 @@ struct FFTSpread : FFTAnalyser_Unit
 };
 struct FFTSlope : FFTAnalyser_Unit
 {
+};
+struct FFTPeak : FFTAnalyser_Unit
+{
+	float outval2, maxfreq, minfreq;
+	int maxbin, minbin;
+};
+struct PV_MagSmooth : Unit {
+	float *m_memory;
+};
+struct FFTMutInf : FFTAnalyser_Unit
+{
+	int m_frombin; // Will hold bin index
+	int m_tobinp1; // Will hold bin index
+	
+	int m_numframes;
+	int m_numbinsused;
+	int m_currentframe; // index of which frame we're writing in
+	
+	float *m_magdata;
+	float *m_framesums;	
 };
 
 
@@ -264,8 +287,8 @@ extern "C"
 //	void PV_DiffAndToDC_Ctor(PV_Unit *unit);
 //	void PV_DiffAndToDC_next(PV_Unit *unit, int inNumSamples);
 
-	void PV_DiffMags_Ctor(PV_Unit *unit);
-	void PV_DiffMags_next(PV_Unit *unit, int inNumSamples);
+	void PV_MagSubtract_Ctor(PV_Unit *unit);
+	void PV_MagSubtract_next(PV_Unit *unit, int inNumSamples);
 
 	void FFTSubbandPower_Ctor(FFTSubbandPower *unit);
 	void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples);
@@ -310,6 +333,18 @@ extern "C"
 	
 	void PV_Conj_Ctor(PV_Unit *unit);
 	void PV_Conj_next(PV_Unit *unit, int inNumSamples);
+	
+	void FFTPeak_Ctor(FFTPeak *unit);
+	void FFTPeak_next(FFTPeak *unit, int inNumSamples);
+	
+	void PV_MagSmooth_Ctor(PV_MagSmooth *unit);
+	void PV_MagSmooth_next(PV_MagSmooth *unit, int inNumSamples);
+	void PV_MagSmooth_Dtor(PV_MagSmooth *unit);
+	
+	void FFTMutInf_Ctor(FFTMutInf *unit);
+	void FFTMutInf_next(FFTMutInf *unit, int inNumSamples);
+	void FFTMutInf_Dtor(FFTMutInf *unit);
+	
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -962,29 +997,48 @@ void FFTDiffMags_Ctor(FFTAnalyser_Unit *unit)
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-
-void PV_DiffMags_next(PV_Unit *unit, int inNumSamples)
+void PV_MagSubtract_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
 	
 	SCPolarBuf *p = ToPolarApx(buf1);
 	SCPolarBuf *q = ToPolarApx(buf2);
 	
-	// First the DC and nyquist
-	p->dc  = p->dc - q->dc;
-	p->nyq = p->nyq - q->nyq;
-
-	for (int i=0; i<numbins; ++i) {
-		p->bin[i].mag -= q->bin[i].mag;
+	bool zerolimit = ZIN0(2) > 0.f;
+	
+	if(zerolimit){
+		// First the DC and nyquist
+		if(p->dc > q->dc)
+			p->dc  = p->dc - q->dc;
+		else
+			p->dc = 0.f;
+			
+		if(p->nyq > q->nyq)
+			p->nyq = p->nyq - q->nyq;
+		else
+			p->nyq = 0.f;
+			
+		for (int i=0; i<numbins; ++i) {
+			if(p->bin[i].mag > q->bin[i].mag)
+				p->bin[i].mag -= q->bin[i].mag;
+			else
+				p->bin[i].mag = 0.f;
+		}
+	}else{
+		// First the DC and nyquist
+		p->dc  = p->dc - q->dc;
+		p->nyq = p->nyq - q->nyq;
+		for (int i=0; i<numbins; ++i) {
+			p->bin[i].mag -= q->bin[i].mag;
+		}
 	}
 }
 
-void PV_DiffMags_Ctor(PV_Unit *unit)
+void PV_MagSubtract_Ctor(PV_Unit *unit)
 {
-	SETCALC(PV_DiffMags_next);
+	SETCALC(PV_MagSubtract_next);
 	ZOUT0(0) = ZIN0(0);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1071,7 +1125,8 @@ void FFTPhaseDev_next(FFTPhaseDev *unit, int inNumSamples)
 		if(p->bin[i].mag > powthresh) {
 		
 			// Deviation is the *second difference* of the phase, which is calc'ed as curval - yesterval - yesterfirstdiff
-			deviation = p->bin[i].phase - storedvals[tbpointer++] - storedvals[tbpointer++];
+			deviation = p->bin[i].phase - storedvals[tbpointer] - storedvals[tbpointer+1];
+			tbpointer += 2;
 			// Wrap onto +-PI range
 			deviation = PHASE_REWRAP(deviation);
 			
@@ -1712,6 +1767,245 @@ void PV_Conj_next(PV_Unit *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void FFTPeak_Ctor(FFTPeak *unit)
+{
+	SETCALC(FFTPeak_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_bintofreq = 0.f;
+	unit->m_freqtobin = 0.f;
+	
+	unit->minbin = -99; // flag for the _next func to initialise it
+	unit->minfreq = ZIN0(1);
+	if(unit->minfreq < 0.f) unit->minfreq = 0.f;
+	unit->maxfreq = ZIN0(2);
+	if(unit->maxfreq < 0.f) unit->maxfreq = 0.f;
+}
+
+void FFTPeak_next(FFTPeak *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF_TWOOUTS
+
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	GET_BINTOFREQ
+	GET_FREQTOBIN
+	
+	int minbin = unit->minbin;
+	int maxbin = unit->maxbin;
+	if(minbin == -99){
+		// Initialise bin ranges from frequency ranges
+		minbin = unit->minbin = ((int)(unit->minfreq * freqtobin)) - 1;
+		if(minbin >= numbins)
+			minbin = unit->minbin = numbins - 1;
+		maxbin = unit->maxbin = ((int)(unit->maxfreq * freqtobin)) - 1;
+		if(maxbin > numbins)
+			maxbin = unit->maxbin = numbins;
+	}
+	
+	// Start off assuming DC is the best...
+	int peakbin=-1; // "-1" meaning DC here, since the DC is not included in the main list
+	float peakmag;
+	if(minbin == -1){
+		peakmag = sc_abs(p->dc);
+		minbin = 0;
+	}else{
+		peakmag = -9999.f; // Will ensure DC gets beaten if not in desired range
+	}
+	
+	// ...then check all the others. We neglect nyquist for efficiency purposes. Sorry.
+	float mag;
+	for(int i = minbin; i < maxbin; ++i){
+	  mag = p->bin[i].mag;
+	  
+	  if(peakmag < mag){
+		peakmag = mag;
+		peakbin = i;
+	  }
+	};
+	  
+	ZOUT0(0) = unit->outval = (peakbin+1) * bintofreq;
+	ZOUT0(1) = unit->outval2 = peakmag;
+	
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void PV_MagSmooth_Ctor(PV_MagSmooth *unit)
+{
+	SETCALC(PV_MagSmooth_next);
+	ZOUT0(0) = ZIN0(0);
+	unit->m_memory = NULL;
+}
+
+void PV_MagSmooth_next(PV_MagSmooth *unit, int inNumSamples)
+{
+	PV_GET_BUF
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	float* memory = unit->m_memory;
+	if(memory==NULL){
+		memory = unit->m_memory = (float*)RTAlloc(unit->mWorld, (numbins+2) * sizeof(float));
+		// Now copy the first frame into the memory
+		for (int i=0; i<numbins; ++i) {
+			memory[i] = p->bin[i].mag;
+		}
+		memory[numbins] = p->dc;
+		memory[numbins+1] = p->nyq;
+	}
+	
+	float factor = ZIN0(1);
+	float onemfactor = 1.f - factor;
+	
+	// The actual smoothing calculation:
+	for (int i=0; i<numbins; ++i) {
+		memory[i]     = p->bin[i].mag = (memory[i        ] * factor) + (p->bin[i].mag  * onemfactor);
+	}
+	memory[numbins]   = p->dc         = (memory[numbins  ] * factor) + (p->dc          * onemfactor);
+	memory[numbins+1] = p->nyq        = (memory[numbins+1] * factor) + (p->nyq         * onemfactor);
+}
+
+void PV_MagSmooth_Dtor(PV_MagSmooth *unit)
+{
+	if(unit->m_memory!=NULL){
+		RTFree(unit->mWorld, unit->m_memory);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FFTMutInf_Ctor(FFTMutInf *unit)
+{
+	SETCALC(FFTMutInf_next);
+	ZOUT0(0) = unit->outval = 0.;
+	
+	unit->m_frombin = 0;
+	unit->m_tobinp1 = 0;
+	
+	unit->m_numframes = sc_max(1, ZIN0(3));
+	unit->m_currentframe = 0;
+	
+	unit->m_magdata = NULL;
+	unit->m_framesums = NULL;
+
+	unit->m_freqtobin = 0.f;
+}
+
+const float FFTMutInf_MinMag = 0.000000001f;
+
+void FFTMutInf_next(FFTMutInf *unit, int inNumSamples)
+{
+	FFTAnalyser_GET_BUF
+
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	int frombin   = unit->m_frombin;
+	int tobinp1   = unit->m_tobinp1;
+	int numframes = unit->m_numframes;
+	int numbinsused   = unit->m_numbinsused;
+	int currentframe = unit->m_currentframe;
+	float *magdata   = unit->m_magdata;
+	float *framesums = unit->m_framesums;
+	
+	//Print("FFTMutInf currentframe %i, bin range [%i, %i)\n", currentframe, frombin, tobinp1);
+	
+	// OK, now we're in a position to initialise our own structures if not already done
+	if(magdata == NULL){
+
+		GET_FREQTOBIN
+	
+		frombin = ((int)ZIN0(1) * freqtobin)-1;
+		frombin = sc_max(0, frombin);
+		unit->m_frombin = frombin;
+		
+		tobinp1 = ((int)ZIN0(2) * freqtobin)-1;
+		tobinp1 = sc_min(sc_max(frombin+1, tobinp1), numbins);
+		unit->m_tobinp1 = tobinp1;
+		
+		//Print("FFTMutInf RANGE DECISION: freqtobin %g, freq range (%g, %g), bin range [%i, %i)\n", freqtobin, ZIN0(1), ZIN0(2), frombin, tobinp1);
+		
+		numbinsused = unit->m_numbinsused = tobinp1 - frombin;
+		
+		magdata = unit->m_magdata = (float*)RTAlloc(unit->mWorld, numframes * numbinsused * sizeof(float));
+		framesums = unit->m_framesums = (float*)RTAlloc(unit->mWorld, numframes * sizeof(float));
+		//Clear(numframes * numbinsused, magdata);
+		//Clear(numframes, framesums);
+		Fill(numframes * numbinsused, magdata  , FFTMutInf_MinMag);
+		Fill(numframes              , framesums, FFTMutInf_MinMag);
+	}
+	
+	// OK, so now let's write the magnitude data into the current frame
+	float frametotal = 0.f;
+	float *writehere = magdata + (numbinsused * currentframe);
+	for(int i=frombin; i < tobinp1; ++i){
+		*writehere = (p->bin[i].mag);
+		if(*writehere < FFTMutInf_MinMag)
+			*writehere = FFTMutInf_MinMag; // Disallow zero magnitude, because of logarithms later
+		frametotal += *(writehere++);
+	}
+	framesums[currentframe] = frametotal;
+	// currentframe no longer needed so we increment for next time
+	if(++currentframe == numframes){
+		currentframe = 0;
+	}
+	unit->m_currentframe = currentframe;
+	
+	
+	
+	double grandtot = 0.;
+	for(int frame=0; frame<numframes; ++frame){
+		grandtot += framesums[frame];
+	}
+	double loggrandtot = log(grandtot);
+
+	
+	
+	// Now we do the mutual info calculation itself.
+	// MI = double-integral of p(t,f) log( p(t,f) / (p(t)p(f)) )
+	// where we equate p(t,f) to mag(t,f)/totalmag.
+	// Rearranging slightly, this becomes
+	// (1 / grandtot) * double-integral of ( mag(t,f) * ( log( mag(t,f) / (columntot*rowtot) ) + log(grandtot)) )
+	float binsum, amag;
+	double theintegral = 0.;
+	
+//	Print("framesums: %g", framesums[0]);
+	
+	
+//	Print("binsums: ");
+	for(int bin=0; bin<numbinsused; ++bin){
+		// first calc the binsum
+		binsum = 0.f;
+		for(int frame=0; frame<numframes; ++frame){
+			amag = magdata[frame * numbinsused + bin];
+			binsum += amag;
+		}
+//		Print("%g, ", binsum);
+		// now we can add to the integral
+		for(int frame=0; frame<numframes; ++frame){
+			amag = magdata[frame * numbinsused + bin];
+			if(amag != 0.f){
+				theintegral += amag * (log(amag / (binsum * framesums[frame])) + loggrandtot);
+				//RONG theintegral += amag * log(amag / (binsum * framesums[frame]));
+			}
+		}
+	}
+//	Print("grandtot %g, theintegral %g\n", grandtot, theintegral);
+	
+	ZOUT0(0) = unit->outval = theintegral / grandtot;
+	
+}
+void FFTMutInf_Dtor(FFTMutInf *unit)
+{
+	if(unit->m_magdata != NULL){
+		RTFree(unit->mWorld, unit->m_magdata);
+		RTFree(unit->mWorld, unit->m_framesums);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void load(InterfaceTable *inTable)
 {
 	ft= inTable;
@@ -1725,7 +2019,7 @@ void load(InterfaceTable *inTable)
 	(*ft->fDefineUnit)("FFTFluxPos", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFluxPos_Ctor, (UnitDtorFunc)&FFTFluxPos_Dtor, 0);
 	(*ft->fDefineUnit)("FFTFlatnessSplitPercentile", sizeof(FFTFlatnessSplitPercentile_Unit), (UnitCtorFunc)&FFTFlatnessSplitPercentile_Ctor, (UnitDtorFunc)&FFTFlatnessSplitPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTDiffMags", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTDiffMags_Ctor, 0, 0);
-	(*ft->fDefineUnit)("PV_DiffMags", sizeof(PV_Unit), (UnitCtorFunc)&PV_DiffMags_Ctor, 0, 0);
+	DefineSimpleUnit(PV_MagSubtract);
 	(*ft->fDefineUnit)("PV_MagLog", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagLog_Ctor, 0, 0);
 	(*ft->fDefineUnit)("PV_MagExp", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagExp_Ctor, 0, 0);
 	DefineDtorUnit(FFTSubbandPower);
@@ -1744,4 +2038,9 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(FFTSubbandFlatness);
 	
 	(*ft->fDefineUnit)("PV_Conj", sizeof(PV_Unit), (UnitCtorFunc)&PV_Conj_Ctor, 0, 0);
+	
+	DefineSimpleUnit(FFTPeak);
+	
+	DefineDtorUnit(PV_MagSmooth);
+	DefineDtorUnit(FFTMutInf);
 }
