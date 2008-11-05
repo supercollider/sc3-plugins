@@ -257,3 +257,11 @@ FFTMutInf : UGen
 	}
 	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
+
+PV_MagMulAdd : PV_ChainUGen 
+{
+	*new { | buffer, mul=1, add=0 |
+		^this.multiNew('control', buffer, mul, add)
+	}
+	*categories { ^ #["UGens>FFT"] }
+}

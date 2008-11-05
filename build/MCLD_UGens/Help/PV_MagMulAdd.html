@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {color: #001bb9}
+span.s2 {color: #000000}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.s5 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>PV_MagMulAdd<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>simple scaling of FFT magnitudes</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>chain = PV_MagMulAdd(chain, mul, add)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Applies the following simple linear transformation to every magnitude in the FFT:</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>mag = mag * mul + add</p>
+<p class="p2"><br></p>
+<p class="p3">This is probably not a very useful audio effect in itself, but may be a component of other analysis or transformation processes...</p>
+<p class="p2"><br></p>
+<p class="p3"><b>chain</b> - fft chain.</p>
+<p class="p2"><br></p>
+<p class="p4">s.boot;</p>
+<p class="p5"><br></p>
+<p class="p4">(</p>
+<p class="p4">b = <span class="s1">Buffer</span>.alloc(s,2048,1);</p>
+<p class="p6"><span class="s2">c = </span><span class="s1">Buffer</span><span class="s2">.read(s,</span>"sounds/a11wlk01.wav"<span class="s2">);</span></p>
+<p class="p4">d = <span class="s1">Buffer</span>.alloc(s,2048,1);</p>
+<p class="p4">)</p>
+<p class="p7"><br></p>
+<p class="p8">// Here, mouse left/right controls "mul", so simply amplifies;<span class="Apple-converted-space"> </span></p>
+<p class="p8">//<span class="Apple-converted-space">  </span>up/down is "add", so kind of artificially raises the noise floor.</p>
+<p class="p9">(</p>
+<p class="p9"><span class="s3">SynthDef</span>(<span class="s4">"help-pvmagmuladd"</span>, {<span class="Apple-converted-space">  </span><span class="s3">arg</span> out=0, bufnum=0, soundBufnum=2;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>in = <span class="s3">PlayBuf</span>.ar(1, soundBufnum, <span class="s3">BufRateScale</span>.kr(soundBufnum), loop: 1);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_MagMulAdd</span>(chain, <span class="s3">MouseX</span>.kr(0,2), <span class="s3">MouseY</span>.kr(0,1));</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(out, 0.3 * <span class="s3">IFFT</span>(chain));<span class="Apple-converted-space"> </span></p>
+<p class="p9">}).play(s,[<span class="s5">\out</span>, 0, <span class="s5">\bufnum</span>, b, <span class="s5">\soundBufnum</span>, c]);</p>
+<p class="p9">)</p>
+</body>
+</html>

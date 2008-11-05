@@ -345,6 +345,9 @@ extern "C"
 	void FFTMutInf_next(FFTMutInf *unit, int inNumSamples);
 	void FFTMutInf_Dtor(FFTMutInf *unit);
 	
+	void PV_MagMulAdd_Ctor(PV_Unit *unit);
+	void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples);
+	
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -2004,6 +2007,30 @@ void FFTMutInf_Dtor(FFTMutInf *unit)
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void PV_MagMulAdd_Ctor(PV_Unit *unit)
+{
+	SETCALC(PV_MagMulAdd_next);
+	ZOUT0(0) = ZIN0(0);
+}
+
+void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples)
+{
+	PV_GET_BUF
+	
+	SCPolarBuf *p = ToPolarApx(buf);
+	
+	float m = ZIN0(1);
+	float a = ZIN0(2);
+	
+	p->dc  = p->dc  * m + a;
+	p->nyq = p->nyq * m + a;
+	for (int i=0; i<numbins; ++i) {
+		p->bin[i].mag = p->bin[i].mag * m + a;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -2043,4 +2070,6 @@ void load(InterfaceTable *inTable)
 	
 	DefineDtorUnit(PV_MagSmooth);
 	DefineDtorUnit(FFTMutInf);
+	
+	(*ft->fDefineUnit)("PV_MagMulAdd", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagMulAdd_Ctor, 0, 0);
 }
