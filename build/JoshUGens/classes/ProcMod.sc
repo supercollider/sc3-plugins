@@ -536,7 +536,9 @@ ProcModR : ProcMod {
 
 	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute;
 		oldproc.notNil.if({this.stopprocess(oldproc)});
-		server.audioBusAllocator.free(oldroute);
+		oldroute.notNil.if({
+			server.audioBusAllocator.free(oldroute);
+			});
 		oldhdr.notNil.if({
 			oldhdr.stop;
 			oldhdrs.remove(oldhdr);
