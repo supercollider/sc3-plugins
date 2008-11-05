@@ -105,6 +105,7 @@
 		4650AC620E788D4E0012CFCF /* Tartini.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC5B0E788D4E0012CFCF /* Tartini.cpp */; };
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
 		F3271C4A0C20F375007DE8F1 /* PV_ThirdParty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */; };
+		F33C341E0EBFBE9B00AA345D /* LadspaUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */; };
 		F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3564C050B0E83FD008AFA51 /* StkAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3564C040B0E83FD008AFA51 /* StkAll.cpp */; };
 		F3564C6F0B0E8493008AFA51 /* ADSR.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C0E0B0E8493008AFA51 /* ADSR.h */; };
@@ -205,6 +206,8 @@
 		F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6D0B0E8493008AFA51 /* WvIn.h */; };
 		F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */ = {isa = PBXBuildFile; fileRef = F3564C6E0B0E8493008AFA51 /* WvOut.h */; };
 		F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3564CF70B0E8736008AFA51 /* libstk.a */; };
+		F359F5730EC217590053D29C /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F359F57C0EC217750053D29C /* BatUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F359F57B0EC217750053D29C /* BatUGens.cpp */; };
 		F35F00AF0E34451900ACCCC6 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F35F00B80E34454800ACCCC6 /* RMEQSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */; };
 		F36FC3EE0C936C0E0055E368 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -234,7 +237,6 @@
 		F3A8FA480B73DCD600296CCA /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3A8FA510B73DD1800296CCA /* LoopBuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */; };
 		F3B10AFD0EBEC870001ABFAC /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
-		F3B10B060EBEC8B0001ABFAC /* LadspaUGens in Sources */ = {isa = PBXBuildFile; fileRef = F3B10B050EBEC8B0001ABFAC /* LadspaUGens */; };
 		F3B3C48E0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */; };
 		F3B3C4900B876A3F00FBDE78 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
 		F3D57D190B102B8A0034519F /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -529,6 +531,7 @@
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SKINI.tbl; sourceTree = "<group>"; };
+		F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LadspaUGens.cpp; path = source/LadspaUGens.cpp; sourceTree = "<group>"; };
 		F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = STKUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StkAll.cpp; path = StkUGens/StkAll.cpp; sourceTree = "<group>"; };
 		F3564C0E0B0E8493008AFA51 /* ADSR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ADSR.h; path = source/StkUGens/include/ADSR.h; sourceTree = SOURCE_ROOT; };
@@ -629,6 +632,8 @@
 		F3564C6D0B0E8493008AFA51 /* WvIn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvIn.h; path = source/StkUGens/include/WvIn.h; sourceTree = SOURCE_ROOT; };
 		F3564C6E0B0E8493008AFA51 /* WvOut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvOut.h; path = source/StkUGens/include/WvOut.h; sourceTree = SOURCE_ROOT; };
 		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = lib/libstk.a; sourceTree = "<group>"; };
+		F359F57A0EC217590053D29C /* BatUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BatUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F359F57B0EC217750053D29C /* BatUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatUGens.cpp; path = source/BatUGens.cpp; sourceTree = "<group>"; };
 		F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RMEQSuiteUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RMEQSuite.cpp; sourceTree = "<group>"; };
 		F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshGrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -758,6 +763,14 @@
 			files = (
 				F3564BDB0B0E82A4008AFA51 /* vecLib.framework in Frameworks */,
 				F3564CF80B0E8736008AFA51 /* libstk.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F359F5720EC217590053D29C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F359F5730EC217590053D29C /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -959,6 +972,8 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
+				F359F57B0EC217750053D29C /* BatUGens.cpp */,
+				F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */,
 				F3B10B050EBEC8B0001ABFAC /* LadspaUGens */,
 				46434A810EB3661A008F1E42 /* SLUGens.cpp */,
 				F50D05D902E69B6B01CA2799 /* fftlib.c */,
@@ -1165,6 +1180,7 @@
 				3751D6B60E8C1F6300B5AC2F /* MCLDOscUGens.scx */,
 				46434A7E0EB36587008F1E42 /* SLUGensUB.scx */,
 				F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */,
+				F359F57A0EC217590053D29C /* BatUGens.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1367,6 +1383,13 @@
 				F3564CCE0B0E8493008AFA51 /* WvIn.h in Headers */,
 				F3564CCF0B0E8493008AFA51 /* WvOut.h in Headers */,
 				F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F359F56F0EC217590053D29C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1743,6 +1766,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F359F56E0EC217590053D29C /* BatUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F359F5760EC217590053D29C /* Build configuration list for PBXNativeTarget "BatUGens" */;
+			buildPhases = (
+				F359F56F0EC217590053D29C /* Headers */,
+				F359F5700EC217590053D29C /* Sources */,
+				F359F5720EC217590053D29C /* Frameworks */,
+				F359F5740EC217590053D29C /* Rez */,
+				F359F5750EC217590053D29C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BatUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F359F57A0EC217590053D29C /* BatUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */ = {
@@ -2174,6 +2217,7 @@
 				3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */,
 				46434A730EB36587008F1E42 /* SLUGens */,
 				F3B10AF80EBEC870001ABFAC /* LadspaUGens */,
+				F359F56E0EC217590053D29C /* BatUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2257,6 +2301,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3564BDC0B0E82A4008AFA51 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F359F5740EC217590053D29C /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2499,6 +2550,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		F3564BDD0B0E82A4008AFA51 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		F359F5750EC217590053D29C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2784,6 +2844,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F359F5700EC217590053D29C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F359F57C0EC217750053D29C /* BatUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F35F00AC0E34451900ACCCC6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2906,7 +2974,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3B10B060EBEC8B0001ABFAC /* LadspaUGens in Sources */,
+				F33C341E0EBFBE9B00AA345D /* LadspaUGens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4452,6 +4520,103 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = STKUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		F359F5770EC217590053D29C /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F359F5780EC217590053D29C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BatUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F359F5790EC217590053D29C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -6475,6 +6640,16 @@
 				F3564BDF0B0E82A4008AFA51 /* Development */,
 				F3564BE00B0E82A4008AFA51 /* Deployment */,
 				F3564BE10B0E82A4008AFA51 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F359F5760EC217590053D29C /* Build configuration list for PBXNativeTarget "BatUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F359F5770EC217590053D29C /* Development */,
+				F359F5780EC217590053D29C /* Deployment */,
+				F359F5790EC217590053D29C /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
