@@ -76,6 +76,7 @@
 				3727B6790EB369B60002FAA0 /* PBXTargetDependency */,
 				3733F6800ECDA5FE008ABE40 /* PBXTargetDependency */,
 				3733F6820ECDA605008ABE40 /* PBXTargetDependency */,
+				37AF81B50ECDDB8200CD45A0 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -443,6 +444,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3751D6AB0E8C1F6300B5AC2F;
 			remoteInfo = MCLDOscUGens;
+		};
+		37AF81B40ECDDB8200CD45A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F359F56E0EC217590053D29C /* BatUGens */;
+			remoteInfo = BatUGens;
 		};
 		37FEEC100D9AA7F80043C418 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3227,6 +3235,11 @@
 			target = 3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */;
 			targetProxy = 3751D6BE0E8C1FC600B5AC2F /* PBXContainerItemProxy */;
 		};
+		37AF81B50ECDDB8200CD45A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F359F56E0EC217590053D29C /* BatUGens */;
+			targetProxy = 37AF81B40ECDDB8200CD45A0 /* PBXContainerItemProxy */;
+		};
 		37FEEC110D9AA7F80043C418 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 37FEEBFE0D9AA7630043C418 /* MCLDSOMUGens */;
@@ -4737,7 +4750,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = JoshUGensUB;
+				PRODUCT_NAME = BatUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -4800,7 +4813,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = JoshUGensUB;
+				PRODUCT_NAME = BatUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
