@@ -9,16 +9,19 @@ else
   cp -uR build Extensions
 fi
 
+mv build/BatUGens.so Extensions/BatUGens
 mv build/BEQSuiteUGens.so Extensions/BEQSuiteUGens
 mv build/bhob*.so build/Bhob*.so Extensions/bhobUGens
 mv build/BlackrainUGens.so Extensions/BlackrainUGens
 mv build/Josh*.so Extensions/JoshUGens
+mv build/LadspaUGens.so Extensions/LadspaUGens
 mv build/LoopBuf.so Extensions/ljpclasses
 mv build/MCLD*.so Extensions/MCLD_UGens
-mv build/TagSystemUgens.so Extensions/TagSystemUGens
+mv build/MdaUGens.so Extensions/MdaUGens
 mv build/MembraneUGens.so Extensions/MembraneUGens
 mv build/MLfftwUGens.so Extensions/MLfftwUGens
 mv build/SLUGens.so Extensions/SLUGens
+mv build/TagSystemUgens.so Extensions/TagSystemUGens
 
 if [ -f AY*.so ]; then
   mv build/AY*.so Extensions/MCLD_UGens

@@ -135,6 +135,12 @@ for file in plugs :
 
 
 ##############################################
+# MdaUGens
+
+Basic_Env.SharedLibrary('build/MdaUGens', ['source/MdaUGens/MdaUGens.cpp'] + platform_SOURCES )
+
+
+##############################################
 # MembraneUGens
 
 Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane_shape.c', 'source/Membrane.cpp'] + platform_SOURCES )

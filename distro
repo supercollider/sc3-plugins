@@ -1,16 +1,19 @@
 #! /bin/sh
 
 svn export --force build Extensions
+cp build/BatUGens*.scx Extensions/BatUGens
 cp build/BEQSuite*.scx Extensions/BEQSuiteUGens
 cp build/bhob*.scx Extensions/bhobUGens
 cp build/BlackrainUGens*.scx Extensions/BlackrainUGens
 cp build/Josh*.scx Extensions/JoshUGens
+cp build/Ladspa*.scx Extensions/LadspaUGens
 cp build/LoopBuf*.scx Extensions/ljpclasses
 cp build/MCLD*.scx Extensions/MCLD_UGens
+cp build/Mda*.scx Extensions/MdaUGens
 cp build/Membrane*.scx Extensions/MembraneUGens
 cp build/MLfftw*.scx Extensions/MLfftwUGens
 # cp build/ReverbUGens/*.scx Extensions/ReverbUGens
-cp build/RMEQSuite*.scx Extensions/RMEQSuiteUGens
+# cp build/RMEQSuite*.scx Extensions/RMEQSuiteUGens
 cp build/SLUGens*.scx Extensions/SLUGens
 cp build/STK*.scx Extensions/StkUGens
 # cp build/TagSystemUGens/*.scx Extensions/TagSystemUGens
