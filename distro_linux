@@ -10,7 +10,7 @@ else
 fi
 
 mv build/BatUGens.so Extensions/BatUGens
-mv build/BEQSuiteUGens.so Extensions/BEQSuiteUGens
+#GONE! mv build/BEQSuiteUGens.so Extensions/BEQSuiteUGens
 mv build/bhob*.so build/Bhob*.so Extensions/bhobUGens
 mv build/BlackrainUGens.so Extensions/BlackrainUGens
 mv build/Josh*.so Extensions/JoshUGens

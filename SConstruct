@@ -100,6 +100,7 @@ if platform.system() == 'Linux':
 headers = sc3_source + 'Headers'
 
 plugs = [
+	'BatUGens',
 	'BlackrainUGens',
 	'JoshUGens',
 	'JoshAmbiUGens',
@@ -178,9 +179,9 @@ FFT_Env = env.Clone(
 ##############################################
 # JoshPVUGens
 
-fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
+fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
 
-FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base  + platform_SOURCES)
+FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base  + platform_SOURCES, LIBS='fftw3f')
 
 ##############################################
 # MCLDFFTTriggeredUGens
