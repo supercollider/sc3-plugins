@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949">
+<meta name="CocoaVersion" content="949.35">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
@@ -14,11 +14,11 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #961e1e}
-span.s1 {color: #001db9}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #981c1c}
+span.s1 {color: #001dba}
 span.s2 {color: #606060}
-span.s3 {color: #961e1e}
-span.s4 {color: #426f0e}
+span.s3 {color: #981c1c}
+span.s4 {color: #426f0b}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -52,16 +52,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p8">// this file came with the JoshUGens... Leonard Bernstein talking about Beethoven.</p>
 <p class="p8">// Place it in your SC3/sounds directory.</p>
-<p class="p6">a = <span class="s1">LPCFile</span>.new(<span class="s2">"/Users/joshp/Desktop/test.lpc",</span> server: s).loadToBuffer;</p>
+<p class="p6">a = <span class="s1">LPCFile</span>.new(<span class="s2">"sounds/fate.lpc",</span> server: s).loadToBuffer;</p>
 <p class="p7"><br></p>
 <p class="p6">(</p>
 <p class="p6">z = {</p>
 <p class="p6"><span class="s1">var</span> cps, rmso, err, voc, noise, timepoint, dur;</p>
-<p class="p6">timepoint = <span class="s1">LFSaw</span>.ar(0.8/a.sndDur, 1, 0.5, 0.5);</p>
+<p class="p6">timepoint = <span class="s1">LFSaw</span>.ar(0.4/a.sndDur, 1, 0.5, 0.5);</p>
 <p class="p7"><br></p>
 <p class="p6"># cps, rmso, err = <span class="s1">LPCVals</span>.ar(a.buffer, timepoint);</p>
 <p class="p8">// a periodic Blip to filter, amplitude is 1 - error</p>
-<p class="p6">noise = <span class="s1">PinkNoise</span>.ar(err); <span class="s3">// a noise source</span></p>
+<p class="p6">noise = <span class="s1">WhiteNoise</span>.ar(err); <span class="s3">// a noise source</span></p>
 <p class="p7"><br></p>
 <p class="p6">voc = Blip.ar(cps, 100);</p>
 <p class="p8">// the rms values tend to be high... scale them back quite a bit!</p>

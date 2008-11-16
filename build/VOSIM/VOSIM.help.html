@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 19.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 19.0px Helvetica; min-height: 23.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica; min-height: 16.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+span.s1 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>Vosim<span class="Apple-converted-space">   </span></b></p>
+<p class="p2"><b></b><br></p>
+<p class="p3"><b>VOSIM.ar(trig, freq, nCycles, decay)</b></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>trig (.ar &amp; .kr)</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>starts a vosim pulse when a transition from non-positive to positive occurs and no other vosim <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>is still going.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.ar will produce sample accurate triggering.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>freq (.ar &amp; kr)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sets the frequency of the squared sinewave.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>nCycles</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sets the number of squared sinewaves to use in one vosim pulse.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>nCycles gets checked when VOSIM receives a trigger.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>decay</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>sets the decay factor.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p5">z = {VOSIM.ar(Impulse.ar(100), MouseX.kr(440, 880, 1), 3, 0.99)}.play;</p>
+<p class="p6"><br></p>
+<p class="p5">z.free;</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p5">(</p>
+<p class="p5">z = {<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-converted-space">  </span><span class="s1">var</span> p,t,f,n,d,a,l,x,y,z,x_,y_;</p>
+<p class="p5"><span class="Apple-converted-space">  </span>p = <span class="s1">TRand</span>.ar(0.0,1.0,<span class="s1">Impulse</span>.ar(6.0));</p>
+<p class="p5"><span class="Apple-converted-space">  </span>t = <span class="s1">Impulse</span>.ar(9*(1+(p&gt;0.95)));</p>
+<p class="p5"><span class="Apple-converted-space">  </span>f = <span class="s1">TRand</span>.ar([40.0,120.0,220.0],[440.0,990.0,880.0],t);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>n = <span class="s1">TRand</span>.ar(4.0,[8.0, 16.0, 32.0],t);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>d = <span class="s1">TRand</span>.ar([0.2,0.4,0.6],[0.6, 0.8, 1.0],t);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>a = <span class="s1">TRand</span>.ar(0.0,[0.2, 0.6, 1.0],t);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>l = <span class="s1">TRand</span>.ar(-1.0,1.0,t);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>x = <span class="s1">MouseX</span>.kr(0.25,2.0);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>y = <span class="s1">MouseY</span>.kr(0.25,1.5);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>z = 9.0;</p>
+<p class="p5"><span class="Apple-converted-space">  </span>x_ = x * <span class="s1">LFNoise2</span>.kr(z).range(0.25,2.0);</p>
+<p class="p5"><span class="Apple-converted-space">  </span>y_ = y * <span class="s1">LFNoise2</span>.kr(z).range(0.25,2.0);</p>
+<p class="p5"><span class="Apple-converted-space">  </span><span class="s1">Out</span>.ar(0, <span class="s1">Pan2</span>.ar(<span class="s1">Mix</span>.ar(<span class="s1">VOSIM</span>.ar(t, f*x_, n, d*y_) * a),l,1));</p>
+<p class="p5">}.play;</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p5">z.free;</p>
+</body>
+</html>

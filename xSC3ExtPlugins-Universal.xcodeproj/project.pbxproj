@@ -240,6 +240,8 @@
 		F3A15D190B5D8C6C00D75043 /* MCLDFFTUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */; };
 		F3A8FA480B73DCD600296CCA /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3A8FA510B73DD1800296CCA /* LoopBuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */; };
+		F3AAAAC90ECFCE5400460E62 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F3AAAAD50ECFCE9200460E62 /* VOSIM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */; };
 		F3B10AFD0EBEC870001ABFAC /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3B3C48E0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */; };
 		F3B3C4900B876A3F00FBDE78 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
@@ -449,7 +451,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F359F56E0EC217590053D29C /* BatUGens */;
+			remoteGlobalIDString = F359F56E0EC217590053D29C;
 			remoteInfo = BatUGens;
 		};
 		37FEEC100D9AA7F80043C418 /* PBXContainerItemProxy */ = {
@@ -689,6 +691,8 @@
 		F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDFFTUGens.cpp; sourceTree = "<group>"; };
 		F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LoopBuf.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LoopBuf.cpp; sourceTree = "<group>"; };
+		F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = VOSIMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VOSIM.cpp; path = source/VOSIM.cpp; sourceTree = "<group>"; };
 		F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LadspaUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FFT2InterfaceBhob.cpp; sourceTree = "<group>"; };
 		F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BlackrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -916,6 +920,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3AAAAC80ECFCE5400460E62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3AAAAC90ECFCE5400460E62 /* vecLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3B10AFC0EBEC870001ABFAC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1005,6 +1017,7 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
+				F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */,
 				F359F57B0EC217750053D29C /* BatUGens.cpp */,
 				F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */,
 				46434A810EB3661A008F1E42 /* SLUGens.cpp */,
@@ -1216,6 +1229,7 @@
 				F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */,
 				3715F6170ECB7ADF006BC186 /* MdaUGens.scx */,
 				F359F57A0EC217590053D29C /* BatUGens.scx */,
+				F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1527,6 +1541,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3A8FA440B73DCD600296CCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3AAAAC50ECFCE5400460E62 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2131,6 +2152,26 @@
 			productReference = F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		F3AAAAC40ECFCE5400460E62 /* VOSIM */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3AAAACC0ECFCE5400460E62 /* Build configuration list for PBXNativeTarget "VOSIM" */;
+			buildPhases = (
+				F3AAAAC50ECFCE5400460E62 /* Headers */,
+				F3AAAAC60ECFCE5400460E62 /* Sources */,
+				F3AAAAC80ECFCE5400460E62 /* Frameworks */,
+				F3AAAACA0ECFCE5400460E62 /* Rez */,
+				F3AAAACB0ECFCE5400460E62 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VOSIM;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F3B10AF80EBEC870001ABFAC /* LadspaUGens */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3B10B000EBEC870001ABFAC /* Build configuration list for PBXNativeTarget "LadspaUGens" */;
@@ -2237,10 +2278,12 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				373C2EFE0C94051000A3D3FD /* bhobUGens */,
@@ -2279,6 +2322,7 @@
 				F3B10AF80EBEC870001ABFAC /* LadspaUGens */,
 				3715F60C0ECB7ADF006BC186 /* MdaUGens */,
 				F359F56E0EC217590053D29C /* BatUGens */,
+				F3AAAAC40ECFCE5400460E62 /* VOSIM */,
 			);
 		};
 /* End PBXProject section */
@@ -2474,6 +2518,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3A8FA490B73DCD600296CCA /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3AAAACA0ECFCE5400460E62 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2770,6 +2821,15 @@
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
+		F3AAAACB0ECFCE5400460E62 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
 		F3B10AFF0EBEC870001ABFAC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3052,6 +3112,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3A8FA510B73DD1800296CCA /* LoopBuf.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3AAAAC60ECFCE5400460E62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3AAAAD50ECFCE9200460E62 /* VOSIM.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6183,6 +6251,103 @@
 			};
 			name = Default;
 		};
+		F3AAAACD0ECFCE5400460E62 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BatUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F3AAAACE0ECFCE5400460E62 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = VOSIMUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F3AAAACF0ECFCE5400460E62 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BatUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		F3B10B010EBEC870001ABFAC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6997,6 +7162,16 @@
 				F3A8FA4C0B73DCD600296CCA /* Development */,
 				F3A8FA4D0B73DCD600296CCA /* Deployment */,
 				F3A8FA4E0B73DCD600296CCA /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F3AAAACC0ECFCE5400460E62 /* Build configuration list for PBXNativeTarget "VOSIM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3AAAACD0ECFCE5400460E62 /* Development */,
+				F3AAAACE0ECFCE5400460E62 /* Deployment */,
+				F3AAAACF0ECFCE5400460E62 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
