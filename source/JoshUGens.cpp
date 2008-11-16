@@ -314,10 +314,7 @@ extern "C"
 	void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
 	void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
 	void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
-    
-    void AbsTest_Ctor(AbsTest* unit);
-    void AbsTest_next(AbsTest *unit, int inNumSamples);
-}
+    }
 
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 {
