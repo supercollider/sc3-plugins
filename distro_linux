@@ -1,41 +1,10 @@
 #! /bin/bash
-# blackrain at realizedsound dot net
-# Andrzej Kopec - akopec at chopin dot edu dot pl - Oct 07 2007
-# Dan Stowell Feb 2008 - modifications for non-svn contexts
 
-if [ -d .svn ]; then
-  svn export --force build Extensions
-else
-  cp -uR build Extensions
-fi
-
-mv build/BatUGens.so Extensions/BatUGens
-#GONE! mv build/BEQSuiteUGens.so Extensions/BEQSuiteUGens
-mv build/bhob*.so build/Bhob*.so Extensions/bhobUGens
-mv build/BlackrainUGens.so Extensions/BlackrainUGens
-mv build/Josh*.so Extensions/JoshUGens
-mv build/LadspaUGens.so Extensions/LadspaUGens
-mv build/LoopBuf.so Extensions/ljpclasses
-mv build/MCLD*.so Extensions/MCLD_UGens
-mv build/MdaUGens.so Extensions/MdaUGens
-mv build/MembraneUGens.so Extensions/MembraneUGens
-mv build/MLfftwUGens.so Extensions/MLfftwUGens
-mv build/SLUGens.so Extensions/SLUGens
-mv build/TagSystemUgens.so Extensions/TagSystemUGens
-
-if [ -f AY*.so ]; then
-  mv build/AY*.so Extensions/MCLD_UGens
-fi
-
-# for now disable this
-mkdir -p Extensions/MCLD_UGens/test
-mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/MCLD_UGens/test
-
-#mkdir Extensions/test
-#mv Extensions/StkUGens Extensions/test
-
-#mv StkUGens.so Extensions/StkUGens
-#cp -r ../stk-4.2.1/rawwaves Extensions/StkUGens
-
-
+echo '********************************************'
+echo 'Hello!'
+echo '"distro_linux" has been merged with "distro"'
+echo 'so in future, please use that instead.'
+echo 'Running "distro"...'
+echo '********************************************'
+./distro
 

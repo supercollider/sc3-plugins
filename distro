@@ -1,29 +1,58 @@
-#! /bin/sh
+#!/bin/bash
+# Combined distro script for Mac & Linux (and others...?)
+# made by various people: blackrain, Andrzej Kopec, Dan Stowell
 
-svn export --force build Extensions
-cp build/BatUGens*.scx Extensions/BatUGens
-cp build/BEQSuite*.scx Extensions/BEQSuiteUGens
-cp build/bhob*.scx Extensions/bhobUGens
-cp build/BlackrainUGens*.scx Extensions/BlackrainUGens
-cp build/Josh*.scx Extensions/JoshUGens
-cp build/Ladspa*.scx Extensions/LadspaUGens
-cp build/LoopBuf*.scx Extensions/ljpclasses
-cp build/MCLD*.scx Extensions/MCLD_UGens
-cp build/Mda*.scx Extensions/MdaUGens
-cp build/Membrane*.scx Extensions/MembraneUGens
-cp build/MLfftw*.scx Extensions/MLfftwUGens
-# cp build/ReverbUGens/*.scx Extensions/ReverbUGens
-# cp build/RMEQSuite*.scx Extensions/RMEQSuiteUGens
-cp build/SLUGens*.scx Extensions/SLUGens
-cp build/STK*.scx Extensions/StkUGens
-# cp build/TagSystemUGens/*.scx Extensions/TagSystemUGens
+case `uname` in
+	Darwin) echo "running distro script for Mac OSX";pluginext='scx';movecmd=cp;;
+	*)      echo "running distro script for Linux";  pluginext='so'; movecmd=mv;;
+esac
 
-mkdir Extensions/test
-mv Extensions/StkUGens Extensions/test
+if [ -d .svn ]; then
+	svn export --force build Extensions
+else
+	cp -uR build Extensions
+fi
 
-# License always important! Plus a readme
+$movecmd build/BatUGens.$pluginext       Extensions/BatUGens
+$movecmd build/bhob*.$pluginext          Extensions/bhobUGens
+$movecmd build/BlackrainUGens*.$pluginext Extensions/BlackrainUGens
+$movecmd build/Josh*UGens*.$pluginext    Extensions/JoshUGens
+$movecmd build/LadspaUGens.$pluginext    Extensions/LadspaUGens
+$movecmd build/LoopBuf.$pluginext        Extensions/ljpclasses
+$movecmd build/MCLD*UGens*.$pluginext    Extensions/MCLD_UGens
+$movecmd build/MdaUGens.$pluginext       Extensions/MdaUGens
+$movecmd build/MembraneUGens.$pluginext  Extensions/MembraneUGens
+$movecmd build/MLfftwUGens*.$pluginext   Extensions/MLfftwUGens
+$movecmd build/SLUGens*.$pluginext       Extensions/SLUGens
+if [ -f build/STKUGens*.$pluginext ]; then
+	$movecmd build/STKUGens*.$pluginext      Extensions/StkUGens
+fi
+if [ -f build/TagSystemUgens.$pluginext ]; then
+	$movecmd build/TagSystemUgens.$pluginext Extensions/TagSystemUGens
+fi
+if [ -f build/AY*.$pluginext ]; then
+	$movecmd build/AY*.$pluginext            Extensions/MCLD_UGens
+fi
+
+# License always important
 cp license.txt Extensions/license.txt
-cp Resources/README-for-mac-distro.txt Extensions/README.txt
 
-# Now let's make the disk image
-hdiutil create -srcfolder Extensions "SC3ExtPlugins`date +%Y-%m-%d`.dmg" -volname "SC3-plugins"
+mkdir -p Extensions/test
+
+if [ `uname` = Darwin ]; then
+	# Deactivate wonky
+	mv Extensions/StkUGens Extensions/test
+	
+	# Add the readme
+	cp Resources/README-for-mac-distro.txt Extensions/README.txt
+	
+	# Now let's make the disk image
+	hdiutil create -srcfolder Extensions "SC3ExtPlugins`date +%Y-%m-%d`.dmg" -volname "SC3-plugins"
+fi
+
+if [ `uname` = Linux ]; then
+	# Deactivate wonky
+	mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/test
+fi
+
+echo 'distro done.'
