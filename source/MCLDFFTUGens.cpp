@@ -331,9 +331,6 @@ extern "C"
 	void FFTSlope_Ctor(FFTSlope *unit);
 	void FFTSlope_next(FFTSlope *unit, int inNumSamples);
 	
-	void PV_Conj_Ctor(PV_Unit *unit);
-	void PV_Conj_next(PV_Unit *unit, int inNumSamples);
-	
 	void FFTPeak_Ctor(FFTPeak *unit);
 	void FFTPeak_next(FFTPeak *unit, int inNumSamples);
 	
@@ -1749,25 +1746,6 @@ void FFTSlope_next(FFTSlope *unit, int inNumSamples)
 	
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-void PV_Conj_Ctor(PV_Unit *unit)
-{
-	SETCALC(PV_Conj_next);
-	ZOUT0(0) = ZIN0(0);
-}
-
-void PV_Conj_next(PV_Unit *unit, int inNumSamples)
-{
-	PV_GET_BUF
-	
-	SCComplexBuf *p = ToComplexApx(buf);
-	
-	for (int i=0; i<numbins; ++i) {
-		p->bin[i].imag = 0.f - p->bin[i].imag;
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void FFTPeak_Ctor(FFTPeak *unit)
@@ -2063,8 +2041,6 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(FFTSlope);
 	
 	DefineDtorUnit(FFTSubbandFlatness);
-	
-	(*ft->fDefineUnit)("PV_Conj", sizeof(PV_Unit), (UnitCtorFunc)&PV_Conj_Ctor, 0, 0);
 	
 	DefineSimpleUnit(FFTPeak);
 	

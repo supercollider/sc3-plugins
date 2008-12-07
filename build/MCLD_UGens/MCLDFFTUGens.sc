@@ -222,14 +222,6 @@ FFTSlope : UGen
 	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
-PV_Conj : PV_ChainUGen 
-{
-	*new { arg buffer;
-		^this.multiNew('control', buffer)
-	}
-	*categories { ^ #["UGens>FFT"] }
-}
-
 FFTPeak : MultiOutUGen
 {
 	*kr { | buffer, freqlo=0, freqhi=50000 |
