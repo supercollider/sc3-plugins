@@ -4,7 +4,8 @@ HDR {
 		<reclevel, <channels, <bufnum, <isRecording = false, <server, <synthdef, <synthdefname, 
 		<>bufsize = 65536, cond, <node, <guiMode = false, <monitorMode = false, <monitorOut = 0,
 		<monitorNode, <scopeBufnum, <scopeNode, <numChannels, <bfMonitorMode = false, 
-		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor, cper, timestamp;
+		<>bfMonitorOut = 0, <>bfw, <>bfx, <>bfy, <>bfz, <bfMonitorChans, <bfMonitor, cper,
+		timestamp;
 	
 	*new { arg server, channels, addAction = 1, target = 0, sessionPath, filename, 
 			headerFormat = "aiff", sampleFormat = "int16", reclevel = 1, timestamp = true;

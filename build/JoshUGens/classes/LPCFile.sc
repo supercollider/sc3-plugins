@@ -153,7 +153,7 @@ LPCFile : File {
 			("LPC data loaded to buffer "++ buffer.asString).postln;
 			}
 		}
-		
+	
 	saveLPCFile {arg path;
 		var fil;
 		fil = File.new(path, "wb");
@@ -182,5 +182,8 @@ LPCFile : File {
 				
 		fil.close;
 		}
+		
+	asUGenInput {^buffer}
+	free {buffer.free}
 	}
 	

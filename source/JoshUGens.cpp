@@ -68,11 +68,10 @@ struct LPCSynth : public Unit
 {
 	SndBuf *m_buf;
 	float m_fbufnum;
-	int m_valindex; 
+	int m_valindex, m_first; 
 	float m_framestart;
-	float m_storevals[100]; // this will handle up to 50 poles
-
-
+	float *m_storevals; // this will handle up to 100 poles
+    float *m_polevals;
 };
 
 struct AtsSynth : public Unit
@@ -275,7 +274,8 @@ extern "C"
 	void LPCSynth_next_k(LPCSynth *unit, int inNumSamples);
 	void LPCSynth_next_a(LPCSynth *unit, int inNumSamples);
 	void LPCSynth_Ctor(LPCSynth* unit);
-	
+	void LPCSynth_Dtor(LPCSynth* unit);
+	    
 	void AudioMSG_Ctor(AudioMSG* unit);
 	void AudioMSG_next_a(AudioMSG *unit, int inNumSamples);
 	void AudioMSG_next_k(AudioMSG *unit, int inNumSamples);
@@ -526,16 +526,13 @@ void LPCSynth_Ctor(LPCSynth *unit)
 	unit->m_fbufnum = -1e9f;
 	unit->m_valindex = 0;
 	unit->m_framestart = IN0(2);
-	// init the past sample's values to 0.0
-	for (int i = 0; i < 100; ++i){
-	    unit->m_storevals[i] = 0.0f;
-	    }
+	unit->m_first = 1;
 
 }
 
 void LPCSynth_next_k(LPCSynth *unit, int inNumSamples)
 {
-	float fbufnum  = ZIN0(0);
+    float fbufnum  = ZIN0(0);
 	
 	if (fbufnum != unit->m_fbufnum) {
 		uint32 bufnum = (int)fbufnum;
@@ -555,8 +552,21 @@ void LPCSynth_next_k(LPCSynth *unit, int inNumSamples)
 	int numframes = (int)fileFrames[0];
 	int coefsStart = 3 + (numframes * 4);
 	int npoles = (int)numPoles[0];
+    if(unit->m_first > 0){
+	// init the past sample's values to 0.0
+	unit->m_storevals = (float*)RTAlloc(unit->mWorld, npoles * 2 * sizeof(float));
+	unit->m_polevals = (float*)RTAlloc(unit->mWorld, npoles * sizeof(float));
+	for (int i = 0; i < npoles * 2; ++i){
+	    unit->m_storevals[i] = 0.0f;
+	}
+	for(int i = 0; i < npoles;++i){
+	    unit->m_polevals[i] = 0.0f;
+	}	
+	unit->m_first = 0;
+    }
 
-	float *polevals = new float[npoles];
+
+	float *polevals = unit->m_polevals;
 	int valindex = unit->m_valindex;
 	int intframes = ((int)numframes - 1);
 	float frame = unit->m_framestart * intframes;
@@ -598,7 +608,6 @@ void LPCSynth_next_k(LPCSynth *unit, int inNumSamples)
 	
 	unit->m_framestart = frameend;
 	unit->m_valindex = valindex;
-	delete [] polevals;
 }
 
 void LPCSynth_next_a(LPCSynth *unit, int inNumSamples)
@@ -624,7 +633,21 @@ void LPCSynth_next_a(LPCSynth *unit, int inNumSamples)
 	int coefsStart = 3 + (numframes * 4);
 	int npoles = (int)numPoles[0];
 
-	float *polevals = new float[npoles];
+    if(unit->m_first > 0){
+	// init the past sample's values to 0.0
+	unit->m_storevals = (float*)RTAlloc(unit->mWorld, npoles * 2 * sizeof(float));
+	unit->m_polevals = (float*)RTAlloc(unit->mWorld, npoles * sizeof(float));
+	for (int i = 0; i < npoles * 2; ++i){
+	    unit->m_storevals[i] = 0.0f;
+	}
+	for(int i = 0; i < npoles;++i){
+	    unit->m_polevals[i] = 0.0f;
+	}
+	    
+	unit->m_first = 0;
+    }
+    
+    float *polevals = unit->m_polevals;
 	int valindex = unit->m_valindex;
 	int intframes = ((int)numframes - 1);
 	float *framein = IN(2);
@@ -663,9 +686,13 @@ void LPCSynth_next_a(LPCSynth *unit, int inNumSamples)
 	    }
 	
 	unit->m_valindex = valindex;
-	delete [] polevals;
 }
 
+void LPCSynth_Dtor(LPCSynth* unit)
+{
+	RTFree(unit->mWorld, unit->m_storevals);
+	RTFree(unit->mWorld, unit->m_polevals);
+}
 ///////////////////////////// Maxamp //////////////////////////////////////
 
 void Maxamp_Ctor(Maxamp* unit)
@@ -3319,7 +3346,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(SinTone);
 	DefineSimpleCantAliasUnit(Maxamp);
 
-	DefineSimpleUnit(LPCSynth);
+	DefineDtorUnit(LPCSynth);
 	DefineSimpleUnit(LPCVals);
 	DefineSimpleUnit(AudioMSG);
 	DefineDtorCantAliasUnit(PVSynth);

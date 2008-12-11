@@ -4678,6 +4678,7 @@
 					i386,
 				);
 				LIBRARY_SEARCH_PATHS = "";
+				OBJROOT = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
 			};
