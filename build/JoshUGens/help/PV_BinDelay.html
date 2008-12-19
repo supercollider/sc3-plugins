@@ -12,12 +12,12 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c20000}
-span.s1 {color: #0000c0}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c50000}
+span.s1 {color: #0000c1}
 span.s2 {color: #000000}
-span.s3 {color: #007400}
+span.s3 {color: #007500}
 span.s4 {color: #606060}
-span.s5 {color: #c20000}
+span.s5 {color: #c50000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -72,6 +72,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>synth = <span class="s1">SynthDef</span>(<span class="s4">"help-noopFFT"</span>, { <span class="s1">arg</span> inbus,out=0,bufnum=0, dels=0, fb=0;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">var</span> in, chain;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in = <span class="s1">Impulse</span>.ar(0.33);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in = PlayBuf.ar(1, playbuf, loop: 1);</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>chain = <span class="s1">FFT</span>(bufnum, in, 0.25);</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>chain = <span class="s1">PV_BinDelay</span>(chain, maxdel, dels, fb, 0.25);</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(out,<span class="Apple-converted-space"> </span></p>

@@ -1,15 +1,16 @@
 LPCFile : File {
-	var <header, <sndDur, <buffer, <>coefs, <server;
+	var <header, <sndDur, <buffer, <>coefs, <server, <path;
 	var <headerSize, <magicNum, <numPoles, <nvals, <frameRate, <srate, <nframes, <data;
 	var <>resrms, <>origrms, <>nrmerr, <>pchcps, <len, <signal, <restOfHeader, <le;	
 	
 	*new {arg path, buffer, server;
 		server = server ? Server.default;
-		buffer = buffer ? server.bufferAllocator.alloc(1);
-		^super.new(path, "rb").init(buffer, server);
+		buffer = buffer.asUGenInput ? server.bufferAllocator.alloc(1);
+		^super.new(path, "rb").init(buffer, server, path);
 		}
 		
-	init {arg thisbuf, thisserver;
+	init {arg thisbuf, thisserver, thispath;
+		path = thispath;
 		buffer = thisbuf;
 		server = thisserver;
 		this.readHeader;
@@ -181,6 +182,10 @@ LPCFile : File {
 			});
 				
 		fil.close;
+		}
+	
+	buffer_ {arg buf;
+		buffer = buf.asUGenInput
 		}
 		
 	asUGenInput {^buffer}
