@@ -114,7 +114,7 @@ plugs = [
 	'MCLDSOMUGens',
 	'MCLDTriggeredStatsUgens',
 	'LoopBuf',
-	'rfw-ugens'
+	'rfw-ugens',
 	'SLUGens',
 	'TagSystemUgens',
 	'bhobChaos',
@@ -163,7 +163,7 @@ if build_stkugens == True:
         	CCFLAGS = ['-Wno-unknown-pragmas'],
         	SHLIBPREFIX = '',
         	SHLIBSUFFIX = platform_SHLIBSUFFIX
-	).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS='libstk.a', LIBPATH=stklib_path)
+	).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS=File(stklib_path+'/libstk.a'))
 
 
 ##############################################
