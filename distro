@@ -1,6 +1,6 @@
 #!/bin/bash
 # Combined distro script for Mac & Linux (and others...?)
-# made by various people: blackrain, Andrzej Kopec, Dan Stowell
+# made by various people: blackrain, Andrzej Kopec, Dan Stowell, nescivi
 
 case `uname` in
 	Darwin) echo "running distro script for Mac OSX";pluginext='scx';movecmd=cp;;
@@ -14,15 +14,17 @@ else
 fi
 
 $movecmd build/BatUGens.$pluginext       Extensions/BatUGens
-$movecmd build/bhob*.$pluginext          Extensions/bhobUGens
+$movecmd build/Bhob*.$pluginext          Extensions/BhobUGens
 $movecmd build/BlackrainUGens*.$pluginext Extensions/BlackrainUGens
 $movecmd build/Josh*UGens*.$pluginext    Extensions/JoshUGens
 $movecmd build/LadspaUGens.$pluginext    Extensions/LadspaUGens
-$movecmd build/LoopBuf.$pluginext        Extensions/ljpclasses
-$movecmd build/MCLD*UGens*.$pluginext    Extensions/MCLD_UGens
+$movecmd build/LoopBuf.$pluginext        Extensions/LoopBufUGens
+$movecmd build/MCLD*UGens*.$pluginext    Extensions/MCLDUGens
 $movecmd build/MdaUGens.$pluginext       Extensions/MdaUGens
 $movecmd build/MembraneUGens.$pluginext  Extensions/MembraneUGens
 $movecmd build/MLfftwUGens*.$pluginext   Extensions/MLfftwUGens
+$movecmd build/RMEQSuiteUGens.$pluginext       Extensions/RMEQSuiteUGens
+$movecmd build/RFWUGens.$pluginext       Extensions/RFWUGens
 $movecmd build/SLUGens*.$pluginext       Extensions/SLUGens
 if [ -f build/STKUGens*.$pluginext ]; then
 	$movecmd build/STKUGens*.$pluginext      Extensions/StkUGens
@@ -31,7 +33,7 @@ if [ -f build/TagSystemUgens.$pluginext ]; then
 	$movecmd build/TagSystemUgens.$pluginext Extensions/TagSystemUGens
 fi
 if [ -f build/AY*.$pluginext ]; then
-	$movecmd build/AY*.$pluginext            Extensions/MCLD_UGens
+	$movecmd build/AY*.$pluginext            Extensions/AYUGens
 fi
 
 # License always important
@@ -52,7 +54,7 @@ fi
 
 if [ `uname` = Linux ]; then
 	# Deactivate wonky
-	mv Extensions/MCLD_UGens/MCLD_CQ_UGens.sc Extensions/test
+	mv Extensions/MCLDUGens/MCLD_CQ_UGens.sc Extensions/test
 fi
 
 echo 'distro done.'
