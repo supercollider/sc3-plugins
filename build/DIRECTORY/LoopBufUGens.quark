@@ -1,0 +1,9 @@
+(
+\name:	"LoopBufUGens",
+\path:	"LoopBufUGens",
+\summary:	 "sc3-plugins:LoopBufUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"LoopBufUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

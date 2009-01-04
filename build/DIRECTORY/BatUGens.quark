@@ -1,0 +1,9 @@
+(
+\name:	"BatUGens",
+\path:	"BatUGens",
+\summary:	 "sc3-plugins:BatUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"BatUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

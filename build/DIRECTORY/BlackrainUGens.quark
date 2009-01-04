@@ -1,0 +1,9 @@
+(
+\name:	"BlackrainUGens",
+\path:	"BlackrainUGens",
+\summary:	 "sc3-plugins:BlackrainUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"BlackrainUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

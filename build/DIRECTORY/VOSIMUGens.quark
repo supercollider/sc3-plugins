@@ -1,0 +1,9 @@
+(
+\name:	"VOSIMUGens",
+\path:	"VOSIMUGens",
+\summary:	 "sc3-plugins:VOSIMUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"VOSIMUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

@@ -1,0 +1,9 @@
+(
+\name:	"StkUGens",
+\path:	"StkUGens",
+\summary:	 "sc3-plugins:StkUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"StkUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

@@ -1,0 +1,9 @@
+(
+\name:	"TagSystemUGens",
+\path:	"TagSystemUGens",
+\summary:	 "sc3-plugins:TagSystemUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"TagSystemUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

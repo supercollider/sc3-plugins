@@ -1,0 +1,9 @@
+(
+\name:	"MembraneUGens",
+\path:	"MembraneUGens",
+\summary:	 "sc3-plugins:MembraneUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"MembraneUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

@@ -54,7 +54,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "BlackRainUGens-gcc3.scx";
+				PRODUCT_NAME = "BlackrainUGens-gcc3.scx";
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -62,13 +62,13 @@
 			dependencies = (
 			);
 			isa = PBXLibraryTarget;
-			name = BlackRainUGens;
-			productName = blackrainUGens;
+			name = BlacktainUGens;
+			productName = BlackrainUGens;
 			productReference = 1748DB9607C5F16800A802D7;
 		};
 		1748DB9607C5F16800A802D7 = {
 			isa = PBXLibraryReference;
-			path = "BlackRainUGens-gcc3.scx";
+			path = "BlackrainUGens-gcc3.scx";
 			refType = 3;
 		};
 		1748DB9707C5F2AC00A802D7 = {
@@ -82,7 +82,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/BlackRainUGens-gcc3.scx build/BlackRainUGens";
+			shellScript = "cp build/BlackrainUGens-gcc3.scx build/BlackrainUGens";
 		};
 		1748DB9807C5F59000A802D7 = {
 			isa = PBXTargetDependency;
@@ -183,7 +183,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = JoshPVUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 175290170B11341400A802D7;
 		};
 		175290110B11341400A802D7 = {
@@ -269,7 +269,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = ReverbUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 1752901F0B11342D00A802D7;
 		};
 		175290190B11342D00A802D7 = {
@@ -372,7 +372,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = JoshUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 1752902B0B11348400A802D7;
 		};
 		175290250B11348400A802D7 = {
@@ -737,7 +737,7 @@
 			isa = PBXLibraryTarget;
 			name = AmbisonicUGens;
 			productInstallPath = "";
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 175290FA0B113DDA00A802D7;
 		};
 		175290F40B113DDA00A802D7 = {
@@ -856,7 +856,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLDBufferUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 177D916A0B39F44100A802D7;
 		};
 		177D91640B39F44100A802D7 = {
@@ -899,7 +899,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLDBufferUGens-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLDBufferUGens-gcc3.scx build/MCLDUGens";
 		};
 		177D916A0B39F44100A802D7 = {
 			isa = PBXLibraryReference;
@@ -952,7 +952,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = StkUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 179814D90B11608C00A802D7;
 		};
 		179814D30B11608C00A802D7 = {
@@ -2462,7 +2462,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLDTriggeredStatsUgens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A581C30C21EE4C00A82A64;
 		};
 		17A581B90C21EE4C00A82A64 = {
@@ -2505,7 +2505,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLDTriggeredStatsUgens-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLDTriggeredStatsUgens-gcc3.scx build/MCLDUGens";
 		};
 		17A581C30C21EE4C00A82A64 = {
 			isa = PBXLibraryReference;
@@ -2557,7 +2557,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLD_CQ_UGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A732770B1D381D00A802D7;
 		};
 		17A732690B1D381D00A802D7 = {
@@ -2601,7 +2601,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLD_CQ_UGens-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLD_CQ_UGens-gcc3.scx build/MCLDUGens";
 		};
 		17A732770B1D381D00A802D7 = {
 			isa = PBXLibraryReference;
@@ -2637,7 +2637,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLDChaosUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A732870B1D382900A802D7;
 		};
 		17A732790B1D382900A802D7 = {
@@ -2680,7 +2680,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLDChaosUGens-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLDChaosUGens-gcc3.scx build/MCLDUGens";
 		};
 		17A732870B1D382900A802D7 = {
 			isa = PBXLibraryReference;
@@ -2716,7 +2716,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLDFFTTriggeredUGen;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A732970B1D382C00A802D7;
 		};
 		17A732890B1D382C00A802D7 = {
@@ -2763,7 +2763,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLDFFTTriggeredUGen-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLDFFTTriggeredUGen-gcc3.scx build/MCLDUGens";
 		};
 		17A732970B1D382C00A802D7 = {
 			isa = PBXLibraryReference;
@@ -2799,7 +2799,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = MCLDFFTUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A732A70B1D384500A802D7;
 		};
 		17A732990B1D384500A802D7 = {
@@ -2856,7 +2856,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/MCLDFFTUGens-gcc3.scx build/MCLD_UGens";
+			shellScript = "cp build/MCLDFFTUGens-gcc3.scx build/MCLDUGens";
 		};
 		17A732A70B1D384500A802D7 = {
 			isa = PBXLibraryReference;
@@ -2873,7 +2873,7 @@
 				17A581CE0C21EFFA00A82A64,
 			);
 			isa = PBXGroup;
-			name = MCLD_UGens;
+			name = MCLDUGens;
 			path = "";
 			refType = 4;
 		};
@@ -2969,7 +2969,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = LoopBuf;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C9760B8912ED00A80144;
 		};
 		17A9C9700B8912ED00A80144 = {
@@ -3012,7 +3012,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/LoopBuf-gcc3.scx build/ljpclasses";
+			shellScript = "cp build/LoopBuf-gcc3.scx build/LoopBuf";
 		};
 		17A9C9760B8912ED00A80144 = {
 			isa = PBXLibraryReference;
@@ -3068,7 +3068,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "bhobChaos-gcc3.scx";
+				PRODUCT_NAME = "BhobChaos-gcc3.scx";
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -3076,8 +3076,8 @@
 			dependencies = (
 			);
 			isa = PBXLibraryTarget;
-			name = bhobChaosUGens;
-			productName = blackrainUGens;
+			name = BhobChaosUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C9820B89150300A80144;
 		};
 		17A9C97C0B89150300A80144 = {
@@ -3120,11 +3120,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/bhobChaos-gcc3.scx build/bhobUGens";
+			shellScript = "cp build/BhobChaos-gcc3.scx build/BhobUGens";
 		};
 		17A9C9820B89150300A80144 = {
 			isa = PBXLibraryReference;
-			path = "bhobChaos-gcc3.scx";
+			path = "BhobChaos-gcc3.scx";
 			refType = 3;
 		};
 		17A9C9830B89150700A80144 = {
@@ -3147,7 +3147,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "bhobFFT-gcc3.scx";
+				PRODUCT_NAME = "BhobFFT-gcc3.scx";
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -3155,8 +3155,8 @@
 			dependencies = (
 			);
 			isa = PBXLibraryTarget;
-			name = bhobFFTUGens;
-			productName = blackrainUGens;
+			name = BhobFFTUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C98A0B89150700A80144;
 		};
 		17A9C9840B89150700A80144 = {
@@ -3205,11 +3205,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/bhobFFT-gcc3.scx build/bhobUGens";
+			shellScript = "cp build/BhobFFT-gcc3.scx build/BhobUGens";
 		};
 		17A9C98A0B89150700A80144 = {
 			isa = PBXLibraryReference;
-			path = "bhobFFT-gcc3.scx";
+			path = "BhobFFT-gcc3.scx";
 			refType = 3;
 		};
 		17A9C98B0B89150B00A80144 = {
@@ -3241,7 +3241,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = BhobFiltUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C9920B89150B00A80144;
 		};
 		17A9C98C0B89150B00A80144 = {
@@ -3284,7 +3284,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/BhobFilt-gcc3.scx build/bhobUGens";
+			shellScript = "cp build/BhobFilt-gcc3.scx build/BhobUGens";
 		};
 		17A9C9920B89150B00A80144 = {
 			isa = PBXLibraryReference;
@@ -3311,7 +3311,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "bhobGrain-gcc3.scx";
+				PRODUCT_NAME = "BhobGrain-gcc3.scx";
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -3319,8 +3319,8 @@
 			dependencies = (
 			);
 			isa = PBXLibraryTarget;
-			name = bhobGrainUGens;
-			productName = blackrainUGens;
+			name = BhobGrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C99A0B89151300A80144;
 		};
 		17A9C9940B89151300A80144 = {
@@ -3363,11 +3363,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/bhobGrain-gcc3.scx build/bhobUGens";
+			shellScript = "cp build/BhobGrain-gcc3.scx build/BhobUGens";
 		};
 		17A9C99A0B89151300A80144 = {
 			isa = PBXLibraryReference;
-			path = "bhobGrain-gcc3.scx";
+			path = "BhobGrain-gcc3.scx";
 			refType = 3;
 		};
 		17A9C99B0B89158F00A80144 = {
@@ -3399,7 +3399,7 @@
 			);
 			isa = PBXLibraryTarget;
 			name = BhobNoiseUGens;
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17A9C9A20B89158F00A80144;
 		};
 		17A9C99C0B89158F00A80144 = {
@@ -3442,7 +3442,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp build/BhobNoise-gcc3.scx build/bhobUGens";
+			shellScript = "cp build/BhobNoise-gcc3.scx build/BhobUGens";
 		};
 		17A9C9A20B89158F00A80144 = {
 			isa = PBXLibraryReference;
@@ -3452,7 +3452,7 @@
 		17A9C9A30B8916A000A80144 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = bhobChaos.cpp;
+			path = BhobChaos.cpp;
 			refType = 4;
 		};
 		17A9C9A40B8916A000A80144 = {
@@ -3464,7 +3464,7 @@
 		17A9C9A50B8917EA00A80144 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = bhobFFT.cpp;
+			path = BhobFFT.cpp;
 			refType = 4;
 		};
 		17A9C9A60B8917EA00A80144 = {
@@ -3488,7 +3488,7 @@
 		17A9C9A90B89180400A80144 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = bhobGrain.cpp;
+			path = BhobGrain.cpp;
 			refType = 4;
 		};
 		17A9C9AA0B89180400A80144 = {
@@ -3612,7 +3612,7 @@
 			isa = PBXLibraryTarget;
 			name = BEQSuiteUGens;
 			productInstallPath = "";
-			productName = blackrainUGens;
+			productName = BlackrainUGens;
 			productReference = 17C51CC0086A187800A802D7;
 		};
 		17C51CBA086A187800A802D7 = {

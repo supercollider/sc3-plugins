@@ -1,0 +1,9 @@
+(
+\name:	"LadspaUGens",
+\path:	"LadspaUGens",
+\summary:	 "sc3-plugins:LadspaUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"LadspaUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)
