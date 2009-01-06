@@ -38,6 +38,10 @@ FormantTable {
 		});
 	}
 	
+	*keys {
+		^table.keys
+	}
+	
 	*get { arg preset;
 		^table[preset]
 	}
