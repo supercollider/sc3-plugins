@@ -19,13 +19,14 @@ $movecmd build/BlackrainUGens*.$pluginext Extensions/BlackrainUGens
 $movecmd build/Josh*UGens*.$pluginext    Extensions/JoshUGens
 $movecmd build/LadspaUGens.$pluginext    Extensions/LadspaUGens
 $movecmd build/LoopBuf.$pluginext        Extensions/LoopBufUGens
-$movecmd build/MCLD*UGens*.$pluginext    Extensions/MCLDUGens
+$movecmd build/MCLD*U*en*.$pluginext     Extensions/MCLDUGens
 $movecmd build/MdaUGens.$pluginext       Extensions/MdaUGens
 $movecmd build/MembraneUGens.$pluginext  Extensions/MembraneUGens
 $movecmd build/MLfftwUGens*.$pluginext   Extensions/MLfftwUGens
-$movecmd build/RMEQSuiteUGens.$pluginext       Extensions/RMEQSuiteUGens
+$movecmd build/RMEQSuite*.$pluginext     Extensions/RMEQSuiteUGens
 $movecmd build/RFWUGens.$pluginext       Extensions/RFWUGens
 $movecmd build/SLUGens*.$pluginext       Extensions/SLUGens
+$movecmd build/VOSIM.$pluginext          Extensions/VOSIMUGens
 if [ -f build/STKUGens*.$pluginext ]; then
 	$movecmd build/STKUGens*.$pluginext      Extensions/StkUGens
 fi
