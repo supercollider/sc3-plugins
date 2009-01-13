@@ -476,14 +476,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F3331AF70EFC4ADA00A32D02 /* RFWUGens */;
+			remoteGlobalIDString = F3331AF70EFC4ADA00A32D02;
 			remoteInfo = RFWUGens;
 		};
 		DC4E1F900F1C901C0003E241 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F3AAAAC40ECFCE5400460E62 /* VOSIM */;
+			remoteGlobalIDString = F3AAAAC40ECFCE5400460E62;
 			remoteInfo = VOSIM;
 		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
@@ -711,7 +711,7 @@
 		F3A15D180B5D8C6C00D75043 /* MCLDFFTUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDFFTUGens.cpp; sourceTree = "<group>"; };
 		F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LoopBuf.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LoopBuf.cpp; sourceTree = "<group>"; };
-		F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = VOSIMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = VOSIM.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VOSIM.cpp; path = source/VOSIM.cpp; sourceTree = "<group>"; };
 		F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LadspaUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FFT2InterfaceBhob.cpp; sourceTree = "<group>"; };
@@ -1258,7 +1258,7 @@
 				F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */,
 				3715F6170ECB7ADF006BC186 /* MdaUGens.scx */,
 				F359F57A0EC217590053D29C /* BatUGens.scx */,
-				F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */,
+				F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */,
 				F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */,
 			);
 			name = Products;
@@ -2226,7 +2226,7 @@
 			name = VOSIM;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
-			productReference = F3AAAAD00ECFCE5400460E62 /* VOSIMUGens.scx */;
+			productReference = F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F3B10AF80EBEC870001ABFAC /* LadspaUGens */ = {
@@ -6463,7 +6463,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = BatUGens;
+				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -6495,7 +6495,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = VOSIMUGens;
+				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -6526,7 +6526,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = BatUGens;
+				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
