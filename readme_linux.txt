@@ -5,18 +5,29 @@ building sc3-plugins
 --------------------
 
 $ scons
-$ ./distro_linux
+$ scons install
 
 The SuperCollider source is expected to be at ../ but you can set the path by passing an argument to scons:
 
 $ scons SC3PATH=/my/path/to/supercollider_source
-$ ./distro_linux
+$ scons install
 
-The compiled UGens, Classes and Helpfiles, will be placed into a new 'Extensions' directory in sc3-plugins. This can be moved or better yet, create a symlink to it from your extensions folder.
+You can determine the installation directory with the option PREFIX (the default is /usr/local, and will put everything in /usr/local/share/SuperCollider).
+You can either install the plugins as Quark-installable units (option QUARKS=1), or just install all of them (QUARKS=0).
+E.g. if you want them in your home directory, and Quark-able
 
-$ ln -s /my/path/to_sc3-plugins/Extensions /myhome/share/SuperCollider/Extensions/sc3-plugins
+$ scons SC3PATH=/my/path/to/supercollider_source QUARKS=1 PREFIX=/home/nescivi
+$ scons install
 
-You can add a sub dir named 'test' inside this Extensions directory and move folders in there to disable a particular ugen pack.
+The plugins will end up in:
+/home/nescivi/share/SuperCollider/SC3plugins
+(Look for the helpfile SC3pluginQuarks to install the quarks.)
+
+if the QUARKS=0 it will be:
+/home/nescivi/share/SuperCollider/Extensions/SC3plugins
+
+
+
 
 ------------
 The StkUGens

@@ -55,6 +55,8 @@ opts.AddOptions(
                'Build with STK plugins', 0),
     BoolOption('AY',
                'Build with AY plugins', 0),
+    BoolOption('QUARKS',
+               'Installation as quarks', 0),
     PathOption('PREFIX',
                'Installation prefix', DEFAULT_PREFIX),
     PathOption('DESTDIR',
@@ -134,7 +136,13 @@ def pkg_lib_dir(prefix, *args):
     return os.path.join(lib_dir(prefix), PACKAGE, *args)
 
 def pkg_plug_dir(prefix, *args):
-    return os.path.join(share_dir(prefix), 'SuperCollider', PACKAGE, *args)
+    if env['QUARKS'] :
+        return os.path.join(share_dir(prefix), 'SuperCollider', PACKAGE, *args)
+    else :
+        return os.path.join(share_dir(prefix), 'SuperCollider/Extensions', PACKAGE, *args)
+
+def pkg_help_dir(prefix, *args):
+        return os.path.join(share_dir(prefix), 'SuperCollider/Extensions/Help', PACKAGE, *args)
 
 def flatten_dir(dir):
     res = []
@@ -389,6 +397,12 @@ env.Alias('install-plugins',
 	install_dir(
         env, 'build/',
         pkg_plug_dir(INSTALL_PREFIX),
+        ANY_FILE_RE, 1)
+	)
+env.Alias('install-plugins', 
+	install_dir(
+        env, 'Help/',
+        pkg_help_dir(INSTALL_PREFIX),
         ANY_FILE_RE, 1)
 	)
 

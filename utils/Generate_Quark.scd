@@ -3,6 +3,8 @@
 // nescivi, jan 2009
 // =====================================================================
 
+// this is a file to help automate creating Quarks of the plugins.
+
 f = File.new( Document.current.dir+/+"VERSION", "r" );
 ~version = f.getLine;
 f.close;
@@ -30,16 +32,10 @@ var name = PathName( it ).asRelativePath( Document.current.dir +/+ "build" ).cop
 
 ~sc3plugs = Quarks(
 reposPath: "https://sc3-plugins.svn.sourceforge.net/svnroot/sc3-plugins/build",
-localPath: Platform.userAppSupportDir ++ "/SC3plugins"
-);
-
-~sc3plugs = Quarks(
-reposPath: "https://sc3-plugins.svn.sourceforge.net/svnroot/sc3-plugins/build",
-localPath: "/home/nescivi/svn/sc3-plugins/build"
+localPath: Platform.userAppSupportDir +/+ "SC3plugins"
 );
 
 ~sc3plugs.gui;
-Quarks.gui;
 
 (
 (Document.current.dir +/+ "build/*").pathMatch.do{ |it|
