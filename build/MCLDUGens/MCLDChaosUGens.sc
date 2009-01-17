@@ -94,3 +94,12 @@ RMAFoodChainL : MultiOutUGen {
 	}
 	*categories {	^ #["UGens>Generators>Chaotic"]	}
 }
+
+Perlin3 : UGen {
+	*ar { |x=0, y=0, z=0|
+		^this.multiNew('audio', x, y, z);
+	}
+	*kr { |x=0, y=0, z=0|
+		^this.multiNew('control', x, y, z);
+	}
+}

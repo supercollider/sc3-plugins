@@ -963,6 +963,8 @@ void Max_Ctor( Max* unit ) {
 	unit->m_last=unit->m_blocks-1;   
 	unit->m_max=0.0;
 	
+	ZOUT0(0) = ZIN0(0);
+	
 }
 
 void Max_Dtor(Max *unit) {

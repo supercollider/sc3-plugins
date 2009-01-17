@@ -12,16 +12,18 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 47.0px; text-indent: -20.0px; font: 12.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
-span.s1 {text-decoration: underline ; color: #0021e7}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d1c12}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0026b4}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001bb9}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2c7014}
+span.s1 {color: #0039da}
 span.s2 {color: #000000}
-span.s3 {color: #0000bf}
-span.s4 {color: #bf0000}
-span.s5 {color: #007300}
+span.s3 {color: #0026b4}
+span.s4 {color: #9d1c12}
+span.s5 {color: #3d6d1d}
+span.s6 {color: #001bb9}
+span.s7 {color: #2c7014}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -52,11 +54,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>Examples</b></p>
 <p class="p5"><br></p>
 <p class="p6">s.boot;</p>
-<p class="p7"><br></p>
-<p class="p8">// This simple example triggers one note per second, monophonically:</p>
+<p class="p5"><br></p>
+<p class="p7">// This simple example triggers one note per second, monophonically:</p>
 <p class="p6">(</p>
 <p class="p6">x = {</p>
-<p class="p9"><span class="s2"><span class="Apple-tab-span">	</span></span>MdaPiano<span class="s2">.ar(</span></p>
+<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>MdaPiano<span class="s2">.ar(</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">LFNoise0</span>.kr(1).range(20, 60).round.midicps, <span class="s4">// random note</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stereo: 0.5,<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>gate: <span class="s3">LFPulse</span>.kr(1),<span class="Apple-converted-space"> </span></p>
@@ -66,39 +68,43 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">}.play</p>
 <p class="p6">)</p>
 <p class="p6">x.free;</p>
-<p class="p7"><br></p>
-<p class="p7"><br></p>
-<p class="p8">// Now let's define a piano synthdef:</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p7">// Now let's define a piano synthdef:</p>
 <p class="p6">(</p>
-<p class="p9">SynthDef<span class="s2">(</span><span class="s5">\help_mdapiano</span><span class="s2">, { </span>|out=0, freq=440, gate=1|</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> son = <span class="s3">MdaPiano</span>.ar(freq, gate, release: 1.2, stereo: 0.3, sustain: 0);</p>
+<p class="p8">SynthDef<span class="s2">(</span><span class="s5">\help_mdapiano</span><span class="s2">, { </span>|out=0, freq=440, gate=1|</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> son = <span class="s3">MdaPiano</span>.ar(freq, gate, release: 0.9, stereo: 0.3, sustain: 0);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s3">DetectSilence</span>.ar(son, 0.01, doneAction:2);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(out, son * 0.1);</p>
 <p class="p6">}).memStore;</p>
 <p class="p6">)</p>
-<p class="p8">// Then we can use it in a pattern:</p>
+<p class="p7">// Then we can use it in a pattern:</p>
 <p class="p6">(</p>
+<p class="p6"><span class="s6">TempoClock</span>.default.tempo = 1.2;</p>
 <p class="p9">Ppar<span class="s2">([</span></p>
 <p class="p9"><span class="s2"><span class="Apple-tab-span">	</span></span>Pbind<span class="s2">(</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>\instrument<span class="s2">, </span>\help_mdapiano<span class="s2">,</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>\degree<span class="s2">,<span class="Apple-converted-space"> </span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Pseq</span>([<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pseq</span>([<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0, 7, -5, 7,<span class="Apple-converted-space">  </span>0, 5, -7, 5,<span class="Apple-converted-space">  </span>-2, 5, -7, 5,<span class="Apple-converted-space">  </span>-2,<span class="Apple-converted-space">  </span>3, -9,<span class="Apple-converted-space">  </span>3,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0, 7, -5, 7,<span class="Apple-converted-space">  </span>0, 5, -7, 5,<span class="Apple-converted-space">  </span>-2, 5, -7, 5,<span class="Apple-converted-space">  </span>-2, -3, -4, -5 ], <span class="s3">inf</span>),</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\dur</span>, 0.5,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\octave</span>, 3,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\root</span>, 3</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0, 7, -5, 7,<span class="Apple-converted-space">  </span>0, 5, -7, 5,<span class="Apple-converted-space">  </span>-2, 5, -7, 5,<span class="Apple-converted-space">  </span>-2, -3, -4, -5 ], <span class="s6">inf</span>),</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\dur</span>, 0.5,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\octave</span>, 3,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\root</span>, 3,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\vel</span>, <span class="s6">Prand</span>([<span class="s6">Pseq</span>([100, 30, 50, 10]), <span class="s6">Pseq</span>([100, 30, 10, 10, 5, 10, 20, 30])], <span class="s6">inf</span>),</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\legato</span>, 0.95</p>
 <p class="p6"><span class="Apple-tab-span">	</span>),</p>
 <p class="p9"><span class="s2"><span class="Apple-tab-span">	</span></span>Pbind<span class="s2">(</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>\instrument<span class="s2">, </span>\help_mdapiano<span class="s2">,</span></p>
 <p class="p10"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>\degree<span class="s2">,<span class="Apple-converted-space"> </span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Pseq</span>([ \, 0, -1, 0, 2, 0, \, \, \, 0, -2, \, \, -2, -4, \, \ ], <span class="s3">inf</span>),</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\dur</span>, 0.5,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\octave</span>, 6,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">\root</span>, 3</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pseq</span>([ \, 0, -1, 0, 2, 0, \, \, \, 0, -2, \, \, -2, -4, \, \ ], <span class="s6">inf</span>),</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\dur</span>, 0.5,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\octave</span>, 6,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\root</span>, 3,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\vel</span>, <span class="s6">Pwhite</span>(50, 100, <span class="s6">inf</span>)</p>
 <p class="p6"><span class="Apple-tab-span">	</span>)</p>
-<p class="p6">], <span class="s3">inf</span>).play</p>
+<p class="p6">], <span class="s6">inf</span>).play</p>
 <p class="p6">)</p>
-<p class="p8">// Try changing the synthdef while this is running (e.g. activate sustain, tweak stereo)...</p>
+<p class="p7">// Try changing the synthdef while this is running (e.g. activate sustain, tweak stereo)...</p>
 </body>
 </html>
