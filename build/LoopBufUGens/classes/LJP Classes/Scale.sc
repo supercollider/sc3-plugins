@@ -1,4 +1,4 @@
-Scale {
+ScaleLP {
 	
 	var <>stepRatios;
 	
