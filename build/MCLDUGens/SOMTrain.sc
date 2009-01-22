@@ -1,10 +1,8 @@
-// SOM UGens for SuperCollider, (c) 2008 Dan Stowell. Published under the terms of the GPL (v2)
+// SOM UGens for SuperCollider, (c) 2008 Dan Stowell. Published under the terms of the GPL (v2 or, at your option, any later version)
 
 SOMTrain : MultiOutUGen {
 	
 	*kr { |bufnum, inputdata, netsize=10, numdims=2, traindur=5000, nhood=0.5, gate=1, initweight=1|
-		if((numdims < 1) or: {numdims > 4})
-			{"numdims must be between 1 and 4".error};
 		
 		inputdata = inputdata.asArray;
 		^this.multiNew('control', bufnum, netsize, numdims, traindur, nhood, gate, initweight, *inputdata)
@@ -95,7 +93,90 @@ SOMTrain : MultiOutUGen {
 			(from, from+step .. to).collect{|val| less.collect{|lval| lval ++ val} }.flatten
 		}
 	}
-}
+	
+	// Convenience to take a data file ("path", path to an AIFF/WAV/etc) and train a SOM from it.
+	// The WAV/AIFF shouldn't (normally) be a standard audio file, rather a multi-channel file of your data.
+	// "init" can be path to an AIFF file with initial SOM coords, or a symbol for \rand or \gridrand init
+	// "numruns" is how many times to play the data file through. More than once will give smoother fit.
+	*trainFromFile { | path, init=\gridrand, numdims=2, netsize=10, numruns=1, server, action, nhood=0.5, initweight=1 |
+		var sombuf, databuf, sf, numFramesToDo, dur, numFeatures;
+		if(server.isNil){ server = Server.default };
+		if(File.exists(path).not){ ^"File not found: %".format(path).error};
+		if(action.isNil){action = path.splitext[0] ++ "-SOMcoords.aiff"};
+		
+		server.waitForBoot {
+			
+			// Check data file
+			sf = SoundFile(path);
+			if(sf.openRead){
+				numFramesToDo = numruns * sf.numFrames;
+				dur = numFramesToDo * server.options.blockSize / server.sampleRate; // We DON'T use the soundfile's own sample rate
+				"data file will play % time(s) though % data points, taking % seconds".format(numruns, sf.numFrames, dur).postln;
+				numFeatures = sf.numChannels;
+			}{
+				^"trainFromFile: Could not read header of data file %".format(path).error
+			};
+			sf.close;
+			
+			// Check initialisation file, if wanted
+			if(init.isString){
+				sf = SoundFile(init);
+				if(sf.openRead){
+					// Check that the init file has the expected numdims and netsize and numFeatures
+					if(sf.numChannels != numFeatures){
+						^"trainFromFile: data file has % features, yet % channels in init file %"
+									.format(numFeatures, sf.numChannels, init).error
+					};
+					if(sf.numFrames != (netsize ** numdims)){
+						^"trainFromFile: called with netsize=% and numdims=%, yet % frames in init file %"
+									.format(netsize, numdims, sf.numFrames, init).error
+					};
+				}{
+					^"trainFromFile: Could not read header of init file %".format(init).error
+				};
+				sf.close;
+			};
+			
+			// Load the audio buffer, init the SOM buffer
+			databuf = Buffer.read(server, path);
+			if(init.isString){
+				sombuf = Buffer.read(server, init);
+			}{
+				sombuf = this.allocBuf(server, netsize, numdims, numFeatures, init)
+			};
+			0.6.wait;
+			server.sync;
+			"sombuf has % channels and % frames".format(sombuf.numChannels, sombuf.numFrames).postln;
+			
+			// Run the synth, playing the data back at one-frame-per-control-block
+			{
+				var data;
+				data = PlayBuf.kr(numFeatures, databuf, loop: 1);
+				SOMTrain.kr(sombuf, data, netsize, numdims, /* traindur: */ numFramesToDo, nhood, 1, initweight);
+				Line.kr(dur, 0, dur, doneAction: 2).poll(0.1, "trainFromFile time remaining");
+				0 // silence
+			}.play(server);
+			
+			// Wait a decent amount of time
+			(dur + 0.5).wait;
+			
+			// Then perform the action (giving it the lovely buffer). NB if action is string we write to disk.
+			if(action.isString){
+				sombuf.write(action, "AIFF", "float")
+			}{
+				action.value(sombuf)
+			};
+			
+			// Then wait a bit and sync before tidying up
+			0.6.wait;
+			server.sync;
+			"trainFromFile: done".postln;
+			0.2.wait;
+			[databuf, sombuf].do(_.free);
+		}
+	}
+
+} // End SOMTrain class
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,4 +238,13 @@ SOMRd : MultiOutUGen {
 	81.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 4), 3) }
 	81.collect{|val| SOMRd.coordsToBufIndex(SOMRd.bufIndexToCoords(val, 3, 4), 3) } == (0..80)
 	*/
+}
+
+
+SOMAreaWr : UGen {
+	
+	*kr { |bufnum, inputdata, coords, netsize=10, numdims=2, nhood=0.5, gate=1|
+		inputdata = inputdata.asArray ++  coords.asArray;
+		^this.multiNew('control', bufnum, netsize, numdims, nhood, gate, *inputdata)
+	}
 }

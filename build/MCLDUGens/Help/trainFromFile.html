@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2c7014}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2c7014; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {color: #001bb9}
+span.s2 {color: #2c7014}
+span.s3 {color: #000000}
+span.s4 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>SOMTrain</b></span><b>.trainFromFile</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">SOMTrain</span>.trainFromFile(path, init=<span class="s2">\gridrand</span>, numdims=2, netsize=10, numruns=1, server, action, nhood=0.5, initweight=1)</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1">Here</span>'s how to train the SOM from a data file. The data file should be an audio-format file (e.g. AIFF or WAV) but in most cases it won'<span class="s3">t be audio but whatever kind of data it is you</span>'re interested in learning. Only the first argument is compulsory.<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>"action" can be a string, in which case it's the path for the SOM buffer to be written to (AIFF format); or it can be a function, in which case it is evaluated and passed the SOM buffer.</p>
+<p class="p5"><br></p>
+<p class="p4">Note that the data should be pre-scaled to a range of +-1 on all axes, since this convenience method doesn't account for different dynamic ranges in the data.</p>
+<p class="p5"><br></p>
+<p class="p3"><span class="s2">First let'</span>s generate a file containing toy data. <span class="s1">This</span> will (as in the main <a href="SOMTrain.html"><span class="s1">SOMTrain</span></a> helpfile) be 2<span class="s1">D</span> data with a sinusoidal relationship:</p>
+<p class="p2"><br></p>
+<p class="p3">s.boot;</p>
+<p class="p2"><br></p>
+<p class="p3">~toydata = { <span class="s1">var</span> num; num = 2pi.rand; [num - pi / pi, num.sin]}.dup(10000);</p>
+<p class="p6">// Let's plot the data - looks just like noise?</p>
+<p class="p3">~toydata.flatten.plot(numChannels: 2);</p>
+<p class="p6">// The following will plot a sorted version so you can see the relationship:</p>
+<p class="p3">~toydata.deepCopy.sort{<span class="s1">|a,b|</span> a[0] &lt;= b[0]}.flatten.plot(numChannels: 2)</p>
+<p class="p6">// OK enough fun, let's write it as a datafile</p>
+<p class="p3">~toydata = ~toydata.flatten.as(<span class="s1">FloatArray</span>);</p>
+<p class="p3">~sf = <span class="s1">SoundFile</span>.new.headerFormat_(<span class="s4">"AIFF"</span>).sampleFormat_(<span class="s4">"float"</span>).numChannels_(2);</p>
+<p class="p7"><span class="s3">~sf.openWrite(</span>"tmp_SOMTrain_sinedata.aiff"<span class="s3">);</span></p>
+<p class="p3">~sf.writeData(~toydata);</p>
+<p class="p3">~sf.close;</p>
+<p class="p2"><br></p>
+<p class="p6">// Check it's still sinusoidal:</p>
+<p class="p7"><span class="s3">b = </span><span class="s1">Buffer</span><span class="s3">.read(s, </span>"tmp_SOMTrain_sinedata.aiff"<span class="s3">);</span></p>
+<p class="p3">b.loadToFloatArray(action:{<span class="s1">|data|</span> {data = data.clump(2); data.sort{<span class="s1">|a,b|</span> a[0] &lt;= b[0]};data.flatten.plot(numChannels: 2) }.defer})</p>
+<p class="p2"><br></p>
+<p class="p6">// OK, now let's train a SOM on it (we'll load the resulting data to the lang as ~somdata):</p>
+<p class="p3"><span class="s1">SOMTrain</span>.trainFromFile(<span class="s4">"tmp_SOMTrain_sinedata.aiff"</span>, numdims: 1, netsize: 15, numruns: 2, action:{<span class="s1">|sombuf|</span> sombuf.loadToFloatArray(action:{<span class="s1">|data|</span> ~somdata = data.clump(2)}) });</p>
+<p class="p6">// Let's plot it:</p>
+<p class="p3">(</p>
+<p class="p3"><span class="Apple-tab-span">	</span>~winsize = 700;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>w = <span class="s1">Window</span>(<span class="s4">"SOM node locations"</span>, <span class="s1">Rect</span>(300, 300, ~winsize, ~winsize));</p>
+<p class="p3"><span class="Apple-tab-span">	</span>~somdata.do{<span class="s1">|datum|</span> <span class="s1">SCStaticText</span>(w, <span class="s1">Rect</span>(~winsize * 0.5 * (datum[0]+1), ~winsize * 0.5 * (datum[1]+1), 10, 10)).string_(<span class="s4">"x"</span>)};</p>
+<p class="p3"><span class="Apple-tab-span">	</span>w.front</p>
+<p class="p3">)</p>
+</body>
+</html>

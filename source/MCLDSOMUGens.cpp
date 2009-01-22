@@ -44,6 +44,11 @@ struct SOMTrain : public SOMUnit
 struct SOMRd : public SOMUnit
 {
 };
+struct SOMAreaWr : public SOMUnit
+{
+};
+
+
 
 // declare unit generator functions 
 extern "C"
@@ -51,12 +56,16 @@ extern "C"
 	void load(InterfaceTable *inTable);
 	
 	void SOMTrain_Ctor(SOMTrain* unit);
-	void SOMTrain_reset(SOMTrain* unit);
+	void SOMTrain_Dtor(SOMTrain* unit);
 	void SOMTrain_next(SOMTrain *unit, int inNumSamples);
 	
 	void SOMRd_Ctor(SOMRd* unit);
-	void SOMRd_reset(SOMRd* unit);
 	void SOMRd_next(SOMRd *unit, int inNumSamples);
+	void SOMRd_Dtor(SOMRd* unit);
+	
+	void SOMAreaWr_Ctor(SOMAreaWr* unit);
+	void SOMAreaWr_next(SOMAreaWr *unit, int inNumSamples);
+	void SOMAreaWr_Dtor(SOMAreaWr* unit);
 };
 
 //////////////////////////////////////////////////////////////////
@@ -556,6 +565,101 @@ inline void SOMTrain_updatenodes_update(float* celldata, int numinputdims, doubl
 
 ////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void SOMAreaWr_Ctor(SOMAreaWr* unit)
+{
+	// set the calculation function. do this before the base ctor because it may want to change it!
+	SETCALC(SOMAreaWr_next);
+	
+	int numdims = ZIN0(2);
+	
+	SOM_Ctor_base(unit, 5 + numdims);    // 5 is the offset before we get input data, plus "numdims" as a hacky way to make it infer the correct # of input dims
+	
+	ClearUnitOutputs(unit, 1);
+}
+
+void SOMAreaWr_next(SOMAreaWr *unit, int inNumSamples)
+{
+	// Get the buffer and some other standard stuff...
+	SOM_GET_BUF
+	
+	int nhood = (int)ceil(sc_min(1.f, sc_max(0.f, ZIN0(3))) * (float)(netsize-1));
+	
+	for(int i=0; i<inNumSamples; ++i){
+		
+		if(IN(4)[i] > 0.f){ // If gate > 0
+			
+			// Get data inputs
+			for(int chan=0; chan<numinputdims; ++chan){
+				inputdata[chan] = IN(chan + 5)[i];
+			}
+			
+			// Get co-ords for writing, stored in the (cofusingly-named, here) "bestcoords"
+			for(int dim=0; dim<numdims; ++dim){
+				bestcoords[dim] = IN(dim + 5 + numinputdims)[i];
+			}
+			
+			/*
+			Print("SOMAreaWr: writing [%g", inputdata[0]);
+			for(int k=1; k<numinputdims; ++k)
+				Print(", %g", inputdata[k]);
+			Print("] to [%i", bestcoords[0]);
+			for(int k=1; k<numdims; ++k)
+				Print(", %i", bestcoords[k]);
+			Print("]±%i\n", nhood);
+			*/
+			
+			size_t bytestowrite = numinputdims * sizeof(float);
+			// Now iterate: if cell is in the chosen neighbourhood, we overwrite
+			switch(numdims){
+				case 1:
+					for(int i0=sc_max(0, bestcoords[0]-nhood); i0<sc_min(netsize, bestcoords[0]+nhood+1); ++i0){
+						memcpy(SOM_GETFRAME_1D(i0), inputdata, bytestowrite);
+					}
+					break;
+				case 2:
+					for(int i0=sc_max(0, bestcoords[0]-nhood); i0<sc_min(netsize, bestcoords[0]+nhood+1); ++i0){
+					for(int i1=sc_max(0, bestcoords[1]-nhood); i1<sc_min(netsize, bestcoords[1]+nhood+1); ++i1){
+						memcpy(SOM_GETFRAME_2D(i0, i1), inputdata, bytestowrite);
+					}
+					}
+					break;
+				case 3:
+					for(int i0=sc_max(0, bestcoords[0]-nhood); i0<sc_min(netsize, bestcoords[0]+nhood+1); ++i0){
+					for(int i1=sc_max(0, bestcoords[1]-nhood); i1<sc_min(netsize, bestcoords[1]+nhood+1); ++i1){
+					for(int i2=sc_max(0, bestcoords[2]-nhood); i2<sc_min(netsize, bestcoords[2]+nhood+1); ++i2){
+						memcpy(SOM_GETFRAME_3D(i0, i1, i2), inputdata, bytestowrite);
+					}
+					}
+					}
+					break;
+				case 4:
+					for(int i0=sc_max(0, bestcoords[0]-nhood); i0<sc_min(netsize, bestcoords[0]+nhood+1); ++i0){
+					for(int i1=sc_max(0, bestcoords[1]-nhood); i1<sc_min(netsize, bestcoords[1]+nhood+1); ++i1){
+					for(int i2=sc_max(0, bestcoords[2]-nhood); i2<sc_min(netsize, bestcoords[2]+nhood+1); ++i2){
+					for(int i3=sc_max(0, bestcoords[3]-nhood); i3<sc_min(netsize, bestcoords[3]+nhood+1); ++i3){
+						memcpy(SOM_GETFRAME_4D(i0, i1, i2, i3), inputdata, bytestowrite);
+					}
+					}
+					}
+					}
+					break;
+			}
+			
+		} // End gate check
+		
+	} // end loop inNumSamples
+}
+void SOMAreaWr_Dtor(SOMAreaWr* unit)
+{
+	SOM_Dtor_base(unit);
+}
+
+
+
+////////////////////////////////////////////////////////////////////
+
 // the load function is called by the host when the plug-in is loaded
 void load(InterfaceTable *inTable)
 {
@@ -563,4 +667,5 @@ void load(InterfaceTable *inTable)
 
 	DefineDtorUnit(SOMTrain);
 	DefineDtorUnit(SOMRd);
+	DefineDtorUnit(SOMAreaWr);
 }

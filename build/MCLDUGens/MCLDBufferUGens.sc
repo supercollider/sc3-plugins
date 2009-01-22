@@ -35,11 +35,10 @@ GaussClass : UGen {
 	// This method REQUIRES MATHLIB QUARK. Convenience for preparing data.
 	// Input is an array of classes, each specified as [mean, covariance, weight].
 	*classesToFloatArray { |arr|
-		var numclasses, numdims, classsize, ret, cov;
+		var numclasses, numdims, classsize, cov;
 		numclasses = arr.size;
 		numdims = arr[0][0].size; // size of first mean-array
 		classsize = numdims + (numdims*numdims) + 2; // number of floats for each class
-		ret = FloatArray.newClear(classsize * numclasses);
 		
 		^arr.collect{|cl|
 			cov = Matrix.with(cl[1]);
@@ -53,3 +52,26 @@ GaussClass : UGen {
 	}
 }
 
+BufMax : MultiOutUGen {
+	
+	*kr { arg bufnum=0, gate=1;
+		^this.multiNew('control', bufnum, gate)
+	}
+	init { arg ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(2, rate);
+	}
+	*categories { ^ #["UGens>Buffer"] }
+}
+
+BufMin : BufMax {}
+
+/*
+MIDelay : UGen {
+	
+	*kr { |in1, in2, maxdelay= 0.2, gate=1, mibuf= -1|
+		^this.multiNewList(['control', in1, in2, maxdelay, gate, mibuf])
+	}
+	*categories { ^ #["UGens>Buffer"] }
+}
+*/

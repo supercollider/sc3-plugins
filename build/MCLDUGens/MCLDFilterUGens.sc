@@ -9,3 +9,10 @@ Friction : Filter {
 	}
 	*categories {	^ #["UGens>Filters>Chaotic"]	}
 }
+
+Crest : UGen {
+	*kr { | in, numsamps=400, gate=1, mul=1, add=0 |
+		^this.multiNew('control', in, numsamps, gate).madd(mul, add)
+	}
+	*categories {	^ #["UGens>Analysis"]	}
+}

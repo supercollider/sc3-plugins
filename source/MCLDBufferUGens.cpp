@@ -45,6 +45,31 @@ struct GaussClass : public Unit
 	SndBuf *m_buf;
 };
 
+struct BufMax : public Unit
+{
+	float m_fbufnum;
+	SndBuf *m_buf;
+	
+	float m_bestval;
+	float m_bestpos;
+};
+
+struct BufMin : BufMax {};
+
+/*
+const size_t MIDelay_numbins = 6;
+struct MIDelay : public Unit
+{
+	uint32 *m_xbins, *m_ybins, *m_xybins;
+	int m_mindly, m_maxdly;
+	float m_bestval, m_bestpos;
+	float *m_in1, *m_in2, *m_cutoffs1, *m_cutoffs2;
+	size_t m_inbufsize;
+};
+*/
+
+
+//////////////////////////////////////////////////////////////////
 
 extern "C"
 {
@@ -62,6 +87,16 @@ extern "C"
 	void GaussClass_Ctor(GaussClass* unit);
 	void GaussClass_next(GaussClass *unit, int inNumSamples);
 	void GaussClass_Dtor(GaussClass* unit);
+
+	void BufMax_Ctor(BufMax* unit);
+	void BufMax_next(BufMax *unit, int inNumSamples);
+	
+	void BufMin_Ctor(BufMin* unit);
+	void BufMin_next(BufMin *unit, int inNumSamples);
+	
+	//void MIDelay_Ctor(MIDelay* unit);
+	//void MIDelay_next(MIDelay *unit, int inNumSamples);
+	//void MIDelay_Dtor(MIDelay* unit);
 
 };
 
@@ -420,6 +455,259 @@ void GaussClass_Dtor(GaussClass* unit)
 	RTFree(unit->mWorld, unit->m_centred);
 }
 
+////////////////////////////////////////////////////////////////////
+
+void BufMax_Ctor(BufMax* unit)
+{
+	SETCALC(BufMax_next);
+	unit->m_fbufnum = -1e9f;
+	unit->m_bestval = 0.f;
+	unit->m_bestpos = 0;
+	BufMax_next(unit, 1);
+}
+
+void BufMax_next(BufMax *unit, int inNumSamples)
+{
+	bool gate = ZIN0(1) > 0.f;
+	
+	GET_BUF
+	CHECK_BUF
+	
+//	Print("BufMax: fbufnum %g, gate %i\n", fbufnum, gate);
+	
+	float bestval = unit->m_bestval;
+	uint32 bestpos = unit->m_bestpos;
+	
+	if(gate){
+		bestval = -INFINITY;
+		bestpos = 0;
+		for(uint32 i=0; i<bufSamples; ++i){
+			if(bestval < bufData[i]){
+				bestval = bufData[i];
+				bestpos = i;
+			}
+		}
+		// Store result
+		unit->m_bestval = bestval;
+		unit->m_bestpos = bestpos;
+	}
+	
+	ZOUT0(0) = bestval;
+	ZOUT0(1) = bestpos;
+}
+
+////////////////////////////////////////////////////////////////////
+
+void BufMin_Ctor(BufMin* unit)
+{
+	SETCALC(BufMin_next);
+	unit->m_fbufnum = -1e9f;
+	unit->m_bestval = 0.f;
+	unit->m_bestpos = 0;
+	BufMin_next(unit, 1);
+}
+
+void BufMin_next(BufMin *unit, int inNumSamples)
+{
+	bool gate = ZIN0(1) > 0.f;
+	
+	GET_BUF
+	CHECK_BUF
+	
+	float bestval = unit->m_bestval;
+	uint32 bestpos = unit->m_bestpos;
+	
+	if(gate){
+		bestval = INFINITY;
+		bestpos = 0;
+		for(uint32 i=0; i<bufSamples; ++i){
+			if(bestval > bufData[i]){
+				bestval = bufData[i];
+				bestpos = i;
+			}
+		}
+		// Store result
+		unit->m_bestval = bestval;
+		unit->m_bestpos = bestpos;
+	}
+	
+	ZOUT0(0) = bestval;
+	ZOUT0(1) = bestpos;
+}
+
+////////////////////////////////////////////////////////////////////
+/*
+void MIDelay_Ctor(MIDelay* unit)
+{
+	SETCALC(MIDelay_next);
+
+	unit->m_bestval = 0.f;
+	unit->m_bestpos = 0.f;
+	// Decide (in samples) the lowest and highest delay, in samples (can be +ve or -ve)
+	unit->m_mindly = 0;//(int)(ZIN0(2) * SAMPLERATE);
+	unit->m_maxdly = (int)(ZIN0(2) * FULLRATE);
+	// Allocate the buffers for incoming audio
+	unit->m_inbufsize = sc_max(unit->m_maxdly, 0 - unit->m_mindly) * 2;
+	unit->m_in1 = (float*)RTAlloc(unit->mWorld, unit->m_inbufsize * sizeof(float));
+	unit->m_in2 = (float*)RTAlloc(unit->mWorld, unit->m_inbufsize * sizeof(float));
+	// Allocate space for the bins
+	unit->m_xbins  = (uint32*)RTAlloc(unit->mWorld, MIDelay_numbins * sizeof(uint32));
+	unit->m_ybins  = (uint32*)RTAlloc(unit->mWorld, MIDelay_numbins * sizeof(uint32));
+	unit->m_xybins = (uint32*)RTAlloc(unit->mWorld, MIDelay_numbins * MIDelay_numbins * sizeof(uint32));
+	// and for the cutoffs
+	unit->m_cutoffs1  = (float*)RTAlloc(unit->mWorld, MIDelay_numbins * sizeof(float));
+	unit->m_cutoffs2  = (float*)RTAlloc(unit->mWorld, MIDelay_numbins * sizeof(float));
+	
+	ClearUnitOutputs(unit, 1);
+}
+
+void MIDelay_next(MIDelay *unit, int inNumSamples)
+{
+	bool gate = ZIN0(3) > 0.f;
+	
+	// Add new samples to the storage buffers
+	// (NB here we assume the buffers are at least large enough to hold inNumSamples)
+	float* in1 = unit->m_in1;
+	float* in2 = unit->m_in2;
+	size_t inbufsize = unit->m_inbufsize;
+	// inNumSamples isn't right!
+	inNumSamples = unit->mWorld->mFullRate.mBufLength;
+	memmove(in1, in1 + inNumSamples, (inbufsize - inNumSamples) * sizeof(float));
+	memmove(in2, in2 + inNumSamples, (inbufsize - inNumSamples) * sizeof(float));
+	Copy(inNumSamples, in1 + (inbufsize - inNumSamples), IN(0));
+	Copy(inNumSamples, in2 + (inbufsize - inNumSamples), IN(1));
+	
+	if(gate){
+		// Iterate over the two buffers to find min and max
+		float min1 = INFINITY, min2 = INFINITY, max1 = -INFINITY, max2=-INFINITY;
+		for(size_t i=0; i<inbufsize; ++i){
+			if(min1 > in1[i]) min1 = in1[i];
+			if(min2 > in2[i]) min2 = in2[i];
+			if(max1 < in1[i]) max1 = in1[i];
+			if(max2 < in2[i]) max2 = in2[i];
+		}
+//		Print("min1 %g max1 %g min2 %g max2 %g\n", min1, max1, min2, max2);
+		
+		if(min1==max1){
+		}else if(min2==max2){
+		}else{
+			
+			// Establish the lists of boundaries
+			float* cutoffs1 = unit->m_cutoffs1;
+			float* cutoffs2 = unit->m_cutoffs2;
+			for(size_t i=0; i<MIDelay_numbins; ++i){
+				cutoffs1[i] = min1 + (max1 - min1) * (i+1) / MIDelay_numbins;
+				cutoffs2[i] = min2 + (max2 - min2) * (i+1) / MIDelay_numbins;
+//				Print("cutoffs1[%i] = %g, cutoffs2[%i] = %g\n", i, cutoffs1[i], i, cutoffs2[i]);
+			}
+//			Print("Expected total: %u\n", inbufsize);
+			
+			uint32* xbins  = unit->m_xbins;
+			uint32* ybins  = unit->m_ybins;
+			// First zero the 1D bins
+			memset(xbins, 0, MIDelay_numbins);
+			memset(ybins, 0, MIDelay_numbins);
+			// Iterate over the joint buffers to accumulate the marginal bin subtotals
+			for(size_t i=0; i<inbufsize; ++i){
+				size_t x=0, y=0;
+				while(in1[i] > cutoffs1[x]) ++x;
+				while(in2[i] > cutoffs2[y]) ++y;
+				++xbins[x];
+				++ybins[y];
+			}
+			
+			uint32* xybins = unit->m_xybins;
+			int mindly = unit->m_mindly, maxdly = unit->m_maxdly;
+			double bestmi=-INFINITY;
+			int bestdelta=0;
+			// Foreach shiftval:
+			for(int delta = mindly; delta < maxdly; ++delta){
+				// Zero the 2D bins
+				memset(xybins, 0, MIDelay_numbins * MIDelay_numbins);
+//		Print("xybins[0][0]: %u\n", *xybins);
+				
+				// Get pointers to the buffers, shunted so as to represent the time shift
+				float *in1win, *in2win;
+				size_t winsize;
+				if(delta < 0){
+					in1win = in1 - delta;
+					in2win = in2;
+					winsize = inbufsize + delta;
+				}else{
+					in1win = in1;
+					in2win = in2 + delta;
+					winsize = inbufsize - delta;
+				}
+				
+				// Iterate along a suitable region of the buffers, incrementing the 2D bins
+				uint32 x, y;
+				for(size_t i=0; i<winsize; ++i){
+					x=0, y=0;
+					while(in1win[i] > cutoffs1[x]) ++x;
+					while(in2win[i] > cutoffs2[y]) ++y;
+//					if(delta==0){
+//						printf("Item [%g, %g] goes in bin [%i, %i] (not smaller )\n", in1win[i], in2win[i], x, y);
+//					}
+//		Print("increment xybins[%u][%u] from value of %u\n", x, y, xybins[x * MIDelay_numbins + y]);
+					// note, x-val (chan 1) is the big leap
+					++xybins[x * MIDelay_numbins + y];
+				}
+				
+				// Iterate the 2D bins, calculating the MI value
+				double mi = 0.;
+				for(size_t x=0; x < MIDelay_numbins; ++x){
+					for(size_t y=0; y < MIDelay_numbins; ++y){
+						// MI = sum of   p(x,y)   log [   p(x,y) / p(x)p(y) ]
+						//    = sum of   n(x,y)/winsize log [ N N n(x,y) / n(x)n(y)winsize ]
+//						if(delta==0){
+//							printf("%u,", xybins[x * MIDelay_numbins + y]);
+//						}
+						if(xybins[x * MIDelay_numbins + y] != 0){
+						//	double logthing = winsize * xybins[x * MIDelay_numbins + y] / (xbins[x] * ybins[y]);
+						//	mi += (xybins[x * MIDelay_numbins + y] / winsize)
+						//		* log(logthing);
+							
+							double logthing = inbufsize * (double)inbufsize * (double)xybins[x * MIDelay_numbins + y] 
+										/ 
+									(xbins[x] * ybins[y] * (double)winsize);
+							mi += ((double)xybins[x * MIDelay_numbins + y] / (double)winsize)
+								* log(logthing);
+						}
+					}
+//					if(delta==0){
+//						printf("\n");
+//					}
+				}
+				Print("MI[%i]\t  %g \n", delta, mi);
+				// If the MI value is the highest so far, store it and the current shift
+				if(bestmi < mi){
+					bestmi = mi;
+					bestdelta = delta;
+				}
+			} // end foreach shiftval
+			Print("Best MI was %g at offset %i (offset range was [%i, %i])\n", bestmi, bestdelta, mindly, maxdly);
+			//unit->m_bestval = bestmi;
+			unit->m_bestpos = bestdelta / SAMPLERATE;
+			
+		} // end check for nonzero range
+	}
+	ZOUT0(0) = unit->m_bestpos;
+}
+
+void MIDelay_Dtor(MIDelay* unit)
+{
+	if(unit->m_xbins){
+		RTFree(unit->mWorld, unit->m_xbins );
+		RTFree(unit->mWorld, unit->m_ybins );
+		RTFree(unit->mWorld, unit->m_xybins);
+		RTFree(unit->mWorld, unit->m_in1);
+		RTFree(unit->mWorld, unit->m_in2);
+		RTFree(unit->mWorld, unit->m_cutoffs1);
+		RTFree(unit->mWorld, unit->m_cutoffs2);
+	}
+}
+*/
+
 //////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -430,4 +718,7 @@ void load(InterfaceTable *inTable)
 	DefineSimpleUnit(ListTrig);
 	DefineSimpleUnit(ListTrig2);
 	DefineDtorUnit(GaussClass);
+	DefineSimpleUnit(BufMax);
+	DefineSimpleUnit(BufMin);
+	//DefineDtorUnit(MIDelay);
 }
