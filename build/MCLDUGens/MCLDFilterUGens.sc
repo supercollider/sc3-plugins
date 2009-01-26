@@ -16,3 +16,15 @@ Crest : UGen {
 	}
 	*categories {	^ #["UGens>Analysis"]	}
 }
+
+Goertzel : MultiOutUGen {
+	
+	*kr { arg in = 0.0, bufsize=1024, freq;
+		^this.multiNew('control', in, bufsize, freq)
+	}
+	init { arg ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(2, rate); // outputs [real, imag]
+	}
+}
+

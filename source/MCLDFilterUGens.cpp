@@ -1,4 +1,9 @@
+/*
+This code (c) Dan Stowell, published under the GPL, v2 or later
+*/
+
 #include "SC_PlugIn.h"
+#define TWOPI 6.28318530717952646f 
 
 static InterfaceTable *ft;
 
@@ -17,6 +22,19 @@ struct Crest : public Unit
 	int m_realNumSamples;
 };
 
+struct Goertzel : public Unit
+{
+	unsigned int m_size, m_pos, m_realNumSamples;
+	
+	// Constants
+	float m_w, m_cosine, m_sine;
+	float m_coeff;
+	// State variables
+	float m_q2, m_q1;
+	// Output variables
+	float m_real, m_imag;
+};
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
@@ -27,6 +45,9 @@ extern "C"
 	void Crest_Ctor(Crest* unit);
 	void Crest_next(Crest *unit, int inNumSamples);
 	void Crest_Dtor(Crest* unit);
+
+	void Goertzel_next(Goertzel *unit, int inNumSamples);
+	void Goertzel_Ctor(Goertzel* unit);
 };
 
 //////////////////////////////////////////////////////////////////
@@ -204,6 +225,103 @@ void Crest_Dtor(Crest* unit)
 
 
 //////////////////////////////////////////////////////////////////
+// Goertzel Algorithm, following
+// http://www.embedded.com/story/OEG20020819S0057
+
+void Goertzel_Ctor(Goertzel* unit)
+{
+	SETCALC(Goertzel_next);
+		
+	// 2. initialize the unit generator state variables.
+	unsigned int size = (int)ZIN0(1);
+	
+	double srate;
+	if (INRATE(0) == calc_FullRate) {
+    	unit->m_realNumSamples = unit->mWorld->mFullRate.mBufLength;
+		srate = unit->mWorld->mFullRate.mSampleRate;
+		
+		// Ensure size is a multiple of block size (if audio rate).
+		size = unit->m_realNumSamples * (unsigned int)std::ceil(size / (float)unit->m_realNumSamples);
+	} else {
+	 	unit->m_realNumSamples = 1;
+		srate = unit->mWorld->mBufRate.mSampleRate;
+	}
+	
+	float freq = ZIN0(2);
+	
+	// Precomputed constants
+	float floatN  = (float)size;
+	int    k      = (int)(0.5 + floatN * freq / srate);
+	double w      = (TWOPI * k)/floatN;
+	double cosine = std::cos(w);
+	double sine   = std::sin(w);
+	double coeff  = 2. * cosine;
+	
+	unit->m_size   = size;
+	unit->m_cosine = cosine;
+	unit->m_sine   = sine;
+	unit->m_coeff  = coeff;
+	
+	unit->m_q1 = 0.;
+	unit->m_q2 = 0.;
+	unit->m_real = 0.f;
+	unit->m_imag = 0.f;
+	
+	unit->m_pos = 0;
+	
+	// 3. calculate one sample of output.
+	ZOUT0(0) = 0.f;
+}
+
+//////////////////////////////////////////////////////////////////
+void Goertzel_next(Goertzel *unit, int wrongNumSamples)
+{
+	unsigned int realNumSamples = unit->m_realNumSamples;
+	
+	float* in = IN(0);
+	
+	float cosine = unit->m_cosine;
+	float sine   = unit->m_sine;
+	float coeff  = unit->m_coeff;
+	unsigned int pos = unit->m_pos;
+	unsigned int size   = unit->m_size;
+	float q1 = unit->m_q1;
+	float q2 = unit->m_q2;
+	float real   = unit->m_real;
+	float imag   = unit->m_imag;
+
+	float q0;
+	for(unsigned int i=0; i<realNumSamples; ++i){
+		q0 = coeff * q1 - q2 + in[i];
+		q2 = q1;
+		q1 = q0;
+		++pos;
+	}
+	
+	if(pos == size){
+		// We've reached the end of a block, let's find values
+		real = (q1 - q2 * cosine);
+		imag = (q2 * sine);
+		//Print("Reached block boundary. cosine %g, sine %g, coeff %g, size %u, q0 %g, q1 %g, q2 %g\n", cosine, sine, coeff, size, q0, q1, q2);
+
+		// reset:
+		pos = 0;
+		q1 = q2 = 0.; 
+	}
+	
+	// Output values
+	ZOUT0(0) = real;
+	ZOUT0(1) = imag;
+	
+	// Store state
+	unit->m_q1 = q1;
+	unit->m_q2 = q2;
+	unit->m_pos = pos;
+	unit->m_real = real;
+	unit->m_imag = imag;
+}
+
+//////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
 {
@@ -211,4 +329,5 @@ void load(InterfaceTable *inTable)
 
 	DefineSimpleUnit(Friction);
 	DefineDtorUnit(Crest);
+	DefineSimpleUnit(Goertzel);
 }
