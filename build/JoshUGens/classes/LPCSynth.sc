@@ -1,10 +1,10 @@
 LPCVals : MultiOutUGen {
 	*kr {arg buffer, pointer;
-		^this.multiNew('control', buffer, pointer)
+		^this.multiNew('control', buffer, pointer.min(1).max(0))
 	}
 
 	*ar {arg buffer, pointer;
-		^this.multiNew('audio', buffer, pointer)
+		^this.multiNew('audio', buffer, pointer.min(1).max(0))
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
@@ -15,14 +15,14 @@ LPCVals : MultiOutUGen {
 
 LPCSynth : UGen {
 	*ar {arg buffer, signal, pointer, mul = 1, add = 0;
-		^this.multiNew('audio', buffer, signal, pointer).madd(mul, add)
+		^this.multiNew('audio', buffer, signal, pointer.min(1).max(0)).madd(mul, add)
 	}
 }
 
 // #errval, origrms = LP_Ana.ar(in, lpbuffer, numpoles, windowsize, check)
 // check will check poles for stability. THIS DOES NOT RUN IN REAL_TIME! In NRT, use a value
 // > 1.
-
+/*
 LP_Ana : MultiOutUGen {
 	*ar {arg in, lpbuffer, numpoles, windowsize, check = 0;
 		^this.multiNew('audio', in, lpbuffer, numpoles, windowsize, check);
@@ -84,6 +84,7 @@ LPCVals2 : MultiOutUGen {
 		^this.initOutputs(3, rate);
 	}
 }
+*/
 /*
 
 
