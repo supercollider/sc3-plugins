@@ -14,7 +14,11 @@ AtsFile : File {
 	*load {arg path, server;
 		^this.new(path, server).load;
 		}
-		
+	
+	buffer {
+		^bufnum
+		}
+			
 	init {arg argpath, argserver;
 		path = argpath;
 		server = argserver ?? {Server.default};
@@ -90,6 +94,10 @@ AtsFile : File {
 			}, {
 			("The " ++ server.name ++ " server doesn't appear to be running. Boot the server before loading an ATS file").warn;
 			})
+		}
+	
+	loadToBuffer {arg buffer;
+		this.load(buffer);
 		}
 		
 	freeBuffer {
