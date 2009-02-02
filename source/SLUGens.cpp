@@ -317,19 +317,52 @@ extern "C" {
 }
 
 
+
+//include local buffer test in one place
+SndBuf * SLUGensGetBuffer(Unit * unit, uint32 bufnum) {
+	
+	SndBuf *buf;
+	World *world = unit->mWorld; 
+	
+	if (bufnum >= world->mNumSndBufs) {
+		int localBufNum = bufnum - world->mNumSndBufs; 
+		Graph *parent = unit->mParent; 
+		if(localBufNum <= parent->localMaxBufNum) { 
+			buf = parent->mLocalSndBufs + localBufNum;
+		} else { 
+			if(unit->mWorld->mVerbosity > -1){ Print("SLUGens buffer number error: invalid buffer number: %i.\n", bufnum); }
+			SETCALC(*ClearUnitOutputs);
+			unit->mDone = true; 
+			return NULL; 
+		}
+	} else {
+		buf = world->mSndBufs + bufnum; 
+	}
+	
+	return buf;
+}
+
+
+
+
+
 void SortBuf_Ctor( SortBuf* unit ) {
 	
 	SETCALC(SortBuf_next_k);
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(0);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) { 
+	
 	unit->mBufNum=bufnum;
 	
 	//printf("%d \n",bufnum);			
-	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	///SndBuf *buf = world->mSndBufs + bufnum; 
 	
 	unit->mBufSize = buf->samples;
 	
@@ -344,6 +377,8 @@ void SortBuf_Ctor( SortBuf* unit ) {
 	unit->mSortj=1;
 	unit->mSortdone=0;
 	unit->mOutStep=1; //allows one run through before it sorts
+	
+	}
 }
 
 //void SortBuf_Dtor(SortBuf *unit)
@@ -446,7 +481,7 @@ void SortBuf_next_k( SortBuf *unit, int inNumSamples ) {
 void GravityGrid_Ctor(GravityGrid* unit) {
 	int i;
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	for(i=0;i<9;++i) {
 		
@@ -467,15 +502,35 @@ void GravityGrid_Ctor(GravityGrid* unit) {
 	//	unit->m_weights[i]= g_weights[i];
 	unit->m_weights=NULL; 
 	
-	uint32 bufnum = (uint32)ZIN0(4);
+	//must create int because have -1 as indicator of no buffer! 
+	int bufnum= (int)ZIN0(4);
+	//uint32 bufnum = (uint32)ZIN0(4);
 	
-	if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-		SndBuf *buf = world->mSndBufs + bufnum; 
-		
+	if (bufnum>=0) {
+
+	SndBuf * buf= SLUGensGetBuffer(unit, (uint32)bufnum);
+	
+	if (buf) {
+	
 		if(buf->samples==9) {
 			unit->m_weights= buf->data;
 			
 		}
+		
+		}
+		else
+		{
+		unit->mDone = true;
+		}
+	
+	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+//		SndBuf *buf = world->mSndBufs + bufnum; 
+//		
+//		if(buf->samples==9) {
+//			unit->m_weights= buf->data;
+//			
+//		}
+	
 	}
 	
 	SETCALC(GravityGrid_next_k);
@@ -653,16 +708,24 @@ void GravityGrid_next_k(GravityGrid *unit, int inNumSamples) {
 void GravityGrid2_Ctor(GravityGrid2* unit) {
 	//int i;
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	//get buffer which contains initial number of masses (max of 25), positions and weights
 	
-	uint32 bufnum = (uint32)ZIN0(4);
+	//uint32 bufnum = (uint32)ZIN0(4);
 	
 	//int num;
+	int bufnum= (int)ZIN0(4);
+	//uint32 bufnum = (uint32)ZIN0(4);
 	
-	if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-		SndBuf *snd = world->mSndBufs + bufnum; 
+	if (bufnum>=0) {
+	
+	SndBuf * snd= SLUGensGetBuffer(unit,(int)bufnum);
+	
+	if (snd) {
+	
+	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+		//SndBuf *snd = world->mSndBufs + bufnum; 
 		float *buf = snd->data;
 		
 		//num= (int)(buf[0]+0.001f);
@@ -679,13 +742,15 @@ void GravityGrid2_Ctor(GravityGrid2* unit) {
 //		unit->m_weights[i]=buf[pos+2]; 
 //		}
 		
+	} else
+	{unit->mDone=false;}
+	
 	}
 
 	unit->velx=0.0;
 	unit->vely=0.0;
 	unit->posx=0.0;
 	unit->posy=0.0;
-	
 	
 	SETCALC(GravityGrid2_next_k);
 	
@@ -1639,13 +1704,16 @@ void TermanWang_next_k(TermanWang *unit, int inNumSamples) {
 
 void LTI_Ctor( LTI* unit ) {
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(1);
 	
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//SndBuf *buf = world->mSndBufs + bufnum; 
 	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) {
 	
 	unit->sizea = buf->samples;
 	
@@ -1653,9 +1721,12 @@ void LTI_Ctor( LTI* unit ) {
 	
 	bufnum = (uint32)ZIN0(2);
 	
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	buf= SLUGensGetBuffer(unit,bufnum);
 	
-	buf = world->mSndBufs + bufnum; 
+	if (buf) {
+	
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//buf = world->mSndBufs + bufnum; 
 	
 	unit->sizeb = buf->samples;
 	
@@ -1678,6 +1749,9 @@ void LTI_Ctor( LTI* unit ) {
 	unit->posb=0; 
 	
 	SETCALC(LTI_next_a);
+	
+	}
+	}
 	
 }
 
@@ -1749,13 +1823,16 @@ void NL_Ctor( NL* unit ) {
 	int i;
 	//int maxindex; 
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(1);
 	
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	if (buf) {
+	
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//SndBuf *buf = world->mSndBufs + bufnum; 
 	
 	if (buf->samples%3!=0) printf("feedback data input format wrong, not multiple of 3 size\n");
 	
@@ -1772,9 +1849,12 @@ void NL_Ctor( NL* unit ) {
 	
 	bufnum = (uint32)ZIN0(2);
 	
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	buf= SLUGensGetBuffer(unit,bufnum);
 	
-	buf = world->mSndBufs + bufnum; 
+	if (buf) {
+	
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//buf = world->mSndBufs + bufnum; 
 	
 	if (buf->samples%3!=0) printf("feedforward data input format wrong, not multiple of 3 size\n");
 	
@@ -1808,6 +1888,10 @@ void NL_Ctor( NL* unit ) {
 	unit->posb=0; 
 	
 	SETCALC(NL_next_a);
+	
+	}
+	
+	}
 	
 }
 
@@ -1983,19 +2067,21 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 	float guard2 = ZIN0(5);
 	
 	//Dynamic buffer checks
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(1);
 	
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	SndBuf * sndbuf= SLUGensGetBuffer(unit,bufnum);
 	
-	SndBuf *sndbuf = world->mSndBufs + bufnum; 
+	if (sndbuf) {
+	
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//SndBuf *sndbuf = world->mSndBufs + bufnum; 
 	
 	float *buf = sndbuf->data;
 	//int bufsize= sndbuf->samples;
 	int bufdone = 0;
 	int numcrossterms;
-	
 	
 	float *mema= unit->mema,*memb= unit->memb;
 
@@ -2099,6 +2185,7 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 	unit->posa=posa;
 	unit->posb=posb;
 	
+	}
 }
 
 
@@ -2297,23 +2384,28 @@ void KmeansToBPSet1_Ctor(KmeansToBPSet1* unit) {
 	unit->numdatapoints= (int) ZIN0(1);	
 	unit->maxmeans= (int) ZIN0(2);	
 	
-		World *world = unit->mWorld;
+		//World *world = unit->mWorld;
     
 	//get buffer containing data
 	uint32 bufnum = (uint32)(ZIN0(7)+0.001);
 	
 	unit->m_initdata=NULL;
 	
-	if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-		SndBuf *buf = world->mSndBufs + bufnum; 
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) {
+	
+	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+	//	SndBuf *buf = world->mSndBufs + bufnum; 
 		
 		if(buf->samples == ((2*unit->numdatapoints) + (2*unit->maxmeans))) {
 		//must be of the form 2*numdatapoints then 2*maxmeans
 		unit->m_initdata=buf->data;
 		unit->m_meansindex= 2*unit->numdatapoints;
 		}
-	}
-	
+	} else
+	//don't cancel performance of UGen, but pointer to buf was NULL
+	{unit->mDone = false; }
 	
 	unit->data= (float*)RTAlloc(unit->mWorld, 2*unit->numdatapoints * sizeof(float));
 	unit->means= (float*)RTAlloc(unit->mWorld, 2*unit->maxmeans * sizeof(float));
@@ -2665,13 +2757,18 @@ void KmeansToBPSet1_next_a(KmeansToBPSet1 *unit, int inNumSamples) {
 
 void Instruction_Ctor(Instruction* unit) {
 	
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(0);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) {
+
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
 	unit->mBufNum=bufnum;
 	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	//SndBuf *buf = world->mSndBufs + bufnum; 
 	
 	unit->mBufSize = buf->samples;
 	
@@ -2690,6 +2787,7 @@ void Instruction_Ctor(Instruction* unit) {
 	unit->prob=1.0;
 	
 	SETCALC(Instruction_next_a);
+	}
 }
 
 
@@ -2883,13 +2981,17 @@ void Instruction_next_a(Instruction *unit, int inNumSamples) {
 
 
 void WaveTerrain_Ctor(WaveTerrain* unit) {
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(0);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//unit->m_bufnum=bufnum;
 	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) {
+
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	//unit->m_bufnum=bufnum;
+	//SndBuf *buf = world->mSndBufs + bufnum; 
 	
 	unit->m_size = buf->samples;
 
@@ -2903,6 +3005,7 @@ void WaveTerrain_Ctor(WaveTerrain* unit) {
 	
 	SETCALC(WaveTerrain_next_a);
 	}
+}
 	
 void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 
@@ -2963,13 +3066,18 @@ void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 	
 void VMScan2D_Ctor(VMScan2D* unit) {
 
-	World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(0);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+	
+	if (buf) {
+	
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
 	unit->mBufNum=bufnum;
 	
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	///SndBuf *buf = world->mSndBufs + bufnum; 
 	
 	unit->mBufSize = buf->samples;
 	
@@ -2990,6 +3098,7 @@ void VMScan2D_Ctor(VMScan2D* unit) {
 	unit->prob=1.0;
 	
 	SETCALC(VMScan2D_next_a);
+	}
 }
 
 
