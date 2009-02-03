@@ -209,7 +209,7 @@ void Crest_next(Crest* unit, int inNumSamples)
 			if(maxval < circbuf[i])
 				maxval = circbuf[i];
 		}
-		result = (float)length * maxval / sum;
+		result = sum==0.f  ?  1.f  :  (float)length * maxval / sum;
 	}
 
 	ZOUT0(0) = unit->m_result = result;
