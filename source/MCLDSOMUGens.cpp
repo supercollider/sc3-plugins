@@ -40,6 +40,7 @@ struct SOMTrain : public SOMUnit
 	int m_traindur, m_traincountdown, m_traincountup;
 	double m_nhood, m_nhooddelta/* , m_alpha, m_alphadelta*/;
 	float m_mfactor, m_weightfactor;
+	float m_writeloc; // The (flattened) location that we decided to write to, for fdbk to user.
 };
 struct SOMRd : public SOMUnit
 {
@@ -70,11 +71,18 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////
 
+// Collapse a multidim index position back down to a standard frame index
+#define SOM_SERIALISEINDEX_1D(i0)          (i0)
+#define SOM_SERIALISEINDEX_2D(i0,i1)       (i1 * netsize + i0)
+#define SOM_SERIALISEINDEX_3D(i0,i1,i2)    ((i2 * netsize + i1) * netsize + i0)
+#define SOM_SERIALISEINDEX_4D(i0,i1,i2,i3) (((i3 * netsize + i2) * netsize + i1) * netsize + i0)
+
 // How to get a reference to the intended Buffer frame, given the spatial coordinates
-#define SOM_GETFRAME_1D(i0)          (bufData + (i0 * numinputdims))
-#define SOM_GETFRAME_2D(i0,i1)       (bufData + (i1 * netsize + i0) * numinputdims)
-#define SOM_GETFRAME_3D(i0,i1,i2)    (bufData + ((i2 * netsize + i1) * netsize + i0) * numinputdims)
-#define SOM_GETFRAME_4D(i0,i1,i2,i3) (bufData + (((i3 * netsize + i2) * netsize + i1) * netsize + i0) * numinputdims)
+#define SOM_GETFRAME_1D(i0)          (bufData + SOM_SERIALISEINDEX_1D(i0)          * numinputdims)
+#define SOM_GETFRAME_2D(i0,i1)       (bufData + SOM_SERIALISEINDEX_2D(i0,i1)       * numinputdims)
+#define SOM_GETFRAME_3D(i0,i1,i2)    (bufData + SOM_SERIALISEINDEX_3D(i0,i1,i2)    * numinputdims)
+#define SOM_GETFRAME_4D(i0,i1,i2,i3) (bufData + SOM_SERIALISEINDEX_4D(i0,i1,i2,i3) * numinputdims)
+
 
 // Grabbing the buffer object contents. Note that some of this chunk is copied from GET_BUF
 #define SOM_GET_BUF \
@@ -198,6 +206,7 @@ void SOMTrain_Ctor(SOMTrain* unit)
 	unit->m_nhooddelta = nhooddelta;
 	unit->m_weightfactor   = weightfactor;
 	unit->m_mfactor   = mfactor;
+	unit->m_writeloc  = 0.f;
 	//RM unit->m_alpha      = alpha;
 	//RM unit->m_alphadelta = alphadelta;
 	
@@ -233,16 +242,23 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 		
 		// DO THE NEAREST-NEIGHBOUR SEARCH
 		switch(numdims){
-			case 1: unit->m_reconsterror = SOM_findnearest_1d(bufData, inputdata, bestcoords, netsize, numinputdims); break;
-			case 2: unit->m_reconsterror = SOM_findnearest_2d(bufData, inputdata, bestcoords, netsize, numinputdims); break;
-			case 3: unit->m_reconsterror = SOM_findnearest_3d(bufData, inputdata, bestcoords, netsize, numinputdims); break;
-			case 4: unit->m_reconsterror = SOM_findnearest_4d(bufData, inputdata, bestcoords, netsize, numinputdims); break;
+			case 1: unit->m_reconsterror = SOM_findnearest_1d(bufData, inputdata, bestcoords, netsize, numinputdims); 
+				    unit->m_writeloc     = (float)SOM_SERIALISEINDEX_1D(bestcoords[0]);
+				break;
+			case 2: unit->m_reconsterror = SOM_findnearest_2d(bufData, inputdata, bestcoords, netsize, numinputdims);
+				    unit->m_writeloc     = (float)SOM_SERIALISEINDEX_2D(bestcoords[0], bestcoords[1]);
+				break;
+			case 3: unit->m_reconsterror = SOM_findnearest_3d(bufData, inputdata, bestcoords, netsize, numinputdims);
+				    unit->m_writeloc     = (float)SOM_SERIALISEINDEX_3D(bestcoords[0], bestcoords[1], bestcoords[2]);
+				break;
+			case 4: unit->m_reconsterror = SOM_findnearest_4d(bufData, inputdata, bestcoords, netsize, numinputdims);
+				    unit->m_writeloc     = (float)SOM_SERIALISEINDEX_4D(bestcoords[0], bestcoords[1], bestcoords[2], bestcoords[3]);
+				break;
 		}
-				
+		
 		if(traincountdown != 0){
 			//float alpha = weightfactor / (mfactor * unit->m_traincountup + 1.f); // mulier's approach
 			float alpha = weightfactor * mfactor / (mfactor + unit->m_traincountup); // dan's empirical approach
-		//	Print("alpha2: %g\n", alpha);
 			// UPDATE THE NODES
 			switch(numdims){
 				case 1: SOMTrain_updatenodes_1d(bufData, inputdata, bestcoords, netsize, numinputdims, alpha, nhoodi, nhoodisq); break;
@@ -265,6 +281,7 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 	
 	ZOUT0(0) = traincountdown;
 	ZOUT0(1) = unit->m_reconsterror;
+	ZOUT0(2) = unit->m_writeloc;
 }
 void SOMTrain_Dtor(SOMTrain* unit)
 {

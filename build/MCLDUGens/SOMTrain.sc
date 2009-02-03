@@ -9,7 +9,7 @@ SOMTrain : MultiOutUGen {
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
-		^this.initOutputs(2, rate);
+		^this.initOutputs(3, rate);
 	}
 	*categories {	^ #["UGens>Analysis"]	}
 	
