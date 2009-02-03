@@ -3372,8 +3372,8 @@ void PanX_next(PanX *unit, int inNumSamples)
     float rrange = 1.f / range;
     float spread = width * rnumOutputs * 2; // - ((width - 1.0) * rnumOutputs);
 
-    float lower = 0.0 - (spread * (width + width));
-    float upper = 2.0 - (spread * (width + width));
+    float lower = 0.0 - (spread * (width + 1.));
+    float upper = 2.0 - (spread * (width + 1.));
     float lowest = lower - (width * spread); 
     float highest = upper + (width * spread);
     
