@@ -450,7 +450,7 @@ ProcModR : ProcMod {
 			})
 		}
 	
-	now { "This works".postln; starttime.postln; ^Main.elapsedTime - starttime }
+	now { ^Main.elapsedTime - starttime }
 	
 	setupRouting {arg argNumChannels, argProcout;
 		(argNumChannels > 0).if({

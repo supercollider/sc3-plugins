@@ -1732,9 +1732,24 @@ void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
 
 	uint32 bufnum = (uint32)IN0(0);
 	//Print("FFTBase_Ctor: bufnum is %i\n", bufnum);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	SndBuf *buf = world->mSndBufs + bufnum; 
-
+//	if (bufnum >= world->mNumSndBufs) bufnum = 0;
+//	SndBuf *buf = world->mSndBufs + bufnum; 
+//    
+	uint32 ibufnum = (uint32)IN0(0);
+	SndBuf *buf;
+	
+	//Print("FFTBase_Ctor: bufnum is %i\n", bufnum);
+	if (ibufnum >= world->mNumSndBufs) { 
+	    int localBufNum = ibufnum - world->mNumSndBufs; 
+	    Graph *parent = unit->mParent; 
+	    if(localBufNum <= parent->localBufNum) { 
+		buf = parent->mLocalSndBufs + localBufNum; 
+	    } else { 
+		buf = world->mSndBufs; 
+	    } 
+	} else { 
+	    buf = world->mSndBufs + ibufnum; 
+	} 
 	int frameskip = buf->samples;
 
 	// get the buffer to store data in 
@@ -2095,10 +2110,21 @@ void PV_BufRd_Ctor(PV_BufRd* unit)
 	
 	World *world = unit->mWorld;
 
-	uint32 bufnum = (uint32)IN0(0);
+	uint32 ibufnum = (uint32)IN0(0);
+	SndBuf *buf;
+	
 	//Print("FFTBase_Ctor: bufnum is %i\n", bufnum);
-	if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	SndBuf *buf = world->mSndBufs + bufnum; 
+	if (ibufnum >= world->mNumSndBufs) { 
+	    int localBufNum = ibufnum - world->mNumSndBufs; 
+	    Graph *parent = unit->mParent; 
+	    if(localBufNum <= parent->localBufNum) { 
+		buf = parent->mLocalSndBufs + localBufNum; 
+	    } else { 
+		buf = world->mSndBufs; 
+	    } 
+	} else { 
+	    buf = world->mSndBufs + ibufnum; 
+	} 
 
 	int frameskip = buf->samples;
 
