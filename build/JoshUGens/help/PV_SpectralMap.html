@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.43">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #800080}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #006600}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+span.s1 {color: #000000}
+span.s2 {color: #0000e5}
+span.s3 {color: #800000}
+span.s4 {color: #006600}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>PV_SpectralMap<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maps the spectral envelope of one FFT</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>process onto another (acts as a spectral</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>filter)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>WARNING: Use of a FFTs with a large window size may cause CPU spikes.</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>PV_SpectralMap(buffer, specBuffer, floor, freeze)</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>buffer - the FFT buffer to filter</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>specBuffer - the FFT buffer to derive the spectral curve from</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>floor - the spectral curve is a normalized representation of the magnitudes in specBuffer (between 0<span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and 1). if floor &gt; 0, mags in the spectral curve BELOW this number are also zeroed out.</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>freeze - if &gt; 0, freeze the current spectral curve. The 'floor' parameter is ignored once the spectral</b></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>curve is frozen.</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></b></p>
+<p class="p3"><b>Examples:</b></p>
+<p class="p4"><br></p>
+<p class="p5"><br></p>
+<p class="p6">s.boot;</p>
+<p class="p7"><span class="s1">z = </span><span class="s2">Buffer</span><span class="s1">.read(s, </span>"sounds/a11wlk01.wav"<span class="s1">);</span></p>
+<p class="p8"><br></p>
+<p class="p9">(</p>
+<p class="p9">x = <span class="s2">SynthDef</span>(<span class="s3">\specMap</span>, {<span class="s2">arg</span> sndBuf, freeze = <span class="s2">0</span>;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s2">var</span> a, b, chain1, chain2, out;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>a = <span class="s2">LocalBuf</span>.new(<span class="s2">2048</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>b = <span class="s2">LocalBuf</span>.new(<span class="s2">2048</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>chain1 = <span class="s2">FFT</span>(a, <span class="s2">LFSaw</span>.ar(120)); <span class="s4">// to be filtered</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span>chain2 = <span class="s2">FFT</span>(b, <span class="s2">PlayBuf</span>.ar(<span class="s2">1</span>, z, <span class="s2">1</span>, loop: <span class="s2">1</span>));</p>
+<p class="p10"><span class="s1"><span class="Apple-tab-span">	</span></span>// mouse x to play with floor.<span class="Apple-converted-space"> </span></p>
+<p class="p9"><span class="Apple-tab-span">	</span>chain1 = <span class="s2">PV_SpectralMap</span>(chain1, chain2, <span class="s2">MouseX</span>.kr(<span class="s2">0</span>, <span class="s2">1</span>), freeze);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>out = <span class="s2">IFFT</span>(chain1);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(<span class="s2">0</span>, out.dup);</p>
+<p class="p9">}).play(s, [<span class="s3">\sndBuf</span>, z, <span class="s3">\freeze</span>, <span class="s2">0</span>])</p>
+<p class="p9">)</p>
+<p class="p8"><br></p>
+<p class="p9">x.set(\freeze, 1)</p>
+<p class="p11">x.set(\freeze, 0);</p>
+<p class="p12"><br></p>
+<p class="p11">x.free;</p>
+<p class="p12"><br></p>
+<p class="p11">z.free;</p>
+</body>
+</html>

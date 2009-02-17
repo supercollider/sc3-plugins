@@ -226,7 +226,14 @@ struct PV_BinBufRd : PV_Unit
 	bool first;
         SndBuf *m_buf;
     };
-            
+
+struct PV_SpectralMap : PV_Unit
+{
+    int m_numbins;
+    float *m_mags;
+    SndBuf *m_buf;
+};
+
 extern "C"
 {
 	#include "fftlib.h"
@@ -2477,6 +2484,69 @@ void PV_BinBufRd_Dtor(PV_BinBufRd* unit)
     RTFree(unit->mWorld, unit->m_prevDatabuf);
 }
 
+/* PV_SpectralMap */
+void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
+{	
+    float maxMag = 0.0f;
+    float rMaxMag, floorMag;
+    
+    PV_GET_BUF2
+    
+    SCPolarBuf *p = ToPolarApx(buf1);
+    SCPolarBuf *s = ToPolarApx(buf2);
+    
+    if (!unit->m_mags) {
+	unit->m_mags = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+	Clear(numbins, unit->m_mags);
+	unit->m_numbins = numbins;
+    } else if (numbins != unit->m_numbins) return;
+    
+    
+    float freeze = ZIN0(3);
+    float floor = ZIN0(2);
+    float *mags = unit->m_mags;
+
+    if (freeze > 0.f) {
+	for (int i=0; i<numbins; ++i) {
+	    p->bin[i].mag *= mags[i];
+	}
+    } else {
+	for (int i=0; i<numbins; ++i) {
+	    mags[i] = s->bin[i].mag;
+	    if(maxMag < mags[i]) maxMag = mags[i];
+	}
+	if(maxMag > 0.0001){ 
+	    rMaxMag = 1.0 / maxMag;
+	    floorMag = floor * maxMag;
+	} else {
+	    rMaxMag = 0.0;
+	    floorMag = 0.0;
+	}
+	for (int i = 0; i < numbins; ++i){
+	    if(mags[i] > floorMag){
+		unit->m_mags[i] = mags[i] = mags[i] * rMaxMag;
+	    } else {
+		unit->m_mags[i] = mags[i] = 0.0f;
+	    }
+	    p->bin[i].mag *= mags[i];
+	}
+    
+    }
+}
+
+
+void PV_SpectralMap_Ctor(PV_SpectralMap* unit)
+{
+    SETCALC(PV_SpectralMap_next);
+    ZOUT0(0) = ZIN0(0);
+    unit->m_mags = 0;
+}
+
+void PV_SpectralMap_Dtor(PV_SpectralMap* unit)
+{
+    RTFree(unit->mWorld, unit->m_mags);
+}
+
 void init_SCComplex(InterfaceTable *inTable);
 
 #define DefinePVUnit(name) \
@@ -2506,6 +2576,7 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(PV_BinPlayBuf);
 	DefineDtorUnit(PV_BufRd);
 	DefineDtorUnit(PV_BinBufRd);
+	DefineDtorUnit(PV_SpectralMap);
 	DefineSimpleCantAliasUnit(BinData);
 	}
 	
