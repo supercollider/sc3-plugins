@@ -113,8 +113,8 @@ PV_BinBufRd : PV_ChainUGen
 
 PV_SpectralMap : PV_ChainUGen
 {
-	*new {arg buffer, specBuffer, floor = 0.0, freeze = 0.0;
-		^this.multiNew('control', buffer, specBuffer, floor, freeze)
+	*new {arg buffer, specBuffer, floor = 0.0, freeze = 0.0, mode = 0.0;
+		^this.multiNew('control', buffer, specBuffer, floor, freeze, mode)
 		}
 }
 

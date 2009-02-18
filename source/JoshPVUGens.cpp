@@ -2489,6 +2489,7 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 {	
     float maxMag = 0.0f;
     float rMaxMag, floorMag;
+    bool rejectFlag = false;
     
     PV_GET_BUF2
     
@@ -2504,6 +2505,8 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
     
     float freeze = ZIN0(3);
     float floor = ZIN0(2);
+    float mode = ZIN0(4); // 1 acts as bandpass, -1 as bandreject, 0 hs no effect
+
     float *mags = unit->m_mags;
 
     if (freeze > 0.f) {
@@ -2511,25 +2514,52 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 	    p->bin[i].mag *= mags[i];
 	}
     } else {
+	if(mode > 0.0){
+	    rejectFlag = false;
+	    if(mode > 1.0){
+		mode = 1.0;
+	    }
+	} else {
+	    rejectFlag = true;
+	    if(mode < -1.0){
+		mode = -1.0;
+	    }
+	}
+	float amode = fabs(mode);
+//	Print("%3,3f\n", amode);
+	// get the basic spectral curve
 	for (int i=0; i<numbins; ++i) {
 	    mags[i] = s->bin[i].mag;
 	    if(maxMag < mags[i]) maxMag = mags[i];
 	}
-	if(maxMag > 0.0001){ 
+	// make sure there isn't a divide by 0.0;
+	if(maxMag > 0.00000001){ 
 	    rMaxMag = 1.0 / maxMag;
 	    floorMag = floor * maxMag;
 	} else {
 	    rMaxMag = 0.0;
 	    floorMag = 0.0;
 	}
-	for (int i = 0; i < numbins; ++i){
-	    if(mags[i] > floorMag){
-		unit->m_mags[i] = mags[i] = mags[i] * rMaxMag;
-	    } else {
-		unit->m_mags[i] = mags[i] = 0.0f;
+	if(rejectFlag){
+	    for (int i = 0; i < numbins; ++i){
+		if(mags[i] > floorMag){
+		    unit->m_mags[i] = mags[i] = lininterp(amode, 1.0, 1.0 - (mags[i] * rMaxMag));
+		} else {
+		    unit->m_mags[i] = mags[i] = 1.0 - amode;
+		}
+		p->bin[i].mag *= mags[i];
 	    }
-	    p->bin[i].mag *= mags[i];
+	} else {
+	    for (int i = 0; i < numbins; ++i){
+		if(mags[i] > floorMag){
+		    unit->m_mags[i] = mags[i] = lininterp(amode, 1.0, mags[i] * rMaxMag);
+		} else {
+		    unit->m_mags[i] = mags[i] = amode;
+		}
+		p->bin[i].mag *= mags[i];
+	    }
 	}
+		
     
     }
 }
