@@ -2488,7 +2488,7 @@ void PV_BinBufRd_Dtor(PV_BinBufRd* unit)
 void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 {	
     float maxMag = 0.0f;
-    float rMaxMag, floorMag;
+    float rMaxMag;
     bool rejectFlag = false;
     
     PV_GET_BUF2
@@ -2509,25 +2509,7 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 
     float *mags = unit->m_mags;
 
-    if (freeze > 0.f) {
-	for (int i=0; i<numbins; ++i) {
-	    p->bin[i].mag *= mags[i];
-	}
-    } else {
-	if(mode > 0.0){
-	    rejectFlag = false;
-	    if(mode > 1.0){
-		mode = 1.0;
-	    }
-	} else {
-	    rejectFlag = true;
-	    if(mode < -1.0){
-		mode = -1.0;
-	    }
-	}
-	float amode = fabs(mode);
-//	Print("%3,3f\n", amode);
-	// get the basic spectral curve
+    if (freeze <= 0.f) {
 	for (int i=0; i<numbins; ++i) {
 	    mags[i] = s->bin[i].mag;
 	    if(maxMag < mags[i]) maxMag = mags[i];
@@ -2535,32 +2517,42 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 	// make sure there isn't a divide by 0.0;
 	if(maxMag > 0.00000001){ 
 	    rMaxMag = 1.0 / maxMag;
-	    floorMag = floor * maxMag;
 	} else {
-	    rMaxMag = 0.0;
-	    floorMag = 0.0;
+	    rMaxMag = 0.0;  
 	}
-	if(rejectFlag){
-	    for (int i = 0; i < numbins; ++i){
-		if(mags[i] > floorMag){
-		    unit->m_mags[i] = mags[i] = lininterp(amode, 1.0, 1.0 - (mags[i] * rMaxMag));
-		} else {
-		    unit->m_mags[i] = mags[i] = 1.0 - amode;
-		}
-		p->bin[i].mag *= mags[i];
-	    }
-	} else {
-	    for (int i = 0; i < numbins; ++i){
-		if(mags[i] > floorMag){
-		    unit->m_mags[i] = mags[i] = lininterp(amode, 1.0, mags[i] * rMaxMag);
-		} else {
-		    unit->m_mags[i] = mags[i] = amode;
-		}
-		p->bin[i].mag *= mags[i];
+	for(int i = 0; i < numbins; ++i){
+	    unit->m_mags[i] = mags[i] *= rMaxMag;
+	}
+    }
+    if(mode > 0.0){
+	rejectFlag = false;
+	if(mode > 1.0){
+	    mode = 1.0;
+	}
+    } else {
+	rejectFlag = true;
+	if(mode < -1.0){
+	    mode = -1.0;
+	}
+    }
+    float amode = fabs(mode);
+    float onemamode = 1.0 - amode;
+    if(rejectFlag){
+	for (int i=0; i<numbins; ++i) {
+	    if(mags[i] > floor){ 
+		p->bin[i].mag *= lininterp(amode, 1.0, 1.0 - mags[i]);
+	    } else {
+		p->bin[i].mag *= onemamode;
 	    }
 	}
-		
-    
+    } else {
+	for (int i=0; i<numbins; ++i) {
+	    if(mags[i] > floor){ 
+		p->bin[i].mag *= lininterp(amode, 1.0, mags[i]);
+	    } else {
+		p->bin[i].mag *= onemamode;
+	    }
+	}
     }
 }
 

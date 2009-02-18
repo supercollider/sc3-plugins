@@ -12,14 +12,14 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a91616}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ac1213}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #307109}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2f7104}
 span.s1 {color: #000000}
-span.s2 {color: #0013bc}
-span.s3 {color: #a91616}
-span.s4 {color: #307109}
+span.s2 {color: #0012bd}
+span.s3 {color: #ac1213}
+span.s4 {color: #2f7104}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -55,7 +55,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="Apple-tab-span">	</span>chain1 = <span class="s2">FFT</span>(a, <span class="s2">LFSaw</span>.ar(120)); <span class="s4">// to be filtered</span></p>
 <p class="p8"><span class="Apple-tab-span">	</span>chain2 = <span class="s2">FFT</span>(b, <span class="s2">PlayBuf</span>.ar(<span class="s2">1</span>, z, <span class="s2">1</span>, loop: <span class="s2">1</span>));</p>
 <p class="p9"><span class="s1"><span class="Apple-tab-span">	</span></span>// mouse x to play with floor.<span class="Apple-converted-space"> </span></p>
-<p class="p8"><span class="Apple-tab-span">	</span>chain1 = <span class="s2">PV_SpectralMap</span>(chain1, chain2, <span class="s2">0.1</span>, freeze, MouseX.kr(-1, 1));</p>
+<p class="p8"><span class="Apple-tab-span">	</span>chain1 = <span class="s2">PV_SpectralMap</span>(chain1, chain2, <span class="s2">0.0</span>, freeze, MouseX.kr(-1, 1));</p>
 <p class="p8"><span class="Apple-tab-span">	</span>out = <span class="s2">IFFT</span>(chain1);</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(<span class="s2">0</span>, out.dup);</p>
 <p class="p8">}).play(s, [<span class="s3">\sndBuf</span>, z, <span class="s3">\freeze</span>, <span class="s2">0</span>])</p>
