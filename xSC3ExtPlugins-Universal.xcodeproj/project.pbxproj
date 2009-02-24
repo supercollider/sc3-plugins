@@ -79,6 +79,7 @@
 				37AF81B50ECDDB8200CD45A0 /* PBXTargetDependency */,
 				DC4E1F910F1C901C0003E241 /* PBXTargetDependency */,
 				DC4E1F8F0F1C901C0003E241 /* PBXTargetDependency */,
+				F303893B0F5469C4009EC952 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -489,6 +490,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F3AAAAC40ECFCE5400460E62;
 			remoteInfo = VOSIM;
+		};
+		F303893A0F5469C4009EC952 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
+			remoteInfo = BerlachUGens;
 		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3483,6 +3491,11 @@
 			isa = PBXTargetDependency;
 			target = F3AAAAC40ECFCE5400460E62 /* VOSIM */;
 			targetProxy = DC4E1F900F1C901C0003E241 /* PBXContainerItemProxy */;
+		};
+		F303893B0F5469C4009EC952 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
+			targetProxy = F303893A0F5469C4009EC952 /* PBXContainerItemProxy */;
 		};
 		F3A15D040B5D8C0B00D75043 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
