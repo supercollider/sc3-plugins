@@ -245,6 +245,7 @@ plugs = [
 	'BhobNoise',
 	'LadspaUGens',
 	'VOSIM'
+	'BerlachUGens'
 ]
 
 if platform.system() == 'OSX':
@@ -363,6 +364,7 @@ plugdirs = [
 	'Stk',
 	'TagSystem',
 	'VOSIM'
+	'Berlach'
 ]
 
 # ======================================================================

@@ -1,0 +1,9 @@
+(
+\name:	"BerlachUGens",
+\path:	"BerlachUGens",
+\summary:	 "sc3-plugins:BerlachUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"BerlachUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.3
+)

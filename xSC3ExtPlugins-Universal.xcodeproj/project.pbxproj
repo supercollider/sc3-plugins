@@ -249,6 +249,10 @@
 		F3B10AFD0EBEC870001ABFAC /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3B3C48E0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */; };
 		F3B3C4900B876A3F00FBDE78 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
+		F3B4FA0A0F537EB400B0CD00 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		F3B4FA130F537ED400B0CD00 /* BerlachUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */; };
+		F3B4FA160F537EE200B0CD00 /* Oversamp.h in Headers */ = {isa = PBXBuildFile; fileRef = F3B4FA140F537EE200B0CD00 /* Oversamp.h */; };
+		F3B4FA170F537EE200B0CD00 /* sinctab.h in Headers */ = {isa = PBXBuildFile; fileRef = F3B4FA150F537EE200B0CD00 /* sinctab.h */; };
 		F3D57D190B102B8A0034519F /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F3D57D290B102C1E0034519F /* BlackrainUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */; };
 		F3FE072F0B0D759000A29459 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -715,6 +719,10 @@
 		F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VOSIM.cpp; path = source/VOSIM.cpp; sourceTree = "<group>"; };
 		F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LadspaUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FFT2InterfaceBhob.cpp; sourceTree = "<group>"; };
+		F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BerlachUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BerlachUGens.cpp; path = source/BerlachUGens.cpp; sourceTree = "<group>"; };
+		F3B4FA140F537EE200B0CD00 /* Oversamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Oversamp.h; path = source/Oversamp.h; sourceTree = "<group>"; };
+		F3B4FA150F537EE200B0CD00 /* sinctab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sinctab.h; path = source/sinctab.h; sourceTree = "<group>"; };
 		F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BlackrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BlackrainUGens.cpp; sourceTree = "<group>"; };
 		F3FE07360B0D759000A29459 /* JoshUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -964,6 +972,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3B4FA090F537EB400B0CD00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3B4FA0A0F537EB400B0CD00 /* vecLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3D57D180B102B8A0034519F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1045,6 +1061,9 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
+				F3B4FA140F537EE200B0CD00 /* Oversamp.h */,
+				F3B4FA150F537EE200B0CD00 /* sinctab.h */,
+				F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */,
 				F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */,
 				F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */,
 				F359F57B0EC217750053D29C /* BatUGens.cpp */,
@@ -1260,6 +1279,7 @@
 				F359F57A0EC217590053D29C /* BatUGens.scx */,
 				F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */,
 				F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */,
+				F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1595,6 +1615,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3B4FA060F537EB400B0CD00 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3B4FA160F537EE200B0CD00 /* Oversamp.h in Headers */,
+				F3B4FA170F537EE200B0CD00 /* sinctab.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2249,6 +2278,26 @@
 			productReference = F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		F3B4FA050F537EB400B0CD00 /* BerlachUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3B4FA0D0F537EB400B0CD00 /* Build configuration list for PBXNativeTarget "BerlachUGens" */;
+			buildPhases = (
+				F3B4FA060F537EB400B0CD00 /* Headers */,
+				F3B4FA070F537EB400B0CD00 /* Sources */,
+				F3B4FA090F537EB400B0CD00 /* Frameworks */,
+				F3B4FA0B0F537EB400B0CD00 /* Rez */,
+				F3B4FA0C0F537EB400B0CD00 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BerlachUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens (Upgraded)" */;
@@ -2381,6 +2430,7 @@
 				F359F56E0EC217590053D29C /* BatUGens */,
 				F3AAAAC40ECFCE5400460E62 /* VOSIM */,
 				F3331AF70EFC4ADA00A32D02 /* RFWUGens */,
+				F3B4FA050F537EB400B0CD00 /* BerlachUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2597,6 +2647,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3B10AFE0EBEC870001ABFAC /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3B4FA0B0F537EB400B0CD00 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2913,6 +2970,15 @@
 			shellPath = /bin/sh;
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
+		F3B4FA0C0F537EB400B0CD00 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
 		F3D57D1B0B102B8A0034519F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3210,6 +3276,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F33C341E0EBFBE9B00AA345D /* LadspaUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3B4FA070F537EB400B0CD00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3B4FA130F537ED400B0CD00 /* BerlachUGens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6635,6 +6709,103 @@
 			};
 			name = Default;
 		};
+		F3B4FA0E0F537EB400B0CD00 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		F3B4FA0F0F537EB400B0CD00 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BerlachUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F3B4FA100F537EB400B0CD00 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 		F3D57D1D0B102B8A0034519F /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7382,6 +7553,16 @@
 				F3B10B010EBEC870001ABFAC /* Development */,
 				F3B10B020EBEC870001ABFAC /* Deployment */,
 				F3B10B030EBEC870001ABFAC /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F3B4FA0D0F537EB400B0CD00 /* Build configuration list for PBXNativeTarget "BerlachUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3B4FA0E0F537EB400B0CD00 /* Development */,
+				F3B4FA0F0F537EB400B0CD00 /* Deployment */,
+				F3B4FA100F537EB400B0CD00 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
