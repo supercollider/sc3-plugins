@@ -27,6 +27,8 @@ $movecmd build/RMEQSuite*.$pluginext     Extensions/RMEQSuiteUGens
 $movecmd build/RFWUGens.$pluginext       Extensions/RFWUGens
 $movecmd build/SLUGens*.$pluginext       Extensions/SLUGens
 $movecmd build/VOSIM.$pluginext          Extensions/VOSIMUGens
+$movecmd build/Berlach.$pluginext          Extensions/BerlachUGens
+
 if [ -f build/STKUGens*.$pluginext ]; then
 	$movecmd build/STKUGens*.$pluginext      Extensions/StkUGens
 fi
