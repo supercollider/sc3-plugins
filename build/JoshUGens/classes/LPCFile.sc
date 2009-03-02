@@ -4,16 +4,20 @@ LPCFile : File {
 	var <>resrms, <>origrms, <>nrmerr, <>pchcps, <len, <signal, <restOfHeader, <le;	
 	
 	*new {arg path, buffer, server;
-		server = server ? Server.default;
-		buffer = buffer.asUGenInput ? server.bufferAllocator.alloc(1);
 		^super.new(path, "rb").init(buffer, server, path);
 		}
 		
 	init {arg thisbuf, thisserver, thispath;
+		thisserver = thisserver ? Server.default;
+		server = thisserver;
+		thisbuf = buffer.asUGenInput ? server.bufferAllocator.alloc(1);
 		path = thispath;
 		buffer = thisbuf;
-		server = thisserver;
-		this.readHeader;
+		this.isOpen.if({
+			this.readHeader;
+			}, {
+			("LPCFile couldn't find a file at: "++path).warn;
+			})
 		}
 		
 	readHeader {
@@ -97,6 +101,7 @@ LPCFile : File {
 	// saves in a format that SC can use as a Buffer
 	saveToFile { arg path;
 		var data, sndfile, collection, startFrame;
+		this.loadToSignal;
 		collection = signal;
 		startFrame = 0;
 		server.isLocal.if({
@@ -116,49 +121,53 @@ LPCFile : File {
 	}	
 		
 	loadToBuffer {
-		var c, inc, size, numcycles, tmp;
+		var c, numcycles, tmp;
 		c = Condition.new;
+		this.loadToSignal;
 		Routine.run{
 			this.server.sync(c);
-			inc = 3;
-			size = 2**((len).log2.ceil);
-			signal = Signal.newClear(size);
-			signal[0] = this.numPoles; // the number of poles
-			signal[1] = this.nframes; // the number of frames
-			signal[2] = this.nvals; // number of values for each frame (for inc later in UGen)
-			this.resrms.do{arg val;
-				signal[inc] = val;
-				inc = inc + 1;
-				};
-			this.origrms.do{arg val;
-				signal[inc] = val;
-				inc = inc + 1;
-				};
-			this.nrmerr.do{arg val;
-				signal[inc] = val;
-				inc = inc + 1;
-				};
-			this.pchcps.do{arg val;
-				signal[inc] = val;
-				inc = inc + 1;
-				};
-			this.numPoles.do{arg k;
-				this.coefs[k].do{arg val;
-					signal[inc] = val;
-					inc = inc + 1;
-					}
-				};
-
+			this.loadToSignal;
 			tmp = Buffer.loadCollection(this.server, signal);
 			buffer = tmp.bufnum;		
 			("LPC data loaded to buffer "++ buffer.asString).postln;
 			}
 		}
+		
+	loadToSignal {
+		var inc, size;
+		inc = 3;
+		size = 2**((len).log2.ceil);
+		signal = Signal.newClear(size);
+		signal[0] = this.numPoles; // the number of poles
+		signal[1] = this.nframes; // the number of frames
+		signal[2] = this.nvals; // number of values for each frame (for inc later in UGen)
+		this.resrms.do{arg val;
+			signal[inc] = val;
+			inc = inc + 1;
+			};
+		this.origrms.do{arg val;
+			signal[inc] = val;
+			inc = inc + 1;
+			};
+		this.nrmerr.do{arg val;
+			signal[inc] = val;
+			inc = inc + 1;
+			};
+		this.pchcps.do{arg val;
+			signal[inc] = val;
+			inc = inc + 1;
+			};
+		this.numPoles.do{arg k;
+			this.coefs[k].do{arg val;
+				signal[inc] = val;
+				inc = inc + 1;
+				}
+			};
+		}
 	
 	saveLPCFile {arg path;
 		var fil;
 		fil = File.new(path, "wb");
-		
 		fil.putInt32(headerSize);
 		fil.putInt32(magicNum);
 		fil.putInt32(numPoles);

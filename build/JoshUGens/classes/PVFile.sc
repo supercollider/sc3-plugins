@@ -5,19 +5,22 @@ PVFile : File {
 	var <len, <signal, <le, <path, filepath, <loaded, <magScale;	
 	
 	*new {arg path, server;
-		server = server ? Server.default;
 		^super.new(path, "rb").init(path, server);
 		}
 
 	*load {arg path, server;
 		^this.new(path, server).load;
 		}
-			
+
 	init {arg argpath, argserver;
 		path = argpath;
 		server = argserver ?? {Server.default};
 		loaded = false;
-		this.readHeader;
+		this.isOpen.if({
+			this.readHeader;
+			}, {
+			("PVFile couldn't find a file at: "++path).warn;
+			})
 		}
 		
 	readHeader {

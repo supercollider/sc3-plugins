@@ -927,34 +927,6 @@ ProcEvents {
 										server.sendMsg(\n_set, pedalnode, 
 											\mute, (me.value - 1).abs);
 										});
-								/*
-								GUI.slider.new(pedalgui, Rect(pedalgui.bounds.width * 0.1, 
-										pedalgui.bounds.height * 0.3,
-										pedalgui.bounds.width * 0.3, 
-										pedalgui.bounds.height * 0.6))
-									.value_(headspec.unmap(headroom))
-									.action_({arg me;
-										var idx, mapval;
-										mapval = headspec.map(me.value.round(0.01));
-										idx = pedalgui.view.children.indexOf(me);
-										pedalgui.view.children[idx + 1].value_(mapval);
-										server.sendMsg(\n_set, pedalnode, \headroom, mapval); 
-										});
-								GUI.numberBox.new(pedalgui, Rect(pedalgui.bounds.width * 0.45, 
-										pedalgui.bounds.height * 0.8, 
-										pedalgui.bounds.width * 0.4,
-										pedalgui.bounds.height * 0.1))
-									.value_(headroom)
-									.action_({arg me;
-										var idx;
-										idx = pedalgui.view.children.indexOf(me);
-										pedalgui.view.children[idx - 1].value_(
-											headspec.unmap(me.value));
-										server.sendMsg(\n_set, pedalnode, 
-											\headroom, me.value); 
-
-										});
-								*/
 								gui.if({window.front});
 							}.defer;
 							// remove this repsonder
@@ -1351,7 +1323,7 @@ ProcEvents {
 			SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
 					mute = 1, scale = 1;
 				var in, delay, trig, pitch, hasPitch;
-//				in = Amplitude.kr(In.ar(pedalin)) * mute;
+//				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
 				in = In.ar(pedalin) * scale * mute;
 //				[in, in*scale, scale, mute].poll;
 //				delay = DelayN.ar(in, 0.01, 0.01);
