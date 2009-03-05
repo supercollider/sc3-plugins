@@ -244,7 +244,7 @@ plugs = [
 	'BhobGrain',
 	'BhobNoise',
 	'LadspaUGens',
-	'VOSIM'
+	'VOSIM',
 	'BerlachUGens'
 ]
 
@@ -363,7 +363,7 @@ plugdirs = [
 	'SL',
 	'Stk',
 	'TagSystem',
-	'VOSIM'
+	'VOSIM',
 	'Berlach'
 ]
 
