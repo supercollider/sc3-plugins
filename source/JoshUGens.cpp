@@ -227,93 +227,103 @@ struct DelTapRd : public Unit
 	float m_fbufnum, m_delTime;
 };
 
+struct TRamp : public Unit
+{
+    float prevValue, lastSample;
+    int counter;
+}
+
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-	
-	void Maxamp_next(Maxamp *unit, int inNumSamples);
-	void Maxamp_Ctor(Maxamp* unit);
-	
-	// being a little lazy for the time being... treat PVSynth as
-	// a type 1 ATS file ... HAH! Not anymore! Laziness be gone!
-	
-	void PVSynth_next(PVSynth *unit, int inNumSamples);
-	void PVSynth_Ctor(PVSynth* unit);
-	void PVSynth_Dtor(PVSynth* unit);
-	
-	void PVInfo_next(PVInfo *unit, int inNumSamples);
-	void PVInfo_Ctor(PVInfo* unit);
-	
-	void AtsSynth_next(AtsSynth *unit, int inNumSamples);
-	void AtsSynth_Ctor(AtsSynth* unit);
-	void AtsSynth_Dtor(AtsSynth* unit);
-
-	void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples);
-	void AtsNoiSynth_Ctor(AtsNoiSynth* unit);
-	void AtsNoiSynth_Dtor(AtsNoiSynth* unit);	
-	
-	void AtsFreq_next(AtsFreq *unit, int inNumSamples);
-	void AtsFreq_Ctor(AtsFreq* unit);
-
-	void AtsAmp_next(AtsAmp *unit, int inNumSamples);
-	void AtsAmp_Ctor(AtsAmp* unit);
-
-	void AtsNoise_next(AtsNoise *unit, int inNumSamples);
-	void AtsNoise_Ctor(AtsNoise* unit);
-	
-	void AtsParInfo_next(AtsParInfo *unit, int inNumSamples);
-	void AtsParInfo_Ctor(AtsParInfo* unit);
-
-	void SinTone_next(SinTone *unit, int inNumSamples);
-	void SinTone_Ctor(SinTone* unit);
-	
-	void LPCVals_next_k(LPCVals *unit,  int inNumSamples);
-	void LPCVals_next_a(LPCVals *unit,  int inNumSamples);
-	void LPCVals_Ctor(LPCVals* unit);
-
-	void LPCSynth_next_k(LPCSynth *unit, int inNumSamples);
-	void LPCSynth_next_a(LPCSynth *unit, int inNumSamples);
-	void LPCSynth_Ctor(LPCSynth* unit);
-	void LPCSynth_Dtor(LPCSynth* unit);
-	    
-	void AudioMSG_Ctor(AudioMSG* unit);
-	void AudioMSG_next_a(AudioMSG *unit, int inNumSamples);
-	void AudioMSG_next_k(AudioMSG *unit, int inNumSamples);
-	
-	void Balance_Ctor(Balance* unit);
-	void Balance_next_a(Balance* unit, int inNumSamples);
-	void Balance_next_k(Balance* unit, int inNumSamples);
-		
-	void MoogVCF_Ctor(MoogVCF* unit);
-	void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples);
-	void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples);
-	void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples);
-	void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples);
-	
-	void PosRatio_Ctor(PosRatio* unit);
-	void PosRatio_next(PosRatio *unit, int inNumSamples);
-
-	void CombLP_Ctor(CombLP* unit);
-	void CombLP_next_aa(CombLP *unit, int inNumSamples);
-	void CombLP_next_aa_z(CombLP *unit, int inNumSamples);
-	void CombLP_next_kk(CombLP *unit, int inNumSamples);
-	void CombLP_next_kk_z(CombLP *unit, int inNumSamples);
-	void CombLP_next_ka(CombLP *unit, int inNumSamples);
-	void CombLP_next_ka_z(CombLP *unit, int inNumSamples);
-	void CombLP_next_ak(CombLP *unit, int inNumSamples);
-	void CombLP_next_ak_z(CombLP *unit, int inNumSamples);
+    void load(InterfaceTable *inTable);
     
-	void DelTapWr_Ctor(DelTapWr* unit);
-	void DelTapWr_next(DelTapWr *unit, int inNumSamples);
-	void DelTapWr_first(DelTapWr *unit, int inNumSamples);
+    void Maxamp_next(Maxamp *unit, int inNumSamples);
+    void Maxamp_Ctor(Maxamp* unit);
+    
+    // being a little lazy for the time being... treat PVSynth as
+    // a type 1 ATS file ... HAH! Not anymore! Laziness be gone!
+    
+    void PVSynth_next(PVSynth *unit, int inNumSamples);
+    void PVSynth_Ctor(PVSynth* unit);
+    void PVSynth_Dtor(PVSynth* unit);
+    
+    void PVInfo_next(PVInfo *unit, int inNumSamples);
+    void PVInfo_Ctor(PVInfo* unit);
+    
+    void AtsSynth_next(AtsSynth *unit, int inNumSamples);
+    void AtsSynth_Ctor(AtsSynth* unit);
+    void AtsSynth_Dtor(AtsSynth* unit);
+
+    void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples);
+    void AtsNoiSynth_Ctor(AtsNoiSynth* unit);
+    void AtsNoiSynth_Dtor(AtsNoiSynth* unit);	
+    
+    void AtsFreq_next(AtsFreq *unit, int inNumSamples);
+    void AtsFreq_Ctor(AtsFreq* unit);
+
+    void AtsAmp_next(AtsAmp *unit, int inNumSamples);
+    void AtsAmp_Ctor(AtsAmp* unit);
+
+    void AtsNoise_next(AtsNoise *unit, int inNumSamples);
+    void AtsNoise_Ctor(AtsNoise* unit);
+    
+    void AtsParInfo_next(AtsParInfo *unit, int inNumSamples);
+    void AtsParInfo_Ctor(AtsParInfo* unit);
+
+    void SinTone_next(SinTone *unit, int inNumSamples);
+    void SinTone_Ctor(SinTone* unit);
+    
+    void LPCVals_next_k(LPCVals *unit,  int inNumSamples);
+    void LPCVals_next_a(LPCVals *unit,  int inNumSamples);
+    void LPCVals_Ctor(LPCVals* unit);
+
+    void LPCSynth_next_k(LPCSynth *unit, int inNumSamples);
+    void LPCSynth_next_a(LPCSynth *unit, int inNumSamples);
+    void LPCSynth_Ctor(LPCSynth* unit);
+    void LPCSynth_Dtor(LPCSynth* unit);
 	
-	void DelTapRd_Ctor(DelTapRd* unit);
-	void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples);
-	void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples);
-	void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples);
-	void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
-	void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
-	void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
+    void AudioMSG_Ctor(AudioMSG* unit);
+    void AudioMSG_next_a(AudioMSG *unit, int inNumSamples);
+    void AudioMSG_next_k(AudioMSG *unit, int inNumSamples);
+    
+    void Balance_Ctor(Balance* unit);
+    void Balance_next_a(Balance* unit, int inNumSamples);
+    void Balance_next_k(Balance* unit, int inNumSamples);
+	    
+    void MoogVCF_Ctor(MoogVCF* unit);
+    void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples);
+    void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples);
+    void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples);
+    void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples);
+    
+    void PosRatio_Ctor(PosRatio* unit);
+    void PosRatio_next(PosRatio *unit, int inNumSamples);
+
+    void CombLP_Ctor(CombLP* unit);
+    void CombLP_next_aa(CombLP *unit, int inNumSamples);
+    void CombLP_next_aa_z(CombLP *unit, int inNumSamples);
+    void CombLP_next_kk(CombLP *unit, int inNumSamples);
+    void CombLP_next_kk_z(CombLP *unit, int inNumSamples);
+    void CombLP_next_ka(CombLP *unit, int inNumSamples);
+    void CombLP_next_ka_z(CombLP *unit, int inNumSamples);
+    void CombLP_next_ak(CombLP *unit, int inNumSamples);
+    void CombLP_next_ak_z(CombLP *unit, int inNumSamples);
+
+    void DelTapWr_Ctor(DelTapWr* unit);
+    void DelTapWr_next(DelTapWr *unit, int inNumSamples);
+    void DelTapWr_first(DelTapWr *unit, int inNumSamples);
+    
+    void DelTapRd_Ctor(DelTapRd* unit);
+    void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples);
+    void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples);
+    void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples);
+    void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
+    void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
+    void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
+
+    void TRamp_Ctor(TRamp *unit);
+    void TRamp_next_a(TRamp *unit, int inNumSamples); 
+    void TRamp_next_k(TRamp *unit, int inNumSamples); 
     }
 
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
@@ -3423,6 +3433,51 @@ void PanX_next(PanX *unit, int inNumSamples)
     }
 }
 
+void TRamp_Ctor(TRamp *unit)
+{
+    OUT0(0) = IN0(0);
+    unit->lastSample = unit->prevValue = IN0(0);
+    if((INRATE(0) == calc_FullRate)
+	SETCALC(TRamp_next_a);
+    else 
+	SETCALC(TRamp_next_k);
+}
+
+void TRamp_next_a(TRamp *unit, int inNumSamples)
+{
+    float *in = IN(0);
+    float *out = OUT(0);
+       
+    for(int i = 0; i < inNumSamples; i++){
+       if(unit->prevValue != in[i])
+       {
+       unit->curValue = unit->curPoint = unit->prevValue;
+       unit->prevValue = in[i];
+       float duration = IN_AT(unit, 1, i); 
+       float shape = IN_AT(unit, 2, i);
+       float curve = IN_AT(unit, 3, i);
+       unit->counter = (int)(duration * SAMPLERATE);
+       }
+       if(unit->counter == 0){
+	out[i] = unit->curValue
+       } else {
+	   if(shape >= 0.0)
+	   {
+	   
+	   } else {
+	   
+	   } 
+       }
+    }
+}
+
+void TRamp_next_k(TRamp *unit, int inNumSamples)
+{
+    for(int i = 0; i < inNumSamples; i++){
+	
+	
+    }
+}
 
 /*
 void PanX_Ctor(PanX *unit)

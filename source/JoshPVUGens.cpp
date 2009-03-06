@@ -2446,26 +2446,33 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 	unit->m_numbins = numbins;
     } else if (numbins != unit->m_numbins) return;
     
-    
     float freeze = ZIN0(3);
     float floor = ZIN0(2);
     float mode = ZIN0(4); // 1 acts as bandpass, -1 as bandreject, 0 hs no effect
+    float norm = ZIN0(5);
     
     float *mags = unit->m_mags;
     
     if (freeze <= 0.f) {
-	for (int i=0; i<numbins; ++i) {
-	    mags[i] = s->bin[i].mag;
-	    if(maxMag < mags[i]) maxMag = mags[i];
-	}
-	// make sure there isn't a divide by 0.0;
-	if(maxMag > 0.00000001){ 
-	    rMaxMag = 1.0 / maxMag;
+	if(norm <= 0.f) {
+	    for (int i=0; i<numbins; ++i) {
+		mags[i] = s->bin[i].mag;
+		if(maxMag < mags[i]) maxMag = mags[i];
+	    }
+	    // make sure there isn't a divide by 0.0;
+	    if(maxMag > 0.00000001){ 
+		rMaxMag = 1.0 / maxMag;
+	    } else {
+		rMaxMag = 0.0;  
+	    }
+	    for(int i = 0; i < numbins; ++i){
+		unit->m_mags[i] = mags[i] *= rMaxMag;
+	    }
 	} else {
-	    rMaxMag = 0.0;  
-	}
-	for(int i = 0; i < numbins; ++i){
-	    unit->m_mags[i] = mags[i] *= rMaxMag;
+	    float rNumbins = 1.0 / (float)numbins;
+	    for (int i=0; i<numbins; ++i) {
+		unit->m_mags[i] = mags[i] = s->bin[i].mag * rNumbins;
+	    }	    
 	}
     }
     if(mode > 0.0){

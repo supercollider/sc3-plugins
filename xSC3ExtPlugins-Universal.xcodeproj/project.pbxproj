@@ -495,7 +495,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
+			remoteGlobalIDString = F3B4FA050F537EB400B0CD00;
 			remoteInfo = BerlachUGens;
 		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
