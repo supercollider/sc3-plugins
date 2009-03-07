@@ -226,13 +226,13 @@ struct DelTapRd : public Unit
 	SndBuf *m_buf;
 	float m_fbufnum, m_delTime;
 };
-
+/*
 struct TRamp : public Unit
 {
     float prevValue, lastSample;
     int counter;
-}
-
+};
+*/
 extern "C"
 {
     void load(InterfaceTable *inTable);
@@ -320,10 +320,11 @@ extern "C"
     void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
     void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
     void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
-
+    /*
     void TRamp_Ctor(TRamp *unit);
     void TRamp_next_a(TRamp *unit, int inNumSamples); 
     void TRamp_next_k(TRamp *unit, int inNumSamples); 
+     */
     }
 
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
@@ -3432,7 +3433,7 @@ void PanX_next(PanX *unit, int inNumSamples)
 	}
     }
 }
-
+/*
 void TRamp_Ctor(TRamp *unit)
 {
     OUT0(0) = IN0(0);
@@ -3478,7 +3479,7 @@ void TRamp_next_k(TRamp *unit, int inNumSamples)
 	
     }
 }
-
+*/
 /*
 void PanX_Ctor(PanX *unit)
 {
