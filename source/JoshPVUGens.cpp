@@ -24,28 +24,6 @@
 	rgen.s1 = s1; \
 	rgen.s2 = s2; \
 	rgen.s3 = s3;
-
-// for operation on one buffer
-//#define PV_GET_BUF \
-	float fbufnum = ZIN0(0); \
-	if (fbufnum < 0.f) { ZOUT0(0) = -1.f; return; } \
-	ZOUT0(0) = fbufnum; \
-	uint32 bufnum = (uint32)fbufnum; \
-	World *world = unit->mWorld; \
-		if (bufnum >= world->mNumSndBufs) { \
-			int localBufNum = bufnum - world->mNumSndBufs; \
-			Graph *parent = unit->mParent; \
-			if(localBufNum <= parent->localBufNum) { \
-				unit->m_buf = parent->mLocalSndBufs + localBufNum; \
-			} else { \
-				bufnum = 0; \
-				unit->m_buf = world->mSndBufs + bufnum; \
-			} \
-		} else { \
-			unit->m_buf = world->mSndBufs + bufnum; \
-		} \
-	SndBuf *buf = unit->m_buf; \
-	int numbins = buf->samples - 2 >> 1;
 	
 InterfaceTable *ft;	
 
@@ -2432,9 +2410,10 @@ void PV_BinBufRd_Dtor(PV_BinBufRd* unit)
 void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 {	
     float maxMag = 0.0f;
-    float rMaxMag;
+    float rMaxMag, scaler, rScaler;
     bool rejectFlag = false;
-
+    scaler = rScaler = 1.0;
+    
     PV_GET_BUF2
     
     SCPolarBuf *p = ToPolarApx(buf1);
@@ -2469,9 +2448,19 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 		unit->m_mags[i] = mags[i] *= rMaxMag;
 	    }
 	} else {
-	    float rNumbins = 1.0 / (float)numbins;
+	    float wintype = ZIN0(6);
+	    if(wintype >= 1){
+		scaler = numbins * 0.5;
+	    } else { 
+		if(wintype >= 0.0){
+		    scaler = numbins * 0.6369426751592;
+		} else {
+		    scaler = numbins;
+		}
+	    }
+	    rScaler = 1.0 / scaler;
 	    for (int i=0; i<numbins; ++i) {
-		unit->m_mags[i] = mags[i] = s->bin[i].mag * rNumbins;
+		unit->m_mags[i] = mags[i] = s->bin[i].mag * rScaler;
 	    }	    
 	}
     }
