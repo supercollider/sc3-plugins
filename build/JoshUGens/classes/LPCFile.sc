@@ -201,6 +201,5 @@ LPCFile : File {
 	free {buffer.free}
 	bufnum {^buffer}
 	asControlInput { ^buffer }
-	asUGenInput { ^buffer }
 	}
 	
