@@ -148,5 +148,8 @@ AtsFile : File {
 			("No phase information in Ats file type " ++ atsType).warn;
 			});
 		}
+		
+	asControlInput { ^bufnum }
+	asUGenInput { ^bufnum }
 
 }

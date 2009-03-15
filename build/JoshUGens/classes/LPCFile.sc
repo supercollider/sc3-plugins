@@ -199,5 +199,8 @@ LPCFile : File {
 		
 	asUGenInput {^buffer}
 	free {buffer.free}
+	bufnum {^buffer}
+	asControlInput { ^buffer }
+	asUGenInput { ^buffer }
 	}
 	

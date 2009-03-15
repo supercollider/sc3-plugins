@@ -180,4 +180,8 @@ PVFile : File {
 	calcMagScale {
 		magScale = (this.mags.flat.mean * nBins).reciprocal;
 		}
+		
+	bufnum {^buffer}
+	asControlInput { ^buffer }
+	asUGenInput { ^buffer }
 }
