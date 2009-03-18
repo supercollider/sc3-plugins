@@ -1767,6 +1767,7 @@ void PV_PlayBuf_Ctor(PV_PlayBuf* unit)
 	SETCALC(PV_PlayBuf_first);
 	OUT0(0) = IN0(0);
 	unit->first = true;
+	unit->m_frame = (int)IN0(3);    
 	
 	COND_FFT_BUF
 }
