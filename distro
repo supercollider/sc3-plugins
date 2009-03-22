@@ -42,11 +42,11 @@ fi
 # License always important
 cp license.txt Extensions/license.txt
 
-mkdir -p Extensions/test
+#mkdir -p Extensions/test
 
 if [ `uname` = Darwin ]; then
 	# Deactivate wonky
-	mv Extensions/StkUGens Extensions/test
+#	mv Extensions/StkUGens Extensions/test
 	
 	# Add the readme
 	cp Resources/README-for-mac-distro.txt Extensions/README.txt
@@ -57,7 +57,7 @@ fi
 
 if [ `uname` = Linux ]; then
 	# Deactivate wonky
-	mv Extensions/MCLDUGens/MCLD_CQ_UGens.sc Extensions/test
+#	mv Extensions/MCLDUGens/MCLD_CQ_UGens.sc Extensions/test
 fi
 
 echo 'distro done.'

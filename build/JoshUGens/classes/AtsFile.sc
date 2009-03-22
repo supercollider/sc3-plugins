@@ -130,8 +130,21 @@ AtsFile : File {
 			});
 		}
 		
-//	getBandNoi {arg band;
-//		((atsType
+	getBandNoi {arg band;
+		(band <= 24).if({
+			(atsType >= 3).if({
+				^Array.fill(numFrames, {arg i; 
+					data[10 + (i * increment) + (numPartials * offset) + 1 + band]
+					})
+				}, {
+				"This ATS file doesn't appear to contain noise information".warn;
+				^nil
+				})
+			}, {
+			"Band number must be 24 or less".warn;
+			^nil
+			})
+		}
 		
 	getFrameFreq {arg frame;
 		^Array.fill(numPartials, {arg i; data[10 + (frame * increment) + (i * offset) + 2]});
@@ -146,6 +159,16 @@ AtsFile : File {
 			^Array.fill(numPartials, {arg i; data[10 + (frame * increment) + (i * offset) + 3]});
 			}, {
 			("No phase information in Ats file type " ++ atsType).warn;
+			});
+		}
+		
+	getFrameNoi {arg frame;
+		(atsType > 2).if({
+			^Array.fill(25, {arg i; 
+				data[10 + (frame * increment) + (numPartials * offset) + 1 + i]})
+			}, {
+			"This ATS file doesn't appear to contain noise information".warn;
+			^nil
 			});
 		}
 		
