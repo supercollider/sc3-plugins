@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+span.s1 {color: #0000bf}
+span.s2 {color: #bf0000}
+span.s3 {color: #000000}
+span.s4 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>SMS<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Spectral Modeling Synthesis</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>resynthesis = SMS.ar(input,maxpeaks=80, currentpeaks, tolerance=4, noisefloor= 0.2, freqmult=1.0, mul=1.0, add=0.0)</b></p>
+<p class="p2"><br></p>
+<p class="p3">An implementation of the sines+noise model first described by Xavier Serra in his 1989 PhD thesis; an input sound is analysed in terms of sinusoidal components by a peak tracking phase vocoder. The error between the sinusoidal reconstruction and the original signal (the residual) is then modeled by a noise model of filtered white noise. The sines part and the noise part are separately resynthesised, allowing independent transformations. <span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3">For technical details see:</p>
+<p class="p2"><br></p>
+<p class="p3">Xavier Serra and Julius O. Smith (1990) "Spectral Modeling Synthesis: A Sound Analysis/Synthesis System Based on a Deterministic plus Stochastic Decomposition". Computer Music Journal 14(4): 12--24</p>
+<p class="p2"><br></p>
+<p class="p3"><b>input- </b>Audio rate input to be analysed</p>
+<p class="p3"><b>maxpeaks- </b>Absolute maximum number of allowed peaks to be detected in the spectrum</p>
+<p class="p3"><b>currentpeaks- </b>Current number of allowed peaks to be detected in the spectrum</p>
+<p class="p3"><b>tolerance- </b>Search area for matching peaks; within tolerance spectral bins</p>
+<p class="p3"><b>noisefloor- </b>Minimum magnitude for a candidate peak (measured as spectral magnitude)</p>
+<p class="p3"><b>freqmult- </b>Resynthesis parameter to change frequency; currently causes a gross multiplication of frequency of all sinusoidal components, no spectral envelope compensation (formants not preserved)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//sine reconstruction left channel, noises on right</p>
+<p class="p7">(<span class="Apple-converted-space"> </span></p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>in= <span class="s1">SoundIn</span>.ar(0); <span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 70,<span class="s1">MouseY</span>.kr(1,50), 8, 0.3);<span class="Apple-converted-space">  </span><span class="s2">//or freqmult: MouseX.kr(0.5,4)</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>output<span class="Apple-converted-space"> </span></p>
+<p class="p7">}.play<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-converted-space"> </span></p>
+<p class="p7">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//just noise residual</p>
+<p class="p5"><br></p>
+<p class="p8"><span class="s3">d=</span><span class="s1">Buffer</span><span class="s3">.read(s,</span>"sounds/a11wlk01.wav"<span class="s3">);</span></p>
+<p class="p5"><br></p>
+<p class="p7">(<span class="Apple-converted-space"> </span></p>
+<p class="p7">{<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 50,50, <span class="s1">MouseX</span>.kr(1.0,10.0).round(1.0),<span class="s1">MouseY</span>.kr(0.1,20.0,<span class="s4">'exponential'</span>), 1.0); <span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(0,<span class="s1">Pan2</span>.ar(output[1]));<span class="Apple-converted-space"> </span></p>
+<p class="p7">}.play<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-converted-space"> </span></p>
+<p class="p7">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//transient detection via Pitch hasFreq output</p>
+<p class="p6">//could have freq input and transient detection input to SMS to control rendering <span class="Apple-converted-space"> </span></p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p5"><br></p>
+<p class="p7"><span class="s1">var</span> in, fft, sines, noise, freq, hasFreq;</p>
+<p class="p5"><br></p>
+<p class="p6">//in= SoundIn.ar(0);<span class="Apple-converted-space"> </span></p>
+<p class="p7">in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
+<p class="p5"><br></p>
+<p class="p7">#freq, hasFreq= <span class="s1">Pitch</span>.kr(in); <span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7">#sines, noise=<span class="s1">SMS</span>.ar(in, 50,50, 8, 1.0, <span class="s1">MouseX</span>.kr(0.5,4));<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7"><span class="s1">Pan2</span>.ar(sines*(hasFreq.lag(0.01,0.01)) + <span class="s1">LPF</span>.ar(noise,<span class="s1">MouseY</span>.kr(100,10000,<span class="s4">'exponential'</span>)),0.0)</p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//alternative; only pass into SMS if not a transient region</p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p5"><br></p>
+<p class="p7"><span class="s1">var</span> in, fft, sines, noise, freq, hasFreq;</p>
+<p class="p5"><br></p>
+<p class="p6">//in= SoundIn.ar(0);<span class="Apple-converted-space"> </span></p>
+<p class="p7">in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
+<p class="p5"><br></p>
+<p class="p7">#freq, hasFreq= <span class="s1">Pitch</span>.kr(in); <span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7">#sines, noise=<span class="s1">SMS</span>.ar(if(hasFreq,in, <span class="s1">Silent</span>.ar), 50,50, 8, 1.0, <span class="s1">MouseX</span>.kr(0.5,4));<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7">if(hasFreq,<span class="s1">Pan2</span>.ar(sines + <span class="s1">LPF</span>.ar(noise,<span class="s1">MouseY</span>.kr(100,10000,<span class="s4">'exponential'</span>)), 0.0),0.25*in)</p>
+<p class="p5"><br></p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+</body>
+</html>

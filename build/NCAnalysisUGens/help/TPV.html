@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {color: #000000}
+span.s2 {color: #001bb9}
+span.s3 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>TPV<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Tracking Phase Vocoder</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>resynthesis = TPV.ar(chain, windowsize=1024, hopsize=512, maxpeaks=80, currentpeaks, freqmult=1.0, tolerance=4, noisefloor= 0.01, mul=1.0, add=0.0)</b></p>
+<p class="p2"><br></p>
+<p class="p3">Implementation of the McAulay and Quatieri 1986 sinusoidal model, as described in:</p>
+<p class="p2"><br></p>
+<p class="p3">McAulay, R. and Quatieri, T. (1986) Speech analysis/Synthesis based on a sinusoidal representation. IEEE Transactions on Acoustics, Speech, and Signal Processing 34(4): 744--754</p>
+<p class="p2"><br></p>
+<p class="p3"><b>chain [fft] - </b>Audio input to track, which has been pre-analysed by the FFT UGen; see examples below for the expected FFT size</p>
+<p class="p3"><b>windowsize- </b>Window size used for FFT</p>
+<p class="p3"><b>hopsize- </b>hop size for FFT, typically half window size</p>
+<p class="p3"><b>maxpeaks- </b>Absolute maximum number of allowed peaks to be detected in the spectrum</p>
+<p class="p3"><b>currentpeaks- </b>Current number of allowed peaks to be detected in the spectrum</p>
+<p class="p3"><b>freqmult- </b>Resynthesis parameter to change frequency; currently causes a gross multiplication of frequency of all sinusoidal components, no envelope compensation</p>
+<p class="p3"><b>tolerance- </b>Search area for matching peaks; within tolerance spectral bins</p>
+<p class="p3"><b>noisefloor- </b>Minimum magnitude for a candidate peak</p>
+<p class="p2"><br></p>
+<p class="p4"><br></p>
+<p class="p5">b.free</p>
+<p class="p4"><br></p>
+<p class="p6">//assumes hop of half fftsize, fine</p>
+<p class="p6"><span class="s1">b = </span><span class="s2">Buffer</span><span class="s1">.alloc(s,1024,1); </span>//for sampling rates 44100 and 48000</p>
+<p class="p6">//b = Buffer.alloc(s,2048,1); //for sampling rates 88200 and 96000</p>
+<p class="p4"><br></p>
+<p class="p6">//d=Buffer.read(s,"sounds/a11wlk01.wav");</p>
+<p class="p7"><span class="s1">d=</span><span class="s2">Buffer</span><span class="s1">.read(s,</span>"sounds/break"<span class="s1">);</span></p>
+<p class="p4"><br></p>
+<p class="p8"><br></p>
+<p class="p9">(</p>
+<p class="p9">{</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">var</span> in, fft, output;</p>
+<p class="p8"><br></p>
+<p class="p10"><span class="s1">in= </span><span class="s3">SoundIn</span><span class="s1">.ar(0); </span>//PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);</p>
+<p class="p8"><br></p>
+<p class="p9">fft = <span class="s3">FFT</span>(b, in, wintype:1);</p>
+<p class="p8"><br></p>
+<p class="p9">output=<span class="s3">TPV</span>.ar(fft, 1024, 512, 70,<span class="s3">MouseX</span>.kr(1,70), <span class="s3">MouseY</span>.kr(0.25,3),4,0.2);<span class="Apple-converted-space"> </span></p>
+<p class="p8"><br></p>
+<p class="p10">//Out.ar(0,Pan2.ar(output));<span class="Apple-converted-space"> </span></p>
+<p class="p9">output</p>
+<p class="p9">}.play</p>
+<p class="p9">)</p>
+<p class="p8"><br></p>
+<p class="p9">(</p>
+<p class="p9">{</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">var</span> in, fft, output;</p>
+<p class="p8"><br></p>
+<p class="p9">in= <span class="s3">PlayBuf</span>.ar(1,d,<span class="s3">BufRateScale</span>.kr(d),1,0,1);</p>
+<p class="p8"><br></p>
+<p class="p9">fft = <span class="s3">FFT</span>(b, in, wintype:1);</p>
+<p class="p8"><br></p>
+<p class="p9">output=<span class="s3">TPV</span>.ar(fft, 1024, 512, 50,50,1.0,<span class="s3">MouseX</span>.kr(0.1,100),<span class="s3">MouseY</span>.kr(-20,40).dbamp);<span class="Apple-converted-space"> </span></p>
+<p class="p8"><br></p>
+<p class="p10">//Out.ar(0,Pan2.ar(output));<span class="Apple-converted-space"> </span></p>
+<p class="p9">output</p>
+<p class="p9">}.play</p>
+<p class="p9">)</p>
+<p class="p8"><br></p>
+<p class="p8"><br></p>
+<p class="p9">(</p>
+<p class="p9">{</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">var</span> in, fft, output;</p>
+<p class="p8"><br></p>
+<p class="p9">in= <span class="s3">PlayBuf</span>.ar(1,d,<span class="s3">BufRateScale</span>.kr(d),1,0,1);</p>
+<p class="p8"><br></p>
+<p class="p9">fft = <span class="s3">FFT</span>(b, in);</p>
+<p class="p8"><br></p>
+<p class="p9">output=<span class="s3">TPV</span>.ar(fft, 1024, 512, 1,1);<span class="Apple-converted-space"> </span></p>
+<p class="p8"><br></p>
+<p class="p9">output</p>
+<p class="p10">//Out.ar(0,output);<span class="Apple-converted-space"> </span></p>
+<p class="p9">}.plot(0.05, s, <span class="s3">nil</span>, -1.5, 1.5);</p>
+<p class="p9">)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p6">//residual</p>
+<p class="p4"><br></p>
+<p class="p6"><span class="s1">b = </span><span class="s2">Buffer</span><span class="s1">.alloc(s,1024,1); </span>//for sampling rates 44100 and 48000</p>
+<p class="p4"><br></p>
+<p class="p7"><span class="s1">d=</span><span class="s2">Buffer</span><span class="s1">.read(s,</span>"sounds/break"<span class="s1">);</span></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5">(</p>
+<p class="p9">{</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">var</span> in, fft, output;</p>
+<p class="p9"><span class="s3">var</span> input,inputAmp,threshhold,gate;</p>
+<p class="p8"><br></p>
+<p class="p10"><span class="s1">in= </span><span class="s3">SoundIn</span><span class="s1">.ar(0); </span>//PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);</p>
+<p class="p10">//inputAmp = Amplitude.kr(input);</p>
+<p class="p10">//threshhold = 0.001;<span class="Apple-tab-span">	</span>// noise gating threshold</p>
+<p class="p10">//gate = Lag.kr(inputAmp &gt; threshhold, 0.01);</p>
+<p class="p10">//in= (input * gate);</p>
+<p class="p8"><br></p>
+<p class="p9">fft = <span class="s3">FFT</span>(b, in, wintype:1);</p>
+<p class="p8"><br></p>
+<p class="p9">output=<span class="s3">TPV</span>.ar(fft, 1024, 512, 50,50,1.0,4,0.2);<span class="Apple-converted-space"> </span></p>
+<p class="p8"><br></p>
+<p class="p10">//Out.ar(0,Pan2.ar(output));<span class="Apple-converted-space"> </span></p>
+<p class="p10">//delay by 512 samples for output, then phase measurement is from centre of frame, so <span class="Apple-converted-space"> </span></p>
+<p class="p9">output - <span class="s3">DelayN</span>.ar(in,0.1, (512+512)/44100)</p>
+<p class="p9">}.play</p>
+<p class="p5">)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+</body>
+</html>
