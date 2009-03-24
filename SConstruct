@@ -282,6 +282,12 @@ plugins.append( Basic_Env.SharedLibrary('build/MembraneUGens', ['source/Membrane
 plugins.append( Basic_Env.SharedLibrary('build/MLfftwUGens', ['source/MLfftwUGens/AnalyseEvents2fftw.cpp', 'source/MLfftwUGens/AutoTrackfftw.cpp', 'source/MLfftwUGens/Concatfftw.cpp', 'source/MLfftwUGens/MLfftwUGens.cpp', 'source/MLfftwUGens/Qitchfftw.cpp', 'source/MLfftwUGens/Tartini.cpp'  ] + platform_SOURCES , LIBS='fftw3f') )
 
 ##############################################
+# NCAnalysis
+
+plugins.append( Basic_Env.SharedLibrary('build/NCAnalysis', ['source/NCAnalysis/SMS.cpp','source/NCAnalysis/TPV.cpp','source/NCAnalysis/NCAnalysis.cpp', sc3_source + '/Source/plugins/FFT_UGens.cpp', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'  ] + platform_SOURCES , LIBS='fftw3f') )
+
+
+##############################################
 # StkUGens
 
 if build_stkugens == True:
