@@ -110,6 +110,14 @@
 		4650AC600E788D4E0012CFCF /* MLfftwUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC570E788D4E0012CFCF /* MLfftwUGens.cpp */; };
 		4650AC610E788D4E0012CFCF /* Qitchfftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC590E788D4E0012CFCF /* Qitchfftw.cpp */; };
 		4650AC620E788D4E0012CFCF /* Tartini.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC5B0E788D4E0012CFCF /* Tartini.cpp */; };
+		4693B6470F78EAFA00FEEFF3 /* SMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6450F78EAFA00FEEFF3 /* SMS.cpp */; };
+		4693B6480F78EAFA00FEEFF3 /* TPV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6460F78EAFA00FEEFF3 /* TPV.cpp */; };
+		4693B64A0F78EB3400FEEFF3 /* SC_fftlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */; };
+		4693B64B0F78EBA500FEEFF3 /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
+		4693B6580F78EEA800FEEFF3 /* NCAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 4693B6560F78EEA800FEEFF3 /* NCAnalysis.h */; };
+		4693B6590F78EEA800FEEFF3 /* NCAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6570F78EEA800FEEFF3 /* NCAnalysis.cpp */; };
+		4693B6BD0F78F5A800FEEFF3 /* FFT_UGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6BC0F78F5A800FEEFF3 /* FFT_UGens.cpp */; };
+		4693B6C20F78F5DD00FEEFF3 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		F318855C0B0EAAE10016AAA6 /* STKAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = F318855B0B0EAAE10016AAA6 /* STKAlloc.h */; };
 		F3271C4A0C20F375007DE8F1 /* PV_ThirdParty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */; };
 		F3331AFC0EFC4ADA00A32D02 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
@@ -477,6 +485,13 @@
 			remoteGlobalIDString = 4603006E0E6F42EC00ABDB31;
 			remoteInfo = MachineListening;
 		};
+		46931B8C0F77A017005B16C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46931B800F77A00A005B16C9;
+			remoteInfo = NCAnalysis;
+		};
 		DC4E1F8E0F1C901C0003E241 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -572,7 +587,7 @@
 		37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDSOMUGens.cpp; sourceTree = "<group>"; };
 		4603007B0E6F42EC00ABDB31 /* MLfftwUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MLfftwUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		46434A7E0EB36587008F1E42 /* SLUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SLUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		46434A810EB3661A008F1E42 /* SLUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SLUGens.cpp; path = source/SLUGens.cpp; sourceTree = "<group>"; };
+		46434A810EB3661A008F1E42 /* SLUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SLUGens.cpp; sourceTree = "<group>"; };
 		4650ABFE0E78623A0012CFCF /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = lib/libfftw3f.a; sourceTree = "<group>"; };
 		4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AnalyseEvents2fftw.cpp; path = MLfftwUGens/AnalyseEvents2fftw.cpp; sourceTree = "<group>"; };
 		4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AnalyseEvents2fftw.h; path = ../../MLfftwUGens/AnalyseEvents2fftw.h; sourceTree = "<group>"; };
@@ -586,13 +601,20 @@
 		4650AC5A0E788D4E0012CFCF /* Qitchfftw.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Qitchfftw.h; path = ../../MLfftwUGens/Qitchfftw.h; sourceTree = "<group>"; };
 		4650AC5B0E788D4E0012CFCF /* Tartini.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Tartini.cpp; path = MLfftwUGens/Tartini.cpp; sourceTree = "<group>"; };
 		4650AC5C0E788D4E0012CFCF /* Tartini.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Tartini.h; path = ../../MLfftwUGens/Tartini.h; sourceTree = "<group>"; };
+		46931B8B0F77A00A005B16C9 /* NCAnalysisUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = NCAnalysisUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		4693B6450F78EAFA00FEEFF3 /* SMS.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SMS.cpp; path = NCAnalysis/SMS.cpp; sourceTree = "<group>"; };
+		4693B6460F78EAFA00FEEFF3 /* TPV.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TPV.cpp; path = NCAnalysis/TPV.cpp; sourceTree = "<group>"; };
+		4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SC_fftlib.cpp; path = ../Source/common/SC_fftlib.cpp; sourceTree = SOURCE_ROOT; };
+		4693B6560F78EEA800FEEFF3 /* NCAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCAnalysis.h; path = source/NCAnalysis/NCAnalysis.h; sourceTree = "<group>"; };
+		4693B6570F78EEA800FEEFF3 /* NCAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NCAnalysis.cpp; path = source/NCAnalysis/NCAnalysis.cpp; sourceTree = "<group>"; };
+		4693B6BC0F78F5A800FEEFF3 /* FFT_UGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FFT_UGens.cpp; path = ../Source/plugins/FFT_UGens.cpp; sourceTree = SOURCE_ROOT; };
 		92CCC51F045B4BDE00CA2167 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
 		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
 		F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RFWUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RFWUGens.cpp; path = source/RFWUGens.cpp; sourceTree = "<group>"; };
+		F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RFWUGens.cpp; sourceTree = "<group>"; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SKINI.tbl; sourceTree = "<group>"; };
-		F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LadspaUGens.cpp; path = source/LadspaUGens.cpp; sourceTree = "<group>"; };
+		F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LadspaUGens.cpp; sourceTree = "<group>"; };
 		F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = STKUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3564C040B0E83FD008AFA51 /* StkAll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StkAll.cpp; path = StkUGens/StkAll.cpp; sourceTree = "<group>"; };
 		F3564C0E0B0E8493008AFA51 /* ADSR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ADSR.h; path = source/StkUGens/include/ADSR.h; sourceTree = SOURCE_ROOT; };
@@ -694,7 +716,7 @@
 		F3564C6E0B0E8493008AFA51 /* WvOut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WvOut.h; path = source/StkUGens/include/WvOut.h; sourceTree = SOURCE_ROOT; };
 		F3564CF70B0E8736008AFA51 /* libstk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstk.a; path = lib/libstk.a; sourceTree = "<group>"; };
 		F359F57A0EC217590053D29C /* BatUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BatUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F359F57B0EC217750053D29C /* BatUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatUGens.cpp; path = source/BatUGens.cpp; sourceTree = "<group>"; };
+		F359F57B0EC217750053D29C /* BatUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatUGens.cpp; sourceTree = "<group>"; };
 		F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RMEQSuiteUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F35F00B70E34454800ACCCC6 /* RMEQSuite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RMEQSuite.cpp; sourceTree = "<group>"; };
 		F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshGrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -724,13 +746,13 @@
 		F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LoopBuf.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A8FA500B73DD1800296CCA /* LoopBuf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LoopBuf.cpp; sourceTree = "<group>"; };
 		F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = VOSIM.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VOSIM.cpp; path = source/VOSIM.cpp; sourceTree = "<group>"; };
+		F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VOSIM.cpp; sourceTree = "<group>"; };
 		F3B10B040EBEC870001ABFAC /* LadspaUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = LadspaUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3B3C48D0B876A2800FBDE78 /* FFT2InterfaceBhob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FFT2InterfaceBhob.cpp; sourceTree = "<group>"; };
 		F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BerlachUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BerlachUGens.cpp; path = source/BerlachUGens.cpp; sourceTree = "<group>"; };
-		F3B4FA140F537EE200B0CD00 /* Oversamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Oversamp.h; path = source/Oversamp.h; sourceTree = "<group>"; };
-		F3B4FA150F537EE200B0CD00 /* sinctab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sinctab.h; path = source/sinctab.h; sourceTree = "<group>"; };
+		F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BerlachUGens.cpp; sourceTree = "<group>"; };
+		F3B4FA140F537EE200B0CD00 /* Oversamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Oversamp.h; path = ../../Oversamp.h; sourceTree = "<group>"; };
+		F3B4FA150F537EE200B0CD00 /* sinctab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sinctab.h; path = ../../sinctab.h; sourceTree = "<group>"; };
 		F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BlackrainUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D57D280B102C1E0034519F /* BlackrainUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BlackrainUGens.cpp; sourceTree = "<group>"; };
 		F3FE07360B0D759000A29459 /* JoshUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -827,6 +849,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46931B840F77A00A005B16C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4693B6C20F78F5DD00FEEFF3 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1069,27 +1099,21 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
-				F3B4FA140F537EE200B0CD00 /* Oversamp.h */,
-				F3B4FA150F537EE200B0CD00 /* sinctab.h */,
-				F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */,
-				F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */,
-				F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */,
-				F359F57B0EC217750053D29C /* BatUGens.cpp */,
-				F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */,
-				46434A810EB3661A008F1E42 /* SLUGens.cpp */,
-				F50D05D902E69B6B01CA2799 /* fftlib.c */,
-				F50D05E202E69B6B01CA2799 /* SCComplex.cpp */,
 				F50D054502E69B6B01CA2799 /* include */,
 				F50D057E02E69B6B01CA2799 /* source */,
 				F50D060302E69C2101CA2799 /* Products */,
 				F50D069402E6A1C601CA2799 /* Frameworks */,
 				F50D069D02E6A1C601CA2799 /* Resources */,
+				4693B6560F78EEA800FEEFF3 /* NCAnalysis.h */,
+				4693B6570F78EEA800FEEFF3 /* NCAnalysis.cpp */,
 			);
 			sourceTree = "<group>";
 		};
 		F50D054502E69B6B01CA2799 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				F3B4FA140F537EE200B0CD00 /* Oversamp.h */,
+				F3B4FA150F537EE200B0CD00 /* sinctab.h */,
 				37EC44AA0E78F45000090462 /* fftw3.h */,
 				4650AC520E788D4E0012CFCF /* AnalyseEvents2fftw.h */,
 				4650AC540E788D4E0012CFCF /* AutoTrackfftw.h */,
@@ -1205,6 +1229,18 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */,
+				F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */,
+				F3AAAAD40ECFCE9200460E62 /* VOSIM.cpp */,
+				F359F57B0EC217750053D29C /* BatUGens.cpp */,
+				F33C341D0EBFBE9B00AA345D /* LadspaUGens.cpp */,
+				46434A810EB3661A008F1E42 /* SLUGens.cpp */,
+				4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */,
+				4693B6BC0F78F5A800FEEFF3 /* FFT_UGens.cpp */,
+				F50D05D902E69B6B01CA2799 /* fftlib.c */,
+				F50D05E202E69B6B01CA2799 /* SCComplex.cpp */,
+				4693B6450F78EAFA00FEEFF3 /* SMS.cpp */,
+				4693B6460F78EAFA00FEEFF3 /* TPV.cpp */,
 				F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */,
 				46434A810EB3661A008F1E42 /* SLUGens.cpp */,
 				3715F61A0ECB7B32006BC186 /* MdaUGens.cpp */,
@@ -1288,6 +1324,7 @@
 				F3AAAAD00ECFCE5400460E62 /* VOSIM.scx */,
 				F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */,
 				F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */,
+				46931B8B0F77A00A005B16C9 /* NCAnalysisUB.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1392,6 +1429,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46931B810F77A00A005B16C9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4693B6580F78EEA800FEEFF3 /* NCAnalysis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1898,11 +1943,32 @@
 			buildRules = (
 			);
 			dependencies = (
+				46931B8D0F77A017005B16C9 /* PBXTargetDependency */,
 			);
 			name = SLUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 46434A7E0EB36587008F1E42 /* SLUGensUB.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		46931B800F77A00A005B16C9 /* NCAnalysis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 46931B870F77A00A005B16C9 /* Build configuration list for PBXNativeTarget "NCAnalysis" */;
+			buildPhases = (
+				46931B810F77A00A005B16C9 /* Headers */,
+				46931B820F77A00A005B16C9 /* Sources */,
+				46931B840F77A00A005B16C9 /* Frameworks */,
+				46931B850F77A00A005B16C9 /* Rez */,
+				46931B860F77A00A005B16C9 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NCAnalysis;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 46931B8B0F77A00A005B16C9 /* NCAnalysisUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F3331AF70EFC4ADA00A32D02 /* RFWUGens */ = {
@@ -2392,7 +2458,6 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
@@ -2432,6 +2497,7 @@
 				F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
 				4603006E0E6F42EC00ABDB31 /* MLfftwUGens */,
 				3751D6AB0E8C1F6300B5AC2F /* MCLDOscUGens */,
+				46931B800F77A00A005B16C9 /* NCAnalysis */,
 				46434A730EB36587008F1E42 /* SLUGens */,
 				F3B10AF80EBEC870001ABFAC /* LadspaUGens */,
 				3715F60C0ECB7ADF006BC186 /* MdaUGens */,
@@ -2522,6 +2588,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		46434A780EB36587008F1E42 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46931B850F77A00A005B16C9 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2799,6 +2872,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		46434A790EB36587008F1E42 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		46931B860F77A00A005B16C9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3126,6 +3208,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				46434A820EB3661A008F1E42 /* SLUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46931B820F77A00A005B16C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4693B64B0F78EBA500FEEFF3 /* SCComplex.cpp in Sources */,
+				4693B6470F78EAFA00FEEFF3 /* SMS.cpp in Sources */,
+				4693B6480F78EAFA00FEEFF3 /* TPV.cpp in Sources */,
+				4693B64A0F78EB3400FEEFF3 /* SC_fftlib.cpp in Sources */,
+				4693B6590F78EEA800FEEFF3 /* NCAnalysis.cpp in Sources */,
+				4693B6BD0F78F5A800FEEFF3 /* FFT_UGens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3481,6 +3576,11 @@
 			isa = PBXTargetDependency;
 			target = 4603006E0E6F42EC00ABDB31 /* MLfftwUGens */;
 			targetProxy = 4603009E0E6F45F000ABDB31 /* PBXContainerItemProxy */;
+		};
+		46931B8D0F77A017005B16C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46931B800F77A00A005B16C9 /* NCAnalysis */;
+			targetProxy = 46931B8C0F77A017005B16C9 /* PBXContainerItemProxy */;
 		};
 		DC4E1F8F0F1C901C0003E241 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4765,6 +4865,103 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = SLUGensUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		46931B880F77A00A005B16C9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = NCAnalysisUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		46931B890F77A00A005B16C9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = NCAnalysisUB;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		46931B8A0F77A00A005B16C9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = NCAnalysisUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -7356,6 +7553,16 @@
 				46434A7B0EB36587008F1E42 /* Development */,
 				46434A7C0EB36587008F1E42 /* Deployment */,
 				46434A7D0EB36587008F1E42 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		46931B870F77A00A005B16C9 /* Build configuration list for PBXNativeTarget "NCAnalysis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				46931B880F77A00A005B16C9 /* Development */,
+				46931B890F77A00A005B16C9 /* Deployment */,
+				46931B8A0F77A00A005B16C9 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
