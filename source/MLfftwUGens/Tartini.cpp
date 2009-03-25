@@ -211,9 +211,9 @@ void preparefft(Tartini *unit, float* in) {
 	// Copy input samples into prepare buffer	
 	while ((bufpos < n) && (cpt > 0)) {
 		preparefftbuf[bufpos] = in[index];
-		bufpos++;
-		index++;
-		cpt--;
+		++bufpos;
+		++index;
+		--cpt;
 	}
 	
 	// When Buffer is full...
@@ -222,10 +222,14 @@ void preparefft(Tartini *unit, float* in) {
 		float * input= unit->input;
 		
 		// Make a copy of prepared buffer into FFT buffer for computation
+		/*
 		for (i=0; i<n; i++) {
 			fftbuf[i] = preparefftbuf[i];
 			input[i]=  preparefftbuf[i];
 		}
+		*/
+		Copy(n, fftbuf, preparefftbuf);
+		Copy(n, input , preparefftbuf);
 		
 		//zero pad top k elements
 		int size=unit->size;
@@ -259,8 +263,11 @@ void preparefft(Tartini *unit, float* in) {
 		//if(unit->m_overlap>0) will be safe as long as overlap=0l overlapindex=0 too
 		
 		// Save overlapping samples back into buffer- no danger since no indices overwritten
+		/*
 		for (i=0; i<unit->overlap; i++) 
 			preparefftbuf[i] = preparefftbuf[unit->overlapindex+i];
+		*/
+		Copy(unit->overlap, preparefftbuf, preparefftbuf + unit->overlapindex);
 		
 		maxindex = blocklength - index + unit->overlap;
 		
@@ -343,16 +350,16 @@ void nsdf(Tartini *unit) {
 
 	float * autocorrTime= unit->autocorrTime; //results ofinverse FFT
 	float * output= unit->output;
-	float fsize = float(size);
+	float fsize_rec = 1.f / float(size);
 	//buffer for k outputs (512 autocorr coefficients- check if same if take 2048 point autocorr?)
 	
 	int k= unit->k;
 	int n= unit->n;
 	
 	for(float *p1=output, *p2=autocorrTime+1; p1<output+k;)
-	    *p1++ = *p2++ / fsize;
+	    *p1++ = *p2++ * fsize_rec;
 	//    
-	double sumSq= double(autocorrTime[0]) / double(size);
+	double sumSq= double(autocorrTime[0]) * double(fsize_rec);
 	
 	//NSDF
 	double sumRightSq = sumSq, sumLeftSq = sumSq;
