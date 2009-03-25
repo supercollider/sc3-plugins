@@ -346,7 +346,7 @@ if build_ay == True:
 		CCFLAGS = ['-Wno-unknown-pragmas'],
 		SHLIBPREFIX = '',
 		SHLIBSUFFIX = PLUGIN_EXT
-	).SharedLibrary('AY_UGen', 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
+	).SharedLibrary(make_plugin_target('AY_UGen'), 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
 	)
 
 opts.Save('scache.conf', env)
