@@ -1,0 +1,9 @@
+(
+\name:	"NCAnalysisUGens",
+\path:	"NCAnalysisUGens",
+\summary:	 "sc3-plugins:NCAnalysisUGens",
+\author:	 "sc3-plugins:Nick Collins",
+\helpdoc:	"NCAnalysisUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	nil
+)

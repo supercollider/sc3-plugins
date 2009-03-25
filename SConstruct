@@ -370,7 +370,8 @@ plugdirs = [
 	'Stk',
 	'TagSystem',
 	'VOSIM',
-	'Berlach'
+	'Berlach',
+	'NCAnalysis'
 ]
 
 # ======================================================================
