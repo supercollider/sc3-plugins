@@ -8,26 +8,25 @@
 <meta name="CocoaVersion" content="949.43">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #a91616}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #007300}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-span.s1 {color: #1441eb}
-span.s2 {color: #0000bf}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #307109}
+span.s1 {color: #1b46e7}
+span.s2 {color: #0013bc}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
-span.s5 {color: #007300}
+span.s5 {color: #307109}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>PV_BinPlayBuf<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>plays FFT data to a memory buffer</b></p>
-<p class="p2">œœ</p>
+<p class="p2"><br></p>
 <p class="p3"><b>PV_PlayBuf will play back FFT data stored to a buffer with PV_RecordBuf.</b></p>
 <p class="p4"><br></p>
 <p class="p3"><b>WARNING: Resynth of a FFTs with large window sizes may cause CPU spikes.</b></p>
@@ -108,7 +107,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span>bufnum = <span class="s2">LocalBuf</span>.new(1024);</p>
 <p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s2">FFT</span>(bufnum, <span class="s2">PlayBuf</span>.ar(1, playbuf, <span class="s2">BufRateScale</span>.kr(playbuf), loop: 1));</p>
 <p class="p6"><span class="s3"><span class="Apple-tab-span">	</span></span>// start at bin 10, skip 3, resynth 50 - replace these bins. MouseX controls rate</p>
-<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s2">PV_BinPlayBuf</span>(chain, recBuf, <span class="s2">MouseX</span>.kr(-0.8, 0.8), 0, 10, 10, 50, 1, clear);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s2">PV_BinPlayBuf</span>(chain, recBuf, <span class="s2">MouseX</span>.kr(-0.8, 0.8), 0, 10, 3, 50, 1, clear);</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s2">Out</span>.ar(out, <span class="s2">IFFT</span>(chain, 1).dup);</p>
 <p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
 <p class="p7">);</p>
@@ -151,6 +150,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">b.free;</p>
 <p class="p6">// free the buffers</p>
 <p class="p7">[y, z].do({<span class="s2">arg</span> me; me.free});</p>
-<p class="p10"><br></p>
+<p class="p5"><br></p>
 </body>
 </html>
