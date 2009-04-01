@@ -67,6 +67,18 @@ extern "C"
 //InterfaceTable *ft;
 
 
+//blackman92fft[]= {-2.990080, -0.000001, 36.167683, 0.000001, -125.002235, 0.000002, 183.679993, -0.000001, -125.002228, 0.000000, 36.167679, 0.000000, -2.990080 }
+//these are results of cosine(10*w)*window and show real coefficients only (all imag are 0 due to even input)
+float g_blackman92fft[7]= {-2.990080, 36.167683, -125.002235, 183.679993, -125.002228, 36.167679, -2.990080 };
+
+float g_blackman92window[1024]; //created in loadSMS()
+//BOTH of these assume 1024 window, no zero padding
+
+//will calculate output as A/2 * exp(i phase) * coeff over real and imag bin components centred on frequency (freq1+freq2)*0.5 at blackman[3]
+
+
+
+
 
 //SndBuf is too full a construct with fields I don't need. Just need an indication of whether rectangular or polar; but then, will know this anyway! 
 SCPolarBuf* ToPolarApx2(float* buf, int windowsize=1024)
@@ -180,6 +192,12 @@ struct SMS : Unit {
 	scfft* m_scifft;
 	float* m_q; 
 	
+	scfft* m_scifftresynth1;
+	float * resynth1;
+	
+	int m_useifft; 
+	float m_ampmult;
+	
 	//ready for transform
 	float * m_inplace;
 	
@@ -202,8 +220,10 @@ struct SMS : Unit {
 	int m_straightpos, m_deterministicpos;
 	//synthesised noise can be added onto 
 	
-	
-	
+	//frequency multiplication
+	float m_freqmult, m_freqadd; 
+	Guide * m_tracks2; //adjusted tracks for formant preservation, only calculated as necessary 
+	int m_formantpreserve; //whether using alternative formant preserving track data or not
 	////////
 	
 
@@ -258,13 +278,16 @@ extern "C"
 void peakmatching(SMS * unit);
 void peakdetection(SMS * unit, float * magspectrum, SCPolarBuf *p);
 void newinputframe(SMS * unit, float * inputbuffer);
-void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, float mult, int which);
+//void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, float mult, int which);
+void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, Guide * tracks);
 void synthesisestochastic(SMS * unit); 
+void formantpreserve(SMS * unit, float freqmult);
+void ifftsines(SMS * unit, float * output, int number,int& pos, int total, Guide * tracks);
 
 
 void SMS_Ctor(SMS* unit) {
 	
-	int i,j;
+	int j; //i,j;
 	
 	//CHECK SAMPLING RATE AND BUFFER SIZE
 	unit->m_blocksize = unit->mWorld->mFullRate.mBufLength;
@@ -340,7 +363,7 @@ void SMS_Ctor(SMS* unit) {
 	unit->m_scfftinput = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
 	unit->m_scfftresynth = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
 	unit->m_scifft = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
-	
+
 	//scfft, input size, window size, window type, in, out, transfer, forwards flag
 	scfft_create(unit->m_scfftinput, unit->m_windowsize, unit->m_windowsize, WINDOW_HANN, unit->m_inplace, unit->m_inplace, unit->m_transformbuf, true);
 	//should be WINDOW_RECT or WINDOW_HANN? WINDOW_HANN because comparing FFT of resynthesis to original magnitude spectrum, so both must have same windowing, see Fig 1 in CMJ 14(4): p.14 
@@ -349,6 +372,16 @@ void SMS_Ctor(SMS* unit) {
 	//scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_q, unit->m_q, unit->m_transformbuf, false);
 	scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_straightresynthesis, unit->m_inplace, unit->m_transformbuf, false);
 	
+	unit->m_scifftresynth1 = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+
+	unit->resynth1= (float*)RTAlloc(unit->mWorld, (unit->m_windowsize) * sizeof(float));
+	scfft_create(unit->m_scifftresynth1, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->resynth1, unit->resynth1, unit->m_transformbuf, false);
+	
+	float * ifftsum= unit->resynth1;
+	for (j=0; j<unit->m_windowsize; ++j) 
+		ifftsum[j]=0.0;
+	
+	unit->m_useifft = (int)ZIN0(8);
 	
 	unit->m_straightpos=0;
 	unit->m_deterministicpos=0;
@@ -369,6 +402,9 @@ void SMS_Ctor(SMS* unit) {
 //		inputbuffer[pos++] = 0.0; //in[j]; //post increment returns previous? 
 //	}
 
+	
+	unit->m_ampmult= ZIN0(9)/(float)unit->m_windowsize;
+	
 	unit->m_maxpeaks=(int)ZIN0(1); 
 	//int m_maxlistsize; //double m_maxpeaks
 	
@@ -385,6 +421,13 @@ void SMS_Ctor(SMS* unit) {
 	unit->m_numtracks=0;
 	//unit->m_resynthesisposition=0;
 	
+	//formant preservation test
+	unit->m_freqmult=1.0;
+	unit->m_freqadd=0.0;
+	unit->m_formantpreserve=0; 
+	unit->m_tracks2= (Guide*)RTAlloc(unit->mWorld, 2*unit->m_maxpeaks * sizeof(Guide));
+
+	
 	//SETCALC(*ClearUnitOutputs); 
 	unit->mCalcFunc = (UnitCalcFunc)&SMS_next;
 	
@@ -396,6 +439,28 @@ void SMS_Ctor(SMS* unit) {
 
 void SMS_Dtor(SMS *unit)
 {
+	
+	//
+	if(unit->m_scfftinput){
+		scfft_destroy(unit->m_scfftinput);
+		RTFree(unit->mWorld, unit->m_scfftinput);
+	}
+	
+	if(unit->m_scfftresynth){
+		scfft_destroy(unit->m_scfftresynth);
+		RTFree(unit->mWorld, unit->m_scfftresynth);
+	}
+	
+	if(unit->m_scifft){
+		scfft_destroy(unit->m_scifft);
+		RTFree(unit->mWorld, unit->m_scifft);
+	}
+	
+	
+	
+	
+	RTFree(unit->mWorld, unit->m_tracks2);
+	
 	RTFree(unit->mWorld, unit->m_tracks);
 	RTFree(unit->mWorld, unit->m_prevpeaks);
 	RTFree(unit->mWorld, unit->m_newpeaks);
@@ -415,20 +480,14 @@ void SMS_Dtor(SMS *unit)
 	
 	RTFree(unit->mWorld, unit->m_transformbuf);
 
-	if(unit->m_scfftinput){
-		scfft_destroy(unit->m_scfftinput);
-		RTFree(unit->mWorld, unit->m_scfftinput);
+	RTFree(unit->mWorld, unit->resynth1);
+
+	//
+	if(unit->m_scifftresynth1){
+		scfft_destroy(unit->m_scifftresynth1);
+		RTFree(unit->mWorld, unit->m_scifftresynth1);
 	}
 	
-	if(unit->m_scfftresynth){
-		scfft_destroy(unit->m_scfftresynth);
-		RTFree(unit->mWorld, unit->m_scfftresynth);
-	}
-	
-	if(unit->m_scifft){
-		scfft_destroy(unit->m_scifft);
-		RTFree(unit->mWorld, unit->m_scifft);
-	}
 	
 }
 
@@ -474,15 +533,35 @@ void SMS_next(SMS *unit, int numSamples)
 
 	//printf("before str %d det %d \n",unit->m_straightpos, unit->m_deterministicpos);
 
-	//calculate blocksize*overlapfactor into straight resynthesis buffer
-	//would be more efficient if separate function
-	synthesisedeterministic(unit, unit->m_straightresynthesis, numSamples*unit->m_overlapfactor, unit->m_straightpos, unit->m_windowsize, 1.0,0);
 	
-	//precalculates twice as much as needed so ready to do crossfade for next time without preserving multiple guide lists? 
-	//assumes overlap is 4 or 2????
-	//calculate blocksize*2 into deterministic transformation buffer
-	//which flag set to 1 here to differentiate which phase variable to use in Guides
-	synthesisedeterministic(unit, unit->m_deterministicresynthesis, numSamples*2, unit->m_deterministicpos, unit->m_hopsize*2, ZIN0(5), 1);
+	if(unit->m_useifft) {
+		//experimental inverse FFT resynthesis
+		ifftsines(unit, unit->m_straightresynthesis, numSamples*unit->m_overlapfactor, unit->m_straightpos, unit->m_windowsize, unit->m_tracks); 
+		ifftsines(unit, unit->m_deterministicresynthesis, numSamples*2, unit->m_deterministicpos, unit->m_hopsize*2, unit->m_tracks2); 
+		
+	} else
+	{
+		//calculate blocksize*overlapfactor into straight resynthesis buffer
+		//would be more efficient if separate function
+		//NOT THIS ONE synthesisedeterministic(unit, unit->m_straightresynthesis, numSamples*unit->m_overlapfactor, unit->m_straightpos, unit->m_windowsize, 1.0,0);
+		
+		synthesisedeterministic(unit, unit->m_straightresynthesis, numSamples*unit->m_overlapfactor, unit->m_straightpos, unit->m_windowsize, unit->m_tracks);
+		
+		//POTENTIAL ERROR HERE SINCE freqmult can change during resynthesis of set of tracks 
+		//precalculates twice as much as needed so ready to do crossfade for next time without preserving multiple guide lists? 
+		//assumes overlap is 4 or 2????
+		//calculate blocksize*2 into deterministic transformation buffer
+		//which flag set to 1 here to differentiate which phase variable to use in Guides
+		//ZIN0(5)
+		//no need to separate as flag 0 or 1 anymore since independent guides list
+		
+		//CURRENT
+		synthesisedeterministic(unit, unit->m_deterministicresynthesis, numSamples*2, unit->m_deterministicpos, unit->m_hopsize*2,  unit->m_tracks2);
+		
+		//OLD
+		//synthesisedeterministic(unit, unit->m_deterministicresynthesis, numSamples*2, unit->m_deterministicpos, unit->m_hopsize*2, unit->m_freqmult, 1);
+	}
+	
 	
 	//printf("after str %d det %d \n",unit->m_straightpos, unit->m_deterministicpos);
 	
@@ -532,6 +611,9 @@ void SMS_next(SMS *unit, int numSamples)
 		
 		//printf("shunt done, now new input frame\n");
 		
+		unit->m_ampmult= ZIN0(9)/(float)unit->m_windowsize;
+		//must update before starting new cycle since determines amp coefficients in peak detection
+		unit->m_useifft = (int)ZIN0(8);
 		//fft, phase vocode, peak pick and peak match
 		newinputframe(unit, inplace);
 		
@@ -541,6 +623,23 @@ void SMS_next(SMS *unit, int numSamples)
 		//unit->m_resynthesisposition=0;
 		unit->m_straightpos=0;
 		unit->m_deterministicpos=0;
+		
+		//get new freq mult at this point? 
+		//create guide copies with adjusted amplitudes
+		unit->m_freqmult= ZIN0(5);
+		unit->m_freqadd= ZIN0(6);
+		unit->m_formantpreserve= ZIN0(7);
+		//adjust guide amplitudes based on matching frequencies to original magspectrum
+		//if(unit->m_formantpreserve)
+		
+		
+		//IF always running, probably don't need two phase variables any more? 
+		//always run this, for freqmult
+		formantpreserve(unit, unit->m_freqmult); 
+		
+		//HERE! create formantpreserve function 
+		//then potentially rejig synthesisedeterminstic into two versions, avoiding ifs and freqmult step
+		
 		
 		float * resynth= unit->m_straightresynthesis;
 		
@@ -553,6 +652,7 @@ void SMS_next(SMS *unit, int numSamples)
 		//2 times hopsize 
 		for (j=0; j<unit->m_nover2; ++j) 
 		resynth[j]=0.0;
+		
 	}
 	
 	unit->m_inputpos=pos; //store for next time
@@ -586,21 +686,215 @@ void SMS_next(SMS *unit, int numSamples)
 
 
 
-void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, float mult, int which=0) {
+//float phase1, phase2; //two phase variables required- in general, one for each resynthesis required!  
+//float amp1, amp2, freq1, freq2;
+void formantpreserve(SMS * unit, float freqmult) {
+
+	//copy between
+	//m_tracks2
+	//m_tracks
+
+	Guide * tracks = unit->m_tracks; 
+	Guide * tracks2 = unit->m_tracks2; 	
+	int numtracks = unit->m_numtracks;
+	
+	float freqshift = 2*pi* unit->m_freqadd/unit->m_sr;  //2pi* f/R
+	
+	int i; 
+	
+	Guide * pointer;
+	Guide * pointer2;
+	
+	if(unit->m_formantpreserve) {
+	
+		float * magspectrum= unit->m_magspectrum;
+		float angmultr= unit->m_nover2/pi; 
+		float ampmult= unit->m_ampmult; //(1.0/unit->m_windowsize); //NOT NEEDED: remember blackman window function already has scale factor of N implcit unit->m_useifft? 1.0 : (1.0/unit->m_windowsize);
+		
+		int test= (unit->m_nover2-1); //top bin value
+		
+		int low; //, high; 
+		float freqbin; //, frac;
+		
+		for (i=0; i<numtracks; ++i) {
+			
+			pointer= &tracks[i]; 
+			pointer2= &tracks2[i]; 
+			
+			pointer2->phase1= pointer->phase1; 
+			//pointer2->phase2= pointer->phase2; 
+			pointer2->freq1= pointer->freq1 * freqmult + freqshift; 
+			pointer2->freq2= pointer->freq2 * freqmult + freqshift; 
+			
+			//bin number to freq (i-1)*angmult float angmult= pi/nover2;
+			
+			freqbin= pointer2->freq1 * angmultr; 
+			
+			//don't do linear interpolation, rough calc only
+			low= (int)freqbin; 
+			
+			if(low>=test) low= low%test;
+			if(low<0) low= (-low)%test;
+			
+//			frac= freqbin-low; 
+//			high= low+1; 
+			
+			//must check for birth and deaths and preserve those
+			pointer2->amp1=(pointer->amp1<0.000001)? (pointer->amp1): (magspectrum[low]*ampmult);  
+			
+			freqbin= pointer2->freq2 * angmultr; 
+			low= (int)freqbin; 
+			
+			if(low>=test) low= low%test;
+			if(low<0) low= (-low)%test;
+			
+			pointer2->amp2=(pointer->amp2<0.000001)? (pointer->amp2): (magspectrum[low]*ampmult);  
+			
+		}
+	
+	}
+	else
+	{
+		
+		for (i=0; i<numtracks; ++i) {
+		
+			pointer= &tracks[i]; 
+			pointer2= &tracks2[i]; 
+			
+			pointer2->phase1= pointer->phase1; 
+			//pointer2->phase2= pointer->phase2; 
+			pointer2->amp1= pointer->amp1; 
+			pointer2->amp2= pointer->amp2; 
+			
+			//printf("amp1 %f amp2 %f \n",pointer->amp1, pointer->amp2);
+			
+			
+			pointer2->freq1= pointer->freq1 * freqmult + freqshift; 
+			pointer2->freq2= pointer->freq2 * freqmult + freqshift; 
+			
+		}
+		
+	}
+	
+	
+}
+
+
+//, int number,int& pos, int total, 
+void ifftsines(SMS * unit, float * output, int number,int& pos, int total, Guide * tracks) {
+
+	if(pos<total) {
+		
+	pos=total;
+	
+	int i,j;
+	
+	float * ifftsum= unit->resynth1;
+	for (j=0; j<unit->m_windowsize; ++j) 
+		ifftsum[j]=0.0;
+	
+	int numtracks = unit->m_numtracks;
+	
+	Guide * pointer;
+	
+	//printf("numtracks %d \n", numtracks);
+	
+	float phase; 
+	
+	float angmultr= unit->m_nover2/pi;
+	
+	SCComplex what(1.0,0.0);
+	
+	int highestbinallowed= unit->m_nover2-4;
+	
+	for (i=0; i<numtracks; ++i) {	
+		
+		pointer = &(tracks[i]);
+		
+	//	float amp1= pointer->amp1;
+		//float amp2=pointer->amp2;
+		//((i*40.0)/22050.0)*pi; 
+		//float freq1= pointer->freq1;
+		//float freq2= pointer->freq2;
+		
+		//take averages
+		float amp= ((pointer->amp1 + pointer->amp2)*0.5); //*0.5; //additional half recommended by Laroche
+		float freq= (pointer->freq1 + pointer->freq2)*0.5;
+		int freqbin= ((angmultr*freq)+0.5);
+		
+		//need sc_fold if outside of 0 to Nyquist bins? 
+		phase= pointer->phase1; 
+		what= SCPolar(1.0,phase).ToComplexApx();
+		
+		//safety; don't synthesise if off the scale
+		if((freqbin>=4) && (freqbin<highestbinallowed)) {
+		//ignore phase for now, later would work in via e(i*phase) term to spread over real and imag parts
+		//if (freqbin>=4) {
+			
+			for (j=0; j<7; ++j)
+			{
+				int now = 2*(freqbin-3+j);
+				float val = amp*g_blackman92fft[j];
+				//ifftsum[now] += val; 
+				
+				ifftsum[now] += what.real*(val);
+				ifftsum[now+1]+= what.imag*(val);
+			}
+			
+		//}
+		//must take account of negative frequencies entering positive region- times by i
+//		else {
+//				//need clauses to cope with neg frequencies etc; just skip it for now
+//			for (j=0; j<7; ++j)
+//			{
+//				int now = 2*(freqbin-3+j);
+//				float val = amp*g_blackman92fft[j];
+//				//ifftsum[now] += val; 
+//				
+//				ifftsum[now] += what.real*(val);
+//				ifftsum[now+1]+= what.imag*(val);
+//			}
+//				
+//		}
+		}
+		//if(which)
+		//else
+		//phase= pointer->phase2; 	
+	}
+
+	//do IFFT
+	scfft_doifft(unit->m_scifftresynth1);
+	
+	//divide out window as well   /g_blackman92window
+	//total = unit->m_windowsize or half window size in one case
+	for (j=0; j<total; ++j) 
+		output[j]= 	ifftsum[j]*g_blackman92window[j]; 	 
+	
+	}
+	
+}
+
+
+//void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, float mult, int which=0)
+void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, int total, Guide * tracks) {
 
 	int i,j;
 	
-	Guide * tracks = unit->m_tracks; 
+	//Guide * tracks = unit->m_tracks; 
 	int numtracks = unit->m_numtracks;
 	
 	//int resynthesisposition = unit->m_resynthesisposition;
 
-	float T = unit->m_hopsize;
-	float rT= 1.0/T;
+	//float T = unit->m_hopsize;
+	//float rT= 1.0/T;
 	
 	Guide * pointer;
 
 	//printf("numtracks %d \n", numtracks);
+	
+	//test avoids pile-up, particulaly at start
+	//printf("problem pos %d \n",pos);
+	if(pos<total) {
 	
 	int top= pos+number;
 	float rtotal= 1.0/total;
@@ -618,10 +912,10 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 		float freq1= pointer->freq1;
 		float freq2= pointer->freq2;
 		
-		if(which)
+		//if(which)
 		phase= pointer->phase1; 
-		else
-		phase= pointer->phase2; 
+		//else
+		//phase= pointer->phase2; 
 		
 		for (j=pos; j<top; ++j) {
 			
@@ -635,8 +929,9 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 			
 			float freq= freq1 + (tpos*(freq2- freq1));
 			
+			//SPEED UP could remove this line if had precalculated frequency multiplication effects, ie separate guides array with freq1 and freq2 already adjusted
 			//update by instantaneous phase
-			phase +=  freq*mult; //*rT; //per sample? with frequency multiplier in here! rT
+			phase +=  freq; //WAS freq*mult; //*rT; //per sample? with frequency multiplier in here! rT
 			
 			float phasetemp= phase*constantsize; //rtwopi*g_costablesize;
 			
@@ -652,7 +947,12 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 			
 			//int prev= (int)wrapval; //truncation alone is sufficient for larger wavetable
 			//float interp= cos(freq1*j); //TEST
-			float interp= g_costable[((int)phasetemp)%1024]; 
+			//float interp= g_costable[((int)phasetemp)%1024]; 
+			//can use efficient trick for any power of two when doing modulo
+			float interp= g_costable[((int)phasetemp) & 0x03FF]; 
+			
+			
+			
 			
 			//float prop=  wrapval-prev; //linear interpolation parameter
 			//float interp= ((1.0-prop)*(g_costable[prev])) + (prop*(g_costable[prev+1]));
@@ -668,18 +968,22 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 		}
 		
 		
-		if(which)
+		//if(which)
 		pointer->phase1= phase; 
-		else
-		pointer->phase2= phase;
+		//else
+		//pointer->phase2= phase;
 		
 	}
+	
+	//for(j=0;j<128;++j)
+	//	printf("test %f \n",output[j]); 
 	
 	
 	pos= pos+number; //reference so should update
 	//resynthesisposition += numSamples;
 	//unit->m_resynthesisposition=resynthesisposition;
-
+	}
+	
 
 }
 
@@ -689,7 +993,7 @@ void newinputframe(SMS * unit, float * inputbuffer) {
 int i;
 
 //windowing
-int n= unit->m_windowsize;
+//int n= unit->m_windowsize;
 
 //for (i=0; i<n; ++i) 
 //	inputbuffer[i] *= g_HannTable[i];
@@ -737,7 +1041,7 @@ peakmatching(unit);
 //peak detection searching through magspectrum, could limit up to 10000 Hz
 void peakdetection(SMS * unit, float * magspectrum, SCPolarBuf *p) {
 
-int i,j;
+	int i; //,j;
 
 int nover2 = unit->m_nover2; 
 
@@ -759,7 +1063,7 @@ newpeaks=temp;
 
 //printf("prev pointer %p new pointer %p temp %p \n",prevpeaks, newpeaks, temp);
 
-float phase, prevmag, mag, nextmag;
+float prevmag, mag, nextmag; //phase, 
 
 //bin 1 can't be pick since no interpolation possible! dc should be ignored
 //test each if peak candidate; if so, add to list and add to peaks total
@@ -775,7 +1079,8 @@ maxpeaks = sc_min(maxpeaks,numpeaksrequested);
 //angular frequency is pi*(i/nover2)
 
 float angmult= pi/nover2; //MIGHT NEED TO VARY BASED ON RESYNTHESIS SPEED? NAH
-float ampmult= (1.0/unit->m_windowsize); //*(1.0/unit->m_maxpeaks);
+//if IFFT resynthesis, get 1/N from the IFFT call; otherwise, time domain resynthesis requires scalefactor to be built in
+float ampmult= unit->m_ampmult; //(1.0/unit->m_windowsize); //unit->m_useifft? 1.0 : (1.0/unit->m_windowsize); //*(1.0/unit->m_maxpeaks);
 
 	//defined here since needed in backdating phase for track births (and potentially for track deaths too)
 //T = number of samples per interpolaion frame, so equals hopsize
@@ -856,7 +1161,7 @@ float testfreq;
 //
 //	
 
-RGen& rgen = *unit->mParent->mRGen;
+//RGen& rgen = *unit->mParent->mRGen;
 
 //ASSUMES BOTH PEAKS LISTS ARE IN ORDER OF INCREASING FREQUENCY
 
@@ -1014,7 +1319,7 @@ for (i=0; i<numprevpeaks; ++i) {
 //now iterate through PartialTracks, preparing them for synthesis
 unit->m_numtracks = numtracks;
 
-
+//printf("numtracks problem? %d \n",numtracks);
 
 }
 		
@@ -1044,9 +1349,7 @@ float * resynthesis= unit->m_straightresynthesis;
 //rffts(resynthesis, unit->m_log2n, 1, g_GreenCosTable);
 scfft_dofft(unit->m_scfftresynth);
 
-
 //printf("past fft \n");
-
 
 //phase vocoder
 
@@ -1078,13 +1381,14 @@ RGen& rgen = *unit->mParent->mRGen;
 //printf("mag diff loop \n");
 
 
-for (i=0; i<nover2; ++i) {
+for (i=0; i<(nover2-1); ++i) {
 
 //will be copy or actual one? 
 SCPolar& polar = p->bin[i];
 
 polar.phase = rgen.frand2()*pi; //rgen.frand()*twopi- pi;  //random number from -pi to pi
-polar.mag = magspectrum[nover2] - polar.mag; 
+//polar.mag = magspectrum[nover2] - polar.mag; //surely terrible mistake?
+polar.mag = magspectrum[i] - polar.mag; 
 }
 
 //returns SCComplexBuf*
@@ -1192,12 +1496,78 @@ void loadSMS(InterfaceTable *inTable)
 	g_fade[i+256]= 1.0-prop;
 	}
 	
+	int windowsize=1024;
+	//g_blackman92window
+	double winc = twopi / windowsize;
+	for (i=0; i<windowsize; ++i) {
+			w = i * winc;
+			//92dB 4-term
+		//reciprocal now since otherwise have to divide by window later, can multiply this way round
+			g_blackman92window[i] = 1.0/(0.35875-(0.48829*cos(w))+(0.14128*cos(w*2))-(0.01168*cos(w*3)));
+			//printf("i %d value %f \n", i,g_blackman92window[i]);	//doesn't go totally to zero, but dangerously low skirts
+	}
+	
+	
+	//printf("SMS LOADED CHECK  test1 %d %d   test2 %d %d  \n",1025 & 0x03FF, 1025%1024, 2050 & 0x03FF, 2050%1024);
+	
+	// & 0x07FF
+	
 	
 	//DefineDtorUnit(SMS);
 	//
 	DefineDtorCantAliasUnit(SMS);
 	
-	//printf("SMS LOADED CHECK\n");
+	//printf("SMS LOADED CHECK  test1 %d %d   test2 %d %d  \n",1025 & 0x0400, 1025%1024, 2050 & 0x0400, 2050);
+	
+	//
+//	
+//	//testing IFFT resynthesis ; take FFT of zero-padded window shape
+//	
+//	int windowsize=1024;
+//	int fullsize= windowsize; //*8; 
+//	float * transformbuf = new float[scfft_trbufsize(fullsize)];
+//	float * inplace = new float[fullsize];
+//	scfft *scfftwindow = new scfft;
+//
+//	//scfft, input size, window size, window type, in, out, transfer, forwards flag
+//	scfft_create(scfftwindow, fullsize, fullsize, WINDOW_RECT, inplace, inplace, transformbuf, true);
+//	
+//	//make window
+//	for (i=0; i<fullsize; ++i)
+//	inplace[i]=0.0;
+//	
+//	//Blackman-Harris? 
+//	double winc = twopi / windowsize;
+//	for (i=0; i<windowsize; ++i) {
+//		w = i * winc;
+//		
+//		//92dB 4-term
+//		//inplace[i] = 0.35875-(0.48829*cos(w))+(0.14128*cos(w*2))-(0.01168*cos(w*3));
+//		
+//		//boost up to a multiple of analysis fundamental
+//		inplace[i] = sin(w*10)*(0.35875-(0.48829*cos(w))+(0.14128*cos(w*2))-(0.01168*cos(w*3)));
+//		
+//		
+//		//http://www.diracdelta.co.uk/science/source/b/l/blackman-harris%20window/source.html
+//		//72dB
+//		//inplace[i] = 0.40217-(0.49703*cos(w))+(0.09392*cos(w*2))-(0.00183*cos(w*3));
+//	}
+//		
+//	scfft_dofft(scfftwindow);
+//	
+//	for (i=0; i<windowsize; ++i) {
+//		printf("i %d value %f \n", i,inplace[i]);
+//	}
+
+	
+//	for (i=0; i<windowsize; ++i) {
+//		printf("i %d value %f \n", i,inplace[i]);
+//	}
+	
+		//18 bins either side of bin 22 
+	//for (i=4; i<40; ++i) {
+	//	printf("i %d value %f \n", i,inplace[i]);
+	//}
 	
 	
 	//testing scale factors for FFT library, particularly with resynthesis via IFFT
