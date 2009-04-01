@@ -16,14 +16,29 @@ ProcMod {
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks, <composite;
 	var recordPM, <>recordpath;
-	classvar addActions;
+	classvar addActions, writeDefs;
 
 	*new {arg env, amp = 1, id, group, addAction = 0, target = 1, function, releaseFunc,
 			onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, server;		^super.newCopyArgs(amp, group, addAction, target, timeScale, lag, id, function, 
-			releaseFunc, onReleaseFunc, responder).initThisClass(clock, server, env);	}
+			releaseFunc, onReleaseFunc, responder).initProcMod(clock, server, env);	}
 		
-	initThisClass {arg argClock, argServer, argEnv, argNumChannels, argProcout;
-		server = argServer ?? {Server.default}; //
+	initProcMod {arg argClock, argServer, argEnv, argNumChannels, argProcout;
+		var tmp, srvrs;
+		writeDefs.if({
+			srvrs = Server.all;
+			writeDefs = false;
+			tmp = SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, 
+					lag = 0.01;
+				var env;
+				env = EnvGen.kr(
+					Control.names(\env).kr(Env.newClear(30)), pgate, 
+						1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+				Out.kr(outbus, env);
+				});
+			tmp.writeDefFile;
+			srvrs.do({arg me; tmp.send(me)});
+			});
+		server = argServer ?? {Server.default}; 
 		env = argEnv;
 		(env.notNil).if({
 			env.isKindOf(Env).if({
@@ -249,7 +264,12 @@ ProcMod {
 		gui = true;
 		trigstr = trig.notNil.if({"("++trig++")"}, {""});
 		window = parent ?? {GUI.window.new(this.id, bounds).front};
-		composite = GUI.compositeView.new(window, parent.notNil.if({bounds}, {Rect(0, 0, bounds.width, bounds.height)}));
+		composite = GUI.compositeView.new(window, parent.notNil.if({
+			bounds
+			}, {
+			Rect(0, 0, bounds.width, bounds.height)
+			})
+			);
 		winh = bounds.height;
 		winw = bounds.width;
 		composite.decorator.isNil.if({
@@ -324,23 +344,24 @@ ProcMod {
 			2 -> 2,
 			3 -> 3,
 			4 -> 4
-			];	
-		StartUp.add({
-		SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;
-			var env;
-			env = EnvGen.kr(
-				Control.names(\env).kr(Env.newClear(30)), pgate, 
-					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
-			Out.kr(outbus, env);
-		}).writeDefFile;
-		})
+			];
+		writeDefs = true;	
+//		StartUp.add({//
+//		SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;//
+//			var env;//
+//			env = EnvGen.kr(//
+//				Control.names(\env).kr(Env.newClear(30)), pgate, //
+//					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+//			Out.kr(outbus, env);//
+//		}).writeDefFile;
+//		})//
 	}
 }
 
 ProcModR : ProcMod {
 	var <routebus, <procout, <isRecording = false, <notegroup, <numChannels, 
 		<>headerFormat = "aiff", <>sampleFormat = "int16", <hdr, oldhdrs;
-	classvar addActions;
+	classvar addActions, writeDefs;
 
 // if numChannels is not nil, enter routing mode 
 //	- unique audio bus (routebus) is passed into the function
@@ -350,12 +371,39 @@ ProcModR : ProcMod {
 			function, releaseFunc, onReleaseFunc, responder, timeScale = 1, lag = 0.01, clock, 
 			server;
 		^super.newCopyArgs(amp, group, addAction, target, timeScale, lag, id, function, 
-			releaseFunc, onReleaseFunc, responder).initThisClass(clock, server, env, 
+			releaseFunc, onReleaseFunc, responder).initProcModR(clock, server, env, 
 			numChannels, procout);
 		}
 		
-	initThisClass {arg argClock, argServer, argEnv, argNumChannels, argProcout;
+	initProcModR {arg argClock, argServer, argEnv, argNumChannels, argProcout;
+		var tmp, srvrs;
 		server = argServer ?? {Server.default};
+		writeDefs.if({
+			srvrs = Server.all;
+			writeDefs = false;
+			for(1, 16, {arg i;
+					tmp = SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus, 
+							amp = 1, lag = 0.01;
+						Out.ar(outbus, In.ar(inbus, i) * Lag2.kr(amp, lag));
+					});
+					tmp.writeDefFile;	
+					srvrs.do({arg me; tmp.send(me)});
+				});
+			for(1, 16, {arg i;
+					tmp = SynthDef((\procmodroute_8723_env_ ++ i).asSymbol, {arg inbus, outbus, 
+							pgate = 1, amp = 1, timeScale = 1, lag = 0.01;
+						var sig;
+						sig = In.ar(inbus, i) *
+							EnvGen.kr(
+								Control.names(\env).kr(Env.newClear(30)), pgate, 
+									1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+						ReplaceOut.ar(inbus, sig); 
+						Out.ar(outbus, sig);
+					});
+					tmp.writeDefFile;	
+					srvrs.do({arg me; tmp.send(me)});
+				});
+			});
 		env = argEnv;
 		(env.notNil).if({
 			env.isKindOf(Env).if({
@@ -571,27 +619,28 @@ ProcModR : ProcMod {
 			3 -> 3,
 			4 -> 4
 			];
-		StartUp.add {
-			for(1, 16, {arg i;
-					SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus, amp = 1,
-							lag = 0.01;
-						Out.ar(outbus, In.ar(inbus, i) * Lag2.kr(amp, lag));
-					}).writeDefFile;	
-				});
-			for(1, 16, {arg i;
-					SynthDef((\procmodroute_8723_env_ ++ i).asSymbol, {arg inbus, outbus, 
-							pgate = 1, amp = 1, timeScale = 1, lag = 0.01;
-						var sig;
-						sig = In.ar(inbus, i) *
-							EnvGen.kr(
-								Control.names(\env).kr(Env.newClear(30)), pgate, 
-									1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
-						ReplaceOut.ar(inbus, sig); 
-						Out.ar(outbus, sig);
-						
-					}).writeDefFile;	
-				});
-		}
+		writeDefs = true;
+//		StartUp.add {
+//			for(1, 16, {arg i;
+//					SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus, amp = 1,
+//							lag = 0.01;
+//						Out.ar(outbus, In.ar(inbus, i) * Lag2.kr(amp, lag));
+//					}).writeDefFile;	
+//				});
+//			for(1, 16, {arg i;
+//					SynthDef((\procmodroute_8723_env_ ++ i).asSymbol, {arg inbus, outbus, 
+//							pgate = 1, amp = 1, timeScale = 1, lag = 0.01;
+//						var sig;
+//						sig = In.ar(inbus, i) *
+//							EnvGen.kr(
+//								Control.names(\env).kr(Env.newClear(30)), pgate, 
+//									1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+//						ReplaceOut.ar(inbus, sig); 
+//						Out.ar(outbus, sig);
+//						
+//					}).writeDefFile;	
+//				});
+//		}
 	}
 }
 
@@ -619,11 +668,11 @@ ProcEvents {
 	var <recordPM = false, recordpath, <>timeStamp, <>headerFormat, <>sampleFormat;
 	var <>onEvent;
 	
-	classvar addActions;
+	classvar addActions, writeDefs;
 	
 	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
 		server = server ?? {Server.default};
-		^super.new.init(events, amp, initmod, killmod, id, server, lag);
+		^super.new.initProcEvents(events, amp, initmod, killmod, id, server, lag);
 	}
 	
 	starttime_ {arg newtime;
@@ -632,8 +681,40 @@ ProcEvents {
 		timeOffset = starttime; // for time stamping ProcMod output
 		}
 		
-	init {arg events, argamp, arginitmod, argkillmod, argid, argserver, arglag;
+	initProcEvents {arg events, argamp, arginitmod, argkillmod, argid, argserver, arglag;
 		var proc, release, newproc, evid;
+		var tmp, srvrs;
+		writeDefs.if({
+			srvrs = Server.all;
+			writeDefs = false;
+			tmp = SynthDef(\procevoutenv6253, {arg amp = 1, lag = 0.2;
+				ReplaceOut.ar(0, In.ar(0, 8) * Lag2.kr(amp, lag))				});
+			tmp.writeDefFile;
+			srvrs.do({arg me; tmp.send(me)});
+			tmp = SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;
+					var ped;
+//					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
+					ped = Amplitude.kr(In.ar(pedalin));
+					SendTrig.ar(Impulse.ar(10), id, ped);
+				});
+			tmp.writeDefFile;
+			srvrs.do({arg me; tmp.send(me)});
+			tmp = SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
+					mute = 1, scale = 1;
+				var in, delay, trig, pitch, hasPitch;
+//				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
+				in = In.ar(pedalin) * scale * mute;
+//				[in, in*scale, scale, mute].poll;
+//				delay = DelayN.ar(in, 0.01, 0.01);
+//				trig = (in / delay.max(0.00001)) > headroom.dbamp;
+				#pitch, hasPitch = 
+					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
+//				[pitch, hasPitch].poll;
+				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
+				});
+			tmp.writeDefFile;
+			srvrs.do({arg me; tmp.send(me)});
+			});
 		eventDict = Dictionary.new(events.flat.size);
 		eventArray = Array.fill(events.size, {Array.new});
 		releaseArray = Array.fill(events.size, {Array.new});
@@ -1309,32 +1390,33 @@ ProcEvents {
 			3 -> 3,
 			4 -> 4
 			];
-		StartUp.add {	
-			SynthDef(\procevoutenv6253, {arg amp = 1, lag = 0.2;
-				ReplaceOut.ar(0, In.ar(0, 8) * Lag2.kr(amp, lag))
-				}).writeDefFile;	
-			
-			SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;
-					var ped;
-//					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
-					ped = Amplitude.kr(In.ar(pedalin));
-					SendTrig.ar(Impulse.ar(10), id, ped);
-				}).writeDefFile;
-			SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
-					mute = 1, scale = 1;
-				var in, delay, trig, pitch, hasPitch;
-//				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
-				in = In.ar(pedalin) * scale * mute;
-//				[in, in*scale, scale, mute].poll;
-//				delay = DelayN.ar(in, 0.01, 0.01);
-//				trig = (in / delay.max(0.00001)) > headroom.dbamp;
-				#pitch, hasPitch = 
-					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
-//				[pitch, hasPitch].poll;
-				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
-				}).writeDefFile;
-			
-			}
+		writeDefs = true;
+//		StartUp.add {	//
+//			SynthDef(\procevoutenv6253, {arg amp = 1, lag = 0.2;//
+//				ReplaceOut.ar(0, In.ar(0, 8) * Lag2.kr(amp, lag))//
+//				}).writeDefFile;	//
+//			//
+//			SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;//
+//					var ped;//
+////					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);//
+//					ped = Amplitude.kr(In.ar(pedalin));
+//					SendTrig.ar(Impulse.ar(10), id, ped);//
+//				}).writeDefFile;//
+//			SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
+//					mute = 1, scale = 1;
+//				var in, delay, trig, pitch, hasPitch;
+////				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
+//				in = In.ar(pedalin) * scale * mute;
+////				[in, in*scale, scale, mute].poll;
+////				delay = DelayN.ar(in, 0.01, 0.01);
+////				trig = (in / delay.max(0.00001)) > headroom.dbamp;
+//				#pitch, hasPitch = 
+//					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
+////				[pitch, hasPitch].poll;
+//				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
+//				}).writeDefFile;////
+//			//
+//			}//
 	}
 
 }

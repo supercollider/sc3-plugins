@@ -5,28 +5,29 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.35">
+<meta name="CocoaVersion" content="949.43">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #576925; min-height: 16.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #5b6828; min-height: 16.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0629ad}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #7e2a2b}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0c2daa}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #722d2e}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #0c2da8}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #732e2f}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #1130a5}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #683031}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Helvetica; min-height: 19.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0629ad}
-span.s3 {color: #516a1f}
-span.s4 {color: #000000}
-span.s5 {color: #0c2da8}
-span.s6 {color: #576925}
-span.s7 {color: #732e2f}
-span.s8 {color: #606060}
+span.s2 {color: #0000ff}
+span.s3 {color: #0c2daa}
+span.s4 {color: #576922}
+span.s5 {color: #000000}
+span.s6 {color: #1130a5}
+span.s7 {color: #5b6828}
+span.s8 {color: #683031}
+span.s9 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -35,6 +36,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>ProcMod - A structure for controlling modular processes.</b></p>
 <p class="p3"><b>ProcEvents - An event manager for ProcMod with GUI control capabilities.</b></p>
+<p class="p2"><br></p>
+<p class="p3">SEE ALSO: <a href="ProcModR.html"><span class="s2">ProcModR</span></a> - even cooler then ProcMod.</p>
 <p class="p2"><br></p>
 <p class="p4"><b>ProcMod</b></p>
 <p class="p2"><br></p>
@@ -113,26 +116,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>Examples:</b></p>
 <p class="p5"><br></p>
-<p class="p6"><span class="s2">SynthDef</span>(<span class="s3">\singrain</span>, {<span class="s2">arg</span> freq, amp, dur, envbus;</p>
-<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>OffsetOut<span class="s4">.ar(0,<span class="Apple-converted-space"> </span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Pan2</span>.ar(</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">EnvGen</span>.kr(<span class="s2">Env</span>.sine(dur, amp), doneAction: 2) *</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">In</span>.kr(envbus),</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Rand</span>.new(-1.0, 1.0)</p>
+<p class="p6"><span class="s3">SynthDef</span>(<span class="s4">\singrain</span>, {<span class="s3">arg</span> freq, amp, dur, envbus;</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>OffsetOut<span class="s5">.ar(0,<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Pan2</span>.ar(</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">EnvGen</span>.kr(<span class="s3">Env</span>.sine(dur, amp), doneAction: 2) *</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">In</span>.kr(envbus),</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Rand</span>.new(-1.0, 1.0)</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span>) </span>// read off the overall env control of the ProcMod</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span>) </span>// read off the overall env control of the ProcMod</p>
 <p class="p6">}).load(s);</p>
 <p class="p9"><span class="Apple-tab-span">	</span></p>
 <p class="p8">// create a new proc mod, and assign a function to it</p>
-<p class="p6">a = <span class="s2">ProcMod</span>.new(<span class="s2">Env</span>([0, 1, 0], [1, 1], <span class="s3">\sin</span>, 1), server: s);</p>
-<p class="p6">a.function_({<span class="s2">arg</span> group, envbus, server;</p>
-<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>Task<span class="s4">({</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">inf</span>.do({</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s3">\s_new</span>, <span class="s3">\singrain</span>, server.nextNodeID, 0, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">\freq</span>, 440.rrand(1760), <span class="s3">\amp</span>, 0.1, <span class="s3">\dur</span>, 5, <span class="s3">\envbus</span>, envbus);</p>
+<p class="p6">a = <span class="s3">ProcMod</span>.new(<span class="s3">Env</span>([0, 1, 0], [1, 1], <span class="s4">\sin</span>, 1), server: s);</p>
+<p class="p6">a.function_({<span class="s3">arg</span> group, envbus, server;</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>Task<span class="s5">({</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">inf</span>.do({</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s4">\s_new</span>, <span class="s4">\singrain</span>, server.nextNodeID, 0, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">\freq</span>, 440.rrand(1760), <span class="s4">\amp</span>, 0.1, <span class="s4">\dur</span>, 5, <span class="s4">\envbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.5.wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
@@ -151,18 +154,18 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><br></p>
 <p class="p8">// creating ProcMods in a functional way</p>
 <p class="p9"><br></p>
-<p class="p6">a = {<span class="s2">arg</span> amp, env, high, low, winsize, overlaps;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s2">var</span> proc;</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span></span>// defaults to Server.default if no Server is supplied</p>
-<p class="p6"><span class="Apple-tab-span">	</span>proc = <span class="s2">ProcMod</span>.new(env, amp);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>proc.function_({<span class="s2">arg</span> group, envbus, server;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">Task</span>({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">inf</span>.do({</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
-<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s3">\s_new</span>, <span class="s3">\singrain</span>, server.nextNodeID, 0, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">\freq</span>, high.rrand(low), <span class="s3">\amp</span>, 1, <span class="s3">\dur</span>, winsize,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">\envbus</span>, envbus);</p>
+<p class="p6">a = {<span class="s3">arg</span> amp, env, high, low, winsize, overlaps;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> proc;</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span></span>// defaults to Server.default if no Server is supplied</p>
+<p class="p6"><span class="Apple-tab-span">	</span>proc = <span class="s3">ProcMod</span>.new(env, amp);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>proc.function_({<span class="s3">arg</span> group, envbus, server;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Task</span>({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">inf</span>.do({</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
+<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s4">\s_new</span>, <span class="s4">\singrain</span>, server.nextNodeID, 0, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">\freq</span>, high.rrand(low), <span class="s4">\amp</span>, 1, <span class="s4">\dur</span>, winsize,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">\envbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(winsize / overlaps).wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
@@ -170,8 +173,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span>};</p>
 <p class="p9"><br></p>
 <p class="p8">// create new instances of ProcMod... store it to the variables 'b' and 'c'</p>
-<p class="p6">b = a.value(0.2, <span class="s2">Env</span>([0, 1, 0], [1, 1], <span class="s3">\sin</span>, 1), 2000, 1000, 0.1, 4);</p>
-<p class="p6">c = a.value(0.3, <span class="s2">Env</span>([0, 1, 0], [10, 0.1], [5, -10], 1), 440, 880, 0.4, 2);</p>
+<p class="p6">b = a.value(0.2, <span class="s3">Env</span>([0, 1, 0], [1, 1], <span class="s4">\sin</span>, 1), 2000, 1000, 0.1, 4);</p>
+<p class="p6">c = a.value(0.3, <span class="s3">Env</span>([0, 1, 0], [10, 0.1], [5, -10], 1), 440, 880, 0.4, 2);</p>
 <p class="p9"><br></p>
 <p class="p6">b.play; c.play;</p>
 <p class="p9"><br></p>
@@ -182,49 +185,49 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">ProcMods are meant for the most part, to be played and released. However, if the function slot is passed a Function object, they can be re-triggered after they have been released. If the Function returns a Task or Routine, the ProcMod will function as though a Task or Routine were placed in the function slot (it will be started and released in the same way). Re-triggered events will be assigned a new group and envbus, so these are made available to the Function through arguments. If an OSCresponderNode or releaseFunc are needed for each re-triggered event, they should be assigned inside the Function:</p>
 <p class="p2"><br></p>
-<p class="p6"><span class="s5">SynthDef</span>(<span class="s6">\trig</span>, {<span class="s5">arg</span> id, val;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">SendTrig</span>.kr(<span class="s5">Impulse</span>.kr(10), id, val);</p>
+<p class="p6"><span class="s6">SynthDef</span>(<span class="s7">\trig</span>, {<span class="s6">arg</span> id, val;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">SendTrig</span>.kr(<span class="s6">Impulse</span>.kr(10), id, val);</p>
 <p class="p6"><span class="Apple-tab-span">	</span>}).load(s);</p>
 <p class="p9"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="s5">SynthDef</span>(<span class="s6">\singrain</span>, {<span class="s5">arg</span> freq, amp, dur, envbus;</p>
-<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span></span>OffsetOut<span class="s4">.ar(0,<span class="Apple-converted-space"> </span></span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pan2</span>.ar(</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">EnvGen</span>.kr(<span class="s5">Env</span>.sine(dur, amp), doneAction: 2) *</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">In</span>.kr(envbus),</p>
+<p class="p6"><span class="s6">SynthDef</span>(<span class="s7">\singrain</span>, {<span class="s6">arg</span> freq, amp, dur, envbus;</p>
+<p class="p10"><span class="s5"><span class="Apple-tab-span">	</span></span>OffsetOut<span class="s5">.ar(0,<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pan2</span>.ar(</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">EnvGen</span>.kr(<span class="s6">Env</span>.sine(dur, amp), doneAction: 2) *</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">In</span>.kr(envbus),</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-1.0.rrand(1.0)</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span>) </span>// read off the overall env control of the ProcMod</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span>) </span>// read off the overall env control of the ProcMod</p>
 <p class="p6">}).load(s);</p>
 <p class="p9"><br></p>
 <p class="p6">i = 0;</p>
 <p class="p6">s.boot;</p>
-<p class="p6">a = <span class="s5">ProcMod</span>.new(<span class="s5">Env</span>([0, 1, 0], [1, 3], <span class="s6">\sin</span>, 1), server: s);</p>
+<p class="p6">a = <span class="s6">ProcMod</span>.new(<span class="s6">Env</span>([0, 1, 0], [1, 3], <span class="s7">\sin</span>, 1), server: s);</p>
 <p class="p11">// use a function. This one returns the Task. group and envbus are passed in as args</p>
-<p class="p6">a.function_({<span class="s5">arg</span> group, envbus, server;</p>
+<p class="p6">a.function_({<span class="s6">arg</span> group, envbus, server;</p>
 <p class="p6"><span class="Apple-tab-span">	</span>a.responder_(</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">OSCresponderNode</span>(a.server.addr, <span class="s6">'/tr'</span>, {<span class="s5">arg</span> time, resp, msg;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">OSCresponderNode</span>(a.server.addr, <span class="s7">'/tr'</span>, {<span class="s6">arg</span> time, resp, msg;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(msg[2] == group).if({msg[3].postln})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
-<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span></span>Task<span class="s4">({</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s6">\s_new</span>, <span class="s6">\trig</span>, a.server.nextNodeID, 0, group, <span class="s6">\id</span>, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\val</span>, i);</p>
+<p class="p10"><span class="s5"><span class="Apple-tab-span">	</span></span>Task<span class="s5">({</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s7">\s_new</span>, <span class="s7">\trig</span>, a.server.nextNodeID, 0, group, <span class="s7">\id</span>, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\val</span>, i);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>i = i + 1;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">inf</span>.do({</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s6">\s_new</span>, <span class="s6">\singrain</span>, server.nextNodeID, 0,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group, <span class="s6">\freq</span>, 440.rrand(880) * i, <span class="s6">\amp</span>, 0.1, <span class="s6">\dur</span>, 5,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\envbus</span>, envbus);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">inf</span>.do({</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s7">\s_new</span>, <span class="s7">\singrain</span>, server.nextNodeID, 0,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group, <span class="s7">\freq</span>, 440.rrand(880) * i, <span class="s7">\amp</span>, 0.1, <span class="s7">\dur</span>, 5,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\envbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
 <p class="p6"><span class="Apple-tab-span">	</span>});</p>
 <p class="p9"><br></p>
-<p class="p11"><span class="s4">a.play; </span>// play the ProcMod</p>
+<p class="p11"><span class="s5">a.play; </span>// play the ProcMod</p>
 <p class="p11">// release the current event, and start a new one immediately. These will overlap.</p>
-<p class="p11"><span class="s4">a.release; a.play; </span>// watch the posted values from the OSCresponderNode</p>
+<p class="p11"><span class="s5">a.release; a.play; </span>// watch the posted values from the OSCresponderNode</p>
 <p class="p6">a.release;</p>
 <p class="p9"><br></p>
 <p class="p4"><b>ProcEvents</b></p>
@@ -285,12 +288,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>Examples:</b></p>
 <p class="p2"><br></p>
-<p class="p6"><span class="s5">SynthDef</span>(<span class="s6">\singrain</span>, {<span class="s5">arg</span> freq, amp, dur, procbus, outbus = 0;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(outbus,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pan2</span>.ar(</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">EnvGen</span>.kr(<span class="s5">Env</span>.sine(dur, amp), doneAction: 2) *</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s5">In</span><span class="s4">.kr(procbus), </span>// read off the overall env control of the ProcMod</p>
+<p class="p6"><span class="s6">SynthDef</span>(<span class="s7">\singrain</span>, {<span class="s6">arg</span> freq, amp, dur, procbus, outbus = 0;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">Out</span>.ar(outbus,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pan2</span>.ar(</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">SinOsc</span>.ar(freq, 0, amp) *<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">EnvGen</span>.kr(<span class="s6">Env</span>.sine(dur, amp), doneAction: 2) *</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">In</span><span class="s5">.kr(procbus), </span>// read off the overall env control of the ProcMod</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Rand(-1.0, 1.0)</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
 <p class="p6"><span class="Apple-tab-span">	</span>)<span class="Apple-converted-space"> </span></p>
@@ -298,13 +301,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><br></p>
 <p class="p6">(</p>
 <p class="p11">// create a ProcMod... feed the function in at init time</p>
-<p class="p6">a = <span class="s5">ProcMod</span>.new(<span class="s5">Env</span>([0, 1, 0], [1, 1], <span class="s6">\sin</span>, 1), 0.02,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>function: {<span class="s5">arg</span> group, envbus, server;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Task</span>({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">inf</span>.do({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s6">\s_new</span>, <span class="s6">\singrain</span>, s.nextNodeID, 0, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\freq</span>, 440.rrand(880), <span class="s6">\amp</span>, 1, <span class="s6">\dur</span>, 0.2,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\procbus</span>, envbus);</p>
+<p class="p6">a = <span class="s6">ProcMod</span>.new(<span class="s6">Env</span>([0, 1, 0], [1, 1], <span class="s7">\sin</span>, 1), 0.02,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>function: {<span class="s6">arg</span> group, envbus, server;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Task</span>({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">inf</span>.do({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s7">\s_new</span>, <span class="s7">\singrain</span>, s.nextNodeID, 0, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\freq</span>, 440.rrand(880), <span class="s7">\amp</span>, 1, <span class="s7">\dur</span>, 0.2,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\procbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
@@ -312,28 +315,28 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>);</p>
 <p class="p9"><br></p>
 <p class="p11">// create a ProcMod... set the function after init time</p>
-<p class="p6">b = <span class="s5">ProcMod</span>.new(<span class="s5">Env</span>([0, 1, 0], [1, 1], <span class="s6">\sin</span>, 1), 0.02)</p>
-<p class="p6"><span class="Apple-tab-span">	</span>.function_({<span class="s5">arg</span> group, envbus;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Task</span>({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">inf</span>.do({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s6">\s_new</span>, <span class="s6">\singrain</span>, s.nextNodeID, 0, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\freq</span>, 4400.rrand(8800), <span class="s6">\amp</span>, 1, <span class="s6">\dur</span>, 0.2,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\procbus</span>, envbus);</p>
+<p class="p6">b = <span class="s6">ProcMod</span>.new(<span class="s6">Env</span>([0, 1, 0], [1, 1], <span class="s7">\sin</span>, 1), 0.02)</p>
+<p class="p6"><span class="Apple-tab-span">	</span>.function_({<span class="s6">arg</span> group, envbus;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Task</span>({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">inf</span>.do({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>s.sendMsg(<span class="s7">\s_new</span>, <span class="s7">\singrain</span>, s.nextNodeID, 0, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\freq</span>, 4400.rrand(8800), <span class="s7">\amp</span>, 1, <span class="s7">\dur</span>, 0.2,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\procbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.05.wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p9"><br></p>
 <p class="p11">// create the ProcEvents to run the above ProcMods<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p10"><span class="s4">e = </span>ProcEvents<span class="s4">.new(</span></p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// an array of event / release arrays</p>
+<p class="p10"><span class="s5">e = </span>ProcEvents<span class="s5">.new(</span></p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// an array of event / release arrays</p>
 <p class="p6"><span class="Apple-tab-span">	</span>[</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// run 'a'</p>
-<p class="p6"><span class="s7">/* 0 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a, <span class="s5">nil</span>],</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// run 'b'</p>
-<p class="p6"><span class="s7">/* 1 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[b, <span class="s5">nil</span>],</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// kill ev1 and ev2</p>
-<p class="p6"><span class="s7">/* 2 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[<span class="s5">nil</span>, [a, b]]</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// run 'a'</p>
+<p class="p6"><span class="s8">/* 0 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a, <span class="s6">nil</span>],</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// run 'b'</p>
+<p class="p6"><span class="s8">/* 1 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[b, <span class="s6">nil</span>],</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// kill ev1 and ev2</p>
+<p class="p6"><span class="s8">/* 2 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[<span class="s6">nil</span>, [a, b]]</p>
 <p class="p6"><span class="Apple-tab-span">	</span>], 1);</p>
 <p class="p9"><br></p>
 <p class="p6">)</p>
@@ -344,33 +347,33 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11">// a more complex example, using function to create ProcMods, and feeding the<span class="Apple-converted-space"> </span></p>
 <p class="p11">// evaluated form of those functions into ProcEvents.</p>
 <p class="p6">(</p>
-<p class="p6">a = {<span class="s5">arg</span> id, amp, env, high, low, winsize, overlaps;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> proc;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>proc = <span class="s5">ProcMod</span>.new(env, amp, id: id);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>proc.function_({<span class="s5">arg</span> group, envbus, server;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Task</span>({</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">inf</span>.do({</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s6">\s_new</span>, <span class="s6">\singrain</span>, server.nextNodeID, 0, group,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\freq</span>, high.rrand(low), <span class="s6">\amp</span>, 1, <span class="s6">\dur</span>, winsize,<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">\procbus</span>, envbus);</p>
+<p class="p6">a = {<span class="s6">arg</span> id, amp, env, high, low, winsize, overlaps;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">var</span> proc;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>proc = <span class="s6">ProcMod</span>.new(env, amp, id: id);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>proc.function_({<span class="s6">arg</span> group, envbus, server;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Task</span>({</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">inf</span>.do({</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// start a new synth... run it inside this ProcMod's group,</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// and read control values off the envbus</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server.sendMsg(<span class="s7">\s_new</span>, <span class="s7">\singrain</span>, server.nextNodeID, 0, group,</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\freq</span>, high.rrand(low), <span class="s7">\amp</span>, 1, <span class="s7">\dur</span>, winsize,<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">\procbus</span>, envbus);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(winsize / overlaps).wait;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
 <p class="p6"><span class="Apple-tab-span">	</span>};</p>
 <p class="p9"><br></p>
-<p class="p6">e = <span class="s5">ProcEvents</span>.new([</p>
-<p class="p6"><span class="s7">/* 0 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s6">\ev1</span>, 0.1, <span class="s5">Env</span>([0, 1, 0], [2, 10], <span class="s6">\sin</span>, 1), 440, 880, 0.3, 8),</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s5">nil</span><span class="s4">], </span>// create \ev1, release nothing</p>
-<p class="p6"><span class="s7">/* 1 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s6">\ev2</span>, 0.1, <span class="s5">Env</span>([0, 1, 0], [1, 10], <span class="s6">\sin</span>, 1), 2200, 4400, 0.2, 8),</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">nil</span>],</p>
-<p class="p6"><span class="s7">/* 2 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s6">\ev3</span>, 0.1, <span class="s5">Env</span>([0, 1, 0.5, 2, 0], [1, 1, 1, 1], <span class="s6">\sin</span>, 1), 100,</p>
+<p class="p6">e = <span class="s6">ProcEvents</span>.new([</p>
+<p class="p6"><span class="s8">/* 0 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s7">\ev1</span>, 0.1, <span class="s6">Env</span>([0, 1, 0], [2, 10], <span class="s7">\sin</span>, 1), 440, 880, 0.3, 8),</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">nil</span><span class="s5">], </span>// create \ev1, release nothing</p>
+<p class="p6"><span class="s8">/* 1 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s7">\ev2</span>, 0.1, <span class="s6">Env</span>([0, 1, 0], [1, 10], <span class="s7">\sin</span>, 1), 2200, 4400, 0.2, 8),</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">nil</span>],</p>
+<p class="p6"><span class="s8">/* 2 */</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[a.value(<span class="s7">\ev3</span>, 0.1, <span class="s6">Env</span>([0, 1, 0.5, 2, 0], [1, 1, 1, 1], <span class="s7">\sin</span>, 1), 100,</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>10000, 1, 4),</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[</span><span class="s6">\ev1</span><span class="s4">, </span><span class="s6">\ev2</span><span class="s4">]], </span>// release ev1 and ev2</p>
-<p class="p11">/* 3 */<span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[</span><span class="s5">nil</span><span class="s4">, </span><span class="s6">\ev3</span><span class="s4">]</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], 0.dbamp, id: <span class="s8">"test"</span>);</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[</span><span class="s7">\ev1</span><span class="s5">, </span><span class="s7">\ev2</span><span class="s5">]], </span>// release ev1 and ev2</p>
+<p class="p11">/* 3 */<span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[</span><span class="s6">nil</span><span class="s5">, </span><span class="s7">\ev3</span><span class="s5">]</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], 0.dbamp, id: <span class="s9">"test"</span>);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6">)</p>
 <p class="p9"><br></p>
@@ -380,27 +383,27 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11">can see how it works with an internval mic ... snap your fingers and the GUI should advance */</p>
 <p class="p9"><br></p>
 <p class="p6">(</p>
-<p class="p6">s=<span class="s5">Server</span>.internal.boot;</p>
+<p class="p6">s=<span class="s6">Server</span>.internal.boot;</p>
 <p class="p6">s.waitForBoot({</p>
-<p class="p6"><span class="Apple-tab-span">	</span>a = <span class="s5">ProcEvents</span>.new([</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event1"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event2"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event3"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event4"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event5"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event6"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event7"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event8"</span>.postln}, <span class="s5">nil</span>],</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s8">"event9"</span>.postln}, <span class="s5">nil</span>]</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], 1, <span class="s5">nil</span>, <span class="s5">nil</span>, <span class="s8">"test"</span>, s);</p>
+<p class="p6"><span class="Apple-tab-span">	</span>a = <span class="s6">ProcEvents</span>.new([</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event1"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event2"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event3"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event4"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event5"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event6"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event7"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event8"</span>.postln}, <span class="s6">nil</span>],</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[{<span class="s9">"event9"</span>.postln}, <span class="s6">nil</span>]</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], 1, <span class="s6">nil</span>, <span class="s6">nil</span>, <span class="s9">"test"</span>, s);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// .pedalTrig(pedalbus, tolerance, testdur)</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// we'll make the pedalbus the inbus of the pedal</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// pedalTrig will listen for the average amount of noise on the bus</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// then looks for triggers above noise * headroom</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// 5 might be high... but it is handy for using the internal mic for a test</p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// this really depends on the noise floor of your pedal (I've used values in<span class="Apple-converted-space"> </span></p>
-<p class="p11"><span class="s4"><span class="Apple-tab-span">	</span></span>// the hundreds even)</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// .pedalTrig(pedalbus, tolerance, testdur)</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// we'll make the pedalbus the inbus of the pedal</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// pedalTrig will listen for the average amount of noise on the bus</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// then looks for triggers above noise * headroom</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// 5 might be high... but it is handy for using the internal mic for a test</p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// this really depends on the noise floor of your pedal (I've used values in<span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="s5"><span class="Apple-tab-span">	</span></span>// the hundreds even)</p>
 <p class="p6"><span class="Apple-tab-span">	</span>a.pedalTrig(s.options.numOutputBusChannels, 10, 2);</p>
 <p class="p9"><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>a.perfGUI;</p>
