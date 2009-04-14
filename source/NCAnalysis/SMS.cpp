@@ -169,6 +169,7 @@ struct SMS : Unit {
 	int m_sr;
 	int m_blocksize;
 	
+	float * buf; //for passing sines+noise data to a graphics object 
 	float * m_inputbuffer;
 	int m_inputpos;
 	
@@ -283,15 +284,15 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 void synthesisestochastic(SMS * unit); 
 void formantpreserve(SMS * unit, float freqmult);
 void ifftsines(SMS * unit, float * output, int number,int& pos, int total, Guide * tracks);
-
+void graphicsbuffer(SMS * unit, Guide * tracks);
 
 void SMS_Ctor(SMS* unit) {
 	
 	int j; //i,j;
 	
+
 	//CHECK SAMPLING RATE AND BUFFER SIZE
 	unit->m_blocksize = unit->mWorld->mFullRate.mBufLength;
-	
 	
 	if(unit->m_blocksize!=64) { 
 		printf("SMS complains: block size not 64, you have %d\n", unit->m_blocksize);
@@ -407,6 +408,56 @@ void SMS_Ctor(SMS* unit) {
 	
 	unit->m_maxpeaks=(int)ZIN0(1); 
 	//int m_maxlistsize; //double m_maxpeaks
+	
+	float fbufnum = ZIN0(10);
+	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+	World * world = unit->mWorld;
+	
+	//printf("fbufnum %f int %d \n",fbufnum, (int)fbufnum);
+	
+	if(fbufnum>=0.f){
+	
+		int bufnum= (int)fbufnum; 
+		
+	if(0<=bufnum<= world->mNumSndBufs) {
+		SndBuf * buf;
+		
+		buf = world->mSndBufs + bufnum; 
+		//unit->mBufNum=bufnum;
+		//printf("%d \n",bufnum);			
+		//unit->mBufSize = buf->samples;
+		unit->buf= buf->data; //(float*)RTAlloc(unit->mWorld, unit->mBufSize * sizeof(float));
+							  //
+							  //		} else { 
+							  //			if(world->mVerbosity > -1){ Print("SLUGens buffer number error: invalid buffer number: %i.\n", bufnum); }
+							  //			SETCALC(*ClearUnitOutputs);
+							  //			unit->mDone = true; 
+							  //			return NULL; 
+							  //		}
+		
+		//must be enough room for current peak count integer, up to max number of sine peaks*2, and a mag spectrum for the noise 
+		if(buf->samples<(unit->m_maxpeaks*10 + unit->m_nover2+1+1)) {
+			Print("buffer not large enough %i.\n", buf->samples); 
+		SETCALC(*ClearUnitOutputs);
+		unit->mDone = true; 
+		//return NULL;
+		}
+
+buf->data[0]= 0; //start with no trails to paint
+
+	} else {
+		unit->buf=NULL;	
+	}
+	
+} else
+{
+		unit->buf=NULL; 
+}
+
+
+	
+	
+	
 	
 	unit->m_tracks= (Guide*)RTAlloc(unit->mWorld, 2*unit->m_maxpeaks * sizeof(Guide));
 
@@ -653,6 +704,7 @@ void SMS_next(SMS *unit, int numSamples)
 		for (j=0; j<unit->m_nover2; ++j) 
 		resynth[j]=0.0;
 		
+		
 	}
 	
 	unit->m_inputpos=pos; //store for next time
@@ -681,6 +733,50 @@ void SMS_next(SMS *unit, int numSamples)
 	
 	unit->m_outputpos = outputpos;
 
+}
+
+
+
+//can get magspectrum of noise and sine peak data
+void graphicsbuffer(SMS * unit, Guide * tracks, SCPolarBuf * p) {
+
+	int i; 
+	
+	float * buf = unit->buf; 
+	
+	int numtracks = unit->m_numtracks;
+	
+	int pos= 0; //numtracks;  
+	
+	buf[0]= (float)numtracks;
+	
+	//printf("numtracks %d ",numtracks);
+	
+	for (i=0; i<numtracks; ++i) {
+		
+		pos= i*5+1; //numtracks;  
+		
+		Guide *  pointer= &tracks[i]; 
+
+		buf[pos]= pointer->freq1;
+		buf[pos+1]= pointer->freq2;
+		buf[pos+2]= pointer->amp1;
+		buf[pos+3]= pointer->amp2;
+		buf[pos+4]= pointer->phase1;
+	}
+	
+	pos= numtracks*5+1;
+	
+	int nover2= unit->m_nover2; 
+	
+	for (i=0; i<(nover2-1); ++i) {
+		
+		//will be copy or actual one? 
+		SCPolar& polar = p->bin[i];
+		
+		buf[pos+i] = polar.mag;
+	}
+	
 }
 
 
@@ -1391,6 +1487,12 @@ polar.phase = rgen.frand2()*pi; //rgen.frand()*twopi- pi;  //random number from 
 polar.mag = magspectrum[i] - polar.mag; 
 }
 
+
+//must write to buffer at this point if going to do so, while have noise magnitude spectrum
+if(unit->buf)
+graphicsbuffer(unit, unit->m_tracks, p);
+
+
 //returns SCComplexBuf*
  float* q = (float *) ToComplexApx2((float *)p); //assumes inputbuffer in SCPolar format, which it is! 
 
@@ -1403,7 +1505,6 @@ unit->m_q = q;
 scfft_doifft(unit->m_scifft);
 
 float * ifftoutput= unit->m_inplace;
-
 
 //printf("Post inverse FFT \n");
 
