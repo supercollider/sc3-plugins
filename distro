@@ -13,7 +13,17 @@ else
 	cp -uR build Extensions
 fi
 
+# TODO there's inconsistency between xcode and scons in naming the AY product. 
+# Not sure what order the different namings have appeared.
+# Also we put this before the "easy" moves so MCLDAY* doesn't get moved to MCLDUGens 
+if [ -f build/AY*.$pluginext ]; then
+	$movecmd build/AY*.$pluginext            Extensions/AYUGens
+elif [ -f build/MCLDAY*.$pluginext ]; then
+	$movecmd build/MCLDAY*.$pluginext            Extensions/AYUGens
+fi
+
 $movecmd build/BatUGens.$pluginext       Extensions/BatUGens
+$movecmd build/BerlachUGens.$pluginext   Extensions/BerlachUGens
 $movecmd build/Bhob*.$pluginext          Extensions/BhobUGens
 $movecmd build/BlackrainUGens*.$pluginext Extensions/BlackrainUGens
 $movecmd build/Josh*UGens*.$pluginext    Extensions/JoshUGens
@@ -23,20 +33,17 @@ $movecmd build/MCLD*U*en*.$pluginext     Extensions/MCLDUGens
 $movecmd build/MdaUGens.$pluginext       Extensions/MdaUGens
 $movecmd build/MembraneUGens.$pluginext  Extensions/MembraneUGens
 $movecmd build/MLfftwUGens*.$pluginext   Extensions/MLfftwUGens
+$movecmd build/NCAnalysis*.$pluginext    Extensions/NCAnalysisUGens
 $movecmd build/RMEQSuite*.$pluginext     Extensions/RMEQSuiteUGens
 $movecmd build/RFWUGens.$pluginext       Extensions/RFWUGens
 $movecmd build/SLUGens*.$pluginext       Extensions/SLUGens
 $movecmd build/VOSIM.$pluginext          Extensions/VOSIMUGens
-$movecmd build/Berlach.$pluginext          Extensions/BerlachUGens
 
 if [ -f build/STKUGens*.$pluginext ]; then
 	$movecmd build/STKUGens*.$pluginext      Extensions/StkUGens
 fi
 if [ -f build/TagSystemUgens.$pluginext ]; then
 	$movecmd build/TagSystemUgens.$pluginext Extensions/TagSystemUGens
-fi
-if [ -f build/AY*.$pluginext ]; then
-	$movecmd build/AY*.$pluginext            Extensions/AYUGens
 fi
 
 # License always important
@@ -55,9 +62,9 @@ if [ `uname` = Darwin ]; then
 	hdiutil create -srcfolder Extensions "SC3ExtPlugins`date +%Y-%m-%d`.dmg" -volname "SC3-plugins"
 fi
 
-if [ `uname` = Linux ]; then
-	# Deactivate wonky
+#if [ `uname` = Linux ]; then
+#	# Deactivate wonky
 #	mv Extensions/MCLDUGens/MCLD_CQ_UGens.sc Extensions/test
-fi
+#fi
 
 echo 'distro done.'
