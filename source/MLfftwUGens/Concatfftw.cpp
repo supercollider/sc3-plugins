@@ -111,7 +111,9 @@ void Concat_Ctor(Concat* unit) {
 	unit->m_matchframes=1;
 	unit->m_fadeoutlocation= (-1); //negative means do nothing
 	
-	
+	//Print("aaaaaaaaaaaaaaaaaagh \n"); 
+	//SETCALC(*ClearUnitOutputs);
+	//unit->mDone = true; 
 	unit->mCalcFunc = (UnitCalcFunc)&Concat_next;
 	
 	//printf("debug nover2 %d blocksperframe %d samplesforzcr %d sourceframes %d \n", unit->m_nover2, unit->m_blocksperframe, unit->m_samplesforzcr, unit->m_sourceframes);
@@ -386,7 +388,7 @@ float calcst(float * fftbuf) {
 float calcsc(float * fftbuf, int nover2) {
 	
 	int i;
-	float sum=0.0, val;
+	float sum=1.0, val;
 	float centroid=0.0;
 	
 	for (i=1; i<nover2; ++i) {
@@ -396,6 +398,8 @@ float calcsc(float * fftbuf, int nover2) {
 		centroid+= val*i;
 		sum+= val;
 	}
+	
+	//printf("sum %f\n", sum);
 	
 	centroid=centroid/sum;
 	
