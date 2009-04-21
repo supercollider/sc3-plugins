@@ -18,7 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-//some UGens by Nick Collins 
+//UGens by Nick Collins 
 //SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.informatics.sussex.ac.uk/users/nc81/
 
 #include "SC_PlugIn.h"
@@ -232,6 +232,39 @@ struct VMScan2D : public Unit
 //also VM for nonlinear filter equations; stability not guaranteed, so various strategies for recovery
 
 
+
+
+struct SLOnset : public Unit    
+{
+	float * m_memory1, * m_memory2;
+	int m_memorysize1, m_before, m_after, m_memorysize2, m_hysteresiscount, m_memorycounter1, m_memorycounter2; 
+};
+
+
+//only sample length delays for now too
+//could have pitch control later, but totaldelay, junctionposition also too indirect; d1 and d2 lengths
+//pitch and junctionpos at initialisation only for now, g is loss function
+//output= TwoTube.ar(input, scatteringcoefficient,lossfactor,d1length,d2length);
+//waveguide synthesis experiment
+//scattering junction control k will be audio input
+struct TwoTube : public Unit    
+{
+	float * delay1right, * delay1left; //tube 1
+	float * delay2right, * delay2left; //tube 2
+	int d1length, d2length;
+	float lossfactor; 
+	float f1in, f1out;	//averaging filters f1, f2 for frequency dependent losses; need a storage slot for previous values
+	float f2in, f2out;
+	int d1rightpos, d1leftpos, d2rightpos, d2leftpos;
+};
+
+
+
+
+
+
+
+
 extern "C" {  
 	
 	void SortBuf_next_k(SortBuf *unit, int inNumSamples);
@@ -277,7 +310,7 @@ extern "C" {
 	
 	void TermanWang_next_k(TermanWang *unit, int inNumSamples);
 	void TermanWang_Ctor(TermanWang *unit);
-
+	
 	//arbitrary potential well function polynomial leads to buffer coefficients/powers of up to order 10 passed in
 	//void PotentialWell_next_a(PotentialWell *unit, int inNumSamples);
 	//void PotentialWell_Ctor(PotentialWell* unit);
@@ -313,7 +346,17 @@ extern "C" {
 	void VMScan2D_next_a(VMScan2D *unit, int inNumSamples);
 	void VMScan2D_Ctor(VMScan2D* unit);
 	void readinstructionVMScan2D(VMScan2D *unit, int command, float param);
-
+	
+	
+	void SLOnset_next(SLOnset *unit, int inNumSamples);
+	void SLOnset_Ctor(SLOnset* unit);
+	void SLOnset_Dtor(SLOnset* unit);
+	
+	void TwoTube_next(TwoTube *unit, int inNumSamples);
+	void TwoTube_Ctor(TwoTube* unit);
+	void TwoTube_Dtor(TwoTube* unit);
+	
+	
 }
 
 
@@ -358,26 +401,26 @@ void SortBuf_Ctor( SortBuf* unit ) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) { 
-	
-	unit->mBufNum=bufnum;
-	
-	//printf("%d \n",bufnum);			
-	///SndBuf *buf = world->mSndBufs + bufnum; 
-	
-	unit->mBufSize = buf->samples;
-	
-	unit->mBufCopy= buf->data; //(float*)RTAlloc(unit->mWorld, unit->mBufSize * sizeof(float));
-	
-	//initialise to copy
-	//int i=0;
-	//	for(i=0; i<unit->mBufSize;++i) 
-	//		unit->mBufCopy[i]=buf->data[i];
-	//	
-	unit->mSorti=unit->mBufSize - 1;
-	unit->mSortj=1;
-	unit->mSortdone=0;
-	unit->mOutStep=1; //allows one run through before it sorts
-	
+		
+		unit->mBufNum=bufnum;
+		
+		//printf("%d \n",bufnum);			
+		///SndBuf *buf = world->mSndBufs + bufnum; 
+		
+		unit->mBufSize = buf->samples;
+		
+		unit->mBufCopy= buf->data; //(float*)RTAlloc(unit->mWorld, unit->mBufSize * sizeof(float));
+		
+		//initialise to copy
+		//int i=0;
+		//	for(i=0; i<unit->mBufSize;++i) 
+		//		unit->mBufCopy[i]=buf->data[i];
+		//	
+		unit->mSorti=unit->mBufSize - 1;
+		unit->mSortj=1;
+		unit->mSortdone=0;
+		unit->mOutStep=1; //allows one run through before it sorts
+		
 	}
 }
 
@@ -507,35 +550,35 @@ void GravityGrid_Ctor(GravityGrid* unit) {
 	//uint32 bufnum = (uint32)ZIN0(4);
 	
 	if (bufnum>=0) {
-
-	SndBuf * buf= SLUGensGetBuffer(unit, (uint32)bufnum);
-	
-	if (buf) {
-	
-		if(buf->samples==9) {
-			unit->m_weights= buf->data;
-			
-		}
 		
+		SndBuf * buf= SLUGensGetBuffer(unit, (uint32)bufnum);
+		
+		if (buf) {
+			
+			if(buf->samples==9) {
+				unit->m_weights= buf->data;
+				
+			}
+			
 		}
 		else
 		{
-		unit->mDone = true;
+			unit->mDone = true;
 		}
-	
-	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-//		SndBuf *buf = world->mSndBufs + bufnum; 
-//		
-//		if(buf->samples==9) {
-//			unit->m_weights= buf->data;
-//			
-//		}
-	
-	}
+		
+		//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+		//		SndBuf *buf = world->mSndBufs + bufnum; 
+		//		
+		//		if(buf->samples==9) {
+		//			unit->m_weights= buf->data;
+		//			
+		//		}
+		
+		}
 	
 	SETCALC(GravityGrid_next_k);
 	
-}
+	}
 
 
 //can't have independent x and y, causes trouble- zero has a pusher at it with infinite size! 
@@ -673,7 +716,7 @@ void GravityGrid_next_k(GravityGrid *unit, int inNumSamples) {
 			if ((posx>1.0) || (posx<-1.0)) posx=fabs(fmod((posx-1.0),4.0)-2.0)-1.0;
 			if ((posy>1.0) || (posy-1.0)) posy=fabs(fmod((posy-1.0),4.0)-2.0)-1.0;
 			
-				
+			
 			//if ((posx>1.0) || (posx<-1.0)) posx=sc_fold(posx, -1.0f, 1.0f);
 			//if ((posy>1.0) || (posy<-1.0)) posy=sc_fold(posy, -1.0f, 1.0f);
 			
@@ -719,34 +762,34 @@ void GravityGrid2_Ctor(GravityGrid2* unit) {
 	//uint32 bufnum = (uint32)ZIN0(4);
 	
 	if (bufnum>=0) {
-	
-	SndBuf * snd= SLUGensGetBuffer(unit,(int)bufnum);
-	
-	if (snd) {
-	
-	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-		//SndBuf *snd = world->mSndBufs + bufnum; 
-		float *buf = snd->data;
 		
-		//num= (int)(buf[0]+0.001f);
-		//unit->nummasses = num;
+		SndBuf * snd= SLUGensGetBuffer(unit,(int)bufnum);
 		
-		unit->m_weights= buf;
+		if (snd) {
+			
+			//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+			//SndBuf *snd = world->mSndBufs + bufnum; 
+			float *buf = snd->data;
+			
+			//num= (int)(buf[0]+0.001f);
+			//unit->nummasses = num;
+			
+			unit->m_weights= buf;
+			
+			//for (i=0; i<num; ++i) {
+			//		
+			//		int pos= i*3+1;
+			//		
+			//		unit->x[i]=buf[pos];
+			//		unit->y[i]=buf[pos+1];
+			//		unit->m_weights[i]=buf[pos+2]; 
+			//		}
+			
+			} else
+			{unit->mDone=false;}
 		
-		//for (i=0; i<num; ++i) {
-//		
-//		int pos= i*3+1;
-//		
-//		unit->x[i]=buf[pos];
-//		unit->y[i]=buf[pos+1];
-//		unit->m_weights[i]=buf[pos+2]; 
-//		}
-		
-	} else
-	{unit->mDone=false;}
+		}
 	
-	}
-
 	unit->velx=0.0;
 	unit->vely=0.0;
 	unit->posx=0.0;
@@ -754,7 +797,7 @@ void GravityGrid2_Ctor(GravityGrid2* unit) {
 	
 	SETCALC(GravityGrid2_next_k);
 	
-}
+	}
 
 float gg_lookupsin[100];
 float gg_lookupcos[100];
@@ -806,94 +849,94 @@ void GravityGrid2_next_k(GravityGrid2 *unit, int inNumSamples) {
 	w=unit->m_weights;
 	
 	int num= (int)(w[0]+0.001f);
-
-		for (int j=0; j<inNumSamples;++j) {
-			
-			accelx=0.0;
-			accely=0.0;
-			
-			//could use this to decide on run function but can't be bothered, negligible on loop performance and 
-			//keeps code in one place for edits
-			
-			for(int i=0;i<num;++i) {
-				
-				int index= i*3;
+	
+	for (int j=0; j<inNumSamples;++j) {
 		
-					//xdiff= ((posx)-(x[i]));
-					//ydiff= ((y[i])-(posy));
-					
-					xdiff= ((posx)-(w[index]));
-					ydiff= ((w[index+1])-(posy));
-					
-					
-					if((xdiff < 0.01) && (xdiff>(-0.00001))) xdiff= 0.01;
-					if((ydiff < 0.01) && (ydiff>(-0.00001))) ydiff= 0.01;
-					if((xdiff > (-0.01)) && (xdiff<(0.0))) xdiff= -0.01;
-					if((ydiff > (-0.01)) && (ydiff<(0.0))) ydiff= -0.01;
-					
-					theta= atan2(ydiff, xdiff);
-					//result is between -pi and pi
-					
-					lookupindex= (int)(((theta/twopi)*99.999)+50); //gives index into lookup tables
-					
-					//lookup tables for cos and sin
-					
-					//hyp= 1.0/sqrt(xdiff*xdiff+ydiff*ydiff);
-					
-					hyp = (xdiff*xdiff+ydiff*ydiff);
-					
-					//if(hyp < 0.01) hyp =0.01;
-					
-					//need lookup table
-					
-					//force of gravity
-					//w[i]
-					rdiff= w[index+2]*0.0001*(1.0/hyp); //*sqrt(xdiff*xdiff+ydiff*ydiff); //(0.0001/(xdiff*xdiff+ydiff*ydiff));
-					
-					tmp= rdiff*(gg_lookupcos[lookupindex]);
-					
-					accelx+= tmp; //rdiff*(xdiff*hyp);
-					
-					tmp= rdiff*(gg_lookupsin[lookupindex]);
-					
-					accely+= tmp; //rdiff*ydiff; //rdiff*(ydiff*hyp);
-					
-			}
+		accelx=0.0;
+		accely=0.0;
+		
+		//could use this to decide on run function but can't be bothered, negligible on loop performance and 
+		//keeps code in one place for edits
+		
+		for(int i=0;i<num;++i) {
+			
+			int index= i*3;
+			
+			//xdiff= ((posx)-(x[i]));
+			//ydiff= ((y[i])-(posy));
+			
+			xdiff= ((posx)-(w[index]));
+			ydiff= ((w[index+1])-(posy));
 			
 			
-			velx=velx+accelx;
-			vely=vely+accely;
+			if((xdiff < 0.01) && (xdiff>(-0.00001))) xdiff= 0.01;
+			if((ydiff < 0.01) && (ydiff>(-0.00001))) ydiff= 0.01;
+			if((xdiff > (-0.01)) && (xdiff<(0.0))) xdiff= -0.01;
+			if((ydiff > (-0.01)) && (ydiff<(0.0))) ydiff= -0.01;
 			
-			//constraints on vel to avoid runaway speeds
-			if ((velx>1.0) || (velx<-1.0)) velx=sc_fold(velx, -1.0f, 1.0f);
-			if ((vely>1.0) || (vely<-1.0)) vely=sc_fold(vely, -1.0f, 1.0f);
+			theta= atan2(ydiff, xdiff);
+			//result is between -pi and pi
 			
-			posx=posx+(rate*(velx));
-			posy=posy+(rate*(vely));
+			lookupindex= (int)(((theta/twopi)*99.999)+50); //gives index into lookup tables
 			
-			//WRONG assumes fmod works correctly for negative values
-			//if ((posx>1.0) || (posx<-1.0)) posx=fabs(fmod((posx-1.0),4.0)-2.0)-1.0;
-			//if ((posy>1.0) || (posy-1.0)) posy=fabs(fmod((posy-1.0),4.0)-2.0)-1.0;
+			//lookup tables for cos and sin
 			
-			//correction: (better with the distorted version above!)
-			if ((posx>1.0) || (posx<-1.0)) posx=sc_fold(posx, -1.0f, 1.0f);
-			if ((posy>1.0) || (posy<-1.0)) posy=sc_fold(posy, -1.0f, 1.0f);
+			//hyp= 1.0/sqrt(xdiff*xdiff+ydiff*ydiff);
 			
-			//could also be wrap
+			hyp = (xdiff*xdiff+ydiff*ydiff);
 			
-			//printf("%f %f %f %f %f %f %f \n",accelx, accely, unit->velx,unit->vely,unit->posx,unit->posy, unit->posy*unit->posy+ unit->posx*unit->posx);
+			//if(hyp < 0.01) hyp =0.01;
 			
+			//need lookup table
 			
-			//removed because discontinuous
-			//float sign; 
-//			if (fabs(posx) < 0.0000001) sign= 1;
-//			else
-//				sign= (posx/fabs(posx));
-//			
-			ZXP(out) = (posy*posy+ posx*posx)*2.0f-1.0f; //posx; //sign*0.5*(posy*posy+ posx*posx);
+			//force of gravity
+			//w[i]
+			rdiff= w[index+2]*0.0001*(1.0/hyp); //*sqrt(xdiff*xdiff+ydiff*ydiff); //(0.0001/(xdiff*xdiff+ydiff*ydiff));
 			
-			//printf("%f \n",(unit->posx/fabs(unit->posx))*0.5*(unit->posy*unit->posy+ unit->posx*unit->posx));
+			tmp= rdiff*(gg_lookupcos[lookupindex]);
+			
+			accelx+= tmp; //rdiff*(xdiff*hyp);
+			
+			tmp= rdiff*(gg_lookupsin[lookupindex]);
+			
+			accely+= tmp; //rdiff*ydiff; //rdiff*(ydiff*hyp);
+			
 		}
+		
+		
+		velx=velx+accelx;
+		vely=vely+accely;
+		
+		//constraints on vel to avoid runaway speeds
+		if ((velx>1.0) || (velx<-1.0)) velx=sc_fold(velx, -1.0f, 1.0f);
+		if ((vely>1.0) || (vely<-1.0)) vely=sc_fold(vely, -1.0f, 1.0f);
+		
+		posx=posx+(rate*(velx));
+		posy=posy+(rate*(vely));
+		
+		//WRONG assumes fmod works correctly for negative values
+		//if ((posx>1.0) || (posx<-1.0)) posx=fabs(fmod((posx-1.0),4.0)-2.0)-1.0;
+		//if ((posy>1.0) || (posy-1.0)) posy=fabs(fmod((posy-1.0),4.0)-2.0)-1.0;
+		
+		//correction: (better with the distorted version above!)
+		if ((posx>1.0) || (posx<-1.0)) posx=sc_fold(posx, -1.0f, 1.0f);
+		if ((posy>1.0) || (posy<-1.0)) posy=sc_fold(posy, -1.0f, 1.0f);
+		
+		//could also be wrap
+		
+		//printf("%f %f %f %f %f %f %f \n",accelx, accely, unit->velx,unit->vely,unit->posx,unit->posy, unit->posy*unit->posy+ unit->posx*unit->posx);
+		
+		
+		//removed because discontinuous
+		//float sign; 
+		//			if (fabs(posx) < 0.0000001) sign= 1;
+		//			else
+		//				sign= (posx/fabs(posx));
+		//			
+		ZXP(out) = (posy*posy+ posx*posx)*2.0f-1.0f; //posx; //sign*0.5*(posy*posy+ posx*posx);
+		
+		//printf("%f \n",(unit->posx/fabs(unit->posx))*0.5*(unit->posy*unit->posy+ unit->posx*unit->posx));
+	}
 	
 	
 	unit->velx=velx;
@@ -1297,10 +1340,10 @@ void DoubleWell_next_k(DoubleWell *unit, int inNumSamples) {
 		//assumes fmod works correctly for negative values- which it doesn't- this is erroneous code, but kept for backwards compatability and
 		//because it can make some curious sounds!
 		if ((x>1.0) || (x<-1.0)) x=fabs(fmod((x-1.0),4.0)-2.0)-1.0;
-//		//if ((posy>1.0) || (posy-1.0)) posy=fabs(fmod((posy-1.0),4.0)-2.0)-1.0;
-//		
+		//		//if ((posy>1.0) || (posy-1.0)) posy=fabs(fmod((posy-1.0),4.0)-2.0)-1.0;
+		//		
 		ZXP(out) = x;
-//		
+		//		
 								
 		//printf("%f \n",(unit->posx/fabs(unit->posx))*0.5*(unit->posy*unit->posy+ unit->posx*unit->posx));
 	}
@@ -1355,13 +1398,13 @@ void DoubleWell2_next_k(DoubleWell2 *unit, int inNumSamples) {
 	for (int j=0; j<inNumSamples;++j) {
 		
 		//improved Euler update using trial (information not just from left derivative)
-	
+		
 		//could make Fcos term another ar or kr input itself? 
 		//float dydt= yrate*(-delta*y+ x - x*x*x + F*cos(w*t));
 		
 		//Improved Euler Method
 		float trialx, dy, dytrial, dydt, dxdt, lasty;
-
+		
 		trialx = x+(y*xrate);
 		
 		dy= F*cos(w*(t*yrate)) + (x) - (x*x*x) - delta*y;
@@ -1378,13 +1421,13 @@ void DoubleWell2_next_k(DoubleWell2 *unit, int inNumSamples) {
 		
 		t=t+1;
 		x+=dxdt;
-
+		
 		//previous equation was wrong
 		if ((x>3.0) || (x<-3.0)) { 
-		
-		//printf("folding, x %f calc %f \n",x, sc_fold(x, -3.0f, 3.0f));
-		x=sc_fold(x, -3.0f, 3.0f);
-		
+			
+			//printf("folding, x %f calc %f \n",x, sc_fold(x, -3.0f, 3.0f));
+			x=sc_fold(x, -3.0f, 3.0f);
+			
 		}
 		
 		//printf("checkx %f\n",x);
@@ -1470,7 +1513,7 @@ void DoubleWell3_next_k(DoubleWell3 *unit, int inNumSamples) {
 		
 		if ((x>3.0) || (x<-3.0)) x=sc_fold(x, -3.0f, 3.0f);
 		ZXP(out) = 0.33*x;
-						
+		
 	}
 	
 	unit->x=x;
@@ -1714,43 +1757,43 @@ void LTI_Ctor( LTI* unit ) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-	
-	unit->sizea = buf->samples;
-	
-	unit->bufa = buf->data;
-	
-	bufnum = (uint32)ZIN0(2);
-	
-	buf= SLUGensGetBuffer(unit,bufnum);
-	
-	if (buf) {
-	
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//buf = world->mSndBufs + bufnum; 
-	
-	unit->sizeb = buf->samples;
-	
-	unit->bufb = buf->data;
-	
-	unit->mema= (float*)RTAlloc(unit->mWorld, unit->sizea * sizeof(float));
-	
-	//initialise to zeroes
-	for(int i=0; i<unit->sizea; ++i)
-		unit->mema[i]=0.f;
-	
-	unit->posa=0; 
-	
-	unit->memb= (float*)RTAlloc(unit->mWorld, unit->sizeb * sizeof(float));
-	
-	//initialise to zeroes
-	for(int i=0; i<unit->sizeb; ++i)
-		unit->memb[i]=0.f;
-	
-	unit->posb=0; 
-	
-	SETCALC(LTI_next_a);
-	
-	}
+		
+		unit->sizea = buf->samples;
+		
+		unit->bufa = buf->data;
+		
+		bufnum = (uint32)ZIN0(2);
+		
+		buf= SLUGensGetBuffer(unit,bufnum);
+		
+		if (buf) {
+			
+			//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+			//buf = world->mSndBufs + bufnum; 
+			
+			unit->sizeb = buf->samples;
+			
+			unit->bufb = buf->data;
+			
+			unit->mema= (float*)RTAlloc(unit->mWorld, unit->sizea * sizeof(float));
+			
+			//initialise to zeroes
+			for(int i=0; i<unit->sizea; ++i)
+				unit->mema[i]=0.f;
+			
+			unit->posa=0; 
+			
+			unit->memb= (float*)RTAlloc(unit->mWorld, unit->sizeb * sizeof(float));
+			
+			//initialise to zeroes
+			for(int i=0; i<unit->sizeb; ++i)
+				unit->memb[i]=0.f;
+			
+			unit->posb=0; 
+			
+			SETCALC(LTI_next_a);
+			
+		}
 	}
 	
 }
@@ -1830,67 +1873,67 @@ void NL_Ctor( NL* unit ) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-	
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//SndBuf *buf = world->mSndBufs + bufnum; 
-	
-	if (buf->samples%3!=0) printf("feedback data input format wrong, not multiple of 3 size\n");
-	
-	unit->numasummands = buf->samples/3;
-	
-	unit->aindices= (int*)RTAlloc(unit->mWorld, unit->numasummands * sizeof(int));
-	
-	for(i=0; i<unit->numasummands; ++i)
-	unit->aindices[i] = (int)(buf->data[3*i]+0.01); //rounding carefully
 		
-	unit->sizea = unit->aindices[unit->numasummands-1] + 1; //last index must be maximal
-	
-	unit->bufa = buf->data;
-	
-	bufnum = (uint32)ZIN0(2);
-	
-	buf= SLUGensGetBuffer(unit,bufnum);
-	
-	if (buf) {
-	
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//buf = world->mSndBufs + bufnum; 
-	
-	if (buf->samples%3!=0) printf("feedforward data input format wrong, not multiple of 3 size\n");
-	
-	unit->numbsummands = buf->samples/3;
-	
-	unit->bindices= (int*)RTAlloc(unit->mWorld, unit->numbsummands * sizeof(int));
-	
-	for(i=0; i<unit->numbsummands; ++i)
-	unit->bindices[i] = (int)(buf->data[3*i]+0.01); //rounding carefully
+		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+		//SndBuf *buf = world->mSndBufs + bufnum; 
 		
-	unit->sizeb = unit->bindices[unit->numbsummands-1] + 1; //last index must be maximal
-	
-	unit->bufb = buf->data;
-	
-	//printf("numa %d sizea %d numb %d sizeb %d \n", unit->numasummands, unit->sizea, unit->numbsummands, unit->sizeb);
-	
-	unit->mema= (float*)RTAlloc(unit->mWorld, unit->sizea * sizeof(float));
-	
-	//initialise to zeroes
-	for(i=0; i<unit->sizea; ++i)
-		unit->mema[i]=0.f;
-	
-	unit->posa=0; 
-	
-	unit->memb= (float*)RTAlloc(unit->mWorld, unit->sizeb * sizeof(float));
-	
-	//initialise to zeroes
-	for(i=0; i<unit->sizeb; ++i)
-		unit->memb[i]=0.f;
-	
-	unit->posb=0; 
-	
-	SETCALC(NL_next_a);
-	
-	}
-	
+		if (buf->samples%3!=0) printf("feedback data input format wrong, not multiple of 3 size\n");
+		
+		unit->numasummands = buf->samples/3;
+		
+		unit->aindices= (int*)RTAlloc(unit->mWorld, unit->numasummands * sizeof(int));
+		
+		for(i=0; i<unit->numasummands; ++i)
+			unit->aindices[i] = (int)(buf->data[3*i]+0.01); //rounding carefully
+		
+		unit->sizea = unit->aindices[unit->numasummands-1] + 1; //last index must be maximal
+		
+		unit->bufa = buf->data;
+		
+		bufnum = (uint32)ZIN0(2);
+		
+		buf= SLUGensGetBuffer(unit,bufnum);
+		
+		if (buf) {
+			
+			//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+			//buf = world->mSndBufs + bufnum; 
+			
+			if (buf->samples%3!=0) printf("feedforward data input format wrong, not multiple of 3 size\n");
+			
+			unit->numbsummands = buf->samples/3;
+			
+			unit->bindices= (int*)RTAlloc(unit->mWorld, unit->numbsummands * sizeof(int));
+			
+			for(i=0; i<unit->numbsummands; ++i)
+				unit->bindices[i] = (int)(buf->data[3*i]+0.01); //rounding carefully
+			
+			unit->sizeb = unit->bindices[unit->numbsummands-1] + 1; //last index must be maximal
+			
+			unit->bufb = buf->data;
+			
+			//printf("numa %d sizea %d numb %d sizeb %d \n", unit->numasummands, unit->sizea, unit->numbsummands, unit->sizeb);
+			
+			unit->mema= (float*)RTAlloc(unit->mWorld, unit->sizea * sizeof(float));
+			
+			//initialise to zeroes
+			for(i=0; i<unit->sizea; ++i)
+				unit->mema[i]=0.f;
+			
+			unit->posa=0; 
+			
+			unit->memb= (float*)RTAlloc(unit->mWorld, unit->sizeb * sizeof(float));
+			
+			//initialise to zeroes
+			for(i=0; i<unit->sizeb; ++i)
+				unit->memb[i]=0.f;
+			
+			unit->posb=0; 
+			
+			SETCALC(NL_next_a);
+			
+		}
+		
 	}
 	
 }
@@ -1942,12 +1985,12 @@ void  NL_next_a(NL *unit, int inNumSamples ) {
 			val= memb[pos]; 
 			
 			if ((val < 0.0))
-			total+= (pow(fabs(val),exponent))*(-1.0*coefficient);
+				total+= (pow(fabs(val),exponent))*(-1.0*coefficient);
 			else
-			total+= (pow(val,exponent))*coefficient;
+				total+= (pow(val,exponent))*coefficient;
 			
 			//printf("index %d totalb %f change %f %f %f \n", index, total,val,exponent,coefficient);
-		
+			
 			
 		}
 		
@@ -1970,13 +2013,13 @@ void  NL_next_a(NL *unit, int inNumSamples ) {
 			val= mema[pos]; 
 			
 			if ((val < 0.0))
-			total+= (pow(fabs(val),exponent))*(-1.0*coefficient);
+				total+= (pow(fabs(val),exponent))*(-1.0*coefficient);
 			else
-			total+= (pow(val,exponent))*coefficient;
+				total+= (pow(val,exponent))*coefficient;
 			
 			
 			//printf("index %d totala %f change %f %f %f \n", index, total,val,exponent,coefficient);
-		
+			
 		}
 		
 		//printf("post a total! g1 %f %f %f g2 %f %f \n", total, fabs(total), guard1, fabs(total- mema[posa]), guard2);
@@ -2023,7 +2066,7 @@ void NL2_Ctor( NL2* unit ) {
 	unit->sizea = (int)(ZIN0(2)+0.01); //last index must be maximal
 	
 	unit->sizeb = (int)(ZIN0(3)+0.01); //last index must be maximal
-
+	
 	//printf("numa %d sizea %d numb %d sizeb %d \n", unit->numasummands, unit->sizea, unit->numbsummands, unit->sizeb);
 	
 	unit->mema= (float*)RTAlloc(unit->mWorld, unit->sizea * sizeof(float));
@@ -2074,117 +2117,117 @@ void  NL2_next_a(NL2 *unit, int inNumSamples ) {
 	SndBuf * sndbuf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (sndbuf) {
-	
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//SndBuf *sndbuf = world->mSndBufs + bufnum; 
-	
-	float *buf = sndbuf->data;
-	//int bufsize= sndbuf->samples;
-	int bufdone = 0;
-	int numcrossterms;
-	
-	float *mema= unit->mema,*memb= unit->memb;
-
-	int sizea=unit->sizea, posa= unit->posa;
-	int sizeb= unit->sizeb, posb= unit->posb;
-	
-	for (j=0; j<inNumSamples;++j) {
-		total=0.0;
 		
-		//sum last x inputs
-		memb[posb]= ZXP(in);
+		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+		//SndBuf *sndbuf = world->mSndBufs + bufnum; 
 		
-		//bool check= true; 
+		float *buf = sndbuf->data;
+		//int bufsize= sndbuf->samples;
+		int bufdone = 0;
+		int numcrossterms;
 		
-		numcrossterms = (int)buf[0]; 
+		float *mema= unit->mema,*memb= unit->memb;
 		
-		bufdone= 1; 
+		int sizea=unit->sizea, posa= unit->posa;
+		int sizeb= unit->sizeb, posb= unit->posb;
 		
-		for (k= 0; k<numcrossterms; ++k) {
-		
-		float product = buf[bufdone]; 
-		
-		int numbinproduct = (int)buf[bufdone+1];
-		
-		bufdone +=2; 
-		
-		for (i=0; i<numbinproduct; ++i) {
-		
-			index= (int)buf[bufdone];
-			//coefficient= buf[bufdone+1];
-			exponent= buf[bufdone+1];
-	
-			pos= (posb+sizeb-index)%sizeb;
-			
-			val= memb[pos]; 
-			
-			if ((val < 0.0))
-			product*= (pow(fabs(val),exponent))*(-1.0); //(-1.0*coefficient);
-			else
-			product*= (pow(val,exponent)); //*coefficient;
-
-			bufdone += 2; 
-		
-		}
-		
-		int numainproduct = (int)buf[bufdone];
-		
-		bufdone +=1; 
-		
-		for (i=0; i<numainproduct; ++i) {
-		
-			index= (int)buf[bufdone];
-			//coefficient= buf[bufdone+1];
-			exponent= buf[bufdone+1];
-	
-			pos= (posa+sizea-index)%sizea;
-			
-			val= mema[pos]; 
-			
-			if ((val < 0.0))
-			product*= (pow(fabs(val),exponent))*(-1.0); //(-1.0*coefficient);
-			else
-			product*= (pow(val,exponent)); //*coefficient;
-
-			bufdone += 2; 
-		
-		}
-		
-		total += product; 
-			
-		};
-		
-		
-		
-		//update x memory
-		posb=(posb+1)%sizeb;
-		
-		//sum last y outputs
-		//printf("post b total! g1 %f %f %f g2 %f %f \n", total, fabs(total), guard1, fabs(total- mema[posa]), guard2);
-		
-		//check for blow-ups! 
-		if ((fabs(total)>guard1) || (fabs(total- mema[posa])>guard2)) {
-			
-			//printf("blowup! g1 %f %f %f g2 %f %f \n", total, fabs(total), guard1, fabs(total- mema[posa]), guard2);
-			for (i=0; i<sizea; ++i) {
-				mema[i]=0.0;
-			}
+		for (j=0; j<inNumSamples;++j) {
 			total=0.0;
+			
+			//sum last x inputs
+			memb[posb]= ZXP(in);
+			
+			//bool check= true; 
+			
+			numcrossterms = (int)buf[0]; 
+			
+			bufdone= 1; 
+			
+			for (k= 0; k<numcrossterms; ++k) {
+				
+				float product = buf[bufdone]; 
+				
+				int numbinproduct = (int)buf[bufdone+1];
+				
+				bufdone +=2; 
+				
+				for (i=0; i<numbinproduct; ++i) {
+					
+					index= (int)buf[bufdone];
+					//coefficient= buf[bufdone+1];
+					exponent= buf[bufdone+1];
+					
+					pos= (posb+sizeb-index)%sizeb;
+					
+					val= memb[pos]; 
+					
+					if ((val < 0.0))
+						product*= (pow(fabs(val),exponent))*(-1.0); //(-1.0*coefficient);
+					else
+						product*= (pow(val,exponent)); //*coefficient;
+					
+					bufdone += 2; 
+					
+				}
+				
+				int numainproduct = (int)buf[bufdone];
+				
+				bufdone +=1; 
+				
+				for (i=0; i<numainproduct; ++i) {
+					
+					index= (int)buf[bufdone];
+					//coefficient= buf[bufdone+1];
+					exponent= buf[bufdone+1];
+					
+					pos= (posa+sizea-index)%sizea;
+					
+					val= mema[pos]; 
+					
+					if ((val < 0.0))
+						product*= (pow(fabs(val),exponent))*(-1.0); //(-1.0*coefficient);
+					else
+						product*= (pow(val,exponent)); //*coefficient;
+					
+					bufdone += 2; 
+					
+				}
+				
+				total += product; 
+				
+			};
+			
+			
+			
+			//update x memory
+			posb=(posb+1)%sizeb;
+			
+			//sum last y outputs
+			//printf("post b total! g1 %f %f %f g2 %f %f \n", total, fabs(total), guard1, fabs(total- mema[posa]), guard2);
+			
+			//check for blow-ups! 
+			if ((fabs(total)>guard1) || (fabs(total- mema[posa])>guard2)) {
+				
+				//printf("blowup! g1 %f %f %f g2 %f %f \n", total, fabs(total), guard1, fabs(total- mema[posa]), guard2);
+				for (i=0; i<sizea; ++i) {
+					mema[i]=0.0;
+				}
+				total=0.0;
+			}
+			
+			//update y memory
+			posa=(posa+1)%sizea;
+			mema[posa]= total;
+			
+			//output total
+			ZXP(out) = total;
+			
+			//printf("%f \n",);
 		}
 		
-		//update y memory
-		posa=(posa+1)%sizea;
-		mema[posa]= total;
+		unit->posa=posa;
+		unit->posb=posb;
 		
-		//output total
-		ZXP(out) = total;
-		
-		//printf("%f \n",);
-	}
-	
-	unit->posa=posa;
-	unit->posb=posb;
-	
 	}
 }
 
@@ -2384,7 +2427,7 @@ void KmeansToBPSet1_Ctor(KmeansToBPSet1* unit) {
 	unit->numdatapoints= (int) ZIN0(1);	
 	unit->maxmeans= (int) ZIN0(2);	
 	
-		//World *world = unit->mWorld;
+	//World *world = unit->mWorld;
     
 	//get buffer containing data
 	uint32 bufnum = (uint32)(ZIN0(7)+0.001);
@@ -2394,18 +2437,18 @@ void KmeansToBPSet1_Ctor(KmeansToBPSet1* unit) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-	
-	//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
-	//	SndBuf *buf = world->mSndBufs + bufnum; 
+		
+		//if (!(bufnum > world->mNumSndBufs || bufnum<0)) {
+		//	SndBuf *buf = world->mSndBufs + bufnum; 
 		
 		if(buf->samples == ((2*unit->numdatapoints) + (2*unit->maxmeans))) {
-		//must be of the form 2*numdatapoints then 2*maxmeans
-		unit->m_initdata=buf->data;
-		unit->m_meansindex= 2*unit->numdatapoints;
+			//must be of the form 2*numdatapoints then 2*maxmeans
+			unit->m_initdata=buf->data;
+			unit->m_meansindex= 2*unit->numdatapoints;
 		}
-	} else
-	//don't cancel performance of UGen, but pointer to buf was NULL
-	{unit->mDone = false; }
+		} else
+			//don't cancel performance of UGen, but pointer to buf was NULL
+		{unit->mDone = false; }
 	
 	unit->data= (float*)RTAlloc(unit->mWorld, 2*unit->numdatapoints * sizeof(float));
 	unit->means= (float*)RTAlloc(unit->mWorld, 2*unit->maxmeans * sizeof(float));
@@ -2423,26 +2466,26 @@ void KmeansToBPSet1_Ctor(KmeansToBPSet1* unit) {
 	
 	
 	if(unit->m_initdata) {
-				
-				for(i=0; i<(2*unit->numdatapoints);++i) {
-					unit->data[i]=unit->m_initdata[i];
-				}
-				
-				for(i=0; i<(2*unit->maxmeans);++i) {
-					unit->means[i]=unit->m_initdata[unit->m_meansindex+i];
-				}
-				
+		
+		for(i=0; i<(2*unit->numdatapoints);++i) {
+			unit->data[i]=unit->m_initdata[i];
+		}
+		
+		for(i=0; i<(2*unit->maxmeans);++i) {
+			unit->means[i]=unit->m_initdata[unit->m_meansindex+i];
+		}
+		
 				} else {
-				
-				for(i=0; i<(2*unit->numdatapoints);++i) {
-					unit->data[i]=rgen.frand();//x
-								   //unit->data[2*i+1]=rgen.frand(); //y 2*rgen.frand() - 1.0; easier to keep these calcs in 0.0-1.0 range
-				}		
-				
-				for(i=0; i<(2*unit->maxmeans);++i) {
-					unit->means[i]=rgen.frand();
-				}	
-				
+					
+					for(i=0; i<(2*unit->numdatapoints);++i) {
+						unit->data[i]=rgen.frand();//x
+												   //unit->data[2*i+1]=rgen.frand(); //y 2*rgen.frand() - 1.0; easier to keep these calcs in 0.0-1.0 range
+					}		
+					
+					for(i=0; i<(2*unit->maxmeans);++i) {
+						unit->means[i]=rgen.frand();
+					}	
+					
 				}
 	
 	
@@ -2466,7 +2509,7 @@ void KmeansToBPSet1_Ctor(KmeansToBPSet1* unit) {
 	unit->newdataflag=0;
 	
 	SETCALC(KmeansToBPSet1_next_a);
-}
+	}
 
 void KmeansToBPSet1_Dtor(KmeansToBPSet1* unit) {
 	
@@ -2602,39 +2645,39 @@ void KmeansToBPSet1_next_a(KmeansToBPSet1 *unit, int inNumSamples) {
 			if (newdataflag) {
 				
 				if(unit->m_initdata) {
-				
-				for(i=0; i<(2*numdata);++i) {
-					unit->data[i]=unit->m_initdata[i];
-				}
-				
+					
+					for(i=0; i<(2*numdata);++i) {
+						unit->data[i]=unit->m_initdata[i];
+					}
+					
 				} else
-				
-				for(i=0; i<(2*numdata);++i) {
-					unit->data[i]=rgen.frand();
-				}	
-				
-				newdataflag=0;
+					
+					for(i=0; i<(2*numdata);++i) {
+						unit->data[i]=rgen.frand();
+					}	
+						
+						newdataflag=0;
 			}
 			
 			if (newmeanflag || (newnummeans != nummeans)) {
 				
 				nummeans= newnummeans;
 				unit->nummeans=nummeans;
-		
+				
 				if(unit->m_initdata) {
-				
-				for(i=0; i<(2*nummeans);++i) {
-					means[i]=unit->m_initdata[unit->m_meansindex+i];
-				}
-				
+					
+					for(i=0; i<(2*nummeans);++i) {
+						means[i]=unit->m_initdata[unit->m_meansindex+i];
+					}
+					
 				} else {
-				
-				for(i=0; i<(2*nummeans);++i) {
-					means[i]=rgen.frand();
-					//means[2*i]=rgen.frand();
-					//means[2*i+1]=rgen.frand();
-				}		
-				
+					
+					for(i=0; i<(2*nummeans);++i) {
+						means[i]=rgen.frand();
+						//means[2*i]=rgen.frand();
+						//means[2*i+1]=rgen.frand();
+					}		
+					
 				}
 				
 				newmeanflag=0;
@@ -2764,29 +2807,29 @@ void Instruction_Ctor(Instruction* unit) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	unit->mBufNum=bufnum;
-	
-	//SndBuf *buf = world->mSndBufs + bufnum; 
-	
-	unit->mBufSize = buf->samples;
-	
-	if(unit->mBufSize%2==1) printf("Not multiple of 2 size buffer \n");			
-	
-	unit->mBuf= buf->data; 
-	
-	unit->bufpos=0;
-	
-	//unit->lastlastAmp=0.0;
-	unit->lastAmp=0.0;
-	unit->newAmp=0.0;
-	unit->interpsteps=10; 
-	unit->interpnow=10;
-	//unit->lastInstruction=0;
-	unit->prob=1.0;
-	
-	SETCALC(Instruction_next_a);
+		
+		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+		unit->mBufNum=bufnum;
+		
+		//SndBuf *buf = world->mSndBufs + bufnum; 
+		
+		unit->mBufSize = buf->samples;
+		
+		if(unit->mBufSize%2==1) printf("Not multiple of 2 size buffer \n");			
+		
+		unit->mBuf= buf->data; 
+		
+		unit->bufpos=0;
+		
+		//unit->lastlastAmp=0.0;
+		unit->lastAmp=0.0;
+		unit->newAmp=0.0;
+		unit->interpsteps=10; 
+		unit->interpnow=10;
+		//unit->lastInstruction=0;
+		unit->prob=1.0;
+		
+		SETCALC(Instruction_next_a);
 	}
 }
 
@@ -2988,27 +3031,27 @@ void WaveTerrain_Ctor(WaveTerrain* unit) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	//unit->m_bufnum=bufnum;
-	//SndBuf *buf = world->mSndBufs + bufnum; 
-	
-	unit->m_size = buf->samples;
-
-	unit->m_xsize = (int)(ZIN0(3)+0.0001); //safety on round down
-	
-	unit->m_ysize = (int)(ZIN0(4)+0.0001);
-
-	if((unit->m_xsize * unit->m_ysize)!= unit->m_size) { printf("size mismatch! \n"); return;}			
-	
-	unit->m_terrain= buf->data; 
-	
-	SETCALC(WaveTerrain_next_a);
+		
+		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+		//unit->m_bufnum=bufnum;
+		//SndBuf *buf = world->mSndBufs + bufnum; 
+		
+		unit->m_size = buf->samples;
+		
+		unit->m_xsize = (int)(ZIN0(3)+0.0001); //safety on round down
+		
+		unit->m_ysize = (int)(ZIN0(4)+0.0001);
+		
+		if((unit->m_xsize * unit->m_ysize)!= unit->m_size) { printf("size mismatch! \n"); return;}			
+		
+		unit->m_terrain= buf->data; 
+		
+		SETCALC(WaveTerrain_next_a);
 	}
 }
-	
-void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 
+void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
+	
 	float * terrain = unit->m_terrain; 
 	
 	int xsize= unit->m_xsize; 
@@ -3026,46 +3069,46 @@ void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 	float vll,vlr,vul,vur;
 	
 	for (int j=0; j<inNumSamples;++j) {
-
-	x= xin[j]; //0.0 to 1.0
-	y= yin[j];
-
-	//safety
-	x= sc_wrap(x, 0.0f, 1.0f); 
-	y= sc_wrap(y, 0.0f, 1.0f); 
 		
-	xindex= x*xsize;
-	yindex= y*ysize;
-	
-	//these are guaranteed in range from wrap above give or take floating point error on round down? 
-	xfloor= (int)xindex;
-	yfloor= (int)yindex;
-	
-	//these aren't; needs further wrap
-	xnext= (xfloor+1)%xsize;  
-	ynext= (yfloor+1)%ysize; 
-	
-	xprop= xindex-xfloor;
-	yprop= yindex-yfloor;
-
-	//now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
-	
-	//format for terrain should be rows of xsize, indexed from lower left
-	vll= terrain[(xsize*yfloor)+ xfloor];
-	vlr= terrain[(xsize*yfloor)+ xnext];
-	vul= terrain[(xsize*ynext)+ xfloor];
-	vur= terrain[(xsize*ynext)+ xnext];
-	
-	ZXP(out) = (1.0-xprop)*(vll+(yprop*(vul-vll))) + (xprop*(vlr+(yprop*(vur-vlr))));
+		x= xin[j]; //0.0 to 1.0
+		y= yin[j];
+		
+		//safety
+		x= sc_wrap(x, 0.0f, 1.0f); 
+		y= sc_wrap(y, 0.0f, 1.0f); 
+		
+		xindex= x*xsize;
+		yindex= y*ysize;
+		
+		//these are guaranteed in range from wrap above give or take floating point error on round down? 
+		xfloor= (int)xindex;
+		yfloor= (int)yindex;
+		
+		//these aren't; needs further wrap
+		xnext= (xfloor+1)%xsize;  
+		ynext= (yfloor+1)%ysize; 
+		
+		xprop= xindex-xfloor;
+		yprop= yindex-yfloor;
+		
+		//now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
+		
+		//format for terrain should be rows of xsize, indexed from lower left
+		vll= terrain[(xsize*yfloor)+ xfloor];
+		vlr= terrain[(xsize*yfloor)+ xnext];
+		vul= terrain[(xsize*ynext)+ xfloor];
+		vur= terrain[(xsize*ynext)+ xnext];
+		
+		ZXP(out) = (1.0-xprop)*(vll+(yprop*(vul-vll))) + (xprop*(vlr+(yprop*(vur-vlr))));
 		
 		//printf("%f \n",);
 	}
 	
 }
 
-	
-void VMScan2D_Ctor(VMScan2D* unit) {
 
+void VMScan2D_Ctor(VMScan2D* unit) {
+	
 	//World *world = unit->mWorld;
     
 	uint32 bufnum = (uint32)ZIN0(0);
@@ -3073,38 +3116,38 @@ void VMScan2D_Ctor(VMScan2D* unit) {
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
 	
 	if (buf) {
-	
-	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-	unit->mBufNum=bufnum;
-	
-	///SndBuf *buf = world->mSndBufs + bufnum; 
-	
-	unit->mBufSize = buf->samples;
-	
-	if(unit->mBufSize%2==1) printf("Not multiple of 2 size buffer \n");			
-	
-	unit->mBuf= buf->data; 
-	
-	unit->bufpos=0;
-	
-	//unit->lastlastAmp=0.0;
-	unit->lastx=0.0;
-	unit->newx=0.0;
-	unit->lasty=0.0;
-	unit->newy=0.0;
-	unit->interpsteps=10; 
-	unit->interpnow=11;
-	//unit->lastInstruction=0;
-	unit->prob=1.0;
-	
-	SETCALC(VMScan2D_next_a);
+		
+		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
+		unit->mBufNum=bufnum;
+		
+		///SndBuf *buf = world->mSndBufs + bufnum; 
+		
+		unit->mBufSize = buf->samples;
+		
+		if(unit->mBufSize%2==1) printf("Not multiple of 2 size buffer \n");			
+		
+		unit->mBuf= buf->data; 
+		
+		unit->bufpos=0;
+		
+		//unit->lastlastAmp=0.0;
+		unit->lastx=0.0;
+		unit->newx=0.0;
+		unit->lasty=0.0;
+		unit->newy=0.0;
+		unit->interpsteps=10; 
+		unit->interpnow=11;
+		//unit->lastInstruction=0;
+		unit->prob=1.0;
+		
+		SETCALC(VMScan2D_next_a);
 	}
 }
 
 
 
 void VMScan2D_next_a(VMScan2D *unit, int inNumSamples) {
-
+	
 	int multicalltest=0;
 	
 	//float *out = ZOUT(0);
@@ -3180,11 +3223,11 @@ void VMScan2D_next_a(VMScan2D *unit, int inNumSamples) {
 	
 	unit->interpnow=interpnow;
 	unit->interpsteps=interpsteps;
-
+	
 }
 
 void readinstructionVMScan2D(VMScan2D *unit, int command, float param) {
-
+	
 	bool newbreakpoint=false;
 	float tmpx= unit->newx;
 	float tmpy= unit->newy;
@@ -3209,8 +3252,8 @@ void readinstructionVMScan2D(VMScan2D *unit, int command, float param) {
 			//printf("%d \n",steps);
 			
 			if (steps<1) steps=1;
-			if(steps>5000) steps=5000;
-			unit->interpsteps=steps; 
+				if(steps>5000) steps=5000;
+					unit->interpsteps=steps; 
 			
 			break;
 			
@@ -3227,14 +3270,14 @@ void readinstructionVMScan2D(VMScan2D *unit, int command, float param) {
 			
 			tmpx+= (param*(2*rgen.frand() - 1.0)); // degree from param
 			tmpy+= (param*(2*rgen.frand() - 1.0));
-			 
+			
 			if(tmpx>1.0) tmpx=1.0-tmpx;
 				if(tmpx<(0.0)) tmpx= (-tmpx);
-				
-			if(tmpy>1.0) tmpy=1.0-tmpy;
-				if(tmpy<(0.0)) tmpy= (-tmpy);			
 					
-			newbreakpoint=true;
+					if(tmpy>1.0) tmpy=1.0-tmpy;
+						if(tmpy<(0.0)) tmpy= (-tmpy);			
+							
+							newbreakpoint=true;
 			
 			break;
 		case 3: //invert
@@ -3306,25 +3349,318 @@ void readinstructionVMScan2D(VMScan2D *unit, int command, float param) {
 		unit->newy=tmpy;
 	}
 	
-
-
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void SLOnset_Ctor(SLOnset* unit) {
+	
+	unit->m_memorysize1= (int) (ZIN0(1)+0.0001); 
+	unit->m_before= (int) (ZIN0(2)+0.0001); 
+	unit->m_after= (int) (ZIN0(3)+0.0001); 
+	
+	unit->m_memorysize2 = unit->m_before + unit->m_after +1; //unit->m_memorysize2 each side plus central
+	
+	unit->m_memory1 = (float*)RTAlloc(unit->mWorld, unit->m_memorysize1 * sizeof(float)); 
+	unit->m_memory2 = (float*)RTAlloc(unit->mWorld, unit->m_memorysize2 * sizeof(float)); 
+	
+	int i; 
+	
+	//initialise to zeroes! 
+	for (i=0; i<unit->m_memorysize1; ++i)
+		unit->m_memory1[i]= 0.0; 
+	for (i=0; i<unit->m_memorysize2; ++i)
+		unit->m_memory2[i]= 0.0; 
+	
+	unit->m_hysteresiscount= 0; 
+	
+	unit->m_memorycounter1 = 0; 
+	unit->m_memorycounter2 = 0; 
+	
+	SETCALC(SLOnset_next);
+	
+}
+
+void SLOnset_Dtor(SLOnset* unit) {
+	
+	RTFree(unit->mWorld, unit->m_memory1);
+	RTFree(unit->mWorld, unit->m_memory2);
+	
+}
+
+//log2(max(abs(tmp))+1);
+
+void SLOnset_next(SLOnset *unit, int inNumSamples) {
+	
+	int i; 
+	
+	//value to store
+	float * in= IN(0); 
+	float * out= OUT(0); 
+	
+	float maxval= (-1.0); 
+	float tmp; 
+	
+	//assumption of 64 block size really underlies all this
+	for (i=0; i<inNumSamples; ++i) {
+		
+		tmp= fabs(in[i]); 
+		
+		if (tmp>maxval) maxval= tmp;
+	}
+	
+	maxval= log2(maxval+1.0); 
+	
+	//update storage array
+	float * memory1= unit->m_memory1; 
+	float * memory2= unit->m_memory2; 
+	
+	int counter1= unit->m_memorycounter1;
+	int counter2= unit->m_memorycounter2;
+	
+	int memorysize1= unit->m_memorysize1;
+	int memorysize2= unit->m_memorysize2;
+	
+	
+	memory1[counter1] = maxval; 
+	
+	float evidence=0.0; //=maxval 
+	
+	for (i=0; i<memorysize1; ++i) {
+		
+		if (i!=counter1) {
+			tmp = maxval-memory1[i];
+			
+            if (tmp>0.0)
+                evidence = evidence + tmp;
+            else
+				evidence = evidence - 1.0; //%10.0;
+			
+		}
+		
+	}
+	
+	//now update memory2
+	maxval=sc_max(evidence,0.0);
+	
+	memory2[counter2] = maxval;
+	
+	int index; 
+	
+	evidence=0.0;
+	
+	float threshold= ZIN0(4); 	 
+		 	
+	int centreindex= counter2- unit->m_after + memorysize2; 	 
+	
+	float now =memory2[centreindex%memorysize2]; //-threshold; 	 //will perturb calculations
+	
+	for (i=1; i<=unit->m_before; ++i) {
+		
+		index= (centreindex - i + memorysize2)%memorysize2; 
+		tmp = now-memory2[index];
+		
+		if (tmp <0.0)
+            tmp = 0.0; //(- 10.0); 
+		
+        evidence = evidence+ tmp;
+	}
+	
+	for (i=1; i<=unit->m_after; ++i) {
+		
+		index= (centreindex + i + memorysize2)%memorysize2; 
+		tmp = now-memory2[index];
+		
+		if (tmp <0.0)
+			tmp = 0.0; //(- 10.0); 
+		
+		evidence = evidence+ tmp;
+	}
+    
+	
+	out[0]=0.0;
+	if(unit->m_hysteresiscount==0) {
+		if(evidence>threshold){
+			out[0]=1.0;
+			unit->m_hysteresiscount=(int) (ZIN0(5)+0.0001); //5;
+		}
+		
+	}
+	else
+		--unit->m_hysteresiscount;
+	
+	unit->m_memorycounter1 = (counter1+1)%memorysize1;
+	unit->m_memorycounter2 = (counter2+1)%memorysize2;
+	
+}
+
+
+
+
+////output= TwoTube.ar(input, scatteringcoefficient,lossfactor,d1length,d2length);
+void TwoTube_Ctor(TwoTube* unit) {
+	
+	unit->d1length= (int)ZIN0(3); //(int) (ZIN0(1)+0.0001); 
+	unit->d2length= (int)ZIN0(4); //(int) (ZIN0(2)+0.0001); 
+	unit->lossfactor= ZIN0(2); //s(int) (ZIN0(3)+0.0001); 
+	
+	unit->delay1right = (float*)RTAlloc(unit->mWorld, unit->d1length * sizeof(float)); 
+	unit->delay1left = (float*)RTAlloc(unit->mWorld, unit->d1length * sizeof(float)); 
+	unit->delay2right = (float*)RTAlloc(unit->mWorld, unit->d2length * sizeof(float)); 
+	unit->delay2left = (float*)RTAlloc(unit->mWorld, unit->d2length * sizeof(float)); 
+	
+	int i; 
+	
+	//initialise to zeroes! 
+	for (i=0; i<unit->d1length; ++i) {
+		unit->delay1right[i]= 0.0; 
+		unit->delay1left[i]= 0.0; 
+	}
+	for (i=0; i<unit->d2length; ++i) {
+		unit->delay2right[i]= 0.0; 
+		unit->delay2left[i]= 0.0; 
+	}
+	
+	unit->f1in= 0.0;
+	unit->f1out= 0.0;
+	unit->f2in=0.0;
+	unit->f2out=0.0;
+	
+	unit->d1rightpos= 0;
+	unit->d1leftpos= 0;
+	unit->d2rightpos= 0;
+	unit->d2leftpos= 0;
+	
+	SETCALC(TwoTube_next);
+}
+
+void TwoTube_Dtor(TwoTube* unit) {
+	
+	RTFree(unit->mWorld, unit->delay1right);
+	RTFree(unit->mWorld, unit->delay1left);
+	RTFree(unit->mWorld, unit->delay2right);
+	RTFree(unit->mWorld, unit->delay2left);
+	
+}
+
+void TwoTube_next(TwoTube *unit, int inNumSamples) {
+	
+	int i; 
+	
+	//value to store
+	float * in= IN(0); 
+	float * out= OUT(0); 
+	float k= (float)ZIN0(1); //scattering coefficient updated at control rate? 
+	float loss= unit->lossfactor;	
+	
+	float * d1right= unit->delay1right; 
+	int d1rightpos= unit->d1rightpos; 
+	float * d2right= unit->delay2right; 
+	int d2rightpos= unit->d2rightpos;
+	float * d2left= unit->delay2left; 
+	int d2leftpos= unit->d2leftpos;
+	float * d1left= unit->delay1left; 
+	int d1leftpos= unit->d1leftpos;	
+	
+	int d1length=unit->d1length;
+	int d2length=unit->d2length; 	
+	
+	//have to store filter state around loop; probably don't need to store output, but oh well 	
+	float f1in=unit->f1in;
+	float f2in=unit->f2in;
+	float f2out=unit->f2out;
+	float f1out=unit->f1out;
+	
+	for (i=0; i<inNumSamples; ++i) {
+		
+		//update outs of all delays
+		float d1rightout= d1right[d1rightpos]; 
+		float d1leftout= d1left[d1leftpos];
+		float d2rightout= d2right[d2rightpos]; 
+		float d2leftout= d2left[d2leftpos];
+		//
+		//			if(i==1) {
+		//			printf("delay outputs %f %f %f %f", d1rightout, d2rightout, d2leftout, d1leftout);
+		//			}
+		
+		//output value
+		out[i]=d2rightout; 
+		
+		//update all filters
+		f1out= loss*0.5*(f1in+d1leftout); 
+		f1in= d1leftout;
+		
+		//should change s factor later, and independent time varying gains...
+		f2out= loss*(0.5*f2in+0.5*d2rightout); 
+		f2in= d2rightout;
+		
+		//calculate inputs of all delays
+		d1right[d1rightpos]= in[i]+f1out;
+		d2right[d2rightpos]= d1rightout*(1+k)+ ((-k)*d2leftout);
+		d2left[d2leftpos]= f2out;
+		d1left[d1leftpos]= d1rightout*k+ ((1-k)*d2leftout);
+		
+		//update delay line position pointers
+		
+		d1rightpos= (d1rightpos+1)%d1length;
+		d2rightpos= (d2rightpos+1)%d2length;
+		d1leftpos= (d1leftpos+1)%d1length;
+		d2leftpos= (d2leftpos+1)%d2length;
+	}
+	
+	
+	unit->d1rightpos= d1rightpos;  	
+	unit->d1leftpos= d1leftpos;  	
+	unit->d2rightpos= d2rightpos;  	
+	unit->d2leftpos= d2leftpos;  	
+	
+	
+	unit->f1in= f1in;
+	unit->f2in= f2in;
+	unit->f2out=f2out;
+	unit->f1out= f1out;
+	
+	
+	
+}
+
+
+
+
+
+
+
+
+
 
 
 
 void preparelookuptables() {
-
-float theta;
-
-for (int i=0; i<100; ++i) {
-
-theta= twopi*(i/99.0)-pi;
-
-gg_lookupsin[i]=sin(theta);
-gg_lookupcos[i]=cos(theta);
-
-}
-
+	
+	float theta;
+	
+	for (int i=0; i<100; ++i) {
+		
+		theta= twopi*(i/99.0)-pi;
+		
+		gg_lookupsin[i]=sin(theta);
+		gg_lookupcos[i]=cos(theta);
+		
+	}
+	
 }
 
 
@@ -3358,26 +3694,29 @@ extern "C" void load(InterfaceTable *inTable) {
 	DefineSimpleUnit(Instruction);
 	DefineSimpleUnit(WaveTerrain);
 	DefineSimpleUnit(VMScan2D);
+	DefineDtorUnit(SLOnset);
+	DefineDtorCantAliasUnit(TwoTube);
 	
-	#ifdef SLUGENSRESEARCH
+	
+#ifdef SLUGENSRESEARCH
 	initSLUGensResearch(inTable);
-	#endif
+#endif
 	
 	//printf("preparing SLUGens lookup tables\n");
 	preparelookuptables();
 	//printf("SLUGens ready\n");
 	
-//	printf("tests!\n");
-//	
-//	float tests[12]= {1.0,1.5,2.0,-1.0,-1.5,-2.0, -3, -4, -5, 3, 4, 17};
-//	
-//	for (int i=0; i<12; ++i) {
-//	float x= tests[i];
-//	
-//	
-//	printf("tests! %f %f \n", x, sc_fold(x,-1.0f,1.0f));
-//	
-//	}
+	//	printf("tests!\n");
+	//	
+	//	float tests[12]= {1.0,1.5,2.0,-1.0,-1.5,-2.0, -3, -4, -5, 3, 4, 17};
+	//	
+	//	for (int i=0; i<12; ++i) {
+	//	float x= tests[i];
+	//	
+	//	
+	//	printf("tests! %f %f \n", x, sc_fold(x,-1.0f,1.0f));
+	//	
+	//	}
 	
 	
 	

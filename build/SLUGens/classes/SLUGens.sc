@@ -180,3 +180,18 @@ VMScan2D : MultiOutUGen
 
 }
 
+SLOnset : UGen
+{
+	*kr { arg input, memorysize1=20, before=5,after=5, threshold=10, hysteresis=10, mul = 1.0, add = 0.0;
+		^this.multiNew('control', input, memorysize1, before, after, threshold, hysteresis).madd(mul, add);
+	}
+}
+
+
+//TwoTube.ar(input, scatteringcoefficient,lossfactor,d1length,d2length);
+TwoTube : UGen
+{
+	*ar { arg input=0, k=0.01, loss=1.0, d1length=100,d2length=100,  mul = 1.0, add = 0.0;
+		^this.multiNew('audio',input, k, loss, d1length, d2length).madd(mul, add);
+	}
+}
