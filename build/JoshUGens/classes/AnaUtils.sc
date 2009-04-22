@@ -441,7 +441,7 @@ PVAna {
 			Line.kr(1, 1, BufDur.kr(soundBufnum), doneAction: 2);
 			in = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 0);
 			// note the window type and overlaps... this is important for resynth parameters
-			chain = FFT(bufnum, in, hop, 0); 
+			chain = FFT(bufnum, in, hop, winType); 
 			chain = PV_RecordBuf(chain, recBuf, 0, 1, 0, hop, winType);
 			// no ouput ... simply save the analysis to recBuf
 			}).load(Server.default);

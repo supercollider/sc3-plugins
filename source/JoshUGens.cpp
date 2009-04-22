@@ -662,7 +662,7 @@ void LPCSynth_next_a(LPCSynth *unit, int inNumSamples)
 	unit->m_first = 0;
     }
     
-    float *polevals = unit->m_polevals;
+	float *polevals = unit->m_polevals;
 	int valindex = unit->m_valindex;
 	int intframes = ((int)numframes - 1);
 	float *framein = IN(2);
