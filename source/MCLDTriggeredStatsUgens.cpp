@@ -12,7 +12,7 @@ struct MeanTriggered : public StatsTriggeredUnit
 {
 	float* m_circbuf;
 	int m_circbufpos;
-	float m_total;
+	float m_mean;
 	int m_length;
 };
 struct MedianTriggered : public StatsTriggeredUnit
@@ -55,47 +55,51 @@ void MeanTriggered_Ctor(MeanTriggered* unit)
 	}
 	unit->m_circbufpos = 0;
 	unit->m_length = length;
-	unit->m_total = 0.f;
+	unit->m_mean = 0.f;
 }
 
 
 void MeanTriggered_next(MeanTriggered* unit, int inNumSamples)
 {
-	float *out = ZOUT(0);
-	float *in = ZIN(0);
-	float trig = ZIN0(1);
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *trig = IN(1);
 
 	// Get state and instance variables from the struct
 	float* circbuf = unit->m_circbuf;
 	int circbufpos = unit->m_circbufpos;
 	int length = unit->m_length;
-	float total = unit->m_total;
 	
 	// This may or may not be recalculated as we go through the loop, depending on triggering
-	float mean = total / length;
+	float mean = unit->m_mean;
 	float curr;
 	
-	LOOP(inNumSamples, 
-		if(trig > 0.f){
-			curr = ZXP(in);
-			total = total + curr - circbuf[circbufpos];
+	int i, j;
+	for(i=0; i<inNumSamples; ++i){
+		if(*(trig++) > 0.f){
+			curr = in[i];
+			printf("%g, ", curr);
 			circbuf[circbufpos] = curr;
 			circbufpos++;
 			if(circbufpos==length){
 				circbufpos = 0;
 			}
-			mean = total / length;
+			double total = 0.;
+			for(j=0; j<length; ++j)
+				total += circbuf[j];
+			mean = (float)(total / length);
 		}
 		
-		ZXP(out) = mean;
-	);
+		*(out++) = mean;
+	}
 
 	// Store state variables back
 	unit->m_circbufpos = circbufpos;
-	unit->m_total = total;
+	unit->m_mean = mean;
 }
 void MeanTriggered_Dtor(MeanTriggered* unit)
 {
+	printf("\n");
 	RTFree(unit->mWorld, unit->m_circbuf);
 }
 
@@ -125,9 +129,9 @@ void MedianTriggered_Ctor(MedianTriggered* unit)
 
 void MedianTriggered_next(MedianTriggered* unit, int inNumSamples)
 {
-	float *out = ZOUT(0);
-	float *in = ZIN(0);
-	float trig = ZIN0(1);
+	float *out = OUT(0);
+	float *in = IN(0);
+	float *trig = IN(1);
 
 	// Get state and instance variables from the struct
 	float* circbuf = unit->m_circbuf;
@@ -142,9 +146,10 @@ void MedianTriggered_next(MedianTriggered* unit, int inNumSamples)
 	
 	float curr;
 	
-	LOOP(inNumSamples, 
-		if(trig > 0.f){
-			curr = ZXP(in);
+	int i;
+	for(i=0; i<inNumSamples; ++i){
+		if(*(trig++) > 0.f){
+			curr = in[i];
 			circbuf[circbufpos] = curr;
 			circbufpos++;
 			if(circbufpos==length){
@@ -166,8 +171,8 @@ void MedianTriggered_next(MedianTriggered* unit, int inNumSamples)
 			median = length_is_odd ? sortbuf[medianpos] : ((sortbuf[medianpos] + sortbuf[medianpos+1]) * 0.5f);
 		}
 		
-		ZXP(out) = median;
-	);
+		*(out++) = median;
+	}
 
 	// Store state variables back
 	unit->m_circbufpos = circbufpos;
