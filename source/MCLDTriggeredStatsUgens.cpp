@@ -32,11 +32,13 @@ extern "C"
 	void load(InterfaceTable *inTable);
 	
 	void MeanTriggered_Ctor(MeanTriggered* unit);
-	void MeanTriggered_next(MeanTriggered *unit, int inNumSamples);
+	void MeanTriggered_next_xa(MeanTriggered *unit, int inNumSamples);
+	void MeanTriggered_next_xk(MeanTriggered *unit, int inNumSamples);
 	void MeanTriggered_Dtor(MeanTriggered* unit);
 	
 	void MedianTriggered_Ctor(MedianTriggered* unit);
-	void MedianTriggered_next(MedianTriggered *unit, int inNumSamples);
+	void MedianTriggered_next_xa(MedianTriggered *unit, int inNumSamples);
+	void MedianTriggered_next_xk(MedianTriggered *unit, int inNumSamples);
 	void MedianTriggered_SelectionSort(float *array, int length);
 	void MedianTriggered_Dtor(MedianTriggered* unit);
 };
@@ -44,8 +46,12 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////
 void MeanTriggered_Ctor(MeanTriggered* unit)
-{	
-	SETCALC(MeanTriggered_next);
+{
+	if (INRATE(1) == calc_FullRate) {
+		SETCALC(MeanTriggered_next_xa);
+	}else{
+		SETCALC(MeanTriggered_next_xk);
+	}
 	
 	int length = (int)ZIN0(2); // Fixed number of items to average over
 
@@ -56,10 +62,13 @@ void MeanTriggered_Ctor(MeanTriggered* unit)
 	unit->m_circbufpos = 0;
 	unit->m_length = length;
 	unit->m_mean = 0.f;
+	
+	// prime the pumps
+	MeanTriggered_next_xk(unit, 1);
 }
 
 
-void MeanTriggered_next(MeanTriggered* unit, int inNumSamples)
+void MeanTriggered_next_xa(MeanTriggered* unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -78,7 +87,45 @@ void MeanTriggered_next(MeanTriggered* unit, int inNumSamples)
 	for(i=0; i<inNumSamples; ++i){
 		if(*(trig++) > 0.f){
 			curr = in[i];
-			printf("%g, ", curr);
+			//printf("%g, ", curr);
+			circbuf[circbufpos] = curr;
+			circbufpos++;
+			if(circbufpos==length){
+				circbufpos = 0;
+			}
+			double total = 0.;
+			for(j=0; j<length; ++j)
+				total += circbuf[j];
+			mean = (float)(total / length);
+		}
+		
+		*(out++) = mean;
+	}
+
+	// Store state variables back
+	unit->m_circbufpos = circbufpos;
+	unit->m_mean = mean;
+}
+void MeanTriggered_next_xk(MeanTriggered* unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float trig = IN0(1);
+
+	// Get state and instance variables from the struct
+	float* circbuf = unit->m_circbuf;
+	int circbufpos = unit->m_circbufpos;
+	int length = unit->m_length;
+	
+	// This may or may not be recalculated as we go through the loop, depending on triggering
+	float mean = unit->m_mean;
+	float curr;
+	
+	int i, j;
+	for(i=0; i<inNumSamples; ++i){
+		if(trig > 0.f){
+			curr = in[i];
+			//printf("%g, ", curr);
 			circbuf[circbufpos] = curr;
 			circbufpos++;
 			if(circbufpos==length){
@@ -99,7 +146,7 @@ void MeanTriggered_next(MeanTriggered* unit, int inNumSamples)
 }
 void MeanTriggered_Dtor(MeanTriggered* unit)
 {
-	printf("\n");
+	//printf("\n");
 	RTFree(unit->mWorld, unit->m_circbuf);
 }
 
@@ -109,7 +156,11 @@ void MeanTriggered_Dtor(MeanTriggered* unit)
 
 void MedianTriggered_Ctor(MedianTriggered* unit)
 {	
-	SETCALC(MedianTriggered_next);
+	if (INRATE(1) == calc_FullRate) {
+		SETCALC(MedianTriggered_next_xa);
+	}else{
+		SETCALC(MedianTriggered_next_xk);
+	}
 	
 	int length = (int)ZIN0(2); // Fixed number of items to average over
 
@@ -124,10 +175,13 @@ void MedianTriggered_Ctor(MedianTriggered* unit)
 	unit->m_length_is_odd = (length % 2) == 1;
 	// If odd, this number is the index to take. If even, we take this number and the one above.
 	unit->m_medianpos = unit->m_length_is_odd ? ((length-1)/2) : (length/2 - 1);
+
+	// prime the pumps
+	MedianTriggered_next_xk(unit, 1);
 }
 
 
-void MedianTriggered_next(MedianTriggered* unit, int inNumSamples)
+void MedianTriggered_next_xa(MedianTriggered* unit, int inNumSamples)
 {
 	float *out = OUT(0);
 	float *in = IN(0);
@@ -160,7 +214,58 @@ void MedianTriggered_next(MedianTriggered* unit, int inNumSamples)
 			
 			// Copy the data into the buffer for sorting
 			// TODO: Implement the copy more efficiently using memcpy
-			for(int i=0; i<length; i++){
+			for(int i=0; i<length; ++i){
+				sortbuf[i] = circbuf[i];
+			}
+			
+			// Then sort
+			MedianTriggered_SelectionSort(sortbuf, length);
+			
+			// Then update the median
+			median = length_is_odd ? sortbuf[medianpos] : ((sortbuf[medianpos] + sortbuf[medianpos+1]) * 0.5f);
+		}
+		
+		*(out++) = median;
+	}
+
+	// Store state variables back
+	unit->m_circbufpos = circbufpos;
+	unit->m_outval = median;
+}
+void MedianTriggered_next_xk(MedianTriggered* unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float *in = IN(0);
+	float trig = IN0(1);
+
+	// Get state and instance variables from the struct
+	float* circbuf = unit->m_circbuf;
+	float* sortbuf = unit->m_sortbuf;
+	int circbufpos = unit->m_circbufpos;
+	int length = unit->m_length;
+	bool length_is_odd = unit->m_length_is_odd;
+	int medianpos = unit->m_medianpos;
+
+	// This may or may not be recalculated as we go through the loop, depending on triggering
+	float median = unit->m_outval;
+	
+	float curr;
+	
+	int i;
+	for(i=0; i<inNumSamples; ++i){
+		if(trig > 0.f){
+			curr = in[i];
+			circbuf[circbufpos] = curr;
+			circbufpos++;
+			if(circbufpos==length){
+				circbufpos = 0;
+			}
+			
+			// NOW CALCULATE THE MEDIAN
+			
+			// Copy the data into the buffer for sorting
+			// TODO: Implement the copy more efficiently using memcpy
+			for(int i=0; i<length; ++i){
 				sortbuf[i] = circbuf[i];
 			}
 			
