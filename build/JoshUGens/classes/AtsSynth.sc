@@ -23,6 +23,22 @@ AtsNoiSynth : AtsUGen {
 	}
 }
 
+	
+AtsPartial : AtsUGen {
+	*ar { 
+		arg atsbuffer, partial, filePointer = 0, freqMul = 1.0, freqAdd = 0.0, mul=1.0, add=0.0;
+		^this.multiNew('audio', atsbuffer, partial, filePointer, freqMul, freqAdd).madd(mul, add)
+	}
+}
+
+AtsBand : AtsUGen {
+	*ar { 
+		arg atsbuffer, band, filePointer = 0, mul=1.0, add=0.0;
+		^this.multiNew('audio', atsbuffer, band, filePointer).madd(mul, add)
+	}
+}
+
+
 AtsFreq : AtsUGen {
 	*ar {
 		arg atsbuffer, partialNum = 0, filePointer = 0, mul = 1, add = 0;
