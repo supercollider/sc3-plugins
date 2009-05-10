@@ -139,7 +139,12 @@ ProcMod {
 			"You can not change an envelope while the ProcMod is running".warn;
 			}, {
 			env = newenv;
-			})
+			env.isKindOf(Env).if({
+				releasetime = env.releaseTime;
+			}, {
+				env.isKindOf(Number).if({releasetime = env})
+			});
+		})
 	}
 
 	addAction_ {arg newaddAction;
