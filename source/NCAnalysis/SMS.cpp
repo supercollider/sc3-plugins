@@ -404,7 +404,7 @@ void SMS_Ctor(SMS* unit) {
 //	}
 
 	
-	unit->m_ampmult= ZIN0(9)/(float)unit->m_windowsize;
+	unit->m_ampmult= 2.0*ZIN0(9)/((float)unit->m_windowsize); //compensatio for half components (should be except at dc/nyquist)
 	
 	unit->m_maxpeaks=(int)ZIN0(1); 
 	//int m_maxlistsize; //double m_maxpeaks
@@ -662,7 +662,7 @@ void SMS_next(SMS *unit, int numSamples)
 		
 		//printf("shunt done, now new input frame\n");
 		
-		unit->m_ampmult= ZIN0(9)/(float)unit->m_windowsize;
+		unit->m_ampmult= 2.0*ZIN0(9)/(float)unit->m_windowsize;
 		//must update before starting new cycle since determines amp coefficients in peak detection
 		unit->m_useifft = (int)ZIN0(8);
 		//fft, phase vocode, peak pick and peak match
@@ -1002,7 +1002,7 @@ void synthesisedeterministic(SMS * unit, float * output, int number,int& pos, in
 	
 		pointer = &(tracks[i]);
 		
-		float amp1= pointer->amp1;
+		float amp1=pointer->amp1;
 		float amp2=pointer->amp2;
 		//((i*40.0)/22050.0)*pi; 
 		float freq1= pointer->freq1;
@@ -1469,8 +1469,8 @@ int nover2 = unit->m_nover2;
 //USE FABS for differences as per p21 Serra and Smith? 
 
 //just preserved since no peaks here
-p->dc= magspectrum[nover2-1]- p->dc;
-p->nyq= magspectrum[nover2] - p->nyq;
+p->dc= fabs(magspectrum[nover2-1]- p->dc);
+p->nyq= fabs(magspectrum[nover2] - p->nyq);
 
 RGen& rgen = *unit->mParent->mRGen;
 
@@ -1484,7 +1484,8 @@ SCPolar& polar = p->bin[i];
 
 polar.phase = rgen.frand2()*pi; //rgen.frand()*twopi- pi;  //random number from -pi to pi
 //polar.mag = magspectrum[nover2] - polar.mag; //surely terrible mistake?
-polar.mag = magspectrum[i] - polar.mag; 
+float newmag =magspectrum[i] - polar.mag; 
+polar.mag =  newmag>=0.0? newmag: -newmag; //make sure positive! 
 }
 
 
@@ -1619,6 +1620,35 @@ void loadSMS(InterfaceTable *inTable)
 	DefineDtorCantAliasUnit(SMS);
 	
 	//printf("SMS LOADED CHECK  test1 %d %d   test2 %d %d  \n",1025 & 0x0400, 1025%1024, 2050 & 0x0400, 2050);
+	
+	//testing amplitude multiplier and phase result for input sine at multiple of 
+//	
+//	//int windowsize=1024;
+//	int fullsize= windowsize; //*8; 
+//	float * transformbuf = new float[scfft_trbufsize(fullsize)];
+//	float * inplace = new float[fullsize];
+//	scfft *scfftwindow = new scfft;
+//
+//	//scfft, input size, window size, window type, in, out, transfer, forwards flag
+//	scfft_create(scfftwindow, fullsize, fullsize, WINDOW_RECT, inplace, inplace, transformbuf, true);
+//	
+//	//make window
+//	for (i=0; i<fullsize; ++i)
+//	inplace[i]=sin(twopi* (1.0/fullsize) * i);  //no phase offset yet
+//	
+//	scfft_dofft(scfftwindow);
+//
+//	for (i=0; i<512; ++i) {
+//		printf("i %d value %f \n", i,sqrt((inplace[2*i]*inplace[2*i]) + (inplace[2*i+1]*inplace[2*i+1])) );
+//	}
+//	
+////	for (i=0; i<windowsize; ++i) {
+////		printf("i %d value %f \n", i,inplace[i]);
+////	}
+////	
+//	
+//	
+//	
 	
 	//
 //	
