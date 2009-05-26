@@ -35,7 +35,7 @@ const double sqrt3div2 = sqrt(3.) * 0.5;
 const double rsqrt6 = 1. / sqrt(6.);
 const double sqrt6div3 = sqrt(6.) * 0.3333333333;
 const double twodivsqrt3 = 2 / sqrt(3.);
-
+			   
 static InterfaceTable *ft;
 
 struct A2B : public Unit
@@ -94,7 +94,7 @@ struct FMHEncode2 : public Unit
 
 struct BFDecode1 : public Unit
 {
-	float  m_X_amp, m_Y_amp, m_Z_amp, m_azimuth, m_elevation;
+	float  m_W_amp, m_X_amp, m_Y_amp, m_Z_amp, m_azimuth, m_elevation;
 };
 
 struct FMHDecode1 : public Unit
@@ -1301,8 +1301,6 @@ void BFEncodeSter_Ctor(BFEncodeSter *unit)
 	float width2 = width * 0.5;
 	float azplus = azimuth + width2;
 	float azminus = azimuth - width2;
-	float wComp = IN0(7);
-	float wScale;	
 	float sinal = sin(azplus);
 	float sinar = sin(azminus);
 	float sinb= sin(elevation);
@@ -1965,7 +1963,8 @@ void BFDecode1_Ctor(BFDecode1 *unit)
 	float sina = sin(azimuth);
 	float sinb = sin(elevation);
 	float cosb = cos(elevation);
-	
+	float wComp = IN0(7);
+	if(wComp > 0.0) unit->m_W_amp = rsqrt2; else  unit->m_W_amp = 1.;
 	unit->m_X_amp = cosa * cosb;
 	unit->m_Y_amp = sina * cosb;
 	unit->m_Z_amp = sinb;
@@ -1981,7 +1980,7 @@ void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 	float *Yin0 = IN(2);
 	float *Zin0 = IN(3);
 	float *out = OUT(0);
-	
+	float W_amp = unit->m_W_amp;
 	float X_amp = unit->m_X_amp;
 	float Y_amp = unit->m_Y_amp;
 	float Z_amp = unit->m_Z_amp;
@@ -2004,7 +2003,7 @@ void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 	    
 	    for(int i = 0; i < inNumSamples; i++)
 		{ 
-		    out[i] = Win0[i] +    
+		    out[i] = (Win0[i] * W_amp) +    
 			    (Xin0[i] * X_amp) + 
 			    (Yin0[i] * Y_amp) + 
 			    (Zin0[i] * Z_amp);
@@ -2015,7 +2014,7 @@ void BFDecode1_next(BFDecode1 *unit, int inNumSamples)
 	    } else {
 	    for(int i = 0; i < inNumSamples; i++)
 		{ 
-		    out[i] = Win0[i] +    
+		    out[i] = (Win0[i] * W_amp) +
 			    (Xin0[i] * X_amp) + 
 			    (Yin0[i] * Y_amp) + 
 			    (Zin0[i] * Z_amp);
