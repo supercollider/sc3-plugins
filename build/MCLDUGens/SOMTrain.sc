@@ -49,13 +49,16 @@ SOMTrain : MultiOutUGen {
 	
 	// spinmatrix is an array of buf.numChannels vectors, each of which has "numdims" entries
 	*initBufGrid { |buf, netsize, numdims, spinmatrix, offsets = 0, scales = 1|
+		buf.loadCollection(this.makeGrid(buf.numChannels, netsize, numdims, spinmatrix, offsets, scales).flat);
+	}
+	*makeGrid {  |numchans, netsize, numdims, spinmatrix, offsets=0, scales=1|
 		var step, array, row, norm, minval = -1, maxval = 1;
 		
 		step = (maxval - minval) / (netsize - 1);
 		array = this.pr_makegrid(minval, step, maxval, numdims);
 		
-		if(offsets.isArray.not){ offsets = offsets.dup(buf.numChannels) };
-		if( scales.isArray.not){  scales =  scales.dup(buf.numChannels) };
+		if(offsets.isArray.not){ offsets = offsets.dup(numchans) };
+		if( scales.isArray.not){  scales =  scales.dup(numchans) };
 		
 		// Apply the rotation
 		array = array.collect{|point|
@@ -63,10 +66,7 @@ SOMTrain : MultiOutUGen {
 				(point * spincol).sum * scales[scindex] + offsets[scindex]
 			}
 		};
-		
-		array = array.flat;
-		
-		buf.loadCollection(array);
+		^array
 	}
 	
 	*initBufGridRand { |buf, netsize, numdims, offsets = 0, scales = 1|
