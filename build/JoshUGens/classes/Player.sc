@@ -519,7 +519,7 @@ Player {
 						{guioutbus[me.value].value});
 					isScope.if({scope.index_(outbus)});
 					window.view.children[0].focus(true)})
-				.value_(outvals[outbus]);
+				.value_(outvals[outbus] ?? {1});
 			// 2
 			GUI.button.new(window, Rect(120, 35, 100, 18))
 				.states_([

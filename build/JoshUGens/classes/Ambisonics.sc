@@ -109,16 +109,16 @@ FMHEncode2 : BFPanner {
 
 BFDecode1 : BFDecoder {
 	
-	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, mul = 1, add = 0;
-		^this.multiNew('audio', w, x, y, z, azimuth, elevation ).madd(mul, add);
+	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, wComp = 1, mul = 1, add = 0;
+		^this.multiNew('audio', w, x, y, z, azimuth, elevation, wComp ).madd(mul, add);
 	}
 	
-	*ar1 {arg w, x, y, z, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, mul = 1, 
-			add = 0, scaleflag = 1;
+	*ar1 {arg w, x, y, z, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, wComp = 1,
+			mul = 1,  add = 0, scaleflag = 1;
 		var dist, scaler;
 		dist = ((maxDist - distance) / 345);
 		scaler = if((scaleflag == 1), 1/((distance/maxDist)**1.5), 1);
-		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation ), dist, dist, 			scaler.reciprocal).madd(mul, add);
+		^DelayN.ar(this.multiNew('audio', w, x, y, z, azimuth, elevation, wComp ), dist, dist, 			scaler.reciprocal).madd(mul, add);
 	}
 	
 

@@ -14,7 +14,7 @@ ProcMod {
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
-		<tempo = 1, oldclocks, <composite;
+		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiAmpSpec;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -51,6 +51,7 @@ ProcMod {
 		clock = argClock;
 		oldgroups = [];
 		oldclocks = [];
+		midiAmp = false;
 		}
 				
 	*play {arg env, amp = 1, id, group, addAction = 0, target = 1, function, 
@@ -65,6 +66,11 @@ ProcMod {
 			isRunning = true;
 			// add the responder if it isn't nil
 			responder.notNil.if({responder.add});
+			midiAmp.if({
+				ccCtrl = CCResponder({arg src, chan, num, value;
+					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
+					}, nil, midiChan, nil, nil)
+				});
 			// create this Proc's group, and if there is an env, start it
 			// also, if there is no release node, schedule the Procs release
 			group = group ?? {server.nextNodeID};
@@ -172,16 +178,18 @@ ProcMod {
 		}
 		
 	release {arg reltime;
-		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute;
+		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute, 
+			curccctrl;
 		curproc = process;
 		curresp = responder;
 		responder = nil;
 		curgroup = group;
 		currelfunc = releaseFunc;
+		curccctrl = ccCtrl.postln;
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
 			onReleaseFunc.value;
-			server.sendMsg(\n_set, curgroup, \gate, 0);
+//			server.sendMsg(\n_set, curgroup, \gate, 0);
 			env.notNil.if({
 				newrelval = reltime.notNil.if({
 					reltime.neg - 1;
@@ -199,10 +207,12 @@ ProcMod {
 					releasetime
 					});
 				curclock.sched(newrelval, {
-					this.clear(curproc, curresp, curgroup, currelfunc, curclock)
+					this.clear(curproc, curresp, curgroup, currelfunc, curclock, 
+						oldccctrl: curccctrl)
 					})
 				}, {
-				this.clear(curproc, curresp, curgroup, currelfunc, curclock)
+				this.clear(curproc, curresp, curgroup, currelfunc, curclock, 
+					oldccctrl: curccctrl)
 				});
 			});
 		// if retriggerable... clear out group now
@@ -216,11 +226,12 @@ ProcMod {
 		}
 	
 	kill {
-		var curproc, curresp, curgroup, currelfunc, oldclock; 
+		var curproc, curresp, curgroup, currelfunc, oldclock, curccctrl; 
 		curproc = process;
 		curresp = responder;
 		curgroup = group;
 		currelfunc = releaseFunc;
+		curccctrl = ccCtrl;
 		isRunning.if({server.sendMsg(\n_free, curgroup)});
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
 		// if a tempo clock was created for this procMod, clear it
@@ -228,7 +239,7 @@ ProcMod {
 		oldclocks.do({arg me; me.clear; me.stop});
 		curproc.stop;
 		gui.if({window.close});
-		this.clear(curproc, curresp, curgroup, currelfunc, oldclock);
+		this.clear(curproc, curresp, curgroup, currelfunc, oldclock, oldccctrl: curccctrl);
 		isRunning = false;
 
 	}
@@ -240,7 +251,7 @@ ProcMod {
 
 // need to check for TempoClock - old clocks need to be saved until 
 // they can be garbage collected
-	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute;
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute, oldccctrl;
 		oldproc.notNil.if({this.stopprocess(oldproc)});
 		server.sendMsg(\n_free, oldgroup);
 		oldgroups.remove(oldgroup);	
@@ -252,6 +263,7 @@ ProcMod {
 				})
 			});
 		oldresp.notNil.if({oldresp.remove});
+		oldccctrl.notNil.if({oldccctrl.remove});
 		retrig.not.if({isRunning = false});
 		retrig.if({isReleasing = false});
 		oldclock.notNil.if({ oldclock.stop });
@@ -260,6 +272,18 @@ ProcMod {
 	responder_ {arg aResponder;
 		responder = aResponder;
 		isRunning.if({responder.add});
+		}
+		
+	mapAmpToCC {arg channel, maxamp = 6, minamp = -90;
+		midiAmpSpec = [minamp, maxamp, \db].asSpec;
+		midiAmp = true;
+		midiChan = channel;
+		ccCtrl.notNil.if({
+			ccCtrl.remove;
+			ccCtrl = CCResponder({arg src, chan, num, value;
+				this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
+				}, nil, midiChan, nil, nil)
+			})
 		}
 			
 	// ProcMod.gui should create a small GUI that will control the ProcMod - start / stop, amp
@@ -420,6 +444,7 @@ ProcModR : ProcMod {
 		clock = argClock;
 		recordPM = false;
 		this.setupRouting(argNumChannels, argProcout);
+		midiAmp = false;
 		oldgroups = [];
 		oldclocks = [];
 		oldhdrs = [];
@@ -453,6 +478,11 @@ ProcModR : ProcMod {
 		isRunning.not.if({	
 			isRunning = true;
 			responder.notNil.if({responder.add});
+			midiAmp.if({
+				ccCtrl = CCResponder({arg src, chan, num, value;
+					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
+					}, nil, midiChan, nil, nil)
+				});
 			notegroup = group = group ?? {server.nextNodeID};
 			server.sendBundle(nil, [\g_new, group, addActions[addAction], target]);
 			notegroup = server.nextNodeID;
@@ -521,9 +551,11 @@ ProcModR : ProcMod {
 		}
 					
 	release {arg reltime;
-		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute;
+		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute,
+			curccctrl;
 		curproc = process;
 		curresp = responder;
+		curccctrl = ccCtrl;
 		responder = nil;
 		curgroup = group;
 		currelfunc = releaseFunc;
@@ -531,7 +563,7 @@ ProcModR : ProcMod {
 		curroute = routebus;
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
-			server.sendMsg(\n_set, curgroup, \gate, 0);
+//			server.sendMsg(\n_set, curgroup, \gate, 0);
 			onReleaseFunc.value;
 			env.notNil.if({
 				newrelval = reltime.notNil.if({
@@ -551,11 +583,11 @@ ProcModR : ProcMod {
 				oldhdrs = oldhdrs.add(curhdr);
 				curclock.sched(newrelval, {
 					this.clear(curproc, curresp, curgroup, currelfunc, curclock,
-					curhdr, curroute)
+					curhdr, curroute, curccctrl)
 					})
 				}, {
 				this.clear(curproc, curresp, curgroup, currelfunc, curclock,
-					curhdr, curroute)
+					curhdr, curroute, curccctrl)
 				});
 			});
 		// if retriggerable... clear out group now
@@ -569,9 +601,10 @@ ProcModR : ProcMod {
 		}
 	
 	kill {
-		var curproc, curresp, curgroup, currelfunc, oldclock, curhdr, curroute;
+		var curproc, curresp, curgroup, currelfunc, oldclock, curhdr, curroute, curccctrl;
 		curproc = process;
 		curresp = responder;
+		curccctrl = ccCtrl;
 		curgroup = group;
 		currelfunc = releaseFunc;
 		curhdr = hdr;
@@ -583,11 +616,11 @@ ProcModR : ProcMod {
 		oldhdrs.do({arg me; me.stop});
 		curproc.stop;
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock,
-			curhdr, curroute, 0.0);
+			curhdr, curroute, curccctrl);
 		isRunning = false;
 	}
 
-	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute;
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute, oldccctrl;
 		oldproc.notNil.if({this.stopprocess(oldproc)});
 		oldroute.notNil.if({
 			server.audioBusAllocator.free(oldroute);
@@ -606,6 +639,7 @@ ProcModR : ProcMod {
 				})
 			});
 		oldresp.notNil.if({oldresp.remove});
+		oldccctrl.notNil.if({oldccctrl.remove});
 		retrig.not.if({isRunning = false});
 		retrig.if({isReleasing = false});
 		oldclock.notNil.if({ oldclock.stop });
@@ -1396,32 +1430,6 @@ ProcEvents {
 			4 -> 4
 			];
 		writeDefs = true;
-//		StartUp.add {	//
-//			SynthDef(\procevoutenv6253, {arg amp = 1, lag = 0.2;//
-//				ReplaceOut.ar(0, In.ar(0, 8) * Lag2.kr(amp, lag))//
-//				}).writeDefFile;	//
-//			//
-//			SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;//
-//					var ped;//
-////					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);//
-//					ped = Amplitude.kr(In.ar(pedalin));
-//					SendTrig.ar(Impulse.ar(10), id, ped);//
-//				}).writeDefFile;//
-//			SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1, 
-//					mute = 1, scale = 1;
-//				var in, delay, trig, pitch, hasPitch;
-////				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
-//				in = In.ar(pedalin) * scale * mute;
-////				[in, in*scale, scale, mute].poll;
-////				delay = DelayN.ar(in, 0.01, 0.01);
-////				trig = (in / delay.max(0.00001)) > headroom.dbamp;
-//				#pitch, hasPitch = 
-//					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
-////				[pitch, hasPitch].poll;
-//				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
-//				}).writeDefFile;////
-//			//
-//			}//
 	}
 
 }
@@ -1464,7 +1472,7 @@ ProcSink {
 		sinkWindow = GUI.window.new("ProcSink", sinkBounds).front;
 		GUI.dragSink.new(sinkWindow, Rect(5, 5, sinkBounds.width - 10, sinkBounds.height * 0.6))
 			.action_({arg me;
-				this.add(me.object)
+				this.add(me.object.interpret)
 				});
 		startbutton = GUI.button.new(sinkWindow, Rect(5, sinkBounds.height * 0.7, 
 				sinkBounds.width - 10, sinkBounds.height * 0.3 - 10))
