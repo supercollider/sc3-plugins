@@ -29,8 +29,9 @@ struct Goertzel : public Unit
 	// Constants
 	float m_w, m_cosine, m_sine;
 	float m_coeff;
+	unsigned int m_numParallel, m_whichNext, *m_checkpoints;
 	// State variables
-	float m_q2, m_q1;
+	float *m_q2, *m_q1;
 	// Output variables
 	float m_real, m_imag;
 };
@@ -46,8 +47,10 @@ extern "C"
 	void Crest_next(Crest *unit, int inNumSamples);
 	void Crest_Dtor(Crest* unit);
 
-	void Goertzel_next(Goertzel *unit, int inNumSamples);
 	void Goertzel_Ctor(Goertzel* unit);
+	void Goertzel_next_1(Goertzel *unit, int inNumSamples);
+	void Goertzel_next_multi(Goertzel *unit, int inNumSamples);
+	void Goertzel_Dtor(Goertzel* unit);
 };
 
 //////////////////////////////////////////////////////////////////
@@ -229,23 +232,33 @@ void Crest_Dtor(Crest* unit)
 // http://www.embedded.com/story/OEG20020819S0057
 
 void Goertzel_Ctor(Goertzel* unit)
-{
-	SETCALC(Goertzel_next);
-		
-	// 2. initialize the unit generator state variables.
+{		
+	// initialize the unit generator state variables.
 	unsigned int size = (int)ZIN0(1);
+	float hopf = ZIN0(3); // a ratio, should be 0<hopf<=1
+	unsigned int hop = (unsigned int)std::ceil(hopf * (float)size); // in samples
 	
 	double srate;
 	if (INRATE(0) == calc_FullRate) {
     	unit->m_realNumSamples = unit->mWorld->mFullRate.mBufLength;
 		srate = unit->mWorld->mFullRate.mSampleRate;
 		
-		// Ensure size is a multiple of block size (if audio rate).
+		// Ensure size is a multiple of block size (if audio rate)
 		size = unit->m_realNumSamples * (unsigned int)std::ceil(size / (float)unit->m_realNumSamples);
+		hop  = unit->m_realNumSamples * (unsigned int)std::ceil(hop  / (float)unit->m_realNumSamples);
 	} else {
 	 	unit->m_realNumSamples = 1;
 		srate = unit->mWorld->mBufRate.mSampleRate;
 	}
+
+	unsigned int numParallel = size / hop;
+	
+	//printf("Goertzel: size %u, hop %u; so %u in parallel\n", size, hop, numParallel);
+
+	if(numParallel == 1)
+		SETCALC(Goertzel_next_1);
+	else
+		SETCALC(Goertzel_next_multi);	
 	
 	float freq = ZIN0(2);
 	
@@ -262,19 +275,31 @@ void Goertzel_Ctor(Goertzel* unit)
 	unit->m_sine   = sine;
 	unit->m_coeff  = coeff;
 	
-	unit->m_q1 = 0.;
-	unit->m_q2 = 0.;
+	// Values re the round-robin approach to "overlap"
+	unit->m_numParallel = numParallel;
+	unit->m_whichNext = 0;
+	
+	unit->m_q1 = (float*)RTAlloc(unit->mWorld, numParallel * sizeof(float));
+	unit->m_q2 = (float*)RTAlloc(unit->mWorld, numParallel * sizeof(float));
+	unit->m_checkpoints = (unsigned int*)RTAlloc(unit->mWorld, numParallel * sizeof(unsigned int));
+	for(unsigned int i=0; i<numParallel; ++i){
+		unit->m_q1[i] = 0.f;
+		unit->m_q2[i] = 0.f;
+		// The "checkpoints" are the points in the (theoretical) "buffer" at which we output-and-reset each goertzel stream
+		unit->m_checkpoints[i] = (i+1) * hop;
+	}
 	unit->m_real = 0.f;
 	unit->m_imag = 0.f;
 	
 	unit->m_pos = 0;
 	
-	// 3. calculate one sample of output.
+	// calculate one sample of output.
 	ZOUT0(0) = 0.f;
 }
 
 //////////////////////////////////////////////////////////////////
-void Goertzel_next(Goertzel *unit, int wrongNumSamples)
+// Optimised version if no overlap (can avoid some looping, some array indexing, etc):
+void Goertzel_next_1(Goertzel *unit, int wrongNumSamples)
 {
 	unsigned int realNumSamples = unit->m_realNumSamples;
 	
@@ -283,10 +308,10 @@ void Goertzel_next(Goertzel *unit, int wrongNumSamples)
 	float cosine = unit->m_cosine;
 	float sine   = unit->m_sine;
 	float coeff  = unit->m_coeff;
-	unsigned int pos = unit->m_pos;
-	unsigned int size   = unit->m_size;
-	float q1 = unit->m_q1;
-	float q2 = unit->m_q2;
+	unsigned int pos         = unit->m_pos;
+	unsigned int size        = unit->m_size;
+	float q1 = unit->m_q1[0];
+	float q2 = unit->m_q2[0];
 	float real   = unit->m_real;
 	float imag   = unit->m_imag;
 
@@ -305,20 +330,84 @@ void Goertzel_next(Goertzel *unit, int wrongNumSamples)
 		//Print("Reached block boundary. cosine %g, sine %g, coeff %g, size %u, q0 %g, q1 %g, q2 %g\n", cosine, sine, coeff, size, q0, q1, q2);
 
 		// reset:
+		q1 = q2 = 0.f; 
 		pos = 0;
-		q1 = q2 = 0.; 
 	}
-	
 	// Output values
 	ZOUT0(0) = real;
 	ZOUT0(1) = imag;
 	
 	// Store state
-	unit->m_q1 = q1;
-	unit->m_q2 = q2;
+	unit->m_q1[0] = q1;
+	unit->m_q2[0] = q2;
 	unit->m_pos = pos;
 	unit->m_real = real;
 	unit->m_imag = imag;
+}
+
+void Goertzel_next_multi(Goertzel *unit, int wrongNumSamples)
+{
+	unsigned int realNumSamples = unit->m_realNumSamples;
+	
+	float* in = IN(0);
+	
+	float cosine = unit->m_cosine;
+	float sine   = unit->m_sine;
+	float coeff  = unit->m_coeff;
+	unsigned int pos         = unit->m_pos;
+	unsigned int size        = unit->m_size;
+	unsigned int whichNext   = unit->m_whichNext;
+	unsigned int numParallel = unit->m_numParallel;
+	unsigned int checkpoint  = unit->m_checkpoints[whichNext];
+	float *q1 = unit->m_q1;
+	float *q2 = unit->m_q2;
+	float real   = unit->m_real;
+	float imag   = unit->m_imag;
+
+	float q0;
+	for(unsigned int i=0; i<realNumSamples; ++i){
+		for(unsigned int j=0; j<numParallel; ++j){
+			q0 = coeff * q1[j] - q2[j] + in[i];
+			q2[j] = q1[j];
+			q1[j] = q0;
+		}
+		++pos;
+	}
+	
+	if(pos == checkpoint){
+		// We've reached the end of a block for our currently-selected stream, let's find values
+		real = (q1[whichNext] - q2[whichNext] * cosine);
+		imag = (q2[whichNext] * sine);
+		//Print("Reached block boundary. cosine %g, sine %g, coeff %g, size %u, q0 %g, q1 %g, q2 %g\n", cosine, sine, coeff, size, q0, q1, q2);
+
+		// reset:
+		q1[whichNext] = q2[whichNext] = 0.; 
+		if(pos==size){
+			pos = 0;
+		}
+		++whichNext;
+		if(whichNext == numParallel){
+			whichNext = 0;
+		}
+		unit->m_whichNext = whichNext;
+	}
+	// Output values
+	ZOUT0(0) = real;
+	ZOUT0(1) = imag;
+	
+	// Store state
+	unit->m_pos = pos;
+	unit->m_real = real;
+	unit->m_imag = imag;
+}
+
+void Goertzel_Dtor(Goertzel* unit)
+{
+	if(unit->m_q1){
+		RTFree(unit->mWorld, unit->m_q1);
+		RTFree(unit->mWorld, unit->m_q2);
+		RTFree(unit->mWorld, unit->m_checkpoints);
+	}
 }
 
 //////////////////////////////////////////////////////////////////
@@ -329,5 +418,5 @@ void load(InterfaceTable *inTable)
 
 	DefineSimpleUnit(Friction);
 	DefineDtorUnit(Crest);
-	DefineSimpleUnit(Goertzel);
+	DefineDtorUnit(Goertzel);
 }

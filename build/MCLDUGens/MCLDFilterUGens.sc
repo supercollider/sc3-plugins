@@ -19,8 +19,8 @@ Crest : UGen {
 
 Goertzel : MultiOutUGen {
 	
-	*kr { arg in = 0.0, bufsize=1024, freq;
-		^this.multiNew('control', in, bufsize, freq)
+	*kr { arg in = 0.0, bufsize=1024, freq, hop=1;
+		^this.multiNew('control', in, bufsize, freq, hop)
 	}
 	init { arg ... theInputs;
 		inputs = theInputs;
