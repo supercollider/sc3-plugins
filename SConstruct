@@ -53,6 +53,8 @@ if platform.system() == 'Windows':
 opts.AddOptions(
     BoolOption('STK',
                'Build with STK plugins', 0),
+    BoolOption('STKDynamic',
+               'Dynamically link to STK lib', 0),
     BoolOption('AY',
                'Build with AY plugins', 0),
     BoolOption('QUARKS',
@@ -88,6 +90,7 @@ env.Append(PATH = ['/usr/local/bin', '/usr/bin', '/bin'])
 if platform.system() == 'Windows':
 	# Use mingw
 	env.Append(tools = ['mingw'])
+
 
 ########################################
 # install function
@@ -202,7 +205,7 @@ if platform.system() == 'Linux':
 	platform_CPPDEFINES = ['SC_LINUX']
 	platform_SOURCES = [ ]
 	platform_HEADERS = [ ]
-	
+
 ########################################
 # Configure for OSX
 
@@ -285,15 +288,33 @@ plugins.append( Basic_Env.SharedLibrary('build/MLfftwUGens', ['source/MLfftwUGen
 ##############################################
 # StkUGens
 
+#def make_conf(env):
+    #return Configure(env, custom_tests = { 'CheckPKGConfig' : CheckPKGConfig,
+                                           #'CheckPKG' : CheckPKG })
+
 if build_stkugens == True:
-	plugins.append( env.Clone(
-       		CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
-        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
-        	CCFLAGS = ['-Wno-unknown-pragmas'],
-        	SHLIBPREFIX = '',
-        	SHLIBSUFFIX = PLUGIN_EXT
-	).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS=File(stklib_path+'/libstk.a'))
-	)
+	if env['STKDynamic']:
+		stkEnv = env.Clone(
+			#	CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+				CPPPATH = platform_HEADERS + ['/usr/include/stk', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+				CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+				CCFLAGS = ['-Wno-unknown-pragmas'],
+				SHLIBPREFIX = '',
+				SHLIBSUFFIX = PLUGIN_EXT,
+				#LINKFLAGS = File(stklib_path+'/libstk.so')
+		)
+		stkEnv.Append( LIBS = ['stk','asound','rt','jack', 'pthread', 'm'], DEFS = ['__LINUX_OSS__' , '__LINUX_ALSA__' , '__LINUX_JACK__', '__LINUX_ALSASEQ__' ] )
+		plugins.append( stkEnv.SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES)
+		)
+	else:
+		plugins.append( env.Clone(
+				CPPPATH = platform_HEADERS + ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', 'source/StkUGens/include'],
+				CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
+				CCFLAGS = ['-Wno-unknown-pragmas'],
+				SHLIBPREFIX = '',
+				SHLIBSUFFIX = PLUGIN_EXT
+		).SharedLibrary('build/StkUGens', ['source/StkUGens/StkAll.cpp'] + platform_SOURCES, LIBS=File(stklib_path+'/libstk.a'))
+		)
 
 ##############################################
 # base FFT Envirnonment
@@ -338,7 +359,7 @@ plugins.append( FFT_Env.SharedLibrary('build/' + 'BhobFFT', ['source/BhobFFT.cpp
 if build_ay == True:
 	env.Clone(
 		CPPPATH = ['include', ay_path + 'include' ],
-		CCFLAGS = ['-Wno-unknown-pragmas'],
+		CCFLAGS = ['-Wno-unknown-pragmas', '-fPIC'],
 	).StaticLibrary(ay_path + 'AY', [ay_path + 'src/ay8912.c'])
 	plugins.append( env.Clone(
 		CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', ay_path + 'include'],

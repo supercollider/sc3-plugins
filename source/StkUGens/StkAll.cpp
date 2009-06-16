@@ -1,33 +1,33 @@
 #include "SC_PlugIn.h"
 
-#include "Skini.h"  // caps
+#include <Skini.h>  // caps
 #include "include/SKINI.tbl"
 
-#include "OneZero.h"
-#include "OnePole.h"
-#include "DelayA.h"
-#include "Noise.h"
+#include <OneZero.h>
+#include <OnePole.h>
+#include <DelayA.h>
+#include <Noise.h>
 
-#include "VoicForm.h"
-#include "Phonemes.h"
+#include <VoicForm.h>
+#include <Phonemes.h>
 
-#include "BandedWG.h"
-#include "BeeThree.h"
-#include "BlowHole.h"
-#include "Bowed.h" // caps
-#include "Clarinet.h"
-#include "Flute.h"
-#include "ModalBar.h"
-#include "Moog.h"
-#include "Saxofony.h"
-#include "Shakers.h"
-#include "Mandolin.h"
-#include "Sitar.h"
-#include "StifKarp.h"
-#include "TubeBell.h"
+#include <BandedWG.h>
+#include <BeeThree.h>
+#include <BlowHole.h>
+#include <Bowed.h> // caps
+#include <Clarinet.h>
+#include <Flute.h>
+#include <ModalBar.h>
+#include <Moog.h>
+#include <Saxofony.h>
+#include <Shakers.h>
+#include <Mandolin.h>
+#include <Sitar.h>
+#include <StifKarp.h>
+#include <TubeBell.h>
 
-#include "Stk.h"
-#include "STKAlloc.h"
+#include <Stk.h>
+#include <STKAlloc.h>
 
 #include <math.h>
 
@@ -751,13 +751,18 @@ void StkFlute_Ctor(StkFlute* unit)
 {
 	STKAlloc(unit->mWorld, unit->flute, Flute, 40);
  
+	unit->flute->setFrequency( unit->freq = IN0(0) );
+	unit->flute->noteOn(IN0(0),1);
+
+//	unit->flute->setJetDelay( unit->jetdelay = IN0(1) );
 	unit->flute->controlChange(2, unit->jetdelay = IN0(1));// jet delay
-	unit->flute->controlChange(4, unit->noisegain = IN0(2));// noisegain
+
+	unit->flute->controlChange(4, unit->noisegain = IN0(2));// noisegain // this seems to have to be some kind of midi control value??
+	
+//	unit->flute->setJetReflection( unit->jetdelay = IN0(3) );
 	unit->flute->controlChange(11, unit->vibfreq = IN0(3));// vibrato freq
 	unit->flute->controlChange(1, unit->vibgain = IN0(4));// vibrato gain
 	unit->flute->controlChange(128, unit->breathpressure = IN0(5));	// breathpressure
-	unit->flute->noteOn(IN0(0),1);
-    unit->freq = IN0(0);
 	SETCALC(StkFlute_next);
 
 	StkFlute_next(unit, 1);
@@ -808,9 +813,9 @@ void StkModalBar_Ctor(StkModalBar* unit)
     Control Change Numbers: 
        - Stick Hardness = 2
        - Stick Position = 4
-       - Vibrato Gain = 11
-       - Vibrato Frequency = 7
-       - Direct Stick Mix = 1
+       - Vibrato Gain = 1
+       - Vibrato Frequency = 11
+       - Direct Stick Mix = 8
        - Volume = 128
        - Modal Presets = 16
          - Marimba = 0
@@ -832,9 +837,9 @@ void StkModalBar_Ctor(StkModalBar* unit)
 	unit->modalBar->controlChange(16,unit->instrument = IN0(1));// instrument
 	unit->modalBar->controlChange(2, unit->stickhardness = IN0(2));// stickhardness
 	unit->modalBar->controlChange(4, unit->stickposition = IN0(3));// stickposition
-	unit->modalBar->controlChange(11, unit->vibratogain = IN0(4));// vibratogain
-	unit->modalBar->controlChange(7, unit->vibratofreq = IN0(5));// vibratofreq
-	unit->modalBar->controlChange(1, unit->directstickmix = IN0(6));// directstickmix
+	unit->modalBar->controlChange(1, unit->vibratogain = IN0(4));// vibratogain
+	unit->modalBar->controlChange(11, unit->vibratofreq = IN0(5));// vibratofreq
+	unit->modalBar->controlChange(8, unit->directstickmix = IN0(6));// directstickmix
 	unit->modalBar->controlChange(128, unit->volume = IN0(7));// volume
   	SETCALC(StkModalBar_next);
 	StkModalBar_next(unit, 1);
@@ -859,8 +864,7 @@ void StkModalBar_next(StkModalBar *unit, int inNumSamples)
 				
 				unit->modalBar->noteOff( 0);
 			    unit->modalBar->noteOn(IN0(0) ,1);
-			
-}; 
+				}; 
 			};
 	unit->trig = IN0(8);
 
@@ -868,7 +872,7 @@ void StkModalBar_next(StkModalBar *unit, int inNumSamples)
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->modalBar->tick();
-        }
+    }
  }
 
 void StkModalBar_Dtor(StkModalBar* unit)
@@ -1108,8 +1112,8 @@ void StkSaxofony_Dtor(StkSaxofony* unit)
 void StkShakers_Ctor(StkShakers* unit)
 {
 // p0=freq, p1=shaker number, p2=energy, p3=system decay, p4=number of objects, p5 = resonance freq
-	unit->shakers = new Shakers();
-	//STKAlloc0(unit->mWorld,  unit->shakers, Shakers);
+//	unit->shakers = new Shakers();
+	STKAlloc0(unit->mWorld,  unit->shakers, Shakers);
  
 /******
     Control Change Numbers: 
@@ -1182,9 +1186,9 @@ void StkShakers_next(StkShakers *unit, int inNumSamples)
 
 void StkShakers_Dtor(StkShakers* unit)
 {
-	delete unit->shakers;
+//	delete unit->shakers;
 	unit->shakers->~Shakers();
-   // RTFree(unit->mWorld, unit->shakers);
+    RTFree(unit->mWorld, unit->shakers);
 
 }
 
@@ -1433,7 +1437,9 @@ void StkTubeBell_Ctor(StkTubeBell* unit)
 {
 //	Stk :: setRawwavePath("/Users/paul/stk-4.1.3/rawwaves");
 
-	unit->tubebell = new TubeBell();
+  STKAlloc0(unit->mWorld, unit->tubebell, TubeBell );
+
+//	unit->tubebell = new TubeBell();
 	unit->tubebell->noteOn(IN0(0) ,1);
 	SETCALC(StkTubeBell_next);
 	StkTubeBell_next(unit, 1);
@@ -1453,7 +1459,10 @@ void StkTubeBell_next(StkTubeBell *unit, int inNumSamples)
 
 void StkTubeBell_Dtor(StkTubeBell* unit)
 {
-	delete unit->tubebell;
+//	delete unit->tubebell;
+	unit->tubebell->~TubeBell();
+    RTFree(unit->mWorld, unit->tubebell);
+	
 }
 
 

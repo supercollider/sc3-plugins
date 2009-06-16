@@ -1,6 +1,7 @@
 #!/bin/bash
 # Combined distro script for Mac & Linux (and others...?)
 # made by various people: blackrain, Andrzej Kopec, Dan Stowell, nescivi
+# note distro script is not necessary anymore for Linux, since scons install takes care of it now
 
 case `uname` in
 	Darwin) echo "running distro script for Mac OSX";pluginext='scx';movecmd=cp;;
