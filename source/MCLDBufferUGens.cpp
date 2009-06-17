@@ -56,6 +56,9 @@ struct BufMax : public Unit
 
 struct BufMin : BufMax {};
 
+struct ArrayMax : public Unit {};
+struct ArrayMin : ArrayMax {};
+
 /*
 const size_t MIDelay_numbins = 6;
 struct MIDelay : public Unit
@@ -93,6 +96,12 @@ extern "C"
 	
 	void BufMin_Ctor(BufMin* unit);
 	void BufMin_next(BufMin *unit, int inNumSamples);
+	
+	void ArrayMax_Ctor(ArrayMax* unit);
+	void ArrayMax_next(ArrayMax *unit, int inNumSamples);
+	
+	void ArrayMin_Ctor(ArrayMin* unit);
+	void ArrayMin_next(ArrayMin *unit, int inNumSamples);
 	
 	//void MIDelay_Ctor(MIDelay* unit);
 	//void MIDelay_next(MIDelay *unit, int inNumSamples);
@@ -536,6 +545,68 @@ void BufMin_next(BufMin *unit, int inNumSamples)
 }
 
 ////////////////////////////////////////////////////////////////////
+
+void ArrayMax_Ctor(ArrayMax* unit)
+{
+	SETCALC(ArrayMax_next);
+	ArrayMax_next(unit, 1);
+}
+
+void ArrayMax_next(ArrayMax *unit, int inNumSamples)
+{
+	float *out0 = ZOUT(0);
+	float *out1 = ZOUT(1);
+	uint16 numInputs = unit->mNumInputs;
+	
+	float val, bestval;
+	uint16 bestpos;
+	for(int j=0; j<inNumSamples; ++j){
+		bestval = -INFINITY;
+		bestpos = 0;
+		for(uint16 i=0; i<numInputs; ++i){
+			val = IN(i)[j];
+			if(bestval < val){
+				bestval = val;
+				bestpos = i;
+			}
+		}
+		ZXP(out0) = bestval;
+		ZXP(out1) = (float)bestpos;
+	}
+}
+
+//////////
+
+void ArrayMin_Ctor(ArrayMin* unit)
+{
+	SETCALC(ArrayMin_next);
+	ArrayMin_next(unit, 1);
+}
+
+void ArrayMin_next(ArrayMin *unit, int inNumSamples)
+{
+	float *out0 = ZOUT(0);
+	float *out1 = ZOUT(1);
+	uint16 numInputs = unit->mNumInputs;
+	
+	float val, bestval;
+	uint16 bestpos;
+	for(int j=0; j<inNumSamples; ++j){
+		bestval = INFINITY;
+		bestpos = 0;
+		for(uint16 i=0; i<numInputs; ++i){
+			val = IN(i)[j];
+			if(bestval > val){
+				bestval = val;
+				bestpos = i;
+			}
+		}
+		ZXP(out0) = bestval;
+		ZXP(out1) = (float)bestpos;
+	}
+}
+
+////////////////////////////////////////////////////////////////////
 /*
 void MIDelay_Ctor(MIDelay* unit)
 {
@@ -720,5 +791,7 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(GaussClass);
 	DefineSimpleUnit(BufMax);
 	DefineSimpleUnit(BufMin);
+	DefineSimpleUnit(ArrayMax);
+	DefineSimpleUnit(ArrayMin);
 	//DefineDtorUnit(MIDelay);
 }

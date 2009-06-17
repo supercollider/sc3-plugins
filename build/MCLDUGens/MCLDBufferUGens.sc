@@ -67,6 +67,31 @@ BufMax : MultiOutUGen {
 BufMin : BufMax {}
 
 /*
+{ArrayMax.ar(SinOsc.ar(1000, [0, pi]))}.plot(1)
+{ArrayMax.kr(SinOsc.kr(1000, [0, pi]))}.plot(1)
+*/
+
+ArrayMax : MultiOutUGen {
+	*ar { | array |
+		^this.multiNewList(['audio'] ++ array.asArray)
+	}
+	*kr { | array |
+		^this.multiNewList(['control'] ++ array.asArray)
+	}
+	init { arg ... theInputs;
+		inputs = theInputs;		
+		channels = [ 
+			OutputProxy(rate, this, 0), 
+			OutputProxy(rate, this, 1) 
+		];
+		^channels
+	}
+	*categories { ^ #["UGens>Multichannel", "UGens>Analysis"] }
+}
+
+ArrayMin : ArrayMax {}
+
+/*
 MIDelay : UGen {
 	
 	*kr { |in1, in2, maxdelay= 0.2, gate=1, mibuf= -1|
