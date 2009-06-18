@@ -15,7 +15,7 @@ BFDecoder : UGen {
 	
 BFEncode1 : BFPanner {
 	
-	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
+	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 0;
 		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp)
 	}
 	
@@ -29,7 +29,7 @@ BFEncode1 : BFPanner {
 
 BFEncodeSter : BFPanner {
 
-	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1, wComp = 1;
+	*ar { arg l, r, azimuth=0, width = 0.5pi, elevation=0, rho = 1, gain=1, wComp = 0;
 		^this.multiNew('audio', l, r, azimuth, width, elevation, rho, gain, wComp )
 	}
 	
@@ -43,7 +43,7 @@ BFEncodeSter : BFPanner {
 
 BFEncode2 : BFPanner {
 	
-	*ar { arg in, point_x = 1, point_y = 1, elevation=0, gain=1, wComp = 1;
+	*ar { arg in, point_x = 1, point_y = 1, elevation=0, gain=1, wComp = 0;
 		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp )
 	}
 
@@ -75,7 +75,7 @@ FMHEncode0 : BFPanner {
 
 FMHEncode1 : BFPanner {
 	
-	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 1;
+	*ar { arg in, azimuth=0, elevation=0, rho = 1, gain=1, wComp = 0;
 		^this.multiNew('audio', in, azimuth, elevation, rho, gain, wComp )
 	}
 	
@@ -92,7 +92,7 @@ FMHEncode1 : BFPanner {
 
 FMHEncode2 : BFPanner {
 	
-	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1, wComp = 1;
+	*ar { arg in, point_x = 0, point_y = 0, elevation=0, gain=1, wComp = 0;
 		^this.multiNew('audio', in, point_x, point_y, elevation, gain, wComp)
 	}
 	
@@ -109,11 +109,11 @@ FMHEncode2 : BFPanner {
 
 BFDecode1 : BFDecoder {
 	
-	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, wComp = 1, mul = 1, add = 0;
+	*ar { arg w, x, y, z, azimuth = 0, elevation = 0, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', w, x, y, z, azimuth, elevation, wComp ).madd(mul, add);
 	}
 	
-	*ar1 {arg w, x, y, z, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, wComp = 1,
+	*ar1 {arg w, x, y, z, azimuth = 0, elevation = 0, maxDist = 10, distance = 10, wComp = 0,
 			mul = 1,  add = 0, scaleflag = 1;
 		var dist, scaler;
 		dist = ((maxDist - distance) / 345);

@@ -118,6 +118,13 @@ PV_SpectralMap : PV_ChainUGen
 		}
 }
 
+PV_SpectralEnhance : PV_ChainUGen
+{
+	*new {arg buffer, numPartials = 8, ratio = 2, strength = 0.1;
+		^this.multiNew('control', buffer, numPartials, ratio, strength);
+		}
+}
+
 BinData : MultiOutUGen 
 {
 	*ar {arg buffer, bin, overlaps = 0.5;

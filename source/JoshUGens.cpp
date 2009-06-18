@@ -142,28 +142,21 @@ struct AtsPartial : public Unit
 
 struct AtsBand : public Unit
 {
-    int32 *m_phase; 
-    float *m_lastfreq;
-    float *m_lastamp;
-    float *m_lastnoise;
-    float *m_tempNoise;
     int32  m_lomask;
-    float m_rScale, m_freqMul, m_freqAdd;;
-    int m_numPartials, m_partialStart, m_partialSkip, m_totalPartials;
+    float m_rScale;
     int m_numBands, m_bandStart, m_bandSkip, m_totalBands;
-    float m_sinePct, m_noisePct;
     float m_fbufnum;
     double m_cpstoinc, m_radtoinc;
-    int32 m_sinphase[25];
+    int32 m_sinphase;
     double m_sincpstoinc, m_sinradtoinc;
-    float m_atsBandFreq[25]; 
-    int32 m_atsCenterFreq[25];
-    float m_level[25];
-    float m_slope[25];
-    int32 m_counter[25];
+    float m_atsBandFreq; 
+    int32 m_atsCenterFreq;
+    float m_level;
+    float m_slope;
+    int32 m_counter;
     SndBuf *m_buf;
-    int *m_partials;
-    int *m_bands;	
+    float m_lastnoise;
+    int m_bands;	
     int phaseinit;
 };
 
@@ -300,12 +293,10 @@ extern "C"
 
     void AtsPartial_next(AtsPartial *unit, int inNumSamples);
     void AtsPartial_Ctor(AtsPartial* unit);
-    void AtsPartial_Dtor(AtsPartial* unit);
 
     void AtsBand_next(AtsBand *unit, int inNumSamples);
     void AtsBand_Ctor(AtsBand* unit);
-    void AtsBand_Dtor(AtsBand* unit);
-    
+
     void AtsFreq_next(AtsFreq *unit, int inNumSamples);
     void AtsFreq_Ctor(AtsFreq* unit);
 
@@ -1224,170 +1215,254 @@ void AtsNoiSynth_next(AtsNoiSynth *unit, int inNumSamples)
 	unit->m_noisePct = noisePct;
 }
 
-/*
+
  /////////////AtsPartial
  
- void AtsPartial_Ctor(AtsPartial* unit)
- {
+void AtsPartial_Ctor(AtsPartial* unit)
+{
     SETCALC(AtsPartial_next);
     int tableSizeSin = ft->mSineSize;
-    unit->partial = IN0(1);
-    unit->m_freqMul = IN0(3);
-    unit->m_freqAdd = IN0(4);
+    unit->m_numPartials = (int)IN0(1);
     unit->m_lomask = (tableSizeSin - 1) << 3; 
     unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
-    unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
+    unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;
+    unit->m_freqMul = IN0(3);
+    unit->m_freqAdd = IN0(4);    
     unit->phaseinit = 1;
     unit->m_fbufnum = -1e9f;
     ClearUnitOutputs(unit, 1);
- }
-  
- void AtsPartial_next(AtsPartial *unit, int inNumSamples)
- {
- int thisPartial, dataPos1, dataPos2, partialOffset;
- float rScale, amp1, amp2, freq1, freq2, noise1, noise2, amp, freq, noise, newamp, newfreq, ampslope, freqslope, noiseslope;
- int32 ifreq, phase;
- 
- ClearUnitOutputs(unit, inNumSamples); 
- // get the buffer that stores the ATS data 
- float fbufnum = IN0(0);
- 
- GET_ATS_BUF
- 
- // calculate offsets based on file type 
- int offset1 = 2;
- int offset2 = 1;
- if((fileType == 2) || (fileType == 4)) offset1 = 3;
- if(fileType >2) offset2 = 26;
- 
- // set-up the output pointer 
- float *out = OUT(0);
- 
- // get the requested frames and other inputs 
- float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame should be between 0 and 1	
- 
- // to get current data, we will need to interpolate values between frames - figure out the bounding frames 
- CALC_FRAME_OFFSETS
- 
- int block = ((fileNumPartials * offset1) + offset2);
- int block1 = iFrame1 * block;
- int block2 = iFrame2 * block;
- 
- float nextFreqMul = IN0(3);
- float nextFreqAdd = IN0(4);
- 
- float freqMul = unit->m_freqMul;
- float freqAdd = unit->m_freqAdd;
- float freqMulSlope = CALCSLOPE(nextFreqMul, freqMul);
- float freqAddSlope = CALCSLOPE(nextFreqAdd, freqAdd);
- 
- // if this is the first time through the 'next' function, allocate the pointers, and zero out if needed, fill the initial data 
- if(unit->phaseinit > 0){
- 
- unit->m_partials = IN0(1);  
- 
+}
 
- unit->m_phase[i] = 0.;
- partialOffset = (thisPartial * offset1);
- dataPos1 = block1 + partialOffset;
- dataPos2 = block2 + partialOffset;
- freq1 = atsData[dataPos1 + 1];
- freq2 = atsData[dataPos2 + 1];
- unit->m_lastfreq = (lininterp(framePct, freq1, freq2) * freqMul) + freqAdd;
- amp1 = atsData[dataPos1]; 
- amp2 = atsData[dataPos2];
- unit->m_lastamp = lininterp(framePct, amp1, amp2);
- 
- unit->phaseinit = -1;
- }
- 
- int partial = unit->m_partial;
 
- // the sine table 
- float *table0 = ft->mSineWavetable;
- float *table1 = table0 + 1;
- int32 lomask = unit->m_lomask;
- 
- // this loop calulates the partial sample values for the each of the sins, stores them in an array
- for (int i = 0; i< totalPartials; ++i){
- thisPartial = partials[i];
- partialOffset = (thisPartial * offset1);
- dataPos1 = block1 + partialOffset;
- dataPos2 = block2 + partialOffset;
- amp1 = atsData[dataPos1];
- amp2 = atsData[dataPos2];
- freq1 = atsData[dataPos1 + 1];
- freq2 = atsData[dataPos2 + 1];
- freqMul = unit->m_freqMul; //grab the original value from the struct
- freqAdd = unit->m_freqAdd; 
- 
- ADD_SIN_PARTIALS
- 
- }
- unit->m_freqMul = freqMul;
- unit->m_freqAdd = freqAdd;
- 
- rScale = unit->m_rScale;
- 
- RGET
- 
- float *tempNoise = unit->m_tempNoise;
- //calculate the noise
- if(fileType > 2) {
- for (int i = 0; i < inNumSamples; i++) tempNoise[i] = 0.f;
- for (int i = 0; i < totalBands; i++){
- int bandnum = bands[i];
- float noiseStart = unit->m_lastnoise[i];
- int dataOffset = (fileNumPartials * offset1) + bandnum;
- noise1 = atsData[block1 + dataOffset]; 
- noise2 = atsData[block2 + dataOffset];
- unit->m_lastnoise[i] = noise = sqrt(lininterp(framePct, noise1, noise2) * rScale);
- noiseslope = CALCSLOPE(noise, noiseStart);
- 
- int32 sinphase = unit->m_sinphase[i];
- 
- float noisefreq = unit->m_atsBandFreq[bandnum];
- int32 freq = unit->m_atsCenterFreq[bandnum];
- 
- float level = unit->m_level[i];
- float slope = unit->m_slope[i];
- int32 counter = unit->m_counter[i];
- float nextlevel = 0.;
- for (int j = 0; j < inNumSamples; j++){
- if (counter<=0) {
- counter = (int32)(unit->mRate->mSampleRate / sc_max(noisefreq, .001f));
- counter = sc_max(1, counter);
- nextlevel = frand2(s1, s2, s3);
- slope = (nextlevel - level) / counter;
- } else --counter;
- tempNoise[j] += lookupi1(table0, table1, sinphase, lomask) * level * noiseStart;
- noiseStart += noiseslope;
- level += slope;
- sinphase += freq;
- }
- unit->m_level[i] = level;
- unit->m_slope[i] = slope;
- unit->m_counter[i] = counter;
- unit->m_sinphase[i] = sinphase;
- }
- } else {
- Print("This ATS file doesn't appear to have noise data. Use AtsSynth\n");
- }
- 
- RPUT
- 
- // NOW - scale by the sinPct and noisePct (saves TONS of multiplies and adds this way)
- 
- for (int i = 0; i < inNumSamples; i++){
- out[i] = (out[i] * sinePct) + (tempNoise[i] * noisePct);
- sinePct += sinePctSlope;
- noisePct += noisePctSlope;
- }
- unit->m_sinePct = sinePct;
- unit->m_noisePct = noisePct;
- }
- 
- */
+void AtsPartial_next(AtsPartial *unit, int inNumSamples)
+{
+    ClearUnitOutputs(unit, inNumSamples); 
+    // get the buffer that stores the ATS data 
+    float fbufnum = IN0(0);
+    
+    GET_ATS_BUF
+    
+    // calculate offsets based on file type 
+    int offset1 = 2;
+    int offset2 = 1;
+    if((fileType == 2) || (fileType == 4)) offset1 = 3;
+    if(fileType >2) offset2 = 26;
+    
+    // set-up the output pointer 
+    float *out = OUT(0);
+    
+    // get the requested frames and other inputs
+    float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame input should be between 0 and 1	
+    float nextFreqMul = IN0(3);
+    float nextFreqAdd = IN0(4);
+    
+    float freqMul = unit->m_freqMul;
+    float freqAdd = unit->m_freqAdd;
+    float freqMulSlope = CALCSLOPE(nextFreqMul, freqMul);
+    float freqAddSlope = CALCSLOPE(nextFreqAdd, freqAdd);
+    
+    // to get current data, we will need to interpolate values between frames - figure out the bounding frames
+    CALC_FRAME_OFFSETS
+    
+    int block = ((fileNumPartials * offset1) + offset2);
+    int block1 = iFrame1 * block;
+    int block2 = iFrame2 * block;
+    
+    int thisPartial, dataPos1, dataPos2, partialOffset;
+    float amp1, amp2, freq1, freq2, amp, freq, newamp, newfreq, ampslope, freqslope;
+    int32 ifreq, phase;
+    
+    // if this is the first time through the next function, allocate the phase pointer, and zero it out, fill the initial amp and freq data
+    if(unit->phaseinit > 0){
+	unit->m_partials = (int)IN0(1);
+	
+	thisPartial = unit->m_partials;
+	unit->m_phase = 0;
+	partialOffset = (thisPartial * offset1);
+	dataPos1 = block1 + partialOffset;
+	dataPos2 = block2 + partialOffset;
+	freq1 = atsData[dataPos1 + 1];
+	freq2 = atsData[dataPos2 + 1];
+	unit->m_lastfreq = (lininterp(framePct, freq1, freq2) * freqMul) + freqAdd;
+	amp1 = atsData[dataPos1];
+	amp2 = atsData[dataPos2];
+	unit->m_lastamp = lininterp(framePct, amp1, amp2);
+    
+	unit->phaseinit = -1;
+    }
+    
+    int partials = unit->m_partials;
+    
+    // the sine table
+    float *table0 = ft->mSineWavetable;
+    float *table1 = table0 + 1;
+    int32 lomask = unit->m_lomask;
+    
+    // this loop calulates the partial sample values for the each of the sins, stores them in an array
+    thisPartial = partials;
+    partialOffset = (thisPartial * offset1);
+    dataPos1 = block1 + partialOffset;
+    dataPos2 = block2 + partialOffset;
+    amp1 = atsData[dataPos1];
+    amp2 = atsData[dataPos2];
+    freq1 = atsData[dataPos1 + 1];
+    freq2 = atsData[dataPos2 + 1];
+    freqMul = unit->m_freqMul; //grab the original value from the struct
+    freqAdd = unit->m_freqAdd; 
+    
+    newamp = lininterp(framePct, amp1, amp2); \
+    newfreq = ((lininterp(framePct, freq1, freq2) * freqMul) + freqAdd); 
+    amp = unit->m_lastamp; 
+    freq = unit->m_lastfreq;
+    ampslope = CALCSLOPE(newamp, amp); 
+    freqslope = CALCSLOPE(newfreq, freq); 
+    phase = unit->m_phase; 
+    for (int j = 0; j < inNumSamples; ++j){ 
+	ifreq = (int32)(unit->m_cpstoinc * freq); 
+	out[j] += (lookupi1(table0, table1, phase, lomask) * amp); 
+	phase += ifreq; 
+	freq += freqslope; 
+	amp += ampslope; 
+	freqMul += freqMulSlope; 
+	freqAdd += freqAddSlope; 
+    }; 
+    unit->m_lastfreq = freq; 
+    unit->m_lastamp = amp; 
+    unit->m_phase = phase;     
+
+    unit->m_freqMul = freqMul;
+    unit->m_freqAdd = freqAdd;
+} 
+
+/* AtsBand */
+
+void AtsBand_Ctor(AtsBand* unit)
+{
+    SETCALC(AtsBand_next);
+    int tableSizeSin = ft->mSineSize;
+    int band = (int)IN0(1);
+    unit->m_lomask = (tableSizeSin - 1) << 3; 
+    unit->m_radtoinc = tableSizeSin * (rtwopi * 65536.); 
+    unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;     
+    
+    float atsBandFreq[25] = ATS_BAND_WIDTH;
+    float atsCenterFreq[25] = ATS_CENTER_FREQ;
+    
+    RGET
+    
+    unit->m_atsBandFreq = atsBandFreq[band];
+    unit->m_atsCenterFreq = (int32)(unit->m_cpstoinc * atsCenterFreq[band]);
+    unit->m_counter = 0;
+    unit->m_level = unit->mParent->mRGen->frand2();
+    unit->m_slope = 0.f;
+    
+    RPUT
+    
+    unit->phaseinit = 1;
+    unit->m_fbufnum = -1e9f;
+    ClearUnitOutputs(unit, 1);
+}
+
+void AtsBand_next(AtsBand *unit, int inNumSamples)
+{
+    int dataPos1, dataPos2, partialOffset;
+    float rScale, noise1, noise2, amp, freq, noise, newamp, newfreq, ampslope, freqslope, noiseslope;
+    int32 ifreq, phase;
+    
+    ClearUnitOutputs(unit, inNumSamples); 
+    // get the buffer that stores the ATS data 
+    float fbufnum = IN0(0);
+    
+    GET_ATS_BUF
+    
+    // calculate offsets based on file type 
+    int offset1 = 2;
+    int offset2 = 1;
+    if((fileType == 2) || (fileType == 4)) offset1 = 3;
+    if(fileType >2) offset2 = 26;
+    
+    // set-up the output pointer 
+    float *out = OUT(0);
+    
+    // get the requested frames and other inputs 
+    float frame = sc_mod(IN0(2), 1.0f) * (float)fileNumFrames; // frame should be between 0 and 1	
+    
+    // to get current data, we will need to interpolate values between frames - figure out the bounding frames 
+    CALC_FRAME_OFFSETS
+    
+    int block = ((fileNumPartials * offset1) + offset2);
+    int block1 = iFrame1 * block;
+    int block2 = iFrame2 * block;
+        
+    // if this is the first time through the 'next' function, allocate the pointers, and zero out if needed, fill the initial data 
+    if(unit->phaseinit > 0){
+
+	unit->m_bands = (int)IN0(1);
+	
+	unit->m_rScale = rScale = 1 / (bufData[3] * 0.33166610955984); 
+	int bandnum = unit->m_bands;
+	int dataOffset = (fileNumPartials * offset1) + bandnum;
+	noise1 = atsData[block1 + dataOffset]; // 1 + 10 slots of header
+	noise2 = atsData[block2 + dataOffset];
+	unit->m_lastnoise = sqrt(lininterp(framePct, noise1, noise2) * rScale);
+	unit->m_sinphase = 0;
+	unit->phaseinit = -1;
+    }
+    
+    int bands = unit->m_bands;
+    int totalBands = 1; //unit->m_totalBands;
+    
+    // the sine table 
+    float *table0 = ft->mSineWavetable;
+    float *table1 = table0 + 1;
+    int32 lomask = unit->m_lomask;
+    
+    rScale = unit->m_rScale;
+    
+    RGET
+    
+    //calculate the noise
+    if(fileType > 2) {
+	    int bandnum = bands;
+	    float noiseStart = unit->m_lastnoise;
+	    int dataOffset = (fileNumPartials * offset1) + bandnum;
+	    noise1 = atsData[block1 + dataOffset]; 
+	    noise2 = atsData[block2 + dataOffset];
+	    unit->m_lastnoise = noise = sqrt(lininterp(framePct, noise1, noise2) * rScale);
+	    noiseslope = CALCSLOPE(noise, noiseStart);
+	    
+	    int32 sinphase = unit->m_sinphase;
+	    
+	    float noisefreq = unit->m_atsBandFreq;
+	    int32 freq = unit->m_atsCenterFreq;
+	    
+	    float level = unit->m_level;
+	    float slope = unit->m_slope;
+	    int32 counter = unit->m_counter;
+	    float nextlevel = 0.;
+	    for (int j = 0; j < inNumSamples; j++){
+		if (counter<=0) {
+		    counter = (int32)(unit->mRate->mSampleRate / sc_max(noisefreq, .001f));
+		    counter = sc_max(1, counter);
+		    nextlevel = frand2(s1, s2, s3);
+		    slope = (nextlevel - level) / counter;
+		} else --counter;
+		out[j] += lookupi1(table0, table1, sinphase, lomask) * level * noiseStart;
+		noiseStart += noiseslope;
+		level += slope;
+		sinphase += freq;
+	    }
+	    unit->m_level = level;
+	    unit->m_slope = slope;
+	    unit->m_counter = counter;
+	    unit->m_sinphase = sinphase;
+    } else {
+	Print("This ATS file doesn't appear to have noise data. Use AtsSynth\n");
+    }
+    
+    RPUT
+
+}
 
 void AtsFreq_Ctor(AtsFreq* unit)
 {
@@ -3766,8 +3841,8 @@ void load(InterfaceTable *inTable)
 	
 	DefineDtorUnit(AtsSynth);
 	DefineDtorUnit(AtsNoiSynth);
-//	DefineDtorUnit(AtsPartial);
-//	DefineDtorUnit(AtsBand);
+	DefineSimpleUnit(AtsPartial);
+	DefineSimpleUnit(AtsBand);
 	DefineSimpleUnit(AtsFreq);
 	DefineSimpleUnit(AtsAmp);
 	DefineSimpleUnit(AtsNoise);

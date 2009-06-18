@@ -5,22 +5,22 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="949.46">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #a91616}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #961e1e}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
-span.s1 {color: #1940d3}
-span.s2 {color: #1541e7}
-span.s3 {color: #0013bc}
+span.s1 {color: #1f44d0}
+span.s2 {color: #1c45e3}
+span.s3 {color: #001cb9}
 span.s4 {color: #000000}
 span.s5 {color: #606060}
-span.s6 {color: #307109}
+span.s6 {color: #426f0e}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -74,7 +74,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s3">Line</span>.kr(1, 1, <span class="s3">BufDur</span>.kr(soundBufnum), doneAction: 2);</p>
 <p class="p7"><span class="Apple-tab-span">	</span>in = <span class="s3">PlayBuf</span>.ar(1, soundBufnum, <span class="s3">BufRateScale</span>.kr(soundBufnum), loop: 0);</p>
 <p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>// note the window type and overlaps... this is important for resynth parameters</p>
-<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in, 0.25, 0);<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in, 0.25, 1);<span class="Apple-converted-space"> </span></p>
 <p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_RecordBuf</span>(chain, recBuf, 0, 1, 0, 0.5, 1);</p>
 <p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>// no ouput ... simply save the analysis to recBuf</p>
 <p class="p7"><span class="Apple-tab-span">	</span>}).load(s);</p>

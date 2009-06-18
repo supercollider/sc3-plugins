@@ -14,7 +14,8 @@ ProcMod {
 		<>releaseFunc, <>onReleaseFunc, <responder, <envnode, <isRunning = false, <data,
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
-		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiAmpSpec;
+		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiCtrl, 
+		midiAmpSpec, midiPort;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -60,16 +61,19 @@ ProcMod {
 			responder, timeScale, lag, clock, server).play;		}
 
 	play {
-		var thisfun;
+		var thisfun, port;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({	
 			isRunning = true;
 			// add the responder if it isn't nil
 			responder.notNil.if({responder.add});
 			midiAmp.if({
+				[midiChan, midiCtrl].postln;
 				ccCtrl = CCResponder({arg src, chan, num, value;
-					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
-					}, nil, midiChan, nil, nil)
+					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp, false);
+					}, nil, midiChan, midiCtrl, nil);
+				port = MIDIOut.new(midiPort);
+				port.control(midiChan, midiCtrl, (midiAmpSpec.unmap(amp) * 127).round);
 				});
 			// create this Proc's group, and if there is an env, start it
 			// also, if there is no release node, schedule the Procs release
@@ -125,9 +129,15 @@ ProcMod {
 		this.play(recpath, timestamp, headerFormat, sampleFormat);
 	}
 	
-	amp_ {arg newamp;
+	amp_ {arg newamp, sendMidi = true;
+		var port;
 		amp = newamp;
 		envnode.notNil.if({server.sendBundle(nil, [\n_set, envnode, \amp, amp])});
+		(midiAmp and: {sendMidi}).if({
+			port = MIDIOut.new(midiPort);
+			port.control(midiChan, midiCtrl, 
+				(midiAmpSpec.unmap(amp) * 127).round.max(0).min(127));
+			})
 	}
 		
 	lag_ {arg newlag;
@@ -273,16 +283,23 @@ ProcMod {
 		responder = aResponder;
 		isRunning.if({responder.add});
 		}
+	
+	*midiDevices {
+		MIDIClient.init;
+		MIDIClient.destinations;			
+		}
 		
-	mapAmpToCC {arg channel, maxamp = 6, minamp = -90;
+	mapAmpToCC {arg control, maxamp = 6, minamp = -90, clientPort = 0, midiChannel = 0;
 		midiAmpSpec = [minamp, maxamp, \db].asSpec;
 		midiAmp = true;
-		midiChan = channel;
+		midiCtrl = control;
+		midiPort = clientPort;
+		midiChan = midiChannel;
 		ccCtrl.notNil.if({
 			ccCtrl.remove;
 			ccCtrl = CCResponder({arg src, chan, num, value;
-				this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
-				}, nil, midiChan, nil, nil)
+				this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp, false);
+				}, nil, midiChan, midiCtrl, nil)
 			})
 		}
 			
@@ -473,15 +490,18 @@ ProcModR : ProcMod {
 		}
 		
 	play {arg recpath, timestamp = true, argHeaderFormat, argSampleFormat;
-		var thisfun;
+		var thisfun, port;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({	
 			isRunning = true;
 			responder.notNil.if({responder.add});
 			midiAmp.if({
+				[midiChan, midiCtrl].postln;
 				ccCtrl = CCResponder({arg src, chan, num, value;
-					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp);
-					}, nil, midiChan, nil, nil)
+					this.amp_(midiAmpSpec.map(value*0.0078740157480315).dbamp, false);
+					}, nil, midiChan, midiCtrl, nil);
+				port = MIDIOut.new(midiPort);
+				port.control(midiChan, midiCtrl, (midiAmpSpec.unmap(amp) * 127).round);
 				});
 			notegroup = group = group ?? {server.nextNodeID};
 			server.sendBundle(nil, [\g_new, group, addActions[addAction], target]);
@@ -694,7 +714,7 @@ ProcEvents {
 		<id, gui = false, <window, <server, firstevent = false, initmod, killmod, <amp, <lag,
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
 		<eventButton, <killButton, <releaseButton, starttime = nil, <pedal = false, 
-		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui, bounds,
+		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui,
 		<bigNum = false, bigNumWindow, <>preKill;
 	var <buttonHeight, <buttonWidth;
 	var <>showPMGUIs = false, columns = 2, rows = 15, column = 0, row = 0;
@@ -707,7 +727,7 @@ ProcEvents {
 	var <recordPM = false, recordpath, <>timeStamp, <>headerFormat, <>sampleFormat;
 	var <>onEvent;
 	
-	classvar addActions, writeDefs;
+	classvar addActions, writeDefs, bounds;
 	
 	*new {arg events, amp, initmod, killmod, id, server, lag = 0.1;
 		server = server ?? {Server.default};
@@ -758,7 +778,6 @@ ProcEvents {
 		eventArray = Array.fill(events.size, {Array.new});
 		releaseArray = Array.fill(events.size, {Array.new});
 		timeArray = Dictionary.new(events.flat.size);
-		bounds = GUI.window.screenBounds;
 		id = argid;
 		server = argserver;
 		amp = argamp;
@@ -1309,15 +1328,18 @@ ProcEvents {
 				CmdPeriod.add(cper);
 				});
 			clock.sched(wait, {
-				{this.next}.defer;
-				index = index + 1;
-				(index <= numEvs).if({
-					currentTime = currentTime + wait;
-					wait = timeLine[index + 1] - currentTime;
-					this.playTimeLine(wait);
-					}, {
-					this.stopTimeLine
-					})
+				{
+					this.next; 
+//					index = index + 1;
+//					index.postln;
+					(index <= numEvs).if({
+						currentTime = currentTime + wait;
+						wait = timeLine[index + 1] - currentTime;
+						this.playTimeLine(wait);
+						}, {
+						this.stopTimeLine
+						})
+				}.defer;
 				});
 			})
 		}
@@ -1430,6 +1452,8 @@ ProcEvents {
 			4 -> 4
 			];
 		writeDefs = true;
+		{bounds = GUI.window.screenBounds}.defer;
+
 	}
 
 }
