@@ -77,7 +77,7 @@ PV_RecordBuf : PV_ChainUGen
 	}
 }
 
-// rate relates to expansion of compression of speed. 1 is normal, -1 is backwards, 0.5 doubles
+// rate relates to expansion or compression of speed. 1 is normal, -1 is backwards, 0.5 doubles
 // the duration, 2.0, halves it.
 
 PV_PlayBuf : PV_ChainUGen
