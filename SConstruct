@@ -41,14 +41,14 @@ if platform.system() == 'OSX':
 	DEFAULT_PREFIX = '/usr/local'
 if platform.system() == 'Windows':
 	opts.AddOptions(
-    	PathOption('STKPATH',
-        	       'STK libary path', 'C:'),
-		PathOption('SC3PATH', 'SuperCollider source path', 'C:' ),
-		PathOption('PTHREADSPATH', 'pthreads path', 'C:' )
+    	PathOption('STKPATH', 'STK libary path', 'C:/'),
+		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
+		PathOption('PTHREADSPATH', 'pthreads path', '../../pthreads-win32' ),
+		PathOption('FFTW3PATH', 'fftw3 path', '../../fftw3' )
 	)
 	PLUGIN_FILE_RE = re.compile('.*\.scx$')
 	PLUGIN_EXT = '.scx'
-	DEFAULT_PREFIX = '/'
+	DEFAULT_PREFIX = 'C:/'
 
 opts.AddOptions(
     BoolOption('STK',
@@ -79,18 +79,24 @@ def make_os_env(*keys):
 
 # Configure base environment for the current platform
 
-env = Environment(options = opts,
-                  ENV = make_os_env('PATH', 'PKG_CONFIG_PATH'),
-                  PACKAGE = PACKAGE,
-                  VERSION = VERSION,
-                  URL = 'http://sc3-plugins.sourceforge.net',
-                  TARBALL = PACKAGE + VERSION + '.tbz2')
-env.Append(PATH = ['/usr/local/bin', '/usr/bin', '/bin'])
+if platform.system() != 'Windows':
+	env = Environment(options = opts, 
+	                  ENV = make_os_env('PATH', 'PKG_CONFIG_PATH'),
+	                  PACKAGE = PACKAGE,
+	                  VERSION = VERSION,
+	                  URL = 'http://sc3-plugins.sourceforge.net',
+	                  TARBALL = PACKAGE + VERSION + '.tbz2')
+	env.Append(PATH = ['/usr/local/bin', '/usr/bin', '/bin'])
 
-if platform.system() == 'Windows':
-	# Use mingw
-	env.Append(tools = ['mingw'])
-
+else:
+	# Use mingw - no pkg_config
+	env = Environment(options = opts,
+                      tools = ['mingw'],
+	                  ENV = os.environ,
+	                  PACKAGE = PACKAGE,
+	                  VERSION = VERSION,
+	                  URL = 'http://sc3-plugins.sourceforge.net',
+	                  TARBALL = PACKAGE + VERSION + '.tbz2')
 
 ########################################
 # install function
@@ -190,13 +196,15 @@ if platform.system() == 'Windows':
 	if not os.path.exists(pthreads + '/pthread.h'):
 		print 'Couldn\'t find pthreads! Is "pthreads" set correctly in your SConstruct file?'
 		Exit(1)
-	export_helper = sc3_source + '/windows/PlugIns/ExportHelper.cpp'
+	export_helper = sc3_source + 'windows/PlugIns/ExportHelper.cpp'
 	if not os.path.exists(export_helper):
 		print 'Couldn\'t find ExportHelper.cpp! Check your SuperCollider directory.'
 		Exit(1)
+	fftw3 = env['FFTW3PATH']
+	print 'fftw source is at: ' + fftw3
 	platform_CPPDEFINES = ['SC_WIN32', '__GCC__']
 	platform_SOURCES = [ export_helper ]
-	platform_HEADERS = [ sc3_source + '/libsndfile', pthreads ]
+	platform_HEADERS = [ sc3_source + '/libsndfile', pthreads, sc3_source + '/windows/compat_stuff' ]
 	
 ########################################
 # Configure for Linux 
@@ -263,6 +271,11 @@ Basic_Env = env.Clone(
         	SHLIBSUFFIX = PLUGIN_EXT
 );
 
+if platform.system() == 'Windows':
+	Basic_Env.SharedObject(target = 'ExportHelper.o', source = export_helper)
+	platform_SOURCES = ['ExportHelper.o']
+	Basic_Env.Append(LIBPATH=fftw3)
+
 for file in plugs :
 	plugins.append( Basic_Env.SharedLibrary(make_plugin_target(file), ['source/' + file + '.cpp'] + platform_SOURCES ) )
 
@@ -326,6 +339,9 @@ FFT_Env = env.Clone(
        	SHLIBPREFIX = '',
        	SHLIBSUFFIX = PLUGIN_EXT
 )
+
+if platform.system() == 'Windows':
+	FFT_Env.Append(LIBPATH=fftw3)
 
 ##############################################
 # JoshPVUGens
