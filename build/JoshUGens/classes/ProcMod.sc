@@ -743,6 +743,7 @@ ProcEvents {
 	initProcEvents {arg events, argamp, arginitmod, argkillmod, argid, argserver, arglag;
 		var proc, release, newproc, evid;
 		var tmp, srvrs;
+		{bounds = Window.screenBounds}.defer;
 		writeDefs.if({
 			srvrs = Server.all;
 			writeDefs = false;
@@ -1452,7 +1453,6 @@ ProcEvents {
 			4 -> 4
 			];
 		writeDefs = true;
-		{bounds = GUI.window.screenBounds}.defer;
 
 	}
 
