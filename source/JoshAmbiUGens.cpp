@@ -2256,20 +2256,20 @@ void load(InterfaceTable *inTable)
 {
 	ft = inTable;
 	
-	DefineSimpleUnit(BFEncode1);
-	DefineSimpleUnit(BFEncode2);
-	DefineSimpleUnit(BFEncodeSter);
-	DefineSimpleUnit(FMHEncode0);
-	DefineSimpleUnit(FMHEncode1);
-	DefineSimpleUnit(FMHEncode2);
+	DefineSimpleCantAliasUnit(BFEncode1);
+	DefineSimpleCantAliasUnit(BFEncode2);
+	DefineSimpleCantAliasUnit(BFEncodeSter);
+	DefineSimpleCantAliasUnit(FMHEncode0);
+	DefineSimpleCantAliasUnit(FMHEncode1);
+	DefineSimpleCantAliasUnit(FMHEncode2);
 	DefineSimpleCantAliasUnit(BFDecode1);
 	DefineSimpleCantAliasUnit(FMHDecode1);
 	DefineSimpleUnit(BFManipulate);
-	DefineSimpleUnit(B2Ster);
+	DefineSimpleCantAliasUnit(B2Ster);
 	DefineSimpleUnit(A2B);
 	DefineSimpleUnit(B2A);
-	DefineSimpleUnit(UHJ2B);
-	DefineSimpleUnit(B2UHJ);
+	DefineSimpleCantAliasUnit(UHJ2B);
+	DefineSimpleCantAliasUnit(B2UHJ);
 //	DefineDtorCantAliasUnit(BFFreeVerb);
 
 	
