@@ -4125,11 +4125,11 @@ void WarpZ_next(WarpZ *unit, int inNumSamples)
 		    bool findzero = true;
 		    int maxcount = (int)(bufSampleRate * zeroSearch);
 		    float *a;
+		    float *aTmp;
 		    int iTmp = 0;
 		    int iLoopMax = (int)loopMax;
 		    int iPhase = (int)phase;
-		    float a0;
-		    float a1;
+		    float a0, a1;
 		    while(findzero && (iTmp < maxcount) && ((iPhase + bufChannels) < iLoopMax)){
 			a = bufData + iPhase;
 			a0 = a[0];
@@ -4151,24 +4151,24 @@ void WarpZ_next(WarpZ *unit, int inNumSamples)
 			int ppos = iPhase + (nextGrain * bufChannels);
 			int loopTest = ppos + bufChannels;
 			iTmp = 0;
+			a = bufData + ppos;
 			while (findzero && (iTmp < maxDev) && (loopTest < iLoopMax)){
-			    a = bufData + ppos;
-			    a0 = a[0];
-			    a1 = a[bufChannels];
+			    aTmp = a + iTmp;
+			    a0 = aTmp[0];
+			    a1 = aTmp[bufChannels];
 			    // check ahead for a zero crossing in the CURRENT grain...
 			    if((a0 <= 0.0) && (a1 > 0.0)){
 				nextGrain = unit->mNextGrain[n] += iTmp;
 				findzero = false;
 			    } else {
 				// and behind ...
-				a = bufData - ppos;
-				a0 = a[0];
-				a1 = a[bufChannels];
-				if((a0 <= 0.0 && (a1 > 0.0))){
+				aTmp = a - iTmp;
+				a0 = aTmp[0];
+				a1 = aTmp[bufChannels];
+				if((a0 <= 0.0) && (a1 > 0.0)){
 				    nextGrain = unit->mNextGrain[n] -= iTmp;
 				    findzero = false;
 				} else {
-				    ppos += bufChannels;
 				    loopTest += bufChannels;
 				    iTmp++;
 				}
