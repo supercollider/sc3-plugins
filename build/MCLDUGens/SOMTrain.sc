@@ -215,8 +215,10 @@ SOMRd : MultiOutUGen {
 	
 	// And the reverse, in case you need it:
 	*bufIndexToCoords { |bufindex, netsize=10, numdims=3|
-		bufindex = bufindex.asInteger;
-		netsize  = netsize.asInteger;
+		// note: would like to use .asInteger but can't use that in a synthdef
+		bufindex = bufindex.round;
+		netsize  = netsize.round;
+		// but numdims can't go into the synthdef, must be evaluated by lang:
 		numdims  = numdims.asInteger;
 		^numdims.switch(
 			1, { bufindex },
