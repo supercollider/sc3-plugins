@@ -4,6 +4,8 @@ Grab environment variables (numeric ones please!) for use in synth graphs.
 */
 
 #include "SC_PlugIn.h"
+#include <sys/time.h>
+#include <ctime>
 
 static InterfaceTable *ft;
 
@@ -14,12 +16,21 @@ struct Getenv : public Unit
 	float m_value;
 };
 
+struct Clockmus : public Unit
+{
+	timeval tp;
+};
+
 extern "C"
 {
 	void load(InterfaceTable *inTable);
+
 	void Getenv_Ctor(Getenv* unit);
 	void Getenv_next(Getenv *unit, int inNumSamples);
 	void Getenv_Dtor(Getenv* unit);
+
+	void Clockmus_Ctor(Clockmus* unit);
+	void Clockmus_next(Clockmus *unit, int inNumSamples);
 };
 
 //////////////////////////////////////////////////////////////////
@@ -62,15 +73,10 @@ void Getenv_Ctor(Getenv* unit)
 	Getenv_next(unit, 1);
 }
 
-
-//////////////////////////////////////////////////////////////////
-
 void Getenv_next(Getenv *unit, int inNumSamples)
 {
 	OUT0(0) = unit->m_value;
 }
-
-//////////////////////////////////////////////////////////////////
 
 void Getenv_Dtor(Getenv* unit)
 {
@@ -79,9 +85,25 @@ void Getenv_Dtor(Getenv* unit)
 
 //////////////////////////////////////////////////////////////////
 
+void Clockmus_Ctor(Clockmus* unit)
+{
+	SETCALC(Clockmus_next);
+	Clockmus_next(unit, 1);
+}
+
+void Clockmus_next(Clockmus *unit, int inNumSamples)
+{
+	gettimeofday(&(unit->tp), NULL);
+	OUT0(0) = (float) unit->tp.tv_usec;
+}
+
+//////////////////////////////////////////////////////////////////
+
+
 void load(InterfaceTable *inTable)
 {
 	ft = inTable;
 
 	DefineDtorUnit(Getenv);
+	DefineSimpleUnit(Clockmus);
 }
