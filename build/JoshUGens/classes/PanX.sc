@@ -1,10 +1,10 @@
 PanX : Panner {
 	
-	*ar { arg numChans, in, pos = 0.0, level = 1.0, width = 2.0, orientation = 0.5;
-		^this.multiNew('audio', numChans, in, pos, level, width, orientation )
+	*ar { arg numChans, in, pos = 0.0, level = 1.0, width = 2.0;
+		^this.multiNew('audio', numChans, in, pos, level, width )
 	}
-	*kr { arg numChans, in, pos = 0.0, level = 1.0, width = 2.0, orientation = 0.5;
-		^this.multiNew('control', numChans, in, pos, level, width, orientation )
+	*kr { arg numChans, in, pos = 0.0, level = 1.0, width = 2.0;
+		^this.multiNew('control', numChans, in, pos, level, width )
 	}
 	init { arg numChans ... theInputs;
 		inputs = theInputs;		

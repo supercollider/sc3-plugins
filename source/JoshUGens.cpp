@@ -3794,130 +3794,84 @@ extern "C"
     void PanX_next(PanX *unit, int inNumSamples);
     void PanX_Ctor(PanX* unit);
 }
+//
+//void PanX_Ctor(PanX *unit)
+//{	
+//    int numOutputs = unit->mNumOutputs;
+//    for (int i=0; i<numOutputs; ++i) {
+//	unit->m_chanamp[i] = 0;
+//	ZOUT0(i) = 0.f;	
+//    }
+//    SETCALC(PanX_next);
+//}
+//
+//void PanX_next(PanX *unit, int inNumSamples)
+//{
+//    float fpos = ZIN0(1);
+//    float level = ZIN0(2);
+//    float width = ZIN0(3);
+//    float orientation = ZIN0(4);
+//    
+//
+//    int numOutputs = unit->mNumOutputs;
+//    float rnumOutputs = 1.0 / (float)unit->mNumOutputs;
+//    float rwidth = 1.f / width;
+//    float range = numOutputs * rwidth;
+//    float rrange = 1.f / range;
+//    float spread = width * rnumOutputs * 2; // - ((width - 1.0) * rnumOutputs);
+//
+//    float lower = 0.0 - (spread * (width + 1.));
+//    float upper = 2.0 - (spread * (width + 1.));
+//    float lowest = lower - (width * spread); 
+//    float highest = upper + (width * spread);
+//    
+////    Print("%3,3f, %3,3f, %3d, %3,3f, %3,3f, %3,3f\n", lower, upper, numOutputs, width, lowest, highest);
+//			
+//    float pos = fpos * 0.5 * numOutputs + width * 0.5 + orientation;
+//    
+//    float *zin0 = ZIN(0);
+//    
+//    for (int i=0; i<numOutputs; ++i) {
+//	float *out = ZOUT(i);
+////	if((fpos < lowest) || (fpos > highest) || ((fpos < lower) && (i > (int)width)) || ((fpos > upper) && (i < (int)width))) {
+//	if((fpos < (0 - spread)) || (fpos > (2 - spread)) || ((fpos < (0.0 + spread)) && (i > (int)width)) || ((fpos > (2 - spread)) && (i < (int)width))) {
+//	    ZClear(inNumSamples, out);
+//	   } else {
+//
+//	    float nextchanamp;
+//	    float chanpos = pos - i;
+//	    chanpos *= rwidth;
+//	    chanpos = chanpos - range * floor(rrange * chanpos); 
+//	    if (chanpos > 1.f) {
+//		nextchanamp = 0.f;
+//	    } else {
+//		nextchanamp  = level * ft->mSine[(long)(4096.f * chanpos)];
+//	    }
+//	    float chanamp = unit->m_chanamp[i];
+//	    
+//	    if (nextchanamp == chanamp) {
+//		if (nextchanamp == 0.f) {
+//		    ZClear(inNumSamples, out);
+//		} else {	
+//		    float *in = zin0;
+//		    LOOP(inNumSamples, 
+//			 ZXP(out) = ZXP(in) * chanamp;
+//			 )
+//		}
+//	    } else {
+//		float chanampslope  = CALCSLOPE(nextchanamp, chanamp);
+//		float *in = zin0;
+//		LOOP(inNumSamples, 
+//		     ZXP(out) = ZXP(in) * chanamp;
+//		     chanamp += chanampslope;
+//		     )
+//		unit->m_chanamp[i] = nextchanamp;
+//	    }
+//	}
+//    }
+//}
 
-void PanX_Ctor(PanX *unit)
-{	
-    int numOutputs = unit->mNumOutputs;
-    for (int i=0; i<numOutputs; ++i) {
-	unit->m_chanamp[i] = 0;
-	ZOUT0(i) = 0.f;	
-    }
-    SETCALC(PanX_next);
-}
 
-void PanX_next(PanX *unit, int inNumSamples)
-{
-    float fpos = ZIN0(1);
-    float level = ZIN0(2);
-    float width = ZIN0(3);
-    float orientation = ZIN0(4);
-    
-
-    int numOutputs = unit->mNumOutputs;
-    float rnumOutputs = 1.0 / (float)unit->mNumOutputs;
-    float rwidth = 1.f / width;
-    float range = numOutputs * rwidth;
-    float rrange = 1.f / range;
-    float spread = width * rnumOutputs * 2; // - ((width - 1.0) * rnumOutputs);
-
-    float lower = 0.0 - (spread * (width + 1.));
-    float upper = 2.0 - (spread * (width + 1.));
-    float lowest = lower - (width * spread); 
-    float highest = upper + (width * spread);
-    
-//    Print("%3,3f, %3,3f, %3d, %3,3f, %3,3f, %3,3f\n", lower, upper, numOutputs, width, lowest, highest);
-			
-    float pos = fpos * 0.5 * numOutputs + width * 0.5 + orientation;
-    
-    float *zin0 = ZIN(0);
-    
-    for (int i=0; i<numOutputs; ++i) {
-	float *out = ZOUT(i);
-//	if((fpos < lowest) || (fpos > highest) || ((fpos < lower) && (i > (int)width)) || ((fpos > upper) && (i < (int)width))) {
-	if((fpos < (0 - spread)) || (fpos > (2 - spread)) || ((fpos < (0.0 + spread)) && (i > (int)width)) || ((fpos > (2 - spread)) && (i < (int)width))) {
-	    ZClear(inNumSamples, out);
-	   } else {
-
-	    float nextchanamp;
-	    float chanpos = pos - i;
-	    chanpos *= rwidth;
-	    chanpos = chanpos - range * floor(rrange * chanpos); 
-	    if (chanpos > 1.f) {
-		nextchanamp = 0.f;
-	    } else {
-		nextchanamp  = level * ft->mSine[(long)(4096.f * chanpos)];
-	    }
-	    float chanamp = unit->m_chanamp[i];
-	    
-	    if (nextchanamp == chanamp) {
-		if (nextchanamp == 0.f) {
-		    ZClear(inNumSamples, out);
-		} else {	
-		    float *in = zin0;
-		    LOOP(inNumSamples, 
-			 ZXP(out) = ZXP(in) * chanamp;
-			 )
-		}
-	    } else {
-		float chanampslope  = CALCSLOPE(nextchanamp, chanamp);
-		float *in = zin0;
-		LOOP(inNumSamples, 
-		     ZXP(out) = ZXP(in) * chanamp;
-		     chanamp += chanampslope;
-		     )
-		unit->m_chanamp[i] = nextchanamp;
-	    }
-	}
-    }
-}
-/*
-void TRamp_Ctor(TRamp *unit)
-{
-    OUT0(0) = IN0(0);
-    unit->lastSample = unit->prevValue = IN0(0);
-    if((INRATE(0) == calc_FullRate)
-	SETCALC(TRamp_next_a);
-    else 
-	SETCALC(TRamp_next_k);
-}
-
-void TRamp_next_a(TRamp *unit, int inNumSamples)
-{
-    float *in = IN(0);
-    float *out = OUT(0);
-       
-    for(int i = 0; i < inNumSamples; i++){
-       if(unit->prevValue != in[i])
-       {
-       unit->curValue = unit->curPoint = unit->prevValue;
-       unit->prevValue = in[i];
-       float duration = IN_AT(unit, 1, i); 
-       float shape = IN_AT(unit, 2, i);
-       float curve = IN_AT(unit, 3, i);
-       unit->counter = (int)(duration * SAMPLERATE);
-       }
-       if(unit->counter == 0){
-	out[i] = unit->curValue
-       } else {
-	   if(shape >= 0.0)
-	   {
-	   
-	   } else {
-	   
-	   } 
-       }
-    }
-}
-
-void TRamp_next_k(TRamp *unit, int inNumSamples)
-{
-    for(int i = 0; i < inNumSamples; i++){
-	
-	
-    }
-}
-*/
-/*
 void PanX_Ctor(PanX *unit)
 {
     int numOutputs = unit->mNumOutputs;
@@ -3930,33 +3884,26 @@ void PanX_Ctor(PanX *unit)
 
 void PanX_next(PanX *unit, int inNumSamples)
 {
-    float pos = ZIN0(1);
+    float pos = ZIN0(1); // from zero to 1 * numChans - 1
     float level = ZIN0(2);
     float width = ZIN0(3);
-    float orientation = ZIN0(4);
+    float width2 = width * 0.5;
     
     int numOutputs = unit->mNumOutputs;
+    pos = pos * ((float)numOutputs - 1.0); // + width;
     float rwidth = 1.f / width;
-    float range = numOutputs * rwidth;
-    float rrange = 1.f / range;
-    float rnumOutputs = 1.f / (float)numOutputs;
 
-    float lower = 0.0 - (2.0 * rnumOutputs) - ((width - 1.0) * rnumOutputs);
-    float upper = 2.0 - (2.0 * rnumOutputs) - ((width - 1.0) * rnumOutputs);    
-    
-    pos = pos * 0.5 * numOutputs + width * 0.5 + orientation;
-    
     float *zin0 = ZIN(0);
-    
+    float lower = pos - width2;
+    float upper = pos + width2;
     for (int i=0; i<numOutputs; ++i) {
 	float *out = ZOUT(i);
+	float fi = (float)i;
 	float nextchanamp;
-	float chanpos = pos - i;
-	chanpos *= rwidth;
-	chanpos = chanpos - range * floor(rrange * chanpos); 
-	if (chanpos > 1.f) {
+	if ((fi <= lower) || (fi >= upper)) {
 	    nextchanamp = 0.f;
 	} else {
+	    float chanpos = (fi - lower) * rwidth;
 	    nextchanamp  = level * ft->mSine[(long)(4096.f * chanpos)];
 	}
 	float chanamp = unit->m_chanamp[i];
@@ -3981,7 +3928,7 @@ void PanX_next(PanX *unit, int inNumSamples)
 	}
     }
 }
-*/
+
 
 
 #define BUF_GRAIN_LOOP_BODY_4_N \
