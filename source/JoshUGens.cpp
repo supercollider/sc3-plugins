@@ -399,13 +399,6 @@ struct DelTapRd : public Unit
 	SndBuf *m_buf;
 	float m_fbufnum, m_delTime;
 };
-/*
-struct TRamp : public Unit
-{
-    float prevValue, lastSample;
-    int counter;
-};
-*/
 
 struct WarpWinGrain
 {
@@ -517,11 +510,7 @@ extern "C"
     void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
     void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
     void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
-    /*
-    void TRamp_Ctor(TRamp *unit);
-    void TRamp_next_a(TRamp *unit, int inNumSamples); 
-    void TRamp_next_k(TRamp *unit, int inNumSamples); 
-     */
+
     void WarpZ_next(WarpZ *unit, int inNumSamples);
     void WarpZ_Ctor(WarpZ* unit);
     }
@@ -3794,82 +3783,6 @@ extern "C"
     void PanX_next(PanX *unit, int inNumSamples);
     void PanX_Ctor(PanX* unit);
 }
-//
-//void PanX_Ctor(PanX *unit)
-//{	
-//    int numOutputs = unit->mNumOutputs;
-//    for (int i=0; i<numOutputs; ++i) {
-//	unit->m_chanamp[i] = 0;
-//	ZOUT0(i) = 0.f;	
-//    }
-//    SETCALC(PanX_next);
-//}
-//
-//void PanX_next(PanX *unit, int inNumSamples)
-//{
-//    float fpos = ZIN0(1);
-//    float level = ZIN0(2);
-//    float width = ZIN0(3);
-//    float orientation = ZIN0(4);
-//    
-//
-//    int numOutputs = unit->mNumOutputs;
-//    float rnumOutputs = 1.0 / (float)unit->mNumOutputs;
-//    float rwidth = 1.f / width;
-//    float range = numOutputs * rwidth;
-//    float rrange = 1.f / range;
-//    float spread = width * rnumOutputs * 2; // - ((width - 1.0) * rnumOutputs);
-//
-//    float lower = 0.0 - (spread * (width + 1.));
-//    float upper = 2.0 - (spread * (width + 1.));
-//    float lowest = lower - (width * spread); 
-//    float highest = upper + (width * spread);
-//    
-////    Print("%3,3f, %3,3f, %3d, %3,3f, %3,3f, %3,3f\n", lower, upper, numOutputs, width, lowest, highest);
-//			
-//    float pos = fpos * 0.5 * numOutputs + width * 0.5 + orientation;
-//    
-//    float *zin0 = ZIN(0);
-//    
-//    for (int i=0; i<numOutputs; ++i) {
-//	float *out = ZOUT(i);
-////	if((fpos < lowest) || (fpos > highest) || ((fpos < lower) && (i > (int)width)) || ((fpos > upper) && (i < (int)width))) {
-//	if((fpos < (0 - spread)) || (fpos > (2 - spread)) || ((fpos < (0.0 + spread)) && (i > (int)width)) || ((fpos > (2 - spread)) && (i < (int)width))) {
-//	    ZClear(inNumSamples, out);
-//	   } else {
-//
-//	    float nextchanamp;
-//	    float chanpos = pos - i;
-//	    chanpos *= rwidth;
-//	    chanpos = chanpos - range * floor(rrange * chanpos); 
-//	    if (chanpos > 1.f) {
-//		nextchanamp = 0.f;
-//	    } else {
-//		nextchanamp  = level * ft->mSine[(long)(4096.f * chanpos)];
-//	    }
-//	    float chanamp = unit->m_chanamp[i];
-//	    
-//	    if (nextchanamp == chanamp) {
-//		if (nextchanamp == 0.f) {
-//		    ZClear(inNumSamples, out);
-//		} else {	
-//		    float *in = zin0;
-//		    LOOP(inNumSamples, 
-//			 ZXP(out) = ZXP(in) * chanamp;
-//			 )
-//		}
-//	    } else {
-//		float chanampslope  = CALCSLOPE(nextchanamp, chanamp);
-//		float *in = zin0;
-//		LOOP(inNumSamples, 
-//		     ZXP(out) = ZXP(in) * chanamp;
-//		     chanamp += chanampslope;
-//		     )
-//		unit->m_chanamp[i] = nextchanamp;
-//	    }
-//	}
-//    }
-//}
 
 
 void PanX_Ctor(PanX *unit)
@@ -3932,51 +3845,51 @@ void PanX_next(PanX *unit, int inNumSamples)
 
 
 #define BUF_GRAIN_LOOP_BODY_4_N \
-phase = sc_gloop(phase, loopMax); \
-int32 iphase = (int32)phase; \
-float* table1 = bufData + iphase * bufChannels; \
-float* table0 = table1 - bufChannels; \
-float* table2 = table1 + bufChannels; \
-float* table3 = table2 + bufChannels; \
-if (iphase == 0) { \
-table0 += bufSamples; \
-} else if (iphase >= guardFrame) { \
-if (iphase == guardFrame) { \
-table3 -= bufSamples; \
-} else { \
-table2 -= bufSamples; \
-table3 -= bufSamples; \
-} \
-} \
-float fracphase = phase - (double)iphase; \
-float a = table0[n]; \
-float b = table1[n]; \
-float c = table2[n]; \
-float d = table3[n]; \
-float outval = amp * cubicinterp(fracphase, a, b, c, d); \
-ZXP(out1) += outval; \
+    phase = sc_gloop(phase, loopMax); \
+    int32 iphase = (int32)phase; \
+    float* table1 = bufData + iphase * bufChannels; \
+    float* table0 = table1 - bufChannels; \
+    float* table2 = table1 + bufChannels; \
+    float* table3 = table2 + bufChannels; \
+    if (iphase == 0) { \
+        table0 += bufSamples; \
+        } else if (iphase >= guardFrame) { \
+            if (iphase == guardFrame) { \
+		table3 -= bufSamples; \
+	    } else { \
+	    table2 -= bufSamples; \
+	    table3 -= bufSamples; \
+	} \
+    } \
+    float fracphase = phase - (double)iphase; \
+    float a = table0[n]; \
+    float b = table1[n]; \
+    float c = table2[n]; \
+    float d = table3[n]; \
+    float outval = amp * cubicinterp(fracphase, a, b, c, d); \
+    ZXP(out1) += outval; \
 
 #define BUF_GRAIN_LOOP_BODY_2_N \
-phase = sc_gloop(phase, loopMax); \
-int32 iphase = (int32)phase; \
-float* table1 = bufData + iphase * bufChannels; \
-float* table2 = table1 + bufChannels; \
-if (iphase > guardFrame) { \
-table2 -= bufSamples; \
-} \
-float fracphase = phase - (double)iphase; \
-float b = table1[n]; \
-float c = table2[n]; \
-float outval = amp * (b + fracphase * (c - b)); \
-ZXP(out1) += outval; \
+    phase = sc_gloop(phase, loopMax); \
+    int32 iphase = (int32)phase; \
+    float* table1 = bufData + iphase * bufChannels; \
+    float* table2 = table1 + bufChannels; \
+    if (iphase > guardFrame) { \
+	table2 -= bufSamples; \
+    } \
+    float fracphase = phase - (double)iphase; \
+    float b = table1[n]; \
+    float c = table2[n]; \
+    float outval = amp * (b + fracphase * (c - b)); \
+    ZXP(out1) += outval; \
 
-// amp needs to be calculated by looking up values in window
+    // amp needs to be calculated by looking up values in window
 
 #define BUF_GRAIN_LOOP_BODY_1_N \
-phase = sc_gloop(phase, loopMax); \
-int32 iphase = (int32)phase; \
-float outval = amp * bufData[iphase + n]; \
-ZXP(out1) += outval; \
+    phase = sc_gloop(phase, loopMax); \
+    int32 iphase = (int32)phase; \
+    float outval = amp * bufData[iphase + n]; \
+    ZXP(out1) += outval; \
 
 void WarpZ_next(WarpZ *unit, int inNumSamples)
 {
@@ -4184,6 +4097,59 @@ void WarpZ_Ctor(WarpZ *unit)
     
 }
 
+
+// Metronome
+inline float IN_AT(Unit* unit, int index, int offset) 
+{
+    if (INRATE(index) == calc_FullRate) return IN(index)[offset];
+    if (INRATE(index) == calc_DemandRate) return DEMANDINPUT(index);
+    return ZIN0(index);
+}
+
+struct Metro : public Unit
+{
+    int m_nextPulse;
+};
+
+extern "C" 
+{
+    void Metro_next(Metro *unit, int inNumSamples);
+    void Metro_Ctor(Metro* unit);
+}
+
+
+void Metro_Ctor(Metro *unit)
+{
+    SETCALC(Metro_next);
+    unit->m_nextPulse = 0;
+    Metro_next(unit, 1);
+}
+
+void Metro_next(Metro *unit, int inNumSamples)
+{
+    float *out = OUT(0);
+    int nextPulse = unit->m_nextPulse;
+    if(nextPulse > inNumSamples){
+	unit->m_nextPulse -= inNumSamples; ClearUnitOutputs(unit, inNumSamples); return;
+    } else {
+	for(int i = 0; i < inNumSamples; i++){
+	    if(nextPulse <= 0){
+		out[i] = 1.;
+		float bpm = IN_AT(unit, 0, i);
+		float numBeats = IN_AT(unit, 1, i);
+		if(bpm > 0.0){
+		    nextPulse = (int)sc_max(roundf((60.0 / bpm) * numBeats * SAMPLERATE), 2.0);
+		} else {
+		    unit->mDone = true; 
+		    return; 
+		}
+	    }
+	    nextPulse--;
+	}
+	unit->m_nextPulse = nextPulse;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -4221,6 +4187,7 @@ void load(InterfaceTable *inTable)
 	DefineDelayUnit(CombLP);
 	DefineSimpleCantAliasUnit(PanX);
 	DefineSimpleCantAliasUnit(WarpZ);
+	DefineSimpleUnit(Metro);
 
 	
 }

@@ -29,25 +29,6 @@
 		^this.collect({ arg c; c.toUpper })
 	}
 	
-//	find { arg findStr, caseSensitive = true;
-//		// returns index of first occurrence of findStr or nil
-//		var l, result;
-//		findStr = findStr.asString;
-//		^caseSensitive.if({
-//			l = findStr.size - 1;
-//			this.any({arg char, i; 
-//				var s, found; 
-//				s = this.subStr( i, i + l ); 
-//				found = ( s == findStr );
-//				found.if({ result = i });
-//				found
-//			});
-//			result
-//		}, { 
-//			this.toLower.find( findStr.toLower )
-//		})
-//	}
-	
 	rfind { arg findStr, caseSensitive = true;
 		// return the index of the last occurrence of findStr or nil
 		var x;
@@ -67,47 +48,14 @@
 		});
 	}
 	
-//	replace { arg findStr, replStr, caseSensitive = true;
-//		// replace all instances of findStr with replStr
-//		var tmp, r, findLen, out;
-//		out = "";
-//		tmp = this.copy;
-//		findLen = findStr.size;
-//		while({ 
-//			r = tmp.find( findStr, caseSensitive );
-//			r.notNil.if({
-//				out = out ++ (r>0).if({tmp.subStr( 0, r - 1 )},{""}) ++ replStr;
-//				tmp = tmp.subStr( r + findLen ) 
-//			},{
-//				out = out ++ tmp;
-//			});
-//			r.notNil
-//		});
-//		^out
-//	}
-	
-//	split { arg splitChar=$:;
-//		/* 
-//			seperates string into an array of sub-strings by occurrence of splitChar
-//		 	Useful for parsing a path into an array of directories:
-//				a = "Macintosh HD:Users:Chad:SND:sound.aiff";
-//				a.split.postln;
-//				a.split.last.postln;	// returns the filename
-//		*/
-//		var tmp, r, findLen, out;
-//		out = [];
-//		tmp = this.copy;
-//		findLen = splitChar.asString.size;
-//		while({ 
-//			r = tmp.find( splitChar );
-//			r.notNil.if({
-//				(r>0).if({ out = out ++ [tmp.subStr( 0, r - 1 )] });
-//				tmp = tmp.subStr( r + findLen ) 
-//			},{
-//				(tmp.size > 0).if({ out = out ++ [tmp] });
-//			});
-//			r.notNil
-//		});
-//		^out
-//	}
+
+	capitalize {
+		^this[0].toUpper++this[1..]
+	}
+
+	swapCase {
+		^this.collect({ arg c; if (c.isLower) {c.toUpper} {c.toLower} })
+	}
+
+
 }

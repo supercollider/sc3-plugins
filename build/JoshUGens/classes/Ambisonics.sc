@@ -418,18 +418,19 @@ BFGVerb {
 			maxroomsize = 300, mul = 1, add = 0;
 		var a, b, c, d, al, ar, bl, br, cl, cr, dl, dr;
 		#a, b, c, d = B2A.ar(w, x, y, z);
-		#ar, al = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+		#a, b, c, d = DelayN.ar([a, b, c, d], 0.001, Array.fill(4, {Rand.new(0.0, 0.001)}));
+		#ar, al = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#br, bl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+		#br, bl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#cr, cl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+		#cr, cl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#dr, dl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 90, drylevel,
+		#dr, dl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
 		a = ar + al + (br + cl * diffuse);
 		b = br + bl + (cr + dl * diffuse);
 		c = cr + cl + (dr + al * diffuse);
-		d = dr + dl = (ar + bl * diffuse);
+		d = dr + dl + (ar + bl * diffuse);
 		^A2B.ar(a, b, c, d) + add;
 		}
 	}

@@ -70,6 +70,7 @@
 				F3D57D240B102BBC0034519F /* PBXTargetDependency */,
 				F3D57D3E0B102D5C0034519F /* PBXTargetDependency */,
 				F3A8FA540B73DDA000296CCA /* PBXTargetDependency */,
+				F3816D830F6CC75A009FEB43 /* PBXTargetDependency */,
 				372742850DA027AB00287F98 /* PBXTargetDependency */,
 				F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */,
 				4603009F0E6F45F000ABDB31 /* PBXTargetDependency */,
@@ -81,6 +82,7 @@
 				DC4E1F8F0F1C901C0003E241 /* PBXTargetDependency */,
 				DC9721D30F97460E009D3B35 /* PBXTargetDependency */,
 				F303893B0F5469C4009EC952 /* PBXTargetDependency */,
+				F3A369600F867C7D0078D92C /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = "SC_Synth PlugIns";
@@ -524,12 +526,26 @@
 			remoteGlobalIDString = F3B4FA050F537EB400B0CD00;
 			remoteInfo = BerlachUGens;
 		};
+		F3816D820F6CC75A009FEB43 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37BDA12B0C92E27000929FD5;
+			remoteInfo = "TagSystemUGens (Upgraded)";
+		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15C610B5D6D2D00D75043;
 			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
+		};
+		F3A3695F0F867C7D0078D92C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46931B800F77A00A005B16C9;
+			remoteInfo = NCAnalysis;
 		};
 		F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2473,6 +2489,7 @@
 		F50D04F702E68E8201CA2799 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 88332412090ABD1F00A4A7E4 /* Build configuration list for PBXProject "xSC3ExtPlugins-Universal" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = F50D04F802E68E8201CA2799;
 			productRefGroup = F50D060302E69C2101CA2799 /* Products */;
@@ -3618,10 +3635,20 @@
 			target = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
 			targetProxy = F303893A0F5469C4009EC952 /* PBXContainerItemProxy */;
 		};
+		F3816D830F6CC75A009FEB43 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */;
+			targetProxy = F3816D820F6CC75A009FEB43 /* PBXContainerItemProxy */;
+		};
 		F3A15D040B5D8C0B00D75043 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
 			targetProxy = F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */;
+		};
+		F3A369600F867C7D0078D92C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46931B800F77A00A005B16C9 /* NCAnalysis */;
+			targetProxy = F3A3695F0F867C7D0078D92C /* PBXContainerItemProxy */;
 		};
 		F3A8FA540B73DDA000296CCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
