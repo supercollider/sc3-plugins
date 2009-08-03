@@ -432,30 +432,34 @@ PVAna {
 			});
 		}
 		
-	ana {arg filPath, fftSize = 2048, winType = 1, hop = 0.25;
+	ana {arg filPath, fftSize = 2048, winType = 1, hop = 0.25, starttime = 0, duration = nil;
 		var score, sd, pathTest;
 		score = Score.new;
-		sd = SynthDef("pvrec", { arg recBuf=1, soundBufnum=2;
-			var in, chain, bufnum;
+		sd = SynthDef("pvrec", { arg recBuf=1, soundBufnum=2, dur, start;
+			var in, chain, bufnum, env;
 			bufnum = LocalBuf.new(fftSize, 1);
-			Line.kr(1, 1, BufDur.kr(soundBufnum), doneAction: 2);
-			in = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 0);
+			env = EnvGen.kr(Env([0, 1, 1, 0], [0.01, dur - 0.02, 0.01], \sin), doneAction: 2);
+			//Line.kr(1, 1, dur, doneAction: 2);
+			in = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), 
+				startPos: start * BufSampleRate.kr(soundBufnum), loop: 0) * env;
 			// note the window type and overlaps... this is important for resynth parameters
 			chain = FFT(bufnum, in, hop, winType); 
 			chain = PV_RecordBuf(chain, recBuf, 0, 1, 0, hop, winType);
 			// no ouput ... simply save the analysis to recBuf
 			}).load(Server.default);
 		pathTest = PathName(filPath.dirname).isFolder;
+		duration = duration ?? sfDur;
 		pathTest.if({
 			score.add(
-				[0.0, [\b_alloc, 1, sfDur.calcPVRecSize(fftSize, hop, sf.sampleRate)],
+				[0.0, [\b_alloc, 1, duration.calcPVRecSize(fftSize, hop, sf.sampleRate)],
 					[\b_allocRead, 2, sfpath],
-					[\s_new, \pvrec, 1000, 0, 1, \recBuf, 1, \soundBufnum, 2]]);
+					[\s_new, \pvrec, 1000, 0, 1, \recBuf, 1, \soundBufnum, 2, \dur, duration,
+						\start, starttime]]);
 			score.add(
-				[sfDur + 0.1, [\b_write, 1, filPath, 'wav', 'float']]
+				[duration + 0.1, [\b_write, 1, filPath, 'wav', 'float']]
 				);
 			score.add(
-				[sfDur + 0.2, 0]
+				[duration + 0.2, 0]
 				);
 			score.recordNRT("/tmp/trashme", "/tmp/trashme.aif");
 			}, {
