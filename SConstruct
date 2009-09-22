@@ -26,7 +26,7 @@ print 'Building for ' + platform.system()
 if platform.system() == 'Linux':
 	opts.AddOptions(
 		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
-    	PathOption('STKPATH', 'STK libary path', '/usr/lib')
+		PathOption('STKPATH', 'STK libary path', '/usr/lib')
 	)
 	PLUGIN_FILE_RE = re.compile('.*\.so$')
 	PLUGIN_EXT = '.so'
@@ -34,7 +34,7 @@ if platform.system() == 'Linux':
 if platform.system() == 'OSX':
 	opts.AddOptions(
 		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
-    	PathOption('STKPATH', 'STK libary path', '/usr/lib')
+		PathOption('STKPATH', 'STK libary path', '/usr/lib')
 	)
 	PLUGIN_FILE_RE = re.compile('.*\.scx$')
 	PLUGIN_EXT = '.scx'
@@ -63,29 +63,29 @@ opts.AddOptions(
                'Installation prefix', DEFAULT_PREFIX),
     PathOption('DESTDIR',
                'Intermediate installation prefix for packaging', '/'),
-	('CXXFLAGS', 'C++ compiler flags'),
+	('CXXFLAGS', 'C++ compiler flags', "-Wno-deprecated -O3"),
     #BoolOption('SSE',
                #'Build with SSE support', 1),
 	)
 
 def make_os_env(*keys):
-    env = os.environ
-    res = {}
-    for key in keys:
-        if env.has_key(key):
-            res[key] = env[key]
-    return res
-	
+	env = os.environ
+	res = {}
+	for key in keys:
+		if env.has_key(key):
+			res[key] = env[key]
+	return res
+
 
 # Configure base environment for the current platform
 
 if platform.system() != 'Windows':
 	env = Environment(options = opts, 
 	                  ENV = make_os_env('PATH', 'PKG_CONFIG_PATH'),
-	                  PACKAGE = PACKAGE,
-	                  VERSION = VERSION,
-	                  URL = 'http://sc3-plugins.sourceforge.net',
-	                  TARBALL = PACKAGE + VERSION + '.tbz2')
+                      PACKAGE = PACKAGE,
+                      VERSION = VERSION,
+                      URL = 'http://sc3-plugins.sourceforge.net',
+                      TARBALL = PACKAGE + VERSION + '.tbz2')
 	env.Append(PATH = ['/usr/local/bin', '/usr/bin', '/bin'])
 
 else:
@@ -102,69 +102,69 @@ else:
 # install function
 
 def install_dir(env, src_dir, dst_dir, filter_re, strip_levels=0):
-    nodes = []
-    for root, dirs, files in os.walk(src_dir):
-        src_paths = []
-        dst_paths = []
-        if 'CVS' in dirs: dirs.remove('CVS')
-        if '.svn' in dirs: dirs.remove('.svn')
-        for d in dirs[:]:
-            if filter_re.match(d):
-                src_paths += flatten_dir(os.path.join(root, d))
-                dirs.remove(d)
-        for f in files:
-            if filter_re.match(f):
-                src_paths.append(os.path.join(root, f))
-        dst_paths += map(
-            lambda f:
-            os.path.join(
-            dst_dir,
-            *f.split(os.path.sep)[strip_levels:]),
-            src_paths)
-        nodes += env.InstallAs(dst_paths, src_paths)
-    return nodes
+	nodes = []
+	for root, dirs, files in os.walk(src_dir):
+		src_paths = []
+		dst_paths = []
+		if 'CVS' in dirs: dirs.remove('CVS')
+		if '.svn' in dirs: dirs.remove('.svn')
+		for d in dirs[:]:
+			if filter_re.match(d):
+				src_paths += flatten_dir(os.path.join(root, d))
+				dirs.remove(d)
+		for f in files:
+			if filter_re.match(f):
+				src_paths.append(os.path.join(root, f))
+		dst_paths += map(
+			lambda f:
+			os.path.join(
+			dst_dir,
+			*f.split(os.path.sep)[strip_levels:]),
+			src_paths)
+		nodes += env.InstallAs(dst_paths, src_paths)
+	return nodes
 
 def lib_dir(prefix):
-    return os.path.join(prefix, 'lib')
+	return os.path.join(prefix, 'lib')
 def share_dir(prefix):
-    return os.path.join(prefix, 'share')
+	return os.path.join(prefix, 'share')
 
 def is_home_directory(dir):
-    return os.path.normpath(dir) == os.path.normpath(os.environ.get('HOME', '/'))
+	return os.path.normpath(dir) == os.path.normpath(os.environ.get('HOME', '/'))
 
 def pkg_data_dir(prefix, *args):
-    if PLATFORM == 'darwin':
-        base = '/Library/Application Support'
-        if is_home_directory(prefix):
-            base = os.path.join(prefix, base)
-    else:
-        base = os.path.join(prefix, 'share')
-    return os.path.join(base, PACKAGE, *args)
+	if PLATFORM == 'darwin':
+		base = '/Library/Application Support'
+		if is_home_directory(prefix):
+			base = os.path.join(prefix, base)
+	else:
+		base = os.path.join(prefix, 'share')
+	return os.path.join(base, PACKAGE, *args)
 
 def pkg_lib_dir(prefix, *args):
-    return os.path.join(lib_dir(prefix), PACKAGE, *args)
+	return os.path.join(lib_dir(prefix), PACKAGE, *args)
 
 def pkg_plug_dir(prefix, *args):
-    if env['QUARKS'] :
-        return os.path.join(share_dir(prefix), 'SuperCollider', PACKAGE, *args)
-    else :
-        return os.path.join(share_dir(prefix), 'SuperCollider/Extensions', PACKAGE, *args)
+	if env['QUARKS'] :
+		return os.path.join(share_dir(prefix), 'SuperCollider', PACKAGE, *args)
+	else :
+		return os.path.join(share_dir(prefix), 'SuperCollider/Extensions', PACKAGE, *args)
 
 def pkg_help_dir(prefix, *args):
-        return os.path.join(share_dir(prefix), 'SuperCollider/Extensions/Help', PACKAGE, *args)
+	return os.path.join(share_dir(prefix), 'SuperCollider/Extensions/Help', PACKAGE, *args)
 
 def flatten_dir(dir):
-    res = []
-    for root, dirs, files in os.walk(dir):
-        if 'CVS' in dirs: dirs.remove('CVS')
-        if '.svn' in dirs: dirs.remove('.svn')
-        for f in files:
-            res.append(os.path.join(root, f))
-    return res
+	res = []
+	for root, dirs, files in os.walk(dir):
+		if 'CVS' in dirs: dirs.remove('CVS')
+		if '.svn' in dirs: dirs.remove('.svn')
+		for f in files:
+			res.append(os.path.join(root, f))
+	return res
 
 ########################################
 # Configure for all platforms
- 
+
 sc3_source = env['SC3PATH']
 print 'SuperCollider 3 source is at: ' + sc3_source
 if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
@@ -172,7 +172,7 @@ if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
 		print 'Automatically adjusted sc3_source path, one folder higher'
 		sc3_source += '../'
 	else:
-		print 'Couldn\'t find SuperCollider plugin interface! Is "sc3_source" set correctly in your SConstruct file?'
+		print 'Couldn\'t find SuperCollider plugin interface! Please specify "SC3PATH" argument.'
 		Exit(1)
 
 if env['STK']:
@@ -188,7 +188,7 @@ else:
 	build_ay = False
 
 ########################################
-# Configure for Windows 
+# Configure for Windows
 
 if platform.system() == 'Windows':
 	pthreads = env['PTHREADSPATH']
@@ -205,9 +205,9 @@ if platform.system() == 'Windows':
 	platform_CPPDEFINES = ['SC_WIN32', '__GCC__']
 	platform_SOURCES = [ export_helper ]
 	platform_HEADERS = [ sc3_source + '/libsndfile', pthreads, sc3_source + '/windows/compat_stuff' ]
-	
+
 ########################################
-# Configure for Linux 
+# Configure for Linux
 
 if platform.system() == 'Linux':
 	platform_CPPDEFINES = ['SC_LINUX']
@@ -263,12 +263,11 @@ if platform.system() == 'OSX':
 	plugs += 'MCLD_CQ_UGens'
 
 Basic_Env = env.Clone(
-        	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server'],
-        	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
-        	CCFLAGS = ['-Wno-unknown-pragmas'],
-			CXXFLAGS = ['-Wno-deprecated', '-O3'],
-        	SHLIBPREFIX = '',
-        	SHLIBSUFFIX = PLUGIN_EXT
+	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server'],
+	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 16)],
+	CCFLAGS = ['-Wno-unknown-pragmas'],
+	SHLIBPREFIX = '',
+	SHLIBSUFFIX = PLUGIN_EXT
 );
 
 if platform.system() == 'Windows':
@@ -332,13 +331,9 @@ if build_stkugens == True:
 ##############################################
 # base FFT Envirnonment
 
-FFT_Env = env.Clone(
-       	CPPPATH = platform_HEADERS + [headers + '/common', headers + '/plugin_interface', headers + '/server', sc3_source + '/Source/plugins'],
-       	CPPDEFINES = platform_CPPDEFINES + ['_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
-       	CCFLAGS = ['-Wno-unknown-pragmas'],
-       	SHLIBPREFIX = '',
-       	SHLIBSUFFIX = PLUGIN_EXT
-)
+FFT_Env = Basic_Env.Clone()
+
+FFT_Env.Append(CPPPATH=[sc3_source + '/Source/plugins'])
 
 if platform.system() == 'Windows':
 	FFT_Env.Append(LIBPATH=fftw3)
@@ -377,14 +372,9 @@ if build_ay == True:
 		CPPPATH = ['include', ay_path + 'include' ],
 		CCFLAGS = ['-Wno-unknown-pragmas', '-fPIC'],
 	).StaticLibrary(ay_path + 'AY', [ay_path + 'src/ay8912.c'])
-	plugins.append( env.Clone(
-		CPPPATH = ['include', headers + '/common', headers + '/plugin_interface', headers + '/server', ay_path + 'include'],
-		CPPDEFINES = ['SC_LINUX', '_REENTRANT', 'NDEBUG', ('SC_MEMORY_ALIGNMENT', 1)],
-		CCFLAGS = ['-Wno-unknown-pragmas'],
-		SHLIBPREFIX = '',
-		SHLIBSUFFIX = PLUGIN_EXT
-	).SharedLibrary(make_plugin_target('AY_UGen'), 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
-	)
+	ay_env = Basic_Env.Clone()
+	ay_env.Append(CPPDEFINES = ['include', ay_path + 'include'])
+	ay_env.SharedLibrary(make_plugin_target('AY_UGen'), 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
 
 opts.Save('scache.conf', env)
 Help(opts.GenerateHelpText(env))
@@ -416,19 +406,19 @@ plugdirs = [
 # ======================================================================
 
 def is_installing():
-    pat = re.compile('^install.*$')
-    for x in COMMAND_LINE_TARGETS:
-        if pat.match(x): return True
-    return False
+	pat = re.compile('^install.*$')
+	for x in COMMAND_LINE_TARGETS:
+		if pat.match(x): return True
+	return False
 
 
 FINAL_PREFIX = '$PREFIX'
 INSTALL_PREFIX = os.path.join('$DESTDIR', '$PREFIX')
 
 if env['PREFIX'] == '/usr':
-    FINAL_CONFIG_PREFIX = '/etc'
+	FINAL_CONFIG_PREFIX = '/etc'
 else:
-    FINAL_CONFIG_PREFIX = os.path.join(env['PREFIX'], 'etc')
+	FINAL_CONFIG_PREFIX = os.path.join(env['PREFIX'], 'etc')
 CONFIG_PREFIX = '$DESTDIR' + FINAL_CONFIG_PREFIX
 
 if is_installing():
@@ -438,17 +428,17 @@ if is_installing():
 		for plug in plugins :
 			env.Install(os.path.join( 'build', plugname+"UGens" ), plug)
 
-env.Alias('install-plugins', 
+env.Alias('install-plugins',
 	install_dir(
-        env, 'build/',
-        pkg_plug_dir(INSTALL_PREFIX),
-        ANY_FILE_RE, 1)
+		env, 'build/',
+		pkg_plug_dir(INSTALL_PREFIX),
+		ANY_FILE_RE, 1)
 	)
-env.Alias('install-plugins', 
+env.Alias('install-plugins',
 	install_dir(
-        env, 'Help/',
-        pkg_help_dir(INSTALL_PREFIX),
-        ANY_FILE_RE, 1)
+		env, 'Help/',
+		pkg_help_dir(INSTALL_PREFIX),
+		ANY_FILE_RE, 1)
 	)
 
 
@@ -457,7 +447,7 @@ env.Alias('install-plugins',
 # ======================================================================
 
 installEnv = Environment(
-    ALL = ['install-plugins']
-    )
+	ALL = ['install-plugins']
+	)
 
 env.Alias('install', installEnv['ALL'])
