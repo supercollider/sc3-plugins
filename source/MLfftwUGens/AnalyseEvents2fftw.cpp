@@ -574,7 +574,7 @@ void calculatedf(AnalyseEvents2 *unit) {
 		
 		lastloud /= PASTERBBANDS;
 		
-		float diff= sc_max(db-lastloud,0.0);
+		float diff= sc_max(db-lastloud,0.f);
 		
 		dfsum=dfsum+diff; //(bweights[k]*diff);
 		
@@ -777,7 +777,7 @@ void peakpickdf(AnalyseEvents2 *unit) {
 			}
 			
 			//could have a multiplier for how much drop allowed here, can calculate as dBs difference
-			unit->m_testintensity= sc_min(mintest,0.001); //was 0.1 //(unit->m_maxintensity[maxpos]*0.1)+0.001; //end can trigger if drop below this
+			unit->m_testintensity= sc_min(mintest,0.001f); //was 0.1 //(unit->m_maxintensity[maxpos]*0.1)+0.001; //end can trigger if drop below this
 			unit->m_start= start;
 			
 			unit->m_startframe=startframe;

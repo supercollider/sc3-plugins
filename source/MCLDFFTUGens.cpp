@@ -1865,7 +1865,7 @@ void FFTMutInf_Ctor(FFTMutInf *unit)
 	unit->m_frombin = 0;
 	unit->m_tobinp1 = 0;
 	
-	unit->m_numframes = sc_max(1, ZIN0(3));
+	unit->m_numframes = sc_max(1.f, ZIN0(3));
 	unit->m_currentframe = 0;
 	
 	unit->m_magdata = NULL;

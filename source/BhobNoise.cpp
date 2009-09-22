@@ -232,7 +232,7 @@ float Mirroring (float lower, float upper, float in)
 void GaussTrig_Ctor(GaussTrig* unit)
 {
 	RGET
-	int nextSamples=(int)(SAMPLERATE/sc_max(ZIN0(0), 0.001));
+	int nextSamples=(int)(SAMPLERATE/sc_max(ZIN0(0), 0.001f));
 	float nextcount=sqrt(-2*log(frand(s1, s2, s3))) * sin(frand(s1, s2, s3) * twopi);
 	nextcount=Mirroring(-1.f, 1.f, nextcount);
 	int count=(int)(nextSamples + nextcount * ZIN0(1) * nextSamples);
@@ -251,7 +251,7 @@ void GaussTrig_next(GaussTrig* unit, int inNumSamples)
 	LOOP(inNumSamples,
 		if (count <= 0) {
 			RGET
-			int nextSamples=(int)(SAMPLERATE/sc_max(freq, 0.001));
+			int nextSamples=(int)(SAMPLERATE/sc_max(freq, 0.001f));
 			float nextcount=sqrt(-2*log(frand(s1, s2, s3))) * sin(frand(s1, s2, s3) * twopi);
 			nextcount=Mirroring(-1.0, 1.0, nextcount);
 			count=(int)(nextSamples + nextcount * ZIN0(1) * nextSamples);
@@ -784,7 +784,7 @@ void Gendy4_next_k(Gendy4 *unit, int inNumSamples) {
 			rate=Mirroring(0.0, 1.0, rate);
 			unit->mMemoryDur[index]=rate;
 			float fphase=(minfreq+((maxfreq-minfreq)*rate)) * num;
-			fphase=sc_max(fphase, 0.001);
+			fphase=sc_max(fphase, 0.001f);
 			phase=(int32)(unit->mRate->mSampleRate/fphase);
 			phase=sc_max(2, phase);
 			curve = 2.f * (next_midpnt - midpnt - phase * slope) / (phase * phase + phase);

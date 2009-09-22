@@ -138,8 +138,8 @@ void SVF_next(SVF *unit, int inNumSamples)
     if (cutoff != unit->m_cutoff || resonance != unit->m_resonance) {
 	unit->m_cutoff = cutoff;
 	unit->m_resonance = resonance;
-	unit->m_freq = m_freq = (float)(2.f * sin(pi * sc_min(0.25f, cutoff / (SAMPLERATE * 2.f))));
-	unit->m_damp = m_damp = sc_min(2.f * (1.f - pow(resonance, 0.25)), sc_min(2.f, 2.f / m_freq - m_freq * 0.5f));
+	unit->m_freq = m_freq = (float)(2.f * sin(pi * sc_min(0.25, cutoff / (SAMPLERATE * 2.f))));
+	unit->m_damp = m_damp = sc_min(2.0 * (1.0 - pow(resonance, 0.25)), (double)sc_min(2.f, 2.f / m_freq - m_freq * 0.5f));
     } else {
 	m_freq = unit->m_freq;
 	m_damp = unit->m_damp;

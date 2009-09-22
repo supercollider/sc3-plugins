@@ -272,7 +272,7 @@ void TGrains2_next(TGrains2 *unit, int inNumSamples)
 			
 			float pan = IN_AT(unit, 5, i);
 			float amp = IN_AT(unit, 6, i);
-			double att = sc_max(IN_AT(unit, 7, i), SAMPLEDUR);
+			double att = sc_max((double)IN_AT(unit, 7, i), SAMPLEDUR);
 			double dec = IN_AT(unit, 8, i);
 			
 			if ((att + dec) > dur) {

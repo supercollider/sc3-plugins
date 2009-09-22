@@ -700,7 +700,7 @@ void Dfsm_next(Dfsm *unit, int inNumSamples)
 	
 	// get random value and generate random offset (0..size)
 	float rand = DEMANDINPUT_A(1, inNumSamples);
-	choice = (int) sc_max(0.f, rand * size - 0.5);
+	choice = (int) sc_max(0.f, rand * size - 0.5f);
 	
 	// look up the nextstate index
 	index_index = unit->m_nextstate_indices[unit->m_current_state] + choice; // we'll need to limit this /0..1/

@@ -149,7 +149,7 @@ void Squiz_next(Squiz *unit, int inNumSamples)
 	float *buf = unit->m_buf;
 	int buflen = unit->m_buflen;
 	
-	float ratio = sc_min(sc_max(ZIN0(1), 1.0f), buflen); // pitch ratio; also === the sample-by-sample readback increment
+	float ratio = sc_min(sc_max(ZIN0(1), 1.0f), (float)buflen); // pitch ratio; also === the sample-by-sample readback increment
 	int zcperchunk = (int)ZIN0(2);
 	
 	int writepos = unit->m_writepos;

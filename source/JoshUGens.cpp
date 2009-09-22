@@ -4138,7 +4138,7 @@ void Metro_next(Metro *unit, int inNumSamples)
 		float bpm = IN_AT(unit, 0, i);
 		float numBeats = IN_AT(unit, 1, i);
 		if(bpm > 0.0){
-		    nextPulse = (int)sc_max(roundf((60.0 / bpm) * numBeats * SAMPLERATE), 2.0);
+		    nextPulse = (int)sc_max(roundf((60.0 / bpm) * numBeats * SAMPLERATE), 2.f);
 		} else {
 		    unit->mDone = true; 
 		    return; 

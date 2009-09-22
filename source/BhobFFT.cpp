@@ -159,7 +159,7 @@ void PV_MagMinus_next(PV_Unit *unit, int inNumSamples)
 	float remove=ZIN0(2);
 	
 	for (int i=0; i<numbins; ++i) {
-		p->bin[i].mag = sc_max(p->bin[i].mag - q->bin[i].mag*remove, 0);
+		p->bin[i].mag = sc_max(p->bin[i].mag - q->bin[i].mag*remove, 0.f);
 	}
 }
 

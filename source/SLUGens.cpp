@@ -3454,7 +3454,7 @@ void SLOnset_next(SLOnset *unit, int inNumSamples) {
 	}
 	
 	//now update memory2
-	maxval=sc_max(evidence,0.0);
+	maxval=sc_max(evidence,0.f);
 	
 	memory2[counter2] = maxval;
 	

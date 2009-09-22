@@ -457,7 +457,7 @@ void Henon2DC_next(Henon2DC *unit, int inNumSamples)
 			double rate = (newx * unit->mxscale + 1) * 0.5;
 			rate=Mirroring(0.0, 1.0, rate);
 			float fphase = (minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			double ynm1=unit->myclip;
@@ -704,7 +704,7 @@ void Latoocarfian2DC_next(Latoocarfian2DC *unit, int inNumSamples)
 			double rate = (newx * unit->mxscale + 1) * 0.5;
 			rate=Mirroring(0.0, 1.0, rate);
 			float fphase = (minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			double ynm1=unit->myclip;
@@ -971,7 +971,7 @@ void Lorenz2DC_next(Lorenz2DC *unit, int inNumSamples)
 			double rate = (newx * unit->mxscale + 1) * 0.5;
 			rate=Mirroring(0.0, 1.0, rate);
 			float fphase = (minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate / sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate / sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			float newy = yn + h * (-xn * zn + r * xn - yn);
@@ -1229,7 +1229,7 @@ void Standard2DC_next(Standard2DC *unit, int inNumSamples)
 			double rate = xn * scale;
 			rate=Mirroring(0.0, 1.0, rate);
 			float fphase = (minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			double ynm1=unit->myclip;
@@ -1469,7 +1469,7 @@ void Gbman2DC_next(Gbman2DC *unit, int inNumSamples)
 			double rate = (xn * scale + 1) * 0.5;
 			rate=Mirroring(0.0, 1.0, rate);
 			float fphase = (minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			double ynm1=unit->myclip;
@@ -1600,7 +1600,7 @@ void Fhn2DN_next(Fhn2DN *unit, int inNumSamples) {
 			w+=dwdt;
 			
 			double rate=(w * 0.5 + 1) * 0.5;
-			rate=sc_max(rate, 0.f);
+			rate=sc_max(rate, 0.0);
 			speed=(minf + ((maxf-minf)*rate)) * unit->mfreqMul;
 			
 			if ((u>1.0) || (u<-1.0)) u=fabs(fmod((u-1.0),4.0)-2.0)-1.0;
@@ -1667,7 +1667,7 @@ void Fhn2DL_next(Fhn2DL *unit, int inNumSamples) {
 			w+=dwdt;
 			
 			double rate=(w * 0.5 + 1) * 0.5;
-			rate=sc_max(rate, 0.f);
+			rate=sc_max(rate, 0.0);
 			speed=(minf + ((maxf-minf)*rate)) * unit->mfreqMul;
 			
 			if ((u>1.0) || (u<-1.0)) u=fabs(fmod((u-1.0),4.0)-2.0)-1.0;
@@ -1734,9 +1734,9 @@ void Fhn2DC_next(Fhn2DC *unit, int inNumSamples) {
 			w+=dwdt;
 			
 			double rate=(w * 0.5 + 1) * 0.5;
-			rate=sc_max(rate, 0.f);
+			rate=sc_max(rate, 0.);
 			float fphase=(minf + ((maxf-minf)*rate));
-			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001));
+			phase = (int32)(unit->mRate->mSampleRate/sc_max(fphase, 0.001f));
 			phase = sc_max(2, phase);
 			
 			if ((u>1.0) || (u<-1.0)) u=fabs(fmod((u-1.0),4.0)-2.0)-1.0;
@@ -1809,7 +1809,7 @@ void FhnTrig_next(FhnTrig *unit, int inNumSamples) {
 			w+=dwdt;
 			
 			double rate=(w * 0.5 + 1) * 0.5;
-			rate=sc_max(rate, 0.f);
+			rate=sc_max(rate, 0.0);
 			speed=(minf + ((maxf-minf)*rate)) * unit->mfreqMul;
 			
 			if ((u>1.0) || (u<-1.0)) u=fabs(fmod((u-1.0),4.0)-2.0)-1.0;
