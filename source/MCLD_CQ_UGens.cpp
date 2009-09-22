@@ -20,8 +20,8 @@
 
 //this file adapted by Dan Stowell, from "Qitch" by Nicholas M. Collins after Brown/Puckette
 
-#include "SC_PlugIn.h"
 #include <vecLib/vecLib.h>
+#include "SC_PlugIn.h"
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
@@ -214,7 +214,7 @@ void CQ_Diff_Ctor(CQ_Diff* unit)
 	unit->m_vA2.realp = (float*)RTAlloc(unit->mWorld, unit->m_Nover2 * sizeof(float)); //DAN ADDED
 	unit->m_vA2.imagp = (float*)RTAlloc(unit->mWorld, unit->m_Nover2 * sizeof(float)); //DAN ADDED
 	unit->m_vlog2n = unit->m_log2N; //(int)(log2(N)+0.5); //10; //N is hard coded as 1024, so 10^2=1024 //log2max(N);
-	unit->m_vsetup = create_fftsetup(unit->m_vlog2n, 0);
+	unit->m_vsetup = vDSP_create_fftsetup(unit->m_vlog2n, 0);
 	
 	
 	float * qfreqs=(float*)RTAlloc(world, numbands * sizeof(float));
@@ -364,7 +364,7 @@ void CQ_Diff_Dtor(CQ_Diff *unit)
 	if (unit->m_vA.imagp) RTFree(unit->mWorld, unit->m_vA.imagp);
 	if (unit->m_vA2.realp) RTFree(unit->mWorld, unit->m_vA2.realp); //DAN ADDED
 	if (unit->m_vA2.imagp) RTFree(unit->mWorld, unit->m_vA2.imagp); //DAN ADDED
-	if (unit->m_vsetup) destroy_fftsetup(unit->m_vsetup);
+	if (unit->m_vsetup) vDSP_destroy_fftsetup(unit->m_vsetup);
 	
 }
 
@@ -486,12 +486,12 @@ void dofft(CQ_Diff *unit) {
 		// Look at the real signal as an interleaved complex vector by casting it.
 		// Then call the transformation function ctoz to get a split complex vector,
 		// which for a real signal, divides into an even-odd configuration.
-		ctoz ((COMPLEX *) fftbuf, 2, &unit->m_vA, 1, unit->m_Nover2);
-		ctoz ((COMPLEX *) fftbuf2, 2, &unit->m_vA2, 1, unit->m_Nover2); //DAN ADDED
+		vDSP_ctoz ((COMPLEX *) fftbuf, 2, &unit->m_vA, 1, unit->m_Nover2);
+		vDSP_ctoz ((COMPLEX *) fftbuf2, 2, &unit->m_vA2, 1, unit->m_Nover2); //DAN ADDED
 		
 		// Carry out a Forward FFT transform
-		fft_zrip(unit->m_vsetup, &unit->m_vA, 1, unit->m_vlog2n, FFT_FORWARD);
-		fft_zrip(unit->m_vsetup, &unit->m_vA2, 1, unit->m_vlog2n, FFT_FORWARD); //DAN ADDED
+		vDSP_fft_zrip(unit->m_vsetup, &unit->m_vA, 1, unit->m_vlog2n, FFT_FORWARD);
+		vDSP_fft_zrip(unit->m_vsetup, &unit->m_vA2, 1, unit->m_vlog2n, FFT_FORWARD); //DAN ADDED
 		
 		//correct for scaling error in ALTIVEC
 		//float scale = (float)1.0/(2*n);
@@ -500,8 +500,8 @@ void dofft(CQ_Diff *unit) {
 		
 		// The output signal is now in a split real form, ie two arrays for real and imag.  Use the function
 		// ztoc to get a real vector, in format [dc,nyq, bin1realm bin1imag, bin2real, bin2imag, ....] etc
-		ztoc ( &unit->m_vA, 1, (COMPLEX *) fftbuf, 2, unit->m_Nover2);
-		ztoc ( &unit->m_vA2, 1, (COMPLEX *) fftbuf2, 2, unit->m_Nover2); //DAN ADDED
+		vDSP_ztoc ( &unit->m_vA, 1, (COMPLEX *) fftbuf, 2, unit->m_Nover2);
+		vDSP_ztoc ( &unit->m_vA2, 1, (COMPLEX *) fftbuf2, 2, unit->m_Nover2); //DAN ADDED
 		
 		//will probably want to store phase first 
 		
