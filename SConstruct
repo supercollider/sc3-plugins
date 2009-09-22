@@ -436,8 +436,7 @@ if is_installing():
 	for plugname in plugdirs :
 		thisplug = os.path.join( 'build', plugname+"*"+PLUGIN_EXT )
 		for plug in plugins :
-			if plug[0].name.find( plugname ) == 0 :
-				shutil.move( plug[0].path, os.path.join( 'build', plugname+"UGens" ) )
+			env.Install(os.path.join( 'build', plugname+"UGens" ), plug)
 
 env.Alias('install-plugins', 
 	install_dir(
