@@ -1698,7 +1698,7 @@ void FFTSpread_next(FFTSpread *unit, int inNumSamples)
 		denom   += mag;
 	}
 	
-	ZOUT0(0) = unit->outval = (float) (num/denom);
+	ZOUT0(0) = unit->outval = (denom==0.0 ? 0.f : (float) num/denom);
 	
 }
 

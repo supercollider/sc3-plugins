@@ -270,7 +270,6 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 			// Save state to struct.
 			// NB Update "alpha" and "nhood" (both shrink slightly) 
 			unit->m_nhood = unit->m_nhood - unit->m_nhooddelta;
-			//RM unit->m_alpha = unit->m_alpha - unit->m_alphadelta;
 			++(unit->m_traincountup);
 			unit->m_traincountdown = traincountdown = traincountdown - 1;
 			if(traincountdown==0){
