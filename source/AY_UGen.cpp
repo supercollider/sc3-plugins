@@ -11,7 +11,6 @@ struct AY : public Unit
 {
 	ayemu_ay_t * m_ay;
 	unsigned char * m_audiobuf; // The integer audiobuf that the emulator will write to.
-	Sint16 * m_audiobuf16; // As above, but cast as short for reading back
 	size_t m_audiobufsize;
 };
 
@@ -55,7 +54,6 @@ void AY_Ctor(AY* unit)
 	
 	
 	unit->m_audiobuf		= audiobuf;
-	unit->m_audiobuf16		= (Sint16 *) audiobuf;
 	unit->m_ay				= ay;
 	unit->m_audiobufsize	= audiobufsize;
 	
@@ -78,7 +76,6 @@ void AY_next(AY *unit, int inNumSamples)
 	// Retrieve state
 	ayemu_ay_t * ay	= unit->m_ay;
 	unsigned char * audiobuf	= unit->m_audiobuf;
-//	Sint16 * audiobuf16	= unit->m_audiobuf16;
 	size_t audiobufsize	= unit->m_audiobufsize;
 	
 	// The chip's inputs.
@@ -129,9 +126,6 @@ void AY_next(AY *unit, int inNumSamples)
 //		out[i] = ((audiobuf[bufreadpos++] & 0x00FF) | (audiobuf[bufreadpos++] << 8)) * 3.0517578125e-05f;
 //		Print(" {%u}", audiobuf[bufreadpos]);
 		out[i] = (audiobuf[bufreadpos++] - 128) * 0.0078125f; // 1/128
-		
-		
-		//out[i] = audiobuf16[i] * 3.0517578125e-05f; // 1/32768
 	}
 
 }
