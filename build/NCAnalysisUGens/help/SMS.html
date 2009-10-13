@@ -5,19 +5,19 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.48">
+<meta name="CocoaVersion" content="949.46">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #aa0b00}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-span.s1 {color: #001bb9}
-span.s2 {color: #ad140d}
+span.s1 {color: #0010bf}
+span.s2 {color: #aa0b00}
 span.s3 {color: #000000}
-span.s4 {color: #2c7014}
+span.s4 {color: #307200}
 span.s5 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -25,7 +25,7 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><b>SMS<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Spectral Modeling Synthesis</b></p>
 <p class="p2"><br></p>
-<p class="p3"><b>resynthesis = SMS.ar(input,maxpeaks=80, currentpeaks, tolerance=4, noisefloor= 0.2, freqmult=1.0, freqadd=0.0, formantpreserve=0, useifft=0, ampmult=1.0, graphicsbufnum, mul=1.0, add=0.0)</b></p>
+<p class="p3"><b>resynthesis = SMS.ar(input,maxpeaks=80, currentpeaks=80, tolerance=4, noisefloor= 0.2, freqmult=1.0, freqadd=0.0, formantpreserve=0, useifft=0, ampmult=1.0, graphicsbufnum, mul=1.0, add=0.0)</b></p>
 <p class="p2"><br></p>
 <p class="p3">An implementation of the sines+noise model first described by Xavier Serra in his 1989 PhD thesis; an input sound is analysed in terms of sinusoidal components by a peak tracking phase vocoder. The error between the sinusoidal reconstruction and the original signal (the residual) is then modeled by a noise model of filtered white noise. The sines part and the noise part are separately resynthesised, allowing independent transformations. <span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
@@ -57,7 +57,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in= <span class="s1">SoundIn</span>.ar(0); <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 50,<span class="s1">MouseY</span>.kr(1,50), 8, 0.3);<span class="Apple-converted-space">  </span><span class="s2">//or freqmult: MouseX.kr(0.5,4)</span></p>
@@ -74,7 +74,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in= <span class="s1">SoundIn</span>.ar(0); <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 50,<span class="s1">MouseY</span>.kr(1,50), 8, 0.3);<span class="Apple-converted-space">  </span><span class="s2">//or freqmult: MouseX.kr(0.5,4)</span></p>
@@ -94,7 +94,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 50,50, <span class="s1">MouseX</span>.kr(1.0,10.0).round(1.0),<span class="s1">MouseY</span>.kr(0.1,20.0,<span class="s4">'exponential'</span>), 1.0); <span class="Apple-converted-space"> </span></p>
@@ -111,7 +111,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 60,60, 4.0,0.2, <span class="s1">MouseX</span>.kr(0.5,4), <span class="s1">MouseY</span>.kr(0,1000), 1.0); <span class="Apple-converted-space"> </span></p>
@@ -170,7 +170,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 60,60, 4.0,0.2, <span class="s1">MouseX</span>.kr(0.5,4), <span class="s1">MouseY</span>.kr(0.0001,10000,<span class="s4">'exponential'</span>), <span class="s1">LFNoise0</span>.kr(2,0.5,0.5).round(1)); <span class="Apple-converted-space"> </span></p>
@@ -187,7 +187,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">(<span class="Apple-converted-space"> </span></p>
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">SoundIn</span>.ar(0);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 60,60, 4.0,0.1, <span class="s1">MouseX</span>.kr(0.01,10), <span class="s1">MouseY</span>.kr(-1000,1000), 0.0); <span class="Apple-converted-space"> </span></p>
@@ -206,7 +206,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 300,<span class="s1">MouseY</span>.kr(1,300), 10.0,0.01, <span class="s1">MouseX</span>.kr(0.5,4), 0, 1.0, 1); <span class="Apple-converted-space"> </span></p>
@@ -223,7 +223,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">PlayBuf</span>.ar(1,d,<span class="s1">BufRateScale</span>.kr(d),1,0,1);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 500,500, <span class="s1">MouseX</span>.kr(1.0,10.0).round(1.0),<span class="s1">MouseY</span>.kr(0.001,20.0,<span class="s4">'exponential'</span>), 1.0, 1.0,0,1); <span class="Apple-converted-space"> </span></p>
@@ -240,7 +240,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">(<span class="Apple-converted-space"> </span></p>
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">SoundIn</span>.ar(0);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 200,200, 4.0,0.1, <span class="s1">MouseX</span>.kr(0.01,10), <span class="s1">MouseY</span>.kr(-1000,1000), 0.0, useifft:1); <span class="Apple-converted-space"> </span></p>
@@ -257,7 +257,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">(<span class="Apple-converted-space"> </span></p>
 <p class="p6">{<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output;<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in=<span class="s1">SoundIn</span>.ar(0);</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 200,200, 4.0,0.01,<span class="s1">MouseY</span>.kr(0.01,100,<span class="s4">'exponential'</span>),0, formantpreserve:1.0, useifft:1, ampmult:<span class="s1">MouseX</span>.kr(0.0,10.0)); <span class="Apple-converted-space"> </span></p>
@@ -288,13 +288,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">//sine reconstruction left channel, noises on right<span class="Apple-converted-space"> </span></p>
 <p class="p6">( <span class="Apple-converted-space"> </span></p>
 <p class="p6">{ <span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">var</span> in, fft, output; <span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>in= <span class="s1">SoundIn</span>.ar(0);<span class="Apple-converted-space">   </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output=<span class="s1">SMS</span>.ar(in, 100,100, 8, 0.05, useifft:1, graphicsbufnum: b.bufnum);<span class="Apple-converted-space">  </span><span class="s2">//or freqmult: MouseX.kr(0.5,4)<span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>output <span class="Apple-converted-space"> </span></p>
 <p class="p6">}.play <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-converted-space">  </span></p>
@@ -396,11 +396,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//[\freq, freq, \amp, amp].postln;</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span>//goes across by rows then columns down page</p>
-<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span>//i*windowy+freq1</p>
-<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span>//(i*windowy+freq1).post; " ".post;</p>
-<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span>//Integer.fromColor(Color.white);<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span>//was = white</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//goes across by rows then columns down page</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//i*windowy+freq1</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//(i*windowy+freq1).post; " ".post;</p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//Integer.fromColor(Color.white);<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//was = white</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>xperframe.do{<span class="s1">|i|</span><span class="Apple-converted-space">  </span>updatedata[drawshift+i+(freq*drawupdatex)]= <span class="s1">Integer</span>.fromColor(<span class="s1">Color</span>.green(amp));}; <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//" ".postln;<span class="Apple-converted-space"> </span></p>
@@ -435,7 +435,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//drawupdatex<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//w.refresh<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>userview.refreshInRect(<span class="s1">Rect</span>(10+(counter*xperframe),10,drawupdatex,windowy));<span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//i.drawInRect(Rect(10+(counter*xperframe),10,xperframe,windowy), Rect(counter*xperframe,0,xperframe,windowy), 2, 1.0); // only a section<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}.defer; <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
@@ -444,10 +444,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>bufferfetchwait.wait; <span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span>} <span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="Apple-tab-span">	</span> <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
 <p class="p6">}.fork;<span class="Apple-converted-space"> </span></p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>

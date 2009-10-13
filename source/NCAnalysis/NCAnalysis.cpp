@@ -53,6 +53,10 @@ void init_SCComplex(InterfaceTable *inTable);
 
 extern void loadSMS(InterfaceTable *inTable);
 extern void loadTPV(InterfaceTable *inTable);
+extern void loadWaveletDaub(InterfaceTable *inTable); 
+extern void loadWalshHadamard(InterfaceTable *inTable);
+extern void loadLPCAnalyzer(InterfaceTable *inTable);
+
 
 void load(InterfaceTable *inTable)
 {
@@ -64,8 +68,10 @@ void load(InterfaceTable *inTable)
 	scfft_global_init();
 	
 	loadSMS(inTable); 
-	
 	loadTPV(inTable);
+	loadWaveletDaub(inTable); 
+	loadWalshHadamard(inTable);
+	loadLPCAnalyzer(inTable);
 	
 }
 

@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.46">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {color: #0000bf}
+span.s2 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>LPCAnalyzer<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Live Linear Predictive Coding Analysis and Resynthesis</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>LPCAnalyzer.ar(input, source, n=256, p=10,<span class="Apple-converted-space">  </span>testE=0, delta=0.999, windowtype=0, mul = 1.0, add = 0.0)</b></p>
+<p class="p4"><br></p>
+<p class="p3">Linear predictive coding analysis on any arbitrary input signal. The spectrum of the input signal is modeled, and used to filter the source. This works most successfully if the source is spectrally flat to begin with, ie, an impulse train (Impulse UGen) or white noise (WhiteNoise UGen).<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3">The two big hits to CPU costs here are large n, causing peaky calculation hits once per window as autocorrelation coefficients are calculated, and p as determining the order of the filter which is fitted, and thus the per sample output calculation cost. <span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3">(For more technicalities see John Makhoul (1975) Linear Prediction: A Tutorial Review. Proceedings of the IEEE 63(4).)</p>
+<p class="p4"><br></p>
+<p class="p3"><b>input</b>- Original signal to analyse with the LPC model</p>
+<p class="p3"><b>source</b>-<span class="Apple-converted-space">  </span>Excitation to run through LPC derived filter</p>
+<p class="p3"><b>n</b>- Windowsize for analysis in samples; limits of 1&lt;=n&lt;=1024</p>
+<p class="p3"><b>p</b>- Number of poles used to model spectrum of input within one window</p>
+<p class="p3"><b>testE</b>- Whether to test for meeting of error condition, for variable number of poles solution up to p<span class="Apple-converted-space"> </span></p>
+<p class="p3"><b>delta</b>- Test value, close to but just below 1.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><b>windowtype</b>- Windowing. 0 is rectangular window, abrupt swap of filter coefficients after every n samples. 1 is triangular window, and runs two LPCAnalyzers crossfading, for a smoother ride, at expense of double CPU cost.<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(440,0,0.2), 256, 50)}.play</p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(440,0,0.2), 256, 50, windowtype:1)}.play</p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(440,0,0.2), 128,<span class="Apple-converted-space">  </span><span class="s1">MouseX</span>.kr(1,128))}.play</p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(440,0,0.2), 1024,<span class="Apple-converted-space">  </span><span class="s1">MouseX</span>.kr(1,128), windowtype:1)}.play</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,0.1*<span class="s1">WhiteNoise</span>.ar, 256, <span class="s1">MouseX</span>.kr(1,256))}.play</p>
+<p class="p6"><br></p>
+<p class="p8">//keep number of poles lower if pushing harder with bigger windows</p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(<span class="s1">MouseY</span>.kr(100,1000),0,0.2), 1024,<span class="Apple-converted-space">  </span><span class="s1">MouseX</span>.kr(1,128),1,0.9999, 1)}.play</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p7"><span class="s1">var</span> source,amplitude, freq, hasFreq;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">source= <span class="s1">SoundIn</span>.ar;</p>
+<p class="p6"><br></p>
+<p class="p8">//no need, fitted filter tracks amplitudes, essentially</p>
+<p class="p8">//amplitude= Amplitude.kr(source);<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">#freq,hasFreq= <span class="s1">Pitch</span>.kr(source);<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s1">LPCAnalyzer</span>.ar(source,if(hasFreq,<span class="s1">Impulse</span>.ar(freq),0.25*<span class="s1">WhiteNoise</span>.ar), 256,<span class="s1">MouseX</span>.kr(1,256), windowtype:1)</p>
+<p class="p6"><br></p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p8">//singing with myself after three seconds</p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p7"><span class="s1">var</span> source,amplitude, freq, hasFreq;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">source= <span class="s1">SoundIn</span>.ar;</p>
+<p class="p6"><br></p>
+<p class="p7">amplitude= <span class="s1">Amplitude</span>.kr(source);<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s1">LPCAnalyzer</span>.ar(source,<span class="s1">CombC</span>.ar(source,3.0,3.0,10.0), 256,<span class="s1">MouseX</span>.kr(1,256)).dup(2)</p>
+<p class="p6"><br></p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p7"><span class="s1">var</span> input,source;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">input= <span class="s1">Resonz</span>.ar(<span class="s1">Saw</span>.ar(<span class="s1">SinOsc</span>.kr([0.1,0.11],500,600)),<span class="s1">LFNoise1</span>.kr(<span class="s1">LFNoise1</span>.kr(4,3.5,7),700,2500),<span class="s1">LFNoise2</span>.kr(0.5,0.3,0.4));</p>
+<p class="p6"><br></p>
+<p class="p7">source= <span class="s1">SoundIn</span>.ar;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s1">LPCAnalyzer</span>.ar(input,source, 64,<span class="s1">MouseX</span>.kr(1,64), windowtype:1)</p>
+<p class="p6"><br></p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p8">//test variable order<span class="Apple-converted-space"> </span></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(<span class="s1">MouseX</span>.kr(10,1000,<span class="s2">'exponential'</span>),0,0.2), 256, 256,1,0.999)}.play</p>
+<p class="p6"><br></p>
+<p class="p7">{<span class="s1">LPCAnalyzer</span>.ar(<span class="s1">SoundIn</span>.ar,<span class="s1">Impulse</span>.ar(<span class="s1">MouseX</span>.kr(10,1000,<span class="s2">'exponential'</span>),0,0.2), 256, 256,1,<span class="s1">MouseY</span>.kr(0.9,1.0).sqrt)}.play</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p8">//////////////////////////////////////</p>
+<p class="p6"><br></p>
+<p class="p8">//residual test assumes windowtype 0)</p>
+<p class="p7">(</p>
+<p class="p7">{</p>
+<p class="p7"><span class="s1">var</span> input,source;<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="s1">var</span> delaytime= 1024.0/<span class="s1">SampleRate</span>.ir;</p>
+<p class="p6"><br></p>
+<p class="p7">input= <span class="s1">SoundIn</span>.ar;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">source= <span class="s1">Impulse</span>.ar(delaytime.reciprocal);<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7">(<span class="s1">DelayN</span>.ar(input,delaytime, delaytime)- <span class="s1">LPCAnalyzer</span>.ar(input,source,1024,<span class="s1">MouseX</span>.kr(1,256))).poll(10000)</p>
+<p class="p6"><br></p>
+<p class="p7">}.play</p>
+<p class="p7">)</p>
+</body>
+</html>

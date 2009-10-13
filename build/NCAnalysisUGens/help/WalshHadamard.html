@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.46">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+span.s1 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>WalshHadamard<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>decomposition into square waves, and reconstruction</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>WalshHadamard.ar(input, which=0, mul = 1.0, add = 0.0)</b></p>
+<p class="p4"><br></p>
+<p class="p3">WalshHadamard transform to a basis of square wave like functions rather than the more conventional sine waves of Fourier analysis. The advantage is that the transform is really efficient (no need for trignometic functions) but the interpretation in a space of 'sequencies' and amplitudes is less intuitively comprehensible.<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3">The plug-in demonstrates the transform in the context of a filter; choose how many of the 64 basis elements to use in the reconstruction. 64 corresponds to the standard block size. <span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3"><b>input</b>- Original signal to effect</p>
+<p class="p3"><b>which</b>-<span class="Apple-converted-space">  </span>Basis elements whose Indices are below this number will be zeroed. The default 0 means the identity transform, all basis elements will be used in the reconstruction.<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s1">{</span>WalshHadamard<span class="s1">.ar(</span>SoundIn.ar, MouseX.kr(0,64)<span class="s1">)}.play</span></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+</body>
+</html>
