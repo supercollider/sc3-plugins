@@ -25,6 +25,8 @@ ProcMod {
 		
 	initProcMod {arg argClock, argServer, argEnv, argNumChannels, argProcout;
 		var tmp, srvrs;
+		group = group.asControlInput;
+		target = target.asControlInput;
 		writeDefs.if({
 			srvrs = Server.all;
 			writeDefs = false;
@@ -423,6 +425,8 @@ ProcModR : ProcMod {
 		
 	initProcModR {arg argClock, argServer, argEnv, argNumChannels, argProcout;
 		var tmp, srvrs;
+		group = group.asControlInput;
+		target = target.asControlInput;
 		server = argServer ?? {Server.default};
 		writeDefs.if({
 			srvrs = Server.all;
@@ -715,7 +719,7 @@ ProcEvents {
 		<procampsynth, procevscope = false, <pracwindow, <pracmode = false, pracdict, 
 		<eventButton, <killButton, <releaseButton, starttime = nil, <pedal = false, 
 		<pedalin, <triglevel, <pedrespsetup, <pedresp, <pedalnode, <pedalgui,
-		<bigNum = false, bigNumWindow, <>preKill;
+		<bigNum = false, bigNumWindow, <>preKill, stamps;
 	var <buttonHeight, <buttonWidth;
 	var <>showPMGUIs = false, columns = 2, rows = 15, column = 0, row = 0;
 	
@@ -779,6 +783,7 @@ ProcEvents {
 		eventArray = Array.fill(events.size, {Array.new});
 		releaseArray = Array.fill(events.size, {Array.new});
 		timeArray = Dictionary.new(events.flat.size);
+		stamps = Array.fill(events.size, {0.0});
 		id = argid;
 		server = argserver;
 		amp = argamp;
@@ -859,6 +864,7 @@ ProcEvents {
 				0, \amp, amp, \lag, lag);
 			firstevent = false;
 			});
+		stamps[event] = Main.elapsedTime - starttime;
 		onEvent.value(event);
 		eventArray[event].do({arg me;
 			timeArray.put(eventDict[me].id, Main.elapsedTime);
@@ -993,6 +999,10 @@ ProcEvents {
 				0.0
 				})
 			})
+		}
+	
+	stamp {arg idx = 0;
+		^stamps[idx]
 		}
 		
 	pedalTrig {arg pedalbus, trigwindow = 0.5, testdur = 2, guiBounds,
