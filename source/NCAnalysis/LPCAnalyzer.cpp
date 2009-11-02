@@ -41,7 +41,7 @@ void LPCAnalyzer_Ctor(LPCAnalyzer* unit) {
 	
 	if(windowsize<blocksize) windowsize=blocksize; 
 	//must be divisible by two? 
-	if((windowsize & 0x02))
+	if((windowsize & 0x01))
 		windowsize= windowsize+1;
 	if(windowsize>1024) windowsize=1024;
 	
