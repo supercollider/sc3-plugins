@@ -373,7 +373,7 @@ if build_ay == True:
 		CCFLAGS = ['-Wno-unknown-pragmas', '-fPIC'],
 	).StaticLibrary(ay_path + 'AY', [ay_path + 'src/ay8912.c'])
 	ay_env = Basic_Env.Clone()
-	ay_env.Append(CPPDEFINES = ['include', ay_path + 'include'])
+	ay_env.Append(CPPPATH = ['include', ay_path + 'include'])
 	ay_env.SharedLibrary(make_plugin_target('AY_UGen'), 'source/AY_UGen.cpp', LIBS='AY.a', LIBPATH=ay_path)
 
 opts.Save('scache.conf', env)
