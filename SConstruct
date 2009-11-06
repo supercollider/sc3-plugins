@@ -341,7 +341,7 @@ if platform.system() == 'Windows':
 ##############################################
 # JoshPVUGens
 
-fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/plugins/Convolution.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp' ]
+fft_src_base = [ sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ]
 
 plugins.append( FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVUGens.cpp'] + fft_src_base  + platform_SOURCES, LIBS='fftw3f') )
 
@@ -363,7 +363,7 @@ plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFF
 ##############################################
 # bhobfft
 
-plugins.append( FFT_Env.SharedLibrary('build/' + 'BhobFFT', ['source/BhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/plugins/FeatureDetection.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ] + platform_SOURCES) )
+plugins.append( FFT_Env.SharedLibrary('build/' + 'BhobFFT', ['source/BhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp' ] + platform_SOURCES) )
 
 ##############################################
 # AY
