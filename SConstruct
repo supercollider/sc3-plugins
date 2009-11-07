@@ -348,22 +348,22 @@ plugins.append( FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVU
 ##############################################
 # NCAnalysis
 
-plugins.append( FFT_Env.SharedLibrary('build/NCAnalysis', ['source/NCAnalysis/SMS.cpp','source/NCAnalysis/TPV.cpp','source/NCAnalysis/NCAnalysis.cpp', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'  ] + platform_SOURCES , LIBS='fftw3f') )
+plugins.append( FFT_Env.SharedLibrary('build/NCAnalysis', ['source/NCAnalysis/SMS.cpp','source/NCAnalysis/TPV.cpp','source/NCAnalysis/NCAnalysis.cpp', 'source/NCAnalysis/LPCAnalysis.cpp', 'source/NCAnalysis/LPCAnalyzer.cpp', 'source/NCAnalysis/WalshHadamard.cpp', 'source/NCAnalysis/WaveletDaub.cpp', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'  ] + platform_SOURCES , LIBS='fftw3f') )
 
 ##############################################
 # MCLDFFTTriggeredUGens
-
-plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTTriggeredUGen', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']  + platform_SOURCES) )
+# DEPRECATED - see FFTTriggered helpfile for why
+#plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTTriggeredUGen', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']  + platform_SOURCES) )
 
 ##############################################
 # MCLDFFTUGens
 
-plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp']  + platform_SOURCES) )
+plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/SC_fftlib.cpp']  + platform_SOURCES, LIBS='fftw3f') )
 
 ##############################################
 # bhobfft
 
-plugins.append( FFT_Env.SharedLibrary('build/' + 'BhobFFT', ['source/BhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/SCComplex.cpp' ] + platform_SOURCES) )
+plugins.append( FFT_Env.SharedLibrary('build/' + 'BhobFFT', ['source/BhobFFT.cpp', 'source/FFT2InterfaceBhob.cpp', sc3_source + '/Source/common/fftlib.c', sc3_source + '/Source/plugins/PV_ThirdParty.cpp', sc3_source + '/Source/plugins/SCComplex.cpp' ] + platform_SOURCES) )
 
 ##############################################
 # AY
