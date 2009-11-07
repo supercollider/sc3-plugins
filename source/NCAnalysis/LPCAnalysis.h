@@ -61,7 +61,7 @@ public:
 	
 	//int _blocksize, blocksize(_blocksize), 
 	//
-	LPCAnalysis(int _windowsize, int _windowtype=0, int offset=0, World * _world, InterfaceTable * it): windowsize(_windowsize), windowtype(_windowtype), world(_world), ft(it) {
+	LPCAnalysis(int _windowsize, int _windowtype=0, int offset=0, World * _world=0, InterfaceTable * it=0): windowsize(_windowsize), windowtype(_windowtype), world(_world), ft(it) {
 		
 		input= (float *)RTAlloc(world, windowsize*sizeof(float));
 		windowfunction= (float *)RTAlloc(world, windowsize*sizeof(float));

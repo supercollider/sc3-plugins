@@ -10,7 +10,7 @@
 ///#include "WalshHadamard.h"
 #include "NCAnalysis.h"
 
-#include "KaplanDaub.h"
+#include "kaplandaub.h"
 
 
 Daubechies * g_DaubechiesTransform; 
