@@ -52,7 +52,7 @@ void PlaneTree_Ctor(PlaneTree* unit)
 	// Infer the size of the "inputs" array which has been tagged on to the end of the arguments list.
 	int ndims = unit->mNumInputs - 2;
 	
-	Print("PlaneTree_Ctor: ndims is %i\n", ndims);
+	//Print("PlaneTree_Ctor: ndims is %i\n", ndims);
 
 	// Allocate a comfy bit of memory where we'll put the input data while we process it
 	unit->m_inputdata   = (float*)RTAlloc(unit->mWorld, ndims * sizeof(float));
