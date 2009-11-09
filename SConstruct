@@ -244,6 +244,7 @@ plugs = [
 	'MCLDDistortionUGens',
 	'MCLDOscUGens',
 	'MCLDSOMUGens',
+	'MCLDTreeUGens',
 	'MCLDTriggeredStatsUgens',
 	'LoopBuf',
 	'RFWUGens',
