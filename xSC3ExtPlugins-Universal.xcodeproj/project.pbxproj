@@ -292,7 +292,7 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 37046F900CF084B500254768;
-			remoteInfo = "MCLDTriggeredStatsUGens (Upgraded)";
+			remoteInfo = MCLDTriggeredStatsUGens;
 		};
 		372742840DA027AB00287F98 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -327,63 +327,63 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 373C2ED50C94048F00A3D3FD;
-			remoteInfo = "MCLDGetenvUGen (Upgraded)";
+			remoteInfo = MCLDGetenvUGen;
 		};
 		373C2EEA0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 370E4D040C92DE86000AE1EF;
-			remoteInfo = "MCLDAYUGen (Upgraded)";
+			remoteInfo = MCLDAYUGen;
 		};
 		373C2EEE0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 370E4CC30C92DB65000AE1EF;
-			remoteInfo = "MCLDFilterUGens (Upgraded)";
+			remoteInfo = MCLDFilterUGens;
 		};
 		373C2EF00C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 370E4C970C92DA53000AE1EF;
-			remoteInfo = "MCLDDistortionUGens (Upgraded)";
+			remoteInfo = MCLDDistortionUGens;
 		};
 		373C2EF20C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15D050B5D8C3900D75043;
-			remoteInfo = "MCLDFFTUGens (Upgraded)";
+			remoteInfo = MCLDFFTUGens;
 		};
 		373C2EF40C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15C610B5D6D2D00D75043;
-			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
+			remoteInfo = MCLDFFTTriggeredUGens;
 		};
 		373C2EF60C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15CE90B5D8B6D00D75043;
-			remoteInfo = "MCLDChaosUGens (Upgraded)";
+			remoteInfo = MCLDChaosUGens;
 		};
 		373C2EF80C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15CD40B5D8B0600D75043;
-			remoteInfo = "MCLD_CQ_UGens (Upgraded)";
+			remoteInfo = MCLD_CQ_UGens;
 		};
 		373C2EFA0C9404EB00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15CC00B5D89BE00D75043;
-			remoteInfo = "MCLDBufferUGens (Upgraded)";
+			remoteInfo = MCLDBufferUGens;
 		};
 		373C2EFC0C9404FE00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -397,35 +397,35 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F37FF7F10B86BEA6006B0AA3;
-			remoteInfo = "BhobNoise (Upgraded)";
+			remoteInfo = BhobNoise;
 		};
 		373C2F010C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F37FF7E00B86BE6C006B0AA3;
-			remoteInfo = "BhobGrain (Upgraded)";
+			remoteInfo = BhobGrain;
 		};
 		373C2F030C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F37FF7CD0B86BE28006B0AA3;
-			remoteInfo = "BhobFilt (Upgraded)";
+			remoteInfo = BhobFilt;
 		};
 		373C2F050C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F37FF7A10B86BD4E006B0AA3;
-			remoteInfo = "BhobFFT (Upgraded)";
+			remoteInfo = BhobFFT;
 		};
 		373C2F070C94051E00A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F37FF64B0B86A534006B0AA3;
-			remoteInfo = "BhobChaos (Upgraded)";
+			remoteInfo = BhobChaos;
 		};
 		373C2F090C94052100A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -439,28 +439,28 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3FE07880B0D775500A29459;
-			remoteInfo = "JoshPVUGens (Upgraded)";
+			remoteInfo = JoshPVUGens;
 		};
 		373C2F0E0C94054000A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F36FC3F80C936C2D0055E368;
-			remoteInfo = "JoshAmbiUGens (Upgraded)";
+			remoteInfo = JoshAmbiUGens;
 		};
 		373C2F100C94054000A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F36FC3E90C936C0E0055E368;
-			remoteInfo = "JoshGrainUGens (Upgraded)";
+			remoteInfo = JoshGrainUGens;
 		};
 		373C2F120C94054000A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3FE07270B0D759000A29459;
-			remoteInfo = "JoshUGens (Upgraded)";
+			remoteInfo = JoshUGens;
 		};
 		373C2F140C94054400A3D3FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -530,14 +530,14 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 37BDA12B0C92E27000929FD5;
-			remoteInfo = "TagSystemUGens (Upgraded)";
+			remoteInfo = TagSystemUGens;
 		};
 		F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A15C610B5D6D2D00D75043;
-			remoteInfo = "MCLDFFTTriggeredUGens (Upgraded)";
+			remoteInfo = MCLDFFTTriggeredUGens;
 		};
 		F3A3695F0F867C7D0078D92C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -551,7 +551,7 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3A8FA430B73DCD600296CCA;
-			remoteInfo = "LoopBuf (Upgraded)";
+			remoteInfo = LoopBuf;
 		};
 		F3B0AB4D0E36E5CE00BE1079 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -565,14 +565,14 @@
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3D57D120B102B8A0034519F;
-			remoteInfo = "BlackrainUGens (Upgraded)";
+			remoteInfo = BlackrainUGens;
 		};
 		F3D57D3D0B102D5C0034519F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3564BD30B0E82A4008AFA51;
-			remoteInfo = "STKUGens (Upgraded)";
+			remoteInfo = STKUGens;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1755,9 +1755,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */ = {
+		37046F900CF084B500254768 /* MCLDTriggeredStatsUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens (Upgraded)" */;
+			buildConfigurationList = 37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens" */;
 			buildPhases = (
 				37046F910CF084B500254768 /* Headers */,
 				37046F920CF084B500254768 /* Sources */,
@@ -1769,15 +1769,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDTriggeredStatsUGens (Upgraded)";
+			name = MCLDTriggeredStatsUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 37046F9B0CF084B500254768 /* MCLDTriggeredStatsUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */ = {
+		370E4C970C92DA53000AE1EF /* MCLDDistortionUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */;
+			buildConfigurationList = 370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens" */;
 			buildPhases = (
 				370E4C980C92DA53000AE1EF /* Headers */,
 				370E4C990C92DA53000AE1EF /* Sources */,
@@ -1789,15 +1789,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDDistortionUGens (Upgraded)";
+			name = MCLDDistortionUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 370E4CA20C92DA53000AE1EF /* MCLDDistortionUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */ = {
+		370E4CC30C92DB65000AE1EF /* MCLDFilterUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens (Upgraded)" */;
+			buildConfigurationList = 370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens" */;
 			buildPhases = (
 				370E4CC40C92DB65000AE1EF /* Headers */,
 				370E4CC50C92DB65000AE1EF /* Sources */,
@@ -1809,15 +1809,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDFilterUGens (Upgraded)";
+			name = MCLDFilterUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 370E4CD00C92DB65000AE1EF /* MCLDFilterUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */ = {
+		370E4D040C92DE86000AE1EF /* MCLDAYUGen */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen (Upgraded)" */;
+			buildConfigurationList = 370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen" */;
 			buildPhases = (
 				370E4D050C92DE86000AE1EF /* Headers */,
 				370E4D060C92DE86000AE1EF /* Sources */,
@@ -1829,7 +1829,7 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDAYUGen (Upgraded)";
+			name = MCLDAYUGen;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 370E4D0F0C92DE86000AE1EF /* MCLDAYUGen.scx */;
@@ -1875,9 +1875,9 @@
 			productReference = 372742580DA024ED00287F98 /* MembraneUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */ = {
+		373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen (Upgraded)" */;
+			buildConfigurationList = 373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen" */;
 			buildPhases = (
 				373C2ED60C94048F00A3D3FD /* Headers */,
 				373C2ED70C94048F00A3D3FD /* Sources */,
@@ -1889,7 +1889,7 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDGetenvUGen (Upgraded)";
+			name = MCLDGetenvUGen;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 373C2EE00C94048F00A3D3FD /* MCLDGetenvUGenUB.scx */;
@@ -1915,9 +1915,9 @@
 			productReference = 3751D6B60E8C1F6300B5AC2F /* MCLDOscUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */ = {
+		37BDA12B0C92E27000929FD5 /* TagSystemUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 37BDA1320C92E27000929FD5 /* Build configuration list for PBXNativeTarget "TagSystemUGens (Upgraded)" */;
+			buildConfigurationList = 37BDA1320C92E27000929FD5 /* Build configuration list for PBXNativeTarget "TagSystemUGens" */;
 			buildPhases = (
 				37BDA12C0C92E27000929FD5 /* Headers */,
 				37BDA12D0C92E27000929FD5 /* Sources */,
@@ -1929,7 +1929,7 @@
 			);
 			dependencies = (
 			);
-			name = "TagSystemUGens (Upgraded)";
+			name = TagSystemUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */;
@@ -2034,9 +2034,9 @@
 			productReference = F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */ = {
+		F3564BD30B0E82A4008AFA51 /* STKUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens (Upgraded)" */;
+			buildConfigurationList = F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens" */;
 			buildPhases = (
 				F3564BD40B0E82A4008AFA51 /* Headers */,
 				F3564BD80B0E82A4008AFA51 /* Sources */,
@@ -2048,7 +2048,7 @@
 			);
 			dependencies = (
 			);
-			name = "STKUGens (Upgraded)";
+			name = STKUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3564BE20B0E82A4008AFA51 /* STKUGensUB.scx */;
@@ -2094,9 +2094,9 @@
 			productReference = F35F00B60E34451900ACCCC6 /* RMEQSuiteUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */ = {
+		F36FC3E90C936C0E0055E368 /* JoshGrainUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens (Upgraded)" */;
+			buildConfigurationList = F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens" */;
 			buildPhases = (
 				F36FC3EA0C936C0E0055E368 /* Headers */,
 				F36FC3EB0C936C0E0055E368 /* Sources */,
@@ -2108,15 +2108,15 @@
 			);
 			dependencies = (
 			);
-			name = "JoshGrainUGens (Upgraded)";
+			name = JoshGrainUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F36FC3F50C936C0E0055E368 /* JoshGrainUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */ = {
+		F36FC3F80C936C2D0055E368 /* JoshAmbiUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens (Upgraded)" */;
+			buildConfigurationList = F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens" */;
 			buildPhases = (
 				F36FC3F90C936C2D0055E368 /* Headers */,
 				F36FC3FA0C936C2D0055E368 /* Sources */,
@@ -2128,15 +2128,15 @@
 			);
 			dependencies = (
 			);
-			name = "JoshAmbiUGens (Upgraded)";
+			name = JoshAmbiUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F36FC4040C936C2D0055E368 /* JoshAmbiUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F37FF64B0B86A534006B0AA3 /* BhobChaos (Upgraded) */ = {
+		F37FF64B0B86A534006B0AA3 /* BhobChaos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37FF6530B86A534006B0AA3 /* Build configuration list for PBXNativeTarget "BhobChaos (Upgraded)" */;
+			buildConfigurationList = F37FF6530B86A534006B0AA3 /* Build configuration list for PBXNativeTarget "BhobChaos" */;
 			buildPhases = (
 				F37FF64C0B86A534006B0AA3 /* Headers */,
 				F37FF64D0B86A534006B0AA3 /* Sources */,
@@ -2148,15 +2148,15 @@
 			);
 			dependencies = (
 			);
-			name = "BhobChaos (Upgraded)";
+			name = BhobChaos;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F37FF6570B86A534006B0AA3 /* BhobChaos.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F37FF7A10B86BD4E006B0AA3 /* BhobFFT (Upgraded) */ = {
+		F37FF7A10B86BD4E006B0AA3 /* BhobFFT */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37FF7B20B86BD4E006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFFT (Upgraded)" */;
+			buildConfigurationList = F37FF7B20B86BD4E006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFFT" */;
 			buildPhases = (
 				F37FF7A20B86BD4E006B0AA3 /* Headers */,
 				F37FF7A70B86BD4E006B0AA3 /* Sources */,
@@ -2168,15 +2168,15 @@
 			);
 			dependencies = (
 			);
-			name = "BhobFFT (Upgraded)";
+			name = BhobFFT;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F37FF7B60B86BD4E006B0AA3 /* BhobFFT.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F37FF7CD0B86BE28006B0AA3 /* BhobFilt (Upgraded) */ = {
+		F37FF7CD0B86BE28006B0AA3 /* BhobFilt */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37FF7D50B86BE28006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFilt (Upgraded)" */;
+			buildConfigurationList = F37FF7D50B86BE28006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFilt" */;
 			buildPhases = (
 				F37FF7CE0B86BE28006B0AA3 /* Headers */,
 				F37FF7CF0B86BE28006B0AA3 /* Sources */,
@@ -2188,15 +2188,15 @@
 			);
 			dependencies = (
 			);
-			name = "BhobFilt (Upgraded)";
+			name = BhobFilt;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F37FF7D90B86BE28006B0AA3 /* BhobFilt.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F37FF7E00B86BE6C006B0AA3 /* BhobGrain (Upgraded) */ = {
+		F37FF7E00B86BE6C006B0AA3 /* BhobGrain */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37FF7E80B86BE6C006B0AA3 /* Build configuration list for PBXNativeTarget "BhobGrain (Upgraded)" */;
+			buildConfigurationList = F37FF7E80B86BE6C006B0AA3 /* Build configuration list for PBXNativeTarget "BhobGrain" */;
 			buildPhases = (
 				F37FF7E10B86BE6C006B0AA3 /* Headers */,
 				F37FF7E20B86BE6C006B0AA3 /* Sources */,
@@ -2208,15 +2208,15 @@
 			);
 			dependencies = (
 			);
-			name = "BhobGrain (Upgraded)";
+			name = BhobGrain;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F37FF7EC0B86BE6C006B0AA3 /* BhobGrain.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F37FF7F10B86BEA6006B0AA3 /* BhobNoise (Upgraded) */ = {
+		F37FF7F10B86BEA6006B0AA3 /* BhobNoise */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37FF7F90B86BEA6006B0AA3 /* Build configuration list for PBXNativeTarget "BhobNoise (Upgraded)" */;
+			buildConfigurationList = F37FF7F90B86BEA6006B0AA3 /* Build configuration list for PBXNativeTarget "BhobNoise" */;
 			buildPhases = (
 				F37FF7F20B86BEA6006B0AA3 /* Headers */,
 				F37FF7F30B86BEA6006B0AA3 /* Sources */,
@@ -2228,15 +2228,15 @@
 			);
 			dependencies = (
 			);
-			name = "BhobNoise (Upgraded)";
+			name = BhobNoise;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F37FF7FD0B86BEA6006B0AA3 /* BhobNoise.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */ = {
+		F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A15C720B5D6D2D00D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTTriggeredUGens (Upgraded)" */;
+			buildConfigurationList = F3A15C720B5D6D2D00D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTTriggeredUGens" */;
 			buildPhases = (
 				F3A15C620B5D6D2D00D75043 /* Headers */,
 				F3A15C670B5D6D2D00D75043 /* Sources */,
@@ -2248,15 +2248,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDFFTTriggeredUGens (Upgraded)";
+			name = MCLDFFTTriggeredUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A15C760B5D6D2D00D75043 /* MCLDFFTTriggerUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */ = {
+		F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A15CCC0B5D89BE00D75043 /* Build configuration list for PBXNativeTarget "MCLDBufferUGens (Upgraded)" */;
+			buildConfigurationList = F3A15CCC0B5D89BE00D75043 /* Build configuration list for PBXNativeTarget "MCLDBufferUGens" */;
 			buildPhases = (
 				F3A15CC10B5D89BE00D75043 /* Headers */,
 				F3A15CC40B5D89BE00D75043 /* Sources */,
@@ -2268,15 +2268,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDBufferUGens (Upgraded)";
+			name = MCLDBufferUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A15CD00B5D89BE00D75043 /* MCLDBufferUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */ = {
+		F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A15CDE0B5D8B0600D75043 /* Build configuration list for PBXNativeTarget "MCLD_CQ_UGens (Upgraded)" */;
+			buildConfigurationList = F3A15CDE0B5D8B0600D75043 /* Build configuration list for PBXNativeTarget "MCLD_CQ_UGens" */;
 			buildPhases = (
 				F3A15CD50B5D8B0600D75043 /* Headers */,
 				F3A15CD80B5D8B0600D75043 /* Sources */,
@@ -2289,15 +2289,15 @@
 			dependencies = (
 				F3A15D040B5D8C0B00D75043 /* PBXTargetDependency */,
 			);
-			name = "MCLD_CQ_UGens (Upgraded)";
+			name = MCLD_CQ_UGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A15CE20B5D8B0600D75043 /* MCLD_CQ_UgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */ = {
+		F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A15CF10B5D8B6D00D75043 /* Build configuration list for PBXNativeTarget "MCLDChaosUGens (Upgraded)" */;
+			buildConfigurationList = F3A15CF10B5D8B6D00D75043 /* Build configuration list for PBXNativeTarget "MCLDChaosUGens" */;
 			buildPhases = (
 				F3A15CEA0B5D8B6D00D75043 /* Headers */,
 				F3A15CEB0B5D8B6D00D75043 /* Sources */,
@@ -2309,15 +2309,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDChaosUGens (Upgraded)";
+			name = MCLDChaosUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A15CF50B5D8B6D00D75043 /* MCLDChaosUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */ = {
+		F3A15D050B5D8C3900D75043 /* MCLDFFTUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A15D110B5D8C3900D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTUGens (Upgraded)" */;
+			buildConfigurationList = F3A15D110B5D8C3900D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTUGens" */;
 			buildPhases = (
 				F3A15D060B5D8C3900D75043 /* Headers */,
 				F3A15D090B5D8C3900D75043 /* Sources */,
@@ -2329,15 +2329,15 @@
 			);
 			dependencies = (
 			);
-			name = "MCLDFFTUGens (Upgraded)";
+			name = MCLDFFTUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A15D150B5D8C3900D75043 /* MCLDFFTUgensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */ = {
+		F3A8FA430B73DCD600296CCA /* LoopBuf */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf (Upgraded)" */;
+			buildConfigurationList = F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf" */;
 			buildPhases = (
 				F3A8FA440B73DCD600296CCA /* Headers */,
 				F3A8FA450B73DCD600296CCA /* Sources */,
@@ -2349,7 +2349,7 @@
 			);
 			dependencies = (
 			);
-			name = "LoopBuf (Upgraded)";
+			name = LoopBuf;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3A8FA4F0B73DCD600296CCA /* LoopBuf.scx */;
@@ -2415,9 +2415,9 @@
 			productReference = F3B4FA110F537EB400B0CD00 /* BerlachUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */ = {
+		F3D57D120B102B8A0034519F /* BlackrainUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens (Upgraded)" */;
+			buildConfigurationList = F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens" */;
 			buildPhases = (
 				F3D57D130B102B8A0034519F /* Headers */,
 				F3D57D160B102B8A0034519F /* Sources */,
@@ -2429,15 +2429,15 @@
 			);
 			dependencies = (
 			);
-			name = "BlackrainUGens (Upgraded)";
+			name = BlackrainUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3D57D200B102B8A0034519F /* BlackrainUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */ = {
+		F3FE07270B0D759000A29459 /* JoshUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3FE07320B0D759000A29459 /* Build configuration list for PBXNativeTarget "JoshUGens (Upgraded)" */;
+			buildConfigurationList = F3FE07320B0D759000A29459 /* Build configuration list for PBXNativeTarget "JoshUGens" */;
 			buildPhases = (
 				F3FE07280B0D759000A29459 /* Headers */,
 				F3FE072C0B0D759000A29459 /* Sources */,
@@ -2449,15 +2449,15 @@
 			);
 			dependencies = (
 			);
-			name = "JoshUGens (Upgraded)";
+			name = JoshUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3FE07360B0D759000A29459 /* JoshUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */ = {
+		F3FE07510B0D767000A29459 /* AmbisonicUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3FE075C0B0D767000A29459 /* Build configuration list for PBXNativeTarget "AmbisonicUGens (Upgraded)" */;
+			buildConfigurationList = F3FE075C0B0D767000A29459 /* Build configuration list for PBXNativeTarget "AmbisonicUGens" */;
 			buildPhases = (
 				F3FE07520B0D767000A29459 /* Headers */,
 				F3FE07560B0D767000A29459 /* Sources */,
@@ -2469,15 +2469,15 @@
 			);
 			dependencies = (
 			);
-			name = "AmbisonicUGens (Upgraded)";
+			name = AmbisonicUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3FE07600B0D767000A29459 /* AmbisonicUGensUB.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */ = {
+		F3FE07880B0D775500A29459 /* JoshPVUGens */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3FE07930B0D775500A29459 /* Build configuration list for PBXNativeTarget "JoshPVUGens (Upgraded)" */;
+			buildConfigurationList = F3FE07930B0D775500A29459 /* Build configuration list for PBXNativeTarget "JoshPVUGens" */;
 			buildPhases = (
 				F3FE07890B0D775500A29459 /* Headers */,
 				F3FE078D0B0D775500A29459 /* Sources */,
@@ -2489,7 +2489,7 @@
 			);
 			dependencies = (
 			);
-			name = "JoshPVUGens (Upgraded)";
+			name = JoshPVUGens;
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = F3FE07970B0D775500A29459 /* JoshPVUGensUB.scx */;
@@ -2510,33 +2510,33 @@
 			targets = (
 				631417A30A203392007B9355 /* All */,
 				373C2EFE0C94051000A3D3FD /* BhobUGens */,
-				F37FF64B0B86A534006B0AA3 /* BhobChaos (Upgraded) */,
-				F37FF7A10B86BD4E006B0AA3 /* BhobFFT (Upgraded) */,
-				F37FF7CD0B86BE28006B0AA3 /* BhobFilt (Upgraded) */,
-				F37FF7E00B86BE6C006B0AA3 /* BhobGrain (Upgraded) */,
-				F37FF7F10B86BEA6006B0AA3 /* BhobNoise (Upgraded) */,
+				F37FF64B0B86A534006B0AA3 /* BhobChaos */,
+				F37FF7A10B86BD4E006B0AA3 /* BhobFFT */,
+				F37FF7CD0B86BE28006B0AA3 /* BhobFilt */,
+				F37FF7E00B86BE6C006B0AA3 /* BhobGrain */,
+				F37FF7F10B86BEA6006B0AA3 /* BhobNoise */,
 				373C2F0B0C94053300A3D3FD /* JoshUGens */,
-				F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */,
-				F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */,
-				F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */,
-				F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */,
+				F3FE07270B0D759000A29459 /* JoshUGens */,
+				F36FC3E90C936C0E0055E368 /* JoshGrainUGens */,
+				F36FC3F80C936C2D0055E368 /* JoshAmbiUGens */,
+				F3FE07880B0D775500A29459 /* JoshPVUGens */,
 				373C2EE70C9404DC00A3D3FD /* MCLDUGens */,
-				373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */,
-				37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */,
+				373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen */,
+				37046F900CF084B500254768 /* MCLDTriggeredStatsUGens */,
 				37FEEBFE0D9AA7630043C418 /* MCLDSOMUGens */,
-				370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */,
-				370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */,
-				370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */,
-				F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */,
-				F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */,
-				F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */,
-				F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */,
-				F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */,
-				F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */,
-				F3FE07510B0D767000A29459 /* AmbisonicUGens (Upgraded) */,
-				F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */,
-				F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */,
-				37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */,
+				370E4C970C92DA53000AE1EF /* MCLDDistortionUGens */,
+				370E4CC30C92DB65000AE1EF /* MCLDFilterUGens */,
+				370E4D040C92DE86000AE1EF /* MCLDAYUGen */,
+				F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens */,
+				F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens */,
+				F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens */,
+				F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens */,
+				F3A15D050B5D8C3900D75043 /* MCLDFFTUGens */,
+				F3D57D120B102B8A0034519F /* BlackrainUGens */,
+				F3FE07510B0D767000A29459 /* AmbisonicUGens */,
+				F3564BD30B0E82A4008AFA51 /* STKUGens */,
+				F3A8FA430B73DCD600296CCA /* LoopBuf */,
+				37BDA12B0C92E27000929FD5 /* TagSystemUGens */,
 				3727424D0DA024ED00287F98 /* MembraneUGens */,
 				F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */,
 				4603006E0E6F42EC00ABDB31 /* MLfftwUGens */,
@@ -3478,7 +3478,7 @@
 /* Begin PBXTargetDependency section */
 		37046F9F0CF0852500254768 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 37046F900CF084B500254768 /* MCLDTriggeredStatsUGens (Upgraded) */;
+			target = 37046F900CF084B500254768 /* MCLDTriggeredStatsUGens */;
 			targetProxy = 37046F9E0CF0852500254768 /* PBXContainerItemProxy */;
 		};
 		372742850DA027AB00287F98 /* PBXTargetDependency */ = {
@@ -3503,47 +3503,47 @@
 		};
 		373C2EE90C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen (Upgraded) */;
+			target = 373C2ED50C94048F00A3D3FD /* MCLDGetenvUGen */;
 			targetProxy = 373C2EE80C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EEB0C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 370E4D040C92DE86000AE1EF /* MCLDAYUGen (Upgraded) */;
+			target = 370E4D040C92DE86000AE1EF /* MCLDAYUGen */;
 			targetProxy = 373C2EEA0C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EEF0C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens (Upgraded) */;
+			target = 370E4CC30C92DB65000AE1EF /* MCLDFilterUGens */;
 			targetProxy = 373C2EEE0C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EF10C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens (Upgraded) */;
+			target = 370E4C970C92DA53000AE1EF /* MCLDDistortionUGens */;
 			targetProxy = 373C2EF00C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EF30C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15D050B5D8C3900D75043 /* MCLDFFTUGens (Upgraded) */;
+			target = F3A15D050B5D8C3900D75043 /* MCLDFFTUGens */;
 			targetProxy = 373C2EF20C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EF50C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
+			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens */;
 			targetProxy = 373C2EF40C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EF70C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens (Upgraded) */;
+			target = F3A15CE90B5D8B6D00D75043 /* MCLDChaosUGens */;
 			targetProxy = 373C2EF60C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EF90C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens (Upgraded) */;
+			target = F3A15CD40B5D8B0600D75043 /* MCLD_CQ_UGens */;
 			targetProxy = 373C2EF80C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EFB0C9404EB00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens (Upgraded) */;
+			target = F3A15CC00B5D89BE00D75043 /* MCLDBufferUGens */;
 			targetProxy = 373C2EFA0C9404EB00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2EFD0C9404FE00A3D3FD /* PBXTargetDependency */ = {
@@ -3553,27 +3553,27 @@
 		};
 		373C2F000C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F37FF7F10B86BEA6006B0AA3 /* BhobNoise (Upgraded) */;
+			target = F37FF7F10B86BEA6006B0AA3 /* BhobNoise */;
 			targetProxy = 373C2EFF0C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F020C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F37FF7E00B86BE6C006B0AA3 /* BhobGrain (Upgraded) */;
+			target = F37FF7E00B86BE6C006B0AA3 /* BhobGrain */;
 			targetProxy = 373C2F010C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F040C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F37FF7CD0B86BE28006B0AA3 /* BhobFilt (Upgraded) */;
+			target = F37FF7CD0B86BE28006B0AA3 /* BhobFilt */;
 			targetProxy = 373C2F030C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F060C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F37FF7A10B86BD4E006B0AA3 /* BhobFFT (Upgraded) */;
+			target = F37FF7A10B86BD4E006B0AA3 /* BhobFFT */;
 			targetProxy = 373C2F050C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F080C94051E00A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F37FF64B0B86A534006B0AA3 /* BhobChaos (Upgraded) */;
+			target = F37FF64B0B86A534006B0AA3 /* BhobChaos */;
 			targetProxy = 373C2F070C94051E00A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F0A0C94052100A3D3FD /* PBXTargetDependency */ = {
@@ -3583,22 +3583,22 @@
 		};
 		373C2F0D0C94054000A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3FE07880B0D775500A29459 /* JoshPVUGens (Upgraded) */;
+			target = F3FE07880B0D775500A29459 /* JoshPVUGens */;
 			targetProxy = 373C2F0C0C94054000A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F0F0C94054000A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens (Upgraded) */;
+			target = F36FC3F80C936C2D0055E368 /* JoshAmbiUGens */;
 			targetProxy = 373C2F0E0C94054000A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F110C94054000A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F36FC3E90C936C0E0055E368 /* JoshGrainUGens (Upgraded) */;
+			target = F36FC3E90C936C0E0055E368 /* JoshGrainUGens */;
 			targetProxy = 373C2F100C94054000A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F130C94054000A3D3FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3FE07270B0D759000A29459 /* JoshUGens (Upgraded) */;
+			target = F3FE07270B0D759000A29459 /* JoshUGens */;
 			targetProxy = 373C2F120C94054000A3D3FD /* PBXContainerItemProxy */;
 		};
 		373C2F150C94054400A3D3FD /* PBXTargetDependency */ = {
@@ -3648,12 +3648,12 @@
 		};
 		F3816D830F6CC75A009FEB43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 37BDA12B0C92E27000929FD5 /* TagSystemUGens (Upgraded) */;
+			target = 37BDA12B0C92E27000929FD5 /* TagSystemUGens */;
 			targetProxy = F3816D820F6CC75A009FEB43 /* PBXContainerItemProxy */;
 		};
 		F3A15D040B5D8C0B00D75043 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens (Upgraded) */;
+			target = F3A15C610B5D6D2D00D75043 /* MCLDFFTTriggeredUGens */;
 			targetProxy = F3A15D030B5D8C0B00D75043 /* PBXContainerItemProxy */;
 		};
 		F3A369600F867C7D0078D92C /* PBXTargetDependency */ = {
@@ -3663,7 +3663,7 @@
 		};
 		F3A8FA540B73DDA000296CCA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3A8FA430B73DCD600296CCA /* LoopBuf (Upgraded) */;
+			target = F3A8FA430B73DCD600296CCA /* LoopBuf */;
 			targetProxy = F3A8FA530B73DDA000296CCA /* PBXContainerItemProxy */;
 		};
 		F3B0AB4E0E36E5CE00BE1079 /* PBXTargetDependency */ = {
@@ -3673,12 +3673,12 @@
 		};
 		F3D57D240B102BBC0034519F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3D57D120B102B8A0034519F /* BlackrainUGens (Upgraded) */;
+			target = F3D57D120B102B8A0034519F /* BlackrainUGens */;
 			targetProxy = F3D57D230B102BBC0034519F /* PBXContainerItemProxy */;
 		};
 		F3D57D3E0B102D5C0034519F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3564BD30B0E82A4008AFA51 /* STKUGens (Upgraded) */;
+			target = F3564BD30B0E82A4008AFA51 /* STKUGens */;
 			targetProxy = F3D57D3D0B102D5C0034519F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -7466,7 +7466,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens (Upgraded)" */ = {
+		37046F970CF084B500254768 /* Build configuration list for PBXNativeTarget "MCLDTriggeredStatsUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				37046F980CF084B500254768 /* Development */,
@@ -7476,7 +7476,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens (Upgraded)" */ = {
+		370E4C9E0C92DA53000AE1EF /* Build configuration list for PBXNativeTarget "MCLDDistortionUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				370E4C9F0C92DA53000AE1EF /* Development */,
@@ -7486,7 +7486,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens (Upgraded)" */ = {
+		370E4CCC0C92DB65000AE1EF /* Build configuration list for PBXNativeTarget "MCLDFilterUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				370E4CCD0C92DB65000AE1EF /* Development */,
@@ -7496,7 +7496,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen (Upgraded)" */ = {
+		370E4D0B0C92DE86000AE1EF /* Build configuration list for PBXNativeTarget "MCLDAYUGen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				370E4D0C0C92DE86000AE1EF /* Development */,
@@ -7526,7 +7526,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen (Upgraded)" */ = {
+		373C2EDC0C94048F00A3D3FD /* Build configuration list for PBXNativeTarget "MCLDGetenvUGen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				373C2EDD0C94048F00A3D3FD /* Development */,
@@ -7576,7 +7576,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		37BDA1320C92E27000929FD5 /* Build configuration list for PBXNativeTarget "TagSystemUGens (Upgraded)" */ = {
+		37BDA1320C92E27000929FD5 /* Build configuration list for PBXNativeTarget "TagSystemUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				37BDA1330C92E27000929FD5 /* Development */,
@@ -7656,7 +7656,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens (Upgraded)" */ = {
+		F3564BDE0B0E82A4008AFA51 /* Build configuration list for PBXNativeTarget "STKUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3564BDF0B0E82A4008AFA51 /* Development */,
@@ -7686,7 +7686,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens (Upgraded)" */ = {
+		F36FC3F10C936C0E0055E368 /* Build configuration list for PBXNativeTarget "JoshGrainUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F36FC3F20C936C0E0055E368 /* Development */,
@@ -7696,7 +7696,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens (Upgraded)" */ = {
+		F36FC4000C936C2D0055E368 /* Build configuration list for PBXNativeTarget "JoshAmbiUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F36FC4010C936C2D0055E368 /* Development */,
@@ -7706,7 +7706,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F37FF6530B86A534006B0AA3 /* Build configuration list for PBXNativeTarget "BhobChaos (Upgraded)" */ = {
+		F37FF6530B86A534006B0AA3 /* Build configuration list for PBXNativeTarget "BhobChaos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F37FF6540B86A534006B0AA3 /* Development */,
@@ -7716,7 +7716,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F37FF7B20B86BD4E006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFFT (Upgraded)" */ = {
+		F37FF7B20B86BD4E006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFFT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F37FF7B30B86BD4E006B0AA3 /* Development */,
@@ -7726,7 +7726,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F37FF7D50B86BE28006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFilt (Upgraded)" */ = {
+		F37FF7D50B86BE28006B0AA3 /* Build configuration list for PBXNativeTarget "BhobFilt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F37FF7D60B86BE28006B0AA3 /* Development */,
@@ -7736,7 +7736,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F37FF7E80B86BE6C006B0AA3 /* Build configuration list for PBXNativeTarget "BhobGrain (Upgraded)" */ = {
+		F37FF7E80B86BE6C006B0AA3 /* Build configuration list for PBXNativeTarget "BhobGrain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F37FF7E90B86BE6C006B0AA3 /* Development */,
@@ -7746,7 +7746,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F37FF7F90B86BEA6006B0AA3 /* Build configuration list for PBXNativeTarget "BhobNoise (Upgraded)" */ = {
+		F37FF7F90B86BEA6006B0AA3 /* Build configuration list for PBXNativeTarget "BhobNoise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F37FF7FA0B86BEA6006B0AA3 /* Development */,
@@ -7756,7 +7756,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A15C720B5D6D2D00D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTTriggeredUGens (Upgraded)" */ = {
+		F3A15C720B5D6D2D00D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTTriggeredUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A15C730B5D6D2D00D75043 /* Development */,
@@ -7766,7 +7766,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A15CCC0B5D89BE00D75043 /* Build configuration list for PBXNativeTarget "MCLDBufferUGens (Upgraded)" */ = {
+		F3A15CCC0B5D89BE00D75043 /* Build configuration list for PBXNativeTarget "MCLDBufferUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A15CCD0B5D89BE00D75043 /* Development */,
@@ -7776,7 +7776,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A15CDE0B5D8B0600D75043 /* Build configuration list for PBXNativeTarget "MCLD_CQ_UGens (Upgraded)" */ = {
+		F3A15CDE0B5D8B0600D75043 /* Build configuration list for PBXNativeTarget "MCLD_CQ_UGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A15CDF0B5D8B0600D75043 /* Development */,
@@ -7786,7 +7786,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A15CF10B5D8B6D00D75043 /* Build configuration list for PBXNativeTarget "MCLDChaosUGens (Upgraded)" */ = {
+		F3A15CF10B5D8B6D00D75043 /* Build configuration list for PBXNativeTarget "MCLDChaosUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A15CF20B5D8B6D00D75043 /* Development */,
@@ -7796,7 +7796,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A15D110B5D8C3900D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTUGens (Upgraded)" */ = {
+		F3A15D110B5D8C3900D75043 /* Build configuration list for PBXNativeTarget "MCLDFFTUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A15D120B5D8C3900D75043 /* Development */,
@@ -7806,7 +7806,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf (Upgraded)" */ = {
+		F3A8FA4B0B73DCD600296CCA /* Build configuration list for PBXNativeTarget "LoopBuf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3A8FA4C0B73DCD600296CCA /* Development */,
@@ -7846,7 +7846,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens (Upgraded)" */ = {
+		F3D57D1C0B102B8A0034519F /* Build configuration list for PBXNativeTarget "BlackrainUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3D57D1D0B102B8A0034519F /* Development */,
@@ -7856,7 +7856,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3FE07320B0D759000A29459 /* Build configuration list for PBXNativeTarget "JoshUGens (Upgraded)" */ = {
+		F3FE07320B0D759000A29459 /* Build configuration list for PBXNativeTarget "JoshUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3FE07330B0D759000A29459 /* Development */,
@@ -7866,7 +7866,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3FE075C0B0D767000A29459 /* Build configuration list for PBXNativeTarget "AmbisonicUGens (Upgraded)" */ = {
+		F3FE075C0B0D767000A29459 /* Build configuration list for PBXNativeTarget "AmbisonicUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3FE075D0B0D767000A29459 /* Development */,
@@ -7876,7 +7876,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F3FE07930B0D775500A29459 /* Build configuration list for PBXNativeTarget "JoshPVUGens (Upgraded)" */ = {
+		F3FE07930B0D775500A29459 /* Build configuration list for PBXNativeTarget "JoshPVUGens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3FE07940B0D775500A29459 /* Development */,
