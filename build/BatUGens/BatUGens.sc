@@ -23,3 +23,21 @@ MarkovSynth : UGen {
 		^this.multiNew('audio', in, isRecording, waitTime, tableSize)
 		}
 }
+
+FrameCompare : UGen {
+	*kr { arg buffer1, buffer2, wAmount = 0.5;
+		^this.multiNew('control', buffer1, buffer2, wAmount);
+	}
+}
+
+NeedleRect : UGen {
+	*ar { arg rate=1.0, imgWidth=100, imgHeight=100, rectX=0, rectY=0, rectW=100, rectH=100;
+		^this.multiNew('audio', rate, imgWidth, imgHeight, rectX, rectY, rectW, rectH);
+	}
+}
+
+SkipNeedle : UGen {
+	*ar { arg range = 44100, rate = 10, offset = 0;
+		^this.multiNew('audio', range, rate, offset);
+	}
+}
