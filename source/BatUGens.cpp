@@ -78,6 +78,22 @@ struct MarkovSynth : public Unit
 	int trTableSize;    //transition table size
 };
 
+//////////////////////////////////////////////////////////
+struct NeedleRect : public Unit
+{
+	int imgWidth, imgHeight;
+	float oldX, oldY;
+};
+
+/////////////////////////////////////////////////////////
+
+struct SkipNeedle : public Unit
+{
+	float curStart, curTarget;
+	float lastOut;
+	float sampOffset;
+};
+
 
 extern "C"
 {
@@ -97,6 +113,12 @@ extern "C"
 	void MarkovSynth_Ctor(MarkovSynth *unit);
 	void MarkovSynth_Dtor(MarkovSynth *unit);
 	void MarkovSynth_next(MarkovSynth *unit, int inNumSamples);
+	
+	void NeedleRect_Ctor(NeedleRect *unit);
+	void NeedleRect_next(NeedleRect *unit, int inNumSamples);
+	
+	void SkipNeedle_Ctor(SkipNeedle *unit);
+	void SkipNeedle_next(SkipNeedle *unit, int inNumSamples);
 };
 
 void MarkovSynth_Ctor(MarkovSynth *unit)
@@ -507,7 +529,104 @@ void WAmp_next_k(WAmp *unit, int inNumSamples)
 	
 }
 
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 
+void NeedleRect_Ctor(NeedleRect *unit)
+{
+	//rate, imgWidth, imgHeight, rectX, rectY, rectW, rectH
+	SETCALC(NeedleRect_next);
+	
+	unit->imgWidth = ZIN0(1);
+	unit->imgHeight = ZIN0(2);
+	unit->oldX = 0;
+	unit->oldY = 0;
+	
+	ZOUT0(0) = ((float)unit->imgWidth * ZIN0(4)) + ZIN0(3);
+}
+
+void NeedleRect_next(NeedleRect *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	double rate = ZIN0(0) * SAMPLEDUR;
+	float rectX = ZIN0(3);
+	float rectY = ZIN0(4);
+	float rectW = ZIN0(5);
+	float rectH = ZIN0(6);
+	
+	rectX = (rectX >= 0) ? rectX : 0.f;
+	rectY = (rectY >= 0) ? rectY : 0.f;
+	//rectY = (rectY < unit->imgHeight) ? rectY : (unit->imgHeight - 1);
+	
+	LOOP(inNumSamples,
+		 
+		 float tempNextX = fmod((unit->oldX + rate), rectW);
+		 //tempNextX = ((rectX + tempNextX) < unit->imgWidth) ? tempNextX : 0.f;
+
+		 if(tempNextX <= unit->oldX)
+		 {
+			unit->oldY = fmod((unit->oldY + 1), rectH);
+		 }
+		 unit->oldX = tempNextX;
+		 
+		 ZXP(out) = ((unit->oldY + rectY) * (float)unit->imgWidth) + rectX + tempNextX;
+	);
+	
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+
+void SkipNeedle_Ctor(SkipNeedle *unit)
+{
+	//range, rate
+	
+	SETCALC(SkipNeedle_next);
+	float temp1, temp2;
+	RGen& rgen = *unit->mParent->mRGen;
+	temp1 = rgen.irand(ZIN0(0));
+	temp2 = rgen.irand(ZIN0(0));
+	
+	unit->sampOffset = ZIN0(2);
+	unit->curStart = (temp1 >= temp2) ? temp2 : temp1;
+	unit->curTarget = (temp1 < temp2) ? temp2 : temp1;
+	
+	ZOUT0(0) = unit->lastOut = unit->curStart;
+}
+
+void SkipNeedle_next(SkipNeedle *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float blockRange = ZIN0(0);
+	double rate = ZIN0(1) * SAMPLEDUR;
+	
+	LOOP(inNumSamples,
+		
+		unit->lastOut = unit->lastOut + rate;
+		
+		if(unit->lastOut >= unit->curTarget)
+		{
+			//printf("resetting!\n");
+			float temp1; float temp2;
+			
+			RGen& rgen = *unit->mParent->mRGen;
+			temp1 = rgen.irand(blockRange);
+			temp2 = rgen.irand(blockRange);
+			
+			unit->sampOffset = ZIN0(2);
+			unit->curStart = (temp1 >= temp2) ? temp2 : temp1;
+			unit->curTarget = (temp1 < temp2) ? temp2 : temp1;
+			
+			unit->lastOut = unit->curStart;
+			
+			ZXP(out) = fmod(unit->lastOut + unit->sampOffset, blockRange);
+		}
+		else
+		{
+			ZXP(out) = fmod(unit->lastOut + unit->sampOffset, blockRange);
+		}
+	);
+}
 
 ///////////////////////////////////////////////////////////////
 
@@ -519,5 +638,6 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(WAmp);
 	DefineSimpleUnit(TrigAvg);
 	DefineDtorUnit(MarkovSynth);
-	
+	DefineSimpleUnit(NeedleRect);
+	DefineSimpleUnit(SkipNeedle);
 }
