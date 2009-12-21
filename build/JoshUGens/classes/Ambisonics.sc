@@ -421,11 +421,11 @@ BFGVerb {
 		#a, b, c, d = DelayN.ar([a, b, c, d], 0.001, Array.fill(4, {Rand.new(0.0, 0.001)}));
 		#ar, al = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#br, bl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
+		#br, bl = GVerb.ar(b, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#cr, cl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
+		#cr, cl = GVerb.ar(c, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
-		#dr, dl = GVerb.ar(a, roomsize, revtime, damping, inputbw, 45, drylevel,
+		#dr, dl = GVerb.ar(d, roomsize, revtime, damping, inputbw, 45, drylevel,
 			earlyreflevel, taillevel, maxroomsize, mul);
 		a = ar + al + (br + cl * diffuse);
 		b = br + bl + (cr + dl * diffuse);

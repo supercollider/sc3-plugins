@@ -1,5 +1,14 @@
 JoshGrain : UGen {
 	*categories {^#["UGens>GranularSynthesis"]}
+	
+/*
+	init { arg argNumChannels ... theInputs;
+		inputs = theInputs;
+		^this.initOutputs(argNumChannels, rate);
+	}
+
+	argNamesInputsOffset { ^2 }
+*/
 	}
 
 JoshMultiChannelGrain : Panner {
@@ -112,6 +121,88 @@ InGrainI : JoshGrain {
 		}
 	}
 	
+/*
+// add panning
+
+SinGrain : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, freq = 440, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, freq, pan).madd(mul, add);
+		}
+	}
+		
+SinGrainB : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, freq = 440, envbuf, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, freq, envbuf, pan).madd(mul, add);
+		}
+	}		
+
+SinGrainI : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, freq = 440, envbuf1, envbuf2, ifac = 0.5, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, freq, envbuf1, envbuf2, ifac, pan).madd(mul, add);
+		}
+	}	
+	
+FMGrain : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, carfreq, modfreq, index, pan).madd(mul, add);
+		}
+	}
+
+FMGrainB : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf, pan = 0, mul = 1, 
+			add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, carfreq, modfreq, index, envbuf, pan).madd(mul, add);
+		}
+	}
+
+FMGrainI : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf1, envbuf2, 
+			ifac = 0.5, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, carfreq, modfreq, index, envbuf1, envbuf2, ifac, pan)
+			.madd(mul, add);
+		}
+	}
+	
+BufGrain : JoshGrain {
+	*ar { arg numChannels = 1, trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, interp = 2, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, sndbuf, rate, pos, interp, pan).madd(mul, add);
+		}
+	}
+		
+BufGrainB : JoshGrain {
+	*ar { arg numChannels = 1, trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, envbuf, interp = 2, pan = 0, mul = 1, 
+			add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, sndbuf, rate, pos, interp, envbuf, pan).madd(mul, add);
+		}
+	}
+	
+BufGrainI : JoshGrain {
+	*ar { arg numChannels = 1, trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  envbuf1, envbuf2, 
+			ifac = 0.5, interp = 2, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, sndbuf, rate, pos, interp, envbuf1, envbuf2,
+			ifac, pan).madd(mul, add);
+		}
+	}
+	
+InGrain : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, in, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, in, pan).madd(mul, add);
+		}
+	}
+		
+InGrainB : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, in, envbuf, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, in, envbuf, pan).madd(mul, add);
+		}
+	}		
+
+InGrainI : JoshGrain {
+	*ar	{ arg numChannels = 1, trigger = 0, dur = 1, in, envbuf1, envbuf2, ifac = 0.5, pan = 0, mul = 1, add = 0;
+		^this.multiNew('audio', numChannels, trigger, dur, in, envbuf1, envbuf2, ifac, pan).madd(mul, add);
+		}
+	}
+	
+*/
 /* Ambisonic Versions */
 
 BFGrainPanner : JoshMultiOutGrain {

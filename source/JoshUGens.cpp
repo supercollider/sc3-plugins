@@ -84,109 +84,109 @@ inline double sc_gloop(double in, double hi)
 }
 
 #define GRAIN_BUF \
-SndBuf *buf; \
-if (bufnum >= world->mNumSndBufs) { \
-int localBufNum = bufnum - world->mNumSndBufs; \
-Graph *parent = unit->mParent; \
-if(localBufNum <= parent->localBufNum) { \
-buf = parent->mLocalSndBufs + localBufNum; \
-} else { \
-bufnum = 0; \
-buf = world->mSndBufs + bufnum; \
-} \
-} else { \
-if (bufnum < 0) { bufnum = 0; } \
-buf = world->mSndBufs + bufnum; \
-} \
-\
-float *bufData __attribute__((__unused__)) = buf->data; \
-uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
-uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
-uint32 bufFrames = buf->frames; \
-int guardFrame __attribute__((__unused__)) = bufFrames - 2; \
+    SndBuf *buf; \
+    if (bufnum >= world->mNumSndBufs) { \
+	int localBufNum = bufnum - world->mNumSndBufs; \
+	Graph *parent = unit->mParent; \
+	if(localBufNum <= parent->localBufNum) { \
+	    buf = parent->mLocalSndBufs + localBufNum; \
+	    } else { \
+	    bufnum = 0; \
+	    buf = world->mSndBufs + bufnum; \
+	    } \
+	} else { \
+	if (bufnum < 0) { bufnum = 0; } \
+	    buf = world->mSndBufs + bufnum; \
+	    } \
+	\
+	float *bufData __attribute__((__unused__)) = buf->data; \
+	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
+	uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
+	uint32 bufFrames = buf->frames; \
+	int guardFrame __attribute__((__unused__)) = bufFrames - 2; \
 
 #define CHECK_BUF \
-if (!bufData) { \
-unit->mDone = true; \
-ClearUnitOutputs(unit, inNumSamples); \
-return; \
-}
+    if (!bufData) { \
+    unit->mDone = true; \
+    ClearUnitOutputs(unit, inNumSamples); \
+    return; \
+    }
 
 #define GET_GRAIN_WIN \
-window = unit->mWorld->mSndBufs + (int)winType; \
-windowData = window->data; \
-windowSamples = window->samples; \
-windowFrames = window->frames; \
-windowGuardFrame = windowFrames - 1; \
+    window = unit->mWorld->mSndBufs + (int)winType; \
+    windowData = window->data; \
+    windowSamples = window->samples; \
+    windowFrames = window->frames; \
+    windowGuardFrame = windowFrames - 1; \
 
 #define SETUP_OUT \
-uint32 numOutputs = unit->mNumOutputs; \
-if (numOutputs > bufChannels) { \
-unit->mDone = true; \
-ClearUnitOutputs(unit, inNumSamples); \
-return; \
-} \
-float *out[16]; \
-for (uint32 i=0; i<numOutputs; ++i) out[i] = ZOUT(i); 
+    uint32 numOutputs = unit->mNumOutputs; \
+    if (numOutputs > bufChannels) { \
+	unit->mDone = true; \
+	ClearUnitOutputs(unit, inNumSamples); \
+	return; \
+	} \
+    float *out[16]; \
+    for (uint32 i=0; i<numOutputs; ++i) out[i] = ZOUT(i); 
 
 #define CALC_NEXT_GRAIN_AMP \
-if(grain->winType < 0.){ \
-y0 = b1 * y1 - y2; \
-y2 = y1; \
-y1 = y0; \
-amp = y1 * y1; \
-} else { \
-winPos += winInc; \
-int iWinPos = (int)winPos; \
-double winFrac = winPos - (double)iWinPos; \
-float* winTable1 = windowData + iWinPos; \
-float* winTable2 = winTable1 + 1; \
-if (!windowData) break; \
-if (winPos > windowGuardFrame) { \
-winTable2 -= windowSamples; \
-} \
-amp = lininterp(winFrac, winTable1[0], winTable2[0]); \
-} \
+    if(grain->winType < 0.){ \
+	y0 = b1 * y1 - y2; \
+	y2 = y1; \
+	y1 = y0; \
+	amp = y1 * y1; \
+	} else { \
+	winPos += winInc; \
+	int iWinPos = (int)winPos; \
+	double winFrac = winPos - (double)iWinPos; \
+	float* winTable1 = windowData + iWinPos; \
+	float* winTable2 = winTable1 + 1; \
+	if (!windowData) break; \
+	if (winPos > windowGuardFrame) { \
+	    winTable2 -= windowSamples; \
+	} \
+    amp = lininterp(winFrac, winTable1[0], winTable2[0]); \
+    } \
 
 #define GET_GRAIN_AMP_PARAMS \
-if(grain->winType < 0.){ \
-b1 = grain->b1; \
-y1 = grain->y1; \
-y2 = grain->y2; \
-amp = grain->curamp; \
-} else { \
-window = unit->mWorld->mSndBufs + (int)grain->winType; \
-windowData = window->data; \
-windowSamples = window->samples; \
-windowFrames = window->frames; \
-windowGuardFrame = windowFrames - 1; \
-if (!windowData) break; \
-winPos = grain->winPos; \
-winInc = grain->winInc; \
-amp = grain->curamp; \
-} \
+    if(grain->winType < 0.){ \
+	b1 = grain->b1; \
+	y1 = grain->y1; \
+	y2 = grain->y2; \
+	amp = grain->curamp; \
+	} else { \
+	window = unit->mWorld->mSndBufs + (int)grain->winType; \
+	windowData = window->data; \
+	windowSamples = window->samples; \
+	windowFrames = window->frames; \
+	windowGuardFrame = windowFrames - 1; \
+	if (!windowData) break; \
+	winPos = grain->winPos; \
+	winInc = grain->winInc; \
+	amp = grain->curamp; \
+	} \
 
 #define GET_GRAIN_INIT_AMP \
-if(grain->winType < 0.){ \
-w = pi / counter; \
-b1 = grain->b1 = 2. * cos(w); \
-y1 = sin(w); \
-y2 = 0.; \
-amp = y1 * y1; \
-} else { \
-amp = windowData[0]; \
-winPos = grain->winPos = 0.f; \
-winInc = grain->winInc = (double)windowSamples / counter; \
-} \
+    if(grain->winType < 0.){ \
+	w = pi / counter; \
+	b1 = grain->b1 = 2. * cos(w); \
+	y1 = sin(w); \
+	y2 = 0.; \
+	amp = y1 * y1; \
+	} else { \
+	amp = windowData[0]; \
+	winPos = grain->winPos = 0.f; \
+	winInc = grain->winInc = (double)windowSamples / counter; \
+	} \
 
 
 #define SAVE_GRAIN_AMP_PARAMS \
-grain->y1 = y1; \
-grain->y2 = y2; \
-grain->winPos = winPos; \
-grain->winInc = winInc; \
-grain->curamp = amp; \
-grain->counter -= nsmps; \
+    grain->y1 = y1; \
+    grain->y2 = y2; \
+    grain->winPos = winPos; \
+    grain->winInc = winInc; \
+    grain->curamp = amp; \
+    grain->counter -= nsmps; \
 
 
 const double sqrt3 = sqrt(3.);
@@ -211,8 +211,9 @@ struct LPCSynth : public Unit
 	int m_valindex, m_first; 
 	float m_framestart;
 	float *m_storevals; // this will handle up to 100 poles
-    float *m_polevals;
+	float *m_polevals;
 };
+
 
 struct AtsSynth : public Unit
 {
@@ -417,6 +418,146 @@ struct WarpZ : public Unit
     WarpWinGrain mGrains[16][kMaxGrains];
 };
 
+/* New ATS UGens */
+
+// Use these structs adapted from SinOsc and LFNoise1
+
+typedef struct
+{
+    SndBuf *m_buf;
+    float m_fbufnum;
+    int32 m_phase;
+    float m_phasein;
+} SinOscA;
+
+typedef struct 
+{
+    float m_Level, m_Slope;
+    int m_Counter;
+} LFNoise1A;
+
+typedef struct 
+{
+    SinOscA m_partial;
+    float m_lastamp, m_lastfreq;
+    int m_partialNum;
+} ATSPartial;
+
+typedef struct 
+{
+    SinOscA m_center;
+    float m_lastamp;
+    LFNoise1A m_band;
+    int m_bandNum;
+    double phaseinc;
+} ATSBand;
+
+struct ATSBase : public Unit
+{
+    double m_cpstoinc, m_radtoinc;
+    int32 m_tableSize;
+    int32 m_lomask;
+    SndBuf* m_atsFile;
+    float m_fbufnum, m_lastpointer;
+    /* header data available to all UGens */
+    float m_ampMax, m_freqMax, m_sndDur;
+    int m_sr, m_frameSize, m_winSize, m_numPartials, m_numFrames, m_atsType;
+    int m_offset1, m_offset2, m_increment;
+    float m_init;
+};
+
+struct ATSPartialSynth : public ATSBase
+{
+    ATSPartial m_partial;
+};
+
+struct ATSSynth : public ATSBase
+{
+    ATSPartial* m_partials;
+};
+
+struct ATSBandSynth : public ATSBase
+{
+    ATSBand m_band;
+};
+
+struct ATSNoiSynth : public ATSBase
+{
+    ATSPartial* m_partials;
+    ATSBand* m_bands;
+};
+
+struct ATSFreq : public ATSBase {};
+struct ATSAmp : public ATSBase {};
+struct ATSNoise : public ATSBase {};
+struct ATSNumPartials : public ATSBase {};
+struct ATSNumFrames : public ATSBase {};
+struct ATSSndDur : public ATSBase {};
+
+static const int DELAY_LINES_COMB = 5;
+static const int DELAY_LINES_ALLPASS = 6;
+static const int MAX_PRE_DELAY_MS = 1000;
+
+typedef struct {
+    float f, k, p, scale, r, x;
+    float y1, y2, y3, y4, oldx, oldy1, oldy2, oldy3;
+    float fCutoff, fActualCutoff;
+    
+    float sampleRateFactor;
+} Filter;
+    
+typedef struct {
+    float gain, minDamp;
+    float* buffer;
+    int readPtr1, readPtr2, writePtr;
+    float z1;
+    int bufferLengthDelay;
+    float filterStore;
+} CombFilter;
+
+typedef struct {
+    float delay, gain;
+    float* buffer;
+    int bufferLength, writePtr, readPtr1, readPtr2;
+    float z1;
+} AllPassFilter;
+
+typedef struct {
+    int counter;
+    float actualValue;
+    float actualValueFiltered;
+    float filterFactor;
+    float filterFactorInversePlusOne;
+    int randomPeriod;
+} NoiseGenerator;
+
+    
+struct TALReverb : public Unit 
+{
+    float lastGain, lastRoomSize, lastPreDelay, lastLowCut, lastDamp, lastHighCut, lastStereoWidth;
+    
+    float reflectionGains[DELAY_LINES_COMB + DELAY_LINES_ALLPASS];
+    float reflectionDelays[DELAY_LINES_COMB + DELAY_LINES_ALLPASS];
+    
+    CombFilter *combFiltersPreDelay;
+    
+    CombFilter *combFiltersL[DELAY_LINES_COMB];
+    CombFilter *combFiltersR[DELAY_LINES_COMB];
+    NoiseGenerator *noiseGeneratorDampL[DELAY_LINES_COMB];
+    NoiseGenerator *noiseGeneratorDampR[DELAY_LINES_COMB];
+    NoiseGenerator *noiseGeneratorDelayL[DELAY_LINES_COMB];
+    NoiseGenerator *noiseGeneratorDelayR[DELAY_LINES_COMB];
+    AllPassFilter *allPassFiltersL[DELAY_LINES_ALLPASS];
+    AllPassFilter *allPassFiltersR[DELAY_LINES_ALLPASS];
+    
+    AllPassFilter *preAllPassFilter;
+    
+    Filter lpFilter;
+    Filter hpFilter;
+    
+    bool first;
+};
+
 extern "C"
 {
     void load(InterfaceTable *inTable);
@@ -513,7 +654,17 @@ extern "C"
 
     void WarpZ_next(WarpZ *unit, int inNumSamples);
     void WarpZ_Ctor(WarpZ* unit);
+    
+    /* New ATS */
+    void ATSSynth_next(ATSSynth *unit, int inNumSamples);
+    void ATSSynth_Ctor(ATSSynth* unit);
+    void ATSSynth_Dtor(ATSSynth* unit);
+    
+    void TALReverb_next(TALReverb *unit, int inNumSamples);
+    void TALReverb_Ctor(TALReverb* unit);
+    void TALReverb_Dtor(TALReverb* unit);
     }
+
 
 /////////////////  AudioMSG ////////////////////////////////////////////////////////
 
@@ -4150,12 +4301,503 @@ void Metro_next(Metro *unit, int inNumSamples)
     }
 }
 
+/* new ATS UGens */
+
+#define POPULATE_ATS_DATA \
+    float fbufnum = IN0(0); \
+    if (fbufnum != unit->m_fbufnum) { \
+    uint32 bufnum = (int)fbufnum; \
+    World *world = unit->mWorld; \
+    if (bufnum >= world->mNumSndBufs) bufnum = 0; \
+	unit->m_fbufnum = fbufnum; \
+	unit->m_atsFile = world->mSndBufs + bufnum; \
+	} \
+    SndBuf *atsFile = unit->m_atsFile; \
+    float *atsFileData __attribute__((__unused__)) = atsFile->data; \
+    if (!atsFileData) { \
+	unit->mDone = true; \
+	return; \
+    }; \
+    unit->m_sr = (int)atsFileData[1]; \
+    unit->m_frameSize = (int)atsFileData[2]; \
+    unit->m_winSize = (int)atsFileData[3]; \
+    unit->m_numPartials = (int)atsFileData[4]; \
+    unit->m_numFrames = (int)atsFileData[5]; \
+    unit->m_ampMax = atsFileData[6]; \
+    unit->m_freqMax = atsFileData[7]; \
+    unit->m_sndDur = atsFileData[8]; \
+    unit->m_atsType = atsFileData[9]; \
+    float* atsData = atsFileData + 11; \
+    if(( unit->m_atsType == 1 ) || (unit->m_atsType == 3)) { \
+	unit->m_offset1 = 2; \
+	} else { \
+	unit->m_offset1 = 3; \
+	} \
+    if( unit->m_atsType < 3 ){ \
+	unit->m_offset2 = 1; \
+	} else { \
+	unit->m_offset2 = 26; \
+    } \
+    unit->m_increment = unit->m_numPartials * unit->m_offset1 * unit->m_offset2; \
+    unit->m_init = 1.;
+
+
+
+
+
+void ATSSynth_Ctor(ATSSynth* unit)
+{
+    SETCALC(ATSSynth_next);
+    unit->m_fbufnum = -1e9f;
+    unit->m_init = -1.f;
+    ClearUnitOutputs(unit, 1);
+}
+
+void ATSSynth_Dtor(ATSSynth* unit)
+{
+    RTFree(unit->mWorld, unit->m_partials);
+}
+
+// ATSSynth.ar(buffer, pointer, numPartials, partialStart, partialSkip, freqMul, freqAdd)
+
+void ATSSynth_next(ATSSynth* unit, int inNumSamples)
+{
+    
+    if(unit->m_init < 0.0){
+
+        POPULATE_ATS_DATA
+
+        
+	unit->m_lastpointer = IN0(1);
+        int32 tableSize = unit->m_tableSize = ft->mSineSize;
+        int32 lomask = unit->m_lomask = (tableSize - 1) << 3;
+        float fTableSize = (float)tableSize;
+        double radtoinc = unit->m_radtoinc = fTableSize * rtwopi * 65536.;
+        double cpstoinc = unit->m_cpstoinc = fTableSize * SAMPLEDUR * 65536.;
+	
+        int numPartialsRequested = (int)IN0(2);
+        int partialStart = (int)IN0(3);
+        int partialSkip = (int)IN0(4);
+        
+        int totalPartials = numPartialsRequested;
+        for(int i = 0; i < numPartialsRequested; i++){
+            if((partialStart + (partialSkip * i)) >= unit->m_numPartials)
+                totalPartials--;
+	}
+        
+        unit->m_partials = (ATSPartial*)RTAlloc(unit->mWorld, totalPartials * sizeof(ATSPartial));
+        
+        for(int i = 0; i < totalPartials; i++){
+            unit->m_partials[i].m_partialNum = (partialStart + (partialSkip * i));
+            unit->m_partials[i].m_lastamp = 0.0; // grab actual data
+	    unit->m_partials[i].m_lastfreq = 0.0; // grab actual data
+            
+            unit->m_partials[i].m_partial.m_phase = 0;
+            unit->m_partials[i].m_partial.m_phasein = 0;
+        }
+    }
+}
+
+/////////////// TALReverb //////////////////////
+// void TALReverb_next(TALReverb *unit, int inNumSamples);
+// void TALReverb_Ctor(TALReverb* unit);
+// void TALReverb_Dtor(TALReverb* unit);
+
+void TALReverb_Ctor(TALReverb* unit)
+{
+    unit->first = true;
+    SETCALC(TALReverb_next);
+    ClearUnitOutputs(unit, 1);
+    unit->lastGain = IN0(1);
+    unit->lastRoomSize = IN0(2);
+    unit->lastPreDelay = IN0(3);
+    unit->lastLowCut = IN0(4);
+    unit->lastDamp = IN0(5);
+    unit->lastHighCut = IN0(6);
+    unit->lastStereoWidth = IN0(7);
+}
+/* functions from the TALReverb source - SC'ized */
+
+bool isPrime(int value)
+{
+    bool answer = true;
+    if (value == 0) value = 1;
+    for (int i = 2; i <= sqrtf((float)value) ; i++) 
+    {
+	if (value % i == 0)
+	{
+	    answer = false;
+	    break;
+	}
+    }
+    return answer;
+};
+
+void SetupComb(TALReverb *unit, CombFilter *comb, float delayTime, float minDamp)
+{
+    comb->bufferLengthDelay = (int)(delayTime * SAMPLERATE * 0.001);
+    while(!isPrime(comb->bufferLengthDelay)) comb->bufferLengthDelay++;
+    comb->buffer = (float*)RTAlloc(unit->mWorld, sizeof(float) * comb->bufferLengthDelay);
+    for(int i = 0; i < comb->bufferLengthDelay; i++)
+    {
+	comb->buffer[i] = 0.f;
+    }
+    comb->writePtr = 0;
+    comb->readPtr1 = 0;
+    comb->z1 = comb->filterStore = 0.f;
+    comb->minDamp = minDamp;
+}
+
+inline float CombProcess(CombFilter *comb, float input, float damp, float feedback, float delay)
+{
+    float offset = (comb->bufferLengthDelay - 2) * delay + 1.0;
+    comb->readPtr1 = comb->writePtr - (int)floorf(offset);
+    if(comb->readPtr1 < 0)
+	comb->readPtr1 += (comb->bufferLengthDelay);
+    
+    float output = comb->buffer[comb->readPtr1];
+    comb->filterStore = output * (1. - damp) + comb->filterStore * damp;
+    comb->buffer[comb->writePtr] = input + (comb->filterStore * feedback);
+    if(++comb->writePtr >= comb->bufferLengthDelay)
+	comb->writePtr = 0;
+    
+    return output;
+}
+
+inline float CombProcessInterpolated(CombFilter *comb, float input, float damp, float feedback, float delay)
+{
+    float offset = (float)(comb->bufferLengthDelay - 2) * delay + 1.;
+    comb->readPtr1 = comb->writePtr - (int)floorf(offset);
+    if(comb->readPtr1 < 0) comb->readPtr1 += comb->bufferLengthDelay;
+    comb->readPtr2 = comb->readPtr1 - 1;
+    if(comb->readPtr2 < 0) comb->readPtr2 += comb->bufferLengthDelay;
+    float frac = offset - (int)floorf(offset);
+    float output = comb->buffer[comb->readPtr2] + comb->buffer[comb->readPtr1] * (1-frac) - (1-frac) * comb->z1;
+    comb->z1 = output;
+    damp = comb->minDamp * damp;
+    comb->filterStore = output * (1. - damp) + comb->filterStore * damp;
+    comb->buffer[comb->writePtr] = input + (comb->filterStore * feedback);
+    if(++comb->writePtr >= comb->bufferLengthDelay) comb->writePtr = 0;
+    return output;
+}
+
+inline float tickNoise(TALReverb *unit)
+{
+    RGET
+    
+    float nextlevel = frand2(s1, s2, s3);
+    
+    RPUT
+    
+    return nextlevel;
+}
+
+inline int getNextRandomPeriod(TALReverb *unit)
+{   
+    return (int)(tickNoise(unit) * 22768.) + 22188;
+}
+
+inline float tickFilteredNoise(TALReverb *unit, NoiseGenerator *noise)
+{
+    if(noise->counter++ % noise->randomPeriod == 0)
+    {
+	noise->actualValue = tickNoise(unit);
+	noise->randomPeriod = getNextRandomPeriod(unit);
+    }
+    float nextLevel = noise->actualValueFiltered = (noise->actualValueFiltered * noise->filterFactor + noise->actualValue) * noise->filterFactorInversePlusOne;
+    return nextLevel;
+}
+
+
+inline float tickFilteredNoiseFast(TALReverb *unit)
+{
+    return tickNoise(unit);
+}
+
+void SetupNoise(TALReverb *unit, NoiseGenerator *noise)
+{
+    noise->counter = 0;
+    noise->actualValue = noise->actualValueFiltered = 0.f;
+    noise->filterFactor = 5000.;
+    noise->filterFactorInversePlusOne = 1. / (noise->filterFactor + 1.);
+    noise->randomPeriod = getNextRandomPeriod(unit);
+}
+
+void SetupAllPass(TALReverb *unit, AllPassFilter *allPass, float delayTime, float feedbackGain)
+{
+    allPass->gain = feedbackGain;
+    allPass->delay = delayTime;
+    allPass->bufferLength = (int)(delayTime * SAMPLERATE * 0.001);
+    allPass->writePtr = allPass->readPtr1 = allPass->readPtr2 = 0;
+    allPass->z1 = 0.;
+    while(!isPrime(allPass->bufferLength)) allPass->bufferLength++;
+    allPass->buffer = (float*)RTAlloc(unit->mWorld, sizeof(float) * allPass->bufferLength);
+    for(int i = 0; i < allPass->bufferLength; i++)
+    {
+	allPass->buffer[i] = 0.f;
+    }
+}
+
+inline float AllPassProcess(AllPassFilter *allPass, float input)
+{
+    float tmp = allPass->buffer[allPass->readPtr1];
+    allPass->buffer[allPass->readPtr1] = allPass->gain * tmp + input;
+    float output = tmp - allPass->gain * allPass->buffer[allPass->readPtr1];
+    if(++allPass->readPtr1 >= allPass->bufferLength) allPass->readPtr1 = 0;
+    return output;
+}
+
+inline float AllPassProcessInterpolated(AllPassFilter *allPass, float input, float delayLength, float diffuse)
+{
+    float offset = ((float)allPass->bufferLength - 2.) * delayLength + 1.;
+    float fOffset = floorf(offset);
+    allPass->readPtr1 = allPass->writePtr - (int)fOffset;
+    if(allPass->readPtr1 < 0)
+	allPass->readPtr1 += allPass->bufferLength;
+    allPass->readPtr2 = allPass->readPtr1 - 1;
+    if(allPass->readPtr2 < 0)
+	allPass->readPtr2 += allPass->bufferLength;
+    float frac = offset - fOffset;
+    float tmp = allPass->buffer[allPass->readPtr2] + allPass->buffer[allPass->readPtr1] * (1.-frac) - (1.-frac) * allPass->z1;
+    allPass->z1 = tmp;
+    allPass->buffer[allPass->writePtr] = diffuse * allPass->gain * tmp + input;
+    float output = tmp - diffuse * allPass->gain * allPass->buffer[allPass->writePtr];
+    if(++allPass->writePtr >= allPass->bufferLength)
+	allPass->writePtr = 0;
+    return output;
+}
+				
+void SetupFilter(TALReverb *unit, Filter *filter)
+{
+    filter->y1 = filter->y2 = filter->y3 = filter->y4 = filter->oldx = filter->oldy1 = filter->oldy2 = filter->oldy3 = 0.0f;
+    filter->sampleRateFactor = 44100. / SAMPLERATE;
+    if(filter->sampleRateFactor > 1.) filter->sampleRateFactor = 1.;
+    filter->fActualCutoff = -1.;
+}
+
+inline void updateValues(Filter *filter, float fCutoff)
+{
+    filter->f = fCutoff;
+    filter->k = 3.6 * filter->f - 1.6 * filter->f * filter->f - 1.;
+    filter->p = (filter->k + 1.) * 0.5;
+    filter->scale = expf((1. - filter->p) * 1.386249);
+}
+
+inline float FilterProcess(Filter *filter, float input, float fCutoff, float fRes, bool highPass)
+{
+    if(fCutoff != filter->fActualCutoff)
+    {
+	filter->fActualCutoff = fCutoff;
+	fCutoff *= filter->sampleRateFactor;
+	updateValues(filter, fCutoff * fCutoff);
+    }
+    if(input > 1.) input = 1.;
+    if(input < -1.) input = -1.;
+    filter->x = input;
+    filter->y1 = (filter->x + filter->oldx) * filter->p - filter->k * filter->y1;
+    filter->y2 = (filter->y1 + filter->oldy1) + filter->p - filter->k * filter->y2;
+    filter->oldx = filter->x;
+    filter->oldy1 = filter->y1;
+    if(highPass) input = input - filter->y2;
+    else input = filter->y2;
+    return input;	
+}
+
+void TALReverb_next(TALReverb *unit, int inNumSamples)
+{
+
+    float *in = IN(0);
+    float *out0 = OUT(0);
+    float *out1 = OUT(1);
+    float nextGain = IN0(1);
+    float nextRoomSize = IN0(2);
+    float nextPreDelay = IN0(3);
+    float nextLowCut = IN0(4);
+    float nextDamp = IN0(5);
+    float nextHighCut = IN0(6);
+    float nextStereoWidth = IN0(7);
+    float gain = unit->lastGain;
+    float gainSlope = CALCSLOPE(nextGain, gain);
+    float roomSize = unit->lastRoomSize;
+    float roomSizeSlope = CALCSLOPE(nextRoomSize, roomSize);
+    float preDelay = unit->lastPreDelay;
+    float preDelaySlope = CALCSLOPE(nextPreDelay, preDelay);
+    float lowCut = unit->lastLowCut;
+    float lowCutSlope = CALCSLOPE(nextLowCut, lowCut);
+    float damp = unit->lastDamp;
+    float dampSlope = CALCSLOPE(nextDamp, damp);
+    float highCut = unit->lastHighCut;
+    float highCutSlope = CALCSLOPE(nextHighCut, highCut);
+    float stereoWidth = unit->lastStereoWidth;
+    float stereoWidthSlope = CALCSLOPE(nextStereoWidth, stereoWidth);
+
+    if(unit->first) // set-up the delayline and struct instances
+    {
+	// also - for combs and allpasses, need to alloc and init buffer!!!!
+	unit->first = false;
+	float delayLength = 80.;
+	float volumeScale = (float)((-3. * delayLength) / log10f(1.0f));
+	int numlines = DELAY_LINES_COMB + DELAY_LINES_ALLPASS;
+	for(int n = numlines - 1; n>= 0; n--)
+	{
+	    unit->reflectionDelays[numlines - 1 - n] = delayLength / powf(2.0, (float)n/numlines);
+	    unit->reflectionGains[numlines - 1 - n] = powf(10.0, - (3. * unit->reflectionDelays[numlines - 1 - n]) / volumeScale);
+	}
+	
+	unit->combFiltersPreDelay = (CombFilter*)RTAlloc(unit->mWorld, sizeof(CombFilter));
+	SetupComb(unit, unit->combFiltersPreDelay, (float)MAX_PRE_DELAY_MS, 0.0f);
+	float stereoSpreadValue = 0.005f;
+	float stereoSpreadSign = 1.0f;
+	
+	for(int i = 0; i < DELAY_LINES_COMB; i++)
+	{
+	    float stereoSpreadFactor = 1. + stereoSpreadValue;
+	    unit->combFiltersL[i] = (CombFilter*)RTAlloc(unit->mWorld, sizeof(CombFilter));
+	    if(stereoSpreadSign > 0){
+		SetupComb(unit, unit->combFiltersL[i], unit->reflectionDelays[i] * stereoSpreadValue, unit->reflectionGains[i]);
+	    } else {
+		SetupComb(unit, unit->combFiltersL[i], unit->reflectionDelays[i], unit->reflectionGains[i]);		
+	    }
+	    unit->combFiltersR[i] = (CombFilter*)RTAlloc(unit->mWorld, sizeof(CombFilter));
+	    if(stereoSpreadSign > 0){
+		SetupComb(unit, unit->combFiltersR[i], unit->reflectionDelays[i], unit->reflectionGains[i]);
+	    } else {
+		SetupComb(unit, unit->combFiltersR[i], unit->reflectionDelays[i] * stereoSpreadValue, unit->reflectionGains[i]);		
+	    }
+	    
+	    stereoSpreadSign *= -1.;
+	    
+	    unit->noiseGeneratorDampL[i] = (NoiseGenerator*)RTAlloc(unit->mWorld, sizeof(NoiseGenerator));
+	    SetupNoise(unit, unit->noiseGeneratorDampL[i]);
+	    unit->noiseGeneratorDampR[i] = (NoiseGenerator*)RTAlloc(unit->mWorld, sizeof(NoiseGenerator));
+	    SetupNoise(unit, unit->noiseGeneratorDampR[i]);
+	    unit->noiseGeneratorDelayL[i] = (NoiseGenerator*)RTAlloc(unit->mWorld, sizeof(NoiseGenerator));
+	    SetupNoise(unit, unit->noiseGeneratorDelayL[i]);
+	    unit->noiseGeneratorDelayR[i] = (NoiseGenerator*)RTAlloc(unit->mWorld, sizeof(NoiseGenerator));
+	    SetupNoise(unit, unit->noiseGeneratorDelayR[i]);
+	}
+
+	unit->preAllPassFilter = (AllPassFilter*)RTAlloc(unit->mWorld, sizeof(AllPassFilter));
+	SetupAllPass(unit, unit->preAllPassFilter, 15., 0.68);
+	for(int i = 0; i < DELAY_LINES_ALLPASS; i++)
+	{
+	    unit->allPassFiltersL[i] = (AllPassFilter*)RTAlloc(unit->mWorld, sizeof(AllPassFilter));
+	    SetupAllPass(unit, unit->allPassFiltersL[i], unit->reflectionDelays[i + DELAY_LINES_COMB - 1] * 0.21, 0.68);
+	    unit->allPassFiltersR[i] = (AllPassFilter*)RTAlloc(unit->mWorld, sizeof(AllPassFilter));
+	    SetupAllPass(unit, unit->allPassFiltersR[i], unit->reflectionDelays[i + DELAY_LINES_COMB - 1] * 0.22, 0.68);
+	}
+	Filter lpFilter;
+	SetupFilter(unit, &lpFilter);
+	unit->lpFilter = lpFilter;
+	Filter hpFilter;
+	SetupFilter(unit, &hpFilter);
+	unit->hpFilter = hpFilter;
+    }
+    
+    
+    for(int i = 0; i < inNumSamples; i++)
+    {
+	float thisRoomSize = 1. - roomSize;
+	thisRoomSize *= thisRoomSize * thisRoomSize;
+	thisRoomSize = 1. - thisRoomSize;
+	
+	float revL = in[i];
+	float noise = tickNoise(unit);
+	revL += (noise * 0.000000001);
+//	/* Pre Delay */
+	revL += CombProcess(unit->combFiltersPreDelay, revL, 0., 0., preDelay * preDelay);
+//	/* Pre AllPass */
+	revL += AllPassProcessInterpolated(unit->preAllPassFilter, revL, 0.01 + thisRoomSize * 0.99, 0.97 + noise * 0.03) * 0.2;
+	revL *= 0.2;
+	revL = FilterProcess(&unit->lpFilter, revL, highCut, 0., false);
+	revL = FilterProcess(&unit->hpFilter, revL, 0.95 * lowCut + 0.05, 0., true);
+	float revR = revL;
+	float outL = 0.;
+	float outR = 0.;
+	float scaledDamp = 0.95 * damp * damp;
+	float scaledRoomSize = thisRoomSize * 0.97;
+
+	for(int j = 0; j < DELAY_LINES_COMB; j++)
+	{
+	    outL += CombProcessInterpolated(unit->combFiltersL[j], 
+					    revL, 
+					    scaledDamp + 0.05 * tickFilteredNoiseFast(unit), 
+					    scaledRoomSize, 
+					    0.6 * scaledRoomSize + 0.395 + 0.012 * tickFilteredNoise(unit, unit->noiseGeneratorDelayL[j]) * thisRoomSize);
+	    outR += CombProcessInterpolated(unit->combFiltersR[j], 
+					    revR, 
+					    scaledDamp + 0.05 * tickFilteredNoiseFast(unit),
+					    scaledRoomSize, 
+					    0.6 * scaledRoomSize + 0.398 + 0.012 * tickFilteredNoise(unit, unit->noiseGeneratorDelayR[j]) * thisRoomSize);
+	}
+	
+	//out0[i] = outL; //revL;
+	//out1[i] = outR; //revR;
+	
+	for(int j = 0; j < DELAY_LINES_ALLPASS; j++)
+	{
+	    outL = AllPassProcess(unit->allPassFiltersL[j], outL);
+	    outR = AllPassProcess(unit->allPassFiltersR[j], outR);
+	}
+	
+	float thisGain = gain * gain;
+	float wet1 = thisGain * (stereoWidth * 0.5 + 0.5);
+	float wet2 = thisGain * ((1.-stereoWidth) * 0.5);
+	
+	out0[i] = outL * wet1 + outR * wet2;
+	out1[i] = outR * wet1 + outL * wet2;
+	
+	gain += gainSlope;
+	roomSize += roomSizeSlope;
+	preDelay += preDelaySlope;
+	lowCut += lowCutSlope;
+	damp += dampSlope;
+	highCut += highCutSlope;
+	stereoWidth += stereoWidthSlope;
+    }
+    
+    unit->lastGain = gain;
+    unit->lastRoomSize = roomSize;
+    unit->lastPreDelay = preDelay;
+    unit->lastLowCut = lowCut;
+    unit->lastDamp = damp;
+    unit->lastHighCut = highCut;
+    unit->lastStereoWidth = stereoWidth;
+
+}
+
+void TALReverb_Dtor(TALReverb* unit)
+{
+    /* RELEASE INTERNAL BUFFERS FIRST!!!! */
+    RTFree(unit->mWorld, unit->combFiltersPreDelay->buffer);
+    RTFree(unit->mWorld, unit->combFiltersPreDelay);
+    RTFree(unit->mWorld, unit->preAllPassFilter->buffer);
+    RTFree(unit->mWorld, unit->preAllPassFilter);
+    for(int i = 0; i < DELAY_LINES_COMB; i++)
+    {
+	RTFree(unit->mWorld, unit->combFiltersL[i]->buffer);
+	RTFree(unit->mWorld, unit->combFiltersL[i]);
+	RTFree(unit->mWorld, unit->combFiltersR[i]->buffer);
+	RTFree(unit->mWorld, unit->combFiltersR[i]);
+	RTFree(unit->mWorld, unit->noiseGeneratorDampL[i]);
+	RTFree(unit->mWorld, unit->noiseGeneratorDampR[i]);
+	RTFree(unit->mWorld, unit->noiseGeneratorDelayL[i]);
+	RTFree(unit->mWorld, unit->noiseGeneratorDelayL[i]);
+    }
+    for(int i = 0; i < DELAY_LINES_ALLPASS; i++)
+    {
+	RTFree(unit->mWorld, unit->allPassFiltersL[i]->buffer);
+	RTFree(unit->mWorld, unit->allPassFiltersL[i]);
+	RTFree(unit->mWorld, unit->allPassFiltersR[i]->buffer);
+	RTFree(unit->mWorld, unit->allPassFiltersR[i]);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
 {
 	ft = inTable;
-	
 	DefineDtorUnit(AtsSynth);
 	DefineDtorUnit(AtsNoiSynth);
 	DefineSimpleUnit(AtsPartial);
@@ -4189,7 +4831,8 @@ void load(InterfaceTable *inTable)
 	DefineSimpleCantAliasUnit(WarpZ);
 	DefineSimpleUnit(Metro);
 
-	
+	DefineDtorUnit(ATSSynth);
+	DefineDtorCantAliasUnit(TALReverb);
 }
 
 

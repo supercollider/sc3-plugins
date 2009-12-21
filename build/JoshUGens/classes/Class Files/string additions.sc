@@ -21,13 +21,13 @@
 		^( start <= end ).if({this.copyRange( start, end )},{ this.subStr( end, start ).reverse })
 	}
 	
-	toLower {
-		^this.collect({ arg c; c.toLower })
-	}
-	
-	toUpper {
-		^this.collect({ arg c; c.toUpper })
-	}
+//	toLower {
+//		^this.collect({ arg c; c.toLower })
+//	}
+//	
+//	toUpper {
+//		^this.collect({ arg c; c.toUpper })
+//	}
 	
 	rfind { arg findStr, caseSensitive = true;
 		// return the index of the last occurrence of findStr or nil

@@ -2499,6 +2499,15 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
     float amode = fabs(mode);
     float onemamode = 1.0 - amode;
     if(rejectFlag){
+	if(mode == -1.0){
+	    for (int i=0; i<numbins; ++i) {
+		if(mags[i] > floor){ 
+		    p->bin[i].mag *= 1.0 - mags[i];
+		} else {
+		    p->bin[i].mag *= onemamode;
+		}
+	    }	    
+	} else {
 	for (int i=0; i<numbins; ++i) {
 	    if(mags[i] > floor){ 
 		p->bin[i].mag *= lininterp(amode, 1.0, 1.0 - mags[i]);
@@ -2506,13 +2515,24 @@ void PV_SpectralMap_next(PV_SpectralMap *unit, int inNumSamples)
 		p->bin[i].mag *= onemamode;
 	    }
 	}
+	}
     } else {
+	if(mode == 1.0){
+	    for (int i=0; i<numbins; ++i) {
+		if(mags[i] > floor){ 
+		    p->bin[i].mag *= mags[i];
+		} else {
+		    p->bin[i].mag *= onemamode;
+		}
+	    }  
+	} else {
 	for (int i=0; i<numbins; ++i) {
 	    if(mags[i] > floor){ 
 		p->bin[i].mag *= lininterp(amode, 1.0, mags[i]);
 	    } else {
 		p->bin[i].mag *= onemamode;
 	    }
+	}
 	}
     }
 }

@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="1038">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
@@ -13,9 +13,8 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; min-height: 14.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
 span.s1 {color: #1541e7}
 span.s2 {color: #0d3ceb}
 span.s3 {color: #0000bf}
@@ -44,60 +43,61 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>Examples:</b></p>
 <p class="p5"><br></p>
 <p class="p6">// anazlyze a soundfile and store its data to a buffer</p>
-<p class="p7"><br></p>
-<p class="p8">s.boot;</p>
-<p class="p7"><br></p>
-<p class="p8">(</p>
-<p class="p8"><span class="s3">var</span> sf;</p>
+<p class="p5"><br></p>
+<p class="p7">s = Server.local;</p>
+<p class="p7">s.boot;</p>
+<p class="p5"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s3">var</span> sf;</p>
 <p class="p6">// path to a sound file here</p>
-<p class="p9"><span class="s4">p = </span>"sounds/a11wlk01.wav"<span class="s4">;</span></p>
+<p class="p8"><span class="s4">p = </span>"sounds/a11wlk01.wav"<span class="s4">;</span></p>
 <p class="p6">// the frame size for the analysis - experiment with other sizes (powers of 2)</p>
-<p class="p8">f = 1024;<span class="Apple-converted-space"> </span></p>
+<p class="p7">f = 1024;<span class="Apple-converted-space"> </span></p>
 <p class="p6">// the hop size</p>
-<p class="p8">h = 0.25;</p>
+<p class="p7">h = 0.25;</p>
 <p class="p6">// get some info about the file</p>
-<p class="p8">sf = <span class="s3">SoundFile</span>.new( p );</p>
-<p class="p8">sf.openRead;</p>
-<p class="p8">sf.close;</p>
+<p class="p7">sf = <span class="s3">SoundFile</span>.new( p );</p>
+<p class="p7">sf.openRead;</p>
+<p class="p7">sf.close;</p>
 <p class="p6">// allocate memory to store FFT data to... SimpleNumber.calcPVRecSize(frameSize, hop) will return<span class="Apple-converted-space"> </span></p>
 <p class="p6">// the appropriate number of samples needed for the buffer</p>
-<p class="p8">y = <span class="s3">Buffer</span>.alloc(s, sf.duration.calcPVRecSize(f, h));</p>
+<p class="p7">y = <span class="s3">Buffer</span>.alloc(s, sf.duration.calcPVRecSize(f, h));</p>
 <p class="p6">// allocate the soundfile you want to analyze</p>
-<p class="p8">z = <span class="s3">Buffer</span>.read(s, p);</p>
-<p class="p8">)</p>
-<p class="p7"><br></p>
+<p class="p7">z = <span class="s3">Buffer</span>.read(s, p);</p>
+<p class="p7">)</p>
+<p class="p5"><br></p>
 <p class="p6">// this does the analysis and saves it to buffer 1... frees itself when done</p>
-<p class="p8">(</p>
-<p class="p8"><span class="s3">SynthDef</span>(<span class="s5">"pvrec"</span>, { <span class="s3">arg</span> recBuf=1, soundBufnum=2;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain, bufnum;</p>
-<p class="p8"><span class="Apple-tab-span">	</span>bufnum = LocalBuf.new(1024);</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s3">Line</span>.kr(1, 1, <span class="s3">BufDur</span>.kr(soundBufnum), doneAction: 2);</p>
-<p class="p8"><span class="Apple-tab-span">	</span>in = <span class="s3">PlayBuf</span>.ar(1, soundBufnum, <span class="s3">BufRateScale</span>.kr(soundBufnum), loop: 0);</p>
+<p class="p7">(</p>
+<p class="p7"><span class="s3">SynthDef</span>(<span class="s5">"pvrec"</span>, { <span class="s3">arg</span> recBuf=1, soundBufnum=2;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain, bufnum;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>bufnum = LocalBuf.new(1024);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">Line</span>.kr(1, 1, <span class="s3">BufDur</span>.kr(soundBufnum), doneAction: 2);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>in = <span class="s3">PlayBuf</span>.ar(1, soundBufnum, <span class="s3">BufRateScale</span>.kr(soundBufnum), loop: 0);</p>
 <p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>// note the window type and overlaps... this is important for resynth parameters</p>
-<p class="p8"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in, 0.25, 1);<span class="Apple-converted-space"> </span></p>
-<p class="p8"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_RecordBuf</span>(chain, recBuf, 0, 1, 0, 0.25, 1);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">FFT</span>(bufnum, in, 0.25, 1);<span class="Apple-converted-space"> </span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_RecordBuf</span>(chain, recBuf, 0, 1, 0, 0.25, 1);</p>
 <p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>// no ouput ... simply save the analysis to recBuf</p>
-<p class="p8"><span class="Apple-tab-span">	</span>}).send(s);</p>
-<p class="p8">)</p>
-<p class="p8">a = <span class="s3">Synth</span>(<span class="s5">"pvrec"</span>, [<span class="s6">\recBuf</span>, y, <span class="s6">\soundBufnum</span>, z]);</p>
-<p class="p7"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p7">)</p>
+<p class="p7">a = <span class="s3">Synth</span>(<span class="s5">"pvrec"</span>, [<span class="s6">\recBuf</span>, y, <span class="s6">\soundBufnum</span>, z]);</p>
+<p class="p5"><br></p>
 <p class="p6">// you can save your 'analysis' file to disk! I suggest using float32 for the format</p>
 <p class="p6">// These can be read back in using Buffer.read</p>
-<p class="p7"><br></p>
-<p class="p9"><span class="s4">y.write(p++</span>".scpv"<span class="s4">, </span>"wav"<span class="s4">, </span>"float32"<span class="s4">);</span></p>
-<p class="p7"><br></p>
+<p class="p5"><br></p>
+<p class="p8"><span class="s4">y.write(p++</span>".scpv"<span class="s4">, </span>"wav"<span class="s4">, </span>"float32"<span class="s4">);</span></p>
+<p class="p5"><br></p>
 <p class="p6">// play your analysis back ... see the playback UGens listed above for more examples.</p>
-<p class="p8">(</p>
-<p class="p8"><span class="s3">SynthDef</span>(<span class="s5">"pvplay"</span>, { <span class="s3">arg</span> out=0, recBuf=1;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain, bufnum;</p>
-<p class="p8"><span class="Apple-tab-span">	</span>bufnum = LocalBuf.new(1024);</p>
-<p class="p8"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_BufRd</span>(bufnum, recBuf, <span class="s3">MouseX</span>.kr(0.0, 1.0));</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(out, <span class="s3">IFFT</span>(chain, 1).dup);</p>
-<p class="p8"><span class="Apple-tab-span">	</span>}).send(s);</p>
-<p class="p8">);</p>
-<p class="p8">b = <span class="s3">Synth</span>(<span class="s5">"pvplay"</span>, [<span class="s6">\out</span>, 0, <span class="s6">\bufnum</span>, x, <span class="s6">\recBuf</span>, y]);</p>
-<p class="p7"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s3">SynthDef</span>(<span class="s5">"pvplay"</span>, { <span class="s3">arg</span> out=0, recBuf=1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">var</span> in, chain, bufnum;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>bufnum = LocalBuf.new(1024);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>chain = <span class="s3">PV_BufRd</span>(bufnum, recBuf, <span class="s3">MouseX</span>.kr(0.0, 1.0));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(out, <span class="s3">IFFT</span>(chain, 1).dup);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p7">);</p>
+<p class="p7">b = <span class="s3">Synth</span>(<span class="s5">"pvplay"</span>, [<span class="s6">\out</span>, 0, <span class="s6">\bufnum</span>, x, <span class="s6">\recBuf</span>, y]);</p>
+<p class="p5"><br></p>
 <p class="p6">// stop the synth</p>
-<p class="p8">b.free;</p>
+<p class="p7">b.free;</p>
 </body>
 </html>

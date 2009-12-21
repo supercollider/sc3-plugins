@@ -1,13 +1,3 @@
-/* TO ADD - 
-	Two things to add 
-	- ability to route output to a virtual bus, then back to a desired bus
-	- bility to record ONLY the output of a ProcMod from that virtual bus
-	
-- if there is routing or recording... should a second group be used? one to wrap the routeting and recording in? Then INSIDE that group, individual note creation? Id so, a ProcMod's group would be the big one to allow for the placing of other Procs before or after it, BUT the individual notes (or the group that is passed into the funciton) needs to be the second, inner group.
-
-WHY? For the first thing, allow multiple Proc to output, let's say, multiple stereo feeds that can
-be controlled at a mixer for live mixing of Procs. Second, for recording purposes.
-*/
 
 ProcMod {
 	var <amp, <>group, <addAction, <target, <timeScale, <lag, <>id, <>function, 
@@ -15,7 +5,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiCtrl, 
-		midiAmpSpec, midiPort;
+		midiAmpSpec, midiPort, <>pevents;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -798,6 +788,7 @@ ProcEvents {
 			proc.asArray.flat.do{arg thisev;
 				thisev.isKindOf(ProcMod).if({
 					thisev.id.isNil.if({ thisev.id = thisev.identityHash.abs.asString });
+					thisev.pevents_(this);
 					eventDict.put(thisev.id, thisev);
 					eventArray[i] = eventArray[i].add(thisev.id)
 					}, {
