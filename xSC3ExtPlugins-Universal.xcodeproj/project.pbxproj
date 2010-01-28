@@ -297,7 +297,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 20D1B3A310C3530A00529A83 /* BatPVUGens */;
+			remoteGlobalIDString = 20D1B3A310C3530A00529A83;
 			remoteInfo = BatPVUGens;
 		};
 		37046F9E0CF0852500254768 /* PBXContainerItemProxy */ = {
@@ -5370,7 +5370,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				OBJROOT = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../xtralibs/include/libsndfile";
 			};
 			name = Deployment;
 		};
