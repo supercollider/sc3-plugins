@@ -494,8 +494,18 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	}
 	uint32 ibufnum = (uint32)fbufnum;
 	World *world = unit->mWorld;
-	if (ibufnum >= world->mNumSndBufs) ibufnum = 0;
-	SndBuf *buf = world->mSndBufs + ibufnum;
+	SndBuf *buf; \
+	if (ibufnum >= world->mNumSndBufs) { \
+		int localBufNum = ibufnum - world->mNumSndBufs; \
+		Graph *parent = unit->mParent; \
+		if(localBufNum <= parent->localBufNum) { \
+			buf = parent->mLocalSndBufs + localBufNum; \
+		} else { \
+			buf = world->mSndBufs; \
+		} \
+	} else { \
+		buf = world->mSndBufs + ibufnum; \
+	} \
 	int numbins = buf->samples - 2 >> 1;
 	// End: Multi-output equiv of FFTAnalyser_GET_BUF
 	
@@ -581,8 +591,8 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 
 void FFTSubbandPower_Dtor(FFTSubbandPower *unit)
 {
-	RTFree(unit->mWorld, unit->m_cutoffs);
-	RTFree(unit->mWorld, unit->m_outvals);
+	if(unit->m_cutoffs) RTFree(unit->mWorld, unit->m_cutoffs);
+	if(unit->m_outvals) RTFree(unit->mWorld, unit->m_outvals);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
