@@ -156,33 +156,20 @@ void Tartini_next( Tartini *unit, int inNumSamples ) {
 		case 0:
 			break; //do nothing case (will take fft if necessary)
 		case 1: //calculate ifft and nsdf
-			
 			inversefft(unit);
-			
 			unit->m_amortisationstate=2;
-			
 			break;
-				case 2: //calculate ifft and nsdf
-			
+		case 2: //calculate ifft and nsdf
 			nsdf(unit);
-			
 			unit->m_amortisationstate=3;
-			
 			break;
 		case 3: //calculate peak picking
-			
 			peakpicking(unit);
-			
 			unit->m_amortisationstate=0;	
-			
 			break;
-			
-		default:
-			break;
+		//default:
+		//	break;
 	}	
-	
-	
-	
 	preparefft(unit, in);
 	
 	ZOUT0(0)=unit->m_currfreq;
@@ -231,12 +218,9 @@ void preparefft(Tartini *unit, float* in) {
 		Copy(n, fftbuf, preparefftbuf);
 		Copy(n, input , preparefftbuf);
 		
-		//zero pad top k elements
+		//zero padding: zero the top k elements
 		int size=unit->size;
-		for (i=n; i<size;++i) {
-			fftbuf[i]=0.0f;
-		}
-		
+		Clear(size-n, fftbuf+n);
 		
 		//proving that fftw FFT doesn't do anything to input data array! 
 		//	
@@ -299,10 +283,10 @@ void dofft(Tartini *unit) {
 		
 	int j;
 	int size=unit->size;
-		float * autocorrFFT= unit->autocorrFFT; //results of FFT
+	float * autocorrFFT= unit->autocorrFFT; //results of FFT
 	
 	//do half of the calculations
-	for(j=1; j<size/4; j++) {
+	for(j=1; j<size/4; ++j) {
 		float val1= autocorrFFT[j];
 		float val2= autocorrFFT[size-j];
 		
@@ -366,14 +350,14 @@ void nsdf(Tartini *unit) {
 	
 	float * input= unit->input; //dataTemp; //safety because of amortisation
 	
-	for(j=0; j<k; j++) {
+	for(j=0; j<k; ++j) {
 		float left= input[n-1-j];
 		float right= input[j];
 		
 		sumLeftSq  -= left*left;
 		sumRightSq -= right*right;
 		//output[j] = 1.0 - (sumLeftSq + sumRightSq - 2*output[j]) / (sumLeftSq + sumRightSq);
-		output[j] = 2.0 * output[j] / (sumLeftSq + sumRightSq);
+		output[j] *= 2.f / static_cast<float>(sumLeftSq + sumRightSq);
 	}
 	
 	//now have k lags efficiently calculated, peak picking time
@@ -437,18 +421,18 @@ void peakpicking(Tartini *unit) {
     
     while(pos < k-1) {
 		
-		if(output[pos] > output[pos-1] && output[pos] >= output[pos+1]) { //a local maxima
+		if(output[pos] > output[pos-1] && !(output[pos] < output[pos+1])) { //a local maxima
 																		  //if(output[pos] >= threshold) { maxPos = pos; break; } //the first maxima above threshold. Stop there.
 			if(curMaxPos == 0) curMaxPos = pos; //the first maxima (between zero crossings)
 			else if(output[pos] > output[curMaxPos]) curMaxPos = pos; //a higher maxima (between the zero crossings)
 		}
 		pos++;
-		if(pos < k-1 && output[pos] <= 0.0f) { //a negative zero crossing
+		if(pos < k-1 && !(output[pos] > 0.0f)) { //a negative zero crossing
 			if(curMaxPos > 0) { //if there was a maximum
 				maxPositions.push_back(curMaxPos); //add it to the vector of maxima
 				curMaxPos = 0; //clear the maximum position, so we start looking for a new ones
 			}
-			while(pos < k-1 && output[pos] <= 0.0f) pos++; //loop over all the values below zero
+			while(pos < k-1 && !(output[pos] > 0.0f)) pos++; //loop over all the values below zero
 		}
     }
 	
