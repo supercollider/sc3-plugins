@@ -525,7 +525,7 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	if(!unit->m_cutoff_inited){
 		
 		float srate = world->mFullRate.mSampleRate;
-		for(int i=0; i < numcutoffs; i++) {
+		for(int i=0; i < numcutoffs; ++i) {
 			cutoffs[i] = (int)(buf->samples * ZIN0(4 + i) / srate);
 			//Print("Allocated bin cutoff #%d, at bin %d\n", i, cutoffs[i]);
 		}
@@ -545,7 +545,7 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 	float * outvals = unit->m_outvals;
 	float magsq;
 	for (int i=0; i<numbins; ++i) {
-		if(i >= cutoffs[curband]){
+		if((curband != numbands) && (i >= cutoffs[curband])){
 			if(scalemode==1){
 				outvals[curband] = total * normfactor;
 			}else{
@@ -554,7 +554,8 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 				else
 					outvals[curband] = total / binaddcount;
 			}
-			curband++;
+			//Print("Finished off band %i while in bin %i\n", curband, i);
+			++curband;
 			total = 0.f;
 			binaddcount = 0;
 		}
@@ -565,8 +566,8 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 		if(square)
 			total += magsq;
 		else
-			total += sqrt(magsq);
-		binaddcount++;
+			total += std::sqrt(magsq);
+		++binaddcount;
 	}
 	// Remember to output the very last (highest) band
 	if(square)
@@ -582,7 +583,7 @@ void FFTSubbandPower_next(FFTSubbandPower *unit, int inNumSamples)
 		else
 			outvals[curband] = total / (binaddcount + 1); // Plus one because of the nyq value
 	}
-
+	
 	// Now we can output the vals
 	for(int i=0; i<numbands; i++) {
 		ZOUT0(i) = outvals[i];
