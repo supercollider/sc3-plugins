@@ -821,7 +821,7 @@
 		F50D05D902E69B6B01CA2799 /* fftlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = fftlib.c; path = ../Source/common/fftlib.c; sourceTree = SOURCE_ROOT; };
 		F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = SCComplex.cpp; path = ../Source/plugins/SCComplex.cpp; sourceTree = SOURCE_ROOT; };
 		F5499A1103A3023A01BA7E76 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
-		F5D127DE03383D340164B34C /* scUBlibsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = scUBlibsndfile.a; path = /Users/joshp/src/supercollider/libsndfile/scUBlibsndfile.a; sourceTree = "<absolute>"; };
+		F5D127DE03383D340164B34C /* scUBlibsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = scUBlibsndfile.a; path = ../xtralibs/mac/scUBlibsndfile.a; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5356,7 +5356,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../libsndfile";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../xtralibs/include/libsndfile";
 			};
 			name = Development;
 		};
