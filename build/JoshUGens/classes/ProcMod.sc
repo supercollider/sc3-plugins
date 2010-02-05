@@ -5,7 +5,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiCtrl, 
-		midiAmpSpec, midiPort, <>pevents;
+		midiAmpSpec, midiPort, <>pevents, <about, closeable;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -240,7 +240,7 @@ ProcMod {
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
 		oldclocks.do({arg me; me.clear; me.stop});
 		curproc.stop;
-		gui.if({window.close});
+		(gui and: {closeable}).if({window.close});
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock, oldccctrl: curccctrl);
 		isRunning = false;
 
@@ -301,7 +301,8 @@ ProcMod {
 		var slider, numbox, winw, winh, dbspec, xspace, yspace, trigstr;
 		gui = true;
 		trigstr = trig.notNil.if({"("++trig++")"}, {""});
-		window = parent ?? {GUI.window.new(this.id, bounds).front};
+		closeable = false;
+		window = parent ?? {closeable = true; GUI.window.new(this.id, bounds).front};
 		composite = GUI.compositeView.new(window, parent.notNil.if({
 			bounds
 			}, {
@@ -370,6 +371,14 @@ ProcMod {
 		^this;
 		}
 	
+	about_ {arg aboutString;
+		aboutString.isKindOf(String).if({
+			about = aboutString;
+		}, {
+			"You must pass in a String to set the 'about' field".warn
+		})
+	}
+		
 	*initClass {
 		addActions = IdentityDictionary[
 			\head -> 0,
@@ -520,7 +529,7 @@ ProcModR : ProcMod {
 						[\g_new, notegroup, 0, group],
 						[\s_new, (\procmodroute_8723_ ++ numChannels).asSymbol, 
 							envnode = server.nextNodeID, 1, group, \inbus, routebus, 
-							\outbus, procout]);
+							\outbus, procout, \amp, amp]);
 					});
 				}, {
 				"A unique audio bus couldn't be allocated for internal routing. This probably isn't what you wanted, and the resulting sound will probably be wrong. You should quit the server, and increase the number of audio busses with ServerOptions. Sorry... but there are limitations".warn;
