@@ -858,7 +858,7 @@ void RMShelf2_next_a(RMShelf2* unit, int inNumSamples)
 		y1 = y0;
 		
 		y0_2 = allpass1 + b1 * y1_2;
-		allpass2 = a0 * y0_2 + a1 * y1;
+		allpass2 = a0 * y0_2 + a1 * y1_2;
 		y1_2 = y0_2;
 		
 		sum = 0.5 * ksign * (curin + allpass2);
@@ -917,7 +917,7 @@ void RMShelf2_next_k(RMShelf2* unit, int inNumSamples)
 		y1 = y0;
 		
 		y0_2 = allpass1 + b1 * y1_2;
-		allpass2 = a0 * y0_2 + a1 * y1;
+		allpass2 = a0 * y0_2 + a1 * y1_2;
 		y1_2 = y0_2;
 		
 		sum = 0.5 * (curin + allpass2) * ksign;
@@ -939,6 +939,7 @@ void RMShelf2_next_k(RMShelf2* unit, int inNumSamples)
 	
 	unit->m_freq = next_freq;
 	unit->m_y1 = zapgremlins(y1);
+	unit->m_y1_2 = zapgremlins(y1_2);
 	unit->m_a0 = a0;
 	unit->m_b1 = b1;
 	if(next_k != unit->m_k){
