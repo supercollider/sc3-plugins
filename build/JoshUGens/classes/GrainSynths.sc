@@ -224,9 +224,9 @@ BFGrainPanner : JoshMultiOutGrain {
 /* other granular synths */
 
 SinGrainBF : JoshMultiOutGrain {
-	*ar	{ arg trigger = 0, dur = 1, freq = 440, azimuth = 0, elevation = 0, rho = 1, mul = 1, 
-			add = 0;
-		^this.multiNew('audio', trigger, dur, freq, azimuth, elevation, rho).madd(mul, add);
+	*ar	{ arg trigger = 0, dur = 1, freq = 440, azimuth = 0, elevation = 0, rho = 1, wComp = 0, 
+			mul = 1, add = 0;
+		^this.multiNew('audio', trigger, dur, freq, azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -238,9 +238,9 @@ SinGrainBF : JoshMultiOutGrain {
 	}
 		
 SinGrainBBF : JoshMultiOutGrain {
-	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf, azimuth = 0, elevation = 0, rho = 1,
-			mul = 1, add = 0;
-		^this.multiNew('audio', trigger, dur, freq, envbuf, azimuth, elevation, rho)
+	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf, azimuth = 0, elevation = 0, rho = 1, 
+			wComp = 0, mul = 1, add = 0;
+		^this.multiNew('audio', trigger, dur, freq, envbuf, azimuth, elevation, rho, wComp)
 			.madd(mul, add);
 		}
 
@@ -254,9 +254,9 @@ SinGrainBBF : JoshMultiOutGrain {
 
 SinGrainIBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, freq = 440, envbuf1, envbuf2, ifac = 0.5, azimuth = 0, 
-			elevation = 0, rho = 1,mul = 1, add = 0;
+			elevation = 0, rho = 1, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, freq, envbuf1, envbuf2, ifac, azimuth, 
-			elevation, rho).madd(mul, add);
+			elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -269,9 +269,9 @@ SinGrainIBF : JoshMultiOutGrain {
 	
 FMGrainBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, azimuth = 0, 
-			elevation = 0, rho = 1,mul = 1, add = 0;
+			elevation = 0, rho = 1, wComp = 0,mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index,
-			azimuth, elevation, rho).madd(mul, add);
+			azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -284,9 +284,9 @@ FMGrainBF : JoshMultiOutGrain {
 
 FMGrainBBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf, azimuth = 0, 
-			elevation = 0, rho = 1, mul = 1, add = 0;
+			elevation = 0, rho = 1, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf, 
-			azimuth, elevation, rho).madd(mul, add);
+			azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -299,9 +299,9 @@ FMGrainBBF : JoshMultiOutGrain {
 
 FMGrainIBF : JoshMultiOutGrain {
 	*ar	{ arg trigger = 0, dur = 1, carfreq = 440, modfreq = 200, index = 1, envbuf1, envbuf2, 
-			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, mul = 1, add = 0;
+			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, carfreq, modfreq, index, envbuf1, envbuf2, ifac,
-			azimuth, elevation, rho).madd(mul, add);
+			azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -314,9 +314,9 @@ FMGrainIBF : JoshMultiOutGrain {
 	
 BufGrainBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  
-			azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
+			azimuth = 0, elevation = 0, rho = 1, interp = 2, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, azimuth, elevation, 
-			rho).madd(mul, add);
+			rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -329,9 +329,9 @@ BufGrainBF : JoshMultiOutGrain {
 		
 BufGrainBBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0, envbuf,  
-			azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
+			azimuth = 0, elevation = 0, rho = 1, interp = 2, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf, azimuth,
-			elevation, rho).madd(mul, add);
+			elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -344,9 +344,10 @@ BufGrainBBF : JoshMultiOutGrain {
 	
 BufGrainIBF : JoshMultiOutGrain {
 	*ar { arg trigger = 0, dur = 1, sndbuf, rate = 1, pos = 0,  envbuf1, envbuf2, 
-			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, interp = 2, mul = 1, add = 0;
+			ifac = 0.5, azimuth = 0, elevation = 0, rho = 1, interp = 2, wComp = 0, 
+			mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, sndbuf, rate, pos, interp, envbuf1, envbuf2,
-			ifac, azimuth, elevation, rho).madd(mul, add);
+			ifac, azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -358,8 +359,9 @@ BufGrainIBF : JoshMultiOutGrain {
 	}
 	
 InGrainBF : BFGrainPanner {
-	*ar	{ arg trigger = 0, dur = 1, in, azimuth = 0, elevation = 0, rho = 1, mul = 1, add = 0;
-		^this.multiNew('audio', trigger, dur, in, azimuth, elevation, rho).madd(mul, add);
+	*ar	{ arg trigger = 0, dur = 1, in, azimuth = 0, elevation = 0, rho = 1, wComp = 0,
+			mul = 1, add = 0;
+		^this.multiNew('audio', trigger, dur, in, azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -371,9 +373,9 @@ InGrainBF : BFGrainPanner {
 	}
 		
 InGrainBBF : BFGrainPanner {
-	*ar	{ arg trigger = 0, dur = 1, in, envbuf, azimuth = 0, elevation = 0, rho = 1, 
+	*ar	{ arg trigger = 0, dur = 1, in, envbuf, azimuth = 0, elevation = 0, rho = 1, wComp = 0, 
 			mul = 1, add = 0;
-		^this.multiNew('audio', trigger, dur, in, envbuf, azimuth, elevation, rho).madd(mul, add);
+		^this.multiNew('audio', trigger, dur, in, envbuf, azimuth, elevation, rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;
@@ -386,9 +388,9 @@ InGrainBBF : BFGrainPanner {
 
 InGrainIBF : BFGrainPanner {
 	*ar	{ arg trigger = 0, dur = 1, in, envbuf1, envbuf2, ifac = 0.5, 
-			azimuth = 0, elevation = 0, rho = 1, mul = 1, add = 0;
+			azimuth = 0, elevation = 0, rho = 1, wComp = 0, mul = 1, add = 0;
 		^this.multiNew('audio', trigger, dur, in, envbuf1, envbuf2, ifac, azimuth, elevation,
-			rho).madd(mul, add);
+			rho, wComp).madd(mul, add);
 		}
 
 	init { arg ... theInputs;

@@ -312,7 +312,9 @@ struct InGrainBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	IGrainBF mGrains[kMaxSynthGrains];
+
 };
 
 struct IGrainBBF
@@ -329,6 +331,7 @@ struct InGrainBBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	IGrainBBF mGrains[kMaxSynthGrains];
 };
 
@@ -346,6 +349,7 @@ struct InGrainIBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	IGrainIBF mGrains[kMaxSynthGrains];
 };
 
@@ -365,6 +369,7 @@ struct SinGrainBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	SGrainBF mGrains[kMaxSynthGrains];
 };
 
@@ -385,6 +390,7 @@ struct SinGrainBBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	SGrainBBF mGrains[kMaxSynthGrains];
 };
 
@@ -407,6 +413,7 @@ struct SinGrainIBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	SGrainIBF mGrains[kMaxSynthGrains];
 };
 
@@ -428,6 +435,7 @@ struct FMGrainBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	FGrainBF mGrains[kMaxSynthGrains];
 };
 
@@ -450,6 +458,7 @@ struct FMGrainBBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	FGrainBBF mGrains[kMaxSynthGrains];
 };
 
@@ -473,6 +482,7 @@ struct FMGrainIBF : public Unit
 	uint32 m_lomask;
 	float curtrig;
 	double m_cpstoinc, m_radtoinc;
+	float m_wComp;
 	FGrainIBF mGrains[kMaxSynthGrains];
 };
 
@@ -518,6 +528,7 @@ struct BufGrainBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	GrainBF mGrains[kMaxSynthGrains];
 };
 
@@ -525,6 +536,7 @@ struct BufGrainBBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	WinGrainBF mGrains[kMaxSynthGrains];
 };
 
@@ -532,6 +544,7 @@ struct BufGrainIBF : public Unit
 {
 	int mNumActive;
 	float curtrig;
+	float m_wComp;
 	WinGrainIBF mGrains[kMaxSynthGrains];
 };
 
@@ -740,16 +753,17 @@ extern "C"
 //////////////////////////////// Granular UGens ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static float cubicinterp(float x, float y0, float y1, float y2, float y3)
-{
-	// 4-point, 3rd-order Hermite (x-form)
-	float c0 = y1;
-	float c1 = 0.5f * (y2 - y0);
-	float c2 = y0 - 2.5f * y1 + 2.f * y2 - 0.5f * y3;
-	float c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+//static float cubicinterp(float x, float y0, float y1, float y2, float y3)
+//{
+//	// 4-point, 3rd-order Hermite (x-form)
+//	float c0 = y1;
+//	float c1 = 0.5f * (y2 - y0);
+//	float c2 = y0 - 2.5f * y1 + 2.f * y2 - 0.5f * y3;
+//	float c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+//
+//	return ((c3 * x + c2) * x + c1) * x + c0;
+//}
 
-	return ((c3 * x + c2) * x + c1) * x + c0;
-}
 inline float IN_AT(Unit* unit, int index, int offset) 
 {
 	if (INRATE(index) == calc_FullRate) return IN(index)[offset];
@@ -3682,7 +3696,12 @@ void InGrainI_Ctor(InGrainI *unit)
     float X_amp = grain->m_xamp = cosa * cosb * sinint; \
     float Y_amp = grain->m_yamp = sina * cosb  * sinint; \
     float Z_amp = grain->m_zamp = sinb * sinint; \
-    float W_amp = grain->m_wamp = cosint * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))); 
+    float W_amp = 1.;\
+    if(wComp > 0.){ \
+	W_amp = grain->m_wamp = cosint * (1 - (0.293 * ((X_amp * X_amp) + (Y_amp * Y_amp) + (Z_amp * Z_amp)))); \
+    } else { \
+	W_amp = grain->m_wamp = cosint * 0.707; \
+    }
 
 // grab and setup the _amp scalers;
 #define GET_BF_AMPS \
@@ -3844,7 +3863,7 @@ void InGrainBF_next_a(InGrainBF *unit, int inNumSamples)
 	float *trig = IN(0);
 	float *in = IN(2);
 	float winSize;
-	
+	float wComp = unit->m_wComp;
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainBF *grain = unit->mGrains + i;
 		double b1 = grain->b1;
@@ -3926,7 +3945,8 @@ void InGrainBF_next_k(InGrainBF *unit, int inNumSamples)
 	float trig = IN0(0);
 	float *in = IN(2);
 	float winSize;
-	
+	float wComp = unit->m_wComp;
+    
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainBF *grain = unit->mGrains + i;
 		double b1 = grain->b1;
@@ -4010,6 +4030,7 @@ void InGrainBF_Ctor(InGrainBF *unit)
 	unit->mNumActive = 0;
 	unit->curtrig = 0.f;
 	InGrainBF_next_k(unit, 1);
+	unit->m_wComp = IN0(6);
 }
 
 
@@ -4024,7 +4045,8 @@ void InGrainBBF_next_a(InGrainBBF *unit, int inNumSamples)
 	float *trig = IN(0);
 	float *in = IN(2);
 	float winSize;
-
+	float wComp = unit->m_wComp;
+    
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainBBF *grain = unit->mGrains + i;
 		
@@ -4099,6 +4121,7 @@ void InGrainBBF_next_k(InGrainBBF *unit, int inNumSamples)
 	float trig = IN0(0);
 	float *in = IN(2);
 	float winSize;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainBBF *grain = unit->mGrains + i;
@@ -4176,6 +4199,7 @@ void InGrainBBF_Ctor(InGrainBBF *unit)
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
 	InGrainBBF_next_k(unit, 1);
+	unit->m_wComp = IN0(7);
 }
 
 ///////////////////////// InGrainIBF ////////////////////////////
@@ -4189,7 +4213,8 @@ void InGrainIBF_next_a(InGrainIBF *unit, int inNumSamples)
 	float *trig = IN(0);
 	float *in = IN(2);
 	float winSize;
-
+	float wComp = unit->m_wComp;
+    
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainIBF *grain = unit->mGrains + i;
 		GET_INTERP_GRAIN_WIN
@@ -4270,7 +4295,8 @@ void InGrainIBF_next_k(InGrainIBF *unit, int inNumSamples)
 	float trig = IN0(0);
 	float *in = IN(2);
 	float winSize;
-
+	float wComp = unit->m_wComp;
+    
 	for (int i=0; i < unit->mNumActive; ) {
 		IGrainIBF *grain = unit->mGrains + i;
 		GET_INTERP_GRAIN_WIN
@@ -4349,6 +4375,7 @@ void InGrainIBF_Ctor(InGrainIBF *unit)
 	    SETCALC(InGrainIBF_next_k);
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(9);
 	InGrainIBF_next_k(unit, 1);
 }
 
@@ -4366,7 +4393,8 @@ void SinGrainBF_next_a(SinGrainBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
-
+	float wComp = unit->m_wComp;
+    
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainBF *grain = unit->mGrains + i;
 		double b1 = grain->b1;
@@ -4460,7 +4488,7 @@ void SinGrainBF_next_k(SinGrainBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
-
+	float wComp = unit->m_wComp;
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainBF *grain = unit->mGrains + i;
 		double b1 = grain->b1;
@@ -4558,6 +4586,7 @@ void SinGrainBF_Ctor(SinGrainBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(6);
 	SinGrainBF_next_k(unit, 1);
 }
 
@@ -4573,6 +4602,7 @@ void SinGrainBBF_next_a(SinGrainBBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainBBF *grain = unit->mGrains + i;
@@ -4661,6 +4691,7 @@ void SinGrainBBF_next_k(SinGrainBBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainBBF *grain = unit->mGrains + i;
@@ -4750,6 +4781,7 @@ void SinGrainBBF_Ctor(SinGrainBBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(7);
 	SinGrainBBF_next_k(unit, 1);
 }
 
@@ -4765,6 +4797,7 @@ void SinGrainIBF_next_a(SinGrainIBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainIBF *grain = unit->mGrains + i;
@@ -4855,6 +4888,7 @@ void SinGrainIBF_next_k(SinGrainIBF *unit, int inNumSamples)
 	float winSize, freq;
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		SGrainIBF *grain = unit->mGrains + i;
@@ -4949,6 +4983,7 @@ void SinGrainIBF_Ctor(SinGrainIBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(9);
 	SinGrainIBF_next_k(unit, 1);
 }
 
@@ -4965,6 +5000,7 @@ void FMGrainBF_next_a(FMGrainBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainBF *grain = unit->mGrains + i;
@@ -5075,6 +5111,7 @@ void FMGrainBF_next_k(FMGrainBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainBF *grain = unit->mGrains + i;
@@ -5185,6 +5222,7 @@ void FMGrainBF_Ctor(FMGrainBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(8);
 	FMGrainBF_next_k(unit, 1);
 }
 
@@ -5201,6 +5239,7 @@ void FMGrainBBF_next_a(FMGrainBBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainBBF *grain = unit->mGrains + i;
@@ -5302,6 +5341,7 @@ void FMGrainBBF_next_k(FMGrainBBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainBBF *grain = unit->mGrains + i;
@@ -5405,6 +5445,7 @@ void FMGrainBBF_Ctor(FMGrainBBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(9);
 	FMGrainBBF_next_k(unit, 1);
 }
 
@@ -5422,6 +5463,7 @@ void FMGrainIBF_next_a(FMGrainIBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainIBF *grain = unit->mGrains + i;
@@ -5531,6 +5573,7 @@ void FMGrainIBF_next_k(FMGrainIBF *unit, int inNumSamples)
 	
 	float *table0 = ft->mSineWavetable;
 	float *table1 = table0 + 1;
+	float wComp = unit->m_wComp;
 
 	for (int i=0; i < unit->mNumActive; ) {
 		FGrainIBF *grain = unit->mGrains + i;
@@ -5639,6 +5682,7 @@ void FMGrainIBF_Ctor(FMGrainIBF *unit)
 	unit->m_cpstoinc = tableSizeSin * SAMPLEDUR * 65536.;   
 	unit->curtrig = 0.f;	
 	unit->mNumActive = 0;
+	unit->m_wComp = IN0(11);
 	FMGrainIBF_next_k(unit, 1);
 }
 
@@ -5657,7 +5701,8 @@ void BufGrainBF_next_a(BufGrainBF *unit, int inNumSamples)
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
 //	uint32 numBufs = world->mNumSndBufs;
-	
+	float wComp = unit->m_wComp;
+
 	for (int i=0; i < unit->mNumActive; ) {
 		GrainBF *grain = unit->mGrains + i;
 //		uint32 bufnum = grain->bufnum;
@@ -5802,7 +5847,8 @@ void BufGrainBF_next_k(BufGrainBF *unit, int inNumSamples)
 	float *Zout = ZOUT(3);
 	
 	float trig = ZIN0(0);
-	
+	float wComp = unit->m_wComp;
+
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
 	//uint32 numBufs = world->mNumSndBufs;
@@ -5946,6 +5992,7 @@ void BufGrainBF_Ctor(BufGrainBF *unit)
 	    SETCALC(BufGrainBF_next_k);	
 	unit->mNumActive = 0;
 	unit->curtrig = 0.f;	
+	unit->m_wComp = IN0(9);
 	BufGrainBF_next_k(unit, 1); // should be _k
 }
 
@@ -5969,7 +6016,8 @@ void BufGrainBBF_next_a(BufGrainBBF *unit, int inNumSamples)
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
 //	uint32 numBufs = world->mNumSndBufs;
-	
+	float wComp = unit->m_wComp;
+
 	for (int i=0; i < unit->mNumActive; ) {
 		WinGrainBF *grain = unit->mGrains + i;
 //		uint32 bufnum = grain->bufnum;
@@ -6131,7 +6179,8 @@ void BufGrainBBF_next_k(BufGrainBBF *unit, int inNumSamples)
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
 	//uint32 numBufs = world->mNumSndBufs;
-	
+	float wComp = unit->m_wComp;
+
 	for (int i=0; i < unit->mNumActive; ) {
 		WinGrainBF *grain = unit->mGrains + i;
 //		uint32 bufnum = grain->bufnum;
@@ -6282,6 +6331,7 @@ void BufGrainBBF_Ctor(BufGrainBBF *unit)
 	    SETCALC(BufGrainBBF_next_k);	
 	unit->mNumActive = 0;
 	unit->curtrig = 0.f;	
+	unit->m_wComp = IN0(10);
 	BufGrainBBF_next_k(unit, 1); // should be _k
 }
 
@@ -6305,7 +6355,8 @@ void BufGrainIBF_next_a(BufGrainIBF *unit, int inNumSamples)
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
 //	uint32 numBufs = world->mNumSndBufs;
-	
+	float wComp = unit->m_wComp;
+
 	for (int i=0; i < unit->mNumActive; ) {
 		WinGrainIBF *grain = unit->mGrains + i;
 //		uint32 bufnum = grain->bufnum;
@@ -6477,6 +6528,7 @@ void BufGrainIBF_next_k(BufGrainIBF *unit, int inNumSamples)
 	
 	World *world = unit->mWorld;
 //	SndBuf *bufs = world->mSndBufs;
+	float wComp = unit->m_wComp;
 	
 	for (int i=0; i < unit->mNumActive; ) {
 		WinGrainIBF *grain = unit->mGrains + i;
@@ -6632,7 +6684,8 @@ void BufGrainIBF_Ctor(BufGrainIBF *unit)
 	    else
 	    SETCALC(BufGrainIBF_next_k);	
 	unit->mNumActive = 0;
-	unit->curtrig = 0.f;	
+	unit->curtrig = 0.f;
+	unit->m_wComp = IN0(12);
 	BufGrainIBF_next_k(unit, 1); // should be _k
 }
 
