@@ -558,6 +558,57 @@ struct TALReverb : public Unit
     bool first;
 };
 
+/* Delay UGens with different interps - from regular source, used for InterpDelays*/
+
+void DelayUnit_AllocDelayLine(DelayUnit *unit)
+{
+    long delaybufsize = (long)ceil(unit->m_maxdelaytime * SAMPLERATE + 1.f);
+    delaybufsize = delaybufsize + BUFLENGTH;
+    delaybufsize = NEXTPOWEROFTWO(delaybufsize);  // round up to next power of two
+    unit->m_fdelaylen = unit->m_idelaylen = delaybufsize;
+    
+    RTFree(unit->mWorld, unit->m_dlybuf);
+    unit->m_dlybuf = (float*)RTAlloc(unit->mWorld, delaybufsize * sizeof(float));
+    unit->m_mask = delaybufsize - 1;
+}
+
+float CalcDelay(DelayUnit *unit, float delaytime);
+float CalcDelay(DelayUnit *unit, float delaytime)
+{
+    float next_dsamp = delaytime * SAMPLERATE;
+    return sc_clip(next_dsamp, 1.f, unit->m_fdelaylen);
+}
+
+void DelayUnit_Reset(DelayUnit *unit)
+{
+    unit->m_maxdelaytime = ZIN0(1);
+    unit->m_delaytime = ZIN0(2);
+    unit->m_dlybuf = 0;
+    
+    DelayUnit_AllocDelayLine(unit);
+    
+    unit->m_dsamp = CalcDelay(unit, unit->m_delaytime);
+    
+    unit->m_numoutput = 0;
+    unit->m_iwrphase = 0;
+}
+
+
+void DelayUnit_Dtor(DelayUnit *unit)
+{
+    RTFree(unit->mWorld, unit->m_dlybuf);
+}
+
+struct CubicDelay : public DelayUnit
+{
+};
+/*
+struct HermiteDelay : public DelayUnit
+{
+    float m_tension, m_bias;
+};
+*/
+
 extern "C"
 {
     void load(InterfaceTable *inTable);
@@ -663,7 +714,17 @@ extern "C"
     void TALReverb_next(TALReverb *unit, int inNumSamples);
     void TALReverb_Ctor(TALReverb* unit);
     void TALReverb_Dtor(TALReverb* unit);
-    }
+    
+    void CubicDelay_Ctor(CubicDelay *unit);
+    void CubicDelay_next_a(CubicDelay *unit, int inNumSamples);
+    void CubicDelay_next_k(CubicDelay *unit, int inNumSamples);
+/*
+    void HermiteDelay_Ctor(HermiteDelay *unit);
+    void HermiteDelay_next(HermiteDelay *unit, int inNumSamples);
+    void HermiteDelay_next_z(HermiteDelay *unit, int inNumSamples);
+  */  
+
+}
 
 
 /////////////////  AudioMSG ////////////////////////////////////////////////////////
@@ -2721,45 +2782,6 @@ void PosRatio_next(PosRatio *unit, int inNumSamples){
 	}
 
 
-void DelayUnit_AllocDelayLine(DelayUnit *unit)
-{
-	long delaybufsize = (long)ceil(unit->m_maxdelaytime * SAMPLERATE + 1.f);
-	delaybufsize = delaybufsize + BUFLENGTH;
-	delaybufsize = NEXTPOWEROFTWO(delaybufsize);  // round up to next power of two
-	unit->m_fdelaylen = unit->m_idelaylen = delaybufsize;
-	
-	RTFree(unit->mWorld, unit->m_dlybuf);
-	unit->m_dlybuf = (float*)RTAlloc(unit->mWorld, delaybufsize * sizeof(float));
-	unit->m_mask = delaybufsize - 1;
-}
-
-float CalcDelay(DelayUnit *unit, float delaytime);
-float CalcDelay(DelayUnit *unit, float delaytime)
-{
-	float next_dsamp = delaytime * SAMPLERATE;
-	return sc_clip(next_dsamp, 1.f, unit->m_fdelaylen);
-}
-
-void DelayUnit_Reset(DelayUnit *unit)
-{
-	unit->m_maxdelaytime = ZIN0(2);
-	unit->m_delaytime = ZIN0(3);
-	unit->m_dlybuf = 0;
-	
-	DelayUnit_AllocDelayLine(unit);
-
-	unit->m_dsamp = CalcDelay(unit, unit->m_delaytime);	
-	
-	unit->m_numoutput = 0;
-	unit->m_iwrphase = 0;
-}
-
-
-void DelayUnit_Dtor(DelayUnit *unit)
-{
-	RTFree(unit->mWorld, unit->m_dlybuf);
-}
-
 inline float CalcFeedback(float delaytime, float decaytime)
 {
 	if (delaytime == 0.f) {
@@ -4793,6 +4815,118 @@ void TALReverb_Dtor(TALReverb* unit)
     }
 }
 
+	 
+/* Interpolating Delays */
+			 
+/* hacked up versions of DelayC to use other interp methods */
+/* below functions are based on function at:
+ http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+*/
+
+float CubicDelayInterp(float mu, float y0,float y1,float y2 ,float y3 )
+{
+    float a0,a1,a2,a3,mu2;
+    
+    mu2 = mu*mu;
+    a0 = y3 - y2 - y0 + y1;
+    a1 = y0 - y1 - a0;
+    a2 = y2 - y0;
+    a3 = y1;
+    
+    return(a0*mu*mu2+a1*mu2+a2*mu+a3);
+}
+		       
+void CubicDelay_Ctor(CubicDelay *unit)
+{
+    DelayUnit_Reset(unit);
+    // zero out the buffer since I am too lazy to write multiple functions
+    for(int i = 0; i < unit->m_idelaylen; i++) unit->m_dlybuf[i] = 0.0;
+    if (INRATE(2) == calc_FullRate) {
+	SETCALC(CubicDelay_next_a);
+    } else {
+	SETCALC(CubicDelay_next_k);
+    }
+    unit->m_iwrphase--;
+    unit->m_iwrphase--;
+    ClearUnitOutputs(unit, 1); 
+}
+
+void CubicDelay_next_a(CubicDelay *unit, int inNumSamples)
+{
+    float *out = OUT(0);
+    float *in = IN(0);
+    float *delaytime = IN(2);
+    
+    float *dlybuf = unit->m_dlybuf;
+    long iwrphase = unit->m_iwrphase;
+    float dsamp;
+    long idsamp, idsampm1, idsampp1, idsampp2, mask;
+    idsamp = idsampm1 = idsampp1 = idsampp2 = 0;
+    mask = unit->m_mask;
+    float y0, y1, y2, y3, frac;
+    for(int i = 0; i < inNumSamples; i++)
+    {
+	dlybuf[iwrphase & mask] = in[i];
+	dsamp = CalcDelay(unit, delaytime[i]);
+	idsamp = (long)std::floor(dsamp);
+	frac = dsamp - (float)idsamp;
+//	if(frac == 0.0) frac = 1.0;
+	idsamp = iwrphase - idsamp;
+	idsampm1 = idsamp-1;
+	idsampp1 = idsamp+1;
+	idsampp2 = idsamp+2;
+	y0 = dlybuf[idsampm1 & mask];
+	y1 = dlybuf[idsamp & mask];
+	y2 = dlybuf[idsampp1 & mask];
+	y3 = dlybuf[idsampp2 & mask];
+	out[i] = CubicDelayInterp(frac, y0, y1, y2, y3);
+	iwrphase++;
+    }
+    Print("%3,6f, %3,6f\n", dsamp, frac);
+    unit->m_iwrphase = iwrphase;
+    
+}
+
+void CubicDelay_next_k(CubicDelay *unit, int inNumSamples)
+{
+    float *out = OUT(0);
+    float *in = IN(0);
+    float delaytime = IN0(2);
+    
+    float *dlybuf = unit->m_dlybuf;
+    long iwrphase = unit->m_iwrphase;
+    float dsamp = unit->m_dsamp;
+    
+    float next_dsamp = CalcDelay(unit, delaytime);
+    float dsamp_slope = CALCSLOPE(next_dsamp, dsamp);
+    long idsamp, idsampm1, idsampp1, idsampp2, mask;
+    idsamp = idsampm1 = idsampp1 = idsampp2 = 0;
+    mask = unit->m_mask;
+    float y0, y1, y2, y3, frac;
+    for(int i = 0; i < inNumSamples; i++)
+    {
+	dlybuf[iwrphase & mask] = in[i];
+	idsamp = (long)dsamp;
+	frac = dsamp - idsamp;
+	idsamp = iwrphase - idsamp;
+	idsampm1 = idsamp-1;
+	idsampp1 = idsamp+1;
+	idsampp2 = idsamp+2;
+	y0 = dlybuf[idsampm1 & mask];
+	y1 = dlybuf[idsamp & mask];
+	y2 = dlybuf[idsampp1 & mask];
+	y3 = dlybuf[idsampp2 & mask];
+	out[i] = CubicDelayInterp(frac, y0, y1, y2, y3);
+	iwrphase++;
+	dsamp += dsamp_slope;
+    }
+    unit->m_dsamp = next_dsamp;
+    unit->m_delaytime = delaytime;
+    unit->m_iwrphase = iwrphase;
+    
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void load(InterfaceTable *inTable)
@@ -4822,9 +4956,9 @@ void load(InterfaceTable *inTable)
 	DefineSimpleCantAliasUnit(DelTapWr);
 	DefineSimpleCantAliasUnit(DelTapRd);
     
-#define DefineDelayUnit(name) \
-    (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
-    (UnitDtorFunc)&DelayUnit_Dtor, 0);
+	#define DefineDelayUnit(name) \
+	    (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
+	    (UnitDtorFunc)&DelayUnit_Dtor, 0);
     
 	DefineDelayUnit(CombLP);
 	DefineSimpleCantAliasUnit(PanX);
@@ -4833,6 +4967,13 @@ void load(InterfaceTable *inTable)
 
 	DefineDtorUnit(ATSSynth);
 	DefineDtorCantAliasUnit(TALReverb);
+   
+	#define DefineDelayCantAliasUnit(name) \
+	    (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
+	    (UnitDtorFunc)&DelayUnit_Dtor, kUnitDef_CantAliasInputsToOutputs);
+    
+	DefineDelayCantAliasUnit(CubicDelay);
+	//DefineDelayUnit(HermiteDelay);
 }
 
 
