@@ -23,7 +23,7 @@
 //MachineListening.h  Created by Nick Collins on 06/12/2006.
 
 #include "SC_PlugIn.h"
-#include "fftw3.h"
+#include <fftw3.h>
 
 //global data
 
