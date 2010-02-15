@@ -89,6 +89,34 @@
 			name = All;
 			productName = "SC_Synth PlugIns";
 		};
+		F36C2DF31125E73F0099DB2B /* All32-64 */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F36C2E1C1125E73F0099DB2B /* Build configuration list for PBXAggregateTarget "All32-64" */;
+			buildPhases = (
+			);
+			dependencies = (
+				F36C2DF41125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2DF61125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2DF81125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2DFA1125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2DFC1125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E001125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E021125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E041125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E061125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E0A1125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E0C1125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E0E1125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E101125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E121125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E141125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E161125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E181125E73F0099DB2B /* PBXTargetDependency */,
+				F36C2E1A1125E73F0099DB2B /* PBXTargetDependency */,
+			);
+			name = "All32-64";
+			productName = "SC_Synth PlugIns";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -110,7 +138,7 @@
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		3751D6BA0E8C1FBA00B5AC2F /* MCLDOscUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
-		37E8604B0FA1F5D90056E561 /* SC_fftlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E8604A0FA1F5D90056E561 /* SC_fftlib.h */; };
+		37E8604B0FA1F5D90056E561 /* fftlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E8604A0FA1F5D90056E561 /* fftlib.h */; };
 		37E8604C0FA1F6A30056E561 /* SC_fftlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */; };
 		37E8604F0FA1F6DB0056E561 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
@@ -545,6 +573,132 @@
 			remoteGlobalIDString = F3B4FA050F537EB400B0CD00;
 			remoteInfo = BerlachUGens;
 		};
+		F36C2DF51125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20D1B3A310C3530A00529A83;
+			remoteInfo = BatPVUGens;
+		};
+		F36C2DF71125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2EE70C9404DC00A3D3FD;
+			remoteInfo = MCLDUGensUB;
+		};
+		F36C2DF91125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2EFE0C94051000A3D3FD;
+			remoteInfo = BhobUGens;
+		};
+		F36C2DFB1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 373C2F0B0C94053300A3D3FD;
+			remoteInfo = JoshUGens;
+		};
+		F36C2DFD1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3D57D120B102B8A0034519F;
+			remoteInfo = BlackrainUGens;
+		};
+		F36C2E011125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3A8FA430B73DCD600296CCA;
+			remoteInfo = LoopBuf;
+		};
+		F36C2E031125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37BDA12B0C92E27000929FD5;
+			remoteInfo = TagSystemUGens;
+		};
+		F36C2E051125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3727424D0DA024ED00287F98;
+			remoteInfo = MembraneUGens;
+		};
+		F36C2E071125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F35F00AA0E34451900ACCCC6;
+			remoteInfo = RMEQSuiteUGens;
+		};
+		F36C2E0B1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46434A730EB36587008F1E42;
+			remoteInfo = SLUGens;
+		};
+		F36C2E0D1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B10AF80EBEC870001ABFAC;
+			remoteInfo = LadspaUGens;
+		};
+		F36C2E0F1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3715F60C0ECB7ADF006BC186;
+			remoteInfo = MdaUGens;
+		};
+		F36C2E111125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F359F56E0EC217590053D29C;
+			remoteInfo = BatUGens;
+		};
+		F36C2E131125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3AAAAC40ECFCE5400460E62;
+			remoteInfo = VOSIM;
+		};
+		F36C2E151125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3331AF70EFC4ADA00A32D02;
+			remoteInfo = RFWUGens;
+		};
+		F36C2E171125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46931B800F77A00A005B16C9;
+			remoteInfo = NCAnalysis;
+		};
+		F36C2E191125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B4FA050F537EB400B0CD00;
+			remoteInfo = BerlachUGens;
+		};
+		F36C2E1B1125E73F0099DB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 46931B800F77A00A005B16C9;
+			remoteInfo = NCAnalysis;
+		};
 		F3816D820F6CC75A009FEB43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -630,7 +784,7 @@
 		3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDOscUGens.cpp; sourceTree = "<group>"; };
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
-		37E8604A0FA1F5D90056E561 /* SC_fftlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SC_fftlib.h; path = ../Headers/common/SC_fftlib.h; sourceTree = SOURCE_ROOT; };
+		37E8604A0FA1F5D90056E561 /* fftlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftlib.h; path = ../common/Headers/common/fftlib.h; sourceTree = SOURCE_ROOT; };
 		37EC44AA0E78F45000090462 /* fftw3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftw3.h; path = include/fftw3.h; sourceTree = SOURCE_ROOT; };
 		37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDSOMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDSOMUGens.cpp; sourceTree = "<group>"; };
@@ -653,10 +807,10 @@
 		46931B8B0F77A00A005B16C9 /* NCAnalysisUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = NCAnalysisUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		4693B6450F78EAFA00FEEFF3 /* SMS.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SMS.cpp; path = NCAnalysis/SMS.cpp; sourceTree = "<group>"; };
 		4693B6460F78EAFA00FEEFF3 /* TPV.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TPV.cpp; path = NCAnalysis/TPV.cpp; sourceTree = "<group>"; };
-		4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SC_fftlib.cpp; path = ../Source/common/SC_fftlib.cpp; sourceTree = SOURCE_ROOT; };
+		4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SC_fftlib.cpp; path = ../common/Source/common/SC_fftlib.cpp; sourceTree = SOURCE_ROOT; };
 		4693B6560F78EEA800FEEFF3 /* NCAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCAnalysis.h; path = source/NCAnalysis/NCAnalysis.h; sourceTree = "<group>"; };
 		4693B6570F78EEA800FEEFF3 /* NCAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NCAnalysis.cpp; path = source/NCAnalysis/NCAnalysis.cpp; sourceTree = "<group>"; };
-		4693B6BC0F78F5A800FEEFF3 /* FFT_UGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FFT_UGens.cpp; path = ../Source/plugins/FFT_UGens.cpp; sourceTree = SOURCE_ROOT; };
+		4693B6BC0F78F5A800FEEFF3 /* FFT_UGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FFT_UGens.cpp; path = ../common/Source/plugins/FFT_UGens.cpp; sourceTree = SOURCE_ROOT; };
 		46F71CD910851F620067DA43 /* kaplandaub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kaplandaub.h; path = NCAnalysis/kaplandaub.h; sourceTree = "<group>"; };
 		46F71CDA10851F620067DA43 /* LPCAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LPCAnalysis.cpp; path = NCAnalysis/LPCAnalysis.cpp; sourceTree = "<group>"; };
 		46F71CDB10851F620067DA43 /* LPCAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPCAnalysis.h; path = NCAnalysis/LPCAnalysis.h; sourceTree = "<group>"; };
@@ -667,7 +821,7 @@
 		DC84A12C10A8355700D17E63 /* MCLDTreeUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDTreeUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC84A13310A8360400D17E63 /* MCLDTreeUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDTreeUGens.cpp; sourceTree = "<group>"; };
 		F318855B0B0EAAE10016AAA6 /* STKAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = STKAlloc.h; path = source/StkUGens/include/STKAlloc.h; sourceTree = SOURCE_ROOT; };
-		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
+		F3271C480C20F35C007DE8F1 /* PV_ThirdParty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PV_ThirdParty.cpp; path = ../common/Source/plugins/PV_ThirdParty.cpp; sourceTree = SOURCE_ROOT; };
 		F3331B030EFC4ADA00A32D02 /* RFWUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RFWUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RFWUGens.cpp; sourceTree = "<group>"; };
 		F33A46670B0EC50D00E05136 /* SKINI.tbl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SKINI.tbl; sourceTree = "<group>"; };
@@ -818,8 +972,8 @@
 		F3FE07630B0D76AC00A29459 /* AmbisonicUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AmbisonicUGens.cpp; sourceTree = "<group>"; };
 		F3FE07970B0D775500A29459 /* JoshPVUGensUB.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = JoshPVUGensUB.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3FE079A0B0D777E00A29459 /* JoshPVUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JoshPVUGens.cpp; sourceTree = "<group>"; };
-		F50D05D902E69B6B01CA2799 /* fftlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = fftlib.c; path = ../Source/common/fftlib.c; sourceTree = SOURCE_ROOT; };
-		F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = SCComplex.cpp; path = ../Source/plugins/SCComplex.cpp; sourceTree = SOURCE_ROOT; };
+		F50D05D902E69B6B01CA2799 /* fftlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = fftlib.c; path = ../common/Source/common/fftlib.c; sourceTree = SOURCE_ROOT; };
+		F50D05E202E69B6B01CA2799 /* SCComplex.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = SCComplex.cpp; path = ../common/Source/plugins/SCComplex.cpp; sourceTree = SOURCE_ROOT; };
 		F5499A1103A3023A01BA7E76 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
 		F5D127DE03383D340164B34C /* scUBlibsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = scUBlibsndfile.a; path = ../xtralibs/mac/scUBlibsndfile.a; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -1172,7 +1326,6 @@
 		F50D04F802E68E8201CA2799 = {
 			isa = PBXGroup;
 			children = (
-				37E8604A0FA1F5D90056E561 /* SC_fftlib.h */,
 				F50D054502E69B6B01CA2799 /* include */,
 				F50D057E02E69B6B01CA2799 /* source */,
 				F50D060302E69C2101CA2799 /* Products */,
@@ -1186,6 +1339,7 @@
 		F50D054502E69B6B01CA2799 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				37E8604A0FA1F5D90056E561 /* fftlib.h */,
 				F3B4FA140F537EE200B0CD00 /* Oversamp.h */,
 				F3B4FA150F537EE200B0CD00 /* sinctab.h */,
 				37EC44AA0E78F45000090462 /* fftw3.h */,
@@ -1747,7 +1901,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E8604B0FA1F5D90056E561 /* SC_fftlib.h in Headers */,
+				37E8604B0FA1F5D90056E561 /* fftlib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2606,6 +2760,7 @@
 			projectRoot = "";
 			targets = (
 				631417A30A203392007B9355 /* All */,
+				F36C2DF31125E73F0099DB2B /* All32-64 */,
 				373C2EFE0C94051000A3D3FD /* BhobUGens */,
 				F37FF64B0B86A534006B0AA3 /* BhobChaos */,
 				F37FF7A10B86BD4E006B0AA3 /* BhobFFT */,
@@ -3804,6 +3959,96 @@
 			target = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
 			targetProxy = F303893A0F5469C4009EC952 /* PBXContainerItemProxy */;
 		};
+		F36C2DF41125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 20D1B3A310C3530A00529A83 /* BatPVUGens */;
+			targetProxy = F36C2DF51125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2DF61125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2EE70C9404DC00A3D3FD /* MCLDUGens */;
+			targetProxy = F36C2DF71125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2DF81125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2EFE0C94051000A3D3FD /* BhobUGens */;
+			targetProxy = F36C2DF91125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2DFA1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 373C2F0B0C94053300A3D3FD /* JoshUGens */;
+			targetProxy = F36C2DFB1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2DFC1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3D57D120B102B8A0034519F /* BlackrainUGens */;
+			targetProxy = F36C2DFD1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E001125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3A8FA430B73DCD600296CCA /* LoopBuf */;
+			targetProxy = F36C2E011125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E021125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37BDA12B0C92E27000929FD5 /* TagSystemUGens */;
+			targetProxy = F36C2E031125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E041125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3727424D0DA024ED00287F98 /* MembraneUGens */;
+			targetProxy = F36C2E051125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E061125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F35F00AA0E34451900ACCCC6 /* RMEQSuiteUGens */;
+			targetProxy = F36C2E071125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E0A1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46434A730EB36587008F1E42 /* SLUGens */;
+			targetProxy = F36C2E0B1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E0C1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3B10AF80EBEC870001ABFAC /* LadspaUGens */;
+			targetProxy = F36C2E0D1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E0E1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3715F60C0ECB7ADF006BC186 /* MdaUGens */;
+			targetProxy = F36C2E0F1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E101125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F359F56E0EC217590053D29C /* BatUGens */;
+			targetProxy = F36C2E111125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E121125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3AAAAC40ECFCE5400460E62 /* VOSIM */;
+			targetProxy = F36C2E131125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E141125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3331AF70EFC4ADA00A32D02 /* RFWUGens */;
+			targetProxy = F36C2E151125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E161125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46931B800F77A00A005B16C9 /* NCAnalysis */;
+			targetProxy = F36C2E171125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E181125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3B4FA050F537EB400B0CD00 /* BerlachUGens */;
+			targetProxy = F36C2E191125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
+		F36C2E1A1125E73F0099DB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 46931B800F77A00A005B16C9 /* NCAnalysis */;
+			targetProxy = F36C2E1B1125E73F0099DB2B /* PBXContainerItemProxy */;
+		};
 		F3816D830F6CC75A009FEB43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 37BDA12B0C92E27000929FD5 /* TagSystemUGens */;
@@ -3867,6 +4112,7 @@
 				PRODUCT_NAME = BatPVUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -3899,6 +4145,7 @@
 				PRODUCT_NAME = BatPVUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -3930,6 +4177,7 @@
 				PRODUCT_NAME = BatPVUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -3964,6 +4212,7 @@
 				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -3996,6 +4245,7 @@
 				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4027,6 +4277,7 @@
 				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4061,6 +4312,7 @@
 				PRODUCT_NAME = MCLDDistortionUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4093,6 +4345,7 @@
 				PRODUCT_NAME = MCLDDistortionUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4124,6 +4377,7 @@
 				PRODUCT_NAME = MCLDDistortionUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4158,6 +4412,7 @@
 				PRODUCT_NAME = MCLDFilterUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4190,6 +4445,7 @@
 				PRODUCT_NAME = MCLDFilterUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4221,6 +4477,7 @@
 				PRODUCT_NAME = MCLDFilterUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4255,6 +4512,7 @@
 				PRODUCT_NAME = MCLDAYUGen;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4287,6 +4545,7 @@
 				PRODUCT_NAME = MCLDAYUGen;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4318,6 +4577,7 @@
 				PRODUCT_NAME = MCLDAYUGen;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4352,6 +4612,7 @@
 				PRODUCT_NAME = MdaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4384,6 +4645,7 @@
 				PRODUCT_NAME = MdaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4415,6 +4677,7 @@
 				PRODUCT_NAME = MdaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4449,6 +4712,7 @@
 				PRODUCT_NAME = MembraneUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4481,6 +4745,7 @@
 				PRODUCT_NAME = MembraneUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4512,6 +4777,7 @@
 				PRODUCT_NAME = MembraneUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4546,6 +4812,7 @@
 				PRODUCT_NAME = MCLDGetenvUGenUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4578,6 +4845,7 @@
 				PRODUCT_NAME = MCLDGetenvUGenUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4609,6 +4877,7 @@
 				PRODUCT_NAME = MCLDGetenvUGenUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4730,6 +4999,7 @@
 				PRODUCT_NAME = MCLDOscUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4762,6 +5032,7 @@
 				PRODUCT_NAME = MCLDOscUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4793,6 +5064,7 @@
 				PRODUCT_NAME = MCLDOscUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4827,6 +5099,7 @@
 				PRODUCT_NAME = TagSystemUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4859,6 +5132,7 @@
 				PRODUCT_NAME = TagSystemUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4890,6 +5164,7 @@
 				PRODUCT_NAME = TagSystemUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4924,6 +5199,7 @@
 				PRODUCT_NAME = MCLDSOMUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4956,6 +5232,7 @@
 				PRODUCT_NAME = MCLDSOMUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -4987,6 +5264,7 @@
 				PRODUCT_NAME = MCLDSOMUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5021,6 +5299,7 @@
 				PRODUCT_NAME = MLfftwUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5053,6 +5332,7 @@
 				PRODUCT_NAME = MLfftwUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5084,6 +5364,7 @@
 				PRODUCT_NAME = MLfftwUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5118,6 +5399,7 @@
 				PRODUCT_NAME = SLUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5150,6 +5432,7 @@
 				PRODUCT_NAME = SLUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5181,6 +5464,7 @@
 				PRODUCT_NAME = SLUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5215,6 +5499,7 @@
 				PRODUCT_NAME = NCAnalysisUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5247,6 +5532,7 @@
 				PRODUCT_NAME = NCAnalysisUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5278,6 +5564,7 @@
 				PRODUCT_NAME = NCAnalysisUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5412,6 +5699,7 @@
 				PRODUCT_NAME = MCLDTreeUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5444,6 +5732,7 @@
 				PRODUCT_NAME = MCLDTreeUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5475,6 +5764,7 @@
 				PRODUCT_NAME = MCLDTreeUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5509,6 +5799,7 @@
 				PRODUCT_NAME = RFWUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5541,6 +5832,7 @@
 				PRODUCT_NAME = RFWUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5572,6 +5864,7 @@
 				PRODUCT_NAME = RFWUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5607,6 +5900,7 @@
 				PRODUCT_NAME = STKUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5640,6 +5934,7 @@
 				PRODUCT_NAME = STKUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5672,6 +5967,7 @@
 				PRODUCT_NAME = STKUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5706,6 +6002,7 @@
 				PRODUCT_NAME = BatUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5738,6 +6035,7 @@
 				PRODUCT_NAME = BatUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5769,6 +6067,7 @@
 				PRODUCT_NAME = BatUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5803,6 +6102,7 @@
 				PRODUCT_NAME = RMEQSuiteUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5835,6 +6135,7 @@
 				PRODUCT_NAME = RMEQSuiteUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5866,12 +6167,1575 @@
 				PRODUCT_NAME = RMEQSuiteUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
 				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		F36C2DC51125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				LIBRARY_SEARCH_PATHS = "";
+				OBJROOT = "";
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../Headers/plugin_interface ../Headers/common ../Headers/server ../Source/plugins ../xtralibs/include/libsndfile";
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DC61125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DC71125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = BhobUGens;
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DC81125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BhobChaos;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DC91125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BhobFFT;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCA1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BhobFilt;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCB1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BhobGrain;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCC1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BhobNoise;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCD1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = JoshUGens;
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCE1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DCF1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshGrainUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD01125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshAmbiUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD11125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = JoshPVUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD21125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = MCLDUGensUB;
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD31125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDGetenvUGenUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD41125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDTriggeredStatsUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD51125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDSOMUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD61125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDDistortionUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD71125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFilterUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD81125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDAYUGen;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DD91125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDBufferUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDA1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLD_CQ_UgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDB1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDChaosUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDC1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFFTTriggerUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDD1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDFFTUgensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDE1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BlackrainUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DDF1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = AmbisonicUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE01125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = STKUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE11125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = LoopBuf;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE21125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = TagSystemUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE31125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MembraneUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE41125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = RMEQSuiteUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE51125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GCC_VERSION = 4.2;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = lib/libfftw3f.a;
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MLfftwUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE61125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDOscUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE71125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = NCAnalysisUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE81125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SLUGensUB;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DE91125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = LadspaUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DEA1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MdaUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DEB1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BatUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DEC1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = VOSIM;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DED1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = RFWUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DEE1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BerlachUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DEF1125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDTreeUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2DF01125E5D10099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = BatPVUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2E1D1125E73F0099DB2B /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OPTIMIZATION_CFLAGS = "-O0 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		F36C2E1E1125E73F0099DB2B /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		F36C2E1F1125E73F0099DB2B /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+					x86_64,
+				);
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OPTIMIZATION_CFLAGS = "-O3 -faltivec";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		F36C2E201125E73F0099DB2B /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "SC_Synth PlugIns";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
 			};
 			name = Default;
 		};
@@ -5900,6 +7764,7 @@
 				PRODUCT_NAME = JoshGrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5932,6 +7797,7 @@
 				PRODUCT_NAME = JoshGrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5963,6 +7829,7 @@
 				PRODUCT_NAME = JoshGrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -5997,6 +7864,7 @@
 				PRODUCT_NAME = JoshAmbiUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6029,6 +7897,7 @@
 				PRODUCT_NAME = JoshAmbiUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6060,6 +7929,7 @@
 				PRODUCT_NAME = JoshAmbiUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6072,6 +7942,10 @@
 		F37FF6540B86A534006B0AA3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = "";
@@ -6094,6 +7968,7 @@
 				PRODUCT_NAME = BhobChaos;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6126,6 +8001,7 @@
 				PRODUCT_NAME = BhobChaos;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6157,6 +8033,7 @@
 				PRODUCT_NAME = BhobChaos;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6191,6 +8068,7 @@
 				PRODUCT_NAME = BhobFFT;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6223,6 +8101,7 @@
 				PRODUCT_NAME = BhobFFT;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6254,6 +8133,7 @@
 				PRODUCT_NAME = BhobFFT;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6288,6 +8168,7 @@
 				PRODUCT_NAME = BhobFilt;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6320,6 +8201,7 @@
 				PRODUCT_NAME = BhobFilt;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6351,6 +8233,7 @@
 				PRODUCT_NAME = BhobFilt;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6385,6 +8268,7 @@
 				PRODUCT_NAME = BhobGrain;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6417,6 +8301,7 @@
 				PRODUCT_NAME = BhobGrain;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6448,6 +8333,7 @@
 				PRODUCT_NAME = BhobGrain;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6482,6 +8368,7 @@
 				PRODUCT_NAME = BhobNoise;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6514,6 +8401,7 @@
 				PRODUCT_NAME = BhobNoise;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6545,6 +8433,7 @@
 				PRODUCT_NAME = BhobNoise;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6579,6 +8468,7 @@
 				PRODUCT_NAME = MCLDFFTTriggerUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6611,6 +8501,7 @@
 				PRODUCT_NAME = MCLDFFTTriggerUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6642,6 +8533,7 @@
 				PRODUCT_NAME = MCLDFFTTriggerUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6676,6 +8568,7 @@
 				PRODUCT_NAME = MCLDBufferUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6708,6 +8601,7 @@
 				PRODUCT_NAME = MCLDBufferUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6739,6 +8633,7 @@
 				PRODUCT_NAME = MCLDBufferUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6773,6 +8668,7 @@
 				PRODUCT_NAME = MCLD_CQ_UgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6805,6 +8701,7 @@
 				PRODUCT_NAME = MCLD_CQ_UgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6836,6 +8733,7 @@
 				PRODUCT_NAME = MCLD_CQ_UgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6870,6 +8768,7 @@
 				PRODUCT_NAME = MCLDChaosUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6902,6 +8801,7 @@
 				PRODUCT_NAME = MCLDChaosUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6933,6 +8833,7 @@
 				PRODUCT_NAME = MCLDChaosUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6967,6 +8868,7 @@
 				PRODUCT_NAME = MCLDFFTUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -6999,6 +8901,7 @@
 				PRODUCT_NAME = MCLDFFTUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7030,6 +8933,7 @@
 				PRODUCT_NAME = MCLDFFTUgensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7064,6 +8968,7 @@
 				PRODUCT_NAME = LoopBuf;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7096,6 +9001,7 @@
 				PRODUCT_NAME = LoopBuf;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7127,6 +9033,7 @@
 				PRODUCT_NAME = LoopBuf;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7161,6 +9068,7 @@
 				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7193,6 +9101,7 @@
 				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7224,6 +9133,7 @@
 				PRODUCT_NAME = VOSIM;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7258,6 +9168,7 @@
 				PRODUCT_NAME = LadspaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7290,6 +9201,7 @@
 				PRODUCT_NAME = LadspaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7321,6 +9233,7 @@
 				PRODUCT_NAME = LadspaUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7355,6 +9268,7 @@
 				PRODUCT_NAME = BerlachUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7387,6 +9301,7 @@
 				PRODUCT_NAME = BerlachUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7418,6 +9333,7 @@
 				PRODUCT_NAME = BerlachUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7452,6 +9368,7 @@
 				PRODUCT_NAME = BlackrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7484,6 +9401,7 @@
 				PRODUCT_NAME = BlackrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7515,6 +9433,7 @@
 				PRODUCT_NAME = BlackrainUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7549,6 +9468,7 @@
 				PRODUCT_NAME = JoshUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7581,6 +9501,7 @@
 				PRODUCT_NAME = JoshUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7612,6 +9533,7 @@
 				PRODUCT_NAME = JoshUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7743,6 +9665,7 @@
 				PRODUCT_NAME = JoshPVUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7775,6 +9698,7 @@
 				PRODUCT_NAME = JoshPVUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7806,6 +9730,7 @@
 				PRODUCT_NAME = JoshPVUGensUB;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -7823,6 +9748,7 @@
 			buildConfigurations = (
 				20D1B3AC10C3530A00529A83 /* Development */,
 				20D1B3AD10C3530A00529A83 /* Deployment */,
+				F36C2DF01125E5D10099DB2B /* Deployment32-64 */,
 				20D1B3AE10C3530A00529A83 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7833,6 +9759,7 @@
 			buildConfigurations = (
 				37046F980CF084B500254768 /* Development */,
 				37046F990CF084B500254768 /* Deployment */,
+				F36C2DD41125E5D10099DB2B /* Deployment32-64 */,
 				37046F9A0CF084B500254768 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7843,6 +9770,7 @@
 			buildConfigurations = (
 				370E4C9F0C92DA53000AE1EF /* Development */,
 				370E4CA00C92DA53000AE1EF /* Deployment */,
+				F36C2DD61125E5D10099DB2B /* Deployment32-64 */,
 				370E4CA10C92DA53000AE1EF /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7853,6 +9781,7 @@
 			buildConfigurations = (
 				370E4CCD0C92DB65000AE1EF /* Development */,
 				370E4CCE0C92DB65000AE1EF /* Deployment */,
+				F36C2DD71125E5D10099DB2B /* Deployment32-64 */,
 				370E4CCF0C92DB65000AE1EF /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7863,6 +9792,7 @@
 			buildConfigurations = (
 				370E4D0C0C92DE86000AE1EF /* Development */,
 				370E4D0D0C92DE86000AE1EF /* Deployment */,
+				F36C2DD81125E5D10099DB2B /* Deployment32-64 */,
 				370E4D0E0C92DE86000AE1EF /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7873,6 +9803,7 @@
 			buildConfigurations = (
 				3715F6140ECB7ADF006BC186 /* Development */,
 				3715F6150ECB7ADF006BC186 /* Deployment */,
+				F36C2DEA1125E5D10099DB2B /* Deployment32-64 */,
 				3715F6160ECB7ADF006BC186 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7883,6 +9814,7 @@
 			buildConfigurations = (
 				372742550DA024ED00287F98 /* Development */,
 				372742560DA024ED00287F98 /* Deployment */,
+				F36C2DE31125E5D10099DB2B /* Deployment32-64 */,
 				372742570DA024ED00287F98 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7893,6 +9825,7 @@
 			buildConfigurations = (
 				373C2EDD0C94048F00A3D3FD /* Development */,
 				373C2EDE0C94048F00A3D3FD /* Deployment */,
+				F36C2DD31125E5D10099DB2B /* Deployment32-64 */,
 				373C2EDF0C94048F00A3D3FD /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7903,6 +9836,7 @@
 			buildConfigurations = (
 				373C2F190C94059100A3D3FD /* Development */,
 				373C2F1A0C94059100A3D3FD /* Deployment */,
+				F36C2DD21125E5D10099DB2B /* Deployment32-64 */,
 				373C2F1B0C94059100A3D3FD /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7913,6 +9847,7 @@
 			buildConfigurations = (
 				373C2F1D0C94059100A3D3FD /* Development */,
 				373C2F1E0C94059100A3D3FD /* Deployment */,
+				F36C2DC71125E5D10099DB2B /* Deployment32-64 */,
 				373C2F1F0C94059100A3D3FD /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7923,6 +9858,7 @@
 			buildConfigurations = (
 				373C2F210C94059100A3D3FD /* Development */,
 				373C2F220C94059100A3D3FD /* Deployment */,
+				F36C2DCD1125E5D10099DB2B /* Deployment32-64 */,
 				373C2F230C94059100A3D3FD /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7933,6 +9869,7 @@
 			buildConfigurations = (
 				3751D6B30E8C1F6300B5AC2F /* Development */,
 				3751D6B40E8C1F6300B5AC2F /* Deployment */,
+				F36C2DE61125E5D10099DB2B /* Deployment32-64 */,
 				3751D6B50E8C1F6300B5AC2F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7943,6 +9880,7 @@
 			buildConfigurations = (
 				37BDA1330C92E27000929FD5 /* Development */,
 				37BDA1340C92E27000929FD5 /* Deployment */,
+				F36C2DE21125E5D10099DB2B /* Deployment32-64 */,
 				37BDA1350C92E27000929FD5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7953,6 +9891,7 @@
 			buildConfigurations = (
 				37FEEC060D9AA7630043C418 /* Development */,
 				37FEEC070D9AA7630043C418 /* Deployment */,
+				F36C2DD51125E5D10099DB2B /* Deployment32-64 */,
 				37FEEC080D9AA7630043C418 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7963,6 +9902,7 @@
 			buildConfigurations = (
 				460300780E6F42EC00ABDB31 /* Development */,
 				460300790E6F42EC00ABDB31 /* Deployment */,
+				F36C2DE51125E5D10099DB2B /* Deployment32-64 */,
 				4603007A0E6F42EC00ABDB31 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7973,6 +9913,7 @@
 			buildConfigurations = (
 				46434A7B0EB36587008F1E42 /* Development */,
 				46434A7C0EB36587008F1E42 /* Deployment */,
+				F36C2DE81125E5D10099DB2B /* Deployment32-64 */,
 				46434A7D0EB36587008F1E42 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7983,6 +9924,7 @@
 			buildConfigurations = (
 				46931B880F77A00A005B16C9 /* Development */,
 				46931B890F77A00A005B16C9 /* Deployment */,
+				F36C2DE71125E5D10099DB2B /* Deployment32-64 */,
 				46931B8A0F77A00A005B16C9 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -7993,6 +9935,7 @@
 			buildConfigurations = (
 				631417CD0A203392007B9355 /* Development */,
 				631417CE0A203392007B9355 /* Deployment */,
+				F36C2DC61125E5D10099DB2B /* Deployment32-64 */,
 				631417CF0A203392007B9355 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8003,6 +9946,7 @@
 			buildConfigurations = (
 				88332413090ABD1F00A4A7E4 /* Development */,
 				88332414090ABD1F00A4A7E4 /* Deployment */,
+				F36C2DC51125E5D10099DB2B /* Deployment32-64 */,
 				88332415090ABD1F00A4A7E4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8013,6 +9957,7 @@
 			buildConfigurations = (
 				DC84A12910A8355700D17E63 /* Development */,
 				DC84A12A10A8355700D17E63 /* Deployment */,
+				F36C2DEF1125E5D10099DB2B /* Deployment32-64 */,
 				DC84A12B10A8355700D17E63 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8023,6 +9968,7 @@
 			buildConfigurations = (
 				F3331B000EFC4ADA00A32D02 /* Development */,
 				F3331B010EFC4ADA00A32D02 /* Deployment */,
+				F36C2DED1125E5D10099DB2B /* Deployment32-64 */,
 				F3331B020EFC4ADA00A32D02 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8033,6 +9979,7 @@
 			buildConfigurations = (
 				F3564BDF0B0E82A4008AFA51 /* Development */,
 				F3564BE00B0E82A4008AFA51 /* Deployment */,
+				F36C2DE01125E5D10099DB2B /* Deployment32-64 */,
 				F3564BE10B0E82A4008AFA51 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8043,6 +9990,7 @@
 			buildConfigurations = (
 				F359F5770EC217590053D29C /* Development */,
 				F359F5780EC217590053D29C /* Deployment */,
+				F36C2DEB1125E5D10099DB2B /* Deployment32-64 */,
 				F359F5790EC217590053D29C /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8053,7 +10001,19 @@
 			buildConfigurations = (
 				F35F00B30E34451900ACCCC6 /* Development */,
 				F35F00B40E34451900ACCCC6 /* Deployment */,
+				F36C2DE41125E5D10099DB2B /* Deployment32-64 */,
 				F35F00B50E34451900ACCCC6 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		F36C2E1C1125E73F0099DB2B /* Build configuration list for PBXAggregateTarget "All32-64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F36C2E1D1125E73F0099DB2B /* Development */,
+				F36C2E1E1125E73F0099DB2B /* Deployment */,
+				F36C2E1F1125E73F0099DB2B /* Deployment32-64 */,
+				F36C2E201125E73F0099DB2B /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
@@ -8063,6 +10023,7 @@
 			buildConfigurations = (
 				F36FC3F20C936C0E0055E368 /* Development */,
 				F36FC3F30C936C0E0055E368 /* Deployment */,
+				F36C2DCF1125E5D10099DB2B /* Deployment32-64 */,
 				F36FC3F40C936C0E0055E368 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8073,6 +10034,7 @@
 			buildConfigurations = (
 				F36FC4010C936C2D0055E368 /* Development */,
 				F36FC4020C936C2D0055E368 /* Deployment */,
+				F36C2DD01125E5D10099DB2B /* Deployment32-64 */,
 				F36FC4030C936C2D0055E368 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8083,6 +10045,7 @@
 			buildConfigurations = (
 				F37FF6540B86A534006B0AA3 /* Development */,
 				F37FF6550B86A534006B0AA3 /* Deployment */,
+				F36C2DC81125E5D10099DB2B /* Deployment32-64 */,
 				F37FF6560B86A534006B0AA3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8093,6 +10056,7 @@
 			buildConfigurations = (
 				F37FF7B30B86BD4E006B0AA3 /* Development */,
 				F37FF7B40B86BD4E006B0AA3 /* Deployment */,
+				F36C2DC91125E5D10099DB2B /* Deployment32-64 */,
 				F37FF7B50B86BD4E006B0AA3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8103,6 +10067,7 @@
 			buildConfigurations = (
 				F37FF7D60B86BE28006B0AA3 /* Development */,
 				F37FF7D70B86BE28006B0AA3 /* Deployment */,
+				F36C2DCA1125E5D10099DB2B /* Deployment32-64 */,
 				F37FF7D80B86BE28006B0AA3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8113,6 +10078,7 @@
 			buildConfigurations = (
 				F37FF7E90B86BE6C006B0AA3 /* Development */,
 				F37FF7EA0B86BE6C006B0AA3 /* Deployment */,
+				F36C2DCB1125E5D10099DB2B /* Deployment32-64 */,
 				F37FF7EB0B86BE6C006B0AA3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8123,6 +10089,7 @@
 			buildConfigurations = (
 				F37FF7FA0B86BEA6006B0AA3 /* Development */,
 				F37FF7FB0B86BEA6006B0AA3 /* Deployment */,
+				F36C2DCC1125E5D10099DB2B /* Deployment32-64 */,
 				F37FF7FC0B86BEA6006B0AA3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8133,6 +10100,7 @@
 			buildConfigurations = (
 				F3A15C730B5D6D2D00D75043 /* Development */,
 				F3A15C740B5D6D2D00D75043 /* Deployment */,
+				F36C2DDC1125E5D10099DB2B /* Deployment32-64 */,
 				F3A15C750B5D6D2D00D75043 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8143,6 +10111,7 @@
 			buildConfigurations = (
 				F3A15CCD0B5D89BE00D75043 /* Development */,
 				F3A15CCE0B5D89BE00D75043 /* Deployment */,
+				F36C2DD91125E5D10099DB2B /* Deployment32-64 */,
 				F3A15CCF0B5D89BE00D75043 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8153,6 +10122,7 @@
 			buildConfigurations = (
 				F3A15CDF0B5D8B0600D75043 /* Development */,
 				F3A15CE00B5D8B0600D75043 /* Deployment */,
+				F36C2DDA1125E5D10099DB2B /* Deployment32-64 */,
 				F3A15CE10B5D8B0600D75043 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8163,6 +10133,7 @@
 			buildConfigurations = (
 				F3A15CF20B5D8B6D00D75043 /* Development */,
 				F3A15CF30B5D8B6D00D75043 /* Deployment */,
+				F36C2DDB1125E5D10099DB2B /* Deployment32-64 */,
 				F3A15CF40B5D8B6D00D75043 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8173,6 +10144,7 @@
 			buildConfigurations = (
 				F3A15D120B5D8C3900D75043 /* Development */,
 				F3A15D130B5D8C3900D75043 /* Deployment */,
+				F36C2DDD1125E5D10099DB2B /* Deployment32-64 */,
 				F3A15D140B5D8C3900D75043 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8183,6 +10155,7 @@
 			buildConfigurations = (
 				F3A8FA4C0B73DCD600296CCA /* Development */,
 				F3A8FA4D0B73DCD600296CCA /* Deployment */,
+				F36C2DE11125E5D10099DB2B /* Deployment32-64 */,
 				F3A8FA4E0B73DCD600296CCA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8193,6 +10166,7 @@
 			buildConfigurations = (
 				F3AAAACD0ECFCE5400460E62 /* Development */,
 				F3AAAACE0ECFCE5400460E62 /* Deployment */,
+				F36C2DEC1125E5D10099DB2B /* Deployment32-64 */,
 				F3AAAACF0ECFCE5400460E62 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8203,6 +10177,7 @@
 			buildConfigurations = (
 				F3B10B010EBEC870001ABFAC /* Development */,
 				F3B10B020EBEC870001ABFAC /* Deployment */,
+				F36C2DE91125E5D10099DB2B /* Deployment32-64 */,
 				F3B10B030EBEC870001ABFAC /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8213,6 +10188,7 @@
 			buildConfigurations = (
 				F3B4FA0E0F537EB400B0CD00 /* Development */,
 				F3B4FA0F0F537EB400B0CD00 /* Deployment */,
+				F36C2DEE1125E5D10099DB2B /* Deployment32-64 */,
 				F3B4FA100F537EB400B0CD00 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8223,6 +10199,7 @@
 			buildConfigurations = (
 				F3D57D1D0B102B8A0034519F /* Development */,
 				F3D57D1E0B102B8A0034519F /* Deployment */,
+				F36C2DDE1125E5D10099DB2B /* Deployment32-64 */,
 				F3D57D1F0B102B8A0034519F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8233,6 +10210,7 @@
 			buildConfigurations = (
 				F3FE07330B0D759000A29459 /* Development */,
 				F3FE07340B0D759000A29459 /* Deployment */,
+				F36C2DCE1125E5D10099DB2B /* Deployment32-64 */,
 				F3FE07350B0D759000A29459 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8243,6 +10221,7 @@
 			buildConfigurations = (
 				F3FE075D0B0D767000A29459 /* Development */,
 				F3FE075E0B0D767000A29459 /* Deployment */,
+				F36C2DDF1125E5D10099DB2B /* Deployment32-64 */,
 				F3FE075F0B0D767000A29459 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8253,6 +10232,7 @@
 			buildConfigurations = (
 				F3FE07940B0D775500A29459 /* Development */,
 				F3FE07950B0D775500A29459 /* Deployment */,
+				F36C2DD11125E5D10099DB2B /* Deployment32-64 */,
 				F3FE07960B0D775500A29459 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;

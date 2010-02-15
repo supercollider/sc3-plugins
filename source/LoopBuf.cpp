@@ -44,7 +44,7 @@ extern "C"
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 {
 	// 4-point, 3rd-order Hermite (x-form)
@@ -99,7 +99,7 @@ static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 //	return (0.5f * result) + y1;
 
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 //inline double sc_loop(Unit *unit, double in, double hi, int loop) 

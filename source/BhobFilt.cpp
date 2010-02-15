@@ -245,7 +245,7 @@ extern "C"
 	unit->m_dt1=ZIN0(2); \
 	unit->m_dt2=ZIN0(5); \
 	unit->m_dt3=ZIN0(8); \
-	
+/*	
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 {
 	float c0 = y1;
@@ -255,7 +255,7 @@ static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 
 	return ((c3 * x + c2) * x + c1) * x + c0;
 }
-
+*/
 float CalcDelay(FilterDelayUnit *unit, float delaytime);
 float CalcDelay(FilterDelayUnit *unit, float delaytime)
 {

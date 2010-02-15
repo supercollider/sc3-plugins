@@ -65,7 +65,7 @@ extern "C"
 	void TGrains3_next(TGrains3 *unit, int inNumSamples);
 	void TGrains3_Ctor(TGrains3* unit);
 };
-
+/*
 static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 {
 	float c0 = y1;
@@ -75,7 +75,7 @@ static float cubicinterp(float x, float y0, float y1, float y2, float y3)
 
 	return ((c3 * x + c2) * x + c1) * x + c0;
 }
-
+*/
 #define GRAIN_BUF \
 	SndBuf *buf = bufs + bufnum; \
 	float *bufData __attribute__((__unused__)) = buf->data; \
