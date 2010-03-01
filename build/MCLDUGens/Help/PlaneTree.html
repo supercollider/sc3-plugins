@@ -9,17 +9,17 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad140d}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-span.s1 {color: #0000bf}
-span.s2 {color: #0000ff}
-span.s3 {color: #606060}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {color: #001bb9}
+span.s2 {color: #0024f8}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -31,67 +31,69 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>// Language-side:</b></p>
 <p class="p4"><span class="s1"><b>PlaneTree</b></span><b>.classify(point, treedata)</b></p>
 <p class="p2"><br></p>
-<p class="p5">Given a specially-formatted dataset representing a hyperplane-based binary tree classifier, this unit classifies incoming data points. It can handle any dimensionality of data (the dimensionality of the incoming data points needs to match that of the tree) and can branch to arbitrary depths including some branches being deeper than others.</p>
+<p class="p4">Given a specially-formatted dataset representing a hyperplane-based binary tree classifier, this unit classifies incoming data points. It can handle any dimensionality of data (the dimensionality of the incoming data points needs to match that of the tree) and can branch to arbitrary depths including some branches being deeper than others.</p>
 <p class="p2"><br></p>
-<p class="p5"><span class="Apple-converted-space"> </span>- <b>treebuf</b> - a multichannel <a href="SC://Buffer"><span class="s2">Buffer</span></a> holding data in the special tree representation. The required data format is described near the bottom of this document.</p>
-<p class="p5"><span class="Apple-converted-space"> </span>- <b>in</b> - the input signal to be classified (typically a multichannel signal).</p>
-<p class="p5"><span class="Apple-converted-space"> </span>- <b>gate</b> - on or off. While gate&gt;0, classification is performed; otherwise the previous value is held constant.</p>
+<p class="p4"><span class="Apple-converted-space"> </span>- <b>treebuf</b> - a multichannel <a href="SC://Buffer"><span class="s2">Buffer</span></a> holding data in the special tree representation. The required data format is described near the bottom of this document.</p>
+<p class="p4"><span class="Apple-converted-space"> </span>- <b>in</b> - the input signal to be classified (typically a multichannel signal).</p>
+<p class="p4"><span class="Apple-converted-space"> </span>- <b>gate</b> - on or off. While gate&gt;0, classification is performed; otherwise the previous value is held constant.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-converted-space"> </span>The language-side version actually returns two numbers for each result. The first is the value stored in the leaf node (e.g. some user-specified value) and the second is an integer giving a binary representation of the path through the tree (for example: 9 in binary is 1001 – the first 1 always represents the root of the tree, then the remaining digits indicate you go left-left-right).</p>
 <p class="p2"><br></p>
-<p class="p5"><b>Example</b></p>
+<p class="p4"><b>Example</b></p>
 <p class="p2"><br></p>
-<p class="p5">This simple example splits 2D data into four classes:</p>
-<p class="p2"><br></p>
+<p class="p4">This simple example splits 2D data into four classes:</p>
+<p class="p5"><br></p>
 <p class="p6">(</p>
 <p class="p7">// Three nodes in this data. First is always the root.</p>
 <p class="p7">// So the first is applied to decide whether to branch down to the second or third.</p>
 <p class="p7">// Then those nodes decide whether to classify the datum as 1/2/3/4.</p>
-<p class="p8">~treedata = [</p>
+<p class="p6">~treedata = [</p>
 <p class="p7">/* xoff,yoff, xvec,yvec, lisl, lidx, risl, ridx */</p>
-<p class="p8"><span class="Apple-converted-space">   </span>[0.5, 0.5, -0.7, 0.4,<span class="Apple-converted-space">    </span>0,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>0,<span class="Apple-converted-space">    </span>2],</p>
-<p class="p8"><span class="Apple-converted-space">   </span>[0.3, 0.7,<span class="Apple-converted-space">  </span>0.4, 0.7,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>2],</p>
-<p class="p8"><span class="Apple-converted-space">   </span>[0.5, 0.2, -0.8,-0.8,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>3,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>4]</p>
-<p class="p8">];</p>
+<p class="p6"><span class="Apple-converted-space">   </span>[0.5, 0.5, -0.7, 0.4,<span class="Apple-converted-space">    </span>0,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>0,<span class="Apple-converted-space">    </span>2],</p>
+<p class="p6"><span class="Apple-converted-space">   </span>[0.3, 0.7,<span class="Apple-converted-space">  </span>0.4, 0.7,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>2],</p>
+<p class="p6"><span class="Apple-converted-space">   </span>[0.5, 0.2, -0.8,-0.8,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>3,<span class="Apple-converted-space">    </span>1,<span class="Apple-converted-space">    </span>4]</p>
+<p class="p6">];</p>
 <p class="p6">)</p>
-<p class="p9"><br></p>
+<p class="p8"><br></p>
 <p class="p7">// Now to demonstrate language-side classification, we'll iterate over a grid and classify:</p>
-<p class="p8">(</p>
-<p class="p8">(0, 0.1 .. 1).collect{<span class="s1">|y|</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span>(0, 0.1 .. 1).collect{<span class="s1">|x|</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">PlaneTree</span>.classify([x,y], ~treedata)</p>
-<p class="p8"><span class="Apple-tab-span">	</span>}</p>
-<p class="p8">}.do(<span class="s1">_</span>.postln);<span class="s3">""</span></p>
-<p class="p8">)</p>
-<p class="p10"><br></p>
+<p class="p6">(</p>
+<p class="p6">(0, 0.1 .. 1).collect{<span class="s3">|y|</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>(0, 0.1 .. 1).collect{<span class="s3">|x|</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">PlaneTree</span>.classify([x,y], ~treedata)[0]</p>
+<p class="p6"><span class="Apple-tab-span">	</span>}</p>
+<p class="p6">}.do(<span class="s3">_</span>.postln);<span class="s4">""</span></p>
+<p class="p6">)</p>
+<p class="p8"><br></p>
 <p class="p7">// Server-side: run this then move the mouse left/right/up/down - classification should follow same pattern.</p>
-<p class="p8">s.boot;</p>
-<p class="p8">~treebuf = <span class="s1">Buffer</span>.loadCollection(s, ~treedata.flat, ~treedata[0].size);</p>
-<p class="p8">(</p>
-<p class="p8">x = {</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">PlaneTree</span>.kr(~treebuf, [<span class="s1">MouseX</span>.kr(0,1), <span class="s1">MouseY</span>.kr(0,1)]).poll</p>
-<p class="p8">}.play</p>
-<p class="p8">)</p>
-<p class="p8">x.free;</p>
+<p class="p6">s.boot;</p>
+<p class="p6">~treebuf = <span class="s3">Buffer</span>.loadCollection(s, ~treedata.flat, ~treedata[0].size);</p>
+<p class="p6">(</p>
+<p class="p6">x = {</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">PlaneTree</span>.kr(~treebuf, [<span class="s3">MouseX</span>.kr(0,1), <span class="s3">MouseY</span>.kr(0,1)]).poll</p>
+<p class="p6">}.play</p>
+<p class="p6">)</p>
+<p class="p6">x.free;</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
-<p class="p5"><b>Data format</b></p>
+<p class="p4"><b>Data format</b></p>
 <p class="p2"><br></p>
-<p class="p5">Each node in the tree is represented by a multichannel frame in a buffer (or in the language-side representation, by an array in an array). The first node must be the root node and is where classification begins. Each node consists of data defining the hyperplane used for splitting, and then flags indicating whether the split data should recurse further to a different node or whether a numeric classification result is to be returned. More explicitly, for a D-dimensional tree, each node consists of:</p>
+<p class="p4">Each node in the tree is represented by a multichannel frame in a buffer (or in the language-side representation, by an array in an array). The first node must be the root node and is where classification begins. Each node consists of data defining the hyperplane used for splitting, and then flags indicating whether the split data should recurse further to a different node or whether a numeric classification result is to be returned. More explicitly, for a D-dimensional tree, each node consists of:</p>
 <p class="p2"><br></p>
-<p class="p6">[</p>
-<p class="p6"><span class="Apple-tab-span">	</span>D numbers - the offset vector, subtracted from the incoming data point</p>
-<p class="p6"><span class="Apple-tab-span">	</span>D numbers - representing the normal vector, multiplied by the incoming data point (after subtraction) for classification</p>
-<p class="p6"><span class="Apple-tab-span">	</span>0 or 1<span class="Apple-converted-space">    </span>- if 1, the "left" split is a leaf and that branch terminates</p>
-<p class="p6"><span class="Apple-tab-span">	</span>1 number<span class="Apple-converted-space">  </span>- if the "left" split is a leaf, the number to return; ELSE the frame index of the node to branch to</p>
-<p class="p6"><span class="Apple-tab-span">	</span>0 or 1<span class="Apple-converted-space">    </span>- if 1, the "right" split is a leaf and that branch terminates</p>
-<p class="p6"><span class="Apple-tab-span">	</span>1 number<span class="Apple-converted-space">  </span>- if the "right" split is a leaf, the number to return; ELSE the frame index of the node to branch to</p>
-<p class="p6">]</p>
+<p class="p9">[</p>
+<p class="p9"><span class="Apple-tab-span">	</span>D numbers - the offset vector, subtracted from the incoming data point</p>
+<p class="p9"><span class="Apple-tab-span">	</span>D numbers - representing the normal vector, multiplied by the incoming data point (after subtraction) for classification</p>
+<p class="p9"><span class="Apple-tab-span">	</span>0 or 1<span class="Apple-converted-space">    </span>- if 1, the "left" split is a leaf and that branch terminates</p>
+<p class="p9"><span class="Apple-tab-span">	</span>1 number<span class="Apple-converted-space">  </span>- if the "left" split is a leaf, the number to return; ELSE the frame index of the node to branch to</p>
+<p class="p9"><span class="Apple-tab-span">	</span>0 or 1<span class="Apple-converted-space">    </span>- if 1, the "right" split is a leaf and that branch terminates</p>
+<p class="p9"><span class="Apple-tab-span">	</span>1 number<span class="Apple-converted-space">  </span>- if the "right" split is a leaf, the number to return; ELSE the frame index of the node to branch to</p>
+<p class="p9">]</p>
 <p class="p2"><br></p>
-<p class="p5">For dimensionality D the data must therefore have 2D + 4 channels.</p>
+<p class="p4">For dimensionality D the data must therefore have 2D + 4 channels.</p>
 <p class="p2"><br></p>
-<p class="p5">Branching must always be "forwards" through the buffer (frame indexes for branching must always be greater than the current frame index) to avoid infinite loops.</p>
+<p class="p4">Branching must always be "forwards" through the buffer (frame indexes for branching must always be greater than the current frame index) to avoid infinite loops.</p>
 <p class="p2"><br></p>
-<p class="p5">Branching doesn't have to proceed to the same depth at each branch. Also the number returned is not checked, so although it will typically be a unique number for each leaf, unusually-shaped classes could be represented by more than one leaf returning the same id.</p>
+<p class="p4">Branching doesn't have to proceed to the same depth at each branch. Also the number returned is not checked, so although it will typically be a unique number for each leaf, unusually-shaped classes could be represented by more than one leaf returning the same id.</p>
 <p class="p2"><br></p>
-<p class="p5">(c) 2009 Dan Stowell</p>
+<p class="p4">(c) 2009 Dan Stowell</p>
 </body>
 </html>

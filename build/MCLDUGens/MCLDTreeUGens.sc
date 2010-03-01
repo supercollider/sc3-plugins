@@ -10,21 +10,27 @@ PlaneTree : UGen {
 *categories {	^ #["UGens>Analysis"]	}
 
 // a LANGUAGE-SIDE equivalent of the classification that the server-side ugen does.
-// (Don't use the "startAt" arg, it's used for recursion.)
-*classify { |point, treedata, startAt=0|
+// returns two things: [index, pathInteger]
+// (Don't use the "startAt"/"pathsofar" arg, it's used for recursion.)
+*classify { |point, treedata, startAt=0, pathsofar=1|
+	var kidIndex;
 	var node = treedata[startAt];
 	var result = sumF((point - node[..point.size-1]) * node[point.size..point.size*2-1]);
 	^if(result > 0){ // "left" branch
+		kidIndex = node[node.size - 3];
+		pathsofar = (pathsofar << 1);
 		if(node[node.size - 4] > 0){
-			node[node.size - 3]
+			[kidIndex, pathsofar]
 		}{
-			this.classify(point, treedata, node[node.size - 3])
+			this.classify(point, treedata, kidIndex, pathsofar)
 		}
 	}{ // "right" branch
+		kidIndex = node[node.size - 1];
+		pathsofar = (pathsofar << 1) | 1;
 		if(node[node.size - 2] > 0){
-			node[node.size - 1]
+			[kidIndex, pathsofar]
 		}{
-			this.classify(point, treedata, node[node.size - 1])
+			this.classify(point, treedata, kidIndex, pathsofar)
 		}
 	}
 }
