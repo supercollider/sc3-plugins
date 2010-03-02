@@ -1,7 +1,7 @@
 /*
 
 Tree UGens for SuperCollider, by Dan Stowell.
-(c) Dan Stowell 2009.
+(c) Dan Stowell 2009-2010.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -64,8 +64,8 @@ void PlaneTree_Ctor(PlaneTree* unit)
 	unit->m_fbufnum = -1e9f;
 	GET_BUF
 	
-	if((int)bufChannels != (ndims * 2 + 4)){
-		Print("PlaneTree_Ctor: number of channels in buffer (%i) != number of input dimensions (%i) * 2 + 4\n", 
+	if((int)bufChannels != (ndims * 2 + 2)){
+		Print("PlaneTree_Ctor: number of channels in buffer (%i) != number of input dimensions (%i) * 2 + 2\n", 
 									bufChannels, ndims);
 		SETCALC(*ClearUnitOutputs);
 		return;
@@ -79,10 +79,12 @@ void PlaneTree_Ctor(PlaneTree* unit)
 	PlaneTree_next(unit, 1);
 }
 
-// recursive function, returns the classification result
-float PlaneTree_recurse(int ndims, float *inputdata, float *workingdata, float *bufData, uint32 bufChannels, int whichFrame);
-float PlaneTree_recurse(int ndims, float *inputdata, float *workingdata, float *bufData, uint32 bufChannels, int whichFrame){
-	float* ourFrame = bufData + whichFrame * bufChannels;
+// recursive function, returns the classification result.
+// NB the "pathInt" val MUST be one-indexed (i.e. "1" is the FIRST frame)
+float PlaneTree_recurse(int ndims, float *inputdata, float *workingdata, float *bufData, uint32 bufChannels, unsigned long pathInt);
+float PlaneTree_recurse(int ndims, float *inputdata, float *workingdata, float *bufData, uint32 bufChannels, unsigned long pathInt){
+	// This pointer will be incremented as we go along:
+	float* ourFrame = bufData + (pathInt - 1) * bufChannels;   // Note the "-1" - because the indexing starts at 1 not 0 !
 	// First subtract the offset, the first D items in the frame
 	int i;
 	for(i=0; i<ndims; ++i){
@@ -93,21 +95,19 @@ float PlaneTree_recurse(int ndims, float *inputdata, float *workingdata, float *
 	for(i=0; i<ndims; ++i){
 		sum += workingdata[i] * *(ourFrame++);
 	}
-	// Now if the sum is positive we go left (ourFrame already pointing at the correct place), otherwise right
-	if(!(sum > 0.f)){
-		ourFrame += 2;
+	// Now if the sum is positive we go left (ourFrame already pointing at the correct place), otherwise right.
+	// "pathInt" here becomes the index of the child, which is either returned or branched into.
+	if(sum > 0.f){
+		pathInt = (pathInt << 1);     // left
+	}else{
+		pathInt = (pathInt << 1) | 1; // right
+		++ourFrame; // increment to find the float indicating whether we'll be branching or not
 	}
 	// So now we can check if we want to branch and recurse, or if we've hit a leaf and want to return
 	if(*(ourFrame) == 0.f){
-		// This check could be deactivated in future for efficiency, maybe:
-		if(*(ourFrame + 1) <= whichFrame){
-			Print("PlaneTree_recurse ERROR: frame %i contains a reference to frame %i - only forward references are allowed.\n", 
-						whichFrame, static_cast<int>(*(ourFrame + 1)));
-			return *(ourFrame + 1); // error, this is extremely unlikely to be the desired result.
-		}
-		return PlaneTree_recurse(ndims, inputdata, workingdata, bufData, bufChannels, static_cast<int>(*(ourFrame + 1))); // branch further
+		return PlaneTree_recurse(ndims, inputdata, workingdata, bufData, bufChannels, pathInt); // branch further
 	}else{
-		return *(ourFrame + 1); // leaf
+		return static_cast<float>(pathInt); // leaf
 	}
 }
 
@@ -134,7 +134,7 @@ void PlaneTree_next(PlaneTree *unit, int inNumSamples)
 				}
 			}
 			if(inputchanged){
-				result = PlaneTree_recurse(ndims, inputdata, workingdata, bufData, bufChannels, 0);
+				result = PlaneTree_recurse(ndims, inputdata, workingdata, bufData, bufChannels, 1);
 			}
 		} // End gate check
 		OUT(0)[i] = result;

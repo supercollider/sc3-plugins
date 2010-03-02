@@ -1,5 +1,5 @@
 /*
-Generic hyperplane-based tree classifier, (c) 2009 Dan Stowell
+Generic hyperplane-based tree classifier, (c) 2009-2010 Dan Stowell
 */
 PlaneTree : UGen {
 
@@ -10,28 +10,25 @@ PlaneTree : UGen {
 *categories {	^ #["UGens>Analysis"]	}
 
 // a LANGUAGE-SIDE equivalent of the classification that the server-side ugen does.
-// returns two things: [index, pathInteger]
-// (Don't use the "startAt"/"pathsofar" arg, it's used for recursion.)
-*classify { |point, treedata, startAt=0, pathsofar=1|
-	var kidIndex;
-	var node = treedata[startAt];
+// returns pathInteger
+// (Don't use the "pathInt" arg, it's used for recursion.)
+*classify { |point, treedata, pathInt=1|
+	var node = treedata[pathInt - 1]; // note the minus one, it's because the indexing has to start at 1 not 0
 	var result = sumF((point - node[..point.size-1]) * node[point.size..point.size*2-1]);
-	^if(result > 0){ // "left" branch
-		kidIndex = node[node.size - 3];
-		pathsofar = (pathsofar << 1);
-		if(node[node.size - 4] > 0){
-			[kidIndex, pathsofar]
-		}{
-			this.classify(point, treedata, kidIndex, pathsofar)
-		}
+	var isleaf;
+
+	if(result > 0){ // "left" branch
+		pathInt = (pathInt << 1);
+		isleaf = node[node.size - 2] > 0.0;
 	}{ // "right" branch
-		kidIndex = node[node.size - 1];
-		pathsofar = (pathsofar << 1) | 1;
-		if(node[node.size - 2] > 0){
-			[kidIndex, pathsofar]
-		}{
-			this.classify(point, treedata, kidIndex, pathsofar)
-		}
+		pathInt = (pathInt << 1) | 1;
+		isleaf = node[node.size - 1] > 0.0;
+	};
+
+	^if(isleaf){
+		pathInt
+	}{
+		this.classify(point, treedata, pathInt) // recurse
 	}
 }
 
