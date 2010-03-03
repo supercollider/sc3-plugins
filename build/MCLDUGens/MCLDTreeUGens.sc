@@ -32,4 +32,35 @@ PlaneTree : UGen {
 	}
 }
 
+// Distance from one node to another, both represented in the path-integer format returned by *classify
+*treedist { |path1, path2|
+		var bitpos1=0, bitpos2=0, res;
+		// First we find the MSB 1 representing the root node in each one
+		while{(path1 >> bitpos1) != 0}{
+			bitpos1 = bitpos1 + 1
+		};
+		while{(path2 >> bitpos2) != 0}{
+			bitpos2 = bitpos2 + 1
+		};
+		
+		// Then we descend until any of the bits are different
+		while{(bitpos1 != -1) and: {bitpos2 != -1} and: 
+					{((path1 >> bitpos1) & 1) == ((path2 >> bitpos2) & 1)}}{
+			bitpos1 = bitpos1 - 1;
+			bitpos2 = bitpos2 - 1;
+		};
+
+		// The actual descended positions we intend are one more than achieved by the iteration
+		bitpos1 = bitpos1 + 1;
+		bitpos2 = bitpos2 + 1;
+		//postln("Descended positions: % %".format(bitpos1, bitpos2));
+		
+		// Then we sum the number of remaining bits, 
+		// i.e. the number of steps needed to go up the tree and back down again
+		res = bitpos1 + bitpos2;
+		//"d(%,%)=%".format(path1.asBinaryDigits(12).join, path2.asBinaryDigits(12).join, res).postln;
+		^res
+}
+
+
 } // end class
