@@ -25,7 +25,7 @@ SC_FILE_RE = re.compile('.*\.sc$')
 print 'Building for ' + platform.system()
 if platform.system() == 'Linux':
 	opts.AddOptions(
-		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
+		PathOption('SC3PATH', 'SuperCollider source path', '../common/' ),
 		PathOption('STKPATH', 'STK libary path', '/usr/lib')
 	)
 	PLUGIN_FILE_RE = re.compile('.*\.so$')
@@ -33,7 +33,7 @@ if platform.system() == 'Linux':
 	DEFAULT_PREFIX = '/usr/local'
 if platform.system() == 'OSX':
 	opts.AddOptions(
-		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
+		PathOption('SC3PATH', 'SuperCollider source path', '../common/' ),
 		PathOption('STKPATH', 'STK libary path', '/usr/lib')
 	)
 	PLUGIN_FILE_RE = re.compile('.*\.scx$')
@@ -42,7 +42,7 @@ if platform.system() == 'OSX':
 if platform.system() == 'Windows':
 	opts.AddOptions(
     	PathOption('STKPATH', 'STK libary path', 'C:/'),
-		PathOption('SC3PATH', 'SuperCollider source path', '../' ),
+		PathOption('SC3PATH', 'SuperCollider source path', '../common/' ),
 		PathOption('PTHREADSPATH', 'pthreads path', '../../pthreads-win32' ),
 		PathOption('FFTW3PATH', 'fftw3 path', '../../fftw3' )
 	)
@@ -168,9 +168,9 @@ def flatten_dir(dir):
 sc3_source = env['SC3PATH']
 print 'SuperCollider 3 source is at: ' + sc3_source
 if not os.path.exists(sc3_source + 'Headers/plugin_interface/SC_Unit.h'):
-	if os.path.exists(sc3_source + '../Headers/plugin_interface/SC_Unit.h'):
+	if os.path.exists(sc3_source + '../../common/Headers/plugin_interface/SC_Unit.h'):
 		print 'Automatically adjusted sc3_source path, one folder higher'
-		sc3_source += '../'
+		sc3_source += '../../common'
 	else:
 		print 'Couldn\'t find SuperCollider plugin interface! Please specify "SC3PATH" argument.'
 		Exit(1)
