@@ -58,7 +58,7 @@ void PlaneTree_Ctor(PlaneTree* unit)
 	unit->m_inputdata   = (float*)RTAlloc(unit->mWorld, ndims * sizeof(float));
 	unit->m_workingdata = (float*)RTAlloc(unit->mWorld, ndims * sizeof(float));
 	// Try and ensure that the first ever input won't get accidentally skipped:
-	unit->m_inputdata[0] = -1e99f;
+	unit->m_inputdata[0] = -1e9f;
 	
 	// Get the buffer reference, and check that the size and num channels matches what we expect.
 	unit->m_fbufnum = -1e9f;
@@ -73,7 +73,7 @@ void PlaneTree_Ctor(PlaneTree* unit)
 
 	// initialize the unit generator state variables.
 	unit->m_ndims    = ndims;
-	unit->m_result   = -1e99f; // hopefully this will get filled in soon by a classification...
+	unit->m_result   = -1e9f; // hopefully this will get filled in soon by a classification...
 
 	SETCALC(PlaneTree_next);
 	PlaneTree_next(unit, 1);
