@@ -408,6 +408,7 @@ ProcMod {
 ProcModR : ProcMod {
 	var <routebus, <procout, <isRecording = false, <notegroup, <numChannels, 
 		<>headerFormat = "aiff", <>sampleFormat = "int16", <hdr, oldhdrs;
+	var <processor;
 	classvar addActions, writeDefs;
 
 // if numChannels is not nil, enter routing mode 
@@ -506,14 +507,16 @@ ProcModR : ProcMod {
 				port = MIDIOut.new(midiPort);
 				port.control(midiChan, midiCtrl, (midiAmpSpec.unmap(amp) * 127).round);
 				});
-			notegroup = group = group ?? {server.nextNodeID};
-			server.sendBundle(nil, [\g_new, group, addActions[addAction], target]);
+			group = group ?? {server.nextNodeID};
 			notegroup = server.nextNodeID;
+			server.sendBundle(nil, 
+				[\g_new, group, addActions[addAction], target], 
+				[\g_new, notegroup, 0, group]);
 			routebus = server.audioBusAllocator.alloc(numChannels);
 			routebus.notNil.if({
 				env.isKindOf(Env).if({
 					server.sendBundle(nil,
-						[\g_new, notegroup, 0, group],
+//						[\g_new, notegroup, 0, group],
 						[\s_new, (\procmodroute_8723_env_ ++ numChannels).asSymbol, 
 							envnode = server.nextNodeID, 1, group, \inbus, routebus, 
 							\amp, amp, \timeScale, timeScale, \lag, lag, \outbus, procout],
@@ -526,7 +529,7 @@ ProcModR : ProcMod {
 						})
 					}, {
 					server.sendBundle(nil, 
-						[\g_new, notegroup, 0, group],
+//						[\g_new, notegroup, 0, group],
 						[\s_new, (\procmodroute_8723_ ++ numChannels).asSymbol, 
 							envnode = server.nextNodeID, 1, group, \inbus, routebus, 
 							\outbus, procout, \amp, amp]);
@@ -534,6 +537,9 @@ ProcModR : ProcMod {
 				}, {
 				"A unique audio bus couldn't be allocated for internal routing. This probably isn't what you wanted, and the resulting sound will probably be wrong. You should quit the server, and increase the number of audio busses with ServerOptions. Sorry... but there are limitations".warn;
 				});
+			processor.notNil.if({
+				processor.play(routebus, addAction: 3, target: notegroup);
+			}); 
 			recordPM.if({
 				recpath = recpath ?? {recordpath}
 				});
@@ -586,7 +592,6 @@ ProcModR : ProcMod {
 		curroute = routebus;
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
-//			server.sendMsg(\n_set, curgroup, \gate, 0);
 			onReleaseFunc.value;
 			env.notNil.if({
 				newrelval = reltime.notNil.if({
@@ -594,7 +599,6 @@ ProcModR : ProcMod {
 					}, {
 					0
 					});
-//				envnode.notNil.if({server.sendMsg(\n_set, envnode, \gate, 0)});
 				server.sendMsg(\n_set, group, \pgate, 0);
 				});
 			releasetime.notNil.if({
@@ -1653,3 +1657,183 @@ ProcSink {
 
 }
 
+ProcProcessor {
+	var synthdef, inbus, numChannels, addAction, target;
+	var parameters, responders;
+	var <objargs;
+	var <uniqueMethods;
+
+	addGetter {arg key, defaultVal;
+		objargs.put(key.asSymbol, defaultVal);
+		this.addUniqueMethod(key.asSymbol, {arg object; object.objargs[key]});
+		}
+
+	addSetter {arg key;
+		this.addUniqueMethod((key.asString++"_").asSymbol, 
+			{arg object, newval; object.objargs[key] = newval; object;
+			});
+		}
+		
+	addMethod {arg key, func;
+		objargs.put(key.asSymbol, func);
+		this.addUniqueMethod(key.asSymbol, {arg object ... args; 
+			objargs[key].value(object, args);
+			});
+		}
+		
+	addParameter {arg key, defaultVal;
+		defaultVal.isKindOf(Function).if({
+			this.addMethod(key, defaultVal);
+			}, {
+			this.addGetter(key, defaultVal);
+			this.addSetter(key);
+			})
+		^this;
+		}
+		
+	addUniqueMethod { arg selector, function;
+		var methodDict;
+		if (uniqueMethods.isNil, { uniqueMethods = IdentityDictionary.new });
+		uniqueMethods.put(selector, function);
+	}
+			
+	doesNotUnderstand {arg selector ... args;
+		(uniqueMethods[selector].notNil).if({
+			^uniqueMethods[selector].value(this, *args);
+			}, {
+			^DoesNotUnderstandError(this, selector, args).throw;
+			})
+		}
+		
+	*new {arg id, inbus, numChannels;
+		^super.new.initProcProcessor(inbus, numChannels);
+	}
+	
+	initProcProccesor {arg argInbus, argNumChannels;
+		inbus = argInbus;
+		numChannels = argNumChannels;
+	}
+	
+	
+}
+
+// add routing out to a IEnvGen with Processor in between
+ProcSFPlayer {
+	var <path, sf, server, buffer, <isPlaying, <isPaused, bufferLoaded, <nodeID, env, outbus;
+	var synthdef, numChannels;
+	
+	*new {arg path, server; //, numChannels;
+		^super.new.initProcSFPlayer(path, server);
+	}
+	
+	initProcSFPlayer {arg argPath, argServer;
+		server = argServer ?? {Server.default};
+		server.boot;
+		server.doWhenBooted({this.path_(argPath)});
+		isPlaying = false;
+		isPaused = false;
+		bufferLoaded = false;
+	}
+	
+	path_ {arg argPath;
+		var test;
+		sf = SoundFile.new;
+		test = sf.openRead(argPath);
+		test.if({
+			path = argPath;
+			sf.close;
+			this.prepSynthDef;
+		}, {
+			sf = nil;
+			("No SoundFile found at"+argPath).warn;
+		})
+	}
+	
+	prepSynthDef {
+		synthdef = {arg gate = 1, gate2 = 1, outbus, buffer, rate = 1;
+			var vd, env, pauseEnv;
+			env = EnvGen.kr(Env([0, 1, 0], [0.05, 0.05], \sin, 1), gate, doneAction: 2);
+			pauseEnv = EnvGen.kr(
+				Env([0, 1, 1, 0], [0.05, 0.01, 0.05], \sin, 2, nil), gate2, doneAction: 1);
+			Out.ar(outbus, 
+				VDiskIn.ar(sf.numChannels, buffer, rate * BufRateScale.kr(buffer)) * 
+					env *
+				 	pauseEnv)
+		}.asSynthDef;
+		synthdef.send(server);
+	}
+	
+	loadBuffer {arg startTime = 0, bufferSize = 131072;
+		sf.notNil.if({
+			server.sendBundle(0.1, 
+				[\b_alloc, buffer = server.bufferAllocator.alloc(1), bufferSize, sf.numChannels],
+				[\b_read, buffer, path, startTime * sf.sampleRate, bufferSize, 0, 1]
+			);
+			bufferLoaded = true;
+		}, {
+			("No SoundFile to load at"+path).warn;
+		});			
+	}
+	
+	play {arg outbus = 0, addAction = 0, target = 1;
+		bufferLoaded.if({
+			server.sendBundle(0.1, 
+				[\s_new, synthdef.name, nodeID = server.nextNodeID, addAction, target,
+					\outbus, outbus, \buffer, buffer]
+			);
+			isPlaying = true;
+		}, {
+			"Something has gone wrong. Please check that you have loaded a SoundFile".warn
+		})
+	}
+	
+	pause {
+		isPlaying.if({
+			server.sendBundle(0.1, [\n_set, nodeID, \gate2, 0]);
+			isPaused = true;
+		})
+	}
+	
+	
+	unpause {
+		isPaused.if({
+			server.sendBundle(0.1, [\n_run, nodeID, 1], [\n_set, nodeID, \gate2, 1]);
+			isPaused = false;
+		})
+	}
+	
+	// stop frees the buffer
+	stop {
+		server.sendBundle(0.1, [\n_set, nodeID, \gate, 0]);
+		server.sendBundle(0.2, [\b_close, buffer], [\b_free, buffer]);
+		bufferLoaded = false;
+	}
+}
+
+/* // kind oflike ProcEvents, but for osundfiles?
+
+ProcPlayerBank {
+	var server, paths, <startTime, procSFPlayers, isPlaying, isPaused;
+	
+	*new {arg server ... paths;
+		^super.new.initProcPlayer(server, paths);
+	}
+	
+	initProcPlayer {arg argServer, argPaths;
+		server = argServer ?? {Server.default};
+		server.boot;
+		paths = argPaths.asArray;
+		procSFPlayers = paths.collect({arg thisPath; ProcSFPlayer(path, server)});
+		isPlaying = false;
+		isPaused = false;
+	}
+	
+	*load {arg datafile;
+	}
+	
+	startTime_ {arg newStartTime;
+		startTime = newStartTime;
+	}
+		
+}
+*/
