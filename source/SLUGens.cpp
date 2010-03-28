@@ -410,8 +410,6 @@ SndBuf * SLUGensGetBuffer(Unit * unit, uint32 bufnum) {
 
 
 
-
-
 void SortBuf_Ctor( SortBuf* unit ) {
 	
 	SETCALC(SortBuf_next_k);
@@ -3065,12 +3063,18 @@ void WaveTerrain_Ctor(WaveTerrain* unit) {
 		
 		unit->m_ysize = (int)(ZIN0(4)+0.0001);
 		
-		if((unit->m_xsize * unit->m_ysize)!= unit->m_size) { printf("size mismatch! \n"); return;}			
+		if((unit->m_xsize * unit->m_ysize)!= unit->m_size) { 
+			
+			printf("WaveTerrain: size mismatch between xsize*ysize and actual buffer size. UGen will output silence \n"); 
+			SETCALC(*ClearUnitOutputs);
+			return;
+		}			
 		
 		unit->m_terrain= buf->data; 
 		
 		SETCALC(WaveTerrain_next_a);
 	}
+		
 }
 
 void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
@@ -3095,17 +3099,28 @@ void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 		
 		x= xin[j]; //0.0 to 1.0
 		y= yin[j];
-		
+
 		//safety
-		x= sc_wrap(x, 0.0f, 1.0f); 
-		y= sc_wrap(y, 0.0f, 1.0f); 
+		x= sc_wrap(x, 0.0f, 1.f); 
+		y= sc_wrap(y, 0.0f, 1.f); 
 		
 		xindex= x*xsize;
 		yindex= y*ysize;
 		
+//	if (xindex<0.0f) 
+//			xindex=0.0f;
+//		else if (xindex>=xsize)
+//			xindex= xsize-0.00001;
+//			
+//		if (yindex<0.0f) 
+//			yindex=0.0f;
+//		else if (yindex>=ysize)
+//			yindex= ysize-0.00001;
+	
 		//these are guaranteed in range from wrap above give or take floating point error on round down? 
-		xfloor= (int)xindex;
-		yfloor= (int)yindex;
+		//added modulo because very occasional error with index up to xsize or ysize
+		xfloor= ((int)xindex)%xsize;
+		yfloor= ((int)yindex)%ysize;
 		
 		//these aren't; needs further wrap
 		xnext= (xfloor+1)%xsize;  
@@ -3113,6 +3128,8 @@ void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
 		
 		xprop= xindex-xfloor;
 		yprop= yindex-yfloor;
+		
+		//printf("x %f, y %f, xfloor %d, yfloor %d, xnext, %d, ynext %d, xprop %f, yprop %f \n", x, y, xfloor, yfloor, xnext, ynext, xprop, yprop); 
 		
 		//now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
 		
