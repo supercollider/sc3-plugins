@@ -5,5 +5,6 @@
 \author:	 "sc3-plugins",
 \helpdoc:	"JoshUGens.html",
 \url:	 "http://sc3-plugins.sourceforge.net",
+\dependencies:	["RMEQSuiteUGens"],
 \version:	3.3
 )
