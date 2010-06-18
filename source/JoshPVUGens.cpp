@@ -216,6 +216,13 @@ struct PV_SpectralEnhance : PV_Unit
     bool first;
 };
 
+struct PV_PitchShift : PV_Unit
+{
+    float *m_phases;
+    SndBuf *m_buf;
+    bool first;
+};
+
 extern "C"
 {
 	#include "fftlib.h"
@@ -315,6 +322,11 @@ extern "C"
     
     void PV_SpectralEnhance_Ctor(PV_SpectralEnhance *unit);
     void PV_SpectralEnhance_next(PV_SpectralEnhance *unit, int inNumSamples);
+    
+    void PV_PitchShift_Ctor(PV_PitchShift *unit);
+    void PV_PitchShift_Dtor(PV_PitchShift *unit);
+    void PV_PitchShift_next(PV_PitchShift *unit, int inNumSamples);
+    
 }
 
 SCPolarBuf* ToPolarApx(SndBuf *buf)
@@ -1952,7 +1964,12 @@ void PV_BinPlayBuf_first(PV_BinPlayBuf* unit, int inNumSamples)
     bool clear = (IN0(8) > 0.0);
     
     
-    if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+    if((binSkip > 1) && ((numBins * binSkip) > numbins)) 
+    {
+	numBins = (int)(numbins / binSkip);
+    } else {
+	if(numBins > numbins) numBins = numbins;
+    }
     
     float bins[numbins];
     
@@ -2040,7 +2057,12 @@ void PV_BinPlayBuf_next(PV_BinPlayBuf* unit, int inNumSamples)
     int numBins = (int)IN0(7);
     bool clear = (IN0(8) > 0.0);
     
-    if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+    if((binSkip > 1) && ((numBins * binSkip) > numbins)) 
+    {
+	numBins = (int)(numbins / binSkip);
+    } else {
+	if(numBins > numbins) numBins = numbins;
+    }
     
     float bins[numbins];
     
@@ -2276,7 +2298,12 @@ void PV_BinBufRd_first(PV_BinBufRd* unit, int inNumSamples)
     int numBins = (int)IN0(5);
     bool clear = (IN0(6) > 0.0);
     
-    if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+    if((binSkip > 1) && ((numBins * binSkip) > numbins)) 
+    {
+	numBins = (int)(numbins / binSkip);
+    } else {
+	if(numBins > numbins) numBins = numbins;
+    }
     
     float bins[numbins];
     
@@ -2361,7 +2388,12 @@ void PV_BinBufRd_next(PV_BinBufRd* unit, int inNumSamples)
     int numBins = (int)IN0(5);
     bool clear = (IN0(6) > 0.0);	
     
-    if((binSkip > 1) && ((numBins * binSkip) > numbins)) numBins = (int)(numbins / binSkip);
+    if((binSkip > 1) && ((numBins * binSkip) > numbins)) 
+    {
+	numBins = (int)(numbins / binSkip);
+    } else {
+	if(numBins > numbins) numBins = numbins;
+    }
     
     float bins[numbins];
     
@@ -2585,6 +2617,70 @@ void PV_SpectralEnhance_next(PV_SpectralEnhance *unit, int inNumSamples)
     
 }
 
+void PV_PitchShift_Ctor(PV_PitchShift *unit)
+{
+    OUT0(0) = IN0(0);
+    SETCALC(PV_PitchShift_next);
+    unit->first = true;
+    
+}
+
+void PV_PitchShift_Dtor(PV_PitchShift *unit)
+{
+    RTFree(unit->mWorld, unit->m_phases);
+
+}
+
+void PV_PitchShift_next(PV_PitchShift *unit, int inNumSamples)
+{
+    PV_GET_BUF
+
+    if(unit->first){
+	unit->first = false;
+	unit->m_phases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
+    }
+    
+    SCPolarBuf *p = ToPolarApx(buf);
+    float ratio = IN0(1);
+    float rratio = 1. / ratio;
+    if(ratio == 1) return;
+    if(ratio > 1){
+	//work top down
+	int target, last;
+	last = 0;
+	for(int i = numbins; i > 0; i--)
+	{
+	    target = (int)roundf((float)i * rratio);
+	    if((target > 0) && (last != target))
+	    {
+		float phasedif, tmp;
+		phasedif = unit->m_phases[target] - p->bin[target].phase;
+		last = target;
+		tmp = p->bin[i].phase;
+		p->bin[i].phase = unit->m_phases[i] + (phasedif * ratio);// p->bin[target].phase;
+		p->bin[i].mag = p->bin[target].mag;
+		unit->m_phases[i] = tmp;
+
+	    } else {
+		unit->m_phases[i] = p->bin[i].phase;
+		p->bin[i].mag = 0.;
+	    }
+	}
+    } else {
+	// work bottom up
+	int target;
+	for(int i = 0; i > numbins; i++)
+	{
+	    target = (int)roundf((float)i * rratio);
+	    if(target < (numbins - 1))
+	       {
+		   p->bin[i].phase = p->bin[target].phase;
+		   p->bin[i].mag = p->bin[target].mag;
+	       }
+	}
+    }
+    
+}
 
 void init_SCComplex(InterfaceTable *inTable);
 
@@ -2618,5 +2714,6 @@ void load(InterfaceTable *inTable)
 	DefineDtorUnit(PV_SpectralMap);
 	DefinePVUnit(PV_SpectralEnhance);
 	DefineSimpleCantAliasUnit(BinData);
+	DefineDtorUnit(PV_PitchShift);
 	}
 	
