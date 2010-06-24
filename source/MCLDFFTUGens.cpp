@@ -1386,10 +1386,30 @@ void PV_Whiten_next(PV_Whiten *unit, int inNumSamples){
 	uint32 ibufnum1 = (int)fbufnum1;
 	uint32 ibufnum2 = (int)fbufnum2;
 	World *world = unit->mWorld;
-	if (ibufnum1 >= world->mNumSndBufs) ibufnum1 = 0;
-	if (ibufnum2 >= world->mNumSndBufs) ibufnum2 = 0;
-	SndBuf *buf1 = world->mSndBufs + ibufnum1;
-	SndBuf *buf2 = world->mSndBufs + ibufnum2;
+	SndBuf *buf1;
+	if (ibufnum1 >= world->mNumSndBufs) {
+		int localBufNum = ibufnum1 - world->mNumSndBufs;
+		Graph *parent = unit->mParent;
+		if(localBufNum <= parent->localBufNum) {
+			buf1 = parent->mLocalSndBufs + localBufNum;
+		} else {
+			buf1 = world->mSndBufs;
+		}
+	} else {
+		buf1 = world->mSndBufs + ibufnum1;
+	}
+	SndBuf *buf2;
+	if (ibufnum2 >= world->mNumSndBufs) {
+		int localBufNum = ibufnum2 - world->mNumSndBufs;
+		Graph *parent = unit->mParent;
+		if(localBufNum <= parent->localBufNum) {
+			buf2 = parent->mLocalSndBufs + localBufNum;
+		} else {
+			buf2 = world->mSndBufs;
+		}
+	} else {
+		buf2 = world->mSndBufs + ibufnum2;
+	}
 	int numbins = buf1->samples - 2 >> 1;
 //	Print("\nibufnum1: %d; ibufnum2: %d", ibufnum1, ibufnum2);
 //	if (buf1->samples != buf2->samples) return;
