@@ -46,6 +46,10 @@ FormantTable {
 		^table[preset]
 	}
 	
+	*at { arg preset;
+		^table[preset]
+	}
+	
 	*rand {
 		^table.choose
 	}
