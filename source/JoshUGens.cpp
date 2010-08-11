@@ -32,7 +32,10 @@
 #define ATS_BAND_WIDTH { 100.0, 100.0, 100.0, 100.0, 110.0, 120.0, 140.0, 150.0, 160.0, 190.0, 210.0, 240.0, 280.0, 320.0, 380.0, 450.0, 550.0, 700.0, 900.0, 1100.0, 1300.0, 1800.0, 2500.0, 3500.0, 4500.0}
 #define ATS_CENTER_FREQ {50.0, 150.0, 250.0, 350.0, 455.0, 570.0, 700.0, 845.0, 1000.0, 1175.0, 1375.0, 1600.0, 1860.0, 2160.0, 2510.0, 2925.0, 3425.0, 4050.0, 4850.0, 5850.0, 7050.0, 8600.0, 10750.0, 13750.0, 17750.0} 
 #define ATS_OFFSET1 {0, 2, 3, 2, 3}
-#define ATS_OFFSET2 {0, 1, 1, 26, 26};
+#define ATS_OFFSET2 {0, 1, 1, 26, 26}
+#define P2F 6.283185f
+#define PI 3.1415926535898f
+
 
 // band edges from atsa
 //{ 0.0, 100.0, 200.0, 300.0, 400.0, 510.0, 630.0, 770.0, 920.0,  1080.0, 1270.0, 1480.0, 1720.0, 2000.0, 2320.0, 2700.0, 3150.0, 3700.0, 4400.0, 5300.0, 6400.0, 7700.0, 9500.0, 12000.0, 15500.0, 20000.0}
@@ -379,19 +382,6 @@ struct CombLP : public FeedbackDelay
 	long m_inputsamps;
 };
 
-struct DelTapWr : public Unit 
-{
-	SndBuf *m_buf;
-	float m_fbufnum;
-	int32 m_phase;
-};
-
-struct DelTapRd : public Unit
-{
-	SndBuf *m_buf;
-	float m_fbufnum, m_delTime;
-};
-
 struct WarpWinGrain
 {
     double phase, rate;
@@ -593,6 +583,29 @@ void DelayUnit_Dtor(DelayUnit *unit)
 struct CubicDelay : public DelayUnit
 {
 };
+
+struct PMLPF : public Unit
+{
+    float m_y1, m_y2, m_a0, m_a1, m_a2, m_b1, m_b2;
+    float m_fc;
+};
+
+struct PMHPF : public Unit
+{
+    float m_y1, m_y2, m_a0, m_a1, m_a2, m_b1, m_b2;
+    float m_fc;
+};
+
+struct NFC : public Unit
+{
+    float m_y1, m_a0, m_a1, m_b1;
+    float m_distance;
+};
+
+struct Xover2 : public Unit
+{
+    float m_c0, m_c1, m_z0, m_z1, m_z2, m_fc;
+};
 /*
 struct HermiteDelay : public DelayUnit
 {
@@ -682,18 +695,6 @@ extern "C"
     void CombLP_next_ak(CombLP *unit, int inNumSamples);
     void CombLP_next_ak_z(CombLP *unit, int inNumSamples);
 
-    void DelTapWr_Ctor(DelTapWr* unit);
-    void DelTapWr_next(DelTapWr *unit, int inNumSamples);
-    void DelTapWr_first(DelTapWr *unit, int inNumSamples);
-    
-    void DelTapRd_Ctor(DelTapRd* unit);
-    void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples);
-    void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples);
-    void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples);
-    void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples);
-    void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples);
-    void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples);
-
     void WarpZ_next(WarpZ *unit, int inNumSamples);
     void WarpZ_Ctor(WarpZ* unit);
     
@@ -709,6 +710,21 @@ extern "C"
     void CubicDelay_Ctor(CubicDelay *unit);
     void CubicDelay_next_a(CubicDelay *unit, int inNumSamples);
     void CubicDelay_next_k(CubicDelay *unit, int inNumSamples);
+    
+    void Xover2_Ctor(Xover2 *unit);
+    void Xover2_next(Xover2 *unit, int inNumSamples);
+    
+    void PMLPF_Ctor(PMLPF *unit);
+    void PMLPF_next(PMLPF *unit, int inNumSamples);
+    
+    void PMHPF_Ctor(PMHPF *unit);
+    void PMHPF_next(PMHPF *unit, int inNumSamples);
+    
+    void NFC_Ctor(NFC *unit);
+    void NFC_next(NFC *unit, int inNumSamples);
+    
+    void Xover2_Ctor(Xover2 *unit);
+    void Xover2_next(Xover2 *unit, int inNumSamples);
 /*
     void HermiteDelay_Ctor(HermiteDelay *unit);
     void HermiteDelay_next(HermiteDelay *unit, int inNumSamples);
@@ -3627,316 +3643,6 @@ void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 	}
 }
 
-
-#define DELTAP_BUF \
-	World *world = unit->mWorld;\
-	if (bufnum >= world->mNumSndBufs) { \
-		int localBufNum = bufnum - world->mNumSndBufs; \
-		Graph *parent = unit->mParent; \
-		if(localBufNum <= parent->localBufNum) { \
-			unit->m_buf = parent->mLocalSndBufs + localBufNum; \
-		} else { \
-			bufnum = 0; \
-			unit->m_buf = world->mSndBufs + bufnum; \
-		} \
-	} else { \
-		unit->m_buf = world->mSndBufs + bufnum; \
-	} \
-	SndBuf *buf = unit->m_buf; \
-	float *bufData __attribute__((__unused__)) = buf->data; \
-	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
-	uint32 bufSamples = buf->samples; \
-	uint32 bufFrames = buf->frames; \
-	int guardFrame __attribute__((__unused__)) = bufFrames - 2; \
-	double loopMax = (double)bufSamples; \
-
-
-#define CHECK_DELTAP_BUF \
-	if ((!bufData) || (bufChannels != 1)) { \
-                unit->mDone = true; \
-		ClearUnitOutputs(unit, inNumSamples); \
-		return; \
-	}
-
-void DelTapWr_Ctor(DelTapWr *unit)
-{
-	SETCALC(DelTapWr_first);
-	unit->m_phase = 0;
-	unit->m_fbufnum = -1e9f;
-	DelTapWr_first(unit, 1);
-}
-
-void DelTapWr_first(DelTapWr *unit, int inNumSamples)
-{
-	SETCALC(DelTapWr_next);
-    
-	float fbufnum  = IN0(0);
-	uint32 bufnum = (uint32)fbufnum;
-	float* in = IN(1);
-	float* out = OUT(0);
-	
-	uint32 phase = unit->m_phase;
-	
-	DELTAP_BUF
-	CHECK_DELTAP_BUF
-	
-	// zero out the buffer!
-	for(uint32 i = 0; i < bufSamples; i++){
-	    bufData[i] = 0.f;
-	    }
-	    
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = (float)phase;
-	    bufData[phase] = in[i];
-	    phase++;
-	    if(phase == loopMax) phase -= loopMax;
-	    }
-	
-	unit->m_phase = phase;
-}
-
-void DelTapWr_next(DelTapWr *unit, int inNumSamples)
-{
-	float fbufnum  = IN0(0);
-	uint32 bufnum = (uint32)fbufnum;
-	float* in = IN(1);
-	float* out = OUT(0);
-	
-	uint32 phase = unit->m_phase;
-	
-	DELTAP_BUF
-	CHECK_DELTAP_BUF
-
-	for(int i = 0; i < inNumSamples; i++){
-	    out[i] = (float)phase;
-	    bufData[phase] = in[i];
-	    phase++;
-	    if(phase == loopMax) phase -= loopMax;
-	    }
-	
-	unit->m_phase = phase;
-}
-
-#define SETUP_TAPDELK \
-	float delTime = unit->m_delTime; \
-	float newDelTime = IN0(2) * SAMPLERATE; \
-	float delTimeInc = CALCSLOPE(newDelTime, delTime); \
-	float phaseIn = IN0(1); \
-	float phase; \
-	int32 iphase; \
-	float fbufnum  = IN0(0); \
-	uint32 bufnum = (uint32)fbufnum; \
-	float* out = OUT(0); \
-	    
-#define SETUP_TAPDELA \
-	float* delTime = IN(2); \
-	float phaseIn = IN0(1); \
-	float phase, curDelTimeSamps; \
-	int32 iphase; \
-	float fbufnum  = IN0(0); \
-	uint32 bufnum = (uint32)fbufnum; \
-	float* out = OUT(0); \
-	    
-void DelTapRd_Ctor(DelTapRd *unit)
-{
-    unit->m_fbufnum = -1e9f;
-    unit->m_delTime = IN0(2) * SAMPLERATE;
-    int interp = (int)IN0(3);
-    if(INRATE(2) == calc_FullRate){
-	if(interp == 2){
-	    SETCALC(DelTapRd_next2_a);
-	    DelTapRd_next2_a(unit, 1);
-	    } else if(interp == 4){
-		SETCALC(DelTapRd_next4_a);
-		DelTapRd_next4_a(unit, 1);
-		} else {
-		SETCALC(DelTapRd_next1_a);
-		DelTapRd_next1_a(unit, 1);
-		}
-	    } else {
-	if(interp == 2){
-	    SETCALC(DelTapRd_next2_k);
-	    DelTapRd_next2_k(unit, 1);
-	    } else if(interp == 4){
-		SETCALC(DelTapRd_next4_k);
-		DelTapRd_next4_k(unit, 1);
-		} else {
-		SETCALC(DelTapRd_next1_k);
-		DelTapRd_next1_k(unit, 1);
-		}
-	    }
-}
-
-
-void DelTapRd_next1_a(DelTapRd *unit, int inNumSamples)
-{
-    SETUP_TAPDELA
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >=loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    out[i] = bufData[iphase];
-	    phaseIn += 1.;
-	}
-}
-
-void DelTapRd_next1_k(DelTapRd *unit, int inNumSamples)
-{
-    SETUP_TAPDELK
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    phase = phaseIn - delTime;
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >=loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    out[i] = bufData[iphase]; 
-	    delTime += delTimeInc;
-	    phaseIn += 1.;
-	}
-    unit->m_delTime = delTime;
-}
-
-void DelTapRd_next2_k(DelTapRd *unit, int inNumSamples)
-{
-    int32 iloopMax, iphase1;
-    float fracphase, b, c;
-    
-    SETUP_TAPDELK
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    iloopMax = (int32)loopMax;
-    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    phase = phaseIn - delTime;
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >= loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    iphase1 = iphase + 1; 
-	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
-	    fracphase = phase - (float)iphase; 
-	    b = bufData[iphase]; 
-	    c = bufData[iphase1]; 
-	    out[i] = (b + fracphase * (c - b));
-	    delTime += delTimeInc;
-	    phaseIn += 1.;
-	}
-    unit->m_delTime = delTime;
-}
-
-void DelTapRd_next2_a(DelTapRd *unit, int inNumSamples)
-{
-    int32 iloopMax, iphase1;
-    float fracphase, b, c;
-
-    SETUP_TAPDELA
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    iloopMax = (int32)loopMax;
-    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >= loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    iphase1 = iphase + 1; 
-	    if(iphase1 >= iloopMax) iphase1 -= iloopMax; 
-	    fracphase = phase - (float)iphase; 
-	    b = bufData[iphase]; 
-	    c = bufData[iphase1]; 
-	    out[i] = (b + fracphase * (c - b));
-	    phaseIn += 1.;
-	}
-}
-
-void DelTapRd_next4_k(DelTapRd *unit, int inNumSamples)
-{
-    int32 iloopMax, iphase1, iphase2, iphase0;
-    float fracphase, a, b, c, d;
-    
-
-    SETUP_TAPDELK    
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    iloopMax = (int32)loopMax;
-	    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    phase = phaseIn - delTime;
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >= loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    iphase0 = iphase - 1;
-	    iphase1 = iphase + 1;
-	    iphase2 = iphase + 2;
-	    
-	    if(iphase0 < 0) iphase0 += iloopMax;
-	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
-	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
-
-	    fracphase = phase - (float)iphase;
-	    a = bufData[iphase0]; 
-	    b = bufData[iphase]; 
-	    c = bufData[iphase1]; 
-	    d = bufData[iphase2]; 
-	    out[i] = cubicinterp(fracphase, a, b, c, d);
-	    delTime += delTimeInc;
-	    phaseIn += 1.;
-	}
-    unit->m_delTime = delTime;
-}
-
-void DelTapRd_next4_a(DelTapRd *unit, int inNumSamples)
-{
-    int32 iloopMax, iphase1, iphase2, iphase0;
-    float fracphase, a, b, c, d;
-
-    SETUP_TAPDELA
-    DELTAP_BUF
-    CHECK_DELTAP_BUF
-    
-    iloopMax = (int32)loopMax;
-	    
-    for(int i = 0; i < inNumSamples; i++)
-	{
-	    curDelTimeSamps = delTime[i] * SAMPLERATE; 
-	    phase = phaseIn - curDelTimeSamps; 
-	    if(phase < 0.) phase += loopMax; 
-	    if(phase >= loopMax) phase -= loopMax; 
-	    iphase = (int32)phase; 
-	    iphase0 = iphase - 1;
-	    iphase1 = iphase + 1;
-	    iphase2 = iphase + 2;
-	    
-	    if(iphase0 < 0) iphase0 += iloopMax;
-	    if(iphase1 > iloopMax) iphase1 -=iloopMax;
-	    if(iphase2 > iloopMax) iphase2 -=iloopMax;
-
-	    fracphase = phase - (float)iphase;
-	    a = bufData[iphase0]; 
-	    b = bufData[iphase]; 
-	    c = bufData[iphase1]; 
-	    d = bufData[iphase2]; 
-	    out[i] = cubicinterp(fracphase, a, b, c, d);
-	    phaseIn += 1.;
-	}
-}
-
-
 struct PanX : public Unit
 {
     float m_chanamp[16];
@@ -4917,6 +4623,328 @@ void CubicDelay_next_k(CubicDelay *unit, int inNumSamples)
     
 }
 
+#define CALC_PMLPF_COEFS \
+    float fs, k, ksquared, ktwice; \
+    fs = SAMPLERATE; \
+    k = tanf((PI * unit->m_fc) / fs); \
+    ksquared = k * k; \
+    ktwice = k * 2.; \
+    unit->m_a0 = unit->m_a2 = ksquared / (ksquared + ktwice + 1.); \
+    unit->m_a1 = 2. * unit->m_a0; \
+    unit->m_b1 = -1. * ((2. * (ksquared - 1.)) / ( ksquared + ktwice + 1.)); \
+    unit->m_b2 = -1. * ((ksquared - ktwice + 1.) / ( ksquared + ktwice + 1.)); \
+    
+
+void PMLPF_Ctor(PMLPF *unit)
+{
+    unit->m_y1 = 0.f;
+    unit->m_y2 = 0.f;
+
+    ZOUT0(0) = 0.f;
+    unit->m_fc = ZIN0(1);
+    CALC_PMLPF_COEFS
+    SETCALC(PMLPF_next);
+}
+
+void PMLPF_next(PMLPF *unit, int inNumSamples)
+{
+    float *out = ZOUT(0);
+    float *in = ZIN(0);
+    float fc = ZIN0(1);
+    float y0;
+    float y1 = unit->m_y1;
+    float y2 = unit->m_y2;
+    
+    float a0 = unit->m_a0;
+    float a1 = unit->m_a1;
+    float a2 = unit->m_a2;
+    float b1 = unit->m_b1;
+    float b2 = unit->m_b2;
+    
+    if(unit->m_fc == fc)
+    {    
+	
+	LOOP(unit->mRate->mFilterLoops,
+	      y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	      ZXP(out) = a0 * y0 + a1 * y1 + a2 * y2;
+	      
+	      y2 = ZXP(in) + b1 * y0 + b2 * y1;
+	      ZXP(out) = a0 * y2 + a1 * y0 + a2 * y1;
+	      
+	      y1 = ZXP(in) + b1 * y2 + b2 * y0;
+	      ZXP(out) = a0 * y1 + a1 * y2 + a2 * y0;
+	      );
+	LOOP(unit->mRate->mFilterRemain,
+	     y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	     ZXP(out) = a0 * y0 + a1 * y1 + a2 * y2;
+	     y2 = y1;
+	     y1 = y0;
+	     );
+    } else {
+	unit->m_fc = fc;
+	
+	CALC_PMLPF_COEFS
+	
+	float new_a0 = unit->m_a0;
+	float new_a1 = unit->m_a1;
+	float new_a2 = unit->m_a2;
+	float new_b1 = unit->m_b1;
+	float new_b2 = unit->m_b2;
+    
+	float a0_slope = (new_a0 - a0) * unit->mRate->mFilterSlope;
+	float a1_slope = (new_a1 - a1) * unit->mRate->mFilterSlope;
+	float a2_slope = (new_a2 - a2) * unit->mRate->mFilterSlope;
+	float b1_slope = (new_b1 - b1) * unit->mRate->mFilterSlope;
+	float b2_slope = (new_b2 - b2) * unit->mRate->mFilterSlope;
+	
+	LOOP(unit->mRate->mFilterLoops,
+	 y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	 ZXP(out) = a0 * y0 + a1 * y1 + a2 * y2;
+	 
+	 y2 = ZXP(in) + b1 * y0 + b2 * y1;
+	 ZXP(out) = a0 * y2 + a1 * y0 + a2 * y1;
+	 
+	 y1 = ZXP(in) + b1 * y2 + b2 * y0;
+	 ZXP(out) = a0 * y1 + a1 * y2 + a2 * y0;
+	 
+	 a0 += a0_slope;
+	 a1 += a1_slope;
+	 a2 += a2_slope;
+	 b1 += b1_slope;
+	 b2 += b2_slope;
+	 );
+    LOOP(unit->mRate->mFilterRemain,
+	 y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	 ZXP(out) = a0 * y0 + a1 * y1 + a2 * y2;
+	 y2 = y1;
+	 y1 = y0;
+	 );
+    }
+
+    unit->m_y1 = zapgremlins(y1);
+    unit->m_y2 = zapgremlins(y2);
+}
+
+
+#define CALC_PMHPF_COEFS \
+float fs, k, ksquared, ktwice; \
+fs = SAMPLERATE; \
+k = tanf((PI * unit->m_fc) / fs); \
+ksquared = k * k; \
+ktwice = k * 2.; \
+unit->m_a0 = unit->m_a2 = 1. / (ksquared + ktwice + 1.); \
+unit->m_a1 = -2. * unit->m_a0; \
+unit->m_b1 = -1. * ((2. * (ksquared - 1.)) / ( ksquared + ktwice + 1.)); \
+unit->m_b2 = -1. * (((ksquared - ktwice) + 1.) / ( ksquared + ktwice + 1.)); \
+
+void PMHPF_Ctor(PMHPF *unit)
+{
+    unit->m_y1 = 0.f;
+    unit->m_y2 = 0.f;
+    ZOUT0(0) = 0.f;
+    unit->m_fc = ZIN0(1);
+    CALC_PMHPF_COEFS
+    SETCALC(PMHPF_next);
+}
+
+void PMHPF_next(PMHPF *unit, int inNumSamples)
+{
+    float *out = ZOUT(0);
+    float *in = ZIN(0);
+    float fc = ZIN0(1);
+    float y0;
+    float y1 = unit->m_y1;
+    float y2 = unit->m_y2;
+    
+    float a0 = unit->m_a0;
+    float a1 = unit->m_a1;
+    float a2 = unit->m_a2;
+    float b1 = unit->m_b1;
+    float b2 = unit->m_b2;
+    
+    if(unit->m_fc == fc)
+    {    	
+	LOOP(unit->mRate->mFilterLoops,
+	     y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	     ZXP(out) = (a0 * y0 + a1 * y1 + a2 * y2) * -1.;
+	     
+	     y2 = ZXP(in) + b1 * y0 + b2 * y1;
+	     ZXP(out) = (a0 * y2 + a1 * y0 + a2 * y1) * -1.;
+	     
+	     y1 = ZXP(in) + b1 * y2 + b2 * y0;
+	     ZXP(out) = (a0 * y1 + a1 * y2 + a2 * y0) * -1.;
+	     );
+	LOOP(unit->mRate->mFilterRemain,
+	     y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	     ZXP(out) = (a0 * y0 + a1 * y1 + a2 * y2) * -1.;
+	     y2 = y1;
+	     y1 = y0;
+	     );
+    } else {
+	unit->m_fc = fc;
+	
+	CALC_PMHPF_COEFS
+	
+	float new_a0 = unit->m_a0;
+	float new_a1 = unit->m_a1;
+	float new_a2 = unit->m_a2;
+	float new_b1 = unit->m_b1;
+	float new_b2 = unit->m_b2;
+	
+	float a0_slope = (new_a0 - a0) * unit->mRate->mFilterSlope;
+	float a1_slope = (new_a1 - a1) * unit->mRate->mFilterSlope;
+	float a2_slope = (new_a2 - a2) * unit->mRate->mFilterSlope;
+	float b1_slope = (new_b1 - b1) * unit->mRate->mFilterSlope;
+	float b2_slope = (new_b2 - b2) * unit->mRate->mFilterSlope;
+	
+	LOOP(unit->mRate->mFilterLoops,
+	     y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	     ZXP(out) = (a0 * y0 + a1 * y1 + a2 * y2) * -1.;
+	     
+	     y2 = ZXP(in) + b1 * y0 + b2 * y1;
+	     ZXP(out) = (a0 * y2 + a1 * y0 + a2 * y1) * -1.;
+	     
+	     y1 = ZXP(in) + b1 * y2 + b2 * y0;
+	     ZXP(out) = (a0 * y1 + a1 * y2 + a2 * y0) * -1.;
+	     
+	     a0 += a0_slope;
+	     a1 += a1_slope;
+	     a2 += a2_slope;
+	     b1 += b1_slope;
+	     b2 += b2_slope;
+	     );
+	LOOP(unit->mRate->mFilterRemain,
+	     y0 = ZXP(in) + b1 * y1 + b2 * y2;
+	     ZXP(out) = (a0 * y0 + a1 * y1 + a2 * y2) * -1.;
+	     y2 = y1;
+	     y1 = y0;
+	     );
+    }
+    
+    unit->m_y1 = zapgremlins(y1);
+    unit->m_y2 = zapgremlins(y2);
+}
+
+#define CALC_NFC_COEFS \
+    float c, fc, fs, k; \
+    c = 340; \
+    fc = c/((PI * 2.) * unit->m_distance); \
+    fs = SAMPLERATE; \
+    k = tanf((PI * fc) / fs); \
+    unit->m_a0 = 1. / (k + 1.); \
+    unit->m_a1 = -1. * unit->m_a0; \
+    unit->m_b1 = (k - 1.) * unit->m_a0 * -1.; \
+
+
+void NFC_Ctor(NFC *unit)
+{
+    unit->m_y1 = 0.f;
+    OUT0(0) = 0.f;
+    unit->m_distance = IN0(1);
+    CALC_NFC_COEFS
+    SETCALC(NFC_next);
+}
+
+void NFC_next(NFC *unit, int inNumSamples)
+{
+    float *out = ZOUT(0);
+    float *in = ZIN(0);
+    float distance = ZIN0(1);
+    float a0 = unit->m_a0;
+    float a1 = unit->m_a1;
+    float b1 = unit->m_b1;
+    float y1 = unit->m_y1;
+    
+    if(distance == unit->m_distance)
+    {
+
+	LOOP1(inNumSamples,
+	      float y0 = ZXP(in) + b1 * y1;
+	      ZXP(out) = a0 * y0 + a1 * y1;
+	      y1 = y0;
+	      );
+
+	unit->m_y1 = zapgremlins(y1);
+    } else {
+	
+	unit->m_distance = distance;
+	CALC_NFC_COEFS
+
+	float new_a0 = unit->m_a0;
+	float new_a1 = unit->m_a1;
+	float new_b1 = unit->m_b1;
+	float a0_slope = CALCSLOPE(new_a0, a0);
+	float a1_slope = CALCSLOPE(new_a1, a1);
+	float b1_slope = CALCSLOPE(new_b1, b1);
+	LOOP1(inNumSamples,
+	      float y0 = ZXP(in) + b1 * y1;
+	      ZXP(out) = a0 * y0 + a1 * y1;
+	      y1 = y0;
+	      
+	      a0 += a0_slope;
+	      a1 += a1_slope;
+	      b1 += b1_slope;
+	      );
+    }
+    unit->m_y1 = zapgremlins(y1);
+}
+
+#define CALC_XOVER2_COEFS \
+float fc = IN0(1) * SAMPLEDUR; \
+float w, c, s; \
+w = 2. * PI * fc; \
+c = cosf(w); \
+s = sinf(w); \
+unit->m_c0 = (c < 1e-3f) ? (-0.5 * c) : ((s - 1.) / c); \
+unit->m_c1 = 0.5 * (1. + unit->m_c0); \
+
+void Xover2_Ctor(Xover2 *unit)
+{
+    CALC_XOVER2_COEFS
+    unit->m_fc = fc;
+    unit->m_z0 = unit->m_z1 = unit->m_z2 = 0.;
+    SETCALC(Xover2_next);
+    OUT0(0) = 0.;
+    OUT0(1) = 0.;
+}
+
+void Xover2_next(Xover2 *unit, int inNumSamples)
+{
+    float *in = IN(0);
+    float *lp = OUT(0);
+    float *hp = OUT(1);
+    
+    float d, t, x0, x1, z0, z1, z2, c0, c1;
+    z0 = unit->m_z0;
+    z1 = unit->m_z1;
+    z2 = unit->m_z2;
+    c0 = unit->m_c0;
+    c1 = unit->m_c1;
+//    if(unit->m_fc == IN0(1))
+//    {
+	for(int i = 0; i < inNumSamples; i++)
+	{
+	    //hp[i] = lp[i]= in[i];
+	    
+	    x1 = x0 = in[i];
+	    d = c1 * (x1 - z1) + 1e-20f;
+	    x1 = z1 + d;
+	    z1 = x1 + d;
+	    d = c1 * (x1 - z2) + 1e-20f;
+	    x1 = z2 + d;
+	    z2 = x1 + d;	
+	    lp[i] = x1;
+	    
+	    t = x0 - c0 * z0;
+	    x0 = z0 + c0 * t;
+	    z0 = t + 1e-20f;
+	    hp[i] = x0 - x1;
+	}
+//    }
+    unit->m_z0 = z0;
+    unit->m_z1 = z1;
+    unit->m_z2 = z2;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -4943,9 +4971,6 @@ void load(InterfaceTable *inTable)
 	DefineSimpleCantAliasUnit(Balance);
 	DefineSimpleUnit(MoogVCF);
 	DefineSimpleUnit(PosRatio);
-	
-	DefineSimpleCantAliasUnit(DelTapWr);
-	DefineSimpleCantAliasUnit(DelTapRd);
     
 	#define DefineDelayUnit(name) \
 	    (*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
@@ -4964,6 +4989,12 @@ void load(InterfaceTable *inTable)
 	    (UnitDtorFunc)&DelayUnit_Dtor, kUnitDef_CantAliasInputsToOutputs);
     
 	DefineDelayCantAliasUnit(CubicDelay);
+	
+	DefineSimpleUnit(Xover2);
+	DefineSimpleUnit(PMLPF);
+	DefineSimpleUnit(PMHPF);
+	DefineSimpleUnit(NFC);
+	DefineSimpleCantAliasUnit(Xover2);
 	//DefineDelayUnit(HermiteDelay);
 }
 
