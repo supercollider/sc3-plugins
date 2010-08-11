@@ -141,6 +141,13 @@ BinData : MultiOutUGen
 	}
 }
 
+// very poorly implemented for the time being - do not use
+PV_PitchShift : PV_ChainUGen {
+	*new {arg buffer, ratio;
+		^this.multiNew('control', buffer, ratio);
+		}
+}
+
 + SimpleNumber {
 	calcPVRecSize {arg frameSize, hop, sampleRate;
 		var rawsize, tmp;
@@ -149,6 +156,7 @@ BinData : MultiOutUGen
 		^rawsize * hop.reciprocal + 3;
 		}
 	}
+	
 
 /* these aren't really working... hmmm ... maybe make some UGens that output Freq and Mag data
 but doesn't sort it... */

@@ -5,7 +5,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiCtrl, 
-		midiAmpSpec, midiPort, <>pevents, <about, closeable;
+		midiAmpSpec, midiPort, <>pevents, <about, closeable, <>info;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -54,7 +54,7 @@ ProcMod {
 
 	play {
 		var thisfun, port;
-		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
+		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo, queueSize: 1024)};
 		isRunning.not.if({	
 			isRunning = true;
 			// add the responder if it isn't nil
@@ -968,7 +968,7 @@ ProcEvents {
 	killAll {
 		preKill.value;
 		eventDict.do{arg me; me.isRunning.if({me.kill; showPMGUIs.if({me.window.close})})};
-		killmod.notNil.if({killmod.value; killmod.kill});
+		killmod.notNil.if({killmod.value; killmod.isKindOf(ProcMod).if({killmod.kill})});
 		initmod.notNil.if({initmod.kill});
 		gui.if({window.close; gui = false; pracwindow.notNil.if({pracwindow.close})});
 		pedal.if({pedrespsetup.remove; pedresp.remove; pedalgui.notNil.if({pedalgui.close})});
@@ -1475,8 +1475,6 @@ ProcEvents {
 /* this is predominantly a GUI class that stores ProcMods and displays them in a GUI. The GUI has 
 * two parts. A window that shows ProcMods in GUI mode, and a DragSink that takes ProcMods, places
 * them in the GUI, and can save them to a file as an archive
-* INCORPORATE THE STARTPIECE BUTTON ACTION IF A BUTTON IS PUSHED ON THE MAIN SCREEN - POSSIBLY REMOVE FROM 
-* SIDE BAR.
 */
 
 ProcSink {
@@ -1577,6 +1575,7 @@ ProcSink {
 		numProcs = numProcs + 1;
 		procMods = procMods.put(proc.id, proc);
 		rows = (numProcs / columns).ceil;
+		proc.pevents_(this);
 		{
 		procWindow.bounds_(Rect(procWindow.bounds.left, procWindow.bounds.top, 
 			procWindow.bounds.width, rows * (baseheight * 1.3) + 
@@ -1659,51 +1658,51 @@ ProcSink {
 
 ProcProcessor {
 	var synthdef, inbus, numChannels, addAction, target;
-	var parameters, responders;
-	var <objargs;
-	var <uniqueMethods;
-
-	addGetter {arg key, defaultVal;
-		objargs.put(key.asSymbol, defaultVal);
-		this.addUniqueMethod(key.asSymbol, {arg object; object.objargs[key]});
-		}
-
-	addSetter {arg key;
-		this.addUniqueMethod((key.asString++"_").asSymbol, 
-			{arg object, newval; object.objargs[key] = newval; object;
-			});
-		}
-		
-	addMethod {arg key, func;
-		objargs.put(key.asSymbol, func);
-		this.addUniqueMethod(key.asSymbol, {arg object ... args; 
-			objargs[key].value(object, args);
-			});
-		}
-		
-	addParameter {arg key, defaultVal;
-		defaultVal.isKindOf(Function).if({
-			this.addMethod(key, defaultVal);
-			}, {
-			this.addGetter(key, defaultVal);
-			this.addSetter(key);
-			})
-		^this;
-		}
-		
-	addUniqueMethod { arg selector, function;
-		var methodDict;
-		if (uniqueMethods.isNil, { uniqueMethods = IdentityDictionary.new });
-		uniqueMethods.put(selector, function);
-	}
-			
-	doesNotUnderstand {arg selector ... args;
-		(uniqueMethods[selector].notNil).if({
-			^uniqueMethods[selector].value(this, *args);
-			}, {
-			^DoesNotUnderstandError(this, selector, args).throw;
-			})
-		}
+//	var parameters, responders;
+//	var <objargs;
+//	var <uniqueMethods;
+//
+//	addGetter {arg key, defaultVal;
+//		objargs.put(key.asSymbol, defaultVal);
+//		this.addUniqueMethod(key.asSymbol, {arg object; object.objargs[key]});
+//		}
+//
+//	addSetter {arg key;
+//		this.addUniqueMethod((key.asString++"_").asSymbol, 
+//			{arg object, newval; object.objargs[key] = newval; object;
+//			});
+//		}
+//		
+//	addMethod {arg key, func;
+//		objargs.put(key.asSymbol, func);
+//		this.addUniqueMethod(key.asSymbol, {arg object ... args; 
+//			objargs[key].value(object, args);
+//			});
+//		}
+//		
+//	addParameter {arg key, defaultVal;
+//		defaultVal.isKindOf(Function).if({
+//			this.addMethod(key, defaultVal);
+//			}, {
+//			this.addGetter(key, defaultVal);
+//			this.addSetter(key);
+//			})
+//		^this;
+//		}
+//		
+//	addUniqueMethod { arg selector, function;
+//		var methodDict;
+//		if (uniqueMethods.isNil, { uniqueMethods = IdentityDictionary.new });
+//		uniqueMethods.put(selector, function);
+//	}
+//			
+//	doesNotUnderstand {arg selector ... args;
+//		(uniqueMethods[selector].notNil).if({
+//			^uniqueMethods[selector].value(this, *args);
+//			}, {
+//			^DoesNotUnderstandError(this, selector, args).throw;
+//			})
+//		}
 		
 	*new {arg id, inbus, numChannels;
 		^super.new.initProcProcessor(inbus, numChannels);

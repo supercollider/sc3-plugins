@@ -13,6 +13,7 @@ LPCFile : File {
 		thisbuf = buffer.asUGenInput ? server.bufferAllocator.alloc(1);
 		path = thispath;
 		buffer = thisbuf;
+		le = false;
 		this.isOpen.if({
 			this.readHeader;
 			}, {

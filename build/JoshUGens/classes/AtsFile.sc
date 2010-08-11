@@ -40,7 +40,22 @@ AtsFile : File {
 			this.close;
 			})
 		}
-		
+	
+	removeZeroFreqs {
+		numPartials.do({arg thisPar;
+			var thisParData, lastVal;
+			thisParData = this.getParFreq(thisPar);
+			lastVal = thisParData[0];
+			thisParData.do({arg thisFreq, inc;
+				(thisFreq == 0).if({
+					data[10 + (inc * increment + 2 + (thisPar * offset))] = lastVal;
+				}, {
+					lastVal = thisFreq;
+				})
+			})
+		})
+	}
+	
 	checkMN {
 		case
 			{this.getDouble == 123} {le = false; ^true}
@@ -55,6 +70,7 @@ AtsFile : File {
 			}, {
 			DoubleArray.fill(numSamples, {this.getDouble})
 			});
+		this.removeZeroFreqs;
 		}		
 	
 	// saves the ATS file as an Aiff that can be loaded to the server

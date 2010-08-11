@@ -8,6 +8,6 @@ CombLP : UGen {
 /*
 
 a = {
-	Out.ar(1, CombLP.ar(In.ar(16, 1), MouseX.kr(0, 1), 0.1, 200.reciprocal, 5, 0.02, 0.2))}.play(s)
+	Out.ar(1, CombLP.ar(WhiteNoise.ar(0.5), MouseX.kr(0, 1), 0.1, 200.reciprocal, 5, 0.02, 0.2))}.play(s)
 a.free;
 */
