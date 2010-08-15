@@ -121,6 +121,10 @@ struct PV_EvenBin : PV_Unit
     SndBuf *m_buf;
 };
 
+struct PV_BinFilter : PV_Unit
+{
+    SndBuf *m_buf;
+};
 
 struct PV_Invert : PV_Unit
 {
@@ -279,6 +283,9 @@ extern "C"
 	
 	void PV_EvenBin_Ctor(PV_EvenBin *unit);
 	void PV_EvenBin_next(PV_EvenBin* unit, int inNumSamples);
+
+	void PV_BinFilter_Ctor(PV_BinFilter *unit);
+	void PV_BinFilter_next(PV_BinFilter* unit, int inNumSamples);
 	
 	void PV_Invert_Ctor(PV_Invert *unit);
 	void PV_Invert_next(PV_Invert* unit, int inNumSamples);
@@ -1325,6 +1332,30 @@ void PV_EvenBin_next(PV_EvenBin* unit, int inNumSamples)
 	    }
 }
 
+void PV_BinFilter_Ctor(PV_BinFilter *unit)
+{
+    ZOUT0(0) = ZIN0(0);
+    SETCALC(PV_BinFilter_next);
+}
+
+void PV_BinFilter_next(PV_BinFilter* unit, int inNumSamples)
+{
+    PV_GET_BUF
+    SCPolarBuf *p = ToPolarApx(buf);
+    float start = IN0(1);
+    float end = IN0(2);
+    int istart = (int)start;
+    if (istart < 0) istart = 0;
+    int iend = (int)end;
+    if (iend >= numbins) iend = numbins;
+    
+    for(int i = 0; i < istart; i++){
+	p->bin[i].mag = 0.f;
+    }
+    for(int i = iend + 1; i < numbins; i++){
+	p->bin[i].mag = 0.f;
+    }
+}
 
 void PV_Invert_Ctor(PV_Invert *unit)
 {
@@ -2703,6 +2734,7 @@ void load(InterfaceTable *inTable)
 	DefinePVUnit(PV_MagBuffer);
 	DefinePVUnit(PV_OddBin);
 	DefinePVUnit(PV_EvenBin);
+	DefinePVUnit(PV_BinFilter);
 	DefinePVUnit(PV_Invert);
 	DefineDtorUnit(PV_BinDelay);
 	DefineDtorUnit(PV_Freeze);

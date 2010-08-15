@@ -49,6 +49,13 @@ PV_OddBin : PV_ChainUGen
 
 PV_EvenBin : PV_OddBin {}
 
+PV_BinFilter : PV_ChainUGen 
+{
+	*new {arg buffer, start = 0, end = 0;
+		^this.multiNew('control', buffer, start, end);
+	}	
+}
+
 PV_Invert : PV_ChainUGen
 {
 	*new {arg buffer;
