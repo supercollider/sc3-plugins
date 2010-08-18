@@ -352,14 +352,11 @@ plugins.append( FFT_Env.SharedLibrary('build/' + 'JoshPVUGens', ['source/JoshPVU
 plugins.append( FFT_Env.SharedLibrary('build/NCAnalysis', ['source/NCAnalysis/SMS.cpp','source/NCAnalysis/TPV.cpp','source/NCAnalysis/NCAnalysis.cpp', 'source/NCAnalysis/LPCAnalysis.cpp', 'source/NCAnalysis/LPCAnalyzer.cpp', 'source/NCAnalysis/WalshHadamard.cpp', 'source/NCAnalysis/WaveletDaub.cpp', sc3_source + '/Source/common/SC_fftlib.cpp', sc3_source + '/Source/plugins/SCComplex.cpp'  ] + platform_SOURCES , LIBS='fftw3f') )
 
 ##############################################
-# MCLDFFTTriggeredUGens
-# DEPRECATED - see FFTTriggered helpfile for why
-#plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTTriggeredUGen', ['source/MCLDFFTTriggeredUGen.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/fftlib.c']  + platform_SOURCES) )
-
-##############################################
 # MCLDFFTUGens
+plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp']  + platform_SOURCES) )
 
-plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDFFTUGens', ['source/MCLDFFTUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/SC_fftlib.cpp']  + platform_SOURCES, LIBS='fftw3f') )
+# MCLDCepstrumUGens
+plugins.append( FFT_Env.SharedLibrary('build/' + 'MCLDCepstrumUGens', ['source/MCLDCepstrumUGens.cpp', sc3_source + '/Source/plugins/SCComplex.cpp', sc3_source + '/Source/common/SC_fftlib.cpp']  + platform_SOURCES, LIBS='fftw3f') )
 
 ##############################################
 # bhobfft

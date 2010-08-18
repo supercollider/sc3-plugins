@@ -15,6 +15,7 @@
 			dependencies = (
 				373C2EFB0C9404EB00A3D3FD /* PBXTargetDependency */,
 				373C2EF90C9404EB00A3D3FD /* PBXTargetDependency */,
+				37D5EF1B121BD80300B078CF /* PBXTargetDependency */,
 				373C2EF70C9404EB00A3D3FD /* PBXTargetDependency */,
 				373C2EF50C9404EB00A3D3FD /* PBXTargetDependency */,
 				373C2EF30C9404EB00A3D3FD /* PBXTargetDependency */,
@@ -138,9 +139,10 @@
 		373C2EE20C9404C400A3D3FD /* MCLDGetenvUGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2EE10C9404C400A3D3FD /* MCLDGetenvUGen.cpp */; };
 		3751D6BA0E8C1FBA00B5AC2F /* MCLDOscUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */; };
 		37BDA13C0C92E2C100929FD5 /* TagSystemUgens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */; };
-		37E8604B0FA1F5D90056E561 /* fftlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E8604A0FA1F5D90056E561 /* fftlib.h */; };
-		37E8604C0FA1F6A30056E561 /* SC_fftlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */; };
-		37E8604F0FA1F6DB0056E561 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		37D5EF0D121BD7E600B078CF /* SC_fftlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4693B6490F78EB3400FEEFF3 /* SC_fftlib.cpp */; };
+		37D5EF0F121BD7E600B078CF /* SCComplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50D05E202E69B6B01CA2799 /* SCComplex.cpp */; };
+		37D5EF11121BD7E600B078CF /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5499A1103A3023A01BA7E76 /* vecLib.framework */; };
+		37D5EF1D121BD83300B078CF /* MCLDCepstrumUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D5EF1C121BD83300B078CF /* MCLDCepstrumUGens.cpp */; };
 		37FEEC0D0D9AA7960043C418 /* MCLDSOMUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEEC0C0D9AA7960043C418 /* MCLDSOMUGens.cpp */; };
 		46434A820EB3661A008F1E42 /* SLUGens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46434A810EB3661A008F1E42 /* SLUGens.cpp */; };
 		4650AC5D0E788D4E0012CFCF /* AnalyseEvents2fftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4650AC510E788D4E0012CFCF /* AnalyseEvents2fftw.cpp */; };
@@ -524,6 +526,13 @@
 			remoteGlobalIDString = F359F56E0EC217590053D29C;
 			remoteInfo = BatUGens;
 		};
+		37D5EF1A121BD80300B078CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37D5EF09121BD7E600B078CF /* MCLDCepstrumUGens */;
+			remoteInfo = MCLDCepstrumUGens;
+		};
 		37FEEC100D9AA7F80043C418 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F50D04F702E68E8201CA2799 /* Project object */;
@@ -784,6 +793,8 @@
 		3751D6B90E8C1FBA00B5AC2F /* MCLDOscUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDOscUGens.cpp; sourceTree = "<group>"; };
 		37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TagSystemUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
 		37BDA13B0C92E2C100929FD5 /* TagSystemUgens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagSystemUgens.cpp; sourceTree = "<group>"; };
+		37D5EF19121BD7E600B078CF /* MCLDCepstrumUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDCepstrumUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
+		37D5EF1C121BD83300B078CF /* MCLDCepstrumUGens.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MCLDCepstrumUGens.cpp; sourceTree = "<group>"; };
 		37E8604A0FA1F5D90056E561 /* fftlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftlib.h; path = ../common/Headers/common/fftlib.h; sourceTree = SOURCE_ROOT; };
 		37EC44AA0E78F45000090462 /* fftw3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = fftw3.h; path = include/fftw3.h; sourceTree = SOURCE_ROOT; };
 		37FEEC090D9AA7630043C418 /* MCLDSOMUGens.scx */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MCLDSOMUGens.scx; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1050,6 +1061,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		37D5EF10121BD7E600B078CF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37D5EF11121BD7E600B078CF /* vecLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37FEEC020D9AA7630043C418 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1209,7 +1228,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E8604F0FA1F6DB0056E561 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1457,6 +1475,7 @@
 		F50D057E02E69B6B01CA2799 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				37D5EF1C121BD83300B078CF /* MCLDCepstrumUGens.cpp */,
 				20D1B3B310C3535F00529A83 /* BatPVUgens.cpp */,
 				F3B4FA120F537ED300B0CD00 /* BerlachUGens.cpp */,
 				F3331B040EFC4B1500A32D02 /* RFWUGens.cpp */,
@@ -1563,6 +1582,7 @@
 				46931B8B0F77A00A005B16C9 /* NCAnalysisUB.scx */,
 				DC84A12C10A8355700D17E63 /* MCLDTreeUGens.scx */,
 				20D1B3AF10C3530A00529A83 /* BatPVUGens.scx */,
+				37D5EF19121BD7E600B078CF /* MCLDCepstrumUGens.scx */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1657,6 +1677,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		37BDA12C0C92E27000929FD5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37D5EF0A121BD7E600B078CF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1901,7 +1928,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E8604B0FA1F5D90056E561 /* fftlib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2164,6 +2190,26 @@
 			productInstallPath = /usr/local/lib;
 			productName = BinaryOpUGens;
 			productReference = 37BDA1360C92E27000929FD5 /* TagSystemUGens.scx */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		37D5EF09121BD7E600B078CF /* MCLDCepstrumUGens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37D5EF14121BD7E600B078CF /* Build configuration list for PBXNativeTarget "MCLDCepstrumUGens" */;
+			buildPhases = (
+				37D5EF0A121BD7E600B078CF /* Headers */,
+				37D5EF0C121BD7E600B078CF /* Sources */,
+				37D5EF10121BD7E600B078CF /* Frameworks */,
+				37D5EF12121BD7E600B078CF /* Rez */,
+				37D5EF13121BD7E600B078CF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MCLDCepstrumUGens;
+			productInstallPath = /usr/local/lib;
+			productName = BinaryOpUGens;
+			productReference = 37D5EF19121BD7E600B078CF /* MCLDCepstrumUGens.scx */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		37FEEBFE0D9AA7630043C418 /* MCLDSOMUGens */ = {
@@ -2803,6 +2849,7 @@
 				F3B4FA050F537EB400B0CD00 /* BerlachUGens */,
 				DC84A12110A8355700D17E63 /* MCLDTreeUGens */,
 				20D1B3A310C3530A00529A83 /* BatPVUGens */,
+				37D5EF09121BD7E600B078CF /* MCLDCepstrumUGens */,
 			);
 		};
 /* End PBXProject section */
@@ -2872,6 +2919,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		37BDA1300C92E27000929FD5 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37D5EF12121BD7E600B078CF /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3166,6 +3220,15 @@
 			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
 		};
 		37BDA1310C92E27000929FD5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"$TARGET_BUILD_DIR/$PRODUCT_NAME\".scx build/plugins";
+		};
+		37D5EF13121BD7E600B078CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3521,6 +3584,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		37D5EF0C121BD7E600B078CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37D5EF0D121BD7E600B078CF /* SC_fftlib.cpp in Sources */,
+				37D5EF0F121BD7E600B078CF /* SCComplex.cpp in Sources */,
+				37D5EF1D121BD83300B078CF /* MCLDCepstrumUGens.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37FEEC000D9AA7630043C418 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3704,7 +3777,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E8604C0FA1F6A30056E561 /* SC_fftlib.cpp in Sources */,
 				F3A15D190B5D8C6C00D75043 /* MCLDFFTUGens.cpp in Sources */,
 				F3A15D0B0B5D8C3900D75043 /* SCComplex.cpp in Sources */,
 			);
@@ -3923,6 +3995,11 @@
 			isa = PBXTargetDependency;
 			target = F359F56E0EC217590053D29C /* BatUGens */;
 			targetProxy = 37AF81B40ECDDB8200CD45A0 /* PBXContainerItemProxy */;
+		};
+		37D5EF1B121BD80300B078CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37D5EF09121BD7E600B078CF /* MCLDCepstrumUGens */;
+			targetProxy = 37D5EF1A121BD80300B078CF /* PBXContainerItemProxy */;
 		};
 		37FEEC110D9AA7F80043C418 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5162,6 +5239,142 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = TagSystemUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		37D5EF15121BD7E600B078CF /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDCepstrumUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		37D5EF16121BD7E600B078CF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDCepstrumUGens;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		37D5EF17121BD7E600B078CF /* Deployment32-64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDCepstrumUGens;
+				REZ_EXECUTABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = "Deployment32-64";
+		};
+		37D5EF18121BD7E600B078CF /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUNDLE_LOADER)";
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_EXTENSION = scx;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = SC_DARWIN;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = BUNDLE;
+				MACH_O_TYPE = mh_bundle;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MCLDCepstrumUGens;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				USER_HEADER_SEARCH_PATHS = "/usr/local/include lib ../common/Headers/plugin_interface ../common/Headers/common ../common/Headers/server ../common/Source/plugins ../common/include/libsndfile";
@@ -9882,6 +10095,17 @@
 				37BDA1340C92E27000929FD5 /* Deployment */,
 				F36C2DE21125E5D10099DB2B /* Deployment32-64 */,
 				37BDA1350C92E27000929FD5 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		37D5EF14121BD7E600B078CF /* Build configuration list for PBXNativeTarget "MCLDCepstrumUGens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37D5EF15121BD7E600B078CF /* Development */,
+				37D5EF16121BD7E600B078CF /* Deployment */,
+				37D5EF17121BD7E600B078CF /* Deployment32-64 */,
+				37D5EF18121BD7E600B078CF /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
