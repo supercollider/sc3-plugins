@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0000ff}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>TextVU<span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></b></span><b>display level of a UGen as a textual meter</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>TextVU.ar(trig, in, label, width, reset, ana)</b></p>
+<p class="p1"><b>TextVU.kr(trig, in, label, width, reset, ana)</b></p>
+<p class="p3"><br></p>
+<p class="p1">This behaves similar to <a href="SC://Poll"><span class="s2">Poll</span></a> but displays its output as a textual "VU meter" visualisation (ranging from -60 to 0 dB). The class also automatically inserts an <a href="SC://Amplitude"><span class="s2">Amplitude</span></a> analysis into the chain (you can modify this by supplying a function to the <b>ana</b> argument). Also, internally it ONLY RUNS AT CONTROL RATE, although it can analyse ar or kr inputs (and passes them back out again).</p>
+<p class="p3"><br></p>
+<p class="p1">Parameters not found in Poll:</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>width</b><span class="Apple-tab-span">	</span>Number of characters used to display the meter. Cannot be modulated.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>ana</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Analysis function (if nil, inserts an automatic amplitude analysis). Cannot be modulated.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>reset</b><span class="Apple-tab-span">	</span>If &gt;0, resets the ugen's all-time-peak memory.</p>
+<p class="p3"><br></p>
+<p class="p1">The result looks something like this:</p>
+<p class="p3"><br></p>
+<p class="p4">Mic : XXXXXXXXXXXXXXX---|----</p>
+<p class="p4">Line: XXXXXXXXXXXXXXXXXXXXXXX</p>
+<p class="p3"><br></p>
+<p class="p1"><b>Example</b></p>
+<p class="p3"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p5">(</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> son = <span class="s3">SinOsc</span>.ar(mul: <span class="s3">SinOsc</span>.ar(0.3).range(0,1) * <span class="s3">Line</span>.ar(0, 1, 20, doneAction: 2));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">TextVU</span>.ar(2, son, <span class="s4">"Sin"</span>);</p>
+<p class="p5">}.play;</p>
+<p class="p5">)</p>
+</body>
+</html>

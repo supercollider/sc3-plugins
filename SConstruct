@@ -243,6 +243,7 @@ plugs = [
 	'MCLDChaosUGens',
 	'MCLDDistortionUGens',
 	'MCLDOscUGens',
+	'MCLDPollUGens',
 	'MCLDSOMUGens',
 	'MCLDTreeUGens',
 	'MCLDTriggeredStatsUgens',
