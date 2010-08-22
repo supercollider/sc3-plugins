@@ -1560,7 +1560,7 @@ void Sflute_next(Sflute *unit, int inNumSamples)
 		RPUT
 }
   
-void load(InterfaceTable *inTable)
+PluginLoad(Stk)
 {
         ft = inTable;
         DefineDtorUnit(StkBandedWG); 

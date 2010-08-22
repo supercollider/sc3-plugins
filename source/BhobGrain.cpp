@@ -569,7 +569,7 @@ void TGrains3_Ctor(TGrains3 *unit)
 	ClearUnitOutputs(unit, 1);
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(BhobGrains)
 {
 	ft = inTable;
 	

@@ -887,7 +887,7 @@ void Gendy0_next_k(Gendy0 *unit, int inNumSamples) {
 	unit->mDur = rate;
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(BhobNoise)
 {
 	ft = inTable;
 	

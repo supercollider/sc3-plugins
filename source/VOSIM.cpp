@@ -20,7 +20,7 @@
 
 
 /*
-VOSIM implemented by LŽon Spek
+VOSIM implemented by LÃ©on Spek
 http://www.dendriet.nl
 http://www.leonspek.tk
  */
@@ -851,11 +851,10 @@ void VOSIM_next_akkc(VOSIM *unit, int inNumSamples)
 //////////////////////////////////////////////////////////////////
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable)
+PluginLoad(VOSIM)
 {
 	ft = inTable;
 
 	DefineSimpleUnit(VOSIM);
-	
 }
 

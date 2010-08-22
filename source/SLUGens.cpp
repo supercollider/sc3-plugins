@@ -3976,7 +3976,8 @@ void preparelookuptables() {
 extern void initSLUGensResearch(InterfaceTable *);
 #endif
 
-extern "C" void load(InterfaceTable *inTable) {
+PluginLoad(SLUGens)
+{
 	
 	ft = inTable;
 	

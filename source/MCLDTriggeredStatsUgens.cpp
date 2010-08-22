@@ -333,7 +333,7 @@ void MedianTriggered_SelectionSort(float *array, int length)
 
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDTriggeredStats)
 {
 	ft = inTable;
 

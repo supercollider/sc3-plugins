@@ -132,7 +132,7 @@ void AY_next(AY *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(AY)
 {
 	ft = inTable;
 

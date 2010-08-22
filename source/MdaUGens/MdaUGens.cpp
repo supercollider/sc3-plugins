@@ -230,7 +230,7 @@ void MdaPiano_next(MdaPiano *unit, int inNumSamples)
 ////////////////////////////////////////////////////////////////////
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable)
+PluginLoad(Mda)
 {
 	ft = inTable;
 

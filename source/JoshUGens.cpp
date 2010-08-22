@@ -4948,7 +4948,7 @@ void Xover2_next(Xover2 *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(Josh)
 {
 	ft = inTable;
 	DefineDtorUnit(AtsSynth);

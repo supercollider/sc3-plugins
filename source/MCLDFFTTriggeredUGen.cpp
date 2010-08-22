@@ -337,7 +337,7 @@ void init_ffts()
 
 void init_SCComplex(InterfaceTable *inTable);
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDFFTTriggered)
 {
 	ft = inTable;
 

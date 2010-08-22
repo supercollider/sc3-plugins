@@ -623,7 +623,7 @@ void Perlin3_Ctor(Perlin3* unit){
 
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDChaos)
 {
 	ft = inTable;
 

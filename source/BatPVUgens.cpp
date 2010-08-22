@@ -165,7 +165,7 @@ void FrameCompare_Dtor(FrameCompare* unit)
 
 void init_SCComplex(InterfaceTable *inTable);
 
-void load(InterfaceTable *inTable)
+PluginLoad(BatPV)
 {
 	ft = inTable;
 	

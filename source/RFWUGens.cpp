@@ -197,7 +197,8 @@ void AverageOutput_next( AverageOutput *unit, int inNumSamples ) {
 }	
 
 
-extern "C" void load(InterfaceTable *inTable) {
+PluginLoad(RFW)
+{
 	ft = inTable;	
 	DefineDtorUnit(SwitchDelay);
 	DefineSimpleUnit(AverageOutput);

@@ -412,7 +412,7 @@ void Goertzel_Dtor(Goertzel* unit)
 
 //////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDFilter)
 {
 	ft = inTable;
 

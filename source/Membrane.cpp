@@ -310,7 +310,8 @@ void Membrane_Dtor(Membrane* unit) {
 ////////////////////////////////////////////////////////////////////
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable) {
+PluginLoad(Membrane)
+{
   ft = inTable;
   (*ft->fDefineUnit)("MembraneCircle", 
 		     sizeof(Membrane), 

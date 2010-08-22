@@ -506,7 +506,7 @@ void FLoopBuf_next(FLoopBuf *unit, int inNumSamples)
 	unit->m_phase = phase;
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(LoopBuf)
 {
 	ft = inTable;
 	DefineSimpleUnit(LoopBuf);

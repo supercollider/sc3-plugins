@@ -677,7 +677,7 @@ void SOMAreaWr_Dtor(SOMAreaWr* unit)
 ////////////////////////////////////////////////////////////////////
 
 // the load function is called by the host when the plug-in is loaded
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDSOM)
 {
 	ft = inTable;
 

@@ -338,7 +338,7 @@ void Disintegrator_next(Disintegrator *unit, int inNumSamples)
 
 //---------------------------------------------------------- 
 
-void load(InterfaceTable *inTable)
+PluginLoad(Ladspa)
 {
   ft = inTable;
 

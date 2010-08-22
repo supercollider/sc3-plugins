@@ -630,7 +630,7 @@ void SkipNeedle_next(SkipNeedle *unit, int inNumSamples)
 
 ///////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(Bat)
 {
 	ft = inTable;
 	

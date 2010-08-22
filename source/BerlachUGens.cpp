@@ -1225,8 +1225,7 @@ OSTrunc8_next (OSTrunc8 *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void
-load(InterfaceTable *inTable)
+PluginLoad(Berlach)
 {
   ft = inTable;
   DefineSimpleUnit(PeakEQ4);

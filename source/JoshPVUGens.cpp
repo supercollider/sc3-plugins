@@ -2718,7 +2718,7 @@ void init_SCComplex(InterfaceTable *inTable);
 #define DefinePVUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(PV_Unit), (UnitCtorFunc)&name##_Ctor, 0, 0);
 	
-void load(InterfaceTable *inTable)
+PluginLoad(JoshPV)
     {
     	ft = inTable;
 	init_SCComplex(inTable);

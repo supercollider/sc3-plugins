@@ -3315,7 +3315,7 @@ void DoubleNestedAllpassC_next_z(DoubleNestedAllpassC *unit, int inNumSamples) {
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
 	(UnitDtorFunc)&FilterDelay_Dtor, 0);
 
-void load(InterfaceTable *inTable)
+PluginLoad(BhobFilt)
 {
 	ft = inTable;
 

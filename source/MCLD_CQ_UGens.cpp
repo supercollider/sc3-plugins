@@ -696,7 +696,7 @@ void dofft(CQ_Diff *unit) {
 }	
 
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDCQ)
 {
 	
 	ft= inTable;

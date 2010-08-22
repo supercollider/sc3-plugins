@@ -35,7 +35,7 @@ void init_SCComplex(InterfaceTable *inTable);
 //these are defined in the relevant files
 extern void initPV_bhobFFT(InterfaceTable *);
 
-void load(InterfaceTable *inTable)
+PluginLoad(BhobPV)
 {
 	
 	ft= inTable;

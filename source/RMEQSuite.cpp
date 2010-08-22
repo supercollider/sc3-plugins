@@ -1119,7 +1119,7 @@ void Spreader_next_k(Spreader* unit, int inNumSamples)
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(RMEQSuite)
 {
 	ft = inTable;
 	

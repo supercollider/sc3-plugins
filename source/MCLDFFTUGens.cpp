@@ -2039,7 +2039,7 @@ void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDFFT)
 {
 	ft= inTable;
 

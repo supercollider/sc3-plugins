@@ -99,8 +99,7 @@ void Clockmus_next(Clockmus *unit, int inNumSamples)
 
 //////////////////////////////////////////////////////////////////
 
-
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDGetEnv)
 {
 	ft = inTable;
 

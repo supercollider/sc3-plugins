@@ -72,7 +72,8 @@ void prepareHanningWindow(float * hanning, int n){
 	
 }
 
-extern "C" void load(InterfaceTable *inTable) {
+PluginLoad(MLfftw)
+{
 	
 	ft = inTable;
 	

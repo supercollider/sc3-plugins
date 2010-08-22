@@ -464,7 +464,7 @@ void IIRFilter_next_a(IIRFilter *unit, int inNumSamples)
 
 
 
-void load(InterfaceTable *inTable)
+PluginLoad(Blackrain)
 {
 	ft = inTable;
 	DefineSimpleUnit(SVF);

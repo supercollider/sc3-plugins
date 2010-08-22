@@ -110,7 +110,7 @@ void SawDPW_next_k(SawDPW *unit, int inNumSamples)
 	unit->mVal   = val;
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDOsc)
 {
 	ft = inTable;
 	DefineSimpleUnit(SawDPW);

@@ -205,7 +205,7 @@ void Squiz_Dtor(Squiz* unit)
 
 ////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDDistortion)
 {
 	ft = inTable;
 

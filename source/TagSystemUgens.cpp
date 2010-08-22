@@ -790,7 +790,7 @@ void Dfsm_Dtor(Dfsm *unit)
 
 
 
-void load(InterfaceTable *inTable)
+PluginLoad(TagSystem)
 {
 	ft = inTable;
 	DefineDtorUnit(DbufTag);

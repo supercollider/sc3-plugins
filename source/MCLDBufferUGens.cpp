@@ -781,7 +781,7 @@ void MIDelay_Dtor(MIDelay* unit)
 
 //////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(MCLDBuffer)
 {
 	ft = inTable;
 

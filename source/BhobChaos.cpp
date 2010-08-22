@@ -1826,7 +1826,7 @@ void FhnTrig_next(FhnTrig *unit, int inNumSamples) {
 	unit->mspeed=speed;
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(BhobChaos)
 {
 	ft = inTable;
 	
