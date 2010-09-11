@@ -116,7 +116,9 @@ void MdaPiano_next(MdaPiano *unit, int inNumSamples)
 		int32 k, s;
 		
 		// NOTE ON
-		unit->note = note = sc_cpsmidi(freq);
+		note = sc_cpsmidi(freq);
+		if(!(note>0)) note = 0; // Added & phrased to guard against NaNs, should also catch negs
+		unit->note = note;
 		
 		// Update state from arguments:
 		unit->size    = size    = (int32)(12.0f * param[2] - 6.0f);
