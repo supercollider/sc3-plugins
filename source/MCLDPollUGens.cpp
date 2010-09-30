@@ -37,6 +37,7 @@ struct TextVU : public Unit
 	size_t m_width;
 	float *m_cutoffs;
 	char *m_vustring;
+	float m_maxinepoch;
 	size_t m_maxever;
 };
 
@@ -77,6 +78,7 @@ void TextVU_Ctor(TextVU* unit)
 		//Print("cutoff %i: %g\n", i, unit->m_cutoffs[i]);
 		db += cutstep;
 	}
+	unit->m_maxinepoch = 0.f;
 	unit->m_maxever = 0;
 
 	unit->m_mayprint = unit->mWorld->mVerbosity >= 0;
@@ -94,18 +96,23 @@ void TextVU_Dtor(TextVU* unit)
 void TextVU_next_kk(TextVU *unit, int inNumSamples){
 	float in = IN0(1);
 	float trig = IN0(0);
+	float maxinepoch = unit->m_maxinepoch;
 	size_t maxever = unit->m_maxever;
 	size_t width = unit->m_width;
 	float* cutoffs = unit->m_cutoffs;
 	char* vustring = unit->m_vustring;
-	if(IN0(3)) maxever = 0;
+	if(IN0(3)){
+		maxinepoch = 0.f;
+		maxever = 0;
+	}
+	maxinepoch = sc_max(maxinepoch, in);
 	if((unit->m_trig <= 0.f) && (trig > 0.f)){
 		if(unit->m_mayprint){
 			
 			// convert the input value to a meter position, using the precalced thresholds
 			size_t index = 0;
 			for(size_t i=0; i<width; ++i){
-				if(in < cutoffs[i]){
+				if(maxinepoch < cutoffs[i]){
 					if(maxever==i){
 						vustring[i] = '|';
 					}else{
@@ -122,6 +129,7 @@ void TextVU_next_kk(TextVU *unit, int inNumSamples){
 				maxever = index;
 			}
 			Print("%s: %s\n", unit->m_id_string, vustring);
+			maxinepoch = 0.f;
 		}
 	}
 	unit->m_trig = trig;
