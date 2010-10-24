@@ -2,7 +2,7 @@
 	
 	// receiver is a time in seconds
 	// returns string "hh:mm:ss:ttt" where t is milliseconds
-	asTimeString{
+	asTimeStringLJP{
 		var decimal, hours, minutes, seconds, mseconds, string;
 		decimal = this.asInteger;
 		
