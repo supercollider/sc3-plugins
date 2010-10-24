@@ -1,0 +1,9 @@
+(
+\name:	"GlitchUGens",
+\path:	"GlitchUGens",
+\summary:	 "sc3-plugins:GlitchUGens",
+\author:	 "sc3-plugins",
+\helpdoc:	"GlitchUGens.html",
+\url:	 "http://sc3-plugins.sourceforge.net",
+\version:	3.4
+)

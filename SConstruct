@@ -258,7 +258,8 @@ plugs = [
 	'BhobNoise',
 	'LadspaUGens',
 	'VOSIM',
-	'BerlachUGens'
+	'BerlachUGens',
+	'GlitchUGens'
 ]
 
 if platform.system() == 'OSX':

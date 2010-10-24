@@ -27,6 +27,7 @@ $movecmd build/BatUGens.$pluginext       Extensions/BatUGens
 $movecmd build/BerlachUGens.$pluginext   Extensions/BerlachUGens
 $movecmd build/Bhob*.$pluginext          Extensions/BhobUGens
 $movecmd build/BlackrainUGens*.$pluginext Extensions/BlackrainUGens
+$movecmd build/GlitchUGens.$pluginext    Extensions/GlitchUGens
 $movecmd build/Josh*UGens*.$pluginext    Extensions/JoshUGens
 $movecmd build/LadspaUGens.$pluginext    Extensions/LadspaUGens
 $movecmd build/LoopBuf.$pluginext        Extensions/LoopBufUGens
