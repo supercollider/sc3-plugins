@@ -19,6 +19,7 @@ FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
 
 */
 
+#include "SC_fftlib.h"
 #include "SC_PlugIn.h"
 #include "SCComplex.h"
 #include "FFT_UGens.h"

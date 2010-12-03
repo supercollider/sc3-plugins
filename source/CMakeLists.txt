@@ -10,10 +10,18 @@ if (SUPERNOVA)
     include_directories(${SN_PATH}/libs/boost_lockfree)
 endif()
 
+
+
+include_directories(${CMAKE_SOURCE_DIR}/scfft_old/)
+
+include_directories(${SC_PATH}/include/plugin_interface)
+include_directories(${SC_PATH}/include/common)
+include_directories(${SC_PATH}/server/plugins) # for FFT_UGens.h
+
+# old-style directory layout
 include_directories(${SC_PATH}/common/Headers/plugin_interface)
 include_directories(${SC_PATH}/common/Headers/common)
-include_directories(${SC_PATH}/common/Headers/server)
-include_directories(${SC_PATH}/common/Source/plugins)
+include_directories(${SC_PATH}/common/Source/plugins) # for FFT_UGens.h
 
 set(plugin_sources
     AmbisonicUGens.cpp
@@ -71,9 +79,9 @@ if (STK)
 endif()
 
 set(FFTSOURCES
-    ${SC_PATH}/common/Source/common/fftlib.c
-    ${SC_PATH}/common/Source/common/SC_fftlib.cpp
-    ${SC_PATH}/common/Source/server/SC_Complex.cpp
+    ${CMAKE_SOURCE_DIR}/scfft_old/fftlib.c
+    ${CMAKE_SOURCE_DIR}/scfft_old/SC_fftlib.cpp
+    ${CMAKE_SOURCE_DIR}/scfft_old/SCComplex.cpp
 )
 
 add_library(JoshPVUGens MODULE JoshPVUGens.cpp ${FFTSOURCES})

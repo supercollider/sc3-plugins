@@ -8,7 +8,12 @@
  */
 
 //#include <sndfile.h>
+#include "SC_fftlib.h"
 #include "SC_PlugIn.h"
+#undef scfft_create
+#undef scfft_dofft
+#undef scfft_doifft
+#undef scfft_destroy
 #include "SC_Constants.h"
 
 //#include <vecLib/vecLib.h>
@@ -19,7 +24,6 @@
 
 
 #include "FFT_UGens.h"
-//#include "SC_fftlib.h"
 
 //
 //struct SCComplexBuf 

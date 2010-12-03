@@ -18,6 +18,7 @@ SuperCollider real time audio synthesis system
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
+#include "SC_fftlib.h"
 #include "FFT_UGens.h"
 
 struct PV_MagScale : public PV_Unit 

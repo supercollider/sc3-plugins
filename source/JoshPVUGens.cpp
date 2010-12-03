@@ -9,6 +9,7 @@
 
 //third party Phase Vocoder UGens
 
+#include "SC_fftlib.h"
 #include "FFT_UGens.h"
 #include "SCComplex.h"
 #include "SC_PlugIn.h"
