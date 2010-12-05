@@ -6,6 +6,7 @@ set(directories
     BlackrainUGens
     JoshUGens
     LadspaUGens
+    LadspaUGen
     LoopBufUGens
     MCLDUGens
     MdaUGens

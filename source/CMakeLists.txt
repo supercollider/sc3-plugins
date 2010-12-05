@@ -70,6 +70,8 @@ endforeach(plugin)
 add_library(MdaUGens MODULE MdaUGens/MdaUGens.cpp)
 add_library(MembraneUGens MODULE Membrane_shape.c Membrane.cpp)
 
+add_library(LadspaUGen MODULE LadspaUGen/LadspaUGen.cpp LadspaUGen/search.c)
+list(APPEND plugins LadspaUGen)
 
 file(GLOB MLfftwSources MLfftwUGens/*cpp)
 add_library(MLfftwUGens MODULE ${MLfftwSources})
