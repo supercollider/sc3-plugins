@@ -80,12 +80,9 @@ file(GLOB MLfftwSources MLfftwUGens/*cpp)
 add_library(MLfftwUGens MODULE ${MLfftwSources})
 target_link_libraries(MLfftwUGens ${FFTW3F_LIBRARY})
 
-if (STK)
-    file(GLOB STKSources StkUGens/stk-4.2.2/*cpp)
-    include_directories(StkUGens/stk-4.4.2/)
-    include_directories(StkUGens/stk-4.4.2/include)
-    add_library(StkUGens MODULE StkUGens/StkAll.cpp ${STKSources})
-endif()
+add_subdirectory(StkUGens)
+
+list(APPEND plugins ${StkUGens})
 
 set(FFTSOURCES
     ${CMAKE_SOURCE_DIR}/scfft_old/fftlib.c

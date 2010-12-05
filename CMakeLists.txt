@@ -17,7 +17,6 @@ set(SC_PATH "/usr/include/SuperCollider" CACHE STRING "SuperCollider path")
 set(SN_PATH "/path/to/supernova" CACHE STRING "Supernova path")
 
 option(SUPERNOVA "Build plugins for supernova")
-option(STK "Build with STK ugens")
 option(AY "Build with AY ugens")
 
 add_subdirectory(build)
