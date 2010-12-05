@@ -4020,6 +4020,354 @@ void Metro_next(Metro *unit, int inNumSamples)
     }
 }
 
+// TTendency
+struct TTendency : public Unit
+{
+    float m_outVal, m_lastTrig;
+};
+
+extern "C"
+{
+    void TTendency_next_k(TTendency *unit, int inNumSamples);
+    void TTendency_next_a(TTendency *unit, int inNumSamples);
+    void TTendency_Ctor(TTendency *unit);
+}
+
+void TTendency_Ctor(TTendency *unit)
+{
+    unit->m_outVal = 0.f;
+    unit->m_lastTrig = 0.f;
+    if(INRATE(0) == calc_FullRate)
+	SETCALC(TTendency_next_a);
+    else 
+	SETCALC(TTendency_next_k);
+    TTendency_next_k(unit, 1);
+}
+/*
+dist types:
+0 = uniform
+1 = lowpass
+2 = highpass
+3 = mean
+4 = beta
+5 = cauchy
+6 = gauss
+7 = poisson
+8 = expRand
+9 = exponential
+10 = gamma
+11 = laplace
+12 = alaplace
+13 = hcos
+14 = logistic
+15 = arcsin
+*/
+
+inline void getUniformVal(TTendency *unit, float parX, float parY)
+{
+    RGen& rgen = *unit->mParent->mRGen;
+    unit->m_outVal = (rgen.frand() * (parY - parX)) + parX;
+}
+
+inline void getLowpassVal(TTendency *unit, float parX, float parY)
+{
+    float val1, val2;
+    RGen& rgen = *unit->mParent->mRGen;
+    val1 = rgen.frand();
+    val2 = rgen.frand();
+    if(val2 < val1) val1 = val2;
+    unit->m_outVal = (val1 * (parY - parX)) + parX;
+}
+
+inline void getHighpassVal(TTendency *unit, float parX, float parY)
+{
+    float val1, val2;
+    RGen& rgen = *unit->mParent->mRGen;
+    val1 = rgen.frand();
+    val2 = rgen.frand();
+    if(val2 > val1) val1 = val2;
+    unit->m_outVal = (val1 * (parY - parX)) + parX;
+}
+
+inline void getMeanVal(TTendency *unit, float parX, float parY)
+{
+    float val1, val2;
+    RGen& rgen = *unit->mParent->mRGen;
+    val1 = rgen.frand();
+    val2 = rgen.frand();
+    val1 = (val1 + val2) * 0.5;
+    unit->m_outVal = (val1 * (parY - parX)) + parX;
+}
+
+inline void getBetaVal(TTendency *unit, float parX, float parY, float parA, float parB)
+{
+    float sum, rprob1, rprob2, temp, i;
+    RGen& rgen = *unit->mParent->mRGen;
+    sum = 2.0;
+    i = 0;
+    rprob1 = 1.0 / parA;
+    rprob2 = 1.0 / parB;
+    while((sum > 1.0) && (i < 10))
+    {
+	temp = powf(rgen.frand(), rprob1);
+	sum = temp + powf(rgen.frand(), rprob2);
+	i++;
+    }
+    if(sum < 0.000000001f) sum = 0.000000001f;
+    unit->m_outVal = (float)((temp / sum) * (parX - parY)) + parY;
+}
+
+inline void getCauchyVal(TTendency *unit, float parX, float parY, float parA)
+{
+    float u;
+    RGen& rgen = *unit->mParent->mRGen;
+    u = rgen.frand();
+    if(parA > 0.f) u = u * 0.5;
+    u = u * PI;
+    unit->m_outVal = (parX * tanf(u)) + parY;
+}
+
+inline void getGaussVal(TTendency *unit, float parX, float parY)
+{
+    float val1, val2;
+    RGen& rgen = *unit->mParent->mRGen;
+    val1 = rgen.frand();
+    val2 = rgen.frand();
+    unit->m_outVal = (sqrtf(-2.0 * logf(1.0 - val1)) * parX) + parY;
+}
+
+inline void getPoissonVal(TTendency *unit, float parX)
+{
+    float val1, tmp;
+    int count;
+    RGen& rgen = *unit->mParent->mRGen;
+    count = -1;
+    val1 = rgen.frand();
+    tmp = expf(-parX);
+    while(val1 > tmp)
+    {
+	val1 = val1 * rgen.frand();
+	count++;
+    }
+    unit->m_outVal = count;
+}
+
+inline void getExpRandVal(TTendency *unit, float parX, float parY)
+{
+    float ratio;
+    RGen& rgen = *unit->mParent->mRGen;
+    ratio = parY / parX;
+    unit->m_outVal = powf(ratio, rgen.frand()) * parX;
+}
+
+inline void getExponentialVal(TTendency *unit, float parX, float parY)
+{
+    float xs;
+    RGen& rgen = *unit->mParent->mRGen;
+    xs = logf(rgen.frand());
+    unit->m_outVal = (-xs/parX) + parY;
+}
+
+inline void getGammaVal(TTendency *unit, float parX, float parY)
+{
+    float sum;
+    int i;
+    RGen& rgen = *unit->mParent->mRGen;
+    sum = 1.0;
+    for(i = 1; i < (int)parX; i++)
+    {
+	sum *= (1 - rgen.frand());
+    }
+    unit->m_outVal = (logf(sum) * -1) + parY;
+}
+
+inline void getLaplaceVal(TTendency *unit, float parX)
+{
+    float u, val;
+    RGen& rgen = *unit->mParent->mRGen;
+    u = rgen.frand() * 2.0;
+    if(u > 1.0)
+    {
+	u = 2.0 - u;
+	val = -parX * logf(u);
+    } else {
+	val = parX * logf(u);
+    }
+    unit->m_outVal = val + parX;
+}
+
+inline void getAlaplaceVal(TTendency *unit, float parX)
+{
+    float u, val;
+    RGen& rgen = *unit->mParent->mRGen;
+    u = rgen.frand() * 2.0;
+    if(u > 1.0)
+    {
+	u = 2.0 - u;
+	val = -parX * expf(u);
+    } else {
+	val = parX * expf(u);
+    }
+    unit->m_outVal = val + parX;
+}
+
+inline void getHcosVal(TTendency *unit, float parX, float parY)
+{
+    float u, val;
+    RGen& rgen = *unit->mParent->mRGen;  
+    u = rgen.frand();
+    val = logf(tanf(0.5 * PI * u));
+    unit->m_outVal = (parX * val) + parY;
+}
+
+inline void getLogisticVal(TTendency *unit, float parX, float parY)
+{
+    float u, val;
+    RGen& rgen = *unit->mParent->mRGen; 
+    u = rgen.frand();
+    val = logf((1.0 / u) - 1.0);
+    unit->m_outVal = (-parX * val) + parY;
+}
+
+inline void getArcsinVal(TTendency *unit, float parX, float parY)
+{
+    float u, val;
+    RGen& rgen = *unit->mParent->mRGen; 
+    u = rgen.frand();
+    val = (1.0 -sinf(PI * (u - 0.5))) * 0.5;
+    unit->m_outVal = (parX * val) + parY;
+}
+
+void TTendency_next_a(TTendency *unit, int inNumSamples)
+{
+    float dist, parX, parY, parA, parB;
+    int iDist;
+    float *out = OUT(0);
+    float *trigIn = IN(0);
+    for(int i = 0; i < inNumSamples; i++)
+    {
+	if(trigIn[i] > 0.f)
+	{
+	    if(unit->m_lastTrig <= 0.f)
+	    {
+		unit->m_lastTrig = trigIn[i];
+		// there is a trigger
+		dist = IN_AT(unit, 1, i);
+		parX = IN_AT(unit, 2, i);
+		parY = IN_AT(unit, 3, i);
+		parA = IN_AT(unit, 4, i);
+		parB = IN_AT(unit, 5, i);
+		iDist = (int)floorf(dist);
+		switch (iDist)
+		{
+		    case 0:
+			getUniformVal(unit, parX, parY); break;
+		    case 1:
+			getLowpassVal(unit, parX, parY); break;
+		    case 2:
+			getHighpassVal(unit, parX, parY); break;
+		    case 3: 
+			getMeanVal(unit, parX, parY); break;
+		    case 4:
+			getBetaVal(unit, parX, parY, parA, parB); break;
+		    case 5:
+			getCauchyVal(unit, parX, parY, parA); break;
+		    case 6:
+			getGaussVal(unit, parX, parY); break;
+		    case 7:
+			getPoissonVal(unit, parX); break;
+		    case 8:
+			getExpRandVal(unit, parX, parY); break;
+		    case 9:
+			getExponentialVal(unit, parX, parY); break;
+		    case 10:
+			getGammaVal(unit, parX, parY); break;
+		    case 11:
+			getLaplaceVal(unit, parX); break;
+		    case 12:
+			getAlaplaceVal(unit, parX); break;
+		    case 13:
+			getHcosVal(unit, parX, parY); break;
+		    case 14:
+			getLogisticVal(unit, parX, parY); break;
+		    case 15:
+			getArcsinVal(unit, parX, parY); break;
+		    default:
+			getUniformVal(unit, parX, parY); break;
+		}
+	    }
+	} else {
+	    if(unit->m_lastTrig > 0.f) unit->m_lastTrig = 0.f;
+	}
+    out[i] = unit->m_outVal;
+    }
+}
+
+void TTendency_next_k(TTendency *unit, int inNumSamples)
+{
+    float dist, parX, parY, parA, parB;
+    int iDist;
+    float *out = OUT(0);
+    float trigIn = IN0(0);
+    for(int i = 0; i < inNumSamples; i++)
+    {
+	if(trigIn > 0.f)
+	{
+	    if(unit->m_lastTrig <= 0.f)
+	    {
+		unit->m_lastTrig = trigIn;
+		// there is a trigger
+		dist = IN0(1);
+		parX = IN0(2);
+		parY = IN0(3);
+		parA = IN0(4);
+		parB = IN0(5);
+		iDist = (int)floorf(dist);
+		switch (iDist)
+		{
+		    case 0:
+			getUniformVal(unit, parX, parY); break;
+		    case 1:
+			getLowpassVal(unit, parX, parY); break;
+		    case 2:
+			getHighpassVal(unit, parX, parY); break;
+		    case 3: 
+			getMeanVal(unit, parX, parY); break;
+		    case 4:
+			getBetaVal(unit, parX, parY, parA, parB); break;
+		    case 5:
+			getCauchyVal(unit, parX, parY, parA); break;
+		    case 6:
+			getGaussVal(unit, parX, parY); break;
+		    case 7:
+			getPoissonVal(unit, parX); break;
+		    case 8:
+			getExpRandVal(unit, parX, parY); break;
+		    case 9:
+			getExponentialVal(unit, parX, parY); break;
+		    case 10:
+			getGammaVal(unit, parX, parY); break;
+		    case 11:
+			getLaplaceVal(unit, parX); break;
+		    case 12:
+			getAlaplaceVal(unit, parX); break;
+		    case 13:
+			getHcosVal(unit, parX, parY); break;
+		    case 14:
+			getLogisticVal(unit, parX, parY); break;
+		    case 15:
+			getArcsinVal(unit, parX, parY); break;
+		    default:
+			getUniformVal(unit, parX, parY); break;
+		}
+	    }
+	} else {
+	    if(unit->m_lastTrig > 0.f) unit->m_lastTrig = 0.f;
+	}
+	out[i] = unit->m_outVal;
+    }
+}
+
 /* new ATS UGens */
 
 #define POPULATE_ATS_DATA \
@@ -4995,6 +5343,7 @@ PluginLoad(Josh)
 	DefineSimpleUnit(PMHPF);
 	DefineSimpleUnit(NFC);
 	DefineSimpleCantAliasUnit(Xover2);
+	DefineSimpleCantAliasUnit(TTendency);
 	//DefineDelayUnit(HermiteDelay);
 }
 
