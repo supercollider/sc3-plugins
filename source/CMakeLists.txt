@@ -81,9 +81,10 @@ add_library(MLfftwUGens MODULE ${MLfftwSources})
 target_link_libraries(MLfftwUGens ${FFTW3F_LIBRARY})
 
 if (STK)
-    # untested
-    add_library(StkUGens MODULE StkUGens/StkAll.cpp)
-    target_link_libraries(StkUGens STK)
+    file(GLOB STKSources StkUGens/stk-4.2.2/*cpp)
+    include_directories(StkUGens/stk-4.4.2/)
+    include_directories(StkUGens/stk-4.4.2/include)
+    add_library(StkUGens MODULE StkUGens/StkAll.cpp ${STKSources})
 endif()
 
 set(FFTSOURCES

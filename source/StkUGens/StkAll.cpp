@@ -1,5 +1,7 @@
 #include "SC_PlugIn.h"
 
+#define MY_FLOAT float
+
 #include <Skini.h>  // caps
 #include "include/SKINI.tbl"
 
@@ -27,7 +29,7 @@
 #include <TubeBell.h>
 
 #include <Stk.h>
-#include <STKAlloc.h>
+#include "STKAlloc.h"
 
 #include <math.h>
 
@@ -35,26 +37,28 @@
         RGen& rgen = *unit->mParent->mRGen; \
         uint32 s1 = rgen.s1; \
         uint32 s2 = rgen.s2; \
-        uint32 s3 = rgen.s3; 
+        uint32 s3 = rgen.s3;
 
 #define RPUT \
         rgen.s1 = s1; \
         rgen.s2 = s2; \
         rgen.s3 = s3;
-	
+
+using namespace stk;
+
 static InterfaceTable *ft;
  struct StkBandedWG : public Unit
 {
 	BandedWG *bandedWG;
 	int		lastperiod;
 	float   trig;
-	float   instr; 
-	float   bowpressure; 
-	float   bowmotion;  
-	float   integration; 
-	float   modalresonance; 
-	float   bowvelocity; 
-	float   setstriking; 
+	float   instr;
+	float   bowpressure;
+	float   bowmotion;
+	float   integration;
+	float   modalresonance;
+	float   bowvelocity;
+	float   setstriking;
 
 	};
 
@@ -68,7 +72,7 @@ static InterfaceTable *ft;
 	float adsrtarget;
 	float trig;
 	};
-	
+
 /*
        - Reed Stiffness = 2
        - Noise Gain = 4
@@ -99,9 +103,9 @@ static InterfaceTable *ft;
 	float loudness;
 	bool  gate;
 };
- 
+
 /*
-    Control Change Numbers: 
+    Control Change Numbers:
        - Reed Stiffness = 2
        - Noise Gain = 4
        - Vibrato Frequency = 11
@@ -172,7 +176,7 @@ static InterfaceTable *ft;
 };
 
 /*
-    Control Change Numbers: 
+    Control Change Numbers:
        - Reed Stiffness = 2
        - Reed Aperture = 26
        - Noise Gain = 4
@@ -217,7 +221,7 @@ struct StkSaxofony : public Unit
 	float vibgain;
 	float loudness;
 	float trig;
-	
+
 	};
 
 struct StkMandolin : public Unit
@@ -230,13 +234,13 @@ struct StkMandolin : public Unit
 	float aftertouch;
 	float trig;
  };
- 
+
 struct StkSitar : public Unit
 {
 	Sitar *sitar;
 	float trig;
   };
-  
+
 /*
     Control Change Numbers:
        - Pickup Position = 4
@@ -251,7 +255,7 @@ struct StkSitar : public Unit
 	float stringsustain;
 	float stringstretch;
  };
- 
+
   struct StkTubeBell : public Unit
 {
 	TubeBell *tubebell;
@@ -269,22 +273,22 @@ struct StkSitar : public Unit
 	bool lenwrapped;
 	bool lipwrapped;
 };
-	
+
 extern "C"
 {
         void load(InterfaceTable *inTable);
         void StkBandedWG_next(StkBandedWG *unit, int inNumSamples);
         void StkBandedWG_Ctor(StkBandedWG* unit);
         void StkBandedWG_Dtor(StkBandedWG* unit);
-	
+
         void StkBeeThree_next(StkBeeThree *unit, int inNumSamples);
         void StkBeeThree_Ctor(StkBeeThree* unit);
         void StkBeeThree_Dtor(StkBeeThree* unit);
-    
+
         void StkBlowHole_next(StkBlowHole *unit, int inNumSamples);
         void StkBlowHole_Ctor(StkBlowHole* unit);
         void StkBlowHole_Dtor(StkBlowHole* unit);
-	
+
         void StkBowed_next(StkBowed *unit, int inNumSamples);
         void StkBowed_Ctor(StkBowed* unit);
         void StkBowed_Dtor(StkBowed* unit);
@@ -292,11 +296,11 @@ extern "C"
         void StkClarinet_next(StkClarinet *unit, int inNumSamples);
         void StkClarinet_Ctor(StkClarinet* unit);
         void StkClarinet_Dtor(StkClarinet* unit);
-	
+
         void StkFlute_next(StkFlute *unit, int inNumSamples);
         void StkFlute_Ctor(StkFlute* unit);
         void StkFlute_Dtor(StkFlute* unit);
-	
+
 	void StkModalBar_next(StkModalBar *unit, int inNumSamples);
         void StkModalBar_Ctor(StkModalBar* unit);
         void StkModalBar_Dtor(StkModalBar* unit);
@@ -304,7 +308,7 @@ extern "C"
         void StkMoog_next(StkMoog *unit, int inNumSamples);
         void StkMoog_Ctor(StkMoog* unit);
         void StkMoog_Dtor(StkMoog* unit);
-	
+
         void StkPluck_next_notfull(StkPluck *unit, int inNumSamples);
         void StkPluck_Ctor(StkPluck* unit);
         void StkPluck_Dtor(StkPluck* unit);
@@ -312,11 +316,11 @@ extern "C"
         void StkSaxofony_next(StkSaxofony *unit, int inNumSamples);
         void StkSaxofony_Ctor(StkSaxofony* unit);
         void StkSaxofony_Dtor(StkSaxofony* unit);
-	
+
         void StkShakers_next(StkShakers *unit, int inNumSamples);
         void StkShakers_Ctor(StkShakers* unit);
         void StkShakers_Dtor(StkShakers* unit);
-	
+
         void StkVoicForm_next(StkVoicForm *unit, int inNumSamples);
         void StkVoicForm_Ctor(StkVoicForm* unit);
         void StkVoicForm_Dtor(StkVoicForm* unit);
@@ -324,15 +328,15 @@ extern "C"
         void StkMandolin_next(StkMandolin *unit, int inNumSamples);
         void StkMandolin_Ctor(StkMandolin* unit);
         void StkMandolin_Dtor(StkMandolin* unit);
-	
+
         void StkSitar_next(StkSitar *unit, int inNumSamples);
         void StkSitar_Ctor(StkSitar* unit);
         void StkSitar_Dtor(StkSitar* unit);
-	
+
         void StkStifKarp_next(StkStifKarp *unit, int inNumSamples);
         void StkStifKarp_Ctor(StkStifKarp* unit);
         void StkStifKarp_Dtor(StkStifKarp* unit);
-	
+
         void StkTubeBell_next(StkTubeBell *unit, int inNumSamples);
         void StkTubeBell_Ctor(StkTubeBell* unit);
         void StkTubeBell_Dtor(StkTubeBell* unit);
@@ -348,12 +352,12 @@ extern "C"
 void StkBandedWG_Ctor(StkBandedWG* unit)
 {
 // p0=freq,p2=bowpressure, p3=bowmotion, p4=strikeposition, p5=vibratofreq, p6=gain, p7=bowvelocity, p8=setstriking
-	
+
 	//unit->bandedWG = new BandedWG();
 	STKAlloc0(unit->mWorld,  unit->bandedWG, BandedWG);
 
 /******
-     Control Change Numbers: 
+     Control Change Numbers:
        - Bow Pressure = 2
        - Bow Motion = 4
        - Strike Position = 8 (not implemented)
@@ -366,10 +370,10 @@ void StkBandedWG_Ctor(StkBandedWG* unit)
          - Tuned Bar = 1
          - Glass Harmonica = 2
          - Tibetan Bowl = 3
- 
+
   	unit->bandedWG->noteOn(IN0(0) ,1);
-	unit->trig = 1;         
-	unit->bandedWG->controlChange((int)16,unit->instr = IN0(1));     
+	unit->trig = 1;
+	unit->bandedWG->controlChange((int)16,unit->instr = IN0(1));
 	unit->bandedWG->controlChange((int)2,unit->bowpressure = IN0(2));// bow pressure
 	unit->bandedWG->controlChange((int)4,unit->bowmotion = IN0(3)); // bow motion
 	unit->bandedWG->controlChange((int)11, unit->integration = IN0(4)); // vibrato frequency?  integration
@@ -381,43 +385,43 @@ void StkBandedWG_Ctor(StkBandedWG* unit)
 ******/
 
         unit->bandedWG->controlChange((int)16, IN0(1));
- 
+
         unit->bandedWG->controlChange((int)2, IN0(2));// bow pressure
         unit->bandedWG->controlChange((int)4, IN0(3)); // bow motion
         unit->bandedWG->controlChange((int)11, IN0(4)); // vibrato frequency?  integration
         unit->bandedWG->controlChange((int)1, IN0(5)); // gain/ modal resonance
         unit->bandedWG->controlChange((int)128, IN0(6)); //bow velocity
         unit->bandedWG->controlChange((int)64, IN0(7));  // set striking
- 
+
         unit->bandedWG->noteOn(IN0(0) ,1);
         SETCALC(StkBandedWG_next);
         StkBandedWG_next(unit, 1);
 
-//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
+//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7));
 }
-            
+
 void StkBandedWG_next(StkBandedWG *unit, int inNumSamples)
 {
 	float *out = OUT(0);
- 
- 	if(IN0(8) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(8) > 0) {
+		if(unit->trig < 0) {
 				unit->bandedWG->noteOff( 0);
 				//unit->bandedWG->clear();
 			    unit->bandedWG->noteOn(IN0(0) ,1);
-//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7)); 
-		  							   
-				if(unit->instr != IN0(1))  unit->bandedWG->controlChange((int)16,unit->instr = IN0(1));     
+//printf("%f %f %f %f %f %f %f %f\n", IN0(0),IN0(1),IN0(2),IN0(3),IN0(4),IN0(5),IN0(6),IN0(7));
+
+				if(unit->instr != IN0(1))  unit->bandedWG->controlChange((int)16,unit->instr = IN0(1));
 				if(unit->bowpressure != IN0(2)) unit->bandedWG->controlChange((int)2,unit->bowpressure = IN0(2));
-				if(unit->bowmotion != IN0(3)) unit->bandedWG->controlChange((int)4,unit->bowmotion = IN0(3)); 
-				if(unit->integration != IN0(4)) unit->bandedWG->controlChange((int)11,unit->integration = IN0(4));  
+				if(unit->bowmotion != IN0(3)) unit->bandedWG->controlChange((int)4,unit->bowmotion = IN0(3));
+				if(unit->integration != IN0(4)) unit->bandedWG->controlChange((int)11,unit->integration = IN0(4));
 				if(unit->modalresonance != IN0(5)) unit->bandedWG->controlChange((int)1,unit->modalresonance = IN0(5));
-				if(unit->bowvelocity != IN0(6)) unit->bandedWG->controlChange((int)128,unit->bowvelocity = IN0(6)); 
+				if(unit->bowvelocity != IN0(6)) unit->bandedWG->controlChange((int)128,unit->bowvelocity = IN0(6));
 				if(unit->setstriking != IN0(7)) unit->bandedWG->controlChange((int)64,unit->setstriking = IN0(7));
 				};
 			};
 	unit->trig = IN0(8);
-  		
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->bandedWG->tick();
@@ -437,8 +441,8 @@ void StkBandedWG_Dtor(StkBandedWG* unit)
 void StkBeeThree_Ctor(StkBeeThree* unit)
 {
 /********
- 
-    Control Change Numbers: 
+
+    Control Change Numbers:
        - Operator 4 (feedback) Gain = 2
        - Operator 3 Gain = 4
        - LFO Speed = 11
@@ -446,7 +450,7 @@ void StkBeeThree_Ctor(StkBeeThree* unit)
        - ADSR 2 & 4 Target = 128
 
 *****/
-  
+
 	STKAlloc0(unit->mWorld,  unit->beethree, BeeThree);
 
 	unit->beethree->controlChange((int)2,unit->op4gain=IN0(1));// operator4gain
@@ -454,13 +458,13 @@ void StkBeeThree_Ctor(StkBeeThree* unit)
 	unit->beethree->controlChange((int)11,unit->lfospeed=IN0(3)); // lfospeed
 	unit->beethree->controlChange((int)1,unit->lfodepth=IN0(4)); // lfodepth
 	unit->beethree->controlChange((int)128,unit->adsrtarget=IN0(5)); // adsrtarget
- 
+
  	unit->beethree->noteOn(IN0(0) ,1);
 	unit->trig = IN0(6);
  	SETCALC(StkBeeThree_next);
 	StkBeeThree_next(unit, 1);
 }
-  
+
 void StkBeeThree_next(StkBeeThree *unit, int inNumSamples)
 {
 	float *out=OUT(0);
@@ -470,28 +474,28 @@ void StkBeeThree_next(StkBeeThree *unit, int inNumSamples)
 	float in03=IN0(3);
 	float in04=IN0(4);
 	float in05=IN0(5);
- 
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
  				unit->beethree->noteOff( 0);
 			    unit->beethree->noteOn(IN0(0) ,1);
-			
-	}; 
+
+	};
 			};
 	unit->trig = in05;
- 
-	if(in00 != unit->op4gain) unit->beethree->setFrequency(unit->op4gain = in00);	
-	if(in01 != unit->op3gain) unit->beethree->controlChange(2,unit->op3gain =  in01); 	
+
+	if(in00 != unit->op4gain) unit->beethree->setFrequency(unit->op4gain = in00);
+	if(in01 != unit->op3gain) unit->beethree->controlChange(2,unit->op3gain =  in01);
 	if(in02 != unit->lfospeed) unit->beethree->controlChange(4,unit->lfospeed = in02);
-	if(in03 != unit->lfodepth) unit->beethree->controlChange(11,unit->lfodepth =  in03);		
+	if(in03 != unit->lfodepth) unit->beethree->controlChange(11,unit->lfodepth =  in03);
 	if(in04 != unit->adsrtarget) unit->beethree->controlChange(1, unit->adsrtarget = in04);
-		   		
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->beethree->tick();
         }
  }
- 
+
 void StkBeeThree_Dtor(StkBeeThree* unit)
 {
 	//unit->BeeThree->clear();
@@ -511,7 +515,7 @@ void StkBlowHole_Ctor(StkBlowHole* unit)
 	unit->blowhole->noteOn(IN0(0) ,1);
 	SETCALC(StkBlowHole_next);
 	StkBlowHole_next(unit, 1);
- 
+
 }
 
 void StkBlowHole_next(StkBlowHole *unit, int inNumSamples)
@@ -524,7 +528,7 @@ void StkBlowHole_next(StkBlowHole *unit, int inNumSamples)
 	float in04=IN0(4);
 	float in05=IN0(5);
 
-  	if(IN0(6) > 0) { 
+  	if(IN0(6) > 0) {
 		if(unit->trig < 0) {
 				unit->blowhole->noteOff( 0);
 			    unit->blowhole->noteOn(IN0(0) ,1);
@@ -532,15 +536,15 @@ void StkBlowHole_next(StkBlowHole *unit, int inNumSamples)
 			};
 	unit->trig = IN0(6);
 
- 
+
 	if(in00 != unit->freq) {
-		unit->blowhole->setFrequency(in00);  
+		unit->blowhole->setFrequency(in00);
 		unit->freq = in00;};
-	
+
 	if(in01 != unit->reedstiffness) {
 		unit->blowhole->controlChange(2, in01);
 		unit->reedstiffness = in01; };
- 	
+
 	if(in02 != unit->noisegain) {
 		unit->blowhole->controlChange(4, in02);
 		unit->noisegain = in02; };
@@ -548,16 +552,16 @@ void StkBlowHole_next(StkBlowHole *unit, int inNumSamples)
 	if(in03 != unit->tonehole) {
 		unit->blowhole->controlChange(11, in03);
 		unit->tonehole = in03; };
-		
+
 	if(in04 != unit->rgister) {
 		unit->blowhole->controlChange(1, in04);
 		unit->rgister = in04; };
-		
+
 	if(in04 != unit->breathpressure) {
 		unit->blowhole->controlChange(128, in05);
 		unit->breathpressure = in05; };
 
-	
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->blowhole->tick();
@@ -572,7 +576,7 @@ void StkBlowHole_Dtor(StkBlowHole* unit)
     RTFree(unit->mWorld, unit->blowhole);
 
 }
- 
+
 
 
 void StkBowed_Ctor(StkBowed* unit)
@@ -592,20 +596,20 @@ void StkBowed_Ctor(StkBowed* unit)
 	SETCALC(StkBowed_next);
 	StkBowed_next(unit, 1);
 	unit->gate = false;
- 
+
 }
 
 void StkBowed_next(StkBowed *unit, int inNumSamples)
 {
 	float *out = OUT(0);
-	
+
 	float freq  	= IN0(0);
 	float bowpressure	= IN0(1);
 	float bowpos	= IN0(2);
-	
+
 	float vibfreq	= IN0(3);
 	float vibgain	= IN0(4);
-	
+
 	float loudness	= IN0(5);
 	bool  gate		= IN0(6) > 0.f;
 	/*
@@ -630,19 +634,19 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 		}
 		unit->gate = gate;
 	}
-	
+
 	if(freq != unit->freq) {
-		unit->bowed->setFrequency(freq);  
+		unit->bowed->setFrequency(freq);
 		unit->freq = freq;};
-	
+
 	if(bowpressure != unit->bowpressure) {
 		unit->bowed->controlChange(__SK_BowPressure_, bowpressure);
 		unit->bowpressure = bowpressure; };
- 	
+
 	if(bowpos != unit->bowposition) {
 		unit->bowed->controlChange(__SK_BowPosition_, bowpos);
 		unit->bowposition = bowpos; };
- 		
+
 	if(vibfreq != unit->vibfreq) {
 		unit->bowed->controlChange(__SK_ModFrequency_, vibfreq);
 		unit->vibfreq = vibfreq; };
@@ -661,7 +665,7 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 	}
 
 }
- 
+
 void StkBowed_Dtor(StkBowed* unit)
 {
 	//delete unit->bowed;
@@ -674,7 +678,7 @@ void StkClarinet_Ctor(StkClarinet* unit)
 {
  	STKAlloc(unit->mWorld, unit->clarinet, Clarinet, 40);
 
-	
+
  	unit->clarinet->controlChange(2, unit->reedstiffness = IN0(1));
 	unit->clarinet->controlChange(4, unit->noisegain = IN0(2));
 	unit->clarinet->controlChange(11,unit->vibfreq = IN0(3));
@@ -696,36 +700,36 @@ void StkClarinet_next(StkClarinet *unit, int inNumSamples)
 	float in03=IN0(3);
 	float in04=IN0(4);
 	float in05=IN0(5);
-  
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
  				unit->clarinet->noteOff(0);
  			    unit->clarinet->noteOn(IN0(0) ,1);
-	}; 
+	};
 			};
 	unit->trig = IN0(6);
- 	
-	if(in00 != unit->freq) { 
+
+	if(in00 != unit->freq) {
 		unit->clarinet->setFrequency(in00);
 		unit->freq = in00; };
- 	
-	if(in01 != unit->reedstiffness) { 
+
+	if(in01 != unit->reedstiffness) {
 		unit->clarinet->controlChange(2, in01);
 		unit->reedstiffness = in01; };
- 	
-	if(in02 != unit->noisegain) { 
+
+	if(in02 != unit->noisegain) {
 		unit->clarinet->controlChange(4, in02);
 		unit->noisegain = in02; };
 
-	if(in03 != unit->vibfreq) { 
+	if(in03 != unit->vibfreq) {
 		unit->clarinet->controlChange(11, in03);
 		unit->vibfreq = in03; };
-		
-	if(in04 != unit->vibgain) { 
+
+	if(in04 != unit->vibgain) {
 		unit->clarinet->controlChange(1, in04);
 		unit->vibgain = in04; };
-		
-	if(in05 != unit->breathpressure) { 
+
+	if(in05 != unit->breathpressure) {
 		unit->clarinet->controlChange(128, in05);
 		unit->breathpressure = in05; };
 
@@ -750,7 +754,7 @@ void StkClarinet_Dtor(StkClarinet* unit)
 void StkFlute_Ctor(StkFlute* unit)
 {
 	STKAlloc(unit->mWorld, unit->flute, Flute, 40);
- 
+
 	unit->flute->setFrequency( unit->freq = IN0(0) );
 	unit->flute->noteOn(IN0(0),1);
 
@@ -758,7 +762,7 @@ void StkFlute_Ctor(StkFlute* unit)
 	unit->flute->controlChange(2, unit->jetdelay = IN0(1));// jet delay
 
 	unit->flute->controlChange(4, unit->noisegain = IN0(2));// noisegain // this seems to have to be some kind of midi control value??
-	
+
 //	unit->flute->setJetReflection( unit->jetdelay = IN0(3) );
 	unit->flute->controlChange(11, unit->vibfreq = IN0(3));// vibrato freq
 	unit->flute->controlChange(1, unit->vibgain = IN0(4));// vibrato gain
@@ -772,14 +776,14 @@ void StkFlute_Ctor(StkFlute* unit)
 void StkFlute_next(StkFlute *unit, int inNumSamples)
 {
 	float *out OUT(0);
- 
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
 
 			unit->flute->noteOff(0);
 			unit->flute->noteOn(IN0(0) ,1);
-			
-		}; 
+
+		};
 			};
 	unit->trig = IN0(6);
 
@@ -790,7 +794,7 @@ void StkFlute_next(StkFlute *unit, int inNumSamples)
 	if(unit->vibfreq != IN0(3)) unit->flute->controlChange(11, unit->vibfreq = IN0(3));
 	if(unit->vibgain != IN0(4)) unit->flute->controlChange(1, unit->vibgain = IN0(4));
 	if(unit->breathpressure != IN0(5)) unit->flute->controlChange(128, unit->breathpressure = IN0(5));
-	
+
 	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->flute->tick();
@@ -808,9 +812,9 @@ void StkFlute_Dtor(StkFlute* unit)
 //////////////////////////////////////////////////////////////////
 
 void StkModalBar_Ctor(StkModalBar* unit)
-{	
+{
 /*
-    Control Change Numbers: 
+    Control Change Numbers:
        - Stick Hardness = 2
        - Stick Position = 4
        - Vibrato Gain = 1
@@ -832,8 +836,8 @@ void StkModalBar_Ctor(StkModalBar* unit)
 	//unit->modalBar = new ModalBar();
 	STKAlloc0(unit->mWorld,  unit->modalBar, ModalBar);
 
-	unit->modalBar->noteOn(IN0(0) ,1); 
- 
+	unit->modalBar->noteOn(IN0(0) ,1);
+
 	unit->modalBar->controlChange(16,unit->instrument = IN0(1));// instrument
 	unit->modalBar->controlChange(2, unit->stickhardness = IN0(2));// stickhardness
 	unit->modalBar->controlChange(4, unit->stickposition = IN0(3));// stickposition
@@ -845,14 +849,14 @@ void StkModalBar_Ctor(StkModalBar* unit)
 	StkModalBar_next(unit, 1);
 	unit->trig = 1;
 }
-   
+
 void StkModalBar_next(StkModalBar *unit, int inNumSamples)
 {
 	float *out=OUT(0);
 
-  
- 	if(IN0(8) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(8) > 0) {
+		if(unit->trig < 0) {
 				unit->modalBar->clear();
 				if(unit->instrument != IN0(1)) unit->modalBar->controlChange(16,unit->instrument =IN0(1));
 				if(unit->stickhardness != IN0(2)) unit->modalBar->controlChange(2, unit->stickhardness =IN0(2));
@@ -861,10 +865,10 @@ void StkModalBar_next(StkModalBar *unit, int inNumSamples)
 				if(unit->vibratofreq != IN0(5)) unit->modalBar->controlChange(7,unit->vibratofreq = IN0(5));
 				if(unit->directstickmix != IN0(6)) unit->modalBar->controlChange(1,unit->directstickmix =IN0(6));
 				if(unit->volume != IN0(7)) unit->modalBar->controlChange(128,unit->volume  = IN0(7));
-				
+
 				unit->modalBar->noteOff( 0);
 			    unit->modalBar->noteOn(IN0(0) ,1);
-				}; 
+				};
 			};
 	unit->trig = IN0(8);
 
@@ -886,28 +890,28 @@ void StkModalBar_Dtor(StkModalBar* unit)
 void StkMoog_Ctor(StkMoog* unit)
 {
 /********
-    Control Change Numbers: 
+    Control Change Numbers:
        - Filter Q = 2
        - Filter Sweep Rate = 4
        - Vibrato Frequency = 11
        - Vibrato Gain = 1
        - Gain = 128
 *****/
-  
+
 	STKAlloc0(unit->mWorld,  unit->moog, Moog);
 
-	unit->moog->controlChange((int)2, unit->filterQ = IN0(1));// filter Q 
+	unit->moog->controlChange((int)2, unit->filterQ = IN0(1));// filter Q
 	unit->moog->controlChange((int)4, unit->sweeprate = IN0(2));// sweep rate
 	unit->moog->controlChange((int)11, unit->vibfreq = IN0(3)); // vibrato freq
 	unit->moog->controlChange((int)1, unit->vibgain = IN0(4)); // vibrato gain
 	unit->moog->controlChange((int)128, unit->gain = IN0(5)); // gain
- 
+
  	unit->moog->noteOn(unit->freq = IN0(0) ,1);
  	SETCALC(StkMoog_next);
 	unit->trig = 1;
 	StkMoog_next(unit, 1);
 }
-  
+
 void StkMoog_next(StkMoog *unit, int inNumSamples)
 {
 	float *out=OUT(0);
@@ -917,36 +921,36 @@ void StkMoog_next(StkMoog *unit, int inNumSamples)
 	float in03=IN0(3);
 	float in04=IN0(4);
 	float in05=IN0(5);
-  
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
  				unit->moog->noteOff( 0);
 			    unit->moog->noteOn(IN0(0) ,1);
-			
-	}; 
+
+	};
 			};
 	unit->trig = IN0(6);
- 
+
 	if(in00 != unit->freq) unit->moog->setFrequency(unit->freq = in00);
-	
+
 	if(in01 != unit->filterQ) unit->moog->controlChange(2,unit->filterQ =  in01);
- 	
+
 	if(in02 != unit->sweeprate) unit->moog->controlChange(4,unit->sweeprate = in02);
 
 	if(in03 != unit->vibfreq) unit->moog->controlChange(11,unit->vibfreq =  in03);
-		
-	if(in04 != unit->vibgain) unit->moog->controlChange(1, unit->vibgain = in04);
-		
-	if(in05 != unit->gain) unit->moog->controlChange(128,unit->gain = in05);
- 
 
- 		
+	if(in04 != unit->vibgain) unit->moog->controlChange(1, unit->vibgain = in04);
+
+	if(in05 != unit->gain) unit->moog->controlChange(128,unit->gain = in05);
+
+
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->moog->tick();
         }
  }
- 
+
 void StkMoog_Dtor(StkMoog* unit)
 {
 	//unit->Moog->clear();
@@ -982,9 +986,9 @@ void StkPluck_Ctor(StkPluck* unit)
                         else if (delay > unit->length) delay = unit->length;
                 unit->delayLine->setDelay(delay);
                 unit->loopGain = IN0(1) + (IN0(0) * 0.000005);
- 
-                if ( unit->loopGain >= 1.0 ) unit->loopGain = (MY_FLOAT) 0.99999; 
- 
+
+                if ( unit->loopGain >= 1.0 ) unit->loopGain = (MY_FLOAT) 0.99999;
+
                 MY_FLOAT gain = 0.99;
                 // set noiseburst
                 unit->pickFilter->setPole((MY_FLOAT) 0.999 - (gain * (MY_FLOAT) 0.15));
@@ -992,24 +996,24 @@ void StkPluck_Ctor(StkPluck* unit)
                 for (uint32 i=0; i< unit->length; i++)
                         // Fill delay with noise additively with current contents.
                         unit->delayLine->tick( 0.6 * unit->delayLine->lastOut() + unit->pickFilter->tick( unit->noise->tick() ) );
- 
+
                 StkPluck_next_notfull(unit, 1);
- 
+
 }
 
 void StkPluck_next_notfull(StkPluck *unit, int inNumSamples)
 {
       float *out = OUT(0);
-          
+
         for (int i=0; i < inNumSamples; ++i)
         {
         float z,y;
-        z = unit->delayLine->tick( 
-                unit->loopFilter->tick(y= unit->delayLine->lastOut() * unit->loopGain ) ); 
- 
+        z = unit->delayLine->tick(
+                unit->loopFilter->tick(y= unit->delayLine->lastOut() * unit->loopGain ) );
+
            out[i] = z;
         }
-} 
+}
 
 void StkPluck_Dtor(StkPluck* unit)
 {
@@ -1019,7 +1023,7 @@ void StkPluck_Dtor(StkPluck* unit)
                 delete unit->noise;
 
 }
- 
+
 //////////////////////////////////////////////////////////////////
 
 void StkSaxofony_Ctor(StkSaxofony* unit)
@@ -1039,7 +1043,7 @@ void StkSaxofony_Ctor(StkSaxofony* unit)
 void StkSaxofony_next(StkSaxofony *unit, int inNumSamples)
 {
 	float *out OUT(0);
- 
+
 	float in00=IN0(0);
 	float in01=IN0(1);
 	float in02=IN0(2);
@@ -1049,35 +1053,35 @@ void StkSaxofony_next(StkSaxofony *unit, int inNumSamples)
  	float in06=IN0(6);
  	float in07=IN0(7);
 
- 	if(IN0(8) > 0) { 
-		if(unit->trig < 0) {  
+ 	if(IN0(8) > 0) {
+		if(unit->trig < 0) {
 			unit->saxofony->noteOff( 0);
 			unit->saxofony->noteOn(IN0(0) ,1);
-			
+
 		};
 	};
 	unit->trig = IN0(8);
-	
+
 	if(in00 != unit->frequency) {
 		unit->saxofony->setFrequency(in00);
 		unit->frequency = in00;};
-	 
+
 	if(in01 != unit->reedstiffness) {
 		unit->saxofony->controlChange(2, in01);
 		unit->reedstiffness = in01; };
-	
+
 	if(in02 != unit->reedaperture) {
 		unit->saxofony->controlChange(26, in02);
 		unit->reedaperture = in02; };
-	
+
 	if(in03 != unit->noisegain) {
 		unit->saxofony->controlChange(4, in03);
 		unit->noisegain = in03; };
-		
+
 	if(in04 != unit->blowposition) {
 		unit->saxofony->controlChange(11, in04);
 		unit->blowposition = in04; };
- 
+
 	if(in05 != unit->vibratofrequency) {
 		unit->saxofony->controlChange(29, in05);
 		unit->vibratofrequency = in05; };
@@ -1085,12 +1089,12 @@ void StkSaxofony_next(StkSaxofony *unit, int inNumSamples)
 	if(in06 != unit->vibratogain) {
 		unit->saxofony->controlChange(1, in06);
 		unit->vibratogain = in06; };
-  		
+
 	if(in07 != unit->breathpressure) {
 		unit->saxofony->controlChange(128, in07);
 		unit->breathpressure = in07; } ;
 
- 		
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->saxofony->tick();
@@ -1100,7 +1104,7 @@ void StkSaxofony_next(StkSaxofony *unit, int inNumSamples)
 void StkSaxofony_Dtor(StkSaxofony* unit)
 {
 	//unit->saxofony->clear();
-	//delete unit->saxofony;	    
+	//delete unit->saxofony;
     unit->saxofony->~Saxofony();
     RTFree(unit->mWorld, unit->saxofony);
 
@@ -1114,9 +1118,9 @@ void StkShakers_Ctor(StkShakers* unit)
 // p0=freq, p1=shaker number, p2=energy, p3=system decay, p4=number of objects, p5 = resonance freq
 //	unit->shakers = new Shakers();
 	STKAlloc0(unit->mWorld,  unit->shakers, Shakers);
- 
+
 /******
-    Control Change Numbers: 
+    Control Change Numbers:
        - Shake Energy = 2
        - System Decay = 4
        - Number Of Objects = 11
@@ -1161,13 +1165,13 @@ void StkShakers_Ctor(StkShakers* unit)
 void StkShakers_next(StkShakers *unit, int inNumSamples)
 {
 	float *out OUT(0);
-	
-	
- 	if(IN0(5) > 0) { 
-		if(unit->trigger < 0) {  
+
+
+ 	if(IN0(5) > 0) {
+		if(unit->trigger < 0) {
 			unit->shakers->noteOff( 0);
 			unit->shakers->noteOn(IN0(0) ,1);
-			
+
 		};
 	};
 	unit->trigger = IN0(5);
@@ -1177,7 +1181,7 @@ void StkShakers_next(StkShakers *unit, int inNumSamples)
 	if(unit->numobjects != IN0(3)) unit->shakers->controlChange((int)11, unit->numobjects = IN0(3));
 	if(unit->resfreq != IN0(4)) unit->shakers->controlChange((int)1, unit->resfreq = IN0(4));
 
- 		
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->shakers->tick();
@@ -1196,33 +1200,33 @@ void StkShakers_Dtor(StkShakers* unit)
 //////////////////////////////////////////////////////////////////
 
 void StkVoicForm_Ctor(StkVoicForm* unit)
-{	
+{
 	//unit->voiceForm = new VoicForm();
 	STKAlloc0(unit->mWorld,  unit->voiceForm, VoicForm);
 	//unit->voiceForm = (VoicForm *)RTAlloc(unit->mWorld, sizeof(unit->voiceForm));
 
 /*********************************
 p0=freq,p1=vuvmix,p2=vowelphonsel,p3=vibfreq, p4=vibgain, p5=loudness, p6=trig
-    Control Change Numbers: 
+    Control Change Numbers:
        - Voiced/Unvoiced Mix = 2
        - Vowel/Phoneme Selection = 4
        - Vibrato Frequency = 11
        - Vibrato Gain = 1
        - Loudness (Spectral Tilt) = 128
 ***********************************/
- 
-	unit->voiceForm->controlChange(2,unit->vuvmix = IN0(1)); 	
+
+	unit->voiceForm->controlChange(2,unit->vuvmix = IN0(1));
 	unit->voiceForm->controlChange(4, unit->vowelphon=IN0(2));
-	unit->voiceForm->controlChange(11,unit->vibfreq= IN0(3));		
-	unit->voiceForm->controlChange(1,unit->vibgain= IN0(4));		
+	unit->voiceForm->controlChange(11,unit->vibfreq= IN0(3));
+	unit->voiceForm->controlChange(1,unit->vibgain= IN0(4));
 	unit->voiceForm->controlChange(128, unit->loudness=IN0(5));
 
- 	unit->voiceForm->noteOn(unit->freq =IN0(0) ,1); 
+ 	unit->voiceForm->noteOn(unit->freq =IN0(0) ,1);
   	SETCALC(StkVoicForm_next);
 	StkVoicForm_next(unit, 1);
 	unit->trig = 1;
-} 
-  
+}
+
 void StkVoicForm_next(StkVoicForm *unit, int inNumSamples)
 {
 	float *out=OUT(0);
@@ -1232,25 +1236,25 @@ void StkVoicForm_next(StkVoicForm *unit, int inNumSamples)
 	float in03=IN0(3);
 	float in04=IN0(4);
 	float in05=IN0(5);
-/******* 
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+/*******
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
  				//unit->voiceForm->noteOff(0);
  			    unit->voiceForm->noteOn(IN0(0) ,1);
 printf("noteon %f\n", IN0(0));
-		}; 
+		};
 	};
 	unit->trig = IN0(6);
 **********/
 	if(in00 != unit->freq) {
-		unit->voiceForm->setFrequency(in00);  
+		unit->voiceForm->setFrequency(in00);
 		unit->freq = in00;
 		};
-	
+
 	if(in01 != unit->vuvmix) {
 		unit->voiceForm->controlChange(2, in01);
 		unit->vuvmix = in01; };
- 	
+
 	if(in02 != unit->vowelphon) {
 		unit->voiceForm->controlChange(4, in02);
 		unit->vowelphon = in02; };
@@ -1258,15 +1262,15 @@ printf("noteon %f\n", IN0(0));
 	if(in03 != unit->vibfreq) {
 		unit->voiceForm->controlChange(11, in03);
 		unit->vibfreq = in03; };
-		
+
 	if(in04 != unit->vibgain) {
 		unit->voiceForm->controlChange(1, in04);
 		unit->vibgain = in04; };
-		
+
 	if(in04 != unit->loudness) {
 		unit->voiceForm->controlChange(128, in05);
 		unit->vibgain = in05; };
- 	 		
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->voiceForm->tick();
@@ -1279,7 +1283,7 @@ void StkVoicForm_Dtor(StkVoicForm* unit)
 	//delete unit->voiceForm;
 	unit->voiceForm->~VoicForm();
     RTFree(unit->mWorld, unit->voiceForm);
- 
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1290,7 +1294,7 @@ void StkMandolin_Ctor(StkMandolin* unit)
 	//unit->mandolin = new Mandolin((MY_FLOAT) 40);
 	STKAlloc(unit->mWorld, unit->mandolin, Mandolin, 40);
 
-	
+
 	unit->mandolin->controlChange(__SK_BodySize_, unit->bodysize = IN0(1));
 	unit->mandolin->controlChange(__SK_PickPosition_, unit->pickposition = IN0(2));
 	unit->mandolin->controlChange(__SK_StringDamping_, unit->stringdamping = IN0(3));
@@ -1300,15 +1304,15 @@ void StkMandolin_Ctor(StkMandolin* unit)
 	unit->mandolin->noteOn(IN0(0) ,1);
  	SETCALC(StkMandolin_next);
 	StkMandolin_next(unit, 1);
- 
+
 }
 
 void StkMandolin_next(StkMandolin *unit, int inNumSamples)
 {
 	float *out  = OUT(0);
 
- 	if(IN0(6) > 0) { 
-		if(unit->trig < 0) {  
+ 	if(IN0(6) > 0) {
+		if(unit->trig < 0) {
 			if(unit->bodysize != IN0(1)) unit->mandolin->controlChange(__SK_BodySize_, unit->bodysize = IN0(1));
 			if(unit->pickposition != IN0(2)) unit->mandolin->controlChange(__SK_PickPosition_, unit->pickposition = IN0(2));
 			if(unit->stringdamping != IN0(3)) unit->mandolin->controlChange(__SK_StringDamping_, unit->stringdamping = IN0(3));
@@ -1317,8 +1321,8 @@ void StkMandolin_next(StkMandolin *unit, int inNumSamples)
 
 			unit->mandolin->noteOff( 0);
 			unit->mandolin->noteOn(IN0(0) ,1);
-			
-		}; 
+
+		};
 			};
 	unit->trig = IN0(6);
 
@@ -1353,9 +1357,9 @@ void StkSitar_Ctor(StkSitar* unit)
 void StkSitar_next(StkSitar *unit, int inNumSamples)
 {
 	float *out OUT(0);
- 
- 	if(IN0(1) > 0) { 
-		if(unit->trig < 0) { 
+
+ 	if(IN0(1) > 0) {
+		if(unit->trig < 0) {
 				unit->sitar->noteOff( 0);
 			    unit->sitar->noteOn(IN0(0) ,1);
 				};
@@ -1388,7 +1392,7 @@ void StkStifKarp_Ctor(StkStifKarp* unit)
 	unit->stifkarp->noteOn(IN0(0) ,IN0(1));
 	SETCALC(StkStifKarp_next);
 	StkStifKarp_next(unit, 1);
- 
+
 }
 
 void StkStifKarp_next(StkStifKarp *unit, int inNumSamples)
@@ -1399,15 +1403,15 @@ void StkStifKarp_next(StkStifKarp *unit, int inNumSamples)
 	float in02=IN0(3);
 	float in03=IN0(4);
 
- 
+
 	if(in00 != unit->freq) {
-		unit->stifkarp->setFrequency(in00);  
+		unit->stifkarp->setFrequency(in00);
 		unit->freq = in00;};
-	
+
 	if(in01 != unit->pickuppos) {
 		unit->stifkarp->controlChange(4, in01);
 		unit->pickuppos = in01; };
- 	
+
 	if(in02 != unit->stringsustain) {
 		unit->stifkarp->controlChange(11, in02);
 		unit->stringsustain = in02; };
@@ -1415,7 +1419,7 @@ void StkStifKarp_next(StkStifKarp *unit, int inNumSamples)
 	if(in03 != unit->stringstretch) {
 		unit->stifkarp->controlChange(1, in03);
 		unit->stringstretch = in03; };
- 
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->stifkarp->tick();
@@ -1430,7 +1434,7 @@ void StkStifKarp_Dtor(StkStifKarp* unit)
     RTFree(unit->mWorld, unit->stifkarp);
 
 }
- 
+
 //////////////////////////////////////////////////////////////////
 
 void StkTubeBell_Ctor(StkTubeBell* unit)
@@ -1443,13 +1447,13 @@ void StkTubeBell_Ctor(StkTubeBell* unit)
 	unit->tubebell->noteOn(IN0(0) ,1);
 	SETCALC(StkTubeBell_next);
 	StkTubeBell_next(unit, 1);
- 
+
 }
 
 void StkTubeBell_next(StkTubeBell *unit, int inNumSamples)
 {
 	float *out OUT(0);
-	
+
  	for (int i=0; i < inNumSamples; ++i)
 	{
 		out[i] = unit->tubebell->tick();
@@ -1462,7 +1466,7 @@ void StkTubeBell_Dtor(StkTubeBell* unit)
 //	delete unit->tubebell;
 	unit->tubebell->~TubeBell();
     RTFree(unit->mWorld, unit->tubebell);
-	
+
 }
 
 
@@ -1470,7 +1474,7 @@ void StkTubeBell_Dtor(StkTubeBell* unit)
 
 void Sflute_Ctor(Sflute* unit)
 {
-        
+
 #define EMBLEN 100
 #define FLUTELEN 700
         SETCALC(Sflute_next);
@@ -1514,43 +1518,43 @@ void Sflute_next(Sflute *unit, int inNumSamples)
 	bool lipwrapped = unit->lipwrapped;
 	bool lenwrapped = unit->lenwrapped;
 	delay1Length = (uint32)( SAMPLERATE/IN0(0));
-		
+
 	if(delay1Length > FLUTELEN) delay1Length = FLUTELEN;
 	if(delay2Length > EMBLEN) delay2Length = EMBLEN;
- 
+
 	RGET
 	for (int i=0; i < inNumSamples; ++i)
         {
 		float y,lenval;
-				
-		y = (frand(s1,s2,s3)*2-1) * randamp * pressure; 
- 
+
+		y = (frand(s1,s2,s3)*2-1) * randamp * pressure;
+
 		y = y + pressure;	// breath pressure with random deviation
 		lenval = lenwrapped ? delay1[delay1Pos] : 0.f;
  		y = y + (lenval * -.35);	// mix with pressure of returning wave
-				
+
 		delay2[delay2Pos] = y;
 		if(++delay2Pos >= delay2Length) {
 				delay2Pos = 0;
 				lipwrapped = true;
 				};
- 				
+
 		y = lipwrapped ?  delay2[delay2Pos] : 0.f;
  		y = (y * y * y) - y;	//transfer differential across mouth hole
-		y = (jetstream * y) + (fullwave * lenval);   // jet stream plus full wave 
- 				
+		y = (jetstream * y) + (fullwave * lenval);   // jet stream plus full wave
+
 		out[i] = y;	// catch output here
-				
+
 		y = (dampcoef * y) + (1.-dampcoef) * delay3; // lowpass at end of tube
- 				
+
 		delay3 = y;
-           
+
 		delay1[delay1Pos] = y;
                 if (++delay1Pos >= delay1Length) {
-                        delay1Pos = 0; 
+                        delay1Pos = 0;
 						lenwrapped = true;
                 };
-                 
+
         }
 		unit->delay1Pos = delay1Pos;
 		unit->delay2Pos = delay2Pos;
@@ -1559,22 +1563,22 @@ void Sflute_next(Sflute *unit, int inNumSamples)
 		unit->lenwrapped = lenwrapped;
 		RPUT
 }
-  
+
 PluginLoad(Stk)
 {
         ft = inTable;
-        DefineDtorUnit(StkBandedWG); 
-        DefineDtorUnit(StkBeeThree); 
+        DefineDtorUnit(StkBandedWG);
+        DefineDtorUnit(StkBeeThree);
         DefineDtorUnit(StkBlowHole);
         DefineDtorUnit(StkBowed);
         DefineDtorUnit(StkClarinet);
         DefineDtorUnit(StkFlute);
-        DefineDtorUnit(StkModalBar); 
-        DefineDtorUnit(StkMoog); 
+        DefineDtorUnit(StkModalBar);
+        DefineDtorUnit(StkMoog);
         DefineDtorUnit(StkPluck);
-        DefineDtorUnit(StkSaxofony); 
-        DefineDtorUnit(StkShakers); 
-        DefineDtorUnit(StkVoicForm); 
+        DefineDtorUnit(StkSaxofony);
+        DefineDtorUnit(StkShakers);
+        DefineDtorUnit(StkVoicForm);
         DefineDtorUnit(StkMandolin);
         DefineDtorUnit(StkSitar);
         DefineDtorUnit(StkStifKarp);
@@ -1582,4 +1586,4 @@ PluginLoad(Stk)
         DefineDtorUnit(Sflute);
 
 }
- 
+
