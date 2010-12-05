@@ -21,7 +21,7 @@ SuperCollider real time audio synthesis system
 #include "SC_fftlib.h"
 #include "FFT_UGens.h"
 
-struct PV_MagScale : public PV_Unit 
+struct PV_MagScale : public PV_Unit
 {
 	uint32 m_scalebufnum;
 	SndBuf *m_scalebuf;
@@ -31,38 +31,38 @@ struct PV_MagScale : public PV_Unit
 	if (!unit->m_tempbuf) { \
 		unit->m_tempbuf = (float*)RTAlloc(unit->mWorld, buf1->samples * sizeof(float)); \
 		unit->m_numbins = numbins; \
-	} else if (numbins != unit->m_numbins) return; 
+	} else if (numbins != unit->m_numbins) return;
 
 
 extern "C"
-{	
+{
 	void PV_CommonMag_Ctor(PV_Unit *unit);
 	void PV_CommonMag_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_CommonMul_Ctor(PV_Unit *unit);
 	void PV_CommonMul_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_MagMinus_Ctor(PV_Unit *unit);
 	void PV_MagMinus_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_MagGate_Ctor(PV_Unit *unit);
 	void PV_MagGate_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_Compander_Ctor(PV_Unit *unit);
 	void PV_Compander_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_MagScale_Ctor(PV_MagScale *unit);
 	void PV_MagScale_next(PV_MagScale* unit, int inNumSamples);
-	
+
 	void PV_Morph_Ctor(PV_Unit *unit);
 	void PV_Morph_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_XFade_Ctor(PV_Unit *unit);
 	void PV_XFade_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_SoftWipe_Ctor(PV_Unit *unit);
 	void PV_SoftWipe_next(PV_Unit *unit, int inNumSamples);
-	
+
 	void PV_Cutoff_Ctor(PV_Unit *unit);
 	void PV_Cutoff_next(PV_Unit *unit, int inNumSamples);
 }
@@ -102,12 +102,12 @@ SCComplexBuf* ToComplexApx(SndBuf *buf)
 void PV_CommonMag_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
-	
+
 	SCPolarBuf *p = ToPolarApx(buf1);
 	SCPolarBuf *q = ToPolarApx(buf2);
 	float tolerance=ZIN0(2);
 	float remove=ZIN0(3);
-	
+
 	p->dc = q->dc;
 	p->nyq = q->nyq;
 	for (int i=0; i<numbins; ++i) {
@@ -126,12 +126,12 @@ void PV_CommonMag_Ctor(PV_Unit *unit)
 void PV_CommonMul_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
-	
+
 	SCPolarBuf *p = ToPolarApx(buf1);
 	SCPolarBuf *q = ToPolarApx(buf2);
 	float tolerance=ZIN0(2);
 	float remove=ZIN0(3);
-	
+
 	p->dc *= q->dc;
 	p->nyq *= q->nyq;
 	for (int i=0; i<numbins; ++i) {
@@ -154,11 +154,11 @@ void PV_CommonMul_Ctor(PV_Unit *unit)
 void PV_MagMinus_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
-	
+
 	SCPolarBuf *p = ToPolarApx(buf1);
 	SCPolarBuf *q = ToPolarApx(buf2);
 	float remove=ZIN0(2);
-	
+
 	for (int i=0; i<numbins; ++i) {
 		p->bin[i].mag = sc_max(p->bin[i].mag - q->bin[i].mag*remove, 0.f);
 	}
@@ -173,11 +173,11 @@ void PV_MagMinus_Ctor(PV_Unit *unit)
 void PV_MagGate_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF
-	
+
 	SCPolarBuf *p = ToPolarApx(buf);
 	float thresh=ZIN0(1);
 	float reduce=ZIN0(2);
-	
+
 	for (int i=0; i<numbins; ++i) {
 		float mag = p->bin[i].mag;
 		if (thresh < 0.f) {
@@ -195,19 +195,19 @@ void PV_MagGate_Ctor(PV_Unit *unit)
 void PV_Compander_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF
-	
+
 	SCPolarBuf *p = ToPolarApx(buf);
 	float thresh=ZIN0(1);
 	float slope_below=ZIN0(2);
 	float slope_above=ZIN0(3);
-	
+
 	for (int i=0; i<numbins; ++i) {
 		float mag = p->bin[i].mag;
 		if (mag < thresh) {
 			if (slope_below != 1.f) {
 				float gain = pow(mag / thresh, slope_below - 1.f);
 				float32 absx = fabs(gain);
-				gain =  (absx > (float32)1e-15 && absx < (float32)1e15) ? gain : (float32)1.;   
+				gain =  (absx > (float32)1e-15 && absx < (float32)1e15) ? gain : (float32)1.;
 				p->bin[i].mag=mag * gain;
 			}
 		} else {
@@ -228,11 +228,11 @@ void PV_MagScale_next(PV_MagScale *unit, int inNumSamples)
 {
 	PV_GET_BUF
 	float bufin = ZIN0(1);
-	uint32 scalebuf = (uint32)bufin;  
-	if (scalebuf != unit->m_scalebufnum) { 
-			if (scalebuf + 1 >= world->mNumSndBufs) scalebuf = 0; 
+	uint32 scalebuf = (uint32)bufin;
+	if (scalebuf != unit->m_scalebufnum) {
+			if (scalebuf + 1 >= world->mNumSndBufs) scalebuf = 0;
 			unit->m_scalebufnum = scalebuf;
-	} 
+	}
 	SndBuf *scales = world->mSndBufs + scalebuf;
 	float frac = bufin - (int)bufin;
 	if (frac == 0.f) {
@@ -261,13 +261,13 @@ void PV_XFade_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
 	float fade=ZIN0(2);
-	
+
 	SCComplexBuf *p = ToComplexApx(buf1);
 	SCComplexBuf *q = ToComplexApx(buf2);
-	
+
 	p->dc = q->dc;
 	p->nyq = q->nyq;
-	
+
 	for (int i=0; i<numbins; ++i) {
 		p->bin[i].real=(1-fade) * p->bin[i].real + fade * q->bin[i].real;
 		p->bin[i].imag=(1-fade) * p->bin[i].imag + fade * q->bin[i].imag;
@@ -284,13 +284,13 @@ void PV_Morph_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
 	float morph=ZIN0(2);
-	
+
 	SCPolarBuf *p = ToPolarApx(buf1);
 	SCPolarBuf *q = ToPolarApx(buf2);
-	
+
 	p->dc = q->dc;
 	p->nyq = q->nyq;
-	
+
 	for (int i=0; i<numbins; ++i) {
 		p->bin[i].mag=(1-morph) * p->bin[i].mag + morph * q->bin[i].mag;
 		p->bin[i].phase=(1-morph) * p->bin[i].phase + morph * q->bin[i].phase;
@@ -301,12 +301,12 @@ void PV_Morph_Ctor(PV_Unit *unit)
 {
 	SETCALC(PV_Morph_next);
 	ZOUT0(0) = ZIN0(0);
-}	
+}
 
 void PV_SoftWipe_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF2
-	
+
 	SCComplexBuf *p = (SCComplexBuf*)buf1->data;
 	SCComplexBuf *q = (SCComplexBuf*)buf2->data;
 
@@ -317,14 +317,14 @@ void PV_SoftWipe_next(PV_Unit *unit, int inNumSamples)
 		iwipe = sc_min(iwipe, numbins);
 		for (int i=0; i < iwipe-1; ++i) {
 			p->bin[i]=q->bin[i];
-		}	
+		}
 		p->bin[iwipe]=(1-frac) * p->bin[iwipe] + frac * q->bin[iwipe];
 	} else if (iwipe < 0) {
 		iwipe = sc_max(iwipe, -numbins);
 		int lastbin=numbins+iwipe;
 		for (int i=lastbin+1; i < numbins; ++i) {
 			p->bin[i]=q->bin[i];
-		}	
+		}
 		p->bin[lastbin]=(1-frac) * p->bin[lastbin] + frac * q->bin[lastbin];
 	}
 }
@@ -338,7 +338,7 @@ void PV_SoftWipe_Ctor(PV_Unit *unit)
 void PV_Cutoff_next(PV_Unit *unit, int inNumSamples)
 {
 	PV_GET_BUF
-	
+
 	SCComplexBuf *p = (SCComplexBuf*)buf->data;
 
 	float wipe = ZIN0(1) * numbins;
@@ -348,14 +348,14 @@ void PV_Cutoff_next(PV_Unit *unit, int inNumSamples)
 		iwipe = sc_min(iwipe, numbins);
 		for (int i=0; i < iwipe-1; ++i) {
 			p->bin[i] = 0.;
-		}	
+		}
 		p->bin[iwipe]=(1-frac) * p->bin[iwipe];
 	} else if (wipe < 0) {
 		iwipe = sc_max(iwipe, -numbins);
 		int lastbin=numbins+iwipe;
 		for (int i=lastbin+1; i < numbins; ++i) {
 			p->bin[i] = 0.;
-		}	
+		}
 		p->bin[lastbin]=(1-frac) * p->bin[lastbin];
 	}
 }
@@ -370,8 +370,17 @@ void PV_Cutoff_Ctor(PV_Unit *unit)
 	(*ft->fDefineUnit)(#name, sizeof(PV_Unit), (UnitCtorFunc)&name##_Ctor, 0, 0);
 
 
-void initPV_bhobFFT(InterfaceTable *it)
+extern "C"
 {
+    void load(InterfaceTable *inTable);
+}
+
+InterfaceTable *ft;
+
+PluginLoad(BhobPV)
+{
+	ft = inTable;
+
 	DefinePVUnit(PV_MagMinus);
 	DefinePVUnit(PV_CommonMag);
 	DefinePVUnit(PV_CommonMul);
@@ -383,6 +392,3 @@ void initPV_bhobFFT(InterfaceTable *it)
 	DefinePVUnit(PV_Cutoff);
 	DefinePVUnit(PV_Compander);
 }
-
-
-

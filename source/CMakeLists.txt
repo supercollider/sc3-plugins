@@ -29,6 +29,7 @@ set(plugin_sources
     BerlachUGens
     BhobChaos.cpp
     BhobFilt.cpp
+    BhobFFT.cpp
     BhobGrain.cpp
     BhobNoise.cpp
     BlackrainUGens.cpp
@@ -36,12 +37,14 @@ set(plugin_sources
     JoshUGens.cpp
     JoshAmbiUGens.cpp
     JoshGrainUGens.cpp
+    JoshPVUGens.cpp
     LadspaUGens.cpp
     LoopBuf.cpp
     MCLDBufferUGens.cpp
     MCLDChaosUGens.cpp
     MCLDDistortionUGens.cpp
     MCLDFilterUGens.cpp
+    MCLDFFTUGens.cpp
     MCLDGetenvUGen.cpp
     MCLDOscUGens.cpp
     MCLDSOMUGens.cpp
@@ -84,18 +87,9 @@ set(FFTSOURCES
     ${CMAKE_SOURCE_DIR}/scfft_old/SCComplex.cpp
 )
 
-add_library(JoshPVUGens MODULE JoshPVUGens.cpp ${FFTSOURCES})
-target_link_libraries(JoshPVUGens ${FFTW3F_LIBRARY})
-
 file(GLOB NCAnalysisSources NCAnalysis/*cpp)
 add_library(NCAnalysis MODULE ${NCAnalysisSources})
 target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
-
-add_library(MCLDFFTUGens MODULE MCLDFFTUGens.cpp ${FFTSOURCES})
-target_link_libraries(MCLDFFTUGens ${FFTW3F_LIBRARY})
-
-add_library(BhobFFT MODULE BhobFFT.cpp ${FFTSOURCES})
-target_link_libraries(BhobFFT ${FFTW3F_LIBRARY})
 
 if (AY)
     include_directories(AY_libayemu/include)
