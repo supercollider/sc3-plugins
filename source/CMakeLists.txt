@@ -70,8 +70,11 @@ endforeach(plugin)
 add_library(MdaUGens MODULE MdaUGens/MdaUGens.cpp)
 add_library(MembraneUGens MODULE Membrane_shape.c Membrane.cpp)
 
-add_library(LadspaUGen MODULE LadspaUGen/LadspaUGen.cpp LadspaUGen/search.c)
-list(APPEND plugins LadspaUGen)
+find_path(LADSPA_INCLUDE_DIR NAMES ladspa.h PATHS /usr/local/include /usr/include)
+if (LADSPA_INCLUDE_DIR)
+    add_library(LadspaUGen MODULE LadspaUGen/LadspaUGen.cpp LadspaUGen/search.c)
+    list(APPEND plugins LadspaUGen)
+endif()
 
 file(GLOB MLfftwSources MLfftwUGens/*cpp)
 add_library(MLfftwUGens MODULE ${MLfftwSources})
