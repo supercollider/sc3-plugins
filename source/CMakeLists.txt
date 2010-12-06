@@ -68,7 +68,10 @@ endforeach(plugin)
 
 
 add_library(MdaUGens MODULE MdaUGens/MdaUGens.cpp)
+list(APPEND plugins MdaUGens)
+
 add_library(MembraneUGens MODULE Membrane_shape.c Membrane.cpp)
+list(APPEND plugins MembraneUGens)
 
 find_path(LADSPA_INCLUDE_DIR NAMES ladspa.h PATHS /usr/local/include /usr/include)
 if (LADSPA_INCLUDE_DIR)
@@ -79,9 +82,9 @@ endif()
 file(GLOB MLfftwSources MLfftwUGens/*cpp)
 add_library(MLfftwUGens MODULE ${MLfftwSources})
 target_link_libraries(MLfftwUGens ${FFTW3F_LIBRARY})
+list(APPEND plugins MLfftwUGens)
 
 add_subdirectory(StkUGens)
-
 list(APPEND plugins ${StkUGens})
 
 set(FFTSOURCES
@@ -93,10 +96,12 @@ set(FFTSOURCES
 file(GLOB NCAnalysisSources NCAnalysis/*cpp)
 add_library(NCAnalysis MODULE ${NCAnalysisSources})
 target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
+list(APPEND plugins NCAnalysis)
 
 if (AY)
     include_directories(AY_libayemu/include)
     add_library(AY_UGen MODULE AY_UGen.cpp AY_libayemu/src/ay8912.c)
+    list(APPEND plugins AY_UGen)
 endif()
 
 
