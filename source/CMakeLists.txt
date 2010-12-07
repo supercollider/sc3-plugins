@@ -93,10 +93,10 @@ set(FFTSOURCES
     ${CMAKE_SOURCE_DIR}/scfft_old/SCComplex.cpp
 )
 
-file(GLOB NCAnalysisSources NCAnalysis/*cpp)
-add_library(NCAnalysis MODULE ${NCAnalysisSources})
-target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
-list(APPEND plugins NCAnalysis)
+#file(GLOB NCAnalysisSources NCAnalysis/*cpp)
+#add_library(NCAnalysis MODULE ${NCAnalysisSources})
+#target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
+#list(APPEND plugins NCAnalysis)
 
 if (AY)
     include_directories(AY_libayemu/include)
