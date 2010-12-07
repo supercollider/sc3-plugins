@@ -21,7 +21,7 @@ An interface to abstract over different FFT libraries, for SuperCollider 3.
 
 */
 
-#include "SC_fftlib.h"
+#include "SC_fftlib_old.h"
 #include "clz.h"
 #include <stdlib.h>
 #include <cmath>
