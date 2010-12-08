@@ -1,0 +1,3 @@
+[submodule "libs/nova-simd"]
+	path = libs/nova-simd
+	url = git://supercollider.git.sourceforge.net/gitroot/supercollider/nova-simd
