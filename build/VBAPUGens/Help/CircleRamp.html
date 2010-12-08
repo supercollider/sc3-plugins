@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0000ff}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.s5 {color: #000000}
+span.s6 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>CircleRamp<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>circular linear lag</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>CircleRamp.ar(in, lagTime, circmin, circmax)</b></p>
+<p class="p1"><b>CircleRamp.kr(in, lagTime, circmin, circmax)</b></p>
+<p class="p2"><br></p>
+<p class="p1">This is just like <a href="SC://Ramp"><span class="s2">Ramp</span></a>, but always takes the shortest way around a defined circle, wrapping values where appropriate. This can be useful when smoothing panning signals for speaker rings, for instance in Vector Base Amplitude Panning.</p>
+<p class="p1"><b>in</b> - The signal to be smoothed.</p>
+<p class="p1"><b>lagTime</b> - Lag time in seconds. The default is 0.1.</p>
+<p class="p1"><b>circmin</b> - The lower wrap value. The default is -180.</p>
+<p class="p1"><b>circmax</b> - The upper wrap value. The default is 180.</p>
+<p class="p2"><br></p>
+<p class="p1">CircleRamp also defines an extension method for <a href="SC://UGen"><span class="s2">UGen</span></a> which has the same defaults listed above.</p>
+<p class="p2"><br></p>
+<p class="p1"><b>circleRamp(lagTime, circmin, circmax)</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> <a href="SC://Ramp"><span class="s2">Ramp</span></a>, <a href="SC://Lag"><span class="s2">Lag</span></a>, <a href="VBAP.html"><span class="s2">VBAP</span></a></p>
+<p class="p2"><br></p>
+<p class="p3"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="s3">var</span> speakerList, x=200, y=150, targx=200, targy=150;</p>
+<p class="p4"><span class="s3">var</span> atorad = (2pi) / 360, rtoang = 360.0 / (2pi);</p>
+<p class="p4"><span class="s3">var</span> targRotate, actRotate, targPoint, actPoint;</p>
+<p class="p4"><span class="s3">var</span> maxShiftPerFrame = 20, frameInterval = 0.01;</p>
+<p class="p4"><span class="s3">var</span> resched = <span class="s3">false</span>, count = 0;</p>
+<p class="p4"><span class="s3">var</span> panBus, widthBus, recButton;</p>
+<p class="p4"><span class="s3">var</span> a, b, c, e;</p>
+<p class="p5"><br></p>
+<p class="p4">maxShiftPerFrame = maxShiftPerFrame * atorad;</p>
+<p class="p4">actPoint = <span class="s3">Point</span>(x, y) - <span class="s3">Point</span>(200, 200);</p>
+<p class="p4">panBus = <span class="s3">Bus</span>.control;</p>
+<p class="p4">widthBus = <span class="s3">Bus</span>.control.set(60);</p>
+<p class="p5"><br></p>
+<p class="p4">w = <span class="s3">GUI</span>.window.new(<span class="s4">"5.1 Panner"</span>, <span class="s3">Rect</span>(128, 64, 400, 450)).front;</p>
+<p class="p4">w.view.background_(<span class="s3">Color</span>.grey(0.3));</p>
+<p class="p4">w.view.decorator = <span class="s3">FlowLayout</span>(w.view.bounds);</p>
+<p class="p4">speakerList = [[-30, <span class="s4">"L"</span>], [30, <span class="s4">"R"</span>], [0, <span class="s4">"C"</span>], [-110, <span class="s4">"Ls"</span>], [110, <span class="s4">"Rs"</span>]];</p>
+<p class="p4">c = <span class="s3">GUI</span>.userView.new(w,<span class="s3">Rect</span>(0, 0, 400, 380));</p>
+<p class="p4">c.canFocus = <span class="s3">false</span>;</p>
+<p class="p5"><br></p>
+<p class="p4">c.drawFunc = {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Color</span>.grey(0.8).set;</p>
+<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>// draw the speaker layout</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.translate(200,200);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>((actPoint.theta + (0.5pi)).wrap2(pi) * rtoang).round(0.01).asString.drawCenteredIn(<span class="s3">Rect</span>.aboutPoint(0@170, 30, 10), <span class="s3">GUI</span>.font.new(<span class="s4">"Arial"</span>, 10), <span class="s3">Color</span>.grey(0.8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.strokeOval(<span class="s3">Rect</span>.aboutPoint(0@0, 150, 150));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.rotate(pi);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>speakerList.do({<span class="s3">|spkr|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.use({</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.rotate(spkr[0] * atorad);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.moveTo(0@170);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.strokeRect(r = <span class="s3">Rect</span>.aboutPoint(0@170, 30, 10));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(spkr[0].abs &lt; 90, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.use({</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.translate(0, 170);<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.rotate(pi);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>spkr[1].drawCenteredIn(<span class="s3">Rect</span>.aboutPoint(0@0, 30, 10),<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.font.new(<span class="s4">"Arial"</span>, 10), <span class="s3">Color</span>.grey(0.8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>},{<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>spkr[1].drawCenteredIn(r, <span class="s3">GUI</span>.font.new(<span class="s4">"Arial"</span>, 10), <span class="s3">Color</span>.grey(0.8));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span>});</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.moveTo(0@0);</p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>// draw the pan point</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.rotate(actPoint.theta + 0.5pi);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>targPoint = <span class="s3">Point</span>(x, y) - <span class="s3">Point</span>(200, 200);</p>
+<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>// trunc to avoid loops due to fp math</p>
+<p class="p4"><span class="Apple-tab-span">	</span>targRotate = (targPoint.theta - actPoint.theta).trunc(1e-15);</p>
+<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>// wrap around</p>
+<p class="p4"><span class="Apple-tab-span">	</span>if(targRotate.abs &gt; pi, {targRotate = (2pi - targRotate.abs) * targRotate.sign.neg});<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>actRotate = targRotate.clip2(maxShiftPerFrame).trunc(1e-15);</p>
+<p class="p4"><span class="Apple-tab-span">	</span>actPoint = actPoint.rotate(actRotate);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.rotate(actRotate);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.lineTo(0@150);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.stroke;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.fillOval(<span class="s3">Rect</span>.aboutPoint(0@150, 7, 7));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.addWedge(0@0, 140, neg(e.value * 0.5) * atorad + 0.5pi, e.value * atorad);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.stroke;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">Color</span>.grey(0.8).alpha_(0.1).set;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.addWedge(0@0, 140, neg(e.value * 0.5) * atorad + 0.5pi, e.value * atorad);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.fill;</p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>if((actRotate.abs &gt; 0), {<span class="s3">AppClock</span>.sched(frameInterval, {w.refresh})}, {count = 0;});</p>
+<p class="p4"><span class="Apple-tab-span">	</span>if(count%4 == 0, {panBus.set((actPoint.theta + (0.5pi)).wrap2(pi) * rtoang)});</p>
+<p class="p4">};</p>
+<p class="p4">c.mouseTrackFunc_({<span class="s3">|v,inx,iny|</span> x = inx; y = iny; w.refresh;});</p>
+<p class="p4">c.mouseBeginTrackFunc_({<span class="s3">|v,inx,iny|</span> x = inx; y = iny; w.refresh;});</p>
+<p class="p4">e = <span class="s3">GUI</span>.ezSlider.new(w, 380@20, <span class="s4">"Stereo Width"</span>, [0, 180].asSpec, {<span class="s3">arg</span> ez; widthBus.set(ez.value); w.refresh}, 60);</p>
+<p class="p4">e.labelView.setProperty(<span class="s6">\stringColor</span>,<span class="s3">Color</span>.grey(0.8));</p>
+<p class="p5"><br></p>
+<p class="p4">w.refresh;</p>
+<p class="p5"><br></p>
+<p class="p6">// VBAP</p>
+<p class="p5"><br></p>
+<p class="p4">a = <span class="s3">VBAPSpeakerArray</span>.new(2, speakerList.collect(<span class="s3">_</span>.first));</p>
+<p class="p4">b = <span class="s3">Buffer</span>.loadCollection(s, a.getSetsAndMatrices;);</p>
+<p class="p5"><br></p>
+<p class="p7">SynthDef<span class="s5">(</span><span class="s6">'VBAP 5 chan'</span><span class="s5">, { </span>|azi = 0, ele = 0, spr = 0, width = 60, vbapBuf|</p>
+<p class="p4"><span class="s3">var</span> panned, source;</p>
+<p class="p4">source = <span class="s3">SinOsc</span>.ar([440, 660], 0, <span class="s3">Decay2</span>.ar(<span class="s3">Impulse</span>.ar([1, 0.9]), 0.1, 0.2));</p>
+<p class="p4">azi = azi.circleRamp;</p>
+<p class="p4">panned = <span class="s3">VBAP</span>.ar(5, source, vbapBuf, [azi - (0.5 * width), azi + (0.5 * width)], ele, spr);</p>
+<p class="p6">// 'standard' channel order for 5.1</p>
+<p class="p4">[0, 1, 2, 4, 5].do({<span class="s3">arg</span> bus, i; <span class="s3">Out</span>.ar(bus, panned[0][i])});</p>
+<p class="p4">[0, 1, 2, 4, 5].do({<span class="s3">arg</span> bus, i; <span class="s3">Out</span>.ar(bus, panned[1][i])});</p>
+<p class="p5"><br></p>
+<p class="p4">}).play(s, [vbapBuf: b.bufnum, azi: panBus.asMap, width: widthBus.asMap]);</p>
+<p class="p5"><br></p>
+<p class="p4">)</p>
+</body>
+</html>

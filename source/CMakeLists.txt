@@ -56,6 +56,7 @@ set(plugin_sources
     RMEQSuite.cpp
     SLUGens.cpp
     TagSystemUgens.cpp
+    VBAP.cpp
     VOSIM.cpp
 )
 

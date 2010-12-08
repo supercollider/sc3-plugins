@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.46">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bec}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #96281c}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0026f5}
+span.s3 {text-decoration: underline}
+span.s4 {color: #000000}
+span.s5 {color: #001dfd}
+span.s6 {color: #001db7}
+span.s7 {color: #96281c}
+span.s8 {font: 12.0px Helvetica}
+span.s9 {color: #0016bd}
+span.s10 {color: #ae1a19}
+span.s11 {color: #0000ff}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>VBAPSpeakerArray<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Vector Base Amplitude Panning Speaker Array</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>superclass: </b><a href="SC://Object"><span class="s2"><b>Object</b></span></a></p>
+<p class="p3"><br></p>
+<p class="p1">VBAPSpeakerArray represents an array of speakers configured for use with VBAP. It provides functions for calculating optimised pairs and triplets based on speaker location.</p>
+<p class="p2"><br></p>
+<p class="p1">VBAP was created by Ville Pulkki. For more information on VBAP see <span class="s3">http://www.acoustics.hut.fi/research/cat/vbap/</span></p>
+<p class="p2"><br></p>
+<p class="p1">This version of VBAP for SC was ported from the ver. 0.99 PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: <span class="s3">http://www.ahrc.ac.uk</span></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s4"><b>See also:</b> <a href="VBAP.html"><span class="s3">VBAP</span></a>, <a href="CircleRamp.html"><span class="s3">CircleRamp</span></a>, <a href="VBAPSpeaker.html"><span class="s5">VBAPSpeaker</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p5"><b>Creation</b></p>
+<p class="p6"><br></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*new(dim, directions)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a new VBAPSpeakerArray.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dim </b>- Number of dimensions in the array, either 2 (ring or partial ring), or 3 (partial or full dome or sphere).</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>directions<span class="Apple-converted-space"> </span></b> - An <a href="SC://Array"><span class="s2">Array</span></a> containing speaker locations in degrees. If <b>dim</b> is 2 this will be an array of azimuth angles, if <b>dim </b>is 3 this will be an array of arrays of [azimuth, elevation] angle pairs. Angles are given in degrees, with azimuth +/- 180 degrees from the median plane (i.e. straight ahead), and elevation +/- 90 degrees from the azimuth plane.<span class="Apple-tab-span">	</span>The order of the speakers corresponds to the order of the outputs when using a <a href="VBAP.html"><span class="s5">VBAP</span></a> UGen.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// 2D and 3D examples</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">VBAPSpeakerArray</span>.new(2, [ -30, 30, 0, -110, 110 ]); <span class="s7">// 5.1 array</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">VBAPSpeakerArray</span>.new(3, [[-22.5, 14.97], [22.5, 14.97], [-67.5, 14.97], [67.5, 14.97], [-112.5, 14.97], [112.5, 14.97], [-157.5, 14.97], [157.5, 14.97], [-45, 0], [45, 0], [-90, 0], [90, 0], [-135, 0], [135, 0], [0, 0], [180, 0]]); <span class="s7">// zig zag partial dome</span></p>
+<p class="p8"><br></p>
+<p class="p12"><b>Accessing Instance and Class Variables</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*maxNumSpeakers_(num)</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>*maxNumSpeakers</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns or sets the maximum number of speakers in an array. Default is 55. (This limitation will be removed in a later version.)</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><b>dim</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://Integer"><span class="s2">Integer</span></a> corresponding to the receiver's number of dimensions.</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><b>numSpeakers</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://Integer"><span class="s2">Integer</span></a> indicating the number of speakers in this array.</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><b>speakers</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Returns an <a href="SC://Array"><span class="s2">Array</span></a> containing instances of VBAPSpeaker.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p12"><b>Instance Methods</b></p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>getSetsAndMatrices</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Sort the speaker array into loudspeaker pairs or triplets and return this data in a form appropriate for loading into a buffer. Once loaded this data can be used by a <a href="VBAP.html"><span class="s5">VBAP</span></a> UGen.<span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="s8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>a = <span class="s9">VBAPSpeakerArray</span>.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); <span class="s10">// 8 channel ring</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = <span class="s9">Buffer</span>.loadCollection(s, a.getSetsAndMatrices);</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span>loadToBuffer(server)</b></p>
+<p class="p8"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>A shortcut for calling <b>getSetsAndMatrices</b> and loading into a Buffer. Returns a <a href="SC://Buffer"><span class="s11">Buffer</span></a> object.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><span class="s8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>a = <span class="s9">VBAPSpeakerArray</span>.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); <span class="s10">// 8 channel ring</span></p>
+<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = a.loadToBuffer;</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p6"><br></p>
+<p class="p1"><b>See </b><a href="VBAP.html"><span class="s5"><b>VBAP</b></span></a><b> for further examples.</b></p>
+</body>
+</html>
