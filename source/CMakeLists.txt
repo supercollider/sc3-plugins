@@ -11,7 +11,7 @@ if (SUPERNOVA)
 endif()
 
 
-
+include_directories(${CMAKE_SOURCE_DIR}/include/)
 include_directories(${CMAKE_SOURCE_DIR}/scfft_old/)
 
 include_directories(${SC_PATH}/include/plugin_interface)
@@ -22,6 +22,8 @@ include_directories(${SC_PATH}/server/plugins) # for FFT_UGens.h
 include_directories(${SC_PATH}/common/Headers/plugin_interface)
 include_directories(${SC_PATH}/common/Headers/common)
 include_directories(${SC_PATH}/common/Source/plugins) # for FFT_UGens.h
+
+include_directories(${SC_PATH}/external_libraries/libsndfile/)
 
 set(plugin_sources
     AmbisonicUGens.cpp
@@ -59,6 +61,9 @@ set(plugin_sources
 
 set(plugins "")
 set(CMAKE_SHARED_MODULE_PREFIX "")
+if(APPLE OR WIN32)
+	set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
+endif()
 
 foreach(plugin ${plugin_sources})
     string(REPLACE .cpp "" plugin_name ${plugin} )
@@ -98,6 +103,11 @@ add_library(NCAnalysis MODULE ${NCAnalysisSources} ${FFTSOURCES})
 if (NOT APPLE)
     target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
 endif()
+
+if (APPLE)
+    target_link_libraries(NCAnalysis "-framework vecLib")
+endif()
+
 list(APPEND plugins NCAnalysis)
 
 if (AY)
@@ -118,3 +128,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
                 PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     endif()
 endif()
+
+if(APPLE)
+    install(TARGETS ${plugins}
+       DESTINATION  ${CMAKE_SOURCE_DIR}/build/plugins/
+       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endif()
+
