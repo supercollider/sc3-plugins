@@ -3,7 +3,7 @@
 #define MY_FLOAT float
 
 #include <Skini.h>  // caps
-#include "include/SKINI.tbl"
+#include "include/SKINI.msg"
 
 #include <OneZero.h>
 #include <OnePole.h>

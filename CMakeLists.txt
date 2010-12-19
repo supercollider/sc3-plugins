@@ -14,7 +14,6 @@ add_custom_target(uninstall
 
 
 set(SC_PATH "/usr/include/SuperCollider" CACHE STRING "SuperCollider path")
-set(SN_PATH "/path/to/supernova" CACHE STRING "Supernova path")
 
 option(SUPERNOVA "Build plugins for supernova")
 option(AY "Build with AY ugens")

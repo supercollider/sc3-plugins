@@ -5,11 +5,9 @@ if (!FFTW3F_FOUND)
 endif()
 
 if (SUPERNOVA)
-    add_definitions(-DSUPERNOVA)
-    include_directories(${SN_PATH}/libs/nova-tt)
-    include_directories(${SN_PATH}/libs/boost_lockfree)
+    include_directories(${SC_PATH}/external_libraries/nova-tt)
+    include_directories(${SC_PATH}/external_libraries/boost_lockfree)
 endif()
-
 
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 include_directories(${CMAKE_SOURCE_DIR}/scfft_old/)
@@ -24,6 +22,21 @@ include_directories(${SC_PATH}/common/Headers/common)
 include_directories(${SC_PATH}/common/Source/plugins) # for FFT_UGens.h
 
 include_directories(${SC_PATH}/external_libraries/libsndfile/)
+
+macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS)
+    add_library(${PLUGIN_NAME} MODULE ${PLUGIN_SOURCES})
+    list(APPEND plugins ${PLUGIN_NAME})
+    target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
+
+    if(SUPERNOVA)
+        add_library(${PLUGIN_NAME}_supernova MODULE ${PLUGIN_SOURCES})
+        target_link_libraries(${PLUGIN_NAME}_supernova ${PLUGIN_LIBS})
+
+        list(APPEND supernova_plugins ${PLUGIN_NAME}_supernova)
+        set_property(TARGET ${PLUGIN_NAME}_supernova
+                     PROPERTY COMPILE_DEFINITION SUPERNOVA)
+    endif()
+endmacro()
 
 set(plugin_sources
     AmbisonicUGens.cpp
@@ -61,6 +74,8 @@ set(plugin_sources
 )
 
 set(plugins "")
+set(supernova_plugins "")
+
 set(CMAKE_SHARED_MODULE_PREFIX "")
 if(APPLE OR WIN32)
 	set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
@@ -68,30 +83,35 @@ endif()
 
 foreach(plugin ${plugin_sources})
     string(REPLACE .cpp "" plugin_name ${plugin} )
-    add_library(${plugin_name} MODULE ${plugin})
-    list(APPEND plugins ${plugin_name})
+    BUILD_PLUGIN(${plugin_name} ${plugin} "")
 endforeach(plugin)
 
+BUILD_PLUGIN(MdaUGens MdaUGens/MdaUGens.cpp "")
 
-add_library(MdaUGens MODULE MdaUGens/MdaUGens.cpp)
-list(APPEND plugins MdaUGens)
-
-add_library(MembraneUGens MODULE Membrane_shape.c Membrane.cpp)
-list(APPEND plugins MembraneUGens)
+BUILD_PLUGIN(MembraneUGens "Membrane_shape.c;Membrane.cpp" "")
 
 find_path(LADSPA_INCLUDE_DIR NAMES ladspa.h PATHS /usr/local/include /usr/include)
 if (LADSPA_INCLUDE_DIR)
-    add_library(LadspaUGen MODULE LadspaUGen/LadspaUGen.cpp LadspaUGen/search.c)
-    list(APPEND plugins LadspaUGen)
+    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "")
 endif()
 
 file(GLOB MLfftwSources MLfftwUGens/*cpp)
-add_library(MLfftwUGens MODULE ${MLfftwSources})
-target_link_libraries(MLfftwUGens ${FFTW3F_LIBRARY})
-list(APPEND plugins MLfftwUGens)
+BUILD_PLUGIN(MLfftwUGens "${MLfftwSources}" ${FFTW3F_LIBRARY})
 
-add_subdirectory(StkUGens)
-list(APPEND plugins ${StkUGens})
+file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
+file(GLOB UnneededSTKSources "StkUGens/stk-4.4.2/src/Rt*.cpp"
+                             "StkUGens/stk-4.4.2/src/Inet*.cpp"
+                             "StkUGens/stk-4.4.2/src/Socket.cpp"
+                             "StkUGens/stk-4.4.2/src/Tcp*.cpp"
+                             "StkUGens/stk-4.4.2/src/UdpSocket.cpp"
+                             "StkUGens/stk-4.4.2/src/Thread.cpp"
+                             "StkUGens/stk-4.4.2/src/Mutex.cpp"
+)
+list(REMOVE_ITEM STKSources ${UnneededSTKSources})
+include_directories(StkUGens/stk-4.4.2)
+include_directories(StkUGens/stk-4.4.2/include)
+include_directories(StkUGens/stk-4.4.2/src/include)
+BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "")
 
 set(FFTSOURCES
     ${CMAKE_SOURCE_DIR}/scfft_old/fftlib.c
@@ -100,34 +120,27 @@ set(FFTSOURCES
 )
 
 file(GLOB NCAnalysisSources NCAnalysis/*cpp)
-add_library(NCAnalysis MODULE ${NCAnalysisSources} ${FFTSOURCES})
-if (NOT APPLE)
-    target_link_libraries(NCAnalysis ${FFTW3F_LIBRARY})
+if(APPLE)
+    set (NCAnalysisLibs "-framework vecLib")
+else()
+    set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
 
-if (APPLE)
-    target_link_libraries(NCAnalysis "-framework vecLib")
-endif()
-
-list(APPEND plugins NCAnalysis)
+BUILD_PLUGIN(NCAnalysis "${NCAnalysisSources};${FFTSOURCES}" ${NCAnalysisLibs})
 
 if (AY)
     include_directories(AY_libayemu/include)
-    add_library(AY_UGen MODULE AY_UGen.cpp AY_libayemu/src/ay8912.c)
-    list(APPEND plugins AY_UGen)
+    BUILD_PLUGIN(AY_UGen "AY_UGen.cpp;AY_libayemu/src/ay8912.c" "")
 endif()
 
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    if (SUPERNOVA)
-        install(TARGETS ${plugins}
-                DESTINATION "lib/supernova/plugins"
-                PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-    else()
-        install(TARGETS ${plugins}
+    install(TARGETS ${supernova_plugins}
+            DESTINATION "lib/supernova/plugins"
+            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    install(TARGETS ${plugins}
                 DESTINATION "lib/SuperCollider/plugins"
                 PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-    endif()
 endif()
 
 if(APPLE)
