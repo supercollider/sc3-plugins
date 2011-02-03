@@ -19,6 +19,7 @@ set(directories
     StkUGens
     TagSystemUGens
     VOSIMUGens
+    TJUGens
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")

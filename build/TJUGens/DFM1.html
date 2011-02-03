@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cf1913}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {color: #000000}
+span.s2 {color: #0430c2}
+span.s3 {color: #008227}
+</style>
+</head>
+<body>
+<p class="p1"><b>DFM1 - Digital Filter Module</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>DFM1.ar(in, freq, res, inputgain, type, noiselevel, mul, add)</b></p>
+<p class="p4"><br></p>
+<p class="p3">DFM1 is a digitally modelled analog filter.<span class="Apple-converted-space">  </span><span class="s1">It</span> provides low-pass and high-pass filtering.<span class="Apple-converted-space">  </span>The filter can be overdriven and will self-oscillate at high resonances.</p>
+<p class="p4"><br></p>
+<p class="p3"><b>in</b>- input signal</p>
+<p class="p3"><b>freq</b>- cutoff frequency</p>
+<p class="p3"><b>res</b>- resonance</p>
+<p class="p3"><b>inputgain</b>- gain applied to the input signal</p>
+<p class="p3"><b>type</b>- set to 0.0 for low-pass or 1.0 for high-pass</p>
+<p class="p3"><b>noiselevel</b>- amplitude of noise added to the model</p>
+<p class="p4"><br></p>
+<p class="p5">// Play it with the mouse</p>
+<p class="p6">{<span class="s2">DFM1</span>.ar(<span class="s2">PinkNoise</span>.ar(mul: 0.5), <span class="s2">MouseX</span>.kr(80, 5000, <span class="s3">'exponential'</span>), <span class="s2">MouseY</span>.kr(0.1, 1.2))}.play;</p>
+<p class="p2"><br></p>
+<p class="p5">// Throbby bass</p>
+<p class="p6">{<span class="s2">DFM1</span>.ar(<span class="s2">Pulse</span>.ar(100, mul:0.4) + Pulse.ar(100.1, mul:0.4), <span class="s2">SinOsc</span>.kr(<span class="s2">SinOsc</span>.kr(0.3).range(0.2, 5)).range(80, 2000), 1.1, inputgain: 2.0, mul:0.7)!2}.play;</p>
+</body>
+</html>

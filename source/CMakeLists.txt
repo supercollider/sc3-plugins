@@ -133,6 +133,8 @@ if (AY)
     BUILD_PLUGIN(AY_UGen "AY_UGen.cpp;AY_libayemu/src/ay8912.c" "")
 endif()
 
+file(GLOB TJUGensSources TJUGens/*.cpp)
+BUILD_PLUGIN(TJUGens "${TJUGensSources}" "")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     install(TARGETS ${supernova_plugins}
