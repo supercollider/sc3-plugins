@@ -12,6 +12,9 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include/)
 include_directories(${CMAKE_SOURCE_DIR}/scfft_old/)
 
+include_directories(${SC_PATH}/common)
+include_directories(${SC_PATH}/plugin_interface)
+
 include_directories(${SC_PATH}/include/plugin_interface)
 include_directories(${SC_PATH}/include/common)
 include_directories(${SC_PATH}/server/plugins) # for FFT_UGens.h
