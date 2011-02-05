@@ -20,6 +20,10 @@ sc3-plugins/cmake_build/$ cmake ..
       or
 
       sc3-plugins/cmake_build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
+      
+      
+      To set the install target:
+      sc3-plugins/cmake_build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
 
 
 sc3-plugins/cmake_build/$ make
@@ -33,9 +37,3 @@ Starting over:
   if something went wrong and you want to start from scratch, delete everything in the cmake_build directory that you made:
   sc3-plugins/cmake_build/$ rm -r *
   
-
---------------
-open questions
---------------
-
-  How to set install target?
