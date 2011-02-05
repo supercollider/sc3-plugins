@@ -20,6 +20,7 @@ set(directories
     TagSystemUGens
     VOSIMUGens
     TJUGens
+    SummerUGens
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")

@@ -74,6 +74,7 @@ set(plugin_sources
     TagSystemUgens.cpp
     VBAP.cpp
     VOSIM.cpp
+    SummerUGens.cpp
 )
 
 set(plugins "")
