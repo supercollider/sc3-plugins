@@ -18,11 +18,15 @@ set(directories
     SLUGens
     StkUGens
     TagSystemUGens
+    VBAPUGens
     VOSIMUGens
     TJUGens
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     install(DIRECTORY ${directories}
-            DESTINATION "share/SuperCollider/Extensions/SC3plugins")
+            DESTINATION "share/SuperCollider/Extensions/SC3plugins"
+            FILES_MATCHING
+            PATTERN "*"
+            PATTERN "*~" EXCLUDE)
 endif()
