@@ -60,22 +60,40 @@ extern "C"
 	void Summer_next_aa(Summer *unit, int inNumSamples);
 	void Summer_next_ak(Summer *unit, int inNumSamples);
 	void Summer_next_a0(Summer *unit, int inNumSamples);
+	void Summer_next_aaa(Summer *unit, int inNumSamples);
+	void Summer_next_aka(Summer *unit, int inNumSamples);
+	void Summer_next_a0a(Summer *unit, int inNumSamples);
 
 	void WrapSummer_Ctor(Summer *unit);
 	void WrapSummer_next_aa(Summer *unit, int inNumSamples);
 	void WrapSummer_next_ak(Summer *unit, int inNumSamples);
 	void WrapSummer_next_a0(Summer *unit, int inNumSamples);
+	void WrapSummer_next_aaa(Summer *unit, int inNumSamples);
+	void WrapSummer_next_aka(Summer *unit, int inNumSamples);
+	void WrapSummer_next_a0a(Summer *unit, int inNumSamples);
 
 }
 
 void Summer_Ctor(Summer *unit)
 {
 	if (unit->mCalcRate == calc_FullRate && INRATE(0) == calc_FullRate && INRATE(2) == calc_ScalarRate) {
+	  if ( INRATE(1) == calc_FullRate ){
+		SETCALC(Summer_next_a0a);
+	  } else {
 		SETCALC(Summer_next_a0);
+	  }
 	} else if (unit->mCalcRate == calc_FullRate && INRATE(0) == calc_FullRate && INRATE(2) != calc_FullRate) {
+	  if ( INRATE(1) == calc_FullRate ){
+		SETCALC(Summer_next_aka);
+	  } else {
 		SETCALC(Summer_next_ak);
+	  }
 	} else {
+	  if ( INRATE(1) == calc_FullRate ){
+		SETCALC(Summer_next_aaa);
+	  } else {
 		SETCALC(Summer_next_aa);
+	  }
 	}
 
 	unit->m_prevtrig = 0.f;
@@ -84,7 +102,6 @@ void Summer_Ctor(Summer *unit)
 
 	ZOUT0(0) = 0.f;
 }
-
 
 void Summer_next_aa(Summer *unit, int inNumSamples)
 {
@@ -161,14 +178,106 @@ void Summer_next_a0(Summer *unit, int inNumSamples)
 	unit->m_prevtrig = prevtrig;
 }
 
+
+void Summer_next_aaa(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float *reset = ZIN(2);
+	float resetval = ZIN0(3);
+	float prevtrig = unit->m_prevtrig;
+	float prevreset = unit->m_prevreset;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+	      float curtrig = ZXP(trig);
+	      float curreset = ZXP(reset);
+	      float curstep = ZXP(step);
+		if (prevreset <= 0.f && curreset > 0.f) {
+			level = resetval;
+		} else if (prevtrig <= 0.f && curtrig > 0.f) {
+			level = level + curstep;
+		}
+		ZXP(out) = level;
+		prevtrig = curtrig;
+		prevreset = curreset;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
+	unit->m_prevreset = prevreset;
+}
+
+void Summer_next_aka(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float curreset = ZIN0(2);
+	float resetval = ZIN0(3);
+	float prevtrig = unit->m_prevtrig;
+	float prevreset = unit->m_prevreset;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+	      float curtrig = ZXP(trig);
+	      float curstep = ZXP(step);
+	      if (prevreset <= 0.f && curreset > 0.f) {
+		level = resetval;
+	      } else if (prevtrig <= 0.f && curtrig > 0.f) {
+		level = level + curstep;
+	      }
+	      ZXP(out) = level;
+	      prevtrig = curtrig;
+	      prevreset = curreset;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
+	unit->m_prevreset = prevreset;
+}
+
+void Summer_next_a0a(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float prevtrig = unit->m_prevtrig;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+		float curtrig = ZXP(trig);
+	      float curstep = ZXP(step);
+		if (prevtrig <= 0.f && curtrig > 0.f) {
+		  level = level + curstep;
+		}
+		ZXP(out) = level;
+		prevtrig = curtrig;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
+}
+
+
 void WrapSummer_Ctor(Summer *unit)
 {
 	if (unit->mCalcRate == calc_FullRate && INRATE(0) == calc_FullRate && INRATE(4) == calc_ScalarRate) {
-		SETCALC(WrapSummer_next_a0);
+	    if ( INRATE(1) == calc_FullRate ){
+	      SETCALC(WrapSummer_next_a0a);
+	    } else {
+	      SETCALC(WrapSummer_next_a0);
+	    }
 	} else if (unit->mCalcRate == calc_FullRate && INRATE(0) == calc_FullRate && INRATE(4) != calc_FullRate) {
-		SETCALC(WrapSummer_next_ak);
+	    if ( INRATE(1) == calc_FullRate ){
+	      SETCALC(WrapSummer_next_aka);
+	    } else {
+	  	SETCALC(WrapSummer_next_ak);
+	    }
 	} else {
-		SETCALC(WrapSummer_next_aa);
+	    if ( INRATE(1) == calc_FullRate ){
+	      SETCALC(WrapSummer_next_aaa);
+	    } else {
+	      SETCALC(WrapSummer_next_aa);
+	    }
 	}
 
 	unit->m_prevtrig = 0.f;
@@ -178,6 +287,36 @@ void WrapSummer_Ctor(Summer *unit)
 	ZOUT0(0) = 0.f;
 }
 
+void WrapSummer_next_aaa(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float zmin = ZIN0(2);
+	float zmax = ZIN0(3);
+	float *reset = ZIN(4);
+	float resetval = ZIN0(5);
+	float prevtrig = unit->m_prevtrig;
+	float prevreset = unit->m_prevreset;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+	      float curtrig = ZXP(trig);
+	      float curreset = ZXP(reset);
+	      float curstep = ZXP(step);
+	      if (prevreset <= 0.f && curreset > 0.f) {
+		level = sc_wrap(resetval, zmin, zmax);
+	      } else if (prevtrig <= 0.f && curtrig > 0.f) {
+		level = sc_wrap(level + curstep, zmin, zmax);
+	      }
+	      ZXP(out) = level;
+	      prevtrig = curtrig;
+	      prevreset = curreset;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
+	unit->m_prevreset = prevreset;
+}
 
 void WrapSummer_next_aa(Summer *unit, int inNumSamples)
 {
@@ -236,6 +375,59 @@ void WrapSummer_next_ak(Summer *unit, int inNumSamples)
 	unit->mLevel = level;
 	unit->m_prevtrig = prevtrig;
 	unit->m_prevreset = prevreset;
+}
+
+void WrapSummer_next_aka(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float zmin = ZIN0(2);
+	float zmax = ZIN0(3);
+	float curreset = ZIN0(4);
+	float resetval = ZIN0(5);
+	float prevtrig = unit->m_prevtrig;
+	float prevreset = unit->m_prevreset;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+	      float curtrig = ZXP(trig);
+	      float curstep = ZXP( step );
+		if (prevreset <= 0.f && curreset > 0.f) {
+			level = sc_wrap(resetval, zmin, zmax);
+		} else if (prevtrig <= 0.f && curtrig > 0.f) {
+			level = sc_wrap(level + curstep, zmin, zmax);
+		}
+		ZXP(out) = level;
+		prevtrig = curtrig;
+		prevreset = curreset;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
+	unit->m_prevreset = prevreset;
+}
+
+void WrapSummer_next_a0a(Summer *unit, int inNumSamples)
+{
+	float *out = ZOUT(0);
+	float *trig = ZIN(0);
+	float *step = ZIN(1);
+	float zmin = ZIN0(2);
+	float zmax = ZIN0(3);
+	float prevtrig = unit->m_prevtrig;
+	float level = unit->mLevel;
+
+	LOOP1(inNumSamples,
+	      float curtrig = ZXP(trig);
+	      float curstep = ZXP(step);
+		if (prevtrig <= 0.f && curtrig > 0.f) {
+		  level = sc_wrap(level + curstep, zmin, zmax);
+		}
+		ZXP(out) = level;
+		prevtrig = curtrig;
+	);
+	unit->mLevel = level;
+	unit->m_prevtrig = prevtrig;
 }
 
 void WrapSummer_next_a0(Summer *unit, int inNumSamples)
