@@ -179,7 +179,7 @@ void SOMTrain_Ctor(SOMTrain* unit)
 	int traindur = (int)ZIN0(3);
 	int traincountdown = traindur; // Decrement by one on each occasion
 	
-	double nhood = ZIN0(4) * 0.5; // Neighbourhood size (fraction of total) to be included in a training update. Will decrement slowly.
+	double nhood = ZIN0(4) * (unit->m_netsize) * 0.5; // Neighbourhood size (fraction of total, here converted to span of nodes) to be included in a training update. Will decrement slowly.
 	// The reason we halve it is for convenience: we look nhood/2 in positive direction, nhood/2 in negative direction.
 	double nhooddelta = nhood / traindur; // This is how much it decrements by, each occasion.
 	
