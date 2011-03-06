@@ -1,0 +1,49 @@
+class:: LADSPA
+categories:: UGens>Wrappers
+summary:: Run any LADSPA plugin inside SuperCollider
+
+description::
+This UGen lets you run any LADSPA footnote:: See http://www.ladspa.org/ for more information about LADSPA :: plugin inside SuperCollider.
+
+Plugins are searched in the colon-separated LADSPA_PATH environment variable.
+If this variable is not set, it looks in /usr/lib/ladspa or /usr/local/lib/ladspa
+on Linux and /Library/Audio/Plug-Ins/LADSPA on Mac OS X.
+
+If you have Ardour installed, you can find lots of plugins in /Applications/Ardour.app/Contents/Plugins
+
+WARNING:: Some LADSPA plugins might not be real-time safe, if they allocate memory at initialization.
+
+classmethods::
+method:: ar
+The first argument is the number of output audio channels, then the UniqueID, the rest is all the
+inputs in the same order as shown in 'ladspalist' or similar LADSPA browser.
+discussion::
+If the plugin doesn't provide the requested number of channels, the extra channels will be silenced.
+If the plugin provides more than requested number of channels, the extra channels will be ignored.
+
+
+examples::
+Run the included 'ladspalist' in a shell to find the info about the plugin you want:
+code::
+$ ladspalist | less
+::
+for example, glame lowpass iir with ID 1891:
+code::
+# 1891 Glame Lowpass Filter
+> k: Cutoff Frequency (0.0001 to 0.45)
+> k: Stages(2 poles per stage) (1 to 10)
+> a: Input
+< a: Output
+::
+The meaning of the first two characters for each port are:
+code::
+'>' - input
+'<' - output
+'k' - controlrate
+'a' - audiorate
+::
+Use it in SuperCollider:
+code::
+play{ LADSPA.ar(1, 1891, 1000+LFNoise1.kr(10, 800), 2, WhiteNoise.ar(1!2)) }
+::
+
