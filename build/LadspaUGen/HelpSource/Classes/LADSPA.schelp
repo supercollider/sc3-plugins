@@ -14,18 +14,46 @@ If you have Ardour installed, you can find lots of plugins in /Applications/Ardo
 WARNING:: Some LADSPA plugins might not be real-time safe, if they allocate memory at initialization.
 
 classmethods::
+private:: initClass
+
 method:: ar
-The first argument is the number of output audio channels, then the UniqueID, the rest is all the
-inputs in the same order as shown in 'ladspalist' or similar LADSPA browser.
+argument:: nChans
+the number of output audio channels
+argument:: id
+the UniqueID for the LADSPA ugen that should be used
+argument:: ... args
+all the inputs in the same order as shown in code::listPlugins::
 discussion::
 If the plugin doesn't provide the requested number of channels, the extra channels will be silenced.
 If the plugin provides more than requested number of channels, the extra channels will be ignored.
 
+method:: listPlugins
+print a list of all available plugins.
+discussion::
+Each entry looks like this (example for glame lowpass iir with ID 1891):
+code::
+# 1891 Glame Lowpass Filter
+> k: Cutoff Frequency (0.0001 to 0.45)
+> k: Stages(2 poles per stage) (1 to 10)
+> a: Input
+< a: Output
+::
+
+The meaning of the first two characters for each port are:
+list::
+## '>' - input
+## '<' - output
+## 'k' - controlrate
+## 'a' - audiorate
+::
+
+method:: ladspalist_path
+set/get the location of the code::ladspalist:: binary, used to print a list of available plugins.
 
 examples::
-Run the included 'ladspalist' in a shell to find the info about the plugin you want:
+get a list of all plugins and decide which one you want:
 code::
-$ ladspalist | less
+LADPSA.listPlugins;
 ::
 for example, glame lowpass iir with ID 1891:
 code::
@@ -34,13 +62,6 @@ code::
 > k: Stages(2 poles per stage) (1 to 10)
 > a: Input
 < a: Output
-::
-The meaning of the first two characters for each port are:
-code::
-'>' - input
-'<' - output
-'k' - controlrate
-'a' - audiorate
 ::
 Use it in SuperCollider:
 code::

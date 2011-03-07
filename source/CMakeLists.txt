@@ -97,6 +97,8 @@ BUILD_PLUGIN(MembraneUGens "Membrane_shape.c;Membrane.cpp" "")
 find_path(LADSPA_INCLUDE_DIR NAMES ladspa.h PATHS /usr/local/include /usr/include)
 if (LADSPA_INCLUDE_DIR)
     BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "")
+    add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
+    target_link_libraries(ladspalist dl)
 endif()
 
 file(GLOB MLfftwSources MLfftwUGens/*cpp)
@@ -147,11 +149,22 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     install(TARGETS ${plugins}
                 DESTINATION "lib/SuperCollider/plugins"
                 PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    if (LADSPA_INCLUDE_DIR)
+        install(TARGETS ladspalist
+            DESTINATION "share/SuperCollider/Extensions/SC3plugins/LadspaUGen/"
+            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif()
 endif()
 
 if(APPLE)
     install(TARGETS ${plugins}
        DESTINATION  ${CMAKE_SOURCE_DIR}/build/plugins/
        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+    if (LADSPA_INCLUDE_DIR)
+        install(TARGETS ladspalist
+            DESTINATION ${CMAKE_SOURCE_DIR}/build/plugins/LadspaUGen/
+            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif()
 endif()
 
