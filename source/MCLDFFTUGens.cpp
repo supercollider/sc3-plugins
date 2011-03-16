@@ -129,6 +129,12 @@ struct FFTPeak : FFTAnalyser_Unit
 struct PV_MagSmooth : Unit {
 	float *m_memory;
 };
+struct PV_ExtractRepeat : Unit {
+	float* m_logmags;
+	int m_cursor;
+	float m_fbufnum;
+	SndBuf* m_buf;
+};
 
 
 // for operation on one buffer
@@ -299,6 +305,11 @@ extern "C"
 
 	void PV_MagMulAdd_Ctor(PV_Unit *unit);
 	void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples);
+
+	void PV_ExtractRepeat_Ctor(PV_ExtractRepeat *unit);
+	void PV_ExtractRepeat_next(PV_ExtractRepeat *unit, int inNumSamples);
+	void PV_ExtractRepeat_Dtor(PV_ExtractRepeat *unit);
+
 }
 
 InterfaceTable *ft;
@@ -1558,6 +1569,121 @@ void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define GET_BUF_AT1 \
+	float fbufnum1  = ZIN0(1); \
+	if (fbufnum1 < 0.f) { fbufnum1 = 0.f; } \
+	if (fbufnum1 != unit->m_fbufnum) { \
+		uint32 bufnum = (int)fbufnum1; \
+		World *world = unit->mWorld; \
+		if (bufnum >= world->mNumSndBufs) { \
+			int localBufNum = bufnum - world->mNumSndBufs; \
+			Graph *parent = unit->mParent; \
+			if(localBufNum <= parent->localBufNum) { \
+				unit->m_buf = parent->mLocalSndBufs + localBufNum; \
+			} else { \
+				bufnum = 0; \
+				unit->m_buf = world->mSndBufs + bufnum; \
+			} \
+		} else { \
+			unit->m_buf = world->mSndBufs + bufnum; \
+		} \
+		unit->m_fbufnum = fbufnum1; \
+	} \
+	SndBuf* buf1 = unit->m_buf; \
+	LOCK_SNDBUF(buf1); \
+	float *bufData __attribute__((__unused__)) = buf1->data; \
+	uint32 bufChannels __attribute__((__unused__)) = buf1->channels; \
+	uint32 bufSamples __attribute__((__unused__)) = buf1->samples; \
+	uint32 bufFrames = buf1->frames; \
+	int mask __attribute__((__unused__)) = buf1->mask; \
+	int guardFrame __attribute__((__unused__)) = bufFrames - 2;
+
+void PV_ExtractRepeat_Ctor(PV_ExtractRepeat *unit)
+{
+	unit->m_logmags = NULL;
+	unit->m_cursor = 0;
+	unit->m_fbufnum = -1;
+	SETCALC(PV_ExtractRepeat_next);
+	ZOUT0(0) = ZIN0(0);
+}
+
+void PV_ExtractRepeat_next(PV_ExtractRepeat *unit, int inNumSamples)
+{
+	PV_GET_BUF
+	SCPolarBuf *p = ToPolarApx(buf);
+	GET_BUF_AT1
+
+	if((numbins+2) != bufChannels){
+		printf("PV_ExtractRepeat error: fft magnitude size != bufChannels, %i > %i\n", (numbins+2), bufChannels);
+		return;
+	}
+
+	float loopdursecs    = ZIN0(2);
+	float memorytimesecs = ZIN0(3);
+	bool  which          = ZIN0(4) > 0.f;
+	float ffthopsize     = ZIN0(5);
+	float thresh         = ZIN0(6);
+
+	int loopdurframes = loopdursecs * FULLRATE / ((numbins+numbins+2) * ffthopsize);
+	//printf("PV_ExtractRepeat info: loopdurframes is %i\n", bufFrames);
+	if(loopdurframes > bufFrames){
+		printf("PV_ExtractRepeat warning: loopdurframes > bufFrames, %i > %i\n", loopdurframes, bufFrames);
+		loopdurframes = bufFrames;
+	}
+
+	float* logmags = unit->m_logmags;
+	if(logmags==NULL){
+		logmags = unit->m_logmags = (float*)RTAlloc(unit->mWorld, (numbins+2) * sizeof(float));
+		// Here we zero the buffer, not the logmags, but we do it here as first-run initialisation.
+		memset(bufData, 0, bufChannels * bufFrames * sizeof(float));
+	}
+
+	float mag;
+	for (int i=0; i<numbins; ++i) {
+		mag = p->bin[i].mag;
+		logmags[i]     = log(mag > SMALLEST_NUM_FOR_LOG ? mag : SMALLEST_NUM_FOR_LOG);
+	}
+	// Note, we store the dc and nyquist ON THE END
+	mag = sc_abs(p->dc);
+	logmags[numbins  ] = log(mag > SMALLEST_NUM_FOR_LOG ? mag : SMALLEST_NUM_FOR_LOG);
+	mag = sc_abs(p->nyq);
+	logmags[numbins+1] = log(mag > SMALLEST_NUM_FOR_LOG ? mag : SMALLEST_NUM_FOR_LOG);
+
+	// Advance the recursive-buffer-cursor by one. Let's call the 'current' frame in the recursive buffer R.
+	int cursor = unit->m_cursor + 1;
+	if(cursor >= loopdurframes)
+		cursor = 0;
+	unit->m_cursor = cursor;
+	float* curframe = bufData + (cursor * bufChannels);
+
+	// find (X-R) (the original authors would have taken abs of this too, but that seems harmful to me).
+	// find which bins are (X-R)<t  where t=1. Zero them out (in S).
+	//    (OR do the reverse; user-settable flag, applied here using xors.)
+	for (int i=0; i<numbins; ++i)
+		if((logmags[i] - curframe[i] < thresh) xor which)
+			p->bin[i].mag = 0;
+	if((logmags[numbins  ] - curframe[numbins  ] < thresh) xor which)
+		p->dc  = 0;
+	if((logmags[numbins+1] - curframe[numbins+1] < thresh) xor which)
+		p->nyq = 0;
+
+	// Finally update the recursive buffer by writing X onto it crossfade-style.
+	float writestrength = (memorytimesecs == 0.f) ? 0.f :
+		exp(log001 / (memorytimesecs * FULLRATE / ((numbins+numbins+2) * ffthopsize)));
+	float antiwritestrength = 1.f - writestrength;
+	//printf("PV_ExtractRepeat info: memorytimesecs %g gives write strength %g\n", memorytimesecs, writestrength);
+	for (int i=0; i<numbins+2; ++i) {
+		curframe[i] = (curframe[i] * antiwritestrength) + (logmags[i] * writestrength);
+	}
+}
+
+void PV_ExtractRepeat_Dtor(PV_ExtractRepeat *unit)
+{
+	if(unit->m_logmags) RTFree(unit->mWorld, unit->m_logmags);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 PluginLoad(MCLDFFT)
 {
 	ft= inTable;
@@ -1590,4 +1716,6 @@ PluginLoad(MCLDFFT)
 	DefineDtorUnit(PV_MagSmooth);
 
 	(*ft->fDefineUnit)("PV_MagMulAdd", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagMulAdd_Ctor, 0, 0);
+
+	DefineDtorUnit(PV_ExtractRepeat);
 }

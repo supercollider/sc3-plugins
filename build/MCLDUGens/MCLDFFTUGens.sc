@@ -212,3 +212,10 @@ PV_MagMulAdd : PV_ChainUGen
 	*categories { ^ #["UGens>FFT"] }
 }
 
+PV_ExtractRepeat : PV_ChainUGen
+{
+	*new { | buffer, loopbuf, loopdur, memorytime=30, which=0, ffthop=0.5, thresh=1 |
+		^this.multiNew('control', buffer, loopbuf, loopdur, memorytime, which, ffthop, thresh)
+	}
+	*categories { ^ #["UGens>FFT"] }
+}
