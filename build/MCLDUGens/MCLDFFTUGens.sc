@@ -30,24 +30,6 @@ FFTPower : UGen
 	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
-FFTFlatness : UGen
-{
-	*kr { arg buffer;
-		"FFTFlatness is deprecated and will be removed. Use 'SpecFlatness' instead.".error;
-		^this.multiNew('control', buffer)
-	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
-}
-
-FFTPercentile : UGen
-{
-	*kr { arg buffer, fraction=0.5, interpolate=0;
-		"FFTPercentile is deprecated and will be removed. Use 'SpecPcile' instead.".error;
-		^this.multiNew('control', buffer, fraction, interpolate)
-	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
-}
-
 FFTDiffMags : UGen
 {
 	*kr { arg bufferA, bufferB;
@@ -56,18 +38,6 @@ FFTDiffMags : UGen
 	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
-
-FFTFlatnessSplitPercentile : MultiOutUGen {
-	
-	*kr { arg buffer, fraction=0.5;
-		^this.multiNew('control', buffer, fraction)
-	}
-	init { arg ... theInputs;
-		inputs = theInputs;
-		^this.initOutputs(2, rate);
-	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
-}
 
 FFTFlux : UGen
 {
@@ -173,14 +143,6 @@ FFTCentroid : UGen
 	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
-FFTRumble : UGen
-{
-	*kr { | buffer, pitch=440, mode=0, normalise=0 |
-		^this.multiNew('control', buffer, pitch, mode, normalise)
-	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
-}
-
 FFTSubbandFlatness : MultiOutUGen {
 	
 	var <numbands;
@@ -240,14 +202,6 @@ PV_MagSmooth : PV_ChainUGen
 		^this.multiNew('control', buffer, factor)
 	}
 	*categories { ^ #["UGens>FFT"] }
-}
-
-FFTMutInf : UGen
-{
-	*kr { | buffer, minfreq=50, maxfreq=1000, numframes=5 |
-		^this.multiNew('control', buffer, minfreq, maxfreq, numframes)
-	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
 PV_MagMulAdd : PV_ChainUGen 

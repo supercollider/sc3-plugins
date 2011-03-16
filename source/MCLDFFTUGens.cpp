@@ -52,11 +52,6 @@ struct FFTAnalyser_OutOfPlace : FFTAnalyser_Unit
 	float *m_tempbuf;
 };
 
-struct FFTPercentile_Unit : FFTAnalyser_OutOfPlace
-{
-	bool m_interpolate;
-};
-
 struct PV_MagSubtract : Unit {
 };
 
@@ -66,11 +61,6 @@ struct FFTFlux_Unit : FFTAnalyser_OutOfPlace
 	float m_yesterdc;
 	float m_yesternyq;
 	bool m_normalise;
-};
-
-struct FFTFlatnessSplitPercentile_Unit : FFTPercentile_Unit
-{
-	float outval2;
 };
 
 struct FFTPower : FFTAnalyser_Unit
@@ -111,10 +101,6 @@ struct PV_Whiten : Unit {
 	int m_bindownsample;
 };
 
-struct FFTRumble : FFTAnalyser_Unit
-{
-	int m_binpos; // The bin index corresponding to the supplied pitch. We'll round DOWN so as to avoid the fundamental contaminating.
-};
 
 struct FFTSubbandFlatness : FFTAnalyser_Unit
 {
@@ -143,18 +129,7 @@ struct FFTPeak : FFTAnalyser_Unit
 struct PV_MagSmooth : Unit {
 	float *m_memory;
 };
-struct FFTMutInf : FFTAnalyser_Unit
-{
-	int m_frombin; // Will hold bin index
-	int m_tobinp1; // Will hold bin index
 
-	int m_numframes;
-	int m_numbinsused;
-	int m_currentframe; // index of which frame we're writing in
-
-	float *m_magdata;
-	float *m_framesums;
-};
 
 // for operation on one buffer
 // just like PV_GET_BUF except it outputs unit->outval rather than -1 when FFT not triggered
@@ -261,23 +236,12 @@ extern "C"
 	void FFTPower_Ctor(FFTPower *unit);
 	void FFTPower_next(FFTPower *unit, int inNumSamples);
 
-	void FFTFlatness_Ctor(FFTAnalyser_Unit *unit);
-	void FFTFlatness_next(FFTAnalyser_Unit *unit, int inNumSamples);
-
-	void FFTPercentile_Ctor(FFTPercentile_Unit *unit);
-	void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples);
-	void FFTPercentile_Dtor(FFTPercentile_Unit *unit);
-
 	void FFTFlux_Ctor(FFTFlux_Unit *unit);
 	void FFTFlux_next(FFTFlux_Unit *unit, int inNumSamples);
 	void FFTFlux_Dtor(FFTFlux_Unit *unit);
 	void FFTFluxPos_Ctor(FFTFlux_Unit *unit);
 	void FFTFluxPos_next(FFTFlux_Unit *unit, int inNumSamples);
 	void FFTFluxPos_Dtor(FFTFlux_Unit *unit);
-
-	void FFTFlatnessSplitPercentile_Ctor(FFTFlatnessSplitPercentile_Unit *unit);
-	void FFTFlatnessSplitPercentile_next(FFTFlatnessSplitPercentile_Unit *unit, int inNumSamples);
-	void FFTFlatnessSplitPercentile_Dtor(FFTFlatnessSplitPercentile_Unit *unit);
 
 	void FFTDiffMags_Ctor(FFTAnalyser_Unit *unit);
 	void FFTDiffMags_next(FFTAnalyser_Unit *unit, int inNumSamples);
@@ -313,9 +277,6 @@ extern "C"
 	void PV_Whiten_Ctor(PV_Whiten *unit);
 	void PV_Whiten_next(PV_Whiten *unit, int inNumSamples);
 
-	void FFTRumble_Ctor(FFTRumble *unit);
-	void FFTRumble_next(FFTRumble *unit, int inNumSamples);
-
 	void FFTSubbandFlatness_Ctor(FFTSubbandFlatness *unit);
 	void FFTSubbandFlatness_next(FFTSubbandFlatness *unit, int inNumSamples);
 	void FFTSubbandFlatness_Dtor(FFTSubbandFlatness *unit);
@@ -335,10 +296,6 @@ extern "C"
 	void PV_MagSmooth_Ctor(PV_MagSmooth *unit);
 	void PV_MagSmooth_next(PV_MagSmooth *unit, int inNumSamples);
 	void PV_MagSmooth_Dtor(PV_MagSmooth *unit);
-
-	void FFTMutInf_Ctor(FFTMutInf *unit);
-	void FFTMutInf_next(FFTMutInf *unit, int inNumSamples);
-	void FFTMutInf_Dtor(FFTMutInf *unit);
 
 	void PV_MagMulAdd_Ctor(PV_Unit *unit);
 	void PV_MagMulAdd_next(PV_Unit *unit, int inNumSamples);
@@ -549,128 +506,6 @@ void FFTSubbandPower_Dtor(FFTSubbandPower *unit)
 	if(unit->m_outvals) RTFree(unit->mWorld, unit->m_outvals);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-void FFTFlatness_next(FFTAnalyser_Unit *unit, int inNumSamples)
-{
-	FFTAnalyser_GET_BUF
-
-	SCComplexBuf *p = ToComplexApx(buf);
-
-	// Spectral Flatness Measure is geometric mean divided by arithmetic mean.
-	//
-	// In order to calculate geom mean without hitting the precision limit,
-	//  we use the trick of converting to log, taking the average, then converting back from log.
-	double geommean = log(sc_abs(p->dc)) + log(sc_abs(p->nyq));
-	double mean     = sc_abs(p->dc)      + sc_abs(p->nyq);
-
-	for (int i=0; i<numbins; ++i) {
-		float rabs = (p->bin[i].real);
-		float iabs = (p->bin[i].imag);
-		float amp = sqrt((rabs*rabs) + (iabs*iabs));
-		geommean += log(amp);
-		mean += amp;
-	}
-
-	double oneovern = 1/(numbins + 2.);
-	geommean = exp(geommean * oneovern); // Average and then convert back to linear
-	mean *= oneovern;
-
-	// Store the val for output in future calls
-	unit->outval = geommean / mean;
-
-	ZOUT0(0) = unit->outval;
-}
-
-void FFTFlatness_Ctor(FFTAnalyser_Unit *unit)
-{
-	SETCALC(FFTFlatness_next);
-	ZOUT0(0) = unit->outval = 0.;
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-
-
-void FFTPercentile_next(FFTPercentile_Unit *unit, int inNumSamples)
-{
-	FFTAnalyser_GET_BUF
-	MAKE_TEMP_BUF
-
-	// Percentile value as a fraction. eg: 0.5 == 50-percentile (median).
-	float fraction = ZIN0(1);
-	bool interpolate = unit->m_interpolate;
-
-	// The magnitudes in *p will be converted to cumulative sum values and stored in *q temporarily
-	SCComplexBuf *p = ToComplexApx(buf);
-	SCComplexBuf *q = (SCComplexBuf*)unit->m_tempbuf;
-
-	float cumul = sc_abs(p->dc);
-
-	for (int i=0; i<numbins; ++i) {
-		float real = p->bin[i].real;
-		float imag = p->bin[i].imag;
-		cumul += sqrt(real*real + imag*imag);
-
-		// A convenient place to store the mag values...
-		q->bin[i].real = cumul;
-	}
-
-	cumul += sc_abs(p->nyq);
-
-	float target = cumul * fraction; // The target cumul value, stored in the "real" slots
-
-	float bestposition = 0; // May be linear-interpolated between bins, but not implemented yet
-	           // NB If nothing beats the target (e.g. if fraction is -1) zero Hz is returned
-	float nyqfreq = ((float)unit->mWorld->mSampleRate) * 0.5f;
-	float binpos;
-	for(int i=0; i<numbins; i++) {
-		//Print("Testing %g, at position %i", q->bin[i].real, i);
-		if(q->bin[i].real >= target){
-			if(interpolate && i!=0) {
-				binpos = ((float)i) + 1.f - (q->bin[i].real - target) / (q->bin[i].real - q->bin[i-1].real);
-			} else {
-				binpos = ((float)i) + 1.f;
-			}
-			bestposition = (nyqfreq * binpos) / (float)(numbins+2);
-			//Print("Target %g beaten by %g (at position %i), equating to freq %g\n",
-			//				target, p->bin[i].real, i, bestposition);
-			break;
-		}
-	}
-/* THIS COUNTDOWN METHOD DEPRECATED IN FAVOUR OF COUNT-UP, for various reasons.
-	for(int i=numbins-1; i>-1; i--) {
-		//Print("Testing %g, at position %i", q->bin[i].real, i);
-		if(q->bin[i].real <= target){
-			bestposition = (nyqfreq * (float)i) / (float)numbins;
-			//Print("Target %g beaten by %g (at position %i), equating to freq %g\n",
-			//				target, p->bin[i].real, i, bestposition);
-			break;
-		}
-	}
-*/
-
-	// Store the val for output in future calls
-	unit->outval = bestposition;
-
-	ZOUT0(0) = unit->outval;
-}
-
-void FFTPercentile_Ctor(FFTPercentile_Unit *unit)
-{
-	SETCALC(FFTPercentile_next);
-
-//	unit->m_subtotals = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
-	unit->m_interpolate = ZIN0(2) > 0.f;
-
-	ZOUT0(0) = unit->outval = 0.;
-	unit->m_tempbuf = 0;
-}
-
-void FFTPercentile_Dtor(FFTPercentile_Unit *unit)
-{
-	RTFree(unit->mWorld, unit->m_tempbuf);
-}
-
 ////////////////////////////////////////////////////////////////////////////////////
 
 void FFTFlux_Ctor(FFTFlux_Unit *unit)
@@ -838,106 +673,6 @@ void FFTFluxPos_next(FFTFlux_Unit *unit, int inNumSamples)
 
 }
 void FFTFluxPos_Dtor(FFTFlux_Unit *unit)
-{
-	RTFree(unit->mWorld, unit->m_tempbuf);
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-
-
-void FFTFlatnessSplitPercentile_next(FFTFlatnessSplitPercentile_Unit *unit, int inNumSamples)
-{
-	FFTAnalyser_GET_BUF
-	MAKE_TEMP_BUF
-
-	// Percentile value as a fraction. eg: 0.5 == 50-percentile (median).
-	float fraction = ZIN0(1);
-
-	// The magnitudes in *p will be converted to cumulative sum values and stored in *q temporarily
-	SCComplexBuf *p = ToComplexApx(buf);
-	SCComplexBuf *q = (SCComplexBuf*)unit->m_tempbuf;
-
-	// Spectral Flatness Measure is geometric mean divided by arithmetic mean.
-	//
-	// In order to calculate geom mean without hitting the precision limit,
-	//  we use the trick of converting to log, taking the average, then converting back from log.
-	double geommeanupper = log(sc_abs(p->nyq));
-	double meanupper     = sc_abs(p->nyq);
-	double geommeanlower = log(sc_abs(p->dc));
-	double meanlower     = sc_abs(p->dc);
-
-	float cumul = sc_abs(p->dc);
-	for (int i=0; i<numbins; ++i) {
-		float real = p->bin[i].real;
-		float imag = p->bin[i].imag;
-		float amp = sqrt(real*real + imag*imag);
-		cumul += amp;
-
-		// A convenient place to store the mag values...
-		// NOTE: The values stored here are NOT real and imag pairs.
-		q->bin[i].real = cumul;
-		q->bin[i].imag = amp;
-	}
-	cumul += sc_abs(p->nyq);
-
-	float target = cumul * fraction; // The target cumul value, stored in the "real" slots
-
-	int numupper = -1;
-	int numlower = -1;
-	for(int i=numbins-1; i>-1; i--) {
-
-		float amp = q->bin[i].imag; // This is where I stored the amp earlier.
-
-		if(numupper == -1) {
-			//Print("Testing %g, at position %i", q->bin[i].real, i);
-			if(q->bin[i].real <= target){ // We are transitioning from upper to lower region
-				//bestposition = (nyqfreq * (float)i) / (float)numbins;
-				//Print("Target %g beaten by %g (at position %i), equating to freq %g\n",
-				//				target, p->bin[i].real, i, bestposition);
-				geommeanlower += log(amp);
-				meanlower += amp;
-				numupper = numbins - i; // inc nyq, therefore skip the "minus one"
-				numlower = i + 2; // inc DC, therefore "plus two" rather than "plus one"
-			} else { // We're still in the upper portion of the spectrum
-				geommeanupper += log(amp);
-				meanupper += amp;
-			}
-		} else { // We're in the lower portion of the spectrum
-			geommeanlower += log(amp);
-			meanlower += amp;
-		}
-	} // End of iteration backwards over the bins
-
-	if(numupper == -1) { // Should be very unlikely, but may happen (e.g. if fraction==-1)
-		numupper = numbins + 1; // All, plus nyquist
-		numlower = 1; // Just the DC
-	}
-
-	geommeanupper = exp(geommeanupper / numupper); // Average and then convert back to linear
-	meanupper /= numupper;
-	geommeanlower = exp(geommeanlower / numlower); // Average and then convert back to linear
-	meanlower /= numlower;
-
-	// Store the val for output in future calls
-	unit->outval  = geommeanlower / meanlower;
-	unit->outval2 = geommeanupper / meanupper;
-
-	ZOUT0(0) = unit->outval;
-	ZOUT0(1) = unit->outval2;
-}
-
-void FFTFlatnessSplitPercentile_Ctor(FFTFlatnessSplitPercentile_Unit *unit)
-{
-	SETCALC(FFTFlatnessSplitPercentile_next);
-
-//	unit->m_subtotals = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
-
-	ZOUT0(0) = unit->outval = 0.;
-	ZOUT0(1) = unit->outval2 = 0.;
-	unit->m_tempbuf = 0;
-}
-
-void FFTFlatnessSplitPercentile_Dtor(FFTFlatnessSplitPercentile_Unit *unit)
 {
 	RTFree(unit->mWorld, unit->m_tempbuf);
 }
@@ -1441,64 +1176,6 @@ void PV_Whiten_next(PV_Whiten *unit, int inNumSamples){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void FFTRumble_next(FFTRumble *unit, int inNumSamples)
-{
-	FFTAnalyser_GET_BUF
-
-	SCPolarBuf *p = ToPolarApx(buf);
-
-	GET_FREQTOBIN
-
-	float pitch = ZIN0(1);
-	bool sqrmode = ZIN0(2) == 1.f;
-	bool normalise = ZIN0(3) > 0.f;
-
-	int binpos = unit->m_binpos;
-	if(binpos==0){
-		binpos = unit->m_binpos = (int)floorf(pitch * freqtobin);
-	}
-
-	float total = 0.f;
-	if(sqrmode){
-		for (int i=0; i<binpos; ++i) {
-			total += p->bin[i].mag * p->bin[i].mag;
-		}
-	}else{
-		for (int i=0; i<binpos; ++i) {
-			total += p->bin[i].mag;
-		}
-	}
-
-	if(normalise){
-		float denom = total;
-		if(sqrmode){
-			for (int i=binpos; i<numbins; ++i) {
-				denom += p->bin[i].mag * p->bin[i].mag;
-			}
-		}else{
-			for (int i=binpos; i<numbins; ++i) {
-				denom += p->bin[i].mag;
-			}
-		}
-		if(denom!=0.f){
-			total /= denom;
-		}
-	}
-
-	ZOUT0(0) = unit->outval = total;
-}
-
-void FFTRumble_Ctor(FFTRumble *unit)
-{
-	SETCALC(FFTRumble_next);
-	ZOUT0(0) = unit->outval = 0.;
-
-	unit->m_freqtobin = 0.f;
-	unit->m_binpos = 0.f;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
 void FFTSubbandFlatness_next(FFTSubbandFlatness *unit, int inNumSamples)
 {
 	int numbands = unit->m_numbands;
@@ -1855,137 +1532,6 @@ void PV_MagSmooth_Dtor(PV_MagSmooth *unit)
 	}
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void FFTMutInf_Ctor(FFTMutInf *unit)
-{
-	SETCALC(FFTMutInf_next);
-	ZOUT0(0) = unit->outval = 0.;
-
-	unit->m_frombin = 0;
-	unit->m_tobinp1 = 0;
-
-	unit->m_numframes = sc_max(1.f, ZIN0(3));
-	unit->m_currentframe = 0;
-
-	unit->m_magdata = NULL;
-	unit->m_framesums = NULL;
-
-	unit->m_freqtobin = 0.f;
-}
-
-const float FFTMutInf_MinMag = 0.000000001f;
-
-void FFTMutInf_next(FFTMutInf *unit, int inNumSamples)
-{
-	FFTAnalyser_GET_BUF
-
-	SCPolarBuf *p = ToPolarApx(buf);
-
-	int frombin   = unit->m_frombin;
-	int tobinp1   = unit->m_tobinp1;
-	int numframes = unit->m_numframes;
-	int numbinsused   = unit->m_numbinsused;
-	int currentframe = unit->m_currentframe;
-	float *magdata   = unit->m_magdata;
-	float *framesums = unit->m_framesums;
-
-	//Print("FFTMutInf currentframe %i, bin range [%i, %i)\n", currentframe, frombin, tobinp1);
-
-	// OK, now we're in a position to initialise our own structures if not already done
-	if(magdata == NULL){
-
-		GET_FREQTOBIN
-
-		frombin = ((int)ZIN0(1) * freqtobin)-1;
-		frombin = sc_max(0, frombin);
-		unit->m_frombin = frombin;
-
-		tobinp1 = ((int)ZIN0(2) * freqtobin)-1;
-		tobinp1 = sc_min(sc_max(frombin+1, tobinp1), numbins);
-		unit->m_tobinp1 = tobinp1;
-
-		//Print("FFTMutInf RANGE DECISION: freqtobin %g, freq range (%g, %g), bin range [%i, %i)\n", freqtobin, ZIN0(1), ZIN0(2), frombin, tobinp1);
-
-		numbinsused = unit->m_numbinsused = tobinp1 - frombin;
-
-		magdata = unit->m_magdata = (float*)RTAlloc(unit->mWorld, numframes * numbinsused * sizeof(float));
-		framesums = unit->m_framesums = (float*)RTAlloc(unit->mWorld, numframes * sizeof(float));
-		//Clear(numframes * numbinsused, magdata);
-		//Clear(numframes, framesums);
-		Fill(numframes * numbinsused, magdata  , FFTMutInf_MinMag);
-		Fill(numframes              , framesums, FFTMutInf_MinMag);
-	}
-
-	// OK, so now let's write the magnitude data into the current frame
-	float frametotal = 0.f;
-	float *writehere = magdata + (numbinsused * currentframe);
-	for(int i=frombin; i < tobinp1; ++i){
-		*writehere = (p->bin[i].mag);
-		if(*writehere < FFTMutInf_MinMag)
-			*writehere = FFTMutInf_MinMag; // Disallow zero magnitude, because of logarithms later
-		frametotal += *(writehere++);
-	}
-	framesums[currentframe] = frametotal;
-	// currentframe no longer needed so we increment for next time
-	if(++currentframe == numframes){
-		currentframe = 0;
-	}
-	unit->m_currentframe = currentframe;
-
-
-
-	double grandtot = 0.;
-	for(int frame=0; frame<numframes; ++frame){
-		grandtot += framesums[frame];
-	}
-	double loggrandtot = log(grandtot);
-
-
-
-	// Now we do the mutual info calculation itself.
-	// MI = double-integral of p(t,f) log( p(t,f) / (p(t)p(f)) )
-	// where we equate p(t,f) to mag(t,f)/totalmag.
-	// Rearranging slightly, this becomes
-	// (1 / grandtot) * double-integral of ( mag(t,f) * ( log( mag(t,f) / (columntot*rowtot) ) + log(grandtot)) )
-	float binsum, amag;
-	double theintegral = 0.;
-
-//	Print("framesums: %g", framesums[0]);
-
-
-//	Print("binsums: ");
-	for(int bin=0; bin<numbinsused; ++bin){
-		// first calc the binsum
-		binsum = 0.f;
-		for(int frame=0; frame<numframes; ++frame){
-			amag = magdata[frame * numbinsused + bin];
-			binsum += amag;
-		}
-//		Print("%g, ", binsum);
-		// now we can add to the integral
-		for(int frame=0; frame<numframes; ++frame){
-			amag = magdata[frame * numbinsused + bin];
-			if(amag != 0.f){
-				theintegral += amag * (log(amag / (binsum * framesums[frame])) + loggrandtot);
-				//RONG theintegral += amag * log(amag / (binsum * framesums[frame]));
-			}
-		}
-	}
-//	Print("grandtot %g, theintegral %g\n", grandtot, theintegral);
-
-	ZOUT0(0) = unit->outval = theintegral / grandtot;
-
-}
-void FFTMutInf_Dtor(FFTMutInf *unit)
-{
-	if(unit->m_magdata != NULL){
-		RTFree(unit->mWorld, unit->m_magdata);
-		RTFree(unit->mWorld, unit->m_framesums);
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void PV_MagMulAdd_Ctor(PV_Unit *unit)
@@ -2019,11 +1565,8 @@ PluginLoad(MCLDFFT)
 	init_SCComplex(inTable);
 
 	(*ft->fDefineUnit)("FFTPower", sizeof(FFTPower), (UnitCtorFunc)&FFTPower_Ctor, 0, 0);
-	(*ft->fDefineUnit)("FFTFlatness", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTFlatness_Ctor, 0, 0);
-	(*ft->fDefineUnit)("FFTPercentile", sizeof(FFTPercentile_Unit), (UnitCtorFunc)&FFTPercentile_Ctor, (UnitDtorFunc)&FFTPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTFlux", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFlux_Ctor, (UnitDtorFunc)&FFTFlux_Dtor, 0);
 	(*ft->fDefineUnit)("FFTFluxPos", sizeof(FFTFlux_Unit), (UnitCtorFunc)&FFTFluxPos_Ctor, (UnitDtorFunc)&FFTFluxPos_Dtor, 0);
-	(*ft->fDefineUnit)("FFTFlatnessSplitPercentile", sizeof(FFTFlatnessSplitPercentile_Unit), (UnitCtorFunc)&FFTFlatnessSplitPercentile_Ctor, (UnitDtorFunc)&FFTFlatnessSplitPercentile_Dtor, 0);
 	(*ft->fDefineUnit)("FFTDiffMags", sizeof(FFTAnalyser_Unit), (UnitCtorFunc)&FFTDiffMags_Ctor, 0, 0);
 	DefineSimpleUnit(PV_MagSubtract);
 	(*ft->fDefineUnit)("PV_MagLog", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagLog_Ctor, 0, 0);
@@ -2036,7 +1579,6 @@ PluginLoad(MCLDFFT)
 
 	DefineSimpleUnit(PV_Whiten);
 
-	DefineSimpleUnit(FFTRumble);
 	DefineSimpleUnit(FFTCrest);
 	DefineSimpleUnit(FFTSpread);
 	DefineSimpleUnit(FFTSlope);
@@ -2046,7 +1588,6 @@ PluginLoad(MCLDFFT)
 	DefineSimpleUnit(FFTPeak);
 
 	DefineDtorUnit(PV_MagSmooth);
-	DefineDtorUnit(FFTMutInf);
 
 	(*ft->fDefineUnit)("PV_MagMulAdd", sizeof(PV_Unit), (UnitCtorFunc)&PV_MagMulAdd_Ctor, 0, 0);
 }
