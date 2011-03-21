@@ -32,7 +32,6 @@
 #define TWOPI 6.28318530717952646f 
 
 
-extern float hanning256[256]; 
 extern float hanning1024[1024];
 
 
@@ -40,7 +39,6 @@ extern InterfaceTable *ft;
 
 #include "AutoTrackfftw.h"
 #include "AnalyseEvents2fftw.h"
-#include "Concatfftw.h"
 #include "Tartini.h"
 #include "Qitchfftw.h"
 

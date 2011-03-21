@@ -29,7 +29,6 @@
 #include "MLfftwUGens.h"
 
 
-float hanning256[256]; 
 float hanning1024[1024];
 InterfaceTable *ft; 
 
@@ -78,8 +77,7 @@ PluginLoad(MLfftw)
 	ft = inTable;
 	
 	//DefineDtorUnit(Tartini);
-	
-	DefineDtorUnit(Concat);
+
 	DefineDtorCantAliasUnit(AutoTrack);
 	DefineDtorUnit(AnalyseEvents2);
 	DefineDtorUnit(Tartini);
@@ -93,7 +91,7 @@ PluginLoad(MLfftw)
 	//printf("AutoTrack adapted from Matthew Davies' autocorrelation beat tracker\n");
 	//printf("Qitch based on algorithms published by Judith Brown and Miller Puckette\n");
 	
-	prepareHanningWindow(hanning256, 256);		//for Concat
+//	prepareHanningWindow(hanning256, 256);		//for Concat
 	prepareHanningWindow(hanning1024, 1024);	//for AE2 and AutoTrack
 	
 	//printf("Tartini adapted by Nick Collins from Phil McLeod's Tartini project\n");
@@ -106,8 +104,6 @@ PluginLoad(MLfftw)
 	prepareFFTW(512+256);
 	prepareFFTW(2048+1024);
 	
-	//for Concat
-	prepareFFTW(256);
 	
 	//for AutoTrack/AE2
 	prepareFFTW(1024);
