@@ -44,6 +44,7 @@ endmacro()
 set(plugin_sources
     AmbisonicUGens.cpp
     BatUGens.cpp
+    BBCut2UGens.cpp
     BerlachUGens
     BhobChaos.cpp
     BhobFilt.cpp

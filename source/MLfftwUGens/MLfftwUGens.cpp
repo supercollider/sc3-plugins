@@ -76,25 +76,15 @@ PluginLoad(MLfftw)
 	
 	ft = inTable;
 	
-	//DefineDtorUnit(Tartini);
-
-	DefineDtorCantAliasUnit(AutoTrack);
-	DefineDtorUnit(AnalyseEvents2);
 	DefineDtorUnit(Tartini);
 	DefineDtorCantAliasUnit(Qitch);
 	
-	//adding once re-optimise- want an as fast as possible onset detector 
-	//DefineDtorUnit(Onset);
-	
 	//printf("Machine Listening UGens by Nick Collins for SuperCollider 3 \n");
 	//printf("Tartini adapted from Phil McLeod's Tartini project\n");
-	//printf("AutoTrack adapted from Matthew Davies' autocorrelation beat tracker\n");
 	//printf("Qitch based on algorithms published by Judith Brown and Miller Puckette\n");
 	
 //	prepareHanningWindow(hanning256, 256);		//for Concat
 	prepareHanningWindow(hanning1024, 1024);	//for AE2 and AutoTrack
-	
-	//printf("Tartini adapted by Nick Collins from Phil McLeod's Tartini project\n");
 	
 	//If done at this point, won't interfere with realtime once running
 	//printf("initialising FFTW for common plans \n");

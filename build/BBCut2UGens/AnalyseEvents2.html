@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.32">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #376c2a}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+</style>
+</head>
+<body>
+<p class="p1">//This file is part of MLfftwUGens. Copyright (C) 2006<span class="Apple-converted-space">  </span>Nicholas M.Collins distributed under the terms of the GNU General Public License full notice in file MachineListening.license</p>
+<p class="p2"><br></p>
+<p class="p3">//This file is part of The BBCut Library. Copyright (C) 2001<span class="Apple-converted-space">  </span>Nick M.Collins distributed under the terms of the GNU General Public License full notice in file BBCutLibrary.help</p>
+<p class="p2"><br></p>
+<p class="p4"><b>AnalyseEvents2</b></p>
+<p class="p2"><br></p>
+<p class="p4">On-the-fly event analyser, based on onset detection/on-the-fly analysis described in my academic papers. Best for percussive events. Recommended that you go via the Segmentation (for one-pass) and AnalyseEventsDatabase (for on-the-fly) classes in standard usage, don't use this directly.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4">Note: you will need bbcut2 for<span class="Apple-converted-space">  </span>further classes and capabilities. This UGen is included in sc3-plugins for cross-platform building.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Class Methods</b></p>
+<p class="p2"><br></p>
+<p class="p4"><b>*ar(in,bufnum, threshold, triggerid, circular, pitch)</b></p>
+<p class="p2"><br></p>
+<p class="p4"><b>in- </b>Audio input to track</p>
+<p class="p2"><br></p>
+<p class="p4"><b>bufnum- </b>A buffer within which results of the analysis are place</p>
+<p class="p2"><br></p>
+<p class="p4"><b>threshold- </b>A parameter acting as the onset detector threshold, default of 0.34 was determined as the best performing over a database of percussive onset, but you might want to change this to change the sensitivity (though you always increase the risk of false positives or false negatives)</p>
+<p class="p2"><br></p>
+<p class="p4"><b>triggerid- </b>A trigger ID number used for communication from the UGen to the Lang to mark that a new event was received. Only passed for on-the-fly analysis.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>circular- </b>A flag to note on-the-fly analysis assuming a circular buffer. If you only need a one-pass analysis on a file, you won't use this.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>pitch- </b>Can take a .kr pitch detection UGen as input. Will take the median fundamental frequency over a note event from values recorded from this pitch input.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4">No examples are given, to discourage solo use.<span class="Apple-converted-space"> </span></p>
+</body>
+</html>

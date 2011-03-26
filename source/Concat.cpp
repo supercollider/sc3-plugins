@@ -131,7 +131,7 @@ int Concat_CtorCommon(Concat *unit) {
 	
 	if(unit->m_blocksize!=64) {
 		printf("Concat complains: block size not 64, you have %d\n", unit->m_blocksize);
-		return 0; 
+		return 0;  
 	}
 	
 	unit->m_sr = unit->mWorld->mSampleRate; //(int)(unit->mWorld->mSampleRate+0.1);
@@ -207,10 +207,12 @@ int Concat_CtorCommon(Concat *unit) {
 
 void Concat_DtorCommon(Concat *unit) {
 	
+	if(unit->m_scfftsource) {
 	SCWorld_Allocator alloc(ft, unit->mWorld);
 	scfft_destroy(unit->m_scfftsource, alloc);
 	scfft_destroy(unit->m_scfftcontrol, alloc);
-	
+	}
+		
 	RTFree(unit->mWorld, unit->m_FFTBufsource);
 	RTFree(unit->mWorld, unit->m_FFTBufcontrol);
 	//RTFree(unit->mWorld, unit->m_hanning);

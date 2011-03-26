@@ -18,9 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-//This file is part of MachineListening. Copyright (C) 2006  Nicholas M.Collins distributed under the terms of the GNU General Public License full notice in file MachineListening.license
-
-//Nick Collins begun 20 May 2005, corrections up till 6/6/2006
+//Nick Collins begun 20 May 2005, corrections up till 6/6/2006; adapted for new SC FFT scheme, 25 March 2011
 //trying to implement the best onset detection algo from AES118 paper, with event analysis data to be written to a buffer
 //for potential NRT and RT use
 
@@ -35,14 +33,51 @@
 //need to combine with an SC3 GUI that shows the events being collected?
 
 
-//
-//#include "SC_PlugIn.h"
-//#include <string.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <stdio.h>
 
-#include "MLfftwUGens.h"
+
+#include "SC_PlugIn.h"
+#include "SC_fftlib.h"
+
+//helpful constants
+//#define PI 3.1415926535898f
+//#define TWOPI 6.28318530717952646f 
+
+//WARNING- if N was changed here, the Hanning window is pre created for 1024 samples, hanning1024, you'd need to change that too, and also as refed in the files
+//FFT data 
+#define N 1024  //FFT size
+#define NOVER2 512  //FFT size
+#define NOVER4 256  //FFT size
+#define OVERLAP 512
+#define OVERLAPINDEX 512
+#define HOPSIZE 512  
+#define FS 44100 //assumes fixed sampling rate
+#define FRAMESR 86.1328
+#define FRAMEPERIOD 0.01161 //seconds
+
+
+#define NUMERBBANDS 40
+#define PASTERBBANDS 3
+//3 usually, but time resolution improved if made 1?
+
+//in FFT frames
+#define MAXEVENTDUR 80
+#define MINEVENTDUR 3
+//4 or maybe 2
+
+#define CIRCBUFSIZE 15
+
+//7 frames is about 40 mS
+//peak picker will use 3 back, 3 forward
+#define DFFRAMESSTORED 7
+
+#define MAXBLOCKSIZE 64
+#define MAXBLOCKS 700
+
+//MAXEVENTDUR+20 for safety
+#define LOUDNESSSTORED 100
+
+
+
 
 
 int eqlbandbins[43]= {1,2,3,4,5,6,7,8,9,11,13,15,17,19,22,25,28,32,36,41,46,52,58,65,73,82,92,103,116,129,144,161,180,201,225,251,280,312,348,388,433,483,513}; 
@@ -90,6 +125,116 @@ double g_timbreb2= -0.409191154001;
 
 
 
+static InterfaceTable *ft;
+
+
+
+
+struct AnalyseEvents2 : Unit {
+	
+	//FFT data
+	int m_bufWritePos;
+	float * m_prepareFFTBuf;
+	float * m_FFTBuf;
+	
+	scfft *m_scfft; 
+
+	//time positions
+	long m_frame;
+	long m_lastdetect;
+	
+	//loudness measure
+	float m_loudbands[NUMERBBANDS][PASTERBBANDS]; //stores previous loudness bands
+	int m_pasterbbandcounter;
+	float m_df[DFFRAMESSTORED]; //detection function buffer (last 5)
+	int m_dfcounter; 
+	
+	float m_loudness[LOUDNESSSTORED];   //store loudness, sent back with triggers for determining accents (probably not that useful since not measured at peak)
+	int m_loudnesscounter; 
+	
+	//recording state
+	int m_onsetdetected;
+	int m_recording;
+	int m_start;
+	float m_testintensity; //end can trigger if drop below this
+	
+	//into global frame buffer
+	int m_numframes;
+	int m_startframe;
+	int m_endframe;
+	
+	int m_startblock;
+	int m_endblock;
+	
+	//into loudness frame buffer
+	int m_lstartframe;
+	int m_lendframe;
+	
+	//into pitch frame buffer
+	
+	//triggers- greater than 0, send trigger message with that ID
+	int m_triggerid;
+	
+	//target buffer for event data
+	uint32 m_bufNum, m_bufSize;
+	int m_maxEvents; //, m_lastEvent; //maximum that can be stored
+	float * m_eventData; //[0] position stores num of events stored
+	int m_numstored;
+	
+	//different structure to buffer saving for m_circular = true
+	//support for circular buffers and on-the-fly event capture
+	int m_circular; //act as if a circular buffer, uses m_numstored for which to write/pick up next
+	//SendTrigger on a detected event giving place to pick up
+	
+	//pause just by pausing detection Synth (RecordBuf paused at the same time)
+	//int m_pause;	//pause recording, do not store any detected events, zero counts as go round, but Lang side 
+	
+	
+	uint32 m_now;
+	
+	//int m_maxblocksstored; //since FS fixed at 44100, fix this too
+	float * m_maxintensity;
+	int m_maxcount;
+	float * m_store;
+	int m_storecounter;
+	
+	//uses maxcount
+	float * m_pitch;
+	float * m_sortbuf;
+	float m_patband1[LOUDNESSSTORED]; 
+	float m_patband2[LOUDNESSSTORED]; 
+	
+	int m_featurecounter;
+	double m_featurevector[20];
+	
+	double m_timbreFV[12];
+	float m_zcr[LOUDNESSSTORED];
+	float m_speccentroid[LOUDNESSSTORED]; 
+	
+	
+	//evaluation- write beat locations to a buffer
+	//	uint32 m_bufNum2, m_bufSize2;
+	//	//int m_maxbeats, 
+	//	int m_dfsaved;
+	//	float * m_dfData; 
+	//	//uint32 m_now, m_then;
+	//	//uint32 m_lastbeattime;
+	//
+	//	
+};
+
+
+
+extern "C"
+{
+	//required interface functions
+	void AnalyseEvents2_next(AnalyseEvents2 *unit, int wrongNumSamples);
+	void AnalyseEvents2_Ctor(AnalyseEvents2 *unit);
+	void AnalyseEvents2_Dtor(AnalyseEvents2 *unit);
+}
+
+
+
 //other functions
 void AnalyseEvents2_preparefft(AnalyseEvents2 *unit, float* in, int n);
 void AnalyseEvents2_dofft(AnalyseEvents2 *unit);
@@ -110,8 +255,29 @@ float calculateTimbrenn(AnalyseEvents2 *unit);
 float calculateTimbre(AnalyseEvents2 *unit);
 void countZeroCrossing(AnalyseEvents2 *unit);
 
+
+
 void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 	int i,j;
+	
+	
+	//CHECK SAMPLING RATE AND BUFFER SIZE
+	 int blocksize = unit->mWorld->mFullRate.mBufLength;
+	
+	if(blocksize!=64) {
+		printf("AnalyzeEvents2 complains: block size not 64, you have %d\n", blocksize);
+		SETCALC(*ClearUnitOutputs);
+		unit->mDone = true; 
+		return; 
+	}
+	
+	int testsr = unit->mWorld->mSampleRate; //(int)(unit->mWorld->mSampleRate+0.1);
+	
+	if(testsr!=44100) {
+		printf("AnalyzeEvents2 complains: sample rate not 44100, you have %d\n", testsr);
+		//return 0; //not necessarily catastrophic
+	}
+	
 	
 	////////FFT data///////////
 	
@@ -119,16 +285,19 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 	unit->m_FFTBuf = (float*)RTAlloc(unit->mWorld, N * sizeof(float));
 	unit->m_bufWritePos = 0;	
 	
-		//N=1024
-	unit->planTime2FFT = fftwf_plan_r2r_1d(N, unit->m_FFTBuf, unit->m_FFTBuf, FFTW_R2HC, FFTW_ESTIMATE);
+	//N=1024
+	SCWorld_Allocator alloc(ft, unit->mWorld);
+	//no overlap
+	unit->m_scfft = scfft_create(N, N, kHannWindow, unit->m_FFTBuf, unit->m_FFTBuf, kForward, alloc);
+	
 	
 	////////vDSP///////////////
-//	
-//	unit->m_vA.realp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float)); 
-//	unit->m_vA.imagp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float));
-//	unit->m_vlog2n = 10; //N is hard coded as 1024, so 10^2=1024 //log2max(N);
-//	unit->m_vsetup = create_fftsetup(unit->m_vlog2n, 0);
-//	
+	//	
+	//	unit->m_vA.realp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float)); 
+	//	unit->m_vA.imagp = (float*)RTAlloc(unit->mWorld, NOVER2 * sizeof(float));
+	//	unit->m_vlog2n = 10; //N is hard coded as 1024, so 10^2=1024 //log2max(N);
+	//	unit->m_vsetup = create_fftsetup(unit->m_vlog2n, 0);
+	//	
 	////////time positions//////////
 	unit->m_frame=0;
 	unit->m_lastdetect=-100;
@@ -151,7 +320,7 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 		unit->m_speccentroid[j]=0.0;
 		unit->m_zcr[j]=0.0;
 	}
-
+	
 	
 	
 	//zero previous specific loudness in Bark bands
@@ -159,8 +328,8 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 		for(j=0;j<NUMERBBANDS;++j) {
 			unit->m_loudbands[j][i]=0.0;
 		}
-			
-			unit->m_pasterbbandcounter=0;
+	
+	unit->m_pasterbbandcounter=0;
 	
 	unit->m_onsetdetected=0;
 	unit->m_recording=0;
@@ -228,7 +397,7 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 	unit->m_maxintensity=(float*)RTAlloc(unit->mWorld, MAXBLOCKS * sizeof(float));
 	
 	Clear(MAXBLOCKS, unit->m_maxintensity);
-
+	
 	unit->m_maxcount=0;
 	//one second worth of samples held in memory
 	unit->m_store=(float*)RTAlloc(unit->mWorld, FS * sizeof(float));
@@ -240,23 +409,23 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 	unit->m_sortbuf=(float*)RTAlloc(unit->mWorld, MAXBLOCKS * sizeof(float));
 	
 	/////////DEBUG
-
-//	uint32 bufnum2 = (uint32)ZIN0(6);
-//	if (bufnum2 >= world->mNumSndBufs) bufnum2 = 0;
-//	unit->m_bufNum2=bufnum2;
-//
-//	printf("bufnum2 %d \n",bufnum2);			
-//	
-//	SndBuf *buf2 = world->mSndBufs + bufnum2; 
-//	unit->m_bufSize2 = buf2->samples;
-//	
-////	unit->m_maxbeats= (unit->m_bufSize-1); //1 float per event, plus counter
-//	unit->m_dfData= buf2->data; 	
-//	unit->m_dfsaved=0;
-////
-////	unit->m_now=0;
-////	unit->m_then=0;
-//
+	
+	//	uint32 bufnum2 = (uint32)ZIN0(6);
+	//	if (bufnum2 >= world->mNumSndBufs) bufnum2 = 0;
+	//	unit->m_bufNum2=bufnum2;
+	//
+	//	printf("bufnum2 %d \n",bufnum2);			
+	//	
+	//	SndBuf *buf2 = world->mSndBufs + bufnum2; 
+	//	unit->m_bufSize2 = buf2->samples;
+	//	
+	////	unit->m_maxbeats= (unit->m_bufSize-1); //1 float per event, plus counter
+	//	unit->m_dfData= buf2->data; 	
+	//	unit->m_dfsaved=0;
+	////
+	////	unit->m_now=0;
+	////	unit->m_then=0;
+	//
 	///////////
 	
 	unit->mCalcFunc = (UnitCalcFunc)&AnalyseEvents2_next;
@@ -265,8 +434,7 @@ void AnalyseEvents2_Ctor(AnalyseEvents2* unit) {
 
 
 
-void AnalyseEvents2_Dtor(AnalyseEvents2 *unit)
-{
+void AnalyseEvents2_Dtor(AnalyseEvents2 *unit) {
 	
 	RTFree(unit->mWorld, unit->m_prepareFFTBuf);
 	RTFree(unit->mWorld, unit->m_FFTBuf);
@@ -275,13 +443,12 @@ void AnalyseEvents2_Dtor(AnalyseEvents2 *unit)
 	RTFree(unit->mWorld, unit->m_store);
 	RTFree(unit->mWorld, unit->m_pitch);
 	RTFree(unit->mWorld, unit->m_sortbuf);
+		
+	if(unit->m_scfft) {
+		SCWorld_Allocator alloc(ft, unit->mWorld);
+		scfft_destroy(unit->m_scfft, alloc);
+	}	
 	
-	 fftwf_destroy_plan(unit->planTime2FFT);
-	
-	//if (unit->m_vA.realp) RTFree(unit->mWorld, unit->m_vA.realp);
-//	if (unit->m_vA.imagp) RTFree(unit->mWorld, unit->m_vA.imagp);
-//	if (unit->m_vsetup) destroy_fftsetup(unit->m_vsetup);
-//	
 }
 
 
@@ -373,7 +540,7 @@ void AnalyseEvents2_preparefft(AnalyseEvents2 *unit, float* in, int n) {
 	
 	// When Buffer is full...
 	if (bufpos >= N) {
-	
+		
 		// Make a copy of prepared buffer into FFT buffer for computation
 		for (i=0; i<N; i++) 
 			fftbuf[i] = preparefftbuf[i];
@@ -415,51 +582,22 @@ void AnalyseEvents2_dofft(AnalyseEvents2 *unit) {
 	//printf("dofft \n");
 	
 	float * fftbuf= unit->m_FFTBuf;
+
+	scfft_dofft(unit->m_scfft);
+
+	//format is dc, nyquist, bin[1] ,real, bin[1].imag, etc
 	
-	for (i=0; i<N; ++i)
-		fftbuf[i] *= hanning1024[i];
+	//fftbuf[0] already bin 0
+	fftbuf[0]= fftbuf[0]* fftbuf[0]; //get power
 	
-								
-	//easy version, same buffer every time, so simple use of plan
-	fftwf_execute(unit->planTime2FFT);
-	
-				
-										
-//    // Look at the real signal as an interleaved complex vector by casting it.
-//    // Then call the transformation function ctoz to get a split complex vector,
-//    // which for a real signal, divides into an even-odd configuration.
-//    ctoz ((COMPLEX *) fftbuf, 2, &unit->m_vA, 1, NOVER2);
-//	
-//    // Carry out a Forward FFT transform
-//    fft_zrip(unit->m_vsetup, &unit->m_vA, 1, unit->m_vlog2n, FFT_FORWARD);
-//	
-//    // The output signal is now in a split real form.  Use the function
-//    // ztoc to get a split real vector.
-//    ztoc ( &unit->m_vA, 1, (COMPLEX *) fftbuf, 2, NOVER2);
-//
-
-
-//
-//	
-//	// Squared Absolute so get power
-//	for (i=0; i<N; i+=2)
-//		//i>>1 is i/2 
-//		fftbuf[i>>1] = ((fftbuf[i] * fftbuf[i]) + (fftbuf[i+1] * fftbuf[i+1]))*0.25; //correction for Altivec stupid FFT
-//	
-
-//fftbuf[0] is already real component  
-
-fftbuf[0]= fftbuf[0]* fftbuf[0];
-
-	for(i=1; i<NOVER2; i++) {
-		float val1= fftbuf[i];
-		float val2= fftbuf[N-i];
-		
-		fftbuf[i] = (val1*val1) + (val2*val2); 
-		//fftbuf[256-j] = 0.0f;
+	float val1, val2; 
+	// Squared Absolute so get power
+	for (i=2; i<N; i+=2) {
+		val1 = fftbuf[i]; 
+		val2 = fftbuf[i+1];
+		//i>>1 is i/2 
+		fftbuf[i>>1] = (val1*val1)+(val2*val2);		
 	}
-	
-	
 	
 	//calculate loudness detection function
 	calculatedf(unit);
@@ -500,9 +638,9 @@ fftbuf[0]= fftbuf[0]* fftbuf[0];
 			//may also process it further to find peaks, PAT etc
 			storeEvent(unit, unit->m_start, stop);
 			
-			}
-			
-			
+		}
+	
+	
 }	
 
 
@@ -593,27 +731,27 @@ void calculatedf(AnalyseEvents2 *unit) {
 	float psum=0.0;
 	
 	for (k=0;k<11;++k)
-	psum+= pow(10, 0.1*unit->m_loudbands[k][pastband]);
+		psum+= pow(10, 0.1*unit->m_loudbands[k][pastband]);
 	
 	//psum=unit->m_loudbands[1][pastband];
 	
 	unit->m_patband1[unit->m_loudnesscounter]=(10*log10(psum))/11;
 	
-		////DEBUG
-//	unit->m_dfData[unit->m_dfsaved+1]=unit->m_patband1[unit->m_loudnesscounter]; 	
-//	
-//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
-//	
-//	//printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
-//	
-//	unit->m_dfData[0]=unit->m_dfsaved;
-//	////////
+	////DEBUG
+	//	unit->m_dfData[unit->m_dfsaved+1]=unit->m_patband1[unit->m_loudnesscounter]; 	
+	//	
+	//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
+	//	
+	//	//printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
+	//	
+	//	unit->m_dfData[0]=unit->m_dfsaved;
+	//	////////
 	
 	
 	psum=0.0;
 	
 	for (k=26;k<NUMERBBANDS;++k)
-	psum+= pow(10, 0.1*unit->m_loudbands[k][pastband]);
+		psum+= pow(10, 0.1*unit->m_loudbands[k][pastband]);
 	
 	unit->m_patband2[unit->m_loudnesscounter]=(10*log10(psum))/14;
 	
@@ -621,7 +759,7 @@ void calculatedf(AnalyseEvents2 *unit) {
 	psum=0.0;
 	//spec centroid
 	for (k=0;k<NUMERBBANDS;++k)
-	psum+= ((unit->m_loudbands[k][pastband])*0.01)*(k+1);
+		psum+= ((unit->m_loudbands[k][pastband])*0.01)*(k+1);
 	
 	unit->m_speccentroid[unit->m_loudnesscounter]=psum*0.025; // mean over 40 /(40)
 	
@@ -632,15 +770,15 @@ void calculatedf(AnalyseEvents2 *unit) {
 	//increment first so this frame is unit->m_loudnesscounterdfcounter
 	unit->m_dfcounter=(unit->m_dfcounter+1)%DFFRAMESSTORED;
 	
-//	////DEBUG
-//	unit->m_dfData[unit->m_dfsaved+1]=dfsum*0.025; 	
-//	
-//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
-//	
-//	printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
-//	
-//	unit->m_dfData[0]=unit->m_dfsaved;
-//	////////
+	//	////DEBUG
+	//	unit->m_dfData[unit->m_dfsaved+1]=dfsum*0.025; 	
+	//	
+	//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
+	//	
+	//	printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
+	//	
+	//	unit->m_dfData[0]=unit->m_dfsaved;
+	//	////////
 	
 	unit->m_df[unit->m_dfcounter]=dfsum*0.025; //divide by num of bands to get a dB answer
 	
@@ -691,15 +829,15 @@ void peakpickdf(AnalyseEvents2 *unit) {
 	
 	score= score*0.0073;
 	
-//	////DEBUG
-//	unit->m_dfData[unit->m_dfsaved+1]=score; 	
-//	
-//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
-//	
-//	//printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
-//	
-//	unit->m_dfData[0]=unit->m_dfsaved;
-//	////////
+	//	////DEBUG
+	//	unit->m_dfData[unit->m_dfsaved+1]=score; 	
+	//	
+	//	if (unit->m_dfsaved<(unit->m_bufSize2-2))  unit->m_dfsaved=unit->m_dfsaved+1;
+	//	
+	//	//printf("dfsaved %d size %d df %f %f \n",unit->m_dfsaved, unit->m_bufSize2, dfsum*0.025, unit->m_dfData[unit->m_dfsaved]);
+	//	
+	//	unit->m_dfData[0]=unit->m_dfsaved;
+	//	////////
 	
 	
 	//if enough time since last detection
@@ -709,9 +847,9 @@ void peakpickdf(AnalyseEvents2 *unit) {
 		float threshold= ZIN0(2); //0.34 best in trials 
 		
 		if(score>=threshold) { 
-		
+			
 			//printf("threshold %f score %f FRAME %d \n",threshold, score, unit->m_frame);
-		
+			
 			unit->m_lastdetect=unit->m_frame;
 			unit->m_onsetdetected=1;
 			
@@ -751,7 +889,7 @@ void peakpickdf(AnalyseEvents2 *unit) {
 				unit->m_numframes= unit->m_endframe-unit->m_startframe;
 				
 				unit->m_endblock= (unit->m_maxcount+ MAXBLOCKS- blocksold-16)%MAXBLOCKS;
-			
+				
 				//will convert locations in buffer into time locations since UGen began
 				//may also process it further to find peaks, PAT etc
 				storeEvent(unit, unit->m_start, start);
@@ -961,8 +1099,8 @@ void storeEvent(AnalyseEvents2 *unit, int start, int stop) {
 	//printf("failed to send an event %d %d \n", (unit->m_numstored), unit->m_maxEvents);
 	//}
 	
-unit->m_recording=false;
-
+	unit->m_recording=false;
+	
 }
 
 
@@ -1018,36 +1156,36 @@ float calculatePAT2(AnalyseEvents2 *unit) {
 	int frames= unit->m_numframes;
 	float * patband1= unit->m_patband1; 
 	float * patband2= unit->m_patband2;
-			//initialise feature vector for PAT
+	//initialise feature vector for PAT
 	int pos, base;
 	
 	base= lstartframe + LOUDNESSSTORED;
 	
 	for(i=0;i<10;++i) {
-	
-	pos= (i+ base)%LOUDNESSSTORED;
 		
-	unit->m_featurevector[i*2]=patband1[pos];
-	unit->m_featurevector[i*2+1]=patband2[pos];
+		pos= (i+ base)%LOUDNESSSTORED;
+		
+		unit->m_featurevector[i*2]=patband1[pos];
+		unit->m_featurevector[i*2+1]=patband2[pos];
 	}
 	
 	//zero any end frames if event shorter than 10 FFT frames
 	if(frames<10) {
-	
-	for(i=frames;i<10;++i) {
-	
-	//pos= (i+ base)%LOUDNESSSTORED;
 		
-	unit->m_featurevector[i*2]=0.0;
-	unit->m_featurevector[i*2+1]=0.0;
+		for(i=frames;i<10;++i) {
+			
+			//pos= (i+ base)%LOUDNESSSTORED;
+			
+			unit->m_featurevector[i*2]=0.0;
+			unit->m_featurevector[i*2+1]=0.0;
+		}
+		
 	}
 	
-	}
-
 	float pat=calculatePATnn(unit);
-
+	
 	//printf("calc PAT NN %f \n",pat);
-
+	
 	if(pat <(-0.005)) pat=(-0.005);
 	
 	if(pat>0.1) pat=0.1;
@@ -1090,7 +1228,7 @@ float calculatePATnn(AnalyseEvents2 *unit) {
 	sum= sc_max(sum, g_mincut);
 	
 	double output = 1./(1 + exp(-sum));
-
+	
 	return output; 	
 	
 }
@@ -1119,7 +1257,7 @@ void countZeroCrossing(AnalyseEvents2 *unit) {
 		if ( (  ( val<0.0) && (nextval>=0.0) ) ||  ( (val>0.0) && (nextval<=(0.0)) )  ) {
 			count+=1;
 		}
-
+		
 		
 	}
 	
@@ -1143,27 +1281,27 @@ float calculateTimbre(AnalyseEvents2 *unit) {
 	base= lstartframe + LOUDNESSSTORED;
 	
 	for(i=0;i<6;++i) {
-	
-	pos= (i+ base)%LOUDNESSSTORED;
 		
-	unit->m_timbreFV[i]=zcr[pos];	
-	unit->m_timbreFV[6+i]=speccentroid[pos];
+		pos= (i+ base)%LOUDNESSSTORED;
+		
+		unit->m_timbreFV[i]=zcr[pos];	
+		unit->m_timbreFV[6+i]=speccentroid[pos];
 	}
 	
 	//zero any end frames if event shorter than 10 FFT frames
 	if(frames<6) {
-	
-	for(i=frames;i<6;++i) {
-	
-	//pos= (i+ base)%LOUDNESSSTORED;
-	unit->m_timbreFV[i]=0.0;
-	unit->m_timbreFV[6+i]=8.0;
+		
+		for(i=frames;i<6;++i) {
+			
+			//pos= (i+ base)%LOUDNESSSTORED;
+			unit->m_timbreFV[i]=0.0;
+			unit->m_timbreFV[6+i]=8.0;
+		}
+		
 	}
 	
-	}
-
 	float timbre=calculateTimbrenn(unit);
-
+	
 	//printf("calc Timbre NN %f \n",timbre);
 	
 	return timbre;
@@ -1202,14 +1340,14 @@ float calculateTimbrenn(AnalyseEvents2 *unit) {
 	sum= sc_max(sum, g_mincut);
 	
 	double output = 1./(1 + exp(-sum));
-
+	
 	if (output < 0.165)
-	output=1.0; //kick
+		output=1.0; //kick
 	else if(output>=0.5)
-	output=2.0; //snare
+		output=2.0; //snare
 	else
-	output=3.0; //hihat
-
+		output=3.0; //hihat
+	
 	return output; 	
 	
 }
@@ -1239,15 +1377,15 @@ int cmp(const void* vp,const void* vq) {
 //or find median, sort data then select middle index
 
 float calculatePitch(AnalyseEvents2 *unit) {
-
+	
 	int startblock= unit->m_startblock;
 	
 	int endblock=unit->m_endblock;
-
+	
 	int numblocks = endblock-startblock;
 	
 	if(numblocks<1) numblocks= (endblock+MAXBLOCKS-startblock)%MAXBLOCKS;
-
+	
 	float * pitch= unit->m_pitch;
 	float * sortbuf= unit->m_sortbuf;
 	
@@ -1265,15 +1403,15 @@ float calculatePitch(AnalyseEvents2 *unit) {
 	
 	//run sort
 	qsort(sortbuf,numblocks,sizeof(float),cmp);
-
+	
 	//printf("median freq %f midinote %f blocks involved %d \n",sortbuf[numblocks/2], 12*log2(sortbuf[numblocks/2]/261.626)+60, numblocks);
-//
-//for (int i=0; i<numblocks; ++i) {
-//		printf("%f ", sortbuf[i]);
-//	}
-//	
+	//
+	//for (int i=0; i<numblocks; ++i) {
+	//		printf("%f ", sortbuf[i]);
+	//	}
+	//	
 	//printf("\n\n");
-
+	
 	//select middleindex frequency as result
 	return sortbuf[numblocks/2]; 
 	
@@ -1282,4 +1420,12 @@ float calculatePitch(AnalyseEvents2 *unit) {
 
 
 
+
+
+PluginLoad(BBCut2UGens) {
+
+	ft = inTable;
+
+	DefineDtorUnit(AnalyseEvents2);
+}
 

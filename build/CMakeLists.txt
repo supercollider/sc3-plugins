@@ -1,9 +1,11 @@
 set(directories
     AYUGens
     BatUGens
+    BBCut2UGens
     BerlachUGens
     BhobUGens
     BlackrainUGens
+    Concat
     JoshUGens
     LadspaUGens
     LadspaUGen

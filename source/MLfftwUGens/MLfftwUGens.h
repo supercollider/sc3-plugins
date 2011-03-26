@@ -37,8 +37,6 @@ extern float hanning1024[1024];
 
 extern InterfaceTable *ft;
 
-#include "AutoTrackfftw.h"
-#include "AnalyseEvents2fftw.h"
 #include "Tartini.h"
 #include "Qitchfftw.h"
 
