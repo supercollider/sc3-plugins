@@ -46,16 +46,59 @@ PO Box 56, Dunedin 9015, New Zealand.
 
 // parameters- in, threshold (k-rate),  n (i-rate), k (i-rate), overlap (i-rate), smallcutoff(k-rate)
 
-#include "MLfftwUGens.h"
+#include "PitchDetection.h"
 
 
+void setupTartini(InterfaceTable *);
 void preparefft(Tartini *unit, float* in);
 void dofft(Tartini *unit);
 void inversefft(Tartini *unit);
 void nsdf(Tartini *unit);
 void peakpicking(Tartini *unit);
 
-//hard code n and k for now
+
+#if SC_FFT_VDSP
+#define FFT_VSP_MAXSIZE 3072
+static int fftAllowedSizes[3] = {8,9,10}; //{256,512,1024}; 
+static FFTSetup fftSetup3[3]; // vDSP setups, one per FFT size, allowing 512 + 256, 1024 + 512, 2048 + 1024
+static COMPLEX_SPLIT splitBuf; // input buf for vDSP FFT
+static COMPLEX_SPLIT splitBuf2; // output buf
+
+#endif
+
+void setupTartini(InterfaceTable * inTable) {
+
+	ft= inTable;
+	
+	//must sort in Tartini plugin itself 	
+	//for Tartini
+	
+	DefineDtorUnit(Tartini);
+	//	prepareFFTW(1024+512);
+	//	prepareFFTW(512+256);
+	//	prepareFFTW(2048+1024);
+	
+	
+	#if SC_FFT_VDSP
+	
+	for (int i=0; i<3; ++i) {
+		fftSetup3[i] = vDSP_create_fftsetup(fftAllowedSizes[i],FFT_RADIX3);  //FFT has size 3*(2**n), SC_fftlib.cpp can't support this easily
+		if(fftSetup3[i] == NULL)
+			printf("FFT ERROR: Mac vDSP library could not allocate FFT setup for size %i\n", 1<<i);
+	}
+		
+	splitBuf.realp = (float*) malloc ( FFT_VSP_MAXSIZE * sizeof(float) );
+	splitBuf.imagp = (float*) malloc ( FFT_VSP_MAXSIZE * sizeof(float) );
+	splitBuf2.realp = (float*) malloc ( FFT_VSP_MAXSIZE * sizeof(float) );
+	splitBuf2.imagp = (float*) malloc ( FFT_VSP_MAXSIZE * sizeof(float) );
+
+	#endif
+}
+
+
+
+
+
 void Tartini_Ctor( Tartini* unit ) {
 	
 	//int i;
@@ -76,6 +119,34 @@ void Tartini_Ctor( Tartini* unit ) {
 	
 	if(k>n) k=n;
 	
+	//HARD CODED FOR INITIAL TESTS	
+#if SC_FFT_VDSP
+	
+	switch(n) {
+		case 2048: 
+			k= 1024; 
+			//m_whichfftindex = 2;
+			break;
+		case 1024:
+			k=512;
+			//m_whichfftindex = 1;
+			break;
+		case 512:
+			k=256;
+			//m_whichfftindex = 0; 
+			break;
+		default:
+			n= 2048;
+			k=1024;
+			//printf("Tartini: should never occur, OS X use of vDSP requires n = 2048, 1024, 512, you choose %d \n",n);
+			break;
+	}
+	
+	unit->m_whichfftindex = LOG2CEIL(k)-8;
+
+#endif	
+	
+	
 	if (overlap<0) overlap=0;
 	
 	//allow time for amortisation
@@ -84,6 +155,8 @@ void Tartini_Ctor( Tartini* unit ) {
 	//int n=2048;
 	//int k = (n + 1) / 2; //will lead to odd FFT 3072 or 1536 points, cheaper if power of 2
 	int size = n + k;
+	
+
 	
 	//unit->nover2=  (n + 1) / 2;
 	unit->overlap= overlap; //unit->nover2; 
@@ -96,6 +169,9 @@ void Tartini_Ctor( Tartini* unit ) {
 	unit->n= n;
 	unit->k= k;
 	unit->size=size;
+
+
+	
 	//unit->freqPerBin=freqPerBin;
 	unit->rate=samplingrate;
 	
@@ -113,9 +189,14 @@ void Tartini_Ctor( Tartini* unit ) {
 //	unit->autocorrTime = (float*)fftwf_malloc(sizeof(float) * size);
 //	unit->autocorrFFT  = (float*)fftwf_malloc(sizeof(float) * size);
 	
+	
+#if SC_FFT_FFTW
 	unit->planAutocorrTime2FFT = fftwf_plan_r2r_1d(size, unit->autocorrTime, unit->autocorrFFT, FFTW_R2HC, FFTW_ESTIMATE);
 	unit->planAutocorrFFT2Time = fftwf_plan_r2r_1d(size, unit->autocorrFFT, unit->autocorrTime, FFTW_HC2R, FFTW_ESTIMATE);
-	
+#elif SC_FFT_VDSP	
+	unit->log2n = fftAllowedSizes[unit->m_whichfftindex]; //LOG2CEIL(size)	
+
+#endif
 	
 	unit->m_currfreq=440;  
 	unit->m_hasfreq=0;
@@ -129,8 +210,10 @@ void Tartini_Ctor( Tartini* unit ) {
 
 void Tartini_Dtor(Tartini *unit) {
 	
+#if SC_FFT_FFTW	
     fftwf_destroy_plan(unit->planAutocorrFFT2Time);
     fftwf_destroy_plan(unit->planAutocorrTime2FFT);
+#endif	
 //    fftwf_free(unit->autocorrFFT);
 //    fftwf_free(unit->autocorrTime);
 //    fftwf_free(unit->dataTemp);
@@ -278,13 +361,14 @@ void preparefft(Tartini *unit, float* in) {
 //I've split the autocorr calculation over two functions, as below, for amortisation, hence a small amount of repeated code
 void dofft(Tartini *unit) {
 	
-		
-	fftwf_execute(unit->planAutocorrTime2FFT);
-		
 	int j;
 	int size=unit->size;
 	float * autocorrFFT= unit->autocorrFFT; //results of FFT
 	
+	
+#if SC_FFT_FFTW	
+	fftwf_execute(unit->planAutocorrTime2FFT);
+
 	//do half of the calculations
 	for(j=1; j<size/4; ++j) {
 		float val1= autocorrFFT[j];
@@ -293,21 +377,54 @@ void dofft(Tartini *unit) {
 		autocorrFFT[j] = (val1*val1) + (val2*val2); 
 		autocorrFFT[size-j] = 0.0f;
 	}
+	
+#else
+	
+	float * autocorrTime= unit->autocorrTime; //input to FFT
+	
+	//different packing: as complex data	
+	//leave junk data in FFT_VSP_MAXSIZE, just prepare up to size
+	for(j=0; j<size; ++j) {
+		splitBuf.realp[j] = autocorrTime[j]; 
+		splitBuf.imagp[j] = 0.0f; 
+	}
+	
+	// Now the actual FFT; out of place COMPLEX to COMPLEX FFT
+	vDSP_fft3_zop(fftSetup3[unit->m_whichfftindex], &splitBuf, 1, &splitBuf2, 1, unit->log2n, 1);
+	
+	unit->m_nyquist = splitBuf2.realp[size/2]; 
+	
+	// Copy the data to the public output buf, transforming it back out of "split" representation
+	vDSP_ztoc(&splitBuf2, 1, (DSPComplex*)autocorrFFT, 2, size >> 1);
+	
+	//NO SCALING REQUIRED FOR FORWARDS FFT if complex rather  than real input
+	//http://developer.apple.com/library/ios/#documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html
+	//float scale = 0.5f;
+	//vDSP_vsmul(autocorrFFT, 1, &scale, autocorrFFT, 1, size);
 
-	//float * fftbuf= unit->autocorrTime;
-	//float * autocorrFFT= unit->autocorrFFT; //results of FFT
+	//do half of the calculations
+	for(j=1; j<size/4; ++j) {
+		float val1= autocorrFFT[2*j];
+		float val2= autocorrFFT[2*j+1];
+		
+		autocorrFFT[j] = (val1*val1) + (val2*val2); 
+		autocorrFFT[size-j] = 0.0f;
+	}
+#endif
 
 	unit->m_amortisationstate=1; //on	
 }
 
 void inversefft(Tartini *unit) {
 
-
 	int j;
 	int size=unit->size;
 	
 	int start= size/4;
 	float * autocorrFFT= unit->autocorrFFT; //results of FFT
+
+#if SC_FFT_FFTW	
+	
 	
 	for(j=start; j<size/2; j++) {
 		float val1= autocorrFFT[j];
@@ -323,7 +440,46 @@ void inversefft(Tartini *unit) {
 			//Do an inverse FFT
 	fftwf_execute(unit->planAutocorrFFT2Time);
 	
+#else
+	
+	float * autocorrTime= unit->autocorrTime; //input to FFT
+	
+	for(j=start; j<size/2; j++) {
+		float val1= autocorrFFT[2*j];
+		float val2= autocorrFFT[2*j+1];
+		
+		autocorrFFT[j] = (val1*val1) + (val2*val2); 
+		autocorrFFT[size-j] = 0.0f;
+		
+	}
+	
+	autocorrFFT[0] = autocorrFFT[0]*autocorrFFT[0];	//dc
 
+	float nyquist = unit->m_nyquist; 
+	
+	autocorrFFT[size/2] = nyquist*nyquist; //autocorrFFT[size/2]*autocorrFFT[size/2];	//nyquist, packed format from vDSP
+	
+	//leave junk data in FFT_VSP_MAXSIZE, just prepare up to size
+	for(j=0; j<size; ++j) {
+		splitBuf.realp[j] = autocorrFFT[j]; 
+		splitBuf.imagp[j] = 0.0f; 
+	}
+	
+	vDSP_fft3_zop(fftSetup3[unit->m_whichfftindex], &splitBuf, 1, &splitBuf2, 1, unit->log2n, 0);
+	
+	
+	for(j=0; j<size; j++) {
+		autocorrTime[j] = splitBuf2.realp[j];
+	}
+	
+	//No scaling required because later comparative stage does this, otherwise IFFT would be divided by size
+	//float scale = 1.0/((float) size) ;
+	//vDSP_vsmul(autocorrTime, 1, &scale, autocorrTime, 1, size);
+
+	
+#endif
+	
+	
 }
 
 //amortised

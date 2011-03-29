@@ -1,5 +1,3 @@
-//This file is part of MLfftwUGens. Copyright (C) 2006  Nicholas M.Collins distributed under the terms of the GNU General Public License full notice in file MachineListening.license
-
 //constant Q transform, cross correlation spectral template and instantaneous frequency pitch tracker
 
 Qitch : MultiOutUGen {

@@ -23,22 +23,22 @@
 //MachineListening.h  Created by Nick Collins on 06/12/2006.
 
 #include "SC_PlugIn.h"
-#include <fftw3.h>
+#include "SC_fftlib.h"
+//#include <fftw3.h>
 
 //global data
 
 //helpful constants
-#define PI 3.1415926535898f
-#define TWOPI 6.28318530717952646f 
+//#define PI 3.1415926535898f
 
 
-extern float hanning1024[1024];
+//extern float hanning1024[1024];
 
 
 extern InterfaceTable *ft;
 
 #include "Tartini.h"
-#include "Qitchfftw.h"
+#include "Qitch.h"
 
 
 

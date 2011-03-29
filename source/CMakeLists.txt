@@ -103,8 +103,14 @@ if (LADSPA_INCLUDE_DIR)
     target_link_libraries(ladspalist dl)
 endif()
 
-file(GLOB MLfftwSources MLfftwUGens/*cpp)
-BUILD_PLUGIN(MLfftwUGens "${MLfftwSources}" ${FFTW3F_LIBRARY})
+file(GLOB PitchDetectionSources PitchDetection/*cpp)
+if(APPLE)
+    set (PitchDetectionLibs "-framework vecLib")
+else()
+    set (PitchDetectionLibs ${FFTW3F_LIBRARY})
+endif()
+
+BUILD_PLUGIN(PitchDetection "${PitchDetectionSources};${FFTSOURCES}" ${PitchDetectionLibs})
 
 file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
 file(GLOB UnneededSTKSources "StkUGens/stk-4.4.2/src/Rt*.cpp"

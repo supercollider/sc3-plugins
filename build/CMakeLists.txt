@@ -13,8 +13,8 @@ set(directories
     MCLDUGens
     MdaUGens
     MembraneUGens
-    MLfftwUGens
     NCAnalysisUGens
+    PitchDetection
     RFWUGens
     RMEQSuiteUGens
     SLUGens

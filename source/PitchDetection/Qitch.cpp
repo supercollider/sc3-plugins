@@ -22,15 +22,11 @@
 
 //this file 8/1/05 by Nicholas M. Collins after Brown/Puckette
 //updated for fftw 13/12/06
+//converted to SC fft interface, 26 March 2011
 
-//#include "SC_PlugIn.h"
-//#include <vecLib/vecLib.h>
-//#include <string.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <stdio.h>
+#include "PitchDetection.h"
 
-#include "MLfftwUGens.h"
+#define TWOPI 6.28318530717952646f 
 
 
 //float g_fmin;
@@ -117,15 +113,12 @@ void Qitch_Ctor(Qitch* unit)
 	unit->m_FFTBuf = (float*)RTAlloc(unit->mWorld, fftN * sizeof(float));
 	unit->m_bufWritePos = 0;	
 	
-	unit->planTime2FFT = fftwf_plan_r2r_1d(fftN, unit->m_FFTBuf, unit->m_FFTBuf, FFTW_R2HC, FFTW_ESTIMATE);
+	SCWorld_Allocator alloc(ft, world);
 	
-	////////vDSP///////////////
+	//no overlap
+	//no windowing for constant Q
+	unit->m_scfft = scfft_create(fftN, fftN, kRectWindow, unit->m_FFTBuf, unit->m_FFTBuf, kForward, alloc);
 	
-	//unit->m_vA.realp = (float*)RTAlloc(unit->mWorld, unit->m_Nover2 * sizeof(float)); 
-//	unit->m_vA.imagp = (float*)RTAlloc(unit->mWorld, unit->m_Nover2 * sizeof(float));
-//	unit->m_vlog2n = unit->m_log2N; //(int)(log2(N)+0.5); //10; //N is hard coded as 1024, so 10^2=1024 //log2max(N);
-//	unit->m_vsetup = create_fftsetup(unit->m_vlog2n, 0);
-//	
 	
 	float * qfreqs=(float*)RTAlloc(world, numbands * sizeof(float));
 	int * startindex=(int*)RTAlloc(world, numbands * sizeof(int));
@@ -259,8 +252,10 @@ void Qitch_Dtor(Qitch *unit)
 	//RTFree(unit->mWorld, unit->m_store[0]);
 	//RTFree(unit->mWorld, unit->m_store[1]);
 
-	 fftwf_destroy_plan(unit->planTime2FFT);
-	
+	if(unit->m_scfft) {
+		SCWorld_Allocator alloc(ft, unit->mWorld);
+		scfft_destroy(unit->m_scfft, alloc);
+	}
 }
 
 
@@ -351,7 +346,7 @@ void Qitch_dofft(Qitch *unit) {
 	
 	float * fftbuf= unit->m_FFTBuf;
 	
-	float ampthresh = ZIN0(2);;
+	float ampthresh = ZIN0(2);
 	
 	bool ampok=false;
 	
@@ -390,8 +385,8 @@ void Qitch_dofft(Qitch *unit) {
 
 //need to convert to a usable form for calculations below? fftw output comes out split
 
-		fftwf_execute(unit->planTime2FFT);
-	
+		//fftwf_execute(unit->planTime2FFT);
+		scfft_dofft(unit->m_scfft);
 
 		//will probably want to store phase first 
 		
@@ -440,8 +435,12 @@ void Qitch_dofft(Qitch *unit) {
 				//imagsum+= mult*fftbuf[2*j+1];
 				
 				//fftw version
-				realsum+= mult*fftbuf[j];
-				imagsum+= mult*fftbuf[fftN-j];
+				//realsum+= mult*fftbuf[j];
+				//imagsum+= mult*fftbuf[fftN-j];
+				
+				//sc fft version
+				realsum+= mult*fftbuf[2*j];
+				imagsum+= mult*fftbuf[2*j+1];
 			}
 			
 			//scale here by 1/(2*g_N)

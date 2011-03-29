@@ -1,5 +1,3 @@
-//This file is part of MachineListening. Copyright (C) 2006  Nicholas M.Collins distributed under the terms of the GNU General Public License full notice in file MachineListening.license
-
 
 struct Qitch : Unit {
 	
@@ -8,14 +6,7 @@ struct Qitch : Unit {
 	float * m_prepareFFTBuf;
 	float * m_FFTBuf;
 	
-	fftwf_plan planTime2FFT; 
-	
-	//vDSP
-	//unsigned long m_vlog2n;
-//	COMPLEX_SPLIT m_vA;
-//	FFTSetup m_vsetup;
-//	
-
+	scfft *m_scfft; 
 
 	//Q data
 	
