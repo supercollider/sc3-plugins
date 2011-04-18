@@ -4,9 +4,11 @@ set(directories
     BBCut2UGens
     BerlachUGens
     BhobUGens
+    BitUGens
     BlackrainUGens
     Concat
     JoshUGens
+    GlitchUGens
     LadspaUGens
     LadspaUGen
     LoopBufUGens

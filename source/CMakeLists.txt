@@ -51,6 +51,7 @@ set(plugin_sources
     BhobFFT.cpp
     BhobGrain.cpp
     BhobNoise.cpp
+    Bit.cpp
     BlackrainUGens.cpp
     Concat.cpp
     GlitchUGens.cpp
