@@ -14,7 +14,7 @@ LADSPA : MultiOutUGen {
         ^super;
     }
     *listPlugins {
-        ladspalist_path.unixCmd;
+        ladspalist_path.quote.unixCmd;
     }
 }
 
