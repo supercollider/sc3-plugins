@@ -96,12 +96,9 @@ BUILD_PLUGIN(MdaUGens MdaUGens/MdaUGens.cpp "")
 
 BUILD_PLUGIN(MembraneUGens "Membrane_shape.c;Membrane.cpp" "")
 
-find_path(LADSPA_INCLUDE_DIR NAMES ladspa.h PATHS /usr/local/include /usr/include)
-if (LADSPA_INCLUDE_DIR)
-    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "")
-    add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
-    target_link_libraries(ladspalist dl)
-endif()
+BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "")
+add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
+target_link_libraries(ladspalist dl)
 
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 if(APPLE)
@@ -171,7 +168,7 @@ if(APPLE)
 
     if (LADSPA_INCLUDE_DIR)
         install(TARGETS ladspalist
-            DESTINATION ${CMAKE_SOURCE_DIR}/build/plugins/LadspaUGen/
+            DESTINATION ${CMAKE_SOURCE_DIR}/build/LadspaUGen/
             PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     endif()
 endif()
