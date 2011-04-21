@@ -29,9 +29,13 @@ set(directories
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    install(DIRECTORY ${directories}
-            DESTINATION "share/SuperCollider/Extensions/SC3plugins"
-            FILES_MATCHING
-            PATTERN "*"
-            PATTERN "*~" EXCLUDE)
+    set(INSTALL_DESTINATION "share/SuperCollider/Extensions/SC3plugins")
+else()
+    set(INSTALL_DESTINATION ".")
 endif()
+
+install(DIRECTORY ${directories}
+        DESTINATION ${INSTALL_DESTINATION}
+        FILES_MATCHING
+        PATTERN "*"
+        PATTERN "*~" EXCLUDE)

@@ -148,25 +148,30 @@ endif()
 file(GLOB TJUGensSources TJUGens/*.cpp)
 BUILD_PLUGIN(TJUGens "${TJUGensSources}" "")
 
+
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    install(TARGETS ${supernova_plugins}
-            DESTINATION "lib/supernova/plugins"
+    set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
+    set(INSTALL_DESTINATION_SUPERNOVA "lib/supernova/plugins")
+else()
+    set(INSTALL_DESTINATION "plugins")
+    set(INSTALL_DESTINATION_SUPERNOVA "plugins_supernova")
+endif()
+
+install(TARGETS ${plugins}
+            DESTINATION ${INSTALL_DESTINATION}
             PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-    install(TARGETS ${plugins}
-                DESTINATION "lib/SuperCollider/plugins"
-                PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-    install(TARGETS ladspalist
-        DESTINATION "share/SuperCollider/Extensions/SC3plugins/LadspaUGen/"
+
+install(TARGETS ${supernova_plugins}
+        DESTINATION ${INSTALL_DESTINATION_SUPERNOVA}
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(INSTALL_DESTINATION_LADSPALIST "share/SuperCollider/Extensions/SC3plugins/LadspaUGen/")
+else()
+    set(INSTALL_DESTINATION_LADSPALIST "LadspaUGen")
 endif()
 
-if(APPLE)
-    install(TARGETS ${plugins}
-       DESTINATION  ${CMAKE_SOURCE_DIR}/build/plugins/
-       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-
-    install(TARGETS ladspalist
-        DESTINATION ${CMAKE_SOURCE_DIR}/build/LadspaUGen/
+install(TARGETS ladspalist
+        DESTINATION ${INSTALL_DESTINATION_LADSPALIST}
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endif()
-
