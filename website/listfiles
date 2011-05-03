@@ -1,2 +1,1 @@
-find ../build -name "*.rtf" -or -name "*.html" | sed s:..\/build\/:: > filelist.txt
-
+find ../source/*/sc -name "*.rtf" -or -name "*.html" | sed s:..\/source\/:: > filelist.txt

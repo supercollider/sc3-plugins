@@ -48,7 +48,7 @@ foreach($grouped as $group=>$grlist){
 			<li><?php
 				echo $item['name'];
 				if(isset($item['fpath']))
-					echo " <span class='readonlinelink'>[<a href='http://sc3-plugins.svn.sourceforge.net/viewvc/sc3-plugins/build/$item[fpath]'>read online</a>]</span>";
+					echo " <span class='readonlinelink'>[<a href='http://sc3-plugins.svn.sourceforge.net/viewvc/sc3-plugins/source/$item[fpath]'>read online</a>]</span>";
 			?></li>
 			<?php
 		}
