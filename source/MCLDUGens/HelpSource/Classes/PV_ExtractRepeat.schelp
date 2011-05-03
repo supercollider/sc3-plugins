@@ -1,0 +1,117 @@
+class:: PV_ExtractRepeat
+summary:: extract a repeating loop out from audio
+categories::  UGens>FFT, UGens>Analysis
+
+
+Description::
+
+If you have a signal that consists of some fixed looping audio (e.g. a beat) plus some varying content (e.g. singing), this UGen uses a simple binary-masking technique to try and separate the looping bit from the non-looping bit. The quality of the separation is quite rough, but useful in some circumstances.
+
+Note that this unit estimates the loop characteristics online in real time, meaning it takes a few times through the loop before the separation really kicks in. This means that at any point, any novel element is included in the nonrepeating part, even if it's really a loop that's starting.
+
+You must know the loop duration - this unit will not estimate it for you.
+
+
+classmethods::
+
+method::new
+
+argument::array
+The array of input signals.
+
+argument::chain
+an fft chain
+
+argument::loopbuf
+a buffer where data about the loop is calculated/stored. num frames should be enough to hold the loop (you'll get a warning if not), num channels should be (fftsize/2 + 1).
+
+argument::loopdur
+duration in seconds of the bit you want extracted. (You can change the loop duration on-the-fly but you'll get some unhelpful results while the unit settles in to the new loop duration.)
+
+argument::memorytime
+how quickly (in seconds) the recursive estimation converges
+
+argument::which
+set to 0 to extract the loop, set to 1 to extract everything else
+
+argument::ffthop
+this should match the hop size used in the FFT. typically 0.5.
+
+argument::thresh
+threshold for allocating bins to repeating/nonrepeating. Default is 1, and raising it means more gets allocated to the repeating part.
+
+
+
+Examples::
+
+First a toy example with synthetic material; then an example reading a WAV file from disk (you'll have to find one, and also find its bpm).
+
+code::
+
+s.boot
+// Create audio containing repeating and varying components, merged in the same channel:
+(
+x = {
+	var trigs, looplen = 2, loopy, varying;
+	trigs = Impulse.kr(6/looplen) + Impulse.kr(4/looplen);
+	loopy = BPF.ar(WhiteNoise.ar * EnvGen.ar(Env.perc(0.01, 0.3), trigs), LFCub.kr(1/looplen).exprange(100, 5000));
+	varying = Pulse.ar(LFNoise0.kr(6/looplen).exprange(100, 500).cpsmidi.round.midicps) * 0.1;
+	(loopy + varying).dup
+}.play;
+)
+// Now the thing that will attempt to separate them out again (inc a buffer for it to use):
+~loopbuf = Buffer.alloc(s, 200, 513);
+(
+y = { |which=1, active=1|
+	var son = In.ar(0);
+	var chain = FFT(LocalBuf(1024), son);
+	chain = PV_ExtractRepeat(chain, ~loopbuf, 2, memorytime:30, which:which);
+	ReplaceOut.ar(0, Select.ar(active, [son, IFFT(chain)]).dup);
+}.play(x, addAction: \addAfter);
+)
+y.set(\which, 0) // focus on the nonrepeating bit
+y.set(\which, 1) // focus on the repeating bit
+y.set(\active, 0) // back to normal
+y.set(\active, 1) // filter it again
+
+y.free;
+x.free;
+
+
+//////////////////////////////////////
+// With music:
+
+~track = "~/tmpwavs/Postal Service - Such Great Heights.mp3.2.wav".standardizePath; ~bpm=116.6;
+~track = "~/tmpwavs/Amy Winehouse - Rehab.mp3.wav".standardizePath; ~bpm=145.1;
+~looplen = 480/~bpm;
+
+b = Buffer.cueSoundFile(s, ~track, 0, 2);
+x = { DiskIn.ar(2, b) }.play;
+
+// Now the thing that will attempt to separate them out again (inc a buffer for it to use):
+~loopbuf = Buffer.alloc(s, 1000, 513);
+(
+y = { |which=1, active=1, thresh=1|
+	var son = In.ar(0);
+	var chain = FFT(LocalBuf(1024), son);
+	chain = PV_ExtractRepeat(chain, ~loopbuf, ~looplen, memorytime:30, which:which, thresh:thresh);
+	ReplaceOut.ar(0, Select.ar(active, [son, IFFT(chain)]).dup);
+}.play(x, addAction: \addAfter);
+)
+y.set(\which, 0) // focus on the nonrepeating bit
+y.set(\which, 1) // focus on the repeating bit
+y.set(\active, 0) // back to normal
+y.set(\active, 1) // filter it again
+y.set(\which, 0, \thresh, 1.5) // trying a higher threshold
+
+y.free;
+x.free;
+b.close
+
+::
+
+
+This unit is (c) Dan Stowell, based on the technique presented in this paper (but different - adapted for online estimation and with some other little differences):
+
+Zafar Rafii and Bryan Pardo. "A Simple Music/Voice Separation Method based on the Extraction of the Repeating Musical Structure," 36th International Conference on Acoustics, Speech and Signal Processing (ICASSP 2011), Prague, Czech Republic, May 22-27, 2011.
+http://www.cs.northwestern.edu/~zra446/research.html

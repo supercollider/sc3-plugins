@@ -1,0 +1,81 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red191\green0\blue0;\red96\green96\blue96;
+\red0\green0\blue0;\red0\green0\blue191;\red191\green0\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs36 \cf0 FFTFlux - Spectral flux statistic
+\f1\b0\fs34 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs22 \cf0 \
+
+\f0\b\fs24 	FFTFlux.kr(chain)\
+
+\f2\b0 \
+Calculates the
+\f0\b spectral flux
+\f2\b0  of the signal, which is a measure of the rate of change of the FFT power spectrum. It measures the difference between the current and previous FFT frames, by calculating the 2-norm (the Euclidean distance between the two spectra) after normalising for power.\
+\
+For example, a stationary sine wave (or triangle, square, ...) would be expected to exhibit near-zero spectral flux (zero if the period fits neatly into the FFT windowing period). But the boundary between two different musical notes would often be expected to exhibit a peak in spectral flux.\
+\
+The comparison is frame-by-frame, so its behaviour will depend to some extent upon your frame size. Also note that this measure only makes sense when used with a continuous stream of FFT frames - so it should be used with the normal [\ul FFT\ulnone ] UGen, not with [\ul FFTTriggered\ulnone ].\
+\
+Examples:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf0 \
+s = \cf2 Server\cf0 .internal.boot; \
+b = \cf2 Buffer\cf0 .alloc(s,2048,1);\
+\
+\cf3 // Move the mouse to vary the frequency.\cf0 \
+\cf3 // Watch the scope to see the change in sp.flux.\cf0 \
+\cf3 // You'll see that it's higher when freq is changing.\cf0 \
+(\
+x = \{\
+\cf2 var\cf0  in, chain, flux;\
+in = \cf2 SinOsc\cf0 .ar(\cf2 MouseX\cf0 .kr(50, 500, 1), 0, 0.1);\
+chain = \cf2 FFT\cf0 (b.bufnum, in);\
+flux = \cf2 FFTFlux\cf0 .kr(chain, 0.9) * 100; \cf3 // Scale by 100 for more humane numbers\cf0 \
+flux.poll(1, \cf4 "Flux"\cf0 );\
+\cf2 Out\cf0 .ar(0, in.dup);\
+\cf2 Out\cf0 .kr(0, flux);\
+\}.scope;\
+)\
+\
+x.free;\
+\
+\
+\cf3 // Same again, but with filtered white noise.\cf0 \
+\cf3 // White noise naturally has a significant level of spectral flux\cf0 \
+\cf3 // but again, the flux is much higher while the spectral qualities are changing.\cf0 \
+(\
+x = \{\
+\cf2 var\cf0  in, chain, flux;\
+in = \cf2 LPF\cf0 .ar(\cf2 WhiteNoise\cf0 .ar(0.1), \cf2 MouseX\cf0 .kr(50, 5000, 1));\
+chain = \cf2 FFT\cf0 (b.bufnum, in);\
+flux = \cf2 FFTFlux\cf0 .kr(chain, 0.9) * 100; \cf3 // Scale by 100 for more humane numbers\cf0 \
+flux.poll(1, \cf4 "Flux"\cf0 );\
+\cf2 Out\cf0 .ar(0, in.dup);\
+\cf2 Out\cf0 .kr(0, flux);\
+\}.scope;\
+)\
+\
+x.free;\
+\
+\
+\cf3 // Now you try it! Audio input. NB this time we're taking the log because real signals vary a lot.\cf0 \
+(\cf5 \
+x = \{\
+\cf6 var\cf5  in, chain, flux;\
+in = \cf6 AudioIn\cf5 .ar([1,2]).mean;\
+chain = \cf6 FFT\cf5 (b.bufnum, in);\
+flux = (\cf6 FFTFlux\cf5 .kr(chain, 0.9) * 100).log * 0.2;\
+flux = flux.max(-100); \cf7 // This is to avoid an infinity created by the log UGen\cf5 \
+flux.poll(1, \cf8 "Log flux"\cf5 );\
+\cf6 Out\cf5 .kr(0, flux);\
+\}.scope;\
+\cf0 )\
+\
+x.free;}

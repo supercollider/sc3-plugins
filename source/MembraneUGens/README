@@ -1,0 +1,71 @@
+All (c) C. Alex McLean 2008
+
+http://doc.gold.ac.uk/~ma503am/
+
+Released under the GPL version 2 or later, see COPYING for details.
+
+====================================
+ MembraneCircle and MembraneHexagon
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Here's two supercollider externs.  They're rather similar, being
+triangular waveguide meshes of a drum-like membrane.  You input some
+excitation, such as a pulse of noise, and can adjust the tension and
+loss while it plays.
+
+They're named after the shape made out of triangular meshes.
+Obviously you can't make a circle out of triangles, but it tries.  At
+the moment MembraneCircle is a bit bigger than MembraneHexagon, using
+more waveguides and therefore more CPU.
+
+If you want to play with it you might want to fiddle with the defines
+at the top of the .cpp files.
+
+I'm linux based so I'm afraid can't offer help for how to get this
+compiled for other systems.
+
+=======
+ Files
+-=-=-=-
+
+Makefile - makefile tested for use under linux (ubuntu)
+
+membrane.sc - code for testing with native supercollider (sclang)
+membrane.lhs - code for testing with Rohan Drape's HSC library for Haskell
+
+Membrane.cpp - The UGens are defined in here.
+
+shape.c - Where the triangulation happens.  It would be quite trivial to
+shape.h   add more shapes, patches welcome.
+
+classes/MembraneHexagon.sc - class files for use with sclang, copy into
+classes/MembraneCircle.sc    your Extensions folder.
+
+triangulation.pde - processing patch for visualising the triangulations
+
+=========
+ Contact
+-=-=-=-=-
+
+alex@slab.org
+
+Note I can't offer support although may be able to give some tips...
+
+===========
+ More info
+-=-=-=-=-=-
+
+My stuff is here:
+  http://doc.gold.ac.uk/~ma503am/
+
+I also recommend the following thesis:
+  The Physical Modelling of Drums Using Digital Waveguides
+  JA Laird, University of Bristol - 2001 - University of Bristol
+
+this book:
+  Real Sound Synthesis for Interactive Applications, Perry R. Cook
+  http://books.google.co.uk/books?id=20p7Jg_ZdkMC
+
+and these websites:
+  http://ccrma.stanford.edu/~jos/wg.html
+  http://www-ccrma.stanford.edu/~be/drum/drum.htm

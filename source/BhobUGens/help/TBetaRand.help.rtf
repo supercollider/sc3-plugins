@@ -1,0 +1,56 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b\fs36 \cf0 TBetaRand
+\fs24 triggered beta random distribution
+\fs36 \
+\
+
+\fs24 TBetaRand.kr(lo, hi, prob1, prob2, trig)\
+TBetaRand.ar(lo, hi, prob1, prob2, trig)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b \cf0 lo
+\f2\b0  - minimum value\
+
+\f1\b hi
+\f2\b0  - maximum value\
+
+\f1\b prob1, prob2
+\f2\b0  - if prob1 & prob2 are less than 1, values tend towards lo & hi.  if they are equal to 1, there is a linear random distribution.  higher than 1, the distribution tends towards gaussian, with the possibility of a mean skewed towards the prob of the lowest value. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs18 \cf0 (\
+\{ \
+	\cf2 var\cf0  trig = \cf2 Dust\cf0 .kr(10);\
+	\cf2 SinOsc\cf0 .ar(\
+			\cf2 TBetaRand\cf0 .kr(300, 3000, 0.1, 0.1, trig)\
+		) * 0.1\
+\}.play;\
+)\
+\
+(\
+\{ \
+	\cf2 var\cf0  trig, prob1, prob2;\
+	trig = \cf2 Dust\cf0 .kr(\cf2 10\cf0 );\
+	prob1 = MouseX.kr(1, 5);\
+	prob2 = MouseY.kr(1, 5);\
+	\cf2 SinOsc\cf0 .ar(\
+			\cf2 TBetaRand\cf0 .kr(300, 3000, prob1, prob2, trig)\
+		) * 0.1\
+\}.play;\
+)\
+}

@@ -1,0 +1,107 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 ArialMT;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;}
+\vieww8120\viewh6500\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs26 \cf2 /*\
+This package contains a number of ports of the\
+Stk physical models.  They are not highly optimized\
+and initializations can be very expensive.  To\
+get around this triggers are supplied in all\
+units so that they can be fired up in paused states\
+and subsequently triggered and paused, thus greatly reducing\
+initialization cost.  The downside of this is that\
+you have to keep track of the nodes, but that's not\
+a big deal.  I've been initializing a bunch of instruments\
+at the start, pausing for a freq seconds and then starting\
+to play.\
+\
+Installation instructions\
+\
+1) The rawwaves folder has to be parallel\
+to the SuperCollider.app folder.  i.e. the\
+units will look for ../rawwaves/etc.  If you\
+get 'realtime errors' it is in the wrong place.\
+notice: when building from source you will need to get these from the library itself (or the prebuilt lib package download from sc3-plugins sourceforge site).\
+The prebuilt UGens packages for Mac OS X come with this included.\
+\
+2) Copy all the .scx files to the plugins dir.\
+\
+3) These were compiled under 10.3.5 so they will\
+only work under XCode systems.\
+\
+4) Copy the classdefs file to the SCClassLibrary\
+and recompile the Library.\
+\
+5) tests.rtf will quickly test each of the units.\
+If you get sound they're working.\
+\
+6) The classdefs.sc file contains minimal information\
+about each of the units.  When it says that arguments\
+are modulateable it means that they can also be changed\
+when retriggering.\
+\
+7) Triggers\
+When the trigger changes from a negative to a positive\
+value the unit will do an STK noteOn().  In a number of\
+these models the attack portion has particular and \
+noticeable qualities so this can make a big difference.\
+It also allows you to avoid the expensive initializations.\
+\
+Here is an example using the Clarinet model\
+*/\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs28 \cf0 (	\
+\cf3 SynthDef\cf0 (\cf4 "StkClarinet"\cf0 , \{\cf3 arg\cf0   freq=440,reedstiffness=64,noisegain=10,vibfreq=64,\
+				vibgain=10,breathpressure=64, gain=0.2,gate=1,bus=0, \
+				lag = 0.1,sloc=0,riset=0.2,decayt=0.2 ;\
+\
+		\cf3 var\cf0  z,env;\
+		env  =  \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .adsr(attackTime:riset, decayTime:0,sustainLevel:1,\
+						releaseTime:0.1,peakLevel:1),gate:gate, doneAction:0);\
+\
+		z = \cf3 StkClarinet\cf0 .ar(\
+			freq:\cf3 Lag\cf0 .kr(freq, lag),\
+			reedstiffness:reedstiffness,\
+			noisegain:noisegain,\
+			vibfreq:vibfreq,\
+			vibgain:vibgain,\
+			breathpressure:breathpressure,\
+			trig:gate);\
+		\cf3 Out\cf0 .ar(bus, \cf3 Pan2\cf0 .ar(z,sloc)*env*gain);\
+	\}).load(s);\
+)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs26 \cf0 \
+\cf2 // test synthdef\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs28 \cf3 Synth\cf0 (\cf4 "StkClarinet"\cf0 , [\cf5 \\riset\cf0 , 12]).play\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs26 \cf0 \
+\cf2 // start up in paused state (usually necessary to slightly defer\cf0 \
+\cf2 //	the pause for some reason\cf0 \
+\
+\{
+\f1\fs28 s.sendMsg(\cf4 "/s_new"\cf0 , \cf4 "StkClarinet"\cf0 , n = s.nextNodeID ,0,0, \cf5 \\freq\cf0 , 440, \cf5 \\gate\cf0 , -1, \cf5 \\reedstiffness\cf0 , 64,\cf5 \\i_bus\cf0 , 0);  \
+	\{s.sendMsg(\cf5 \\n_run\cf0 , n, 0)\}.defer(0.01); \}\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 // trigger a note\cf0 \
+	s.sendBundle(\cf3 nil\cf0 , [\cf5 \\n_set\cf0 ,n,  \cf5 \\gate\cf0 , 1, \cf5 \\freq\cf0 , 440, \\gain, 0.1], [\cf5 \\n_run\cf0 , n,1]);\
+ \cf2 // trigger another note \cf0 \
+	s.sendBundle(\cf3 nil\cf0 , [\cf5 \\n_set\cf0 ,n,  \cf5 \\gate\cf0 , 1, \cf5 \\freq\cf0 , 540, \cf5 \\lag\cf0 , 0.1], [\cf5 \\n_run\cf0 , n,1]);\
+ \cf2 // turn it off\cf0 \
+	s.sendMsg(\cf5 \\n_set\cf0 , n, \cf5 \\gate\cf0 , -1.2);\
+ \cf2 // pause the unit and free up the CPU\cf0 \
+	s.sendMsg(\cf5 \\n_run\cf0 , n, 0);\
+ \cf2 // start up another note\cf0 \
+	s.sendBundle(\cf3 nil\cf0 , [\cf5 \\n_set\cf0 ,n,  \cf5 \\gate\cf0 , 1, \cf5 \\freq\cf0 , 100, \\vibgain, 50, \\breathpressure, 80, \cf5 \\lag\cf0 ,0], [\cf5 \\n_run\cf0 , n,1]);\
+\cf2 // etc ( any parameters you change will apply to all subsequent notes)
+\f0\fs26 \cf0 \
+\
+}

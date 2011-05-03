@@ -1,0 +1,68 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+\f3\fswiss\fcharset77 Helvetica-BoldOblique;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs36 \cf0 ListTrig
+\fs26 Emit a sequence of triggers at specified time offsets
+\fs36 \
+
+\f1\b0\fs18 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 	ListTrig.kr(bufnum, reset, offset, numframes)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0 \cf0 \
+The data stored in the [\ul Buffer\ulnone ] at
+\f0\b bufnum
+\f2\b0  should be a (single-channel) ordered list of time offsets in seconds. ListTrig will then emit a trigger signal (a single-sample value of 1, at control rate) at each of those times, which are measured from the beginning of the synth's existence, or from the most recent
+\f0\b reset
+\f2\b0  trigger (which also resets reading back to the beginning of the buffer).\
+\
+The
+\f0\b offset
+\f2\b0  parameter can be used to modify the offsets globally. For example, to delay the list of values all by half a second, use an
+\f0\b offset
+\f2\b0  of 0.5. (The
+\f0\b offset
+\f2\b0  value is only updated at initialisation or reset.)\
+\
+Behaviour is undefined if the buffer's values are not in ascending order. If the buffer contains two or more adjacent equal values, it will skip over the duplicates (i.e. only one trigger will be output, and its value will still be 1).\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b \cf0 numframes
+\f2\b0  tells the UGen the size of the buffer. If not set, this will automatically be filled with
+\f3\i\b BufFrames.kr(bufnum)
+\f2\i0\b0 , which is typically what you want to use anyway.\
+\
+
+\f0\b Example
+\f1\b0\fs18 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+s.boot;\
+\cf3 // Everyone likes Fibonacci numbers:\cf2 \
+b = \cf4 Buffer\cf2 .loadCollection(s, [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89] * 0.1);\
+\cf3 // Or you could load some numbers from a file:\cf2 \
+b = \cf4 Buffer\cf2 .loadCollection(s, \cf4 FileReader\cf2 .read(\cf5 "/Users/danstowell/svn/stored_docs/bbx annots/onsets_gt/vb5gt.txt"\cf2 , \cf4 true\cf2 , \cf4 true\cf2 ).collect(\cf4 _\cf2 .at(0).asFloat));\
+(\
+\cf3 // ListTrig used here to output some simple grains.\cf2 \
+\cf3 // I'm also using .poll and a ramp to output the calculated time value, to check the output.\cf2 \
+\cf3 // Note the accuracy, which is limited to the accuracy of the control rate.\cf2 \
+x = \{ \cf4 |t_reset=0|\cf2 \
+	\cf4 var\cf2  trigs, env, son, ramp;\
+	trigs = \cf4 ListTrig\cf2 .kr(b.bufnum, t_reset);\
+	env = \cf4 EnvGen\cf2 .ar(\cf4 Env\cf2 .perc(0.01, 0.1), trigs);\
+	son = \cf4 SinOsc\cf2 .ar(440, 0, env * 0.2);\
+	\
+	ramp = \cf4 Phasor\cf2 .kr(t_reset, \cf4 ControlRate\cf2 .ir.reciprocal, 0, \cf4 inf\cf2 );\
+	ramp.poll(trigs, \cf5 "Trigger at time offset"\cf2 );\
+	\
+	son.dup;\
+\}.play(s)\
+);\
+x.set(\cf6 \\t_reset\cf2 , 1);}

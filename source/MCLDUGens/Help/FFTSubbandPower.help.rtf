@@ -1,0 +1,100 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs36 \cf0 FFTSubbandPower - Spectral power, divided into subbands
+\f1\b0\fs34 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs22 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 	#[power1, power2, ... powerN+1] = FFTSubbandPower.kr(chain, [cutfreq1, cutfreq2, ... cutfreqN], incdc)\
+
+\f2\b0 \
+Calculates the spectral power measure, in the same manner as [\ul FFTPower\ulnone ], but divides the spectrum into (adjacent, non-overlapping) subbands, so returns separate power measures for the different subbands.\
+\
+The
+\f0\b cutfreqs
+\f2\b0  parameter must be an array of frequencies. For example, to divide a 44100Hz signal into three subbands we might specify  [ 5512, 11025 ]  as the cutfreqs, giving subbands of 0-5512Hz, 5512-11025Hz, and 11025-22050Hz. (Frequencies above the Nyquist frequency are not included.)\
+\
+The third parameter
+\f0\b incdc
+\f2\b0  specifies whether the DC power should be included in the measurement. It defaults to 1; set it as zero to exclude the DC component.\
+\
+
+\f0\b cutfreqs
+\f2\b0  and
+\f0\b incdc
+\f2\b0  can only be specified on initialisation - they can't be modulated.\
+\
+\
+
+\f0\b Examples
+\f2\b0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf0 \
+\cf2 // Simple example\cf0 \
+s = \cf3 Server\cf0 .local.boot; \cf2 //Server.internal.boot;\cf0 \
+b = \cf3 Buffer\cf0 .alloc(s,2048,1);\
+(\
+x = \{\
+\cf3 var\cf0  in, chain, powers, cutfreqs;\
+in = \cf3 LPF\cf0 .ar(\cf3 WhiteNoise\cf0 .ar, \cf3 MouseX\cf0 .kr(10,10000, 1));\
+chain = \cf3 FFT\cf0 (b.bufnum, in);\
+\
+powers = \cf3 FFTSubbandPower\cf0 .kr(chain, [100, 200, 400, 800, 1600, 3200, 6400, 12800]);\
+\cf3 \
+Out\cf0 .ar(0, in * 0.1);\
+powers.poll(0.4);\
+\}.play(s);\
+)\
+\
+x.free;\
+\
+
+\f2\fs24 \
+In this next example we create a
+\f0\b graphic EQ meter
+\f2\b0 . The subband power measurements are written out to a control bus, then on the language side we create a task which polls the values and updates a multi-slider to display the power distribution in the familiar home hi-fi style.
+\f1\fs18 \
+\
+s = \cf3 Server\cf0 .local.boot;\
+b = \cf3 Buffer\cf0 .alloc(s,2048,1);\
+(\
+\cf3 var\cf0  win, size=8;\
+c = \cf3 Bus\cf0 .control(s, size); \cf2 // Values will be written to control busses\cf0 \
+win = \cf3 SCWindow\cf0 (\cf4 "EQ meter"\cf0 , \cf3 Rect\cf0 (100, 200, 360, 110));\
+~slider = \cf3 SCMultiSliderView\cf0 (win, \cf3 Rect\cf0 (0, 0, 350, 100));\
+~slider.value_(0.dup(size)).size_(size).isFilled_(\cf3 true\cf0 ).indexThumbSize_(350/8);\
+win.front;\
+)\
+(\
+\cf3 var\cf0  size=8;\
+x = \{\
+\cf3 var\cf0  in, chain, powers, cutfreqs;\
+in = \cf3 LPF\cf0 .ar(\cf3 WhiteNoise\cf0 .ar, \cf3 MouseX\cf0 .kr(10,10000, 1));\
+chain = \cf3 FFT\cf0 (b.bufnum, in);\
+cutfreqs = [100, 200, 400, 800, 1600, 3200, 6400];\
+powers = \cf3 FFTSubbandPower\cf0 .kr(chain, cutfreqs, 0);\
+\cf3 Out\cf0 .ar(0, (in * 0.1).dup);\
+\cf3 Out\cf0 .kr(c.index, powers);\
+\}.play(s);\
+\
+t = \cf3 Task\cf0 (\{\
+	loop\{\
+		0.1.wait;\
+		c.getn(size, \{\cf3 |vals|\cf0  \{\
+			~slider.value_((vals.log2 * 0.2).max(0));\
+			\}.defer\});\
+	\};\
+\}).start;\
+)\
+\
+x.free;\
+t.stop;\
+}

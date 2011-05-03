@@ -1,0 +1,111 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green115\blue0;\red96\green96\blue96;
+\red0\green0\blue191;\red191\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 TGrains3		buffer granulator with user envelope\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs24 \cf0 Triggers generate grains from a buffer. Each grain has a user-defined rise/decay shape and is panned between two channels of multiple outputs.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 TGrains3.ar(numChannels, trigger, bufnum, rate, centerPos, dur, pan, amp, att, dec, window, interp)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b0 \cf0 \
+
+\f0\b numChannels
+\f2\b0  - number of output channels.\
+
+\f0\b trigger
+\f2\b0  - at each trigger, the following arguments are sampled and used \
+		as the arguments of a new grain. \
+		A trigger occurs when a signal changes from <= 0 to > 0.\
+		If the trigger is audio rate then the grains will start with sample accuracy.\
+
+\f0\b bufnum
+\f2\b0  - the index of the buffer to use. It must be a one channel (mono) buffer.\
+
+\f0\b rate
+\f2\b0    -  1.0 is normal, 2.0 is one octave up, 0.5 is one octave down\
+			-1.0 is backwards normal rate ... etc.\
+		Unlike PlayBuf, the rate is multiplied by BufRate, so you needn't do that yourself.\
+
+\f0\b centerPos
+\f2\b0  - the position in the buffer in seconds at which the grain envelope will reach \
+			maximum amplitude.\
+
+\f0\b dur
+\f2\b0     -   duration of the grain in seconds.\
+
+\f0\b pan
+\f2\b0     -   a value from -1 to 1. Determines where to pan the output in the same manner as PanAz.\
+
+\f0\b amp
+\f2\b0    - amplitude of the grain.\
+
+\f0\b att
+\f2\b0 - attack time of grain in seconds.\
+
+\f0\b dec
+\f2\b0 - decay time of grain in seconds.\
+
+\f0\b window
+\f2\b0 - bufnum of rise/decay shape.\
+
+\f0\b interp
+\f2\b0  - 1,2,or 4. Determines whether the grain uses (1) no interpolation, (2) linear interpolation, \
+			or (4) cubic interpolation.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs18 \cf0 \
+\
+\cf2 s.sendMsg(\cf3 \\b_allocRead\cf2 , 10, \cf4 "sounds/a11wlk01.wav"\cf2 );\
+c=\cf5 Buffer\cf2 .alloc(s, s.sampleRate * 0.2, 1) \
+\cf6 // buffer for rise/decay shape - multiple of sr helps prevent clicks, i think.\cf2 \
+\
+(\
+\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\ql\qnatural
+\cf5 var\cf2  y, h;\
+y=\cf5 Signal\cf2 .hanningWindow(s.sampleRate * 0.4); \cf6 // twice the size of our buffer, 'cause we only use 1/2\cf2 \
+h=\cf5 Array\cf2 .fill(s.sampleRate * 0.2, \{\cf5 |i|\cf2  y[i]\});\
+c.loadCollection(h);\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 (\
+\{\
+	\cf5 var\cf2  b = 10, trate, dur, clk;\
+	trate = \cf5 MouseY\cf2 .kr(2,200,1);\
+	dur = 4 / trate;\
+	clk = \cf5 Dust\cf2 .kr(trate);\
+	\cf5 TGrains3\cf2 .ar(2, clk, 10, 1.0, \cf5 LFNoise2\cf2 .kr(0.5).range(0, \cf5 BufDur\cf2 .kr(b)) + \cf5 TRand\cf2 .kr(0, 0.02, clk), dur, 0, 0.1, \cf5 MouseX\cf2 .kr(0.003, 0.01), 0.007, c.bufnum, 4);\
+\}.play;\
+)\
+\
+(\
+\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\ql\qnatural
+\cf5 var\cf2  y, h;\
+y=\cf5 Signal\cf2 .hammingWindow(s.sampleRate * 0.4);\
+h=\cf5 Array\cf2 .fill(s.sampleRate * 0.2, \{\cf5 |i|\cf2  y[i]\});\
+c.loadCollection(h);\
+)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf2 \
+(\
+\{\
+	\cf5 var\cf2  b = 10, trate, dur, clk, pos, pan;\
+	trate = \cf5 MouseY\cf2 .kr(8,220,1);\
+	dur = 2/trate;\
+	clk = \cf5 Impulse\cf2 .kr(trate);\
+	pos = \cf5 MouseX\cf2 .kr(0, \cf5 BufDur\cf2 .kr(b)) + \cf5 TRand\cf2 .kr(0, 0.02, clk);\
+	pan = \cf5 WhiteNoise\cf2 .kr(0.6);\
+	\cf5 TGrains3\cf2 .ar(2, clk, b, 1, pos, dur, pan, 0.1, dur*0.1, dur*0.3, c.bufnum, 4);\
+\}.play;\
+)}
