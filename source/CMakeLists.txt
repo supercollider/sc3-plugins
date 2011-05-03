@@ -50,12 +50,13 @@ macro(FIND_AND_BUILD_PLUGINS DIR)
     file(GLOB PLUGIN_SRC RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${DIR}/*.cpp")
     foreach(plugin ${PLUGIN_SRC})
         get_filename_component(basename ${plugin} NAME_WE)
-        BUILD_PLUGIN(${basename} ${plugin} "")
+        BUILD_PLUGIN(${basename} ${plugin} "" "${DIR}")
     endforeach(plugin)
 endmacro()
 
 
-macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS)
+# Hacky: OSX plugins should install in PLUGIN_DIR
+macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
     add_library(${PLUGIN_NAME} MODULE ${PLUGIN_SOURCES})
     list(APPEND plugins ${PLUGIN_NAME})
     target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
@@ -67,6 +68,12 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS)
         list(APPEND supernova_plugins ${PLUGIN_NAME}_supernova)
         set_property(TARGET ${PLUGIN_NAME}_supernova
                      PROPERTY COMPILE_DEFINITION SUPERNOVA)
+    endif()
+
+    if (APPLE)
+        install(TARGETS ${PLUGIN_NAME}            
+                DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR}
+                PERMISSIONS ${PERMISSIONS})
     endif()
 endmacro()
 
@@ -100,7 +107,6 @@ set(PLUGIN_DIRS
 
 # plugins with extra lib
 set(PLUGIN_DIRS_EXTRA
-    AYUGens
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
@@ -114,28 +120,39 @@ set(plugins "")
 set(supernova_plugins "")
 
 set(CMAKE_SHARED_MODULE_PREFIX "")
+set(PLUGIN_EXTENSION ".so")
+# FIXME not sure about permissions for win32
+set(PERMISSIONS OWNER_READ OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE)
 if (APPLE OR WIN32)
 	set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
+    set(PLUGIN_EXTENSION ".scx")
+    set(PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE 
+                    GROUP_READ GROUP_EXECUTE
+                    WORLD_READ WORLD_EXECUTE)
 endif()
 
+
 GET_GCC_VERSION(gcc_version)
+
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
     set(INSTALL_DESTINATION_SUPERNOVA "lib/supernova/plugins")
     if (QUARKS)
         set(INSTALL_DESTINATION_LADSPALIST
-                "share/SuperCollider/SC3plugins/LadspaUGen/")
+                "share/SuperCollider/SC3plugins/LadspaUGen")
         set(INSTALL_DESTINATION_DISTRO
                 "share/SuperCollider/SC3plugins")
     else()
         set(INSTALL_DESTINATION_LADSPALIST
-                "share/SuperCollider/Extensions/SC3plugins/LadspaUGen/")
+                "share/SuperCollider/Extensions/SC3plugins/LadspaUGen")
         set(INSTALL_DESTINATION_DISTRO
                 "share/SuperCollider/Extensions/SC3plugins")
     endif(QUARKS)
 else()
-    set(INSTALL_DESTINATION "plugins")
+    set(INSTALL_DESTINATION "SC3plugins")
     set(INSTALL_DESTINATION_SUPERNOVA "plugins_supernova")
     set(INSTALL_DESTINATION_LADSPALIST "SC3plugins/LadspaUGen")
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
@@ -152,10 +169,11 @@ endforeach(DIR)
 #---------------------
 
 # MembraneUGens
-BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp" "")
+BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
+             "" "MembraneUGens")
 
 # LadspaUGen
-BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "")
+BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "" "LadspaUGen")
 add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
 target_link_libraries(ladspalist dl)
 
@@ -167,7 +185,8 @@ else()
     set (PitchDetectionLibs ${FFTW3F_LIBRARY})
 endif()
 
-BUILD_PLUGIN(PitchDetection "${PitchDetectionSources};${FFTSOURCES}" ${PitchDetectionLibs})
+BUILD_PLUGIN(PitchDetection "${PitchDetectionSources};${FFTSOURCES}"
+             ${PitchDetectionLibs} "PitchDetection")
 
 # StkUGens
 file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
@@ -183,7 +202,7 @@ list(REMOVE_ITEM STKSources ${UnneededSTKSources})
 include_directories(StkUGens/stk-4.4.2)
 include_directories(StkUGens/stk-4.4.2/include)
 include_directories(StkUGens/stk-4.4.2/src/include)
-BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "")
+BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 
 # NCAnalysisUGens
 set(FFTSOURCES
@@ -199,20 +218,24 @@ else()
     set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
 
-BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources};${FFTSOURCES}" ${NCAnalysisLibs})
+BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources};${FFTSOURCES}"
+             ${NCAnalysisLibs} "NCAnalysisUGens")
 
 # AYUGens
 if (AY)
+    list(APPEND PLUGIN_DIRS_EXTRA AYUGens)
     include_directories(AYUGens/AY_libayemu/include)
-    BUILD_PLUGIN(AY_UGen "AYUGens/AY_UGen.cpp;AYUGens/AY_libayemu/src/ay8912.c" "")
+    BUILD_PLUGIN(AY_UGen "AYUGens/AY_UGen.cpp;AYUGens/AY_libayemu/src/ay8912.c"
+                 "" "AYUGens")
 endif()
 
 # TJUGens
 if (APPLE AND gcc_version MATCHES "4\\.0.*")
+    list(REMOVE_ITEM PLUGIN_DIRS_EXTRA TJUGens)
     message(WARNING "TJUGens won't be built with gcc-4.0 on Apple")
 else()
     file(GLOB TJUGensSources TJUGens/*.cpp)
-    BUILD_PLUGIN(TJUGens "${TJUGensSources}" "")
+    BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
 
@@ -220,22 +243,24 @@ endif()
 # INSTALL
 #--------
 
-# plugins
-install(TARGETS ${plugins}
-        DESTINATION ${INSTALL_DESTINATION}
-        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+# OSX plugins install is done in BUILD_PLUGIN macro
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    install(TARGETS ${plugins}
+            DESTINATION ${INSTALL_DESTINATION}
+            PERMISSIONS ${PERMISSIONS})
 
-install(TARGETS ${supernova_plugins}
-        DESTINATION ${INSTALL_DESTINATION_SUPERNOVA}
-        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    install(TARGETS ${supernova_plugins}
+            DESTINATION ${INSTALL_DESTINATION_SUPERNOVA}
+            PERMISSIONS ${PERMISSIONS})
+endif()        
 
 install(TARGETS ladspalist
         DESTINATION ${INSTALL_DESTINATION_LADSPALIST}
-        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+        PERMISSIONS ${PERMISSIONS})
 
 # install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
 foreach (DIR ${PLUGIN_DIRS};${PLUGIN_DIRS_EXTRA})
     install(DIRECTORY "${DIR}/sc/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${DIR}"
             PATTERN "*"
-            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+            PERMISSIONS ${PERMISSIONS})
 endforeach(DIR)

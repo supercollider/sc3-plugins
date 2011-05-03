@@ -10,7 +10,8 @@ dmg (osx):
 
     sc3-plugins/build/$ make && make install
 
-The dmg image will be generated in sc3-plugins/build_osx
+The dmg image will be generated in sc3-plugins/build/build_osx.
+The dmg image will contain 'License.txt', 'README.txt' and 'SC3plugins'.
 note: the quarks DIRECTORY is included in the dmg by default
 
 -------------

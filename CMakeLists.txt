@@ -16,22 +16,31 @@ add_custom_target(uninstall
 set(SC_PATH "/usr/include/SuperCollider" CACHE STRING "SuperCollider path")
 
 
-# osx `make install' defaults into sc3-plugins directory
-if (APPLE AND ${CMAKE_INSTALL_PREFIX} MATCHES "/usr/local") # don't overwrite if not default
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build_osx")
-endif()
-
-
 option(SUPERNOVA "Build plugins for supernova")
 option(AY "Build with AY ugens")
 option(QUARKS "Install plugins as quarks")
 option(OSX_PACKAGE "Package dmg for Apple")
+option(IN_PLACE_BUILD "Build and install in cmake build folder" ON)
 
+
+# osx `make install' defaults into cmake_build/SC3-plugins directory
+if (APPLE AND IN_PLACE_BUILD)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}")
+endif()
+
+# when packaging OSX dmg, install in 'cmake_build/build_osx' so we can include
+# directly the created SC3plugins subfolder in the root of the dmg (instead of
+# all plugins directories in the dmg root)
+if (APPLE AND OSX_PACKAGE)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/build_osx")
+endif()
 
 add_subdirectory(source)
+
 if (QUARKS OR OSX_PACKAGE) # add quarks DIRECTORY in osx dmg
   add_subdirectory(quarks)
 endif()
+
 if (OSX_PACKAGE)
   add_subdirectory(osx_package)
 endif()

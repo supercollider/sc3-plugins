@@ -25,9 +25,13 @@ and then:
 
     sc3-plugins/build/$ make install
 
-On OSX, the plugins will end up in sc3-plugins/build_osx. Copy everything inside
-that folder into /Library/Application Support/SuperCollider/Extensions (or
-alternatively into a user specific ~/Library folder).
+On OSX, the plugins will end up in sc3-plugins/build/SC3plugins.
+Copy 'SC3plugins' folder into:
+/Library/Application Support/SuperCollider/Extensions
+(or into a user specific ~/Library folder).
+
+WARNING: on OSX, if you want to install into CMAKE_INSTALL_PREFIX, you have to
+specify it by disabling IN_PLACE_BUILD cmake option which defaults to ON (see below).
 
 --------
 Options:
@@ -36,6 +40,10 @@ Options:
 - To set the install target: (default on linux '/usr/local')
 
     sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+
+- (OSX ONLY) Install in cmake build folder instead of CMAKE_INSTALL_PREFIX (default=ON)
+
+    sc3-plugins/build/$ cmake -DIN_PLACE_BUILD=ON
 
 - Build the plugins as quarks: (default 'OFF')
 
