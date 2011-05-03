@@ -9,6 +9,8 @@ source/GlitchUGens/GlitchUGens.cpp
 source/GlitchUGens/GlitchUGens.html
 source/GlitchUGens/GlitchUGens.sc
 
+then edit sc3-plugins/source/CMakeLists.txt and add your folder to PLUGIN_DIRS.
+
 
 For the Quark-installable option, I have created a document Generate_Quark.scd in utils/, which
 also creates a help file, listing all the classes and helpfiles.

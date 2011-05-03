@@ -2,43 +2,63 @@
 How to use the cmake build system
 ---------------------------------
 
-
 Make a directory for the cmake build files to go into:
 
-sc3-plugins/$ mkdir cmake_build
-sc3-plugins/$ cd cmake_build
+    sc3-plugins/$ mkdir build && cd build
 
-sc3-plugins/cmake_build/$ cmake ..
+    sc3-plugins/build/$ cmake ..
 
-      It assumes you have the supercollider header include files located in:
-      /usr/include/SuperCollider/
+It assumes you have the supercollider header include files located in:
+/usr/include/SuperCollider/
 
-      If you have them in another location:
+If you have them in another location:
 
-      sc3-plugins/cmake_build/$ cmake -DSC_PATH=/usr/local/include/SuperCollider/ ..
+    sc3-plugins/build/$ cmake -DSC_PATH=/usr/local/include/SuperCollider/ ..
 
-      or
+or:
 
-      sc3-plugins/cmake_build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
+    sc3-plugins/build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
 
+and then:
 
-      To set the install target:
-      sc3-plugins/cmake_build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+    sc3-plugins/build/$ make
 
+    sc3-plugins/build/$ make install
 
-sc3-plugins/cmake_build/$ make
+On OSX, the plugins will end up in sc3-plugins/build_osx. Copy everything inside
+that folder into /Library/Application Support/SuperCollider/Extensions (or
+alternatively into a user specific ~/Library folder).
 
-sc3-plugins/cmake_build/$ make install
+--------
+Options:
+--------
+
+- To set the install target: (default on linux '/usr/local')
+
+    sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+
+- Build the plugins as quarks: (default 'OFF')
+
+    sc3-plugins/build/$ cmake -DQUARKS=ON ..
+
+- Build supernova-plugins: (default 'OFF')
+
+    sc3-plugins/build/$ cmake -DSUPERNOVA=ON ..
+
+- Build AYUGens: (default 'OFF')
+
+    sc3-plugins/build/$ cmake -AY=ON ..
+
+To print all cmake options:
+
+    sc3-plugins/build/$ cmake -L ..
 
 --------------
 Starting over:
 --------------
 
-  if something went wrong and you want to start from scratch, delete everything in the cmake_build directory that you made:
-  sc3-plugins/cmake_build/$ rm -r *
+If something went wrong and you want to start from scratch, delete everything
+in the build directory that you made:
 
---------
-Options:
---------
-build plugins as quarks:
-sc3-plugins/cmake_build$ cmake -DQUARKS=ON ..
+    sc3-plugins/build/$ make uninstall (only if you did `make install' before)
+    sc3-plugins/build/$ rm -r *

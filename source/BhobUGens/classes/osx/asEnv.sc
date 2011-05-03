@@ -1,4 +1,4 @@
-+ SCEnvelopeView {
++ EnvelopeView {
 	asEnv {|curves, timeScale=1, levelScale=1, levelBias=0, releaseNode, loopNode=0|
 		var val, times, levels;
 		times=Array.new;
