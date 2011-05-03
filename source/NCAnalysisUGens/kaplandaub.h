@@ -30,12 +30,12 @@
   <p>
   The wavelet function is passed two or more samples
   and calculates a wavelet coefficient.  In the case of
-  the Haar wavelet this is 
+  the Haar wavelet this is
   </p>
 
   <pre>
   coef<sub>i</sub> = odd<sub>i</sub> - even<sub>i</sub>
-  or 
+  or
   coef<sub>i</sub> = 0.5 * (odd<sub>i</sub> - even<sub>i</sub>)
   </pre>
   <p>
@@ -48,7 +48,7 @@
   </p>
   <p>
   The Daubechies D4 wavelet algorithm also has a wavelet
-  and a scaling function.  The coefficients for the 
+  and a scaling function.  The coefficients for the
   scaling function are denoted as h<sub>i</sub> and the
   wavelet coefficients are g<sub>i</sub>.
   </p>
@@ -101,8 +101,8 @@
 
   <p>
   Using a standard dot product is grossly inefficient since most
-  of the operands are zero.  In practice the wavelet coefficient 
-  values are moved along the signal vector and a four element 
+  of the operands are zero.  In practice the wavelet coefficient
+  values are moved along the signal vector and a four element
   dot product is calculated.  Expressed in terms of arrays, for
   the forward transform this would be:
   </p>
@@ -123,10 +123,10 @@
   number of elements.
   </p>
   <p>
-  If i=N-1, the i+2 and i+3 elements will be beyond the end of 
-  the array.  There are a number of methods for handling the 
-  wavelet edge problem.  This version of the algorithm acts 
-  like the data is periodic, where the data at the start of 
+  If i=N-1, the i+2 and i+3 elements will be beyond the end of
+  the array.  There are a number of methods for handling the
+  wavelet edge problem.  This version of the algorithm acts
+  like the data is periodic, where the data at the start of
   the signal wraps around to the end.
   </p>
   <p>
@@ -160,25 +160,25 @@ class Daubechies {
    float Ih0, Ih1, Ih2, Ih3;
    float Ig0, Ig1, Ig2, Ig3;
    float* tmp;
-   
-   
+
+
    /**
      Forward Daubechies D4 transform
     */
    void transform( float* a, const int n )
    {
-	   
-	  // printf("inside transform a %p tmp %p \n", a, tmp);
-	   
 
-	   
+	  // printf("inside transform a %p tmp %p \n", a, tmp);
+
+
+
 	  // for(int i=0; i<64; ++i) printf("transform data i %d a %f tmp %f \n",i, a[i], tmp[i]);
-	   
-	   
+
+
       if (n >= 4) {
          int i, j;
          const int half = n >> 1;
-         
+
 	 //float* tmp = new float[n];
 
          for (i = 0, j = 0; j < n-3; j += 2, i++) {
@@ -227,7 +227,7 @@ class Daubechies {
 
    public:
 
-   Daubechies() 
+   Daubechies()
    {
       const float sqrt_3 = sqrt( 3 );
       const float denom = 4 * sqrt( 2 );
@@ -256,19 +256,19 @@ class Daubechies {
       Ig1 = g3;  // -h0
       Ig2 = h1;
       Ig3 = g1;  // -h2
-	  
+
 	  tmp = new float[4096]; //make sure big enough never to be an issue; size chosen here limits overall wavelet transform max N
    }
 
    ~Daubechies() {
 	    delete [] tmp;
    }
-	   
+
    void daubTrans( float* ts, int N )
    {
       int n;
       for (n = N; n >= 4; n >>= 1) {
-         
+
 		  //printf("pre sub transform %d \n",n);
 		  transform( ts, n );
 		  //printf("post sub transform %d \n",n);
@@ -285,4 +285,3 @@ class Daubechies {
    }
 
 }; // Daubechies
-

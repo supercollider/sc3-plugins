@@ -45,7 +45,3 @@ void load(InterfaceTable *inTable)
 	loadLPCAnalyzer(inTable);
 
 }
-
-
-
-

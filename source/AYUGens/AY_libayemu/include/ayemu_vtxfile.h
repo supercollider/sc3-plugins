@@ -64,12 +64,12 @@ typedef struct
     \return Return true if success, else false
 */
 EXTERN int ayemu_vtx_open(ayemu_vtx_t *vtx, const char *filename);
-  
+
 /** Read and encode lha data from .vtx file.
  * \return Return pointer to unpacked data or NULL.
  */
 EXTERN char *ayemu_vtx_load_data(ayemu_vtx_t *vtx);
-  
+
 /** Print formated file name. If fmt is NULL the default format %a - %t will used
  * \return none.
  */

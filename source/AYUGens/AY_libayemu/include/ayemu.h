@@ -16,7 +16,7 @@
   License along with this library; if not, write to the Free
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-  Alexander Sashnov 
+  Alexander Sashnov
   sashnov@ngs.ru
 */
 
@@ -61,7 +61,7 @@
 # ifdef WIN32
 #  ifdef __BORLANDC__
 #   ifdef BUILD_SDL
-#    define DECLSPEC 
+#    define DECLSPEC
 #   else
 #    define DECLSPEC __declspec(dllimport)
 #   endif

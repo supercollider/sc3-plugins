@@ -1,13 +1,14 @@
 If you add a new plugin, please keep to this pattern:
 
-Add a folder in the 'source' directory with your cpp|sc|html files.
-This folder should end with "UGens", and starting with whichever standard pattern
-in the filename you have for the UGens.
+Add a folder in the 'source' directory, that ends with "UGens", and starting
+with whichever standard pattern in the filename you have for the UGens.
+Your source files should go into this directory. Beware, all your sc-specific
+files (sc|html|txt|...) should go into a 'sc' subdirectory.
 
 e.g. the GLitchUGens comprise:
 source/GlitchUGens/GlitchUGens.cpp
-source/GlitchUGens/GlitchUGens.html
-source/GlitchUGens/GlitchUGens.sc
+source/GlitchUGens/sc/GlitchUGens.html
+source/GlitchUGens/sc/GlitchUGens.sc
 
 then edit sc3-plugins/source/CMakeLists.txt and add your folder to PLUGIN_DIRS.
 

@@ -71,17 +71,6 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS)
 endmacro()
 
 
-# INSTALL_DIST_FILES
-# GLOB patterns are extra arguments
-macro(INSTALL_DIST_FILES SEARCH_DIR DESTINATION)
-    # TODO: new help system files?
-    file(GLOB_RECURSE DIST_FILES RELATIVE "${SEARCH_DIR}" ${ARGN})
-    install(FILES ${DIST_FILES}
-            DESTINATION "${DESTINATION}"
-            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endmacro()
-
-
 #-----------------------
 # plugins without extras
 #-----------------------
@@ -113,9 +102,9 @@ set(PLUGIN_DIRS
 set(PLUGIN_DIRS_EXTRA
     AYUGens
     LadspaUGen
-    MembraneUGen
+    MembraneUGens
     NCAnalysisUGens
-    PitchDetectionUGens
+    PitchDetection
     StkUGens
     TJUGens
 )
@@ -155,13 +144,6 @@ endif()
 
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
-endforeach(DIR)
-
-# install help and sc files
-list(APPEND ${PLUGIN_DIRS} ${PLUGIN_DIRS_EXTRA})
-foreach(DIR ${PLUGIN_DIRS})
-    INSTALL_DIST_FILES("${CMAKE_CURRENT_SOURCE}" "${INSTALL_DESTINATION_DISTRO}/${DIR}"
-            "${DIR}/*.html" "${DIR}/*.rtf" "${DIR}/*.sc" "${DIR}/*.scd")
 endforeach(DIR)
 
 
@@ -210,19 +192,19 @@ set(FFTSOURCES
     scfft_old/SCComplex.cpp
 )
 
-file(GLOB NCAnalysisSources NCAnalysis/*cpp)
+file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
 if(APPLE)
     set (NCAnalysisLibs "-framework vecLib")
 else()
     set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
 
-BUILD_PLUGIN(NCAnalysis "${NCAnalysisSources};${FFTSOURCES}" ${NCAnalysisLibs})
+BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources};${FFTSOURCES}" ${NCAnalysisLibs})
 
 # AYUGens
 if (AY)
-    include_directories(AY_libayemu/include)
-    BUILD_PLUGIN(AY_UGen "AYUGens/AY_UGen.cpp;AY_libayemu/src/ay8912.c" "")
+    include_directories(AYUGens/AY_libayemu/include)
+    BUILD_PLUGIN(AY_UGen "AYUGens/AY_UGen.cpp;AYUGens/AY_libayemu/src/ay8912.c" "")
 endif()
 
 # TJUGens
@@ -238,6 +220,7 @@ endif()
 # INSTALL
 #--------
 
+# plugins
 install(TARGETS ${plugins}
         DESTINATION ${INSTALL_DESTINATION}
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -249,3 +232,10 @@ install(TARGETS ${supernova_plugins}
 install(TARGETS ladspalist
         DESTINATION ${INSTALL_DESTINATION_LADSPALIST}
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+# install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
+foreach (DIR ${PLUGIN_DIRS};${PLUGIN_DIRS_EXTRA})
+    install(DIRECTORY "${DIR}/sc/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${DIR}"
+            PATTERN "*"
+            PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endforeach(DIR)
