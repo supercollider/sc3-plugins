@@ -12,9 +12,12 @@ configure_file(
 add_custom_target(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-
-set(SC_PATH "/usr/include/SuperCollider" CACHE STRING "SuperCollider path")
-
+find_package(SuperCollider3)
+if (NOT SC_FOUND)
+	message(SEND_ERROR "cannot find SuperCollider3 headers. Set the variable SC_PATH.")
+else()
+	message(STATUS "Using SC source located at ${SC_PATH}")
+endif()
 
 option(SUPERNOVA "Build plugins for supernova")
 option(AY "Build with AY ugens")
