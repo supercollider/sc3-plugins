@@ -134,6 +134,15 @@ if (APPLE OR WIN32)
 endif()
 
 
+# build source files placed in 'local' by the user (i.e. by default this does nothing)
+file(GLOB local_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "local/*.cpp")
+message(STATUS "local_sources: ${local_sources}")
+foreach(plugin ${local_sources})
+    string(REPLACE .cpp "" plugin_name ${plugin} )
+    string(REPLACE "local/" "" plugin_name ${plugin_name} )
+    BUILD_PLUGIN(${plugin_name} ${plugin} "" ${plugin_name})
+endforeach(plugin)
+
 GET_GCC_VERSION(gcc_version)
 
 
