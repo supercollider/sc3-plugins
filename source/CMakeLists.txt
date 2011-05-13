@@ -169,10 +169,12 @@ message(STATUS "local_sources: ${local_sources}")
 foreach(plugin ${local_sources})
     string(REPLACE .cpp "" plugin_name ${plugin} )
     string(REPLACE "local/" "" plugin_name ${plugin_name} )
-    BUILD_PLUGIN(${plugin_name} ${plugin} "" ${plugin_name})
+    BUILD_PLUGIN(${plugin_name} ${plugin} "" "local")
 endforeach(plugin)
-
-
+# local can have help files and classes too
+install(DIRECTORY local DESTINATION "${INSTALL_DESTINATION_DISTRO}"
+    FILES_MATCHING PATTERN "*.sc" PATTERN "*.scd" PATTERN "*.html" PATTERN "*.schelp" PATTERN "*.rtf"
+    PERMISSIONS ${PERMISSIONS})
 
 #---------------------
 # plugins with extras:
