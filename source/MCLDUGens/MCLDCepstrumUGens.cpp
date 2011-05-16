@@ -1,7 +1,7 @@
 /*
 
 Cesprum UGens for SuperCollider, by Dan Stowell.
-(c) Dan Stowell 2009, 2010.
+(c) Dan Stowell 2009, 2010, 2011.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ Cesprum UGens for SuperCollider, by Dan Stowell.
 */
 
 #include "SC_PlugIn.h"
-#include "SCComplex.h"
 #include "FFT_UGens.h"
 #include "SC_fftlib.h" // for Cepstrum and reverse
 
@@ -33,7 +32,6 @@ struct Cepstrum : Unit
 {
 	SndBuf *buf_ceps, *buf_spec;
 	scfft *m_scfft;
-	float *m_trbuf;
 };
 struct ICepstrum : Cepstrum {
 };
@@ -51,33 +49,6 @@ extern "C"
 	void ICepstrum_Ctor(ICepstrum* unit);
 	void ICepstrum_next(ICepstrum* unit, int inNumSamples);
 	void ICepstrum_Dtor(ICepstrum* unit);
-}
-
-SCPolarBuf* ToPolarApx(SndBuf *buf)
-{
-	if (buf->coord == coord_Complex) {
-		SCComplexBuf* p = (SCComplexBuf*)buf->data;
-		int numbins = buf->samples - 2 >> 1;
-		for (int i=0; i<numbins; ++i) {
-			p->bin[i].ToPolarApxInPlace();
-		}
-		buf->coord = coord_Polar;
-	}
-
-	return (SCPolarBuf*)buf->data;
-}
-
-SCComplexBuf* ToComplexApx(SndBuf *buf)
-{
-	if (buf->coord == coord_Polar) {
-		SCPolarBuf* p = (SCPolarBuf*)buf->data;
-		int numbins = buf->samples - 2 >> 1;
-		for (int i=0; i<numbins; ++i) {
-			p->bin[i].ToComplexApxInPlace();
-		}
-		buf->coord = coord_Complex;
-	}
-	return (SCComplexBuf*)buf->data;
 }
 
 InterfaceTable *ft;
@@ -98,7 +69,7 @@ void ICepstrum_Ctor(ICepstrum* unit){
 	ICepstrum_next(unit, 1);
 }
 
-bool Cepstrum_next_common(Cepstrum* unit, float fbufnum_spec, float fbufnum_ceps, bool forward) {
+bool Cepstrum_next_common(Cepstrum* unit, float fbufnum_spec, float fbufnum_ceps, SCFFT_Direction dirn) {
 	// Grab the buffer references, check they're sane and match the required sizes etc
 	uint32 ibufnum_ceps = (int)fbufnum_ceps;
 	uint32 ibufnum_spec = (int)fbufnum_spec;
@@ -137,11 +108,9 @@ bool Cepstrum_next_common(Cepstrum* unit, float fbufnum_spec, float fbufnum_ceps
 	if(unit->m_scfft == NULL){
 		//Print("unit->m_scfft == NULL so setting up.\n");
 		unsigned int cepsize = unit->buf_ceps->samples;
-		size_t trbufsize = scfft_trbufsize(cepsize);
 
-		unit->m_trbuf = (float*)RTAlloc(unit->mWorld, trbufsize);
-		unit->m_scfft = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
-		scfft_create(unit->m_scfft, cepsize, cepsize, WINDOW_RECT, unit->buf_ceps->data, unit->buf_ceps->data, unit->m_trbuf, forward);
+        SCWorld_Allocator alloc(ft, unit->mWorld);
+		unit->m_scfft = scfft_create(cepsize, cepsize, kRectWindow, unit->buf_ceps->data, unit->buf_ceps->data, dirn, alloc);
 	}
 
 	// We could check to make sure that the buffer references match what the scfft struct knows...
@@ -155,7 +124,7 @@ void Cepstrum_next(Cepstrum* unit, int inNumSamples){
 	if (fbufnum_spec < 0.f) { ZOUT0(0) = -1.f; return; }
 	// First buffer holds the cepstrum (2x smaller than FFT chain buf)
 	float fbufnum_ceps = ZIN0(0);
-	if(!Cepstrum_next_common(unit, fbufnum_spec, fbufnum_ceps, true))
+	if(!Cepstrum_next_common(unit, fbufnum_spec, fbufnum_ceps, kForward))
 		return;
 
 	SndBuf *buf_ceps = unit->buf_ceps;
@@ -198,7 +167,7 @@ void ICepstrum_next(ICepstrum* unit, int inNumSamples){
 	if (fbufnum_ceps < 0.f) { ZOUT0(0) = -1.f; return; }
 	// Second buffer is the ordinary chain buf
 	float fbufnum_spec = ZIN0(1);
-	if(!Cepstrum_next_common(unit, fbufnum_spec, fbufnum_ceps, false))
+	if(!Cepstrum_next_common(unit, fbufnum_spec, fbufnum_ceps, kBackward))
 		return;
 
 	SndBuf *buf_ceps = unit->buf_ceps;
@@ -231,12 +200,10 @@ void ICepstrum_next(ICepstrum* unit, int inNumSamples){
 }
 
 void Cepstrum_Dtor(Cepstrum* unit){
-	if(unit->m_trbuf) RTFree(unit->mWorld, unit->m_trbuf);
 	if(unit->m_scfft) RTFree(unit->mWorld, unit->m_scfft);
 }
 
 void ICepstrum_Dtor(ICepstrum* unit){
-	if(unit->m_trbuf) RTFree(unit->mWorld, unit->m_trbuf);
 	if(unit->m_scfft) RTFree(unit->mWorld, unit->m_scfft);
 }
 
@@ -245,9 +212,6 @@ void ICepstrum_Dtor(ICepstrum* unit){
 PluginLoad(MCLDCepstrum)
 {
 	ft= inTable;
-
-	init_SCComplex(inTable);
-	scfft_global_init(); // for Cepstrum etc
 
 	DefineDtorUnit(Cepstrum);
 	DefineDtorUnit(ICepstrum);
