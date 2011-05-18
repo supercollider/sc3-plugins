@@ -1,4 +1,5 @@
 .DS_Store
+build
 source/local/*.cpp
 source/local/*.scd
 source/local/*.sc
