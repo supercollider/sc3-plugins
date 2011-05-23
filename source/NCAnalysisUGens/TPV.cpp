@@ -202,8 +202,9 @@ void TPV_next(TPV *unit, int numSamples)
 	float* out = OUT(0);
 
 	//int numSamples = unit->mWorld->mFullRate.mBufLength;
+    
 
-
+    
 	if (fftbufnum> (-0.5)) {
 
 		newframe(unit, (int)fftbufnum);
@@ -356,11 +357,25 @@ void TPV_next(TPV *unit, int numSamples)
 void newframe(TPV *unit, int ibufnum) {
 
 	int i,j;
-
-	//get FFT buf
+    
+	//get FFT buf, allow for local buffers and supernova LOCK_SNDBUF
 	World *world = unit->mWorld;
-	if (ibufnum >= world->mNumSndBufs) ibufnum = 0;
-	SndBuf *buf = world->mSndBufs + ibufnum;
+    SndBuf *buf; // = world->mSndBufs + ibufnum;
+    
+    if (ibufnum >= world->mNumSndBufs) { 
+        int localBufNum = ibufnum - world->mNumSndBufs; 
+        Graph *parent = unit->mParent; 
+        if(localBufNum <= parent->localBufNum) { 
+            buf = parent->mLocalSndBufs + localBufNum; 
+        } else { 
+            buf = world->mSndBufs; 
+        } 
+	} else { 
+        buf = world->mSndBufs + ibufnum; 
+	}
+    
+	LOCK_SNDBUF(buf); 
+
 	//int numbins = buf->samples - 2 >> 1;
 
 	//float * data= buf->data;

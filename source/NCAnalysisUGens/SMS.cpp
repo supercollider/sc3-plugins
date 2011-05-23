@@ -56,13 +56,15 @@
 //#include <math.h>
 
 //
-extern "C"
-{
-	//void load(InterfaceTable *inTable);
 
-	//Requires C linking
-	#include "fftlib.h"
-}
+//extern "C"
+//{
+//	//void load(InterfaceTable *inTable);
+//
+//	//Requires C linking
+//	#include "fftlib.h"
+//}
+
 //
 //InterfaceTable *ft;
 
@@ -187,7 +189,7 @@ struct SMS : Unit {
 	int m_log2n;			//10
 
 	//SC FFT variables
-	float* m_transformbuf;
+	//float* m_transformbuf;
 	scfft* m_scfftinput;
 	scfft* m_scfftresynth;
 	scfft* m_scifft;
@@ -329,7 +331,7 @@ void SMS_Ctor(SMS* unit) {
 
 	//unit->tcache=  (float*)RTAlloc(unit->mWorld, unit->m_hopsize * sizeof(float));
 
-	//printf("another check %d windowsize %d hopsize %d \n", unit->m_numoutputs, unit->m_windowsize, unit->m_hopsize);
+	//printf("another check: windowsize %d hopsize %d \n", unit->m_windowsize, unit->m_hopsize);
 
 	unit->m_inputbuffer = (float*)RTAlloc(unit->mWorld, unit->m_windowsize * sizeof(float));
 	unit->m_inputpos = 0;
@@ -350,8 +352,6 @@ void SMS_Ctor(SMS* unit) {
 	//double hopsize samples worth
 	unit->m_deterministicresynthesis=(float*)RTAlloc(unit->mWorld, (unit->m_nover2) * sizeof(float));
 
-
-
 	//two forwards and one inverse FFT
 
 	//rffts(resynthesis, unit->m_log2n, 1, g_GreenCosTable);
@@ -359,24 +359,33 @@ void SMS_Ctor(SMS* unit) {
 	//rffts(inputbuffer, unit->m_log2n, 1, g_GreenCosTable);
 	//riffts(q, unit->m_log2n, 1, g_GreenCosTable);
 
-	unit->m_transformbuf = (float*)RTAlloc(unit->mWorld, scfft_trbufsize(unit->m_windowsize));
+	//unit->m_transformbuf = (float*)RTAlloc(unit->mWorld, scfft_trbufsize(unit->m_windowsize));
 
-	unit->m_scfftinput = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
-	unit->m_scfftresynth = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
-	unit->m_scifft = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+    SCWorld_Allocator alloc(ft, unit->mWorld);
 
-	//scfft, input size, window size, window type, in, out, transfer, forwards flag
-	scfft_create(unit->m_scfftinput, unit->m_windowsize, unit->m_windowsize, WINDOW_HANN, unit->m_inplace, unit->m_inplace, unit->m_transformbuf, true);
-	//should be WINDOW_RECT or WINDOW_HANN? WINDOW_HANN because comparing FFT of resynthesis to original magnitude spectrum, so both must have same windowing, see Fig 1 in CMJ 14(4): p.14
-	//scfft_create(unit->m_scfftresynth, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_straightresynthesis, unit->m_straightresynthesis, unit->m_transformbuf, true);
-	scfft_create(unit->m_scfftresynth, unit->m_windowsize, unit->m_windowsize, WINDOW_HANN, unit->m_straightresynthesis, unit->m_straightresynthesis, unit->m_transformbuf, true);
-	//scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_q, unit->m_q, unit->m_transformbuf, false);
-	scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_straightresynthesis, unit->m_inplace, unit->m_transformbuf, false);
+    unit->m_scfftinput = scfft_create(unit->m_windowsize, unit->m_windowsize, kHannWindow, unit->m_inplace, unit->m_inplace, kForward, alloc);
 
-	unit->m_scifftresynth1 = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+    unit->m_scfftresynth = scfft_create(unit->m_windowsize, unit->m_windowsize, kHannWindow, unit->m_straightresynthesis, unit->m_straightresynthesis, kForward, alloc);
+    
+    unit->m_scifft = scfft_create(unit->m_windowsize, unit->m_windowsize, kRectWindow, unit->m_straightresynthesis, unit->m_inplace, kBackward, alloc);
+ 	    
+//	unit->m_scfftinput = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+//	unit->m_scfftresynth = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+//	unit->m_scifft = (scfft*)RTAlloc(unit->mWorld, sizeof(scfft));
+//
+//	//scfft, input size, window size, window type, in, out, transfer, forwards flag
+//	scfft_create(unit->m_scfftinput, unit->m_windowsize, unit->m_windowsize, WINDOW_HANN, unit->m_inplace, unit->m_inplace, unit->m_transformbuf, true);
+//	//should be WINDOW_RECT or WINDOW_HANN? WINDOW_HANN because comparing FFT of resynthesis to original magnitude spectrum, so both must have same windowing, see Fig 1 in CMJ 14(4): p.14
+//	//scfft_create(unit->m_scfftresynth, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_straightresynthesis, unit->m_straightresynthesis, unit->m_transformbuf, true);
+//	scfft_create(unit->m_scfftresynth, unit->m_windowsize, unit->m_windowsize, WINDOW_HANN, unit->m_straightresynthesis, unit->m_straightresynthesis, unit->m_transformbuf, true);
+//	//scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_q, unit->m_q, unit->m_transformbuf, false);
+//	scfft_create(unit->m_scifft, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->m_straightresynthesis, unit->m_inplace, unit->m_transformbuf, false);
 
-	unit->resynth1= (float*)RTAlloc(unit->mWorld, (unit->m_windowsize) * sizeof(float));
-	scfft_create(unit->m_scifftresynth1, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->resynth1, unit->resynth1, unit->m_transformbuf, false);
+    unit->resynth1= (float*)RTAlloc(unit->mWorld, (unit->m_windowsize) * sizeof(float));
+    unit->m_scifftresynth1= scfft_create(unit->m_windowsize, unit->m_windowsize, kRectWindow, unit->resynth1, unit->resynth1, kBackward, alloc);
+
+    
+//	scfft_create(unit->m_scifftresynth1, unit->m_windowsize, unit->m_windowsize, WINDOW_RECT, unit->resynth1, unit->resynth1, unit->m_transformbuf, false);
 
 	float * ifftsum= unit->resynth1;
 	for (j=0; j<unit->m_windowsize; ++j)
@@ -409,12 +418,14 @@ void SMS_Ctor(SMS* unit) {
 	unit->m_maxpeaks=(int)ZIN0(1);
 	//int m_maxlistsize; //double m_maxpeaks
 
+    //no LocalBuf support for graphics buffer since communicating back to language
+    
 	float fbufnum = ZIN0(10);
 	//if (bufnum >= world->mNumSndBufs) bufnum = 0;
 	World * world = unit->mWorld;
 
 	//printf("fbufnum %f int %d \n",fbufnum, (int)fbufnum);
-
+    
 	if(fbufnum>=0.f){
 
 		int bufnum= (int)fbufnum;
@@ -491,53 +502,64 @@ buf->data[0]= 0; //start with no trails to paint
 void SMS_Dtor(SMS *unit)
 {
 
-	//
-	if(unit->m_scfftinput){
-		scfft_destroy(unit->m_scfftinput);
-		RTFree(unit->mWorld, unit->m_scfftinput);
-	}
-
-	if(unit->m_scfftresynth){
-		scfft_destroy(unit->m_scfftresynth);
-		RTFree(unit->mWorld, unit->m_scfftresynth);
-	}
-
-	if(unit->m_scifft){
-		scfft_destroy(unit->m_scifft);
-		RTFree(unit->mWorld, unit->m_scifft);
-	}
-
-
-
-
-	RTFree(unit->mWorld, unit->m_tracks2);
-
+    
+    RTFree(unit->mWorld, unit->m_tracks2);
+    
 	RTFree(unit->mWorld, unit->m_tracks);
 	RTFree(unit->mWorld, unit->m_prevpeaks);
 	RTFree(unit->mWorld, unit->m_newpeaks);
-
+    
 	//RTFree(unit->mWorld, unit->tcache);
 	RTFree(unit->mWorld, unit->m_inputbuffer);
 	RTFree(unit->mWorld, unit->m_inplace);
 	RTFree(unit->mWorld, unit->m_magspectrum);
-
+    
 	RTFree(unit->mWorld, unit->m_outputold);
 	RTFree(unit->mWorld, unit->m_outputnew);
 	RTFree(unit->mWorld, unit->m_outputoldnoise);
 	RTFree(unit->mWorld, unit->m_outputnewnoise);
-
+    
 	RTFree(unit->mWorld, unit->m_straightresynthesis);
 	RTFree(unit->mWorld, unit->m_deterministicresynthesis);
-
-	RTFree(unit->mWorld, unit->m_transformbuf);
-
+    
+	//RTFree(unit->mWorld, unit->m_transformbuf);
+    
 	RTFree(unit->mWorld, unit->resynth1);
 
-	//
-	if(unit->m_scifftresynth1){
-		scfft_destroy(unit->m_scifftresynth1);
-		RTFree(unit->mWorld, unit->m_scifftresynth1);
+    SCWorld_Allocator alloc(ft, unit->mWorld);
+    
+    if(unit->m_scfftinput) {
+     
+        scfft_destroy(unit->m_scfftinput, alloc);
+        scfft_destroy(unit->m_scfftresynth, alloc);
+        scfft_destroy(unit->m_scifft, alloc);
+ 
 	}
+    
+    if(unit->m_scifftresynth1){
+        scfft_destroy(unit->m_scifftresynth1, alloc);
+        //scfft_destroy(unit->m_scifftresynth1);
+        //RTFree(unit->mWorld, unit->m_scifftresynth1);
+	
+	}
+
+//	if(unit->m_scfftinput){
+//		scfft_destroy(unit->m_scfftinput);
+//		RTFree(unit->mWorld, unit->m_scfftinput);
+//	}
+//
+//	if(unit->m_scfftresynth){
+//		scfft_destroy(unit->m_scfftresynth);
+//		RTFree(unit->mWorld, unit->m_scfftresynth);
+//	}
+//
+//	if(unit->m_scifft){
+//		scfft_destroy(unit->m_scifft);
+//		RTFree(unit->mWorld, unit->m_scifft);
+//	}
+
+	//
+
 
 
 }
@@ -581,7 +603,6 @@ void SMS_next(SMS *unit, int numSamples)
 
 
 	//ASSUMPTIONS RIFE HERE FOR WHAT BLOCKSIZE IS
-
 	//printf("before str %d det %d \n",unit->m_straightpos, unit->m_deterministicpos);
 
 

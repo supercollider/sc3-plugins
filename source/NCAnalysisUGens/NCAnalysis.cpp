@@ -29,14 +29,15 @@ extern void loadWalshHadamard(InterfaceTable *inTable);
 extern void loadLPCAnalyzer(InterfaceTable *inTable);
 
 
-void load(InterfaceTable *inTable)
+//void load(InterfaceTable *inTable)
+PluginLoad(NCAnalysis)
 {
 
 	ft= inTable;
 
 	init_SCComplex(inTable);
 
-	scfft_global_init();
+	//scfft_global_init();
 
 	loadSMS(inTable);
 	loadTPV(inTable);

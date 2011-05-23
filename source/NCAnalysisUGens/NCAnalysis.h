@@ -8,13 +8,20 @@
  */
 
 //#include <sndfile.h>
-#include "SC_PlugIn.h"
-#undef scfft_create
-#undef scfft_dofft
-#undef scfft_doifft
-#undef scfft_destroy
-#include "SC_fftlib_old.h"
-#include "SC_Constants.h"
+
+#include "SC_fftlib.h"
+#include "FFT_UGens.h"
+//#include "SCComplex.h"
+//#include "SC_PlugIn.h"
+
+
+
+//#undef scfft_create
+//#undef scfft_dofft
+//#undef scfft_doifft
+//#undef scfft_destroy
+//#include "SC_fftlib_old.h"
+//#include "SC_Constants.h"
 
 //#include <vecLib/vecLib.h>
 #include <string.h>
@@ -22,7 +29,7 @@
 //#include <stdlib.h>
 //#include <stdio.h>
 
+//#include "FFT_UGens.h"
 
-#include "FFT_UGens.h"
-
-extern InterfaceTable *ft;
+//declared in FFT_UGens.h
+//extern InterfaceTable *ft;
