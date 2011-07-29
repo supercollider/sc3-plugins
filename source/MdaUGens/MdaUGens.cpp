@@ -231,9 +231,15 @@ void MdaPiano_next(MdaPiano *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////
 
+int dummy;
+
 // the load function is called by the host when the plug-in is loaded
 PluginLoad(Mda)
 {
+	// touch every sample to force the buffer into physical ram
+	for (size_t i = 0; i != sizeof(pianoData)/sizeof(short); ++i)
+		dummy += pianoData[i];
+
 	ft = inTable;
 
 	DefineDtorUnit(MdaPiano);
