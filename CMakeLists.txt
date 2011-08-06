@@ -20,7 +20,7 @@ else()
 endif()
 
 option(SUPERNOVA "Build plugins for supernova")
-option(AY "Build with AY ugens")
+option(AY "Build with AY ugens" ON)
 option(QUARKS "Install plugins as quarks")
 option(OSX_PACKAGE "Package dmg for Apple")
 option(IN_PLACE_BUILD "Build and install in cmake build folder" ON)
