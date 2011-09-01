@@ -282,6 +282,28 @@ struct NTube : public Unit
 };
 
 
+struct EnvFollow : public Unit  
+{
+	float eprev_;
+	
+};
+
+struct Sieve1 : public Unit  
+{
+	
+	float * buffer_;
+	int maxdatasize_; 
+	int currentsize_;
+	int bufferpos_; 
+	//int interpsize_; 
+	
+	float phase_; 
+	//int interp_; 
+	int alternate_;
+	int swap_; 
+	
+	
+};
 
 
 
@@ -380,6 +402,14 @@ extern "C" {
 	void NTube_Ctor(NTube* unit);
 	void NTube_Dtor(NTube* unit);
 
+    void EnvFollow_next(EnvFollow *unit, int inNumSamples);
+	void EnvFollow_Ctor(EnvFollow* unit);
+	//void BlitB3_Dtor(BlitB3* unit);
+	
+	void Sieve1_next(Sieve1 *unit, int inNumSamples);
+	void Sieve1_Ctor(Sieve1* unit);
+    
+    
 }
 
 
@@ -3953,6 +3983,162 @@ void NTube_next(NTube *unit, int inNumSamples) {
 
 
 
+void EnvFollow_Ctor( EnvFollow* unit ) {
+	
+	unit->eprev_ = 0.0f; 
+	
+	SETCALC(EnvFollow_next);
+}
+
+
+
+void EnvFollow_next( EnvFollow *unit, int inNumSamples ) {
+	
+	//int numSamples = unit->mWorld->mFullRate.mBufLength;
+	
+	float *input = IN(0); 
+	float *output = OUT(0);
+	
+	float c = ZIN0(1);
+	float oneminusc= 1.0f-c; 
+	
+	float e = unit->eprev_;
+	
+	for (int i=0; i<inNumSamples; ++i) {
+		
+		float  x = input[i]; 
+		
+		//full wave rectify
+		x = x<0.0f?-x:x; 
+		
+		if (x>e) 
+			e = x; 
+		else
+			e = c*e + oneminusc*x;
+		
+		output[i]= e; 
+		
+	}
+	
+	//printf("hello phase %f period %f\n",phase, period); 
+	
+	unit->eprev_ = e; 
+	
+}
+
+
+
+
+void Sieve1_Ctor( Sieve1* unit ) {
+	
+	SndBuf * buf = SLUGensGetBuffer(unit, ZIN0(0)); 
+	
+	if (buf) { 
+		
+		unit->maxdatasize_ = buf->samples -1; //take 1 off to allow that working size always first entry
+		
+		if(unit->maxdatasize_>=1) {
+			
+			unit->buffer_ = buf->data; 
+			
+			unit->bufferpos_=0;
+			unit->currentsize_ = 1; 
+			
+			//unit->interpsize_; 
+			//unit->interp_=0; 
+			
+			unit->alternate_= ZIN0(2);
+			
+			unit->swap_ = 1; 
+			
+			unit->phase_ = 0.0f;	
+			
+			SETCALC(Sieve1_next);	
+			
+		}
+	}
+	
+}
+
+
+
+void Sieve1_next( Sieve1 *unit, int inNumSamples ) {
+	
+	float *output = OUT(0);
+	
+	//int gap = ZIN0(1);
+	float gap = ZIN0(1);
+	
+	//safety
+	if(gap<1.0f) gap = 1.0f; 
+	
+	//int interp = unit->interp_; 
+	
+	float * buffer = unit->buffer_;
+	
+	RGen& rgen = *unit->mParent->mRGen;
+	
+	
+	float phase = unit-> phase_; 
+	
+	for (int i=0; i<inNumSamples; ++i) {
+		
+		//if(interp == 0) {
+		
+		if(phase >= gap) {
+			
+			//interp = gap; 
+			
+			phase = fmod(phase, gap); //can't reduce by gap since gap can change per cycle, and phase could be much larger than 2*gap
+			
+			++unit->bufferpos_; 
+			
+			if(unit->bufferpos_==unit->currentsize_) {
+				
+				unit->currentsize_ = (int)buffer[0]; 
+				
+				if (unit->currentsize_ > unit->maxdatasize_) 
+					unit->currentsize_ = unit->maxdatasize_; 
+				
+				
+				unit->bufferpos_ = 0; 
+			}
+			
+			float chance = buffer[unit->bufferpos_+1]; 
+			
+			float sign = 1.0; 
+			
+			if(unit->alternate_==1) {
+				
+				sign = unit->swap_==1?1.0f:-1.0f; 	
+				
+				unit->swap_ = 1 - unit->swap_; 
+			}
+			
+			if(rgen.frand()<chance)
+				output[i]= sign;  //could alternate left and right
+			else   
+				output[i]= 0.0f; 
+			
+			
+		} else 
+			
+			output[i]= 0.0f; 
+		
+		//--interp;
+		
+		phase += 1.0f; 
+		
+	}
+	
+	//printf("hello phase %f period %f\n",phase, period); 
+	
+	//unit->interp_ = interp; 
+	unit-> phase_ = phase; 
+	
+}
+
+
 
 
 
@@ -3970,6 +4156,10 @@ void preparelookuptables() {
 	}
 
 }
+
+
+
+
 
 
 #ifdef SLUGENSRESEARCH
@@ -4006,7 +4196,9 @@ PluginLoad(SLUGens)
 	DefineDtorUnit(SLOnset);
 	DefineDtorCantAliasUnit(TwoTube);
 	DefineDtorCantAliasUnit(NTube);
-
+    DefineSimpleUnit(EnvFollow);
+	DefineSimpleUnit(Sieve1);
+    
 #ifdef SLUGENSRESEARCH
 	initSLUGensResearch(inTable);
 #endif

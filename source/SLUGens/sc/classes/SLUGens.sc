@@ -211,3 +211,31 @@ NTube : UGen
 	^this.multiNew(*allargs).madd(mul, add);
 	}
 }
+
+
+
+EnvFollow : UGen {
+
+	*ar { arg input, decaycoeff = 0.99, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', input, decaycoeff).madd(mul, add)
+	}
+	
+	*kr { arg input, decaycoeff = 0.99, mul = 1.0, add = 0.0;
+		^this.multiNew('control', input, decaycoeff).madd(mul, add)
+	}
+}
+
+
+
+Sieve1 : UGen {
+
+	*ar { arg bufnum, gap = 2, alternate=1, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', bufnum, gap, alternate).madd(mul, add)
+	}
+	
+	*kr { arg bufnum, gap = 2, alternate=1, mul = 1.0, add = 0.0;
+		^this.multiNew('control', bufnum, gap, alternate).madd(mul, add)
+	}
+}
+
+
