@@ -1,0 +1,92 @@
+CLASS:: FFTSubbandPower
+summary:: Spectral power, divided into subbands
+categories:: UGens>Analysis, UGens>FFT
+related:: Classes/FFTPower
+
+DESCRIPTION::
+Calculates the spectral power measure, in the same manner as FFTPower, but divides the spectrum into (adjacent, non-overlapping) subbands, so returns separate power measures for the different subbands.
+
+The parameters cutfreqs, square and scalemode can only be specified on initialisation - they can't be modulated.
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: chain
+
+argument:: cutfreqs
+must be an array of frequencies. For example, to divide a 44100Hz signal into three subbands we might specify  [ 5512, 11025 ]  as the cutfreqs, giving subbands of 0-5512Hz, 5512-11025Hz, and 11025-22050Hz. (Frequencies above the Nyquist frequency are not included.)
+
+argument:: square
+performs the same role as in FFTPower.
+
+argument:: scalemode
+specifies how the band powers are scaled:
+    Mode 1 (default) is to scale the same way as FFTPower does (according to the total number of bins in the FFT). This means that if you add up the power from the various bins, you'll get the same result as if you'd just used FFTPower. This gives the best impression of how the power is "really" distributed among the bands.
+    Mode 2 scales each band separately, by dividing by the number of bins in that band. This should be handy for EQ-meter type applications since the dynamic range of each output should be more similar.
+
+returns:: #[power1, power2, ... powerN+1]
+
+EXAMPLES::
+
+code::
+// Simple example
+s = Server.local.boot; //Server.internal.boot;
+b = Buffer.alloc(s,2048,1);
+(
+x = {
+var in, chain, powers, cutfreqs;
+in = LPF.ar(WhiteNoise.ar, MouseX.kr(10,10000, 1));
+chain = FFT(b.bufnum, in);
+
+powers = FFTSubbandPower.kr(chain, [100, 200, 400, 800, 1600, 3200, 6400, 12800]);
+
+Out.ar(0, in * 0.1);
+powers.collect{|pow, index| pow.poll(label: "band"+index)};
+powers.sum.poll(label: "sum");
+FFTPower.kr(chain).poll(label: "pow");
+}.play(s);
+)
+
+x.free;
+::
+
+In this next example we create a graphic EQ meter. The subband power measurements are written out to a control bus, then on the language side we create a task which polls the values and updates a multi-slider to display the power distribution in the familiar home hi-fi style.
+
+code::
+s = Server.local.boot;
+b = Buffer.alloc(s,2048,1);
+(
+var win, size=8;
+c = Bus.control(s, size); // Values will be written to control busses
+win = SCWindow("EQ meter", Rect(100, 200, 360, 110));
+~slider = SCMultiSliderView(win, Rect(0, 0, 350, 100));
+~slider.value_(0.dup(size)).size_(size).isFilled_(true).indexThumbSize_(350/8);
+win.front;
+)
+(
+var size=8;
+x = {
+var in, chain, powers, cutfreqs;
+in = BPF.ar(WhiteNoise.ar, MouseX.kr(10,14000, 1), MouseY.kr(0.1, 2, 1));
+chain = FFT(b.bufnum, in);
+cutfreqs = [100, 200, 400, 800, 1600, 3200, 6400];
+powers = FFTSubbandPower.kr(chain, cutfreqs, 1, 2);
+Out.ar(0, (in * 0.1).dup);
+Out.kr(c.index, powers);
+}.play(s);
+
+t = Task({
+	loop{
+		0.1.wait;
+		c.getn(size, {|vals| {
+			~slider.value_((vals.log2 + 7 * 0.08).max(0).min(1));
+		}.defer});
+	};
+}).start;
+)
+
+x.free;
+t.stop;
+::
+

@@ -1,0 +1,59 @@
+CLASS:: FFTCrest
+summary:: Spectral crest measure
+categories:: UGens>Analysis, UGens>FFT
+related:: Classes/FFTFlatness
+
+DESCRIPTION::
+Given an FFT chain, this produces the spectral crest measure, which is an indicator of the "peakiness" of the spectral energy distribution. For example, white noise should produce a flat (non-peaky) spectrum, and therefore a low value for the spectral crest.
+
+Optionally, freqlo and freqhi indicate the lower and upper frequency limits of the band to look at; by default, the whole FFT range (excluding DC and nyquist) is analysed.
+
+In pseudo-equation form, the measure is calculated as follows:
+
+Crest = S.maxItem / S.mean
+
+where "S" is a list of the squared magnitudes in the spectral band. Note that this limits the value to being greater than or equal to 1. (Some research uses a logarithmic scale - you can apply the logarithm yourself if required.)
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: chain
+FFT chain
+argument:: freqlo
+argument:: freqhi
+
+
+EXAMPLES::
+
+code::
+s.boot;
+b = Buffer.alloc(s,2048,1);
+
+(
+{ // Example - vary mixture of white noise and pure tone with the mouse
+var in, chain, crest;
+in = XFade2.ar(WhiteNoise.ar, SinOsc.ar, MouseX.kr(-1,1));
+chain = FFT(b.bufnum, in);
+Out.ar(0, in.dup * 0.1);
+
+crest = FFTCrest.kr(chain);
+
+Out.kr(0, crest.poll(10, "crest"));
+}.play;
+)
+
+(
+{ // Same as above but subbands rather than whole spectrum. move mouse up&down too...
+var in, chain, crest1, crest2;
+in = XFade2.ar(WhiteNoise.ar, Blip.ar(numharm: MouseY.kr(200, 1, 1)), MouseX.kr(-1,1));
+chain = FFT(b.bufnum, in);
+Out.ar(0, in.dup * 0.1);
+
+crest1 = FFTCrest.kr(chain, 100, 2000);
+crest2 = FFTCrest.kr(chain, 2000, 10000);
+
+Out.kr(0, [crest1.poll(10, "crest1"), crest2.poll(10, "crest2")]);
+}.play;
+)
+::
+

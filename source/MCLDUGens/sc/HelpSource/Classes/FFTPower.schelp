@@ -1,0 +1,66 @@
+CLASS:: FFTPower
+summary:: Instantaneous spectral power
+categories:: UGens>Analysis, UGens>FFT
+related:: Classes/Amplitude
+
+DESCRIPTION::
+Outputs a power measurement (sum of squared magnitudes) taken from an FFT chain. It can be used for similar purposes as the Amplitude UGen but has different characteristics since it operates on the frequency-domain rather than time-domain representation.
+
+The output is scaled by dividing by a factor related to the number of bins, meaning that output values occupy a similar dynamic range irrespective of the FFT frame size. To scale the power (e.g.) to lie between 0 and 1, you'll need to find an empirical value that suits the application - note the multipliers used in the examples below.
+
+Note: The first implementation of this UGen summed the magnitudes without squaring them, which is not the ordinary definition of spectral power (it will behave in similar ways for some applications, but will have different characteristics e.g. the effect of noise). By default the UGen does now square the magnitudes, but you can achieve the old behaviour by setting the second "square" argument to false. For most uses you are recommended to leave this at its default.
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: buffer
+argument:: square
+
+EXAMPLES::
+
+code::
+Server.default = s = Server.internal.boot;
+
+b = Buffer.alloc(s, 2048, 1);
+
+(
+{
+var in, chain;
+in = WhiteNoise.ar(MouseX.kr(0,1));
+chain = FFT(b.bufnum, in);
+Out.ar(0, in * 0.1);
+
+Out.kr(0, (FFTPower.kr(chain) * 0.05955912289792).poll(label:"Noise power"));
+
+}.scope;
+)
+
+
+(
+{ // Sine - note how the peak measured power changes with frequency
+var in, chain;
+in = SinOsc.ar(MouseY.kr(100, 1000, 1), 0, MouseX.kr(0,1));
+chain = FFT(b.bufnum, in);
+Out.ar(0, in * 0.1);
+
+Out.kr(0, (FFTPower.kr(chain) * 0.66667).poll(label:"Sine power"));
+
+}.scope;
+)
+
+
+// Let's graph the power of a soundfile
+c = Buffer.read(s, "sounds/a11wlk01.wav");
+(
+{
+var in, chain;
+in = PlayBuf.ar(1, c);
+chain = FFT(b.bufnum, in);
+Out.ar(0, in * 0.1);
+
+[K2A.ar(FFTPower.kr(chain) * 0.2), in]
+
+}.plot(5);
+)
+::
+

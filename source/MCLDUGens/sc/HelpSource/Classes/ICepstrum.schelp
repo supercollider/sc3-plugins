@@ -1,0 +1,17 @@
+CLASS:: ICepstrum
+summary:: Transform a cepstrum back to a spectrum
+categories:: UGens>FFT
+related:: Classes/Cepstrum
+
+DESCRIPTION::
+See link::Classes/Cepstrum::.
+
+CLASSMETHODS::
+
+METHOD:: new
+argument:: cepchain
+a cepstral chain, such as that produced by Cepstrum or any PV_ UGens that have operated on a cepstrum.
+argument:: fftbuf
+The FFT buffer, typically the one that was the original source used for the forward transform.
+returns:: a standard FFT chain.
+

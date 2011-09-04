@@ -1,0 +1,36 @@
+CLASS:: BufMin
+summary:: detect the largest value (and its position) in an array of UGens
+categories:: UGens>Multichannel, UGens>Analysis
+related:: Classes/ArrayMin, Classes/BufMax
+
+DESCRIPTION::
+
+Finds the smallest value in a Buffer, and outputs the value and the index.
+
+
+(Note: doesn't currently handle multichannel buffers in any clever way, treats them as if they were single-channel.)
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: bufnum
+argument:: gate
+You don't need to make use of the gate control: if you do use it, the calculation is only performed when gate>0.
+returns:: # val, index
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+b = Buffer.alloc(s, 100);
+b.zero;
+b.set(33, -1.034);
+// This should detect the 33rd value as the highest...
+x = {BufMin.kr(b).poll}.play;
+
+// ...until we set a new winner...
+b.set(74, -1.038);
+::
+

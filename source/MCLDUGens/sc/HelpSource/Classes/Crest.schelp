@@ -1,0 +1,49 @@
+CLASS:: Crest
+summary:: Measure the temporal crest factor of a signal
+categories:: UGens>Analysis
+related:: Classes/FFTCrest
+
+DESCRIPTION::
+This UGen measures the "crest factor" of a time-domain signal (not to be confused with link::Classes/FFTCrest:: which does the same thing for spectral data). The "crest factor" is the ratio of the absolute peak to the absolute mean over a certain time period. In pseudocode:
+
+      crest = (samples.abs.max) / (samples.abs.mean)
+
+For Pulse waves the value will be 1 - because the mean and the maximum are the same. For SinOsc the theoretical value is 2.sqrt. For Saw it is 3.sqrt. These exact values might not occur in practice, because of anti-aliasing and other sampling factors.
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: in
+the signal to analyse. Can be audio rate or control rate.
+argument:: numsamps
+the number of samples over which to take the measurement. A buffer of this size is created internally (so be careful about specifying a massive number here). This value cannot be modulated.
+argument:: gate
+normally the statistic is calculated on every control block cycle. If you want it less often (eg to reduce CPU usage) you can modulate this - calculation only occurs if gate>0
+argument:: mul
+argument:: add
+returns:: crest factor, measured on a linear scale. Sometimes it is required in dB values, for which you can simply use link::Classes/AbstractFunction#ampdb#ampdb:: to convert the data. You may also wish to add a slight lag to the values you produce, if your window is short and/or your signal includes strong low frequencies, because the phase of the signal may affect the result.
+
+EXAMPLES::
+
+code::
+s.boot;
+(
+{
+// Move the mouse. This varies from sinewave (left) to almost-square (right)
+var sig = (SinOsc.ar(MouseY.kr(100, 1000, 1)) * MouseX.kr(1,10)).clip2(1);
+var val = Crest.kr(sig, 440).poll;
+(sig * 0.1).dup
+}.play
+)
+
+(
+// Or as a plot (which shows the odd results you get over the first few samples):
+{
+var sig = (SinOsc.ar(440, pi.rand) * XLine.kr(1,10, 5)).clip2(1);
+var val = Crest.kr(sig, 440).poll;
+Out.ar(0, sig * 0.1.dup);
+K2A.ar(val);
+}.plot(5, minval:1, maxval: 4)
+)
+::
+

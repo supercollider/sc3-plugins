@@ -1,0 +1,74 @@
+CLASS:: Cepstrum
+summary:: Quefrency analysis and liftering
+categories:: UGens>FFT
+related:: Classes/ICepstrum, Classes/FFT, Classes/MFCC
+
+DESCRIPTION::
+Fourier analysis of the shape of a signal's log-power spectrum. Because this transform applies to magnitudes and not the phases (i.e. it ignores half of the data), strong::the cepstral Buffer is half the size of the FFT Buffer.::
+
+Very loosely speaking the cepstrum is an "FFT of an FFT". There are various forms of cepstral analysis - this UGen applies what is sometimes called the "power cepstrum": a Fourier analysis of the spectral log-magnitudes. (The log is important because that's part of what helps separate source-and-filter components in this procedure.) The reverse, ICepstrum, performs IFFT and exponentiates the result, to derive new magnitudes to be stored back into the fftbuf (phases are left untouched; they are essentially meaningless).
+
+CLASSMETHODS::
+
+METHOD:: new
+argument:: cepbuf
+a Buffer of half the size as the original FFT Buffer.
+argument:: fftchain
+a standard FFT chain as produced by the FFT UGen or various PV_ UGens.
+returns::  a cepstral "chain" which can be treated in many regards like an FFT chain: you can apply PV_ transforms, for example.
+
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+~fftbuf = Buffer.alloc(s, 2048);
+~cepbuf = Buffer.alloc(s, 1024);
+
+(
+x = {
+	var son, chain, cepsch;
+	
+	// You might like to try uncommenting these different source signals:
+	son = WhiteNoise.ar;
+	//son = Impulse.ar(150);
+	//son = SinOsc.ar(440);
+	//son = SinOsc.ar([150, 1450, 7203, 12010]).mean;
+	
+	// Or these filters:
+	son = MoogFF.ar(son, 5350) * 5;
+	//son = son + DelayN.ar(son, 0.003, 0.003);
+	
+	chain = FFT(~fftbuf, son, wintype: 1);
+		
+	cepsch = Cepstrum(~cepbuf, chain);
+	
+	// PV_BrickWall can act as a low-pass filter, or here, as a wol-pass lifter...
+	// ...in practical terms, produces a smoothed version of the spectrum
+	cepsch = PV_BrickWall(cepsch, -0.95);
+	
+	ICepstrum(cepsch, ~fftbuf);
+	
+	// We'll stop the unit after 1 second, the results are visible quickly enough
+	Line.kr(1,0,1, doneAction: 2);
+	
+	son * 0.1
+}.play;
+)
+
+// A convenience function to plot magnitudes:
+~plotmags = {|buf, lbl| buf.loadToFloatArray(action:{|data| {data[0,2..]  .max(0.000001)  .log.normalize  .plot(lbl)}.defer})};
+
+~plotmags.(~cepbuf, "cepstrum");
+~plotmags.(~fftbuf, "liftered (smoothed) spectrum");
+
+[~fftbuf, ~cepbuf].do(_.free);
+::
+
+In the above example, the cepstrum plot itself may be difficult to interpret (although you can clearly see what the PV_BrickWall unit has done), but the liftered spectrum should look reasonably smooth and show the main peaks and troughs of the spectrum (try running the example without ICepstrum to see the unsmoothed version).
+
+Note: the cepstral analysis here includes the DC bin and ignores the Nyquist bin, so as to ensure that the resulting number of bins is a power of two.
+
+

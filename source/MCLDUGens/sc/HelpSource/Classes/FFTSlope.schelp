@@ -1,0 +1,33 @@
+CLASS:: FFTSlope
+summary:: Spectral slope
+categories:: UGens>Analysis, UGens>FFT
+
+DESCRIPTION::
+Given an FFT chain, this measures the spectral slope, which is the slope of the linear correlation line derived from the spectral magnitudes.
+
+CLASSMETHODS::
+METHOD:: kr
+argument:: buffer
+
+EXAMPLES::
+
+code::
+// Very artificial example - just filtering some noise.
+s.boot;
+b = Buffer.alloc(s,2048,1);
+(
+x = {
+var in, chain, freq, val;
+freq = MouseX.kr(20000, 1000, 1);
+in = LPF.ar(WhiteNoise.ar, freq);
+chain = FFT(b.bufnum, in);
+
+val = FFTSlope.kr(chain);
+
+Out.ar(0, in.dup * 0.1);
+(val * 10000).poll(10); // Poll but scaled so more readable!
+}.play(s);
+)
+x.free;
+::
+
