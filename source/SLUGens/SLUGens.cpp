@@ -307,6 +307,34 @@ struct Sieve1 : public Unit
 
 
 
+//see http://www.scholarpedia.org/article/Oregonator
+
+//see also A Brief History of Oscillators and Hair Styles of European Men AASU Math/CS Colloquium, April 2002. 
+struct Oregonator: public Unit {
+    
+    float x, y, z; 
+    
+};
+
+
+struct Brusselator: public Unit {
+    
+    float x, y; 
+    
+};
+
+
+struct SpruceBudworm: public Unit {
+    
+    float x, y; 
+    
+};
+
+
+
+
+
+
 extern "C" {
 
 	void SortBuf_next_k(SortBuf *unit, int inNumSamples);
@@ -409,7 +437,14 @@ extern "C" {
 	void Sieve1_next(Sieve1 *unit, int inNumSamples);
 	void Sieve1_Ctor(Sieve1* unit);
     
+    void Oregonator_next(Oregonator *unit, int inNumSamples);
+	void Oregonator_Ctor(Oregonator* unit);
     
+    void Brusselator_next(Brusselator *unit, int inNumSamples);
+	void Brusselator_Ctor(Brusselator* unit);
+    
+    void SpruceBudworm_next(SpruceBudworm *unit, int inNumSamples);
+	void SpruceBudworm_Ctor(SpruceBudworm* unit);
 }
 
 
@@ -4140,6 +4175,193 @@ void Sieve1_next( Sieve1 *unit, int inNumSamples ) {
 
 
 
+void Oregonator_Ctor( Oregonator* unit ) {
+	
+	unit->x = 0.5f; 
+    unit->y = 0.5f; 
+    unit->z = 0.5f; 
+	
+	SETCALC(Oregonator_next);
+}
+
+
+
+void Oregonator_next( Oregonator *unit, int inNumSamples ) {
+	
+	//int numSamples = unit->mWorld->mFullRate.mBufLength;
+    
+	float *output1 = OUT(0);
+	float *output2 = OUT(1);
+    float *output3 = OUT(2);
+    
+	float delta = ZIN0(1);
+    float epsilon = ZIN0(2);
+    float mu = ZIN0(3);
+    float q = ZIN0(4);
+    float trig = ZIN0(0);
+    
+    float x= unit->x; 
+    float y= unit->y; 
+    float z= unit->z; 
+    
+    float dx, dy, dz; 
+    
+    //reset triggered
+    if(trig>0.0f) {
+        
+        x = ZIN0(5);
+        y = ZIN0(6);
+        z = ZIN0(7);
+        
+    }
+    
+	for (int i=0; i<inNumSamples; ++i) {
+		
+        dx = epsilon*((q*y) -(x*y) + (x*(1-x))); 
+		dy = mu* (-(q*y) -(x*y) + z); 
+        dz = x-y; 
+        
+        x += delta*dx; 
+        y += delta*dy; 
+        z += delta*dz; 
+        
+		output1[i]= x; 
+        output2[i]= y; 
+        output3[i]= z; 
+		
+	}
+	
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
+	
+	unit->x = x; 
+	unit->y = y;
+	unit->z = z;
+}
+
+
+void Brusselator_Ctor( Brusselator* unit ) {
+	
+	unit->x = 0.5f; 
+    unit->y = 0.5f; 
+	
+	SETCALC(Brusselator_next);
+}
+
+
+
+void Brusselator_next( Brusselator *unit, int inNumSamples ) {
+	
+	float *output1 = OUT(0);
+	float *output2 = OUT(1);
+    
+	float delta = ZIN0(1);
+    float mu = ZIN0(2);
+    float gamma = ZIN0(3);
+    float trig = ZIN0(0);
+    
+    float x= unit->x; 
+    float y= unit->y;  
+    
+    float dx, dy; 
+    
+    //reset triggered
+    if(trig>0.0f) {
+        
+        x = ZIN0(4);
+        y = ZIN0(5);
+        
+    }
+    
+    float muplusone = 1.0f+mu; 
+    
+	for (int i=0; i<inNumSamples; ++i) {
+		
+        float temp = x*x*y; 
+        
+        dx = temp - (muplusone*x) + gamma;
+        dy =  (mu*x)  - temp; 
+        
+        x += delta*dx; 
+        y += delta*dy; 
+        
+		output1[i]= x; 
+        output2[i]= y; 
+		
+	}
+	
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
+	
+	unit->x = x; 
+	unit->y = y;
+}
+
+
+
+
+
+void SpruceBudworm_Ctor( SpruceBudworm* unit ) {
+	
+	unit->x = 0.9f; 
+    unit->y = 0.1f; 
+	
+	SETCALC(SpruceBudworm_next);
+}
+
+
+
+void SpruceBudworm_next( SpruceBudworm *unit, int inNumSamples ) {
+	
+	float *output1 = OUT(0);
+	float *output2 = OUT(1);
+    
+    
+    float trig = ZIN0(0);
+    
+    float delta = ZIN0(1);
+    
+	float k1 = ZIN0(2);
+    float k2 = ZIN0(3);
+    float alpha = ZIN0(4);
+    float beta = ZIN0(5);
+    float mu = ZIN0(6);
+    float rho = ZIN0(7);
+    
+    float x= unit->x; 
+    float y= unit->y;  
+    
+    float dx, dy; 
+    
+    //reset triggered
+    if(trig>0.0f) {
+        
+        x = ZIN0(8);
+        y = ZIN0(9);
+        
+    }
+    
+	for (int i=0; i<inNumSamples; ++i) {
+		
+        float temp = y*y; 
+        float temp2 = beta*x;
+        
+        dx = (k1* x* (1.0-x)) - (mu*y);
+        dy = (k2*y*(1.0- (y/(alpha*x))))  - (rho*(temp/(temp2*temp2 +  temp))); 
+        
+        
+        x += delta*dx; 
+        y += delta*dy; 
+        
+		output1[i]= x; 
+        output2[i]= y; 
+		
+	}
+	
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
+	
+	unit->x = x; 
+	unit->y = y;
+}
+
 
 
 void preparelookuptables() {
@@ -4198,6 +4420,9 @@ PluginLoad(SLUGens)
 	DefineDtorCantAliasUnit(NTube);
     DefineSimpleUnit(EnvFollow);
 	DefineSimpleUnit(Sieve1);
+    DefineSimpleUnit(Oregonator);
+    DefineSimpleUnit(Brusselator);
+    DefineSimpleUnit(SpruceBudworm);
     
 #ifdef SLUGENSRESEARCH
 	initSLUGensResearch(inTable);
