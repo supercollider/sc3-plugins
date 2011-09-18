@@ -1,12 +1,11 @@
 /*
-Generic hyperplane-based tree classifier, (c) 2009-2010 Dan Stowell
+hyperplane-based tree classifiers, (c) 2009-2011 Dan Stowell
 */
-PlaneTree : UGen {
 
+PlaneTree : UGen {
 *kr { |treebuf, in, gate=1|
 	^this.multiNew('control', treebuf, gate, *in)
 }
-
 *categories {	^ #["UGens>Analysis"]	}
 
 // a LANGUAGE-SIDE equivalent of the classification that the server-side ugen does.
@@ -63,4 +62,50 @@ PlaneTree : UGen {
 }
 
 
-} // end class
+} // end PlaneTree class
+
+
+/**
+* See the KDTree quark to actually construct a kd-tree data structure.
+*  This UGen class converts the resulting data structure to a Buffer,
+*  and then the UGen does nearest-neighbour search on the server side.
+*  The ugen returns a sorted array of the 'num' closest matches,
+*  in the format [index0, distsq0, index1, distsq1, index2, distsq2, ...].
+*  If you want the co-ordinates back, you can easily read them back out of the treebuf.
+*/
+NearestN : MultiOutUGen {
+
+*kr { |treebuf, in, gate=1, num=1|
+	^this.multiNew('control', treebuf, gate, num, *in)
+}
+init { |... theInputs|
+	inputs = theInputs;
+	^this.initOutputs(theInputs[2] * 3 /* <-- 'num' times three */, rate);
+}
+*categories {	^ #["UGens>Analysis"]	}
+
+// Give it a KDTree object, you get an array suitable for loading to a Buffer.
+// Note that you have to do .flat on it before .sending to the server!
+*makeBufferData { |tree|
+	// We use the format of uniqueid to know where each item should be slotted.
+	// Since root's uniqueid is 1, the zero'th slot is always wasted, but that's the price of efficiency and understandability.
+	// The root's kids are [1 << 1, 1 << 1 | 1] == [2, 3], and so on.
+	/* format of each entry:
+	 * 0 or 1: leftIsLeaf
+	 * 0 or 1: rightIsLeaf
+	 * k floats: location
+	 * 1 float: label
+	*/
+	var numChannels = tree.location.size + 3;
+	var array = {{0.0}.dup(numChannels)}.dup(tree.highestUniqueId+1);
+	tree.do{|node|
+		array[node.uniqueid] = [
+			if(node.leftChild .isNil){1}{0},
+			if(node.rightChild.isNil){1}{0}
+			] ++ node.location ++ (node.label ? 0.0).asFloat;
+	};
+	^array
+}
+
+} // end NearestN class
+
