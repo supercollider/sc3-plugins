@@ -1,0 +1,39 @@
+class:: DFM1
+summary:: Digitally modelled analog filter
+categories:: UGens>Filters
+
+description::
+DFM1 is a digitally modelled analog filter. footnote::
+For questions related to the audio code in DFM1 please contact
+Tony Hardie-Bick <tony@entitysynth.net>
+
+For questions regarding the function of DFM1 within SuperCollider
+contact Jonny Stutters <jstutters@jeremah.co.uk>
+:: It provides low-pass and high-pass filtering. The filter can be overdriven and will self-oscillate at high resonances.
+
+classmethods::
+
+method:: ar
+argument:: in
+input signal
+argument:: freq
+cutoff frequency
+argument:: res
+resonance
+argument:: inputgain
+gain applied to the input signal
+argument:: type
+set to 0.0 for low-pass or 1.0 for high-pass
+argument:: noiselevel
+amplitude of noise added to the model
+
+examples::
+
+code::
+// Play it with the mouse
+{DFM1.ar(PinkNoise.ar(mul: 0.5), MouseX.kr(80, 5000, 'exponential'), MouseY.kr(0.1, 1.2))}.play;
+
+// Throbby bass
+{DFM1.ar(Pulse.ar(100, mul:0.4) + Pulse.ar(100.1, mul:0.4), SinOsc.kr(SinOsc.kr(0.3).range(0.2, 5)).range(80, 2000), 1.1, inputgain: 2.0, mul:0.7)!2}.play;
+::
+
