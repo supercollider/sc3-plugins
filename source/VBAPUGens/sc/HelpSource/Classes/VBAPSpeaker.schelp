@@ -1,0 +1,31 @@
+class:: VBAPSpeaker
+summary:: Vector Base Amplitude Panning Speaker
+categories:: UGens>Multichannel>Panners
+related:: Classes/VBAP, Classes/CircleRamp, Classes/VBAPSpeakerArray
+
+description::
+VBAPSpeaker represents a speaker in a VBAPSpeakerArray. Its instance variables are populated by  VBAPSpeakerArray, and generally you should not need to create or access instances of this class directly. 
+
+VBAP was created by Ville Pulkki. For more information on VBAP see http://www.acoustics.hut.fi/research/cat/vbap/
+
+This version of VBAP for SC was ported from the ver. 0.99 PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
+
+classmethods::
+
+method:: new
+Create a new VBAPSpeaker. Normally you should not need to do this.
+argument:: azi
+This speaker's azimuth angle, +/- 180 degrees from the median plane (i.e. straight ahead)
+argument:: ele
+This speaker's elevation angle, +/- 90 degrees from the azimuth plane.		
+
+instancemethods::
+method:: azi
+Returns this speaker's azimuth angle, +/- 180 degrees from the median plane (i.e. straight ahead).
+method:: ele
+Returns this speaker's azimuth angle, +/- 90 degrees from the azimuth plane.
+method:: x
+method:: y
+method:: z
+Return this speaker's location x, y, and z repectively in cartesian coordinates. These will be values from 0 to 1, where 1 is understood to be equal to the radius of the array.
+

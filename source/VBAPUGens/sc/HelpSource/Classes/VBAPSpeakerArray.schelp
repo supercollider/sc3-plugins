@@ -1,0 +1,64 @@
+class:: VBAPSpeakerArray
+summary:: Vector Base Amplitude Panning Speaker Array
+categories:: UGens>Multichannel>Panners
+related:: Classes/VBAP, Classes/CircleRamp, Classes/VBAPSpeaker
+
+description::
+VBAPSpeakerArray represents an array of speakers configured for use with VBAP. It provides functions for calculating optimised pairs and triplets based on speaker location.
+
+VBAP was created by Ville Pulkki. For more information on VBAP see http://www.acoustics.hut.fi/research/cat/vbap/
+
+This version of VBAP for SC was ported from the ver. 0.99 PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
+
+classmethods::
+method:: new
+Create a new VBAPSpeakerArray.
+argument:: dim
+Number of dimensions in the array, either 2 (ring or partial ring), or 3 (partial or full dome or sphere).
+argument:: directions
+An link::Classes/Array:: containing speaker locations in degrees. If dim is 2 this will be an array of azimuth angles, if dim is 3 this will be an array of arrays of [azimuth, elevation] angle pairs.
+
+Angles are given in degrees, with azimuth +/- 180 degrees from the median plane (i.e. straight ahead), and elevation +/- 90 degrees from the azimuth plane.
+
+The order of the speakers corresponds to the order of the outputs when using a VBAP UGen.
+discussion::
+2D and 3D examples
+code::
+VBAPSpeakerArray.new(2, [ -30, 30, 0, -110, 110 ]); // 5.1 array
+
+VBAPSpeakerArray.new(3, [[-22.5, 14.97], [22.5, 14.97], [-67.5, 14.97], [67.5, 14.97], [-112.5, 14.97], [112.5, 14.97], [-157.5, 14.97], [157.5, 14.97], [-45, 0], [45, 0], [-90, 0], [90, 0], [-135, 0], [135, 0], [0, 0], [180, 0]]); // zig zag partial dome
+::
+
+method:: maxNumSpeakers
+Set/get the maximum number of speakers in an array. Default is 55. (This limitation will be removed in a later version.)
+
+instancemethods::
+
+method:: dim
+Returns an link::Classes/Integer:: corresponding to the receiver's number of dimensions.
+
+method:: numSpeakers
+Returns an link::Classes/Integer:: indicating the number of speakers in this array.
+
+method:: speakers
+Returns an link::Classes/Array:: containing instances of link::Classes/VBAPSpeaker::.
+
+method:: getSetsAndMatrices
+Sort the speaker array into loudspeaker pairs or triplets and return this data in a form appropriate for loading into a buffer. Once loaded this data can be used by a link::Classes/VBAP:: UGen.
+discussion::
+code::
+a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); // 8 channel ring
+b = Buffer.loadCollection(s, a.getSetsAndMatrices);
+::
+
+method:: loadToBuffer
+A shortcut for calling getSetsAndMatrices and loading into a Buffer. Returns a link::Classes/Buffer:: object.
+discussion::
+code::
+a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); // 8 channel ring
+b = a.loadToBuffer;
+::
+
+examples::
+See link::Classes/VBAP:: for further examples.
+
