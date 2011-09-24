@@ -72,8 +72,7 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 
     if (APPLE)
         install(TARGETS ${PLUGIN_NAME}            
-                DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR}
-                PERMISSIONS ${PERMISSIONS})
+                DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
     endif()
 endmacro()
 
@@ -121,10 +120,7 @@ set(supernova_plugins "")
 
 set(CMAKE_SHARED_MODULE_PREFIX "")
 set(PLUGIN_EXTENSION ".so")
-# FIXME not sure about permissions for win32
-set(PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE
-                GROUP_READ GROUP_EXECUTE
-                WORLD_READ WORLD_EXECUTE)
+
 if (APPLE OR WIN32)
 	set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
     set(PLUGIN_EXTENSION ".scx")
@@ -170,8 +166,7 @@ foreach(plugin ${local_sources})
 endforeach(plugin)
 # local can have help files and classes too
 install(DIRECTORY local DESTINATION "${INSTALL_DESTINATION_DISTRO}"
-    FILES_MATCHING PATTERN "*.sc" PATTERN "*.scd" PATTERN "*.html" PATTERN "*.schelp" PATTERN "*.rtf"
-    PERMISSIONS ${PERMISSIONS})
+    FILES_MATCHING PATTERN "*.sc" PATTERN "*.scd" PATTERN "*.html" PATTERN "*.schelp" PATTERN "*.rtf")
 
 #---------------------
 # plugins with extras:
@@ -255,21 +250,17 @@ endif()
 # OSX plugins install is done in BUILD_PLUGIN macro
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     install(TARGETS ${plugins}
-            DESTINATION ${INSTALL_DESTINATION}
-            PERMISSIONS ${PERMISSIONS})
+            DESTINATION ${INSTALL_DESTINATION})
 
     install(TARGETS ${supernova_plugins}
-            DESTINATION ${INSTALL_DESTINATION_SUPERNOVA}
-            PERMISSIONS ${PERMISSIONS})
+            DESTINATION ${INSTALL_DESTINATION_SUPERNOVA})
 endif()        
 
 install(TARGETS ladspalist
-        DESTINATION ${INSTALL_DESTINATION_LADSPALIST}
-        PERMISSIONS ${PERMISSIONS})
+        DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
 
 # install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
 foreach (DIR ${PLUGIN_DIRS};${PLUGIN_DIRS_EXTRA})
     install(DIRECTORY "${DIR}/sc/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${DIR}"
-            PATTERN "*"
-            PERMISSIONS ${PERMISSIONS})
+            PATTERN "*")
 endforeach(DIR)
