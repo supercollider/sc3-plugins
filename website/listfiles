@@ -1,1 +1,1 @@
-find ../source/*/sc -name "*.rtf" -or -name "*.html" | sed s:..\/source\/:: > filelist.txt
+find ../source/*/sc -name "*.rtf" -or -name "*.html" -or -name "*.schelp" | sort | sed s:..\/source\/:: > filelist.txt

@@ -25,13 +25,13 @@ when you download the plugin pack:</p>
 
 <ul>
 <?php
-
+$baseUrl = 'http://sc3-plugins.git.sourceforge.net/git/gitweb.cgi?p=sc3-plugins/sc3-plugins;a=blob_plain;hb=refs/heads/master;f=source';
 $list = file('filelist.txt');
 foreach($list as $key =>$fpath){
 	$group = array_shift(explode('/', $fpath));
 	$filename = trim(basename($fpath));
 	$ext = substr($filename, strrpos($filename, '.'));
-	if($ext == '.html'){
+	if($ext == '.html' && basename($filename, '.html') != $group) {
 		$grouped[$group][] = array('name'=>substr($filename, 0, -5), 'fpath'=>$fpath);
 	}else{
 		$grouped[$group][] = array('name'=>substr($filename, 0, strpos($filename, '.')));
@@ -48,7 +48,7 @@ foreach($grouped as $group=>$grlist){
 			<li><?php
 				echo $item['name'];
 				if(isset($item['fpath']))
-					echo " <span class='readonlinelink'>[<a href='http://sc3-plugins.svn.sourceforge.net/viewvc/sc3-plugins/source/$item[fpath]'>read online</a>]</span>";
+					echo " <span class='readonlinelink'>[<a href='$baseUrl/$item[fpath]'>read online</a>]</span>";
 			?></li>
 			<?php
 		}
