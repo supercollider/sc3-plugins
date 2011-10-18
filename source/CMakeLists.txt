@@ -67,7 +67,7 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 
         list(APPEND supernova_plugins ${PLUGIN_NAME}_supernova)
         set_property(TARGET ${PLUGIN_NAME}_supernova
-                     PROPERTY COMPILE_DEFINITION SUPERNOVA)
+                     PROPERTY COMPILE_DEFINITIONS SUPERNOVA)
     endif()
 
     if (APPLE)
