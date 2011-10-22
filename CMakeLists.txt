@@ -24,7 +24,12 @@ option(AY "Build with AY ugens" ON)
 option(QUARKS "Install plugins as quarks")
 option(OSX_PACKAGE "Package dmg for Apple")
 option(IN_PLACE_BUILD "Build and install in cmake build folder" ON)
+option(NOVA_SIMD "Build VBAP with nova-simd support." ON)
 
+if (NOVA_SIMD)
+  add_definitions(-DNOVA_SIMD)
+  include_directories(libs/nova-simd)
+endif()
 
 # osx `make install' defaults into cmake_build/SC3-plugins directory
 if (APPLE AND IN_PLACE_BUILD)
