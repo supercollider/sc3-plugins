@@ -11,6 +11,8 @@ endif()
 
 if (SUPERNOVA)
     include_directories(${SC_PATH}/external_libraries/nova-tt)
+    # actually just boost.atomic
+    include_directories(${SC_PATH}/external_libraries/boost)
     include_directories(${SC_PATH}/external_libraries/boost_lockfree)
 endif()
 
@@ -71,7 +73,7 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
     endif()
 
     if (APPLE)
-        install(TARGETS ${PLUGIN_NAME}            
+        install(TARGETS ${PLUGIN_NAME}
                 DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
     endif()
 endmacro()
@@ -254,7 +256,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     install(TARGETS ${supernova_plugins}
             DESTINATION ${INSTALL_DESTINATION_SUPERNOVA})
-endif()        
+endif()
 
 install(TARGETS ladspalist
         DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
