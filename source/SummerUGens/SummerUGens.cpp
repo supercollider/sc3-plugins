@@ -24,21 +24,7 @@
 
 #include "SC_PlugIn.h"
 
-#include <algorithm>            /* for std::min and std::max */
-
-#ifdef NOVA_SIMD
-#include "simd_memory.hpp"
-
-#ifdef __GNUC__
-#define inline_functions __attribute__ ((flatten))
-#else
-#define inline_functions
-#endif
-
-#endif
-
 static InterfaceTable *ft;
-
 
 struct Summer : public Unit
 {
