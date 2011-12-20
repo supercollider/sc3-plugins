@@ -1,0 +1,73 @@
+CLASS:: DetaBlockerBuf
+summary:: A Demand UGen running an adapted BetaBlocker VChip
+categories:: UGens>Demand
+related:: Classes/BetaBlocker01, Reference/BetaBlocker
+
+DESCRIPTION::
+A Demand Rate BetaBlocker UGen with a shared heap.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+creates a new DetaBlockerBuf instance.
+
+argument:: bufnum
+the buffer number containing the Heap
+
+argument:: startpoint
+the point to start evaluation
+
+EXAMPLES::
+
+code::
+s.boot;
+
+q = ();
+(
+	q.instructions = (
+		\NOP:  0,
+		\ORG:  1,
+		\EQU:  2,
+		\JMP:  3,
+		\JMPZ: 4,
+		\PSHL: 5,
+		\PSH:  6,
+		\PSHI: 7,
+		\POP:  8,
+		\POPI: 9,
+		\ADD: 10,
+		\SUB: 11,
+		\INC: 12,
+		\DEC: 13,
+		\AND: 14,
+		\OR: 15,
+		\XOR: 16,
+		\NOT: 17,
+		\ROR: 18,
+		\ROL: 19,
+		\PIP: 20,
+		\PDP: 21,
+		\DUP: 22,
+		\NOTE: 23,
+		\VOX: 24,
+		\STOP: 25
+	);
+	
+	q.translate = {|q, val|
+		q.instructions[val] ?? {val}	
+	};
+	
+	q.makeCollection = {|q, program|
+		program.collect{|instr| q.translate(instr)} ++ (0!(256 - program.size))
+	};
+)
+
+// a saw wave generating program
+q.program = [\ORG, \INC, \INC, \JMP, 1];
+
+// load to a buffer
+b.loadCollection(q.makeCollection(q.program))
+
+{Demand.ar(Impulse.ar(20000), 0, DetaBlockerBuf(b.bufnum, 0))}.play
+::

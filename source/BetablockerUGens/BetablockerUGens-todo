@@ -1,0 +1,20 @@
+struct Betablocker : public Unit
+{
+  Betablocker(void) : machine()
+  {}
+
+  ~Betablocker(void)
+  {}
+
+  machine bblocker;
+};
+
+void Betablocker_Ctor(Betablocker* unit)
+{
+  new(unit) Betablocker();
+}
+
+void Betablocker_Dtor(Betablocker* unit)
+{
+  unit->~Betablocker();
+}

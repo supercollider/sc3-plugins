@@ -108,6 +108,7 @@ set(PLUGIN_DIRS
 
 # plugins with extra lib
 set(PLUGIN_DIRS_EXTRA
+	BetablockerUGens
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
@@ -173,6 +174,10 @@ install(DIRECTORY local DESTINATION "${INSTALL_DESTINATION_DISTRO}"
 #---------------------
 # plugins with extras:
 #---------------------
+
+#BetablockerUGens
+BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
+             "" "BetablockerUGens")
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
