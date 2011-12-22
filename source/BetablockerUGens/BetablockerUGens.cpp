@@ -1,4 +1,4 @@
-#include "SC_Plugin.h"
+#include "SC_PlugIn.h"
 #include <stdio.h>
 
 #ifndef MAXFLOAT
