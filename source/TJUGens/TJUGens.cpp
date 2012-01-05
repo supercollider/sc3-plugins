@@ -48,7 +48,6 @@ struct DFM1 : public Unit
 
 extern "C"
 {
-  void load(InterfaceTable *inTable);
   void DFM1_next(DFM1 *unit, int inNumSamples);
   void DFM1_Ctor(DFM1 *unit);
 };
@@ -130,7 +129,7 @@ void DFM1_next(DFM1 *unit, int inNumSamples)
   unit->m_w = df.ng.w;
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(TJUgens)
 {
   ft = inTable;
   DefineSimpleUnit(DFM1);

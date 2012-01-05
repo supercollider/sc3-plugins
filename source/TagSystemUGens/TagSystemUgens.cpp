@@ -62,9 +62,6 @@ struct Dtag : public Unit
 
 extern "C"
 {
-void load(InterfaceTable *inTable);
-
-
 void DbufTag_Ctor(DbufTag *unit);
 void DbufTag_Dtor(DbufTag *unit);
 void DbufTag_next(DbufTag *unit, int inNumSamples);

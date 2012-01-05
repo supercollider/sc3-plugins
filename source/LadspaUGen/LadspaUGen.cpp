@@ -33,7 +33,6 @@ struct LADSPA : public Unit
 
 extern "C" {  
     static const LADSPA_Descriptor **plugins;
-    void load(InterfaceTable *inTable);
     void LADSPA_next(LADSPA *unit, int inNumSamples);
     void LADSPA_Ctor(LADSPA *unit);
     void LADSPA_Dtor(LADSPA *unit);
@@ -133,7 +132,8 @@ static void getPluginLibrary(const char *fn, void *dlHandle, LADSPA_Descriptor_F
     }
 }
 
-extern "C" void load(InterfaceTable *inTable) {
+PluginLoad(LadspaUGen)
+{
     ft = inTable;
 
     plugins_index = 0;

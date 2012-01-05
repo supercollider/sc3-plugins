@@ -35,7 +35,6 @@ struct BitRightShift : public Unit {};
 struct BitUnsignedRightShift : public Unit {};
 
 extern "C" {
-	void load(InterfaceTable *inTable);
 	void BitAnd_Ctor(BitAnd *unit);
 	void BitAnd_next_kk(BitAnd *unit, int inNumSamples);
 	void BitAnd_next_ak(BitAnd *unit, int inNumSamples);
@@ -65,7 +64,8 @@ extern "C" {
 	void BitUnsignedRightShift_next_aa(BitUnsignedRightShift *unit, int inNumSamples);
 }
 
-void load(InterfaceTable *inTable) {
+PluginLoad(Bit)
+{
 	ft= inTable;
 	DefineSimpleUnit(BitAnd);
 	DefineSimpleUnit(BitOr);
