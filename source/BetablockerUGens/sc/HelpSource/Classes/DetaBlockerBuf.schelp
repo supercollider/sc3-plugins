@@ -4,7 +4,7 @@ categories:: UGens>Demand
 related:: Classes/BetaBlocker01, Reference/BetaBlocker
 
 DESCRIPTION::
-A BateBlocker UGen.
+A Demand Rate BetaBlocker UGen with a shared heap.
 
 
 CLASSMETHODS::
