@@ -1,0 +1,43 @@
+class:: Summer
+summary:: Pulse counter with floating point steps
+related:: Classes/Stepper, Classes/PulseCount, Classes/WrapSummer
+categories::  UGens>Triggers
+
+
+Description::
+
+Summer, based on link::Classes/Stepper::, but allowing floats as inputs, so that you can increment a sum with each step.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::trig
+
+The trigger. Trigger can be any signal. A trigger happens when the signal changes from non-positive to positive.
+
+argument::step
+The step size. Can be a link::Classes/Float::
+
+argument::reset
+
+Resets the counter to code::resetval::  when triggered.
+
+argument::resetval
+
+Value to which the counter is reset when it receives a reset trigger.
+
+Examples::
+
+code::
+{SinOsc.ar(Summer.kr(Impulse.kr(5), 1.5, 0, 0).poll * 100, 0, 0.1)}.play;
+
+(
+{
+	var trig = Dust.kr(5);
+	var reset = Impulse.kr(0.5);
+	SinOsc.ar(Summer.kr(trig, [0.5, 0.25], reset, 1) * 100, 0, 0.1)
+}.play;
+)
+::

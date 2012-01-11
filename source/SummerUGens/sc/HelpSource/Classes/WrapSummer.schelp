@@ -1,0 +1,52 @@
+class:: WrapSummer
+summary:: Pulse counter with floating point steps
+related:: Classes/Stepper, Classes/PulseCount, Classes/Summer
+categories::  UGens>Triggers
+
+
+Description::
+
+WrapSummer, based on link::Classes/Stepper::, but allowing floats as inputs, so that you can increment a sum with each step.
+WrapSummer differs from link::Classes/Summer:: in that it wraps around min and max values.
+
+classmethods::
+
+method::ar, kr
+
+argument::trig
+
+The trigger. Trigger can be any signal. A trigger happens when the signal changes from non-positive to positive.
+
+argument::step
+The step size. Can be a link::Classes/Float::
+
+argument::min
+
+Minimum value of the counter.
+
+argument::max
+
+Maximum value of the counter.
+
+argument::reset
+
+Resets the counter to code::resetval::  when triggered.
+
+argument::resetval
+
+Value to which the counter is reset when it receives a reset trigger. If code::nil::, then this is patched to code::min:: .
+
+Examples::
+
+code::
+{SinOsc.ar(WrapSummer.kr(Impulse.kr(10), 1.5, 3, 13).poll * 100, 0, 0.1)}.play;
+
+{SinOsc.ar(WrapSummer.kr(Impulse.kr(12), 1.33, MouseX.kr(1, 5), MouseY.kr(5, 10)) * 100, 0, 0.1)}.play;
+
+(
+{
+	var trig = Dust.kr([5, 5]);
+	BPF.ar(Saw.ar(WrapSummer.kr(trig, 1.0008, 1, 8) * 100, 0.2));
+}.play;
+)
+::

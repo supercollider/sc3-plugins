@@ -1,0 +1,19 @@
+class:: BitNot
+summary:: bitwise calculation
+related:: Classes/BitAnd, Classes/BitLeftShift, Classes/BitOr, Classes/BitRightShift, Classes/BitUnsignedRightShift, Classes/BitXor, Classes/SimpleNumber
+categories:: UGens>Maths
+
+classmethods::
+
+method:: ar, kr
+
+examples::
+
+code::
+s.boot;
+
+{BitNot.kr(2r1010).poll}.play
+-11.asBinaryString(4)
+
+{BitNot.kr(MouseX.kr(0, 15).round, MouseY.kr(0, 15).round).poll}.play
+::

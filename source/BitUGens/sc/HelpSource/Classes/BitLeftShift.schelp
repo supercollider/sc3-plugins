@@ -1,0 +1,23 @@
+class:: BitLeftShift
+summary:: bitwise calculation
+related:: Classes/BitAnd, Classes/BitNot, Classes/BitOr, Classes/BitRightShift, Classes/BitUnsignedRightShift, Classes/BitXor, Classes/SimpleNumber
+categories:: UGens>Maths
+
+classmethods::
+
+method:: ar, kr
+
+examples::
+
+code::
+s.boot;
+
+{BitLeftShift.kr(2r1010, 1, 8).poll}.play
+20.asBinaryString(16)
+
+{BitLeftShift.kr(2r10011010, 1, 8).poll}.play
+52.asBinaryString(16)
+
+{BitLeftShift.kr(2r10011010, 1, 16).poll}.play
+308.asBinaryString(16)
+::

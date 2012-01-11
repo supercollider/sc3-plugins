@@ -1,0 +1,21 @@
+class:: BitOr
+summary:: bitwise calculation
+related:: Classes/BitAnd, Classes/BitLeftShift, Classes/BitNot, Classes/BitRightShift, Classes/BitUnsignedRightShift, Classes/BitXor, Classes/SimpleNumber
+categories:: UGens>Maths
+
+classmethods::
+
+method:: ar, kr
+
+examples::
+
+code::
+s.boot;
+
+{BitOr.kr(2r1010, 2r1110).poll}.play
+14.asBinaryString(4)
+
+{BitOr.kr(MouseX.kr(0, 15).round, MouseY.kr(0, 15).round).poll}.play
+
+{BitOr.kr(SinOsc.kr(2)>0.9, SinOsc.kr(3)>0.3)*SinOsc.ar([400, 404], 0, 0.3)}.play
+::

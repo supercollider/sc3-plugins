@@ -1,0 +1,23 @@
+class:: BitAnd
+summary:: bitwise calculation
+related:: Classes/BitLeftShift, Classes/BitNot, Classes/BitOr, Classes/BitRightShift, Classes/BitUnsignedRightShift, Classes/BitXor, Classes/SimpleNumber
+categories:: UGens>Maths
+
+classmethods::
+
+method:: ar, kr
+
+examples::
+
+code::
+s.boot;
+
+{BitAnd.kr(2r1010, 2r1110).poll}.play
+10.asBinaryString(4)
+
+{BitAnd.kr(MouseX.kr(0, 15).round, MouseY.kr(0, 15).round).poll}.play
+
+{BitAnd.kr(SinOsc.kr(2)>0.9, SinOsc.kr(3)>0.3)*SinOsc.ar([400, 404], 0, 0.3)}.play
+
+{Clip.ar(BitAnd.ar(SinOsc.ar(MouseY.kr(0, 50), 0, 50, 50), MouseY.kr(0, 50)), -1, 1)}.play
+::
