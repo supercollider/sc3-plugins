@@ -1,0 +1,47 @@
+class:: LFBrownNoise0
+summary:: random walk step
+related:: Classes/LFBrownNoise1, Classes/LFBrownNoise2
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+Random walk with Gendyn distributions.
+
+classmethods::
+
+method::ar, kr
+
+argument::freq
+approximate rate at which to generate random values.
+
+argument::dev
+scale maximum step (0-1).
+
+argument::dist
+Gendyn distribution to use (0-5: see link::Classes/Gendy1:: for details).
+
+
+Examples::
+
+code::
+(
+SynthDef("help-LFNoise0", { arg out=0;
+	Out.ar(out,
+		LFBrownNoise0.ar(1000, 1, MouseX.kr(0, 5), 0.25)
+	)
+}).play;
+)
+
+//use as frequency control
+(
+SynthDef("help-LFNoise0", { arg out=0;
+	Out.ar(out,
+		SinOsc.ar(
+			LFBrownNoise0.ar(8, 0.1, 2, 400, 450),
+			0, 0.2
+		)
+	)
+}).play;
+)
+::

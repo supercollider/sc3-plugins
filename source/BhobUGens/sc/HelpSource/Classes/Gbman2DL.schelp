@@ -1,0 +1,37 @@
+class:: Gbman2DL
+summary:: gingerbreadman map 2D chaotic generator
+related:: Classes/Gbman2DN, Classes/Gbman2DC
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+code::
+x(n+1) = 1 - y(n) + |x(n)|
+y(n+1) = x(n)
+::
+
+
+classmethods::
+
+method::ar, kr
+
+argument::minfreq, maxfreq
+iteration frequency in Hertz
+
+argument::x0
+initial value of x
+
+argument::y0
+initial value of y
+
+
+Examples::
+
+code::
+{ Gbman2DL.ar(MouseX.kr(20, SampleRate.ir*0.25), MouseX.kr(80, SampleRate.ir), 0.1) }.play(s);
+
+{ Gbman2DL.ar(11025, 22050, -0.7, -2.7, 0.1) }.play(s);
+
+{ Gbman2DL.ar(2200, 8800, 1.2, 2.0002, 0.1) }.play(s);
+::

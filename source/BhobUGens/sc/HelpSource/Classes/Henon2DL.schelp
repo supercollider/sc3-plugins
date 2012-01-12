@@ -1,0 +1,46 @@
+class:: Henon2DL
+summary:: henon map 2D chaotic generator
+related:: Classes/Henon2DN, Classes/Henon2DC
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+code::
+y = b * x(n)
+x(n+2) = 1 - ax(n+1)^2 + y
+::
+
+
+classmethods::
+
+method::ar, kr
+
+argument::minfreq, maxfreq
+iteration frequency in Hertz
+
+argument::a, b
+equation variables
+
+argument::x0
+initial value of x
+
+argument::y0
+initial value of y
+
+
+Examples::
+
+code::
+{ Henon2DL.ar(SampleRate.ir/4, SampleRate.ir, MouseX.kr(1,1.4), MouseY.kr(0,0.3)) * 0.2 }.play(s);
+
+(
+{ Henon2DL.ar(
+	2200, 8800,
+	LFNoise2.kr(1, 0.2, 1.2),
+	LFNoise2.kr(1, 0.15, 0.15)
+) * 0.2 }.play(s);
+)
+
+{ SinOsc.ar(Henon2DL.ar(20, 40, MouseX.kr(1,1.4), MouseY.kr(0,0.3))*800+900)*0.4 }.play(s);
+::

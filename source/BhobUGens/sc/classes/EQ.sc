@@ -20,6 +20,6 @@ BhobHiShelf {
 
 BhobTone {
 	*ar {|in, tone|
-		^Mix.ar([HiShelf.ar(in, 10000, tone), LoShelf.ar(in, 100, tone.reciprocal)])
+		^Mix([HiShelf.ar(in, 10000, tone), LoShelf.ar(in, 100, tone.reciprocal)])
 	}
 }

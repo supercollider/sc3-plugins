@@ -1,0 +1,56 @@
+title:: Filter Comparisons
+summary:: compare different resonant low pass filters (BhobUGens)
+categories:: UGens>Filters
+related:: Classes/MoogLadder, Classes/RLPFD, Classes/NLFiltN, Classes/Streson
+
+
+section::MoogLadder.ar(in, cutoff, res (0-1), mul, add)
+
+based on code by Victor Lazzarini and Antti Huovilainen
+
+code::
+{ |ffreq=390| MoogLadder.ar(Mix(LFSaw.ar([120, 180], 0, 0.33)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.75, mul:3.5).dup }.play
+::
+
+section::RLPFD.ar(in, cutoff, res (0-1), dist (0-1), mul, add)
+
+resonance and distortion are related. can become nasty when cutoff, res, and dist are all high. this is based on code by Josep M Comajuncosas meant to emulate the TB303
+
+code::
+{ |ffreq=390| RLPFD.ar(Mix(LFSaw.ar([120, 180], 0, 0.33)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.6, 0.0, mul:3.0).dup }.play
+
+{ |ffreq=390| MoogVCF.ar(Mix(LFSaw.ar([120, 180], 0, 0.33)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.75, 2.0).dup }.play
+
+{BLowPass4.ar(Mix(LFSaw.ar([120, 180], mul:0.2)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.2).dup }.play
+
+{BLowPass.ar(Mix(LFSaw.ar([120, 180], mul:0.2)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.2).dup }.play
+
+{RLPF.ar(Mix(LFSaw.ar([120, 180], mul:0.2)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.2).dup }.play
+::
+
+section::NLFiltN.ar(input, a, b, d, c, l, mul, add) (also NLFiltL, NLFiltC)
+
+Implements the filter code::Y{n} =a Y{n-1} + b Y{n-2} + d Y^2{n-L} + X{n} - C:: described in Dobson and Fitch with no, linear, or cubic interpolation and sigmoid clipping.
+
+code::
+(
+{
+	NLFiltC.ar(
+		LFSaw.ar([120, 180], 0, mul:0.1),
+		0.5,
+		-0.04,
+		0.8,
+		0.2,
+		LFCub.kr(0.2, [0, 0.5 * pi], 63, 103)
+	)
+}.play
+)
+::
+
+section::Streson.ar(in, delayTime, res) delayTime=stringFundamental.reciprocal, res=0-1 (effects begin around 0.9)
+
+Victor Lazzarini's string resonator.
+
+code::
+{ Streson.ar(LFSaw.ar([220, 180], 0, mul:EnvGen.kr(Env.asr(0.5, 1, 0.02), 1.0) * 0.2), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 377).reciprocal, 0.9, 0.3) }.play
+::

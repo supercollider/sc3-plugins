@@ -1,0 +1,49 @@
+class:: Latoocarfian2DN
+summary:: latoocarfian 2D chaotic generator
+related:: Classes/Latoocarfian2DL, Classes/Latoocarfian2DC
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+code::
+x(n+1) = sin(by(n)) + c*sin(bx(n))
+y(n+1) = sin(ay(n)) + d*sin(ax(n))
+::
+
+x values determine frequencies; y values determine amplitudes. Stable ranges for strong::a:: & strong::b:: tend to be between -3 to + 3. strong::c:: & strong::d:: between 0.5 and 1.5. There are combinations within these ranges that are unstable, so be prepared to tweak this oscillator.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::minfreq, maxfreq
+iteration frequency in Hertz
+
+argument::a, b, c, d
+equation variables
+
+argument::x0
+initial value of x
+
+argument::y0
+initial value of y
+
+
+Examples::
+
+code::
+{ Latoocarfian2DN.ar(MouseX.kr(20, SampleRate.ir * 0.5), MouseX.kr(40, SampleRate.ir), mul:0.2) }.play(s);
+
+
+(
+{ Latoocarfian2DN.ar(
+	SampleRate.ir/4,
+	SampleRate.ir,
+	LFNoise2.kr(2.dup, 1.5, 1.5),
+	d:LFNoise2.kr(2.dup, 0.5, 1.5),
+	mul:0.2
+) }.play(s);
+)
+::

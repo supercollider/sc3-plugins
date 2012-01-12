@@ -1,0 +1,28 @@
+class:: MoogLadder
+summary:: Moog Filter Emulation
+related:: Classes/MoogFF
+categories:: UGens>Filters
+
+
+Description::
+
+
+classmethods::
+
+method::ar, kr
+
+argument::in
+audio input
+
+argument::ffreq
+cutoff freq
+
+argument::res
+resonance (0-1)
+
+
+Examples::
+
+code::
+{ MoogLadder.ar(Mix(LFSaw.ar([120, 180], 0, 0.33)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 180, 8500), 0.75).dup }.play
+::

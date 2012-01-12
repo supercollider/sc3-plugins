@@ -1,0 +1,45 @@
+class:: Dbrown2
+summary:: demand rate brownian movement with Gendyn distributions
+related:: Classes/Dbrown, Classes/Demand, Classes/Duty, Classes/TDuty
+categories:: UGens>Demand
+
+
+Description::
+
+Dbrown2 returns numbers in the continuous range between lo and hi. The arguments can be a number or any other ugen.
+
+
+classmethods::
+
+method::new
+
+argument::lo
+minimum value
+
+argument::hi
+maximum value
+
+argument::step
+maximum step for each new value
+
+argument::dist
+gendyn distribution (see link::Classes/Gendy1::)
+
+argument::length
+number of values to create
+
+
+Examples::
+
+code::
+(
+{
+	var a, freq, trig;
+	a = Dbrown2(0, 15, 1, [1, 4], inf);
+	trig = Dust.kr(MouseX.kr(1, 40, 1));
+	freq = Demand.kr(trig, 0, a) * 30 + 340;
+	SinOsc.ar(freq) * 0.1
+
+}.play;
+)
+::

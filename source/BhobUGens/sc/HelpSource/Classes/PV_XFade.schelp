@@ -1,0 +1,58 @@
+class:: PV_XFade
+summary:: one kind of spectral morphing
+related:: Classes/PV_Morph
+categories:: UGens>FFT
+
+
+Description::
+
+Interpolates bins between two fft buffers.
+
+
+classmethods::
+
+method::new
+
+argument::bufferA
+fft buffer A.
+
+argument::bufferB
+fft buffer B.
+
+argument::fade
+0-1
+
+Examples::
+
+code::
+s.boot;
+(
+b = Buffer.alloc(s,2048,1);
+c = Buffer.alloc(s,2048,1);
+d = Buffer.read(s,"sounds/a11wlk01.wav");
+)
+
+(
+SynthDef("help-xfade", { arg out=0, bufnumA=0, bufnumB=1;
+	var inA, chainA, inB, chainB, chain;
+	inA = Pulse.ar(180, LFCub.kr(1, 0, 0.1, 0.3), 0.5);
+	inB = VarSaw.ar(190, 0, LFCub.kr(0.8, 0, 0.4, 0.5), 0.5);
+	chainA = FFT(bufnumA, inA);
+	chainB = FFT(bufnumB, inB);
+	chain = PV_XFade(chainA, chainB, MouseX.kr);
+	Out.ar(out, IFFT(chain).dup);
+}).play(s,[\out, 0, \bufnumA, b.bufnum, \bufnumB, c.bufnum ]);
+)
+
+(
+SynthDef("help-xfade2", { arg out=0, bufnumA=0, bufnumB=1, soundBufnum=2;
+	var inA, chainA, inB, chainB, chain;
+	inA = Mix(Formant.ar([120, 180], [1200, 2000], [240, 360], 0.2));
+	inB = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 1);
+	chainA = FFT(bufnumA, inA);
+	chainB = FFT(bufnumB, inB);
+	chain = PV_XFade(chainA, chainB, MouseX.kr);
+	Out.ar(out,  IFFT(chain).dup);
+}).play(s,[\out, 0, \bufnumA, b.bufnum, \bufnumB, c.bufnum, \soundBufnum, d.bufnum]);
+)
+::

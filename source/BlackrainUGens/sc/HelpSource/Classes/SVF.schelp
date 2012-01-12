@@ -1,0 +1,104 @@
+class:: SVF
+summary:: 12db/Oct State Variable Filter
+related:: Classes/IIRFilter, Classes/BMoog
+categories:: UGens>Filters
+
+
+Description::
+
+Total, 100% Plastic...
+
+
+classmethods::
+
+method::ar, kr
+
+argument::signal
+audio in
+
+argument::cutoff
+cutoff frequency
+
+argument::res
+resonance. 0.0 - 1.0
+
+argument::lowpass
+lowpass filter output level. 0.0 - 1.0
+
+argument::bandpass
+bandpass filter output level. 0.0 - 1.0
+
+argument::highpass
+high filter output level. 0.0 - 1.0
+
+argument::notch
+notchfilter output level. 0.0 - 1.0
+
+argument::peak
+peak filter output level. 0.0 - 1.0
+
+
+Examples::
+
+code::
+s.boot;
+(
+z = SynthDef(\svf_test, { arg low=0.1, band=0.0, high=0.0, notch=0.0, peak=0.0;
+	var sig;
+
+	sig = SVF.ar(
+		LFSaw.ar(LFSaw.kr(2).range(110,35)),	// signal
+		MouseX.kr(20,20000,'exponential'),	// cutoff
+		MouseY.kr(1.0,0,'linear'),		// q
+		low, band, high, notch, peak);		// levels
+	Out.ar(0, sig ! 2);
+}).play(addAction: \addToTail);
+)
+
+z.set(\low, 0.1);
+z.set(\band, 0.0);
+z.set(\high, 0.0);
+z.set(\notch, 0.0);
+z.set(\peak, 0.0);
+
+// a small gui (example requires crucial lib)
+(
+k= [];
+[\low, \band, \high, \notch, \peak].do({ arg j;
+	k = k.add(KnobEditor.new(0.0, \amp).action_({ arg v; z.set(j, v.value) }) )
+ });
+)
+
+(
+Sheet({ arg lay;
+	[\low, \band, \high, \notch, \peak].do({ arg j; CXLabel.new(lay, j, minWidth: 44) });
+	lay.startRow;
+	k.do(_.gui(lay));
+}, "SVF")
+)
+
+z.free
+
+(
+Patch({ arg in, ffreq=1200.0, res=0.5, low=0.25, band=0.0, high=0.0, notch=0.0, peak=0.0;
+
+	SVF.ar(
+		LFSaw.ar(LFSaw.kr(2).range(110,55), 0.0, 0.1),
+		ffreq, res, low, band, high, notch, peak);
+
+}).gui
+)
+
+(
+Patch({ arg low=0.25, band=0.0, high=0.0, notch=0.0, peak=0.0;
+	var sig, freq;
+	freq = MouseX.kr(20,12000,\exponential);
+	sig = SVF.ar(
+		LFSaw.ar([freq * 0.99, freq * 1.01], 0, 0.1) ! 2,
+		SinOsc.kr(SinOsc.kr(0.1),1.5pi,1550,1800),
+		MouseY.kr(1,0,\linear),
+		low, band, high, notch, peak);
+	 (CombN.ar(sig, 0.4, [0.4,0.35],2) * 0.4) + (sig * 0.5);
+}).gui
+)
+::

@@ -1,0 +1,49 @@
+class:: PV_CommonMag
+summary:: returns common magnitudes
+related:: Classes/PV_CommonMul
+categories:: UGens>FFT
+
+
+Description::
+
+Returns magnitudes common to strong::bufferA:: & strong::bufferB:: within a tolerance level.
+
+classmethods::
+
+method::new
+
+argument::bufferA
+fft buffer A.
+
+argument::bufferB
+fft buffer B.
+
+argument::tolerance
+magnitudes within which test will pass
+
+argument::remove
+scale uncommon magnitudes
+
+
+Examples::
+
+code::
+s.boot;
+(
+b = Buffer.alloc(s, 2048, 1);
+c = Buffer.alloc(s, 2048, 1);
+d = Buffer.read(s, "sounds/a11wlk01.wav");
+)
+
+(
+SynthDef("help-commonMag", { arg out=0, bufnumA=0, bufnumB=1, soundBufnum=2;
+	var inA, inB, chainA, chainB, chain;
+	inA = HPF.ar(Mix(LFSaw.ar([100, 150], 0, 0.2)), 1200);
+	inB = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 1);
+	chainA = FFT(bufnumA, inA);
+	chainB = FFT(bufnumB, inB);
+	chain = PV_CommonMag(chainA, chainB, MouseX.kr(0, 50), MouseY.kr);
+	Out.ar(out,  IFFT(chain).dup);
+}).play(s,[\out, 0, \bufnumA, b.bufnum, \bufnumB, c.bufnum, \soundBufnum, d.bufnum]);
+)
+::

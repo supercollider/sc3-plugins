@@ -1,0 +1,51 @@
+class:: TBetaRand
+summary:: triggered beta random distribution
+related:: Classes/TRand, Classes/TGaussRand, Classes/TBrownRand
+categories:: UGens>Random, UGens>Triggers
+
+
+Description::
+
+Generates a random float value in beta distribution from code::lo:: to code::hi:: each time the trigger signal changes from nonpositive to positive values.
+
+classmethods::
+
+method::ar, kr
+
+argument::lo
+minimum value
+
+argument::hi
+maximum value
+
+argument::prob1, prob2
+if prob1 & prob2 are less than 1, values tend towards lo & hi. if they are equal to 1, there is a linear random distribution. higher than 1, the distribution tends towards gaussian, with the possibility of a mean skewed towards the prob of the lowest value.
+
+argument::trig
+trigger signal
+
+
+Examples::
+
+code::
+(
+{
+	var trig = Dust.kr(10);
+	SinOsc.ar(
+		TBetaRand.kr(300, 3000, 0.1, 0.1, trig)
+	) * 0.1
+}.play;
+)
+
+(
+{
+	var trig, prob1, prob2;
+	trig = Dust.kr(10);
+	prob1 = MouseX.kr(1, 5);
+	prob2 = MouseY.kr(1, 5);
+	SinOsc.ar(
+		TBetaRand.kr(300, 3000, prob1, prob2, trig)
+	) * 0.1
+}.play;
+)
+::

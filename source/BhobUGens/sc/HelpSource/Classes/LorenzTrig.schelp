@@ -1,0 +1,60 @@
+class:: LorenzTrig
+summary:: lorenz chaotic trigger generator
+related:: Classes/Lorenz2DN
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+code::
+x' = s(y - x)
+y' = x(r - z) - y
+z' = xy - bz
+::
+
+
+classmethods::
+
+method::ar, kr
+
+argument::minfreq
+minimum frequency in Hertz
+
+argument::maxfreq
+maximum frequency in Hertz
+
+argument::s, r, b
+equation variables
+
+argument::h
+integration time step
+
+argument::x0
+initial value of x
+
+argument::y0
+initial value of y
+
+argument::z0
+initial value of z
+
+
+Examples::
+
+code::
+{ LorenzTrig.ar(11025, 44100) }.play(s);
+
+// randomly modulate params
+(
+{ LorenzTrig.ar(
+	11025, 44100,
+	LFNoise0.kr(1, 2, 10),
+	20,
+	LFNoise0.kr(1, 1.5, 2),
+	0.02
+) * 0.2 }.play(s);
+)
+
+// as a frequency control
+{ SinOsc.ar(Decay.ar(LorenzTrig.ar(1, 8, h:0.02))*800+900)*0.4 }.play(s);
+::

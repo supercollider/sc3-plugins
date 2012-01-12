@@ -1,0 +1,71 @@
+class:: Fhn2DC
+summary:: FitzHughNagumo Neuron Firing Oscillator
+related:: Classes/Fhn2DN, Classes/Fhn2DL
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+code::
+du/dt= rateu*(u-0.3333*u^3 - w)
+dw/dt= ratew*(b0+b1*u - w)
+::
+
+note::
+All inputs can have .kr rate UGens plugged in.
+::
+
+classmethods::
+
+method::ar, kr
+
+argument::minfreq, maxfreq
+freq iteration
+
+argument::rateu
+update rate for u
+
+argument::ratew
+update rate for w
+
+argument::b0
+equation constant
+
+argument::b1
+equation constant
+
+argument::i
+arbitrary external impulse; i.e. pulse wave, trigger, lfnoise, or nothing.
+
+argument::initu
+reset value for u
+
+argument::initw
+reset value for w
+
+
+Examples::
+
+code::
+{ Out.ar(0,Pan2.ar(0.3*Fhn2DC.ar(220,800,0.3,0.3,0.6,0.8,LFPulse.kr(MouseX.kr(1, 10, 1), 0, 0.1)),0.0)) }.play
+
+(
+SynthDef(\fhn, {|out=0, pan=0, amp=0.1|
+	var sig;
+	sig=Fhn2DC.ar(110, 22050, TExpRand.kr(0.001, 0.2, Dust.kr(8)), TExpRand.kr(0.001, 0.2, Dust.kr(13)), TRand.kr(0.1, 0.4, Dust.kr(5)),TRand.kr(0.1, 1.9, Dust.kr(3)), mul:amp);
+	Out.ar(0,Pan2.ar(sig, pan))
+}).play
+)
+
+(
+SynthDef(\fhn, {|out=0, pan=0, amp=0.1|
+	var sig, trig1, trig2, b0, b1;
+	trig1=FhnTrig.kr(5, 8, 0.3, 0.3, 1, 1);
+	trig2=FhnTrig.kr(8, 13, 0.27, 0.27, 0.6, 0.8);
+	b0=Fhn2DN.kr(3, 5, 0.29, 0.29, 0.5, 1.1, mul:0.23, add:0.25);
+	b1=Fhn2DN.kr(2, 3, 0.25, 0.25, 0.2, 1.5, mul:0.48, add:0.5);
+	sig=Fhn2DC.ar(110, 22050, TExpRand.kr(0.001, 0.3, trig1), TExpRand.kr(0.001, 0.3, trig2), b0, b1, mul:amp);
+	Out.ar(0,Pan2.ar(sig, pan))
+}).play
+)
+::

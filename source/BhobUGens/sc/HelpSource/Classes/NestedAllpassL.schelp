@@ -1,0 +1,88 @@
+class:: NestedAllpassL
+summary:: Nested Allpass filters as proposed by Vercoe and Pluckett
+related:: Classes/NestedAllpassN, Classes/NestedAllpassC, Classes/DoubleNestedAllpassN, Classes/DoubleNestedAllpassL, Classes/DoubleNestedAllpassC
+categories:: UGens>Delays
+
+
+Description::
+
+Useful for reverberation, especially implementing Gardner reverbs.
+
+
+classmethods::
+
+method::ar
+
+
+Examples::
+
+code::
+(
+Instr([\reverb, \gardnerS], {|chan=2, in|
+	var lp, fb, ap1, ap2, revout;
+	fb=LocalIn.ar(chan);
+	lp=LPF.ar(in, 6000);
+	lp=DelayL.ar(lp, 0.024, 0.024);
+	ap1=DoubleNestedAllpassL.ar(lp + (0.5 * fb));
+	ap2=NestedAllpassL.ar(ap1);
+	revout=ap1 * 0.5 + (ap2 * 0.6);
+	LocalOut.ar(BPF.ar(revout * 0.5, 1600, 0.5));
+	revout
+});
+
+Instr([\reverb, \gardnerM], {|chan=2, in|
+	var lp, fb, ap1, ap2, ap3, revout;
+	fb=LocalIn.ar(chan);
+	lp=LPF.ar(in, 6000);
+	ap1=DoubleNestedAllpassL.ar(lp + (0.5 * fb), 0.0047, 0.0047, 0.25, 0.0083, 0.0083, 0.35, 0.022, 0.022, 0.45);
+	ap2=AllpassL.ar(DelayL.ar(ap1, 0.005, 0.005), 0.03, 0.03, 0.25952);
+	ap2=DelayL.ar(ap2, 0.067, 0.067);
+	ap3=NestedAllpassL.ar(lp + DelayL.ar(ap2, 0.015, 0.015, 0.4), 0.0292, 0.0292, 0.25, 0.0098, 0.0098, 0.35);
+	revout=Mix([ap1, ap2, ap3]) * 0.5;
+	LocalOut.ar(BPF.ar(revout * 0.4, 1000, 0.5));
+	revout
+});
+
+Instr([\reverb, \gardnerL], {|chan=2, in|
+	var lp, fb, ap1, ap2, ap3, ap4, revout;
+	lp=LPF.ar(in, 4000);
+	fb=LocalIn.ar(chan);
+	ap1=AllpassL.ar(lp + (0.5 * fb), 0.008, 0.008, 0.0459);
+	ap2=AllpassL.ar(ap1, 0.012, 0.012, 0.06885);
+	ap2=DelayL.ar(ap2, 0.004, 0.004);
+	ap3=NestedAllpassL.ar(DelayL.ar(ap2, 0.017, 0.017), 0.025, 0.025, 0.5, 0.062, 0.062, 0.25);
+	ap3=DelayL.ar(ap3, 0.031, 0.031);
+	ap4=DoubleNestedAllpassL.ar(DelayL.ar(ap3, 0.003, 0.003), 0.120, 0.120, 0.5, 0.076, 0.076, 0.25, 0.030, 0.030, 0.25);
+	revout=Mix([ap4 * 0.8, ap3 * 0.8, ap2 * 1.5]);
+	LocalOut.ar(BPF.ar(revout * 0.5, 1000, 0.5));
+	revout
+});
+)
+
+(
+{
+	var sig, rev;
+	sig=Splay.arFill(8, { FSinOsc.ar(ExpRand(120, 850)).squared * Decay2.ar(Dust.ar(2), 0.02, 0.1, 0.3) });
+	rev=Instr.ar([\reverb, \gardnerS], [2, sig]);
+	0.5 * rev + sig
+}.play
+)
+
+(
+{
+	var sig, rev;
+	sig=Splay.arFill(8, { FSinOsc.ar(ExpRand(120, 850)).squared * Decay2.ar(Dust.ar(2), 0.02, 0.1, 0.3) });
+	rev=Instr.ar([\reverb, \gardnerM], [2, sig]);
+	0.5 * rev + sig
+}.play
+)
+
+(
+{
+	var sig, rev;
+	sig=Splay.arFill(8, { FSinOsc.ar(ExpRand(120, 850)).squared * Decay2.ar(Dust.ar(2), 0.02, 0.1, 0.3) });
+	rev=Instr.ar([\reverb, \gardnerL], [2, sig]);
+	0.5 * rev + sig
+}.play
+)
+::

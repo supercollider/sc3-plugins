@@ -1,0 +1,33 @@
+class:: RLPFD
+summary:: TB303 Filter Emulation
+related:: Classes/MoogLadder
+categories:: UGens>Filters
+
+
+Description::
+
+This filter can be a little quiet, so i often multiply it by 3 or so.  Watch out for high frequencies + hi res + hi dist = feedback.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::in
+audio input
+
+argument::ffreq
+cutoff freq
+
+argument::res
+resonance (0-1)
+
+argument::dist
+distortion (0-1). interacts with resonance
+
+
+Examples::
+
+code::
+{ RLPFD.ar(Mix(LFSaw.ar([120, 180], 0, 0.33)), LinExp.kr(LFCub.kr(0.1, 0.5*pi), -1, 1, 280, 1500), 0.6, 0.5, mul:3).dup }.play
+::

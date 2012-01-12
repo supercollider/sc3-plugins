@@ -1,0 +1,40 @@
+class:: TGaussRand
+summary:: triggered gaussian random distribution
+related:: Classes/TRand, Classes/TBetaRand, Classes/TBrownRand
+categories:: UGens>Random, UGens>Triggers
+
+
+Description::
+
+Generates a random float value in gaussian distribution from code::lo:: to code::hi:: each time the trigger signal changes from nonpositive to positive values.
+
+classmethods::
+
+method::ar, kr
+
+argument::lo
+minimum value
+
+argument::hi
+maximum value
+
+argument::trig
+trigger signal
+
+
+Examples::
+
+code::
+(
+{
+	var trig;
+	trig = Dust.kr(10);
+	Pan2.ar(SinOsc.ar(
+			TGaussRand.kr(300, 3000, trig)
+		),
+		TGaussRand.kr(-1, 1, trig),
+		0.1
+	)
+}.play;
+)
+::

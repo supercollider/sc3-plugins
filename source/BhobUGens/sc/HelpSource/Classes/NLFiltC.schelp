@@ -1,0 +1,86 @@
+class:: NLFiltC
+summary:: Non-linear Filter
+related:: Classes/NLFiltN, Classes/NLFiltL
+categories:: UGens>Filters
+
+
+Description::
+
+Implements the filter code::Y{n} =a Y{n-1} + b Y{n-2} + d Y^2{n-l} + X{n} - c:: described in Dobson and sigmoid clipping. This filter is inherently unstable, so pick some sane values and move slowly from there.
+
+
+classmethods::
+
+method::ar, kr
+
+
+Examples::
+
+code::
+(
+{
+	NLFiltC.ar(
+		LFSaw.ar([120, 180], 0, mul:0.1),
+		0.5,
+		-0.04,
+		0.8,
+		0.2,
+		LFCub.kr(0.2, [0, 0.5 * pi], 63, 103)
+	)
+}.play
+)
+
+(
+{
+	NLFiltC.ar(
+		LFSaw.ar(XLine.kr([60, 90], [360, 540], 20), 0, mul:0.1),
+		0.0,
+		0.0,
+		0.8,
+		0.4,
+		LFCub.kr(0.2, [0, 0.5 * pi], 3, 9)
+	)
+}.play
+)
+
+(
+// internal mirroring keeps it from blowing up and makes for some gross distortion
+// this is a little loud
+{
+	NLFiltC.ar(
+		LFPulse.ar([100, 150], mul:0.1),
+		LFNoise2.kr(1).range(0.3, 0.5),
+		0.2,
+		0.7,
+		0.4,
+		LFCub.kr(0.2, [0, 0.5 * pi], 100, 400)
+	)
+}.play
+)
+
+(
+{
+	NLFiltC.ar(
+		LFPulse.ar([100, 150], mul:0.1),
+		0.7,
+		-0.2,
+		0.9,
+		0.2,
+		LFCub.kr(0.2, [0, 0.5 * pi], 100, 400)
+	)
+}.play
+)
+
+(
+{
+	NLFiltC.ar(
+		LFPulse.ar([100, 150], mul:0.1),
+		0.35,
+		-0.3,
+		0.95,
+		0.2,
+		LFCub.kr(0.2, [0, 0.5 * pi], 50, 100)
+	)
+}.play
+)
+::
