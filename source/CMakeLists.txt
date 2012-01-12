@@ -88,7 +88,6 @@ set(PLUGIN_DIRS
     BBCut2UGens
     BerlachUGens
     BhobUGens
-    BitUGens
     BlackrainUGens
     ConcatUGens
     DistortionUGens
