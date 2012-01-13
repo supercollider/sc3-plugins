@@ -1,0 +1,34 @@
+class:: SineShaper
+summary:: port of some ladspa plugins
+related:: Classes/CrossoverDistortion, Classes/SmoothingDecimator, Classes/Decimator, Classes/Disintegrator
+categories:: UGens>Filters
+
+
+Description::
+Wave Shaper (Sine-Based).
+
+
+classmethods::
+
+method::ar
+
+argument::in
+The input signal.
+
+argument::limit
+
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+{SineShaper.ar(SinOsc.ar([400, 404], 0, 0.2), MouseX.kr(0, 1))}.play
+
+{SineShaper.ar(SoundIn.ar, MouseX.kr(0, 1))}.play
+::

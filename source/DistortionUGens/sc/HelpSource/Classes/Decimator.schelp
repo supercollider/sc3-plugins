@@ -1,0 +1,37 @@
+class:: Decimator
+summary:: port of some ladspa plugins
+related:: Classes/CrossoverDistortion, Classes/SmoothDecimator, Classes/SineShaper, Classes/Disintegrator
+categories:: UGens>Filters
+
+
+Description::
+Decimates (reduces the effective sample rate), and reduces the bit depth of the input signal, allows non integer values for smooth transitions between clean and lofi signals.
+
+
+classmethods::
+
+method::ar
+
+argument::in
+The input signal.
+
+argument::rate
+The sample rate that the signal will be resampled at.
+
+argument::bits
+The bit depth that the signal will be reduced to.
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+{Decimator.ar(SinOsc.ar([400, 404], 0, 0.2), MouseX.kr(0, 44100), MouseY.kr(0, 31))}.play
+
+{Decimator.ar(SoundIn.ar, MouseX.kr(0, 44100), MouseY.kr(0, 31))}.play
+::

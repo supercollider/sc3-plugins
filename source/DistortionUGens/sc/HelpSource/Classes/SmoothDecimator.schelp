@@ -1,0 +1,37 @@
+class:: SmoothDecimator
+summary:: port of some ladspa plugins
+related:: Classes/CrossoverDistortion, Classes/Decimator, Classes/SineShaper, Classes/Disintegrator
+categories:: UGens>Filters
+
+
+Description::
+Decimates (reduces the effective sample rate).
+
+
+classmethods::
+
+method::ar
+
+argument::in
+The input signal.
+
+argument::rate
+The rate at which the output signal will be resampled.
+
+argument::smoothing
+The amount of smoothing on the output signal.
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+{SmoothDecimator.ar(SinOsc.ar([400, 404], 0, 0.2), MouseX.kr(0, 44100), MouseY.kr(0, 1))}.play
+
+{SmoothDecimator.ar(SoundIn.ar, MouseX.kr(0, 44100), MouseY.kr(0, 1))}.play
+::

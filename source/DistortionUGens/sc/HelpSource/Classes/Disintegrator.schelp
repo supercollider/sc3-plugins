@@ -1,0 +1,35 @@
+class:: Disintegrator
+summary:: port of some ladspa plugins
+related:: Classes/CrossoverDistortion, Classes/Decimator, Classes/SmoothDecimator, Classes/SineShaper
+categories:: UGens>Filters
+
+
+Description::
+Amplifies random half-cycles of it's input by multiplier. Set multiplier to 0 and vary probability for a weird fade effect, or set multiplier to -1 and probability to 0.5 to turn pitched sounds into noise.
+
+
+classmethods::
+
+method::ar
+
+argument::in
+The input signal.
+
+argument::probability
+
+argument::multiplier
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+{Disintegrator.ar(SinOsc.ar([400, 404], 0, 0.2), MouseX.kr(0, 1), MouseY.kr(0, 1))}.play
+
+{Disintegrator.ar(SoundIn.ar, MouseX.kr(0, 44100), MouseY.kr(0, 1))}.play
+::

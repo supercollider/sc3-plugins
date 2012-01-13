@@ -1,0 +1,45 @@
+class:: GlitchRHPF
+summary:: backward compatibility
+related:: Classes/RHPF
+categories:: UGens>Filters>Linear
+
+
+Description::
+
+after sc3.4 HPF and RHPF were changed to use double-precision floats (svn revision: 10300 - 8sep2010). GlitchHPF and GlitchRHPF can be used as drop-in replacements to get the old behavior back. Good for very noise and glitchy sounds.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::in
+The input signal.
+
+argument::freq
+Cutoff frequency in Hertz.
+
+argument::rq
+The reciprocal of Q (bandwidth / cutoffFreq).
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+//code that utilizes the glitch.
+//warning!  extremely loud.
+//note: might not sound the same on all soundcards
+(
+{GlitchRHPF.ar(
+	BrownNoise.ar(1.dup),
+	0.5,
+	Saw.kr(1, 10)
+)}.play;
+)
+::

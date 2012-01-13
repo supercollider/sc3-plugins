@@ -1,0 +1,95 @@
+class:: AutoTrack
+summary:: autocorrelation beat tracker
+related:: Classes/AnalyseEvents2, Classes/BeatTrack
+categories:: UGens>Analysis
+
+
+Description::
+
+note::
+synonym for link::Classes/BeatTrack:: these days, since BeatTrack went in core
+::
+
+Autocorrelation beat tracker by Nick Collins, following:
+
+M. E. P. Davies and M. D. Plumbley. Beat Tracking With A Two State Model. emphasis::Proceedings of the IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP 2005)::, Philadelphia, USA, March 19-23, 2005
+
+This is my own adaptation for my beat tracking research and uses my own C implementation of Matthew Davies' original MATLAB model. Meanwhile, Paul Brossier and Matthew have been preparing their own realtime version for Paul's aubio library.
+
+There are four k-rate outputs, being ticks at quarter, eighth and sixteenth level from the determined beat, and the current detected tempo.
+
+Note the following restrictions:
+
+This beat tracker determines the beat, biased to the midtempo range by weighting functions. It does not determine the measure level, only a tactus. It is also slow reacting, using a 6 second temporal window for it's autocorrelation maneouvres. Don't expect human musician level predictive tracking.
+
+On the other hand, it is tireless, relatively general (though obviously best at transient 4/4 heavy material without much expressive tempo variation), and can form the basis of computer processing that is decidedly faster than human.
+
+
+classmethods::
+
+method::kr
+
+argument::in
+Audio input to track
+
+argument::lock
+If this argument is greater than 0.5, the tracker will lock at its current periodicity and continue from the current phase. Whilst it updates the model's phase and period, this is not reflected in the output until lock goes back below 0.5.
+
+
+Examples::
+
+code::
+//choose some file you want to track off your hard drive (mono)
+b=Buffer.read(s,"/data/audio/mirdata/stevebeattrack/samples/100.wav");
+
+(
+a= SynthDef(\help_autotrack,{arg vol=1.0, beepvol=1.0, lock=0;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= PlayBuf.ar(1,b.bufnum,1.0,1,0,1);
+
+#trackb,trackh,trackq,tempo=AutoTrack.kr(source, lock);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(0,Pan2.ar((vol*source)+(beepvol*beep),0.0));
+
+}).play;
+)
+
+a.set(\vol,0.0);
+
+a.set(\beepvol,1.0);
+
+a.set(\lock,1); //fix it rigidly from current phase/period solution
+
+a.set(\lock,0); //unfix, back to tracking
+
+
+
+
+
+
+
+//track audio in (try clapping a beat or beatboxing, but allow up to 6 seconds for tracking to begin) and spawning stuff at quarters, eighths and sixteenths
+(
+SynthDef(\help_autotrack2,{
+var trackb,trackh,trackq,tempo;
+var source;
+var bsound,hsound,qsound;
+
+source= SoundIn.ar;
+
+#trackb,trackh,trackq,tempo=AutoTrack.kr(source);
+
+bsound= Pan2.ar(LPF.ar(WhiteNoise.ar*(Decay.kr(trackb,0.05)),1000),0.0);
+
+hsound= Pan2.ar(BPF.ar(WhiteNoise.ar*(Decay.kr(trackh,0.05)),3000,0.66),-0.5);
+
+qsound= Pan2.ar(HPF.ar(WhiteNoise.ar*(Decay.kr(trackq,0.05)),5000),0.5);
+
+Out.ar(0, bsound+hsound+qsound);
+}).play;
+)
+::
