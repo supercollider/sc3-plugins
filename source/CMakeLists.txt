@@ -195,7 +195,7 @@ else()
     set (PitchDetectionLibs ${FFTW3F_LIBRARY})
 endif()
 
-BUILD_PLUGIN(PitchDetection "${PitchDetectionSources};${FFTSOURCES}"
+BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
              ${PitchDetectionLibs} "PitchDetection")
 
 # StkUGens
@@ -215,12 +215,6 @@ include_directories(StkUGens/stk-4.4.2/src/include)
 BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 
 # NCAnalysisUGens
-set(FFTSOURCES
-    scfft_old/fftlib.c
-    scfft_old/SC_fftlib.cpp
-    scfft_old/SCComplex.cpp
-)
-
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
 if(APPLE)
     set (NCAnalysisLibs "-framework vecLib")
@@ -228,7 +222,7 @@ else()
     set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
 
-BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources};${FFTSOURCES}"
+BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources}"
              ${NCAnalysisLibs} "NCAnalysisUGens")
 
 # AYUGens
