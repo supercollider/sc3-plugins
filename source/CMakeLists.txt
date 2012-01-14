@@ -1,10 +1,3 @@
-find_package(FFTW3f)
-
-if (!FFTW3F_FOUND)
-    message(SEND_ERROR "Cannot find libfftw3f")
-endif()
-
-
 #---------
 # includes
 #---------
@@ -197,6 +190,27 @@ endif()
 
 BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
              ${PitchDetectionLibs} "PitchDetection")
+
+if (NOT APPLE)
+	find_package(FFTW3f)
+
+	if (!FFTW3F_FOUND)
+		message(SEND_ERROR "Cannot find libfftw3f")
+	endif()
+	set_property(TARGET PitchDetection
+		APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+	if (SUPERNOVA)
+		set_property(TARGET PitchDetection_supernova
+			APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+	endif()
+else()
+	set_property(TARGET PitchDetection
+	APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+	if (SUPERNOVA)
+		set_property(TARGET PitchDetection_supernova
+		APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+	endif()
+endif()
 
 # StkUGens
 file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
