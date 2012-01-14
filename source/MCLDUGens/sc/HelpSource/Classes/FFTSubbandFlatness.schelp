@@ -1,4 +1,4 @@
-CLASS:: FFTSubbandFlatenss
+CLASS:: FFTSubbandFlatness
 summary:: Spectral flatness, divided into subbands
 categories:: UGens>Analysis, UGens>FFT
 related:: Classes/FFTFlatness, Classes/FFTSubbandPower
