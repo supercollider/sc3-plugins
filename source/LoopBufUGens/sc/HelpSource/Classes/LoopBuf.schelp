@@ -1,0 +1,86 @@
+class:: LoopBuf
+summary:: sample looping oscillator
+related:: Classes/PlayBuf
+categories:: UGens>Buffer
+
+
+Description::
+
+Plays and loops between two frames of a sample resident in memory.
+
+
+classmethods::
+
+method::ar
+
+argument::numChannels
+number of channels that the buffer will be. this must be a fixed integer. The architecture of the SynthDef cannot change after it is compiled.
+warning::
+if you supply a bufnum of a buffer that has a different numChannels then you have specified to the LoopBuf, it will fail silently.
+::
+
+argument::bufnum
+the index of the buffer to use
+
+argument::rate
+- 1.0 is normal, 2.0 is one octave up, 0.5 is one octave down. -1.0 is backwards normal rate ... etc.
+
+argument::gate
+positive gate starts playback from startPos. negative gate plays rest of sample from current position
+
+argument::startPos
+sample frame to start playback
+
+argument::startLoop
+sample frame of start of loop
+
+argument::endLoop
+sample frame of end of loop
+
+argument::interpolation
+1 means no interpolation, 2 is linear, 4 is cubic interpolation
+
+
+Examples::
+
+code::
+// Create buffer and SynthDef
+(
+// read a whole sound into memory
+b = Buffer.read(s,"sounds/a11wlk01.wav");
+
+// make a simple sampler instrument
+SynthDef("help-LoopBuf",{ 
+	arg out=0, bufnum=0, rate=1, glide=0, gate=1, loopRel=0, startPos=0, startLoop, endLoop, ipol=2;
+	var env, signal;
+	rate = Lag.kr(rate, glide);
+	env = EnvGen.ar(Env.adsr(0.1,0.2,1,2), gate, doneAction: 2);
+	signal = LoopBuf.ar(1,bufnum, BufRateScale.kr(bufnum) * rate, gate+loopRel, startPos, startLoop, endLoop, ipol);
+	Out.ar(out, (signal * env).dup);
+}).send(s);
+)
+
+// start playback
+s.sendMsg("/s_new", "help-LoopBuf", 3000, 1, 0, \bufnum, b.bufnum, \startLoop, 5000, \endLoop, 15000);
+
+s.sendMsg("/n_set", 3000, \rate, -1);	// backwards
+s.sendMsg("/n_set", 3000, \rate, 1);	// forwards
+
+s.sendMsg("/n_set", 3000, \startLoop, 11000, \endLoop, 13000) // change loop points
+
+s.sendMsg("/n_set", 3000, \glide, 5) // 5 second glide
+s.sendMsg("/n_set", 3000, \rate, 2); // up an octave
+s.sendMsg("/n_set", 3000, \rate, -1); // backwards again
+s.sendMsg("/n_set", 3000, \rate, 1);	// back to normal
+
+s.sendMsg("/n_set", 3000, \ipol, 1);	// no interpolation
+s.sendMsg("/n_set", 3000, \ipol, 2);	// linear interpolation
+s.sendMsg("/n_set", 3000, \ipol, 4);	// cubic interpolation
+
+// release gate to hear post-loop
+s.sendMsg("/n_set", 3000, \gate, 0);
+
+// release instrument without post-loop
+s.sendMsg("/s_new", "help-LoopBuf", 3000, 1, 0, \bufnum, b.bufnum, \startLoop, 11000, \endLoop, 13000);
+s.sendMsg("/n_set", 3000, \loopRel, 1, \gate, 0);
+::

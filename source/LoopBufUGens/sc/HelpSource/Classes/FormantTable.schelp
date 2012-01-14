@@ -1,0 +1,117 @@
+class:: FormantTable
+summary:: Lookup table for emulating vocal tracts
+related:: Classes/Formant, Classes/Harmonics
+categories:: Collections
+
+
+Description::
+
+Returns a set of frequencies+resonances+amplitudes for a set of 5 bandpass filters, useful for emulating the main 5 formants of a vocal tract. To see the available voice types run this line:
+
+code::
+FormantTable.keys
+::
+
+
+classmethods::
+
+private::initClass
+
+method::keys
+returns a link::Classes/Set:: with all available voice types.
+
+method::get
+returns an link::Classes/Array:: of arrays. code::[[frequencies], [resonances], [amplitudes]]::
+
+argument::preset
+a link::Classes/Symbol::.
+
+code::
+FormantTable.get(\bassO)
+::
+
+method::at
+alias of link::#*get::
+
+method::rand
+returns code::[[frequencies], [resonances], [amplitudes]]:: for a random voice type.
+
+
+Examples::
+
+(by Eric Skogen)
+
+code::
+// first boot the server
+s.boot;
+
+// Saw freq is controlled by mouse X position
+// BBandPass filter is controlled by
+// FormantTable data (frequencies, resonances, amplitudes)
+(
+	SynthDef(\formantVoice, { arg
+		f = #[ 400, 750, 2400, 2600, 2900 ],
+		a = #[ 1, 0.28183829312645, 0.089125093813375, 0.1, 0.01 ],
+		q = #[ 0.1, 0.10666666666667, 0.041666666666667,
+			0.046153846153846, 0.041379310344828 ];
+	var scale = [0, 2, 4, 7, 9]; // pentatonic major
+	var scaleBuf = LocalBuf(scale.size, 1).set(scale);
+	var degree = Index.kr(scaleBuf, MouseX.kr(0, BufFrames.kr(scaleBuf)));
+	var vibrato = SinOsc.kr(6, mul:4);
+	var base = 4 * 12;
+	var in = Saw.ar(((degree + base).midicps + vibrato).lag(0.3));
+	Out.ar(0, Mix.new(BBandPass.ar(in, f, q) * a).dup);
+}).send(s);
+)
+
+// create a menu of the FormantTable options for preview
+(
+	var voices = FormantTable.keys.asArray;
+	voices.sort;
+
+	// start an instance of the synth
+	#f, a, q = FormantTable.get( voices.first );
+	x = Synth(\formantVoice, [\f, f, \a, a, \q, q]);
+	w = Window("FormantTable Browser",
+		Rect(Window.screenBounds.width/2 - 150,
+		Window.screenBounds.height/2 - 30,
+		300, 60));
+	StaticText(w, Rect(0, 5, w.view.bounds.width, 20))
+		.font_(Font("Helvetica", 11))
+		.string_("Move mouse left/right to change pitch")
+		.align_(\center);
+	PopUpMenu(w, w.view.bounds.insetBy(15, 20).moveBy(0, 10))
+		.items_(voices)
+		.action_({ |v|
+			// change the data based on user action
+			#f, a, q = FormantTable.get( v.item );
+			x.setn(\f, f);
+			x.setn(\a, a);
+			x.setn(\q, q);
+		});
+	w.onClose_({ x.free });
+	w.front;
+)
+
+
+// A laughter generator
+// NB mac-only at the moment, sorry
+(
+#f, a, q = FormantTable.get(\altoA);
+e = Env(
+[ 1.6315789222717, 2.8684210777283, 0, 1.1526317596436, 0, 0.63157892227173, 0, 0, 0.39473664164831, 0.41710549016785, 0, 0.33685091589462, 0.3538348548878, 0, 0.10526323318481, 0 ],
+[ 0.099179289557717, 0.029608596454967, 0.070896452123469, 0.015656579624523, 0.045265132730657, 0.08636364069852, 0.027344267630401, 0.021196740851856, 0.025568173912275, 0.020519098486223, 0.029819674626466, 0.025645296259773, 0.057419430367461, 0.18465909090909, 0.16357317837802 ]
+);
+w = Window("Laugh Editor", Rect(200,200,400,300));
+v = SCEnvelopeEdit(w, w.view.bounds.moveBy(20,20).resizeBy(-40,-140), e, 20).resize_(5);
+b = Button(w, w.view.bounds.moveBy(20,200).resizeBy(-40,-240)).states_([["Laugh"]]).resize_(5)
+	.action_({
+		x = {
+			var saw = Saw.ar((EnvGen.kr(v.env, doneAction:2) * 440)); // lazy
+			var out = Mix.new(BBandPass.ar(saw, f, q) * a).dup;
+			HPF.ar(out, 250); // avoid blowups
+		}.play;
+	});
+w.front;
+)
+::

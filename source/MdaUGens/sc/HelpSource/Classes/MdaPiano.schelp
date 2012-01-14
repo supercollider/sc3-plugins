@@ -1,0 +1,115 @@
+class:: MdaPiano
+summary:: Piano synthesiser
+related:: Classes/LADSPA
+categories:: UGens>Wrappers
+
+
+Description::
+
+A piano synthesiser emphasis::(originally a VST plugin by Paul Kellett, ported to SC by Dan Stowell)::. This UGen is not polyphonic (but can be retriggered to play notes in sequence).
+
+note::
+This UGen is stereo - it returns two channels, with a stereo "wideness" effect controlled by the strong::stereo:: argument. It has lots of parameters:
+
+classmethods::
+
+method::ar
+
+argument::freq
+Frequency of the note
+
+argument::gate
+note-on occurs when gate goes from nonpositive to positive; note-off occurs when it goes from positive to nonpositive. Most of the other controls are only updated when a new note-on occurs.
+
+argument::vel
+velocity (range is 0 to 127, default 100)
+
+argument::decay
+The time for notes to decay after the initial strike (default 0.8)
+
+argument::release
+The time for notes to decay after the key is released (default 0.8)
+
+argument::hard
+
+argument::velhard
+
+argument::muffle
+
+argument::velmuff
+
+argument::velcurve
+
+argument::stereo
+Width of the stereo effect (which makes low notes sound towards the left, high notes towards the right). 0 to 1.
+
+argument::tune
+Overall tuning
+
+argument::random
+Randomness in note tuning (default 0.1)
+
+argument::stretch
+Stretches the tuning out (higher notes pushed higher)
+
+argument::sustain
+If positive, act as if the piano's sustain pedal is pressed.
+
+
+Examples::
+
+code::
+s.boot;
+
+// This simple example triggers one note per second, monophonically:
+(
+x = {
+	MdaPiano.ar(
+		LFNoise0.kr(1).range(20, 60).round.midicps, // random note
+		stereo: 0.5, 
+		gate: LFPulse.kr(1), 
+		vel: LFPar.kr(0.1).range(10, 100), // varying velocity
+		mul: 0.2
+	)
+}.play
+)
+x.free;
+
+
+// Now let's define a piano synthdef:
+(
+SynthDef(\help_mdapiano, { |out=0, freq=440, gate=1|
+	var son = MdaPiano.ar(freq, gate, release: 0.9, stereo: 0.3, sustain: 0);
+	DetectSilence.ar(son, 0.01, doneAction:2);
+	Out.ar(out, son * 0.1);
+}).add;
+)
+// Then we can use it in a pattern:
+(
+TempoClock.default.tempo = 1.2;
+Ppar([
+	Pbind(
+		\instrument, \help_mdapiano,
+		\degree, 
+			Pseq([ 
+				0, 7, -5, 7,  0, 5, -7, 5,  -2, 5, -7, 5,  -2,  3, -9,  3, 
+				0, 7, -5, 7,  0, 5, -7, 5,  -2, 5, -7, 5,  -2, -3, -4, -5 ], inf),
+		\dur, 0.5, 
+		\octave, 3, 
+		\root, 3,
+		\vel, Prand([Pseq([100, 30, 50, 10]), Pseq([100, 30, 10, 10, 5, 10, 20, 30])], inf),
+		\legato, 0.95
+	),
+	Pbind(
+		\instrument, \help_mdapiano,
+		\degree, 
+			Pseq([ \, 0, -1, 0, 2, 0, \, \, \, 0, -2, \, \, -2, -4, \, \ ], inf),
+		\dur, 0.5, 
+		\octave, 6, 
+		\root, 3,
+		\vel, Pwhite(50, 100, inf)
+	)
+], inf).play
+)
+// Try changing the synthdef while this is running (e.g. activate sustain, tweak stereo)...
+::
