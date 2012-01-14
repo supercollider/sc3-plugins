@@ -138,9 +138,9 @@ PV_Whiten : PV_ChainUGen
 FFTCentroid : UGen
 {
 	*kr { | buffer |
-		^this.multiNew('control', buffer)
+		this.deprecated(thisMethod, SpecCentroid.findMethod(\kr));
+		^SpecCentroid.kr(buffer)
 	}
-	*categories { ^ #["UGens>Analysis", "UGens>FFT"] }
 }
 
 FFTSubbandFlatness : MultiOutUGen {
