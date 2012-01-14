@@ -1,6 +1,6 @@
 CLASS:: SawDPW
 summary:: super-efficient sawtooth oscillator with low aliasing
-categories:: UGens>Generator
+categories:: UGens>Generators
 related:: Classes/PulseDPW
 
 DESCRIPTION::

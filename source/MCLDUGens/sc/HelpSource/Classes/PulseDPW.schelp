@@ -1,6 +1,6 @@
 CLASS:: PulseDPW
 summary:: super-efficient square-wave oscillator with low aliasing
-categories:: UGens>Generator
+categories:: UGens>Generators
 related:: Classes/SawDPW
 
 DESCRIPTION::

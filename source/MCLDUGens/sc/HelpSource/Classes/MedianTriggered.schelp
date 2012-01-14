@@ -1,6 +1,6 @@
 CLASS:: MedianTriggered
 summary:: Median of recent values, triggered
-categories:: UGens>Filter
+categories:: UGens>Filters
 related:: Classes/MeanTriggered
 
 DESCRIPTION::
