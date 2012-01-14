@@ -1,0 +1,42 @@
+CLASS:: ListTrig
+summary:: Emit a sequence of triggers at specified time offsets
+categories:: UGens>Buffer
+related:: Classes/Logger
+
+DESCRIPTION::
+The data stored in the [Buffer] atbufnum should be a (single-channel) ordered list of time offsets in seconds. ListTrig will then emit a trigger signal (a single-sample value of 1, at control rate) at each of those times, which are measured from the beginning of the synth's existence, or from the most recentreset trigger (which also resets reading back to the beginning of the buffer).
+
+Theoffset parameter can be used to modify the offsets globally. For example, to delay the list of values all by half a second, use anoffset of 0.5. (Theoffset value is only updated at initialisation or reset.)
+
+Behaviour is undefined if the buffer's values are not in ascending order. If the buffer contains two or more adjacent equal values, it will skip over the duplicates (i.e. only one trigger will be output, and its value will still be 1).
+
+numframes tells the UGen the size of the buffer. If not set, this will automatically be filled withBufFrames.kr(bufnum), which is typically what you want to use anyway.
+
+
+EXAMPLES::
+
+code::
+s.boot;
+// Everyone likes Fibonacci numbers:
+b = Buffer.loadCollection(s, [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89] * 0.1);
+// Or you could load some numbers from a file:
+b = Buffer.loadCollection(s, FileReader.read("/Users/danstowell/svn/stored_docs/bbx annots/onsets_gt/vb5gt.txt", true, true).collect(_.at(0).asFloat));
+(
+// ListTrig used here to output some simple grains.
+// I'm also using .poll and a ramp to output the calculated time value, to check the output.
+// Note the accuracy, which is limited to the accuracy of the control rate.
+x = { |t_reset=0|
+	var trigs, env, son, ramp;
+	trigs = ListTrig.kr(b.bufnum, t_reset);
+	env = EnvGen.ar(Env.perc(0.01, 0.1), trigs);
+	son = SinOsc.ar(440, 0, env * 0.2);
+	
+	ramp = Phasor.kr(t_reset, ControlRate.ir.reciprocal, 0, inf);
+	ramp.poll(trigs, "Trigger at time offset");
+	
+	son.dup;
+}.play(s)
+);
+x.set(\t_reset, 1);
+::
+

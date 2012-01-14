@@ -1,0 +1,94 @@
+CLASS:: Friction
+summary:: A physical model of a system with dry-friction. A chaotic filter.
+categories:: UGens>Filter
+related:: 
+DESCRIPTION::
+The input is treated as the driving force in a physical model of a mass resting on a belt, which can stick or slip relative to the belt (depending on the friction between the two). The input represents the position of the belt, and the mass is held approximately in place by a spring and a damper.
+The output is the position of the mass, which in very high-friction situations will be exactly the same as the input - but when the other forces can overcome the friction then stick-and-slip alternatiions will typically occur.
+image::friction1-diagram.png::
+The model (and the diagram) is inspired by the one considered in this research artcle:
+
+A. Luo and B. Gegg, Dynamics of a harmonically excited oscillator with dry-friction on a sinusoidally time-varying, traveling surface, International Journal of Bifurcation and Chaos, 16 (2006), pp. 3539–3566.
+
+To create the system studied in that paper (which analyses chaotic stick-and-slip oscillations), the input should be a sinusoid added to an ever-increasing ramp value. But for musical effects you can do different things.
+
+Note that DC offset will have a qualitative effect on the system's behaviour (because of the spring being stretched), so feel free to experiment with adding/removing DC.
+
+EXAMPLES::
+code::
+s = Server.internal;
+s.boot;
+
+(
+// This filters a simple sine wave, producing a chaotic result
+x = {
+var sig, out;
+sig = SinOsc.ar(660);
+out = Friction.ar(sig, friction: 5.41322e-5, mass: 8.05501);
+Pan2.ar(out, 0, 0.1);
+}.scope
+)
+
+x.free;
+
+(
+// Modulate the parameters by moving the mouse. Left speaker is original (modulated) sine wave, right speaker is filtered.
+x = {
+var sig, out;
+sig = SinOsc.ar((LFPulse.kr(0.5) + LFPulse.kr(0.33)).range(220, 660).lag(0.1));
+out = Friction.ar(sig, friction: MouseX.kr(0.00001, 0.03, 1), mass: MouseY.kr(0.2, 10, 1));
+[sig, out] * 0.1;
+}.scope
+)
+
+x.free;
+
+(
+// Some Ringz oscillators, each with a _separate_ Friction1, then merged to create a "rusty" klank.
+// Note the way the effect changes as the sound dies away.
+x = {
+var imp, klank, rusty;
+imp = Impulse.ar(1, 0, 0.1);
+klank = Ringz.ar(imp, [800, 1071, 1153, 1723]);
+
+rusty = Friction.ar(klank, 
+friction: 1.75584e-5, 
+mass: 2.69789);
+
+Pan2.ar(rusty.sum)
+}.play(s);
+)
+
+x.free;
+
+(
+// In this one we can play with the DC offset and the spring stiffness
+x = {
+var sig, out;
+sig = SinOsc.ar(330) + MouseX.kr(0.01, 10, 1);
+
+out = Friction.ar(sig, friction: 5.41322e-5, mass: 8.05501, 
+spring: MouseY.kr(0,1));
+Pan2.ar(out * 0.1);
+}.scope
+)
+
+x.free;
+
+(
+// Similar, but this time as a filter for a control-rate signal. 
+// Converts boring sinusoidal freq undulation into something much more interesting...
+x = {
+var sig, out;
+sig = LFPar.kr(33) + MouseX.kr(0.01, 10, 1);
+
+out = Friction.kr(sig, friction: 5.41322e-5, mass: 8.05501, 
+spring: MouseY.kr(0,1));
+out = SinOsc.ar(out.range(150,500));
+Pan2.ar(out * 0.1);
+}.scope
+)
+
+x.free;
+::
+

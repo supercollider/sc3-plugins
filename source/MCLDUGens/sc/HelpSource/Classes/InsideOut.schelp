@@ -1,0 +1,24 @@
+CLASS:: InsideOut
+summary:: Distortion by subtracting magnitude from 1
+categories:: UGens>Filter
+related:: 
+
+DESCRIPTION::
+If the signal is positive, outputs (1 - input).
+
+If the signal is negative, outputs ( - 1 - input).
+
+It really distorts an audio signal. MIND YOUR EARS!
+
+
+EXAMPLES::
+
+code::
+s = Server.internal.boot;
+x = {InsideOut.ar(SinOsc.ar(220) + PinkNoise.ar(0.9), 0.1)}.scope;
+x.free;
+// Wear headphones and turn the vol down for this one
+x = {InsideOut.ar(AudioIn.ar([1,2]).mean, 0.01).dup(2)}.scope;
+x.free;
+::
+

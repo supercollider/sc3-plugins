@@ -1,0 +1,8 @@
+CLASS:: ListTrig2
+summary:: Emit a sequence of triggers at specified time offsets
+categories:: UGens>Buffer
+related:: Classes/ListTrig, Classes/Logger
+
+DESCRIPTION::
+Just like ListTrig, but takes a list of time-intervals ("deltas") rather than a list of time offsets.
+

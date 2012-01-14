@@ -1,0 +1,25 @@
+CLASS:: PulseDPW
+summary:: super-efficient square-wave oscillator with low aliasing
+categories:: UGens>Generator
+related:: Classes/SawDPW
+
+DESCRIPTION::
+Use this just like the Pulse UGen - as with SawDPW, this uses the "Differentiated Parabolic Wave" technique to create a waveform extremely efficiently and with low (but not zero) aliasing.
+
+freq - Frequency in Hertz (control rate)
+
+width - Pulse width ratio from zero to one. 0.5 makes a square wave. This cannot be modulated.
+
+This is actually a "pseudo-ugen" based on SawDPW rather than a separate UGen in itself, but is still very efficient. Compare the CPU usage in these examples:
+
+EXAMPLES::
+code::
+// modulate frequency
+{ Pulse   .ar(XLine.kr(40,4000,6),0.1, 0.2) }.play;
+{ PulseDPW.ar(XLine.kr(40,4000,6),0.1, 0.2) }.play;
+
+// two band limited square waves thru a resonant low pass filter
+{ RLPF.ar(Pulse   .ar([100,250],0.5,0.1), XLine.kr(8000,400,5), 0.05) }.play;
+{ RLPF.ar(PulseDPW.ar([100,250],0.5,0.1), XLine.kr(8000,400,5), 0.05) }.play;
+::
+

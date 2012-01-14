@@ -1,0 +1,33 @@
+CLASS:: TextVU
+summary:: super-efficient sawtooth oscillator with low aliasing
+categories:: UGens>Generator
+related:: Classes/PulseDPW
+
+DESCRIPTION::
+This behaves similar to Poll but displays its output as a textual "VU meter" visualisation (ranging from -60 to 0 dB). The class also automatically inserts an Amplitude analysis into the chain (you can modify this by supplying a function to the ana argument). Also, internally it ONLY RUNS AT CONTROL RATE, although it can analyse ar or kr inputs (and passes them back out again).
+
+Parameters not found in Poll:
+
+width Number of characters used to display the meter. Cannot be modulated.
+
+ana Analysis function (if nil, inserts an automatic amplitude analysis). Cannot be modulated.
+
+reset If >0, resets the ugen's all-time-peak memory.
+
+The result looks something like this:
+
+Mic : XXXXXXXXXXXXXXX---|----
+Line: XXXXXXXXXXXXXXXXXXXXXXX
+
+
+EXAMPLES::
+code::
+s.boot;
+(
+x = {
+var son = SinOsc.ar(mul: SinOsc.ar(0.3).range(0,1) * Line.ar(0, 1, 20, doneAction: 2));
+TextVU.ar(2, son, "Sin");
+}.play;
+)
+::
+

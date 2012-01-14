@@ -1,0 +1,40 @@
+CLASS:: SawDPW
+summary:: super-efficient sawtooth oscillator with low aliasing
+categories:: UGens>Generator
+related:: Classes/PulseDPW
+
+DESCRIPTION::
+A sawtooth oscillator using the "Differentiated Parabolic Wave" technique, which suppresses aliasing at a wide range of frequencies, yet is about 3 times as CPU-efficient as SuperCollider's Saw ugen. 
+
+freq - frequency in Hertz
+
+iphase - initial phase offset, a value ranging from -1 to 1.
+
+It doesn't guarantee to be alias-free but sounds very good for most applications: e.g. at 44.1 kHz sample rate, aliasing can only be heard if the frequency goes over around 4 kHz. The technique is documented in Välimäki (2005) Signal Processing Letters 12(3) pages 214-217.
+
+EXAMPLES::
+code::
+Server.default = s = Server.internal;
+s.boot
+s.scope
+
+// Amplitude will be polled, move mouse to change frequency
+{var x; x = SawDPW.ar(MouseX.kr(50, 2000, 1));Amplitude.ar(x, 0.2, 0.2).poll; x.madd(0.1).dup}.play
+{var x; x = SawDPW.ar(K2A.ar(MouseX.kr(50, 2000, 1)));Amplitude.ar(x, 0.2, 0.2).poll; x.madd(0.1).dup}.play
+
+// Listen to these to compare aliasing characteristics
+{var x; x = SawDPW.ar(MouseX.kr(50, 10000, 1).poll); x.madd(0.1).dup}.play
+{var x; x = Saw   .ar(MouseX.kr(50, 10000, 1).poll); x.madd(0.1).dup}.play
+{var x; x = LFSaw .ar(MouseX.kr(50, 10000, 1).poll); x.madd(0.1).dup}.play
+
+{var x; x = [SawDPW, Saw].collect(_.ar(K2A.ar(MouseX.kr(10, 20000, 1).poll))); Amplitude.ar(x[0], 0.2, 0.2).poll; x.madd(0.1)}.play
+
+// Efficiency comparisons:
+~num = 100;
+// scsynth on PPC Mac G4, idle around 2.1% CPU
+// k-rate freq inputs
+{Saw   .ar({exprand(50, 1000)}.dup(~num)).mean.dup}.play // 30.7% CPU
+{SawDPW.ar({exprand(50, 1000)}.dup(~num)).mean.dup}.play // 12.4% CPU
+{LFSaw .ar({exprand(50, 1000)}.dup(~num)).mean.dup}.play //  7.0% CPU
+::
+

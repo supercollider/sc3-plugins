@@ -1,0 +1,61 @@
+CLASS:: Logger
+summary:: Store values to a buffer, whenever triggered
+categories:: UGens>Buffer
+related:: Classes/ListTrig
+
+DESCRIPTION::
+Writes a series of (control-rate) values to a Buffer, storing them strictly sequentially. Whenever trig crosses from non-positive to positive,  the current value of the input will be written to the buffer. Storage starts at the buffer beginning and increments the write position until the buffer is full. If reset crosses from non-positive to positive, then the buffer will be zero'ed (all values set to zero) and the next write will begin again at the first entry.
+
+in can be an array - it should be of the same size as the number of channels in the buffer.
+
+NB: Logger zeroes the buffer upon first instantiation, to ensure that out-of-date data is not confused with new data. So it will definitely clobber any data you may have had in the buffer before it runs. It makes no sense to use multiple instances of Logger on the same buffer, since data will be overwritten.
+
+Output is 1 in normal operation, then changes to 0 if triggers are received but there's no more space in the Buffer. (Flips back to 1 if you reset it.)
+
+
+EXAMPLES::
+
+code::
+s.boot;
+b = Buffer.alloc(s, 100);
+(
+// This example simply stores values regularly sampled from an oscillator.
+// With such a small buffer, it doesn't take long to fill up.
+// Note what happens when full.
+x = {
+var source;
+source = LFCub.kr(10, 0, EnvGen.kr(Env.linen(1, 2, 1), doneAction:2));
+Logger.kr(source, Impulse.kr(49), b.bufnum);
+}.play(s);
+)
+x.free;
+b.plot;
+
+b = Buffer.alloc(s, 100, 3);
+(
+// The same but multi-channel.
+x = {
+var source;
+source = LFCub.kr(10, 0, EnvGen.kr(Env.linen(1, 2, 1), doneAction:2));
+Logger.kr([source, source * 0.5, source + WhiteNoise.kr(0.3)], Impulse.kr(49), b.bufnum);
+}.play(s);
+)
+x.free;
+b.plot;
+
+b = Buffer.alloc(s, 100);
+(
+// This time we'll trigger something to create and store random values, and recall them later.
+x = { |t_trig=0, t_reset=0|
+var source;
+source = LFNoise0.kr(10);
+source.poll(t_trig, "Storing this random value");
+Logger.kr(source, t_trig, b.bufnum, t_reset);
+}.play(s);
+)
+
+x.set(\t_trig, 1); // Call this a few times
+b.loadToFloatArray(action:{|ar| ar.postcs}) // Dump the values
+x.set(\t_reset, 1); // When you want to start from scratch
+::
+

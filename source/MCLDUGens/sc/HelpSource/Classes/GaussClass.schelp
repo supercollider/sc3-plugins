@@ -1,0 +1,82 @@
+CLASS:: GaussClass
+summary:: Gaussian classifier
+categories:: UGens
+related:: 
+
+DESCRIPTION::
+A Gaussian classifier, which classifies an input vector as belonging to one of the gaussian distributions defined in a specially-formatted Buffer.
+
+The Buffer should be single-channel. Its exact format is specified towards the bottom of this file. If you have the MathLib quark installed then you can use the convenience function GaussClass.classesToFloatArray() to create a FloatArray suitable for loading to a Buffer.
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: in
+input signal, a multichannel signal specifying a co-ordinate in the space (i.e. a vector).
+
+argument:: bufnum
+the buffer in which the shapes and weights of the gaussian components are specified.
+
+argument:: gate
+the classifier is only active when this is greater than 0 (otherwise, previous value is held constant). Its default value is 1.
+
+
+EXAMPLES::
+
+The following example creates two-dimensional data with three classes:
+
+code::
+(
+~classes = [
+[ // First class's mean, covariance, weight:
+[2, 8],   [[1, 0], [0, 1]],   0.3
+],[ // Second class's mean, covariance, weight:
+[8, 2],   [[1, 0], [0, 1]],   0.3
+],[ // Third class's mean, covariance, weight:
+[8, 8],   [[0.75, 0.5], [0.5, 0.75]],   0.4
+]
+];
+~serialised = GaussClass.classesToFloatArray(~classes);
+)
+
+// Now let's use it:
+s.boot;
+b = Buffer.loadCollection(s, ~serialised);
+(
+x = {
+var rate = 20, input, result, gate;
+//input = {LFNoise2.kr(rate).range(0, 10)}.dup(2); // Our "query point" wanders around in space
+input = [MouseX.kr(0, 10), MouseY.kr(0, 10)]; // Or you can wander yourself using the mouse
+gate = Impulse.kr(rate);
+result = GaussClass.kr(input, b, gate);
+input.poll(gate, "input");
+result.poll(gate, "result");
+Out.ar(0, SinOsc.ar(result.linexp(0, ~classes.size-1, 440, 880), 0, 0.1).dup); // sonify
+}.play(s)
+)
+x.free;
+::
+
+
+
+
+________________________________
+
+THE FORMAT OF THE BUFFER:
+
+
+The Buffer should be single-channel and hold data in the following order, once for each class: 
+
+
+ - N floats: the mean vector; 
+
+ - N*N floats: the inverse of the covariance matrix; and
+
+ - 1 float: the weight of the component divided by the square root of the determinant of the covariance matrix.
+
+
+N is the dimensionality of the data space. The length of the Buffer is therefore C * (N*N + N + 1). GaussClass.kr will determine the number of classes from the size of the Buffer.
+
+
+
+

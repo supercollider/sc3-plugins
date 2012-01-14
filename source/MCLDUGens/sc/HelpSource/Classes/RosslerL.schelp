@@ -1,0 +1,74 @@
+CLASS:: RosslerL
+summary:: Rossler chaotic generator
+categories:: UGens>Generators>Chaotic
+related:: 
+
+DESCRIPTION::
+A strange attractor discovered by Otto Rossler based on work in chemical kinetics.
+The system is composed of three ordinary differential equations:
+	
+	x' = - y - z
+	y' = x + ay
+	z' = b + z(x - c)
+
+The time step amounthdetermines the rate at which the ODE is evaluated.  Higher values will increase the
+rate, but cause more instability.  A safe choice is the default amount of 0.05.
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+argument:: in
+
+argument:: freq
+iteration frequency in Hertz
+
+argument::a, b, c
+equation variables
+
+argument::h
+integration time step
+
+argument::xi
+initial value of x
+
+argument::yi
+initial value of y
+
+argument::zi
+initial value of z
+
+
+EXAMPLES::
+
+These first examples treat RosslerL as a single-output UGen (i.e. using x only):
+
+code::
+// vary frequency - these parameters are for "one-pulse" orbit
+{ RosslerL.ar(MouseX.kr(20, SampleRate.ir), 0.36, 0.35, 4.5) * 0.3 }.play(s);
+
+// randomly modulate params
+(
+{ RosslerL.ar(
+	SampleRate.ir, 
+	0.2, // First variable tends to lead to NaN if modulated in this example
+	LFNoise0.kr(1, 0.01, 0.2),
+	LFNoise0.kr(1, 0.2, 0.7)
+) * 0.2 }.play(s);
+)
+
+// as a frequency control
+{ SinOsc.ar(Lag.ar(RosslerL.ar(MouseX.kr(1, 200)))*800+900)*0.4 }.play(s);
+::
+
+An example utilising the three different outputs as pitch, PWM and pan values (respectively):
+
+code::
+(
+{
+# x,y,z = RosslerL.ar(MouseX.kr(1, 200));
+Pan2.ar(Pulse.ar(x.range(100,1000), y.range(0,1), 0.3), z)
+}.play(s)
+)
+::
+

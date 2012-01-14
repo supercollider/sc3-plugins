@@ -1,0 +1,38 @@
+CLASS:: MedianTriggered
+summary:: Median of recent values, triggered
+categories:: UGens>Filter
+related:: Classes/MeanTriggered
+
+DESCRIPTION::
+Calculates the median of the most recent length values, but only paying attention to values input while the trigger is greater than zero. One application of this is to calculate a running median of values coming from FFT analysis.
+
+While trig<=0, the last-measured median is held constant.
+
+The length argument is set at initialisation, and cannot be modulated. The length is directly reflected in the amount of real-time memory taken by this UGen, so please think carefully before using large values of length. Values in the low single- or double-figures are expected.
+
+The median is implemented using a simple "selection sort", which is another argument against using large values for length since the performance is not tailored for large collections.
+
+EXAMPLES::
+code::
+s.boot;
+// Simple polling of median values - you could do this without a UGen!
+x = {|val=1, t_trig=0| MedianTriggered.kr(val, t_trig, 3).poll(t_trig, "Median of recent 3 values"); }.play;
+x.set(\val, 10.rand.postln, \t_trig, 1); // Execute this repeatedly
+
+x.free;
+
+// Same but with 4 values - note the way medians behave with even-sized sets
+x = {|val=1, t_trig=0| MedianTriggered.kr(val, t_trig, 4).poll(t_trig, "Median of recent 4 values"); }.play;
+x.set(\val, 10.rand.postln, \t_trig, 1); // Execute this repeatedly
+
+x.free;
+
+// Using it as an audio filter - compare the sounds of these:
+x = {WhiteNoise.ar(0.1)}.play;
+x.free;
+x = {MedianTriggered.ar(WhiteNoise.ar(0.1), 1, 3)}.play; // Note that Median.ar is more efficient for this kind of thing
+x.free;
+x = {MedianTriggered.ar(WhiteNoise.ar(0.1), 1, 11)}.play; // Note that Median.ar is more efficient for this kind of thing
+x.free;
+::
+

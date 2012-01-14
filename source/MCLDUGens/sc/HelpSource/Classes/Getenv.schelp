@@ -1,0 +1,37 @@
+CLASS:: Getenv
+summary:: Read (numeric) shell environment variables into a synth
+categories:: UGens
+related:: 
+
+DESCRIPTION::
+Tries to grab a shell environment variable (with name key) and convert it to a floating-point value, which is output.
+
+If the environment variable is not set, defaultval is output.
+
+If the environment variable cannot be converted to a floating-point value, the output is zero.
+
+NOTE: the shell context is that of the server, not the client.
+
+
+EXAMPLES::
+code::
+Server.local.quit; // If server running, need to stop it for this example
+
+// We'll modify the server boot procedure to set our env var...
+~realserverprogram = Server.program;
+Server.program = "export PANCREAS=220;" + Server.program
+s.boot;
+
+(
+x = {
+// Env var specifies frequency.
+// If you change the env var name to one that isn't set, 440 is used.
+SinOsc.ar(Getenv(\PANCREAS, 440), 0, 0.1);
+}.play(Server.local);
+)
+x.free;
+
+// This should restore the variable to what it was
+Server.program = ~realserverprogram;
+::
+

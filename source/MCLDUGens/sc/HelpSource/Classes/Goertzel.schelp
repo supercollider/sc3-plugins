@@ -1,0 +1,91 @@
+CLASS:: Goertzel
+summary:: Calculate a single DFT bin, to detect presence of a frequency
+categories:: UGens>Filter
+related:: 
+DESCRIPTION::
+The Goertzel algorithm is a way to calculate the magnitude and phase of a signal's content at a single specified frequency. It's the equivalent of running an FFT, and then only looking at the output corresponding to a single bin. If you're only interested in a small number of bins then it is more efficient; if you're interested in the majority of bins, you typically want to do an FFT instead.
+CLASSMETHODS::
+METHOD:: kr
+argument::in
+
+argument::bufsize
+used in the same way as an FFT buffer size - the larger this value, the better the frequency resolution, but the worse the time resolution.
+argument::freq
+target frequency. This can not be modulated.
+argument::hop
+same meaning as in the FFT UGen. Supply a value between zero and one, for the amount of overlap between Goertzel "frames". The default is a hop of 1 (meaning no overlap between frames). If you specify 0.5 then the analysis value will be produced twice as often; 0.25, four times as often.
+
+
+EXAMPLES::
+code::
+s.boot
+(
+x = {
+var freq, amp, sig, real, imag, mag, bufsize=4096;
+
+// try changing freq to a matching or nonmatching frequency to what we're looking for
+freq = 220; // or try MouseY.kr(110, 440, 1);
+amp = MouseX.kr;
+sig = SinOsc.ar(freq, 0, amp);
+# real, imag = Goertzel.kr(sig, bufsize, 220);
+
+// Calc the magnitude. We also normalise it against buffer size here.
+mag = (real.squared + imag.squared).sqrt * (bufsize / 2).reciprocal;
+
+amp.poll(label: "Input amplitude");
+mag.poll(label: "Measured amplitude");
+(sig * 0.1).dup
+}.play
+)
+
+// This one is similar but on control-rate data:
+(
+x = {
+var freq, amp, sig, real, imag, mag, bufsize=100;
+
+// try changing freq to a matching or nonmatching frequency to what we're looking for
+freq = 22; // or try MouseY.kr(11, 44, 1);
+amp = MouseX.kr;
+sig = SinOsc.kr(freq, 0, amp);
+# real, imag = Goertzel.kr(sig, bufsize, 22);
+
+// Calc the magnitude. We also normalise it against buffer size here.
+mag = (real.squared + imag.squared).sqrt * (bufsize / 2).reciprocal;
+
+amp.poll(label: "Input amplitude");
+mag.poll(label: "Measured amplitude");
+(sig * 0.1).dup
+}.play
+)
+
+
+// OK, now let's do a kind of spectrogram, but focused on a specific frequency region of interest
+(
+~binfreqs = (300, 310 .. 400);
+w = Window.new.front;
+m = MultiSliderView(w,Rect(10,10,~binfreqs.size*13+2,100)); //default thumbWidth is 13
+~bus = Bus.control(s, ~binfreqs.size);
+x = {
+var sig, mags, bufsize=4096, real, imag;
+sig = SinOsc.ar(MouseX.kr(~binfreqs.first, ~binfreqs.last));
+mags = ~binfreqs.collect{|binfreq|
+# real, imag = Goertzel.kr(sig, bufsize, binfreq);
+(real.squared + imag.squared).sqrt * (bufsize / 2).reciprocal;
+};
+Out.kr(~bus, mags);
+(sig * 0.1).dup
+}.play;
+t = Task{
+loop{
+0.1.wait;
+~bus.getn(~binfreqs.size, {|vals|
+{m.value = vals}.defer;
+})
+}
+}.play;
+w.onClose_{~bus.free; x.free; t.stop; };
+)
+w.close;
+
+::
+

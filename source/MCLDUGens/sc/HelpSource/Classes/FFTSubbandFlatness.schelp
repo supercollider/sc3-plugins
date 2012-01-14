@@ -1,0 +1,54 @@
+CLASS:: FFTSubbandFlatenss
+summary:: Spectral flatness, divided into subbands
+categories:: UGens>Analysis, UGens>FFT
+related:: Classes/FFTFlatness, Classes/FFTSubbandPower
+
+DESCRIPTION::
+Calculates the spectral flatness measure, in the same manner as FFTFlatness, but divides the spectrum into (adjacent, non-overlapping) subbands, so returns separate measures for the different subbands.
+
+The parameter cutfreqs can only be specified on initialisation - they can't be modulated.
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: chain
+
+argument:: cutfreqs
+must be an array of frequencies. For example, to divide a 44100Hz signal into three subbands we might specify  [ 5512, 11025 ]  as the cutfreqs, giving subbands of 0-5512Hz, 5512-11025Hz, and 11025-22050Hz. (Frequencies above the Nyquist frequency are not included.)
+
+returns:: #[flatness1, flatness2, ... flatnessN+1]
+
+EXAMPLES::
+
+In this example we take a "flat" sound (white noise) and an "unflat" sound (a sawtooth wave) and mix them together bandwise using [PV_BinWipe]. With the spectrum divided into three bands you should be able to see the results.
+
+code::
+s.boot;
+b = Buffer.alloc(s,2048,1);
+c = Buffer.alloc(s,2048,1);
+(
+x = {
+var inA, inB, chainA, chainB, chain, vals, cutfreqs;
+//in = LPF.ar(WhiteNoise.ar, MouseX.kr(10,10000, 1));
+
+inA = WhiteNoise.ar;
+inB = Saw.ar;
+
+chainA = FFT(b.bufnum, inA);
+chainB = FFT(c.bufnum, inB);
+
+chain = PV_BinWipe(chainA, chainB, MouseX.kr(-1, 1));
+
+vals = FFTSubbandPower.kr(chain, [300, 500, 1500]);
+
+vals[3].poll(10, "hi ");
+vals[2].poll(10, "med");
+vals[1].poll(10, "low");
+
+Out.ar(0, IFFT(chain).dup * 0.2);
+}.play(s);
+)
+x.free;
+::
+
