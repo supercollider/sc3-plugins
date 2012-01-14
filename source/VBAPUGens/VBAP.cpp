@@ -779,7 +779,7 @@ static void CircleRamp_Ctor(CircleRamp* unit)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(VBAP)
 {
 	ft = inTable;
 	DefineDtorCantAliasUnit(VBAP);
