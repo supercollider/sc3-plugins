@@ -70,6 +70,7 @@ use or for distribution:
 
 #include "SC_PlugIn.h"
 #include <cmath>
+#include <limits>
 
 #ifdef NOVA_SIMD
 #include "simd_memory.hpp"
@@ -620,6 +621,8 @@ static void VBAP_Ctor(VBAP* unit)
 	int numvals = buf->samples;
 	unit->x_dimension = (int)(buf->data[datapointer++]);
 	unit->x_ls_amount = (int)(buf->data[datapointer++]);
+
+	unit->x_azi = unit->x_ele = unit->x_spread = std::numeric_limits<float>::quiet_NaN();
 
 	unit->final_gs = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
 	unit->x_lsset_available = 1;
