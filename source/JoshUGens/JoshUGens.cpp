@@ -353,6 +353,7 @@ struct MoogVCF : public Unit
 	float m_res;
 	float m_xnm1, m_y1nm1, m_y2nm1, m_y3nm1;
 	float m_y1n, m_y2n, m_y3n, m_y4n;
+	float m_kp, m_pp1d2, m_k;
 };
 
 struct PosRatio : public Unit
@@ -677,6 +678,8 @@ extern "C"
     void Balance_next_k(Balance* unit, int inNumSamples);
 
     void MoogVCF_Ctor(MoogVCF* unit);
+    void MoogVCF_next_ii(MoogVCF *unit, int inNumSamples);
+    void MoogVCF_next_ki(MoogVCF *unit, int inNumSamples);
     void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples);
     void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples);
     void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples);
@@ -2474,27 +2477,6 @@ MoogVCF.ar(in, fco, res, mul, add); fco = filter cut-off, res = resonance (0 -> 
 
 */
 
-void MoogVCF_Ctor(MoogVCF* unit) {
-    if (INRATE(1) == calc_FullRate) {
-	if (INRATE(2) == calc_FullRate) {
-		SETCALC(MoogVCF_next_aa); // a-rate fco and res
-		} else {
-		SETCALC(MoogVCF_next_ak); // a-rate fco, k-rate res
-		}
-	    } else {
-	if (INRATE(2) == calc_FullRate) {
-		SETCALC(MoogVCF_next_ka); // k-rate fco, a-rate res
-		} else {
-		SETCALC(MoogVCF_next_kk);
-		} // k-rate fco and res
-	    }
-	unit->m_fco = (IN0(1) * 2) / SAMPLERATE;
-	unit->m_res = IN0(2);
-	unit->m_xnm1 = unit->m_y1nm1 = unit->m_y2nm1 = unit->m_y3nm1 = 0.0f;
-	unit->m_y1n = unit->m_y2n = unit->m_y3n = unit->m_y4n = 0.0f;
-	ClearUnitOutputs(unit, 1);
-}
-
 static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, float & pp1d2, float & k)
 {
 	kp = (3.6f * fco) - ((1.6f * fco) * fco) - 1.0f;  /* Emperical tuning     */
@@ -2502,6 +2484,154 @@ static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, flo
 	float scale = exp((double)((1.0f - pp1d2 ) * 1.386249f)); /* Scaling factor  */
 	k = res * scale;
 }
+
+void MoogVCF_Ctor(MoogVCF* unit)
+{
+	unit->m_fco = (IN0(1) * 2) / SAMPLERATE;
+	unit->m_res = IN0(2);
+	unit->m_xnm1 = unit->m_y1nm1 = unit->m_y2nm1 = unit->m_y3nm1 = 0.0f;
+	unit->m_y1n = unit->m_y2n = unit->m_y3n = unit->m_y4n = 0.0f;
+
+	switch (INRATE(1)) {
+	case calc_FullRate:
+		switch (INRATE(2)) {
+		case calc_FullRate:
+			SETCALC(MoogVCF_next_aa); // a-rate fco and res
+			break;
+		default:
+			SETCALC(MoogVCF_next_ak); // a-rate fco, k-rate res
+			break;
+		}
+		break;
+
+	case calc_BufRate:
+		switch (INRATE(2)) {
+			case calc_FullRate:
+				SETCALC(MoogVCF_next_ka); // k-rate fco and res
+				break;
+			case calc_BufRate:
+				SETCALC(MoogVCF_next_ka); // k-rate fco, k-rate res
+				break;
+			default:
+				SETCALC(MoogVCF_next_ki); // k-rate fco, i-rate res
+				break;
+		}
+		break;
+
+	case calc_ScalarRate:
+		switch (INRATE(2)) {
+			case calc_ScalarRate:
+				SETCALC(MoogVCF_next_ii); // i-rate fco and res
+				MoogVCF_calc_parameters(unit->m_fco, unit->m_res, unit->m_kp, unit->m_pp1d2, unit->m_k);
+				break;
+			default:
+				SETCALC(MoogVCF_next_kk);
+				break;
+		}
+		break;
+	}
+
+	ClearUnitOutputs(unit, 1);
+}
+
+void MoogVCF_next_ii(MoogVCF *unit, int inNumSamples){
+	float* in = IN(0);
+	float* out = OUT(0);
+
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
+
+	float kp = unit->m_kp, pp1d2 = unit->m_pp1d2, k = unit->m_k;
+
+	const float oneOverSix = 1/6.0f;
+
+	for (int i = 0; i < inNumSamples; i++) {
+		float xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+	}
+
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
+}
+
+void MoogVCF_next_ki(MoogVCF *unit, int inNumSamples){
+	float* in = IN(0);
+	float* out = OUT(0);
+	float nextfco = IN0(1);
+	float fco = unit->m_fco; // already normalized
+	float res = unit->m_res;
+	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+
+	float fcoslope = CALCSLOPE(fcon, fco);
+
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
+
+	const float oneOverSix = 1/6.0f;
+
+	for (int i = 0; i < inNumSamples; i++) {
+		float kp, pp1d2, scale, xn, k;
+		MoogVCF_calc_parameters(fco, res, kp, pp1d2, k);
+		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+		fco += fcoslope;
+	}
+
+	unit->m_fco = fcon; // store the normalized frequency
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
+}
+
 
 void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 	float* in = IN(0);
