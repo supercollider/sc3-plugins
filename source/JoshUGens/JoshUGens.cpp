@@ -2517,11 +2517,12 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 	float y4n = unit->m_y4n;
 
 	float kp, pp1d2, scale, xn, k;
+	const float oneOverSix = 1/6.0f;
 
 	for (int i = 0; i < inNumSamples; i++) {
-		kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
-		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		kp = (3.6f * fco) - ((1.6f * fco) * fco) - 1.0f;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0f) * 0.5f;              /* Timesaver                  */
+		scale = exp((double)((1.0f - pp1d2 ) * 1.386249f)); /* Scaling factor  */
 		k = res * scale;
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2532,7 +2533,7 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2574,11 +2575,12 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 	float y4n = unit->m_y4n;
 
 	float kp, pp1d2, scale, xn, k;
+	const float oneOverSix = 1/6.0f;
 
 	for (int i = 0; i < inNumSamples; i++) {
-		kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
-		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		kp = (3.6f * fco) - ((1.6f * fco) * fco) - 1.0f;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0f) * 0.5f;              /* Timesaver                  */
+		scale = exp((double)((1.0f - pp1d2 ) * 1.386249f)); /* Scaling factor  */
 		k = res[i] * scale;
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2589,7 +2591,7 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2629,12 +2631,13 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 	float y4n = unit->m_y4n;
 
 	float kp, pp1d2, scale, xn, k, thisfco;
+	const float oneOverSix = 1/6.0f;
 
 	for (int i = 0; i < inNumSamples; i++) {
 		thisfco = fco[i] * fcon;
-		kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
-		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		kp = (3.6f * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0f;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0f) * 0.5f;              /* Timesaver                  */
+		scale = exp((double)((1.0f - pp1d2 ) * 1.386249f)); /* Scaling factor  */
 		k = res * scale;
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2645,7 +2648,7 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2682,12 +2685,13 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 	float y4n = unit->m_y4n;
 
 	float kp, pp1d2, scale, xn, k, thisfco;
+	const float oneOverSix = 1/6.0f;
 
 	for (int i = 0; i < inNumSamples; i++) {
 		thisfco = fco[i] * fcon;
-		kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
-		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		kp = (3.6f * thisfco) - ((1.6f * thisfco) * thisfco) - 1.0f;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0f) * 0.5;              /* Timesaver                  */
+		scale = exp((double)((1.0f - pp1d2 ) * 1.386249f)); /* Scaling factor  */
 		k = res[i] * scale;
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2698,7 +2702,7 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
