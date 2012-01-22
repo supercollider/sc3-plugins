@@ -2496,224 +2496,224 @@ void MoogVCF_Ctor(MoogVCF* unit) {
 }
 
 void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
-    float* in = IN(0);
-    float* out = OUT(0);
-    float nextfco = IN0(1);
-    float nextres = IN0(2);
-    float fco = unit->m_fco; // already normalized
-    float res = unit->m_res;
-    float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+	float* in = IN(0);
+	float* out = OUT(0);
+	float nextfco = IN0(1);
+	float nextres = IN0(2);
+	float fco = unit->m_fco; // already normalized
+	float res = unit->m_res;
+	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
 
-    float fcoslope = CALCSLOPE(fcon, fco);
-    float resslope = CALCSLOPE(nextres, res);
+	float fcoslope = CALCSLOPE(fcon, fco);
+	float resslope = CALCSLOPE(nextres, res);
 
-    float xnm1 = unit->m_xnm1;
-    float y1nm1 = unit->m_y1nm1;
-    float y2nm1 = unit->m_y2nm1;
-    float y3nm1 = unit->m_y3nm1;
-    float y1n = unit->m_y1n;
-    float y2n = unit->m_y2n;
-    float y3n = unit->m_y3n;
-    float y4n = unit->m_y4n;
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
 
-    float kp, pp1d2, scale, xn, k;
+	float kp, pp1d2, scale, xn, k;
 
-    for (int i = 0; i < inNumSamples; i++) {
-	kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
-	pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-	scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
-	k = res * scale;
-	xn = in[i]; // make this similar to the CSound stuff for now... easier translation
-	xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+	for (int i = 0; i < inNumSamples; i++) {
+		kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
+		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		k = res * scale;
+		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-	/* Four cascaded onepole filters (bilinear transform) */
-	y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
-	y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
-	y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
-	y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-	/* Clipper band limited sigmoid */
-	y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
-	xnm1  = xn;       /* Update Xn-1  */
-	y1nm1 = y1n;      /* Update Y1n-1 */
-	y2nm1 = y2n;      /* Update Y2n-1 */
-	y3nm1 = y3n;      /* Update Y3n-1 */
-	out[i] = y4n;
-	fco += fcoslope;
-	res += resslope;
-    }
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+		fco += fcoslope;
+		res += resslope;
+	}
 
-    unit->m_fco = fcon; // store the normalized frequency
-    unit->m_res = nextres;
-    unit->m_xnm1 = zapgremlins(xnm1);
-    unit->m_y1nm1 = zapgremlins(y1nm1);
-    unit->m_y2nm1 = zapgremlins(y2nm1);
-    unit->m_y3nm1 = zapgremlins(y3nm1);
-    unit->m_y1n = zapgremlins(y1n);
-    unit->m_y2n = zapgremlins(y2n);
-    unit->m_y3n = zapgremlins(y3n);
-    unit->m_y4n = zapgremlins(y4n);
+	unit->m_fco = fcon; // store the normalized frequency
+	unit->m_res = nextres;
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
 }
 
 void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
-    float* in = IN(0);
-    float* out = OUT(0);
-    float nextfco = IN0(1);
-    float* res = IN(2);
-    float fco = unit->m_fco; // already normalized
-    float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+	float* in = IN(0);
+	float* out = OUT(0);
+	float nextfco = IN0(1);
+	float* res = IN(2);
+	float fco = unit->m_fco; // already normalized
+	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
 
-    float fcoslope = CALCSLOPE(fcon, fco);
+	float fcoslope = CALCSLOPE(fcon, fco);
 
-    float xnm1 = unit->m_xnm1;
-    float y1nm1 = unit->m_y1nm1;
-    float y2nm1 = unit->m_y2nm1;
-    float y3nm1 = unit->m_y3nm1;
-    float y1n = unit->m_y1n;
-    float y2n = unit->m_y2n;
-    float y3n = unit->m_y3n;
-    float y4n = unit->m_y4n;
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
 
-    float kp, pp1d2, scale, xn, k;
+	float kp, pp1d2, scale, xn, k;
 
-    for (int i = 0; i < inNumSamples; i++) {
-	kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
-	pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-	scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
-	k = res[i] * scale;
-	xn = in[i]; // make this similar to the CSound stuff for now... easier translation
-	xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+	for (int i = 0; i < inNumSamples; i++) {
+		kp = (3.6 * fco) - ((1.6 * fco) * fco) - 1.0;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
+		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		k = res[i] * scale;
+		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-	/* Four cascaded onepole filters (bilinear transform) */
-	y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
-	y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
-	y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
-	y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-	/* Clipper band limited sigmoid */
-	y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
-	xnm1  = xn;       /* Update Xn-1  */
-	y1nm1 = y1n;      /* Update Y1n-1 */
-	y2nm1 = y2n;      /* Update Y2n-1 */
-	y3nm1 = y3n;      /* Update Y3n-1 */
-	out[i] = y4n;
-	fco += fcoslope;
-    }
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+		fco += fcoslope;
+	}
 
-    unit->m_fco = fcon; // store the normalized frequency
-    unit->m_xnm1 = zapgremlins(xnm1);
-    unit->m_y1nm1 = zapgremlins(y1nm1);
-    unit->m_y2nm1 = zapgremlins(y2nm1);
-    unit->m_y3nm1 = zapgremlins(y3nm1);
-    unit->m_y1n = zapgremlins(y1n);
-    unit->m_y2n = zapgremlins(y2n);
-    unit->m_y3n = zapgremlins(y3n);
-    unit->m_y4n = zapgremlins(y4n);
+	unit->m_fco = fcon; // store the normalized frequency
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
 }
 
 void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
-    float* in = IN(0);
-    float* out = OUT(0);
-    float* fco = IN(1);
-    float nextres = IN0(2);
-    float res = unit->m_res;
-    float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
+	float* in = IN(0);
+	float* out = OUT(0);
+	float* fco = IN(1);
+	float nextres = IN0(2);
+	float res = unit->m_res;
+	float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
 
-    float resslope = CALCSLOPE(nextres, res);
+	float resslope = CALCSLOPE(nextres, res);
 
-    float xnm1 = unit->m_xnm1;
-    float y1nm1 = unit->m_y1nm1;
-    float y2nm1 = unit->m_y2nm1;
-    float y3nm1 = unit->m_y3nm1;
-    float y1n = unit->m_y1n;
-    float y2n = unit->m_y2n;
-    float y3n = unit->m_y3n;
-    float y4n = unit->m_y4n;
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
 
-    float kp, pp1d2, scale, xn, k, thisfco;
+	float kp, pp1d2, scale, xn, k, thisfco;
 
-    for (int i = 0; i < inNumSamples; i++) {
-	thisfco = fco[i] * fcon;
-	kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
-	pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-	scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
-	k = res * scale;
-	xn = in[i]; // make this similar to the CSound stuff for now... easier translation
-	xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+	for (int i = 0; i < inNumSamples; i++) {
+		thisfco = fco[i] * fcon;
+		kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
+		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		k = res * scale;
+		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-	/* Four cascaded onepole filters (bilinear transform) */
-	y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
-	y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
-	y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
-	y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-	/* Clipper band limited sigmoid */
-	y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
-	xnm1  = xn;       /* Update Xn-1  */
-	y1nm1 = y1n;      /* Update Y1n-1 */
-	y2nm1 = y2n;      /* Update Y2n-1 */
-	y3nm1 = y3n;      /* Update Y3n-1 */
-	out[i] = y4n;
-	res += resslope;
-    }
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+		res += resslope;
+	}
 
-    unit->m_res = nextres;
-    unit->m_xnm1 = zapgremlins(xnm1);
-    unit->m_y1nm1 = zapgremlins(y1nm1);
-    unit->m_y2nm1 = zapgremlins(y2nm1);
-    unit->m_y3nm1 = zapgremlins(y3nm1);
-    unit->m_y1n = zapgremlins(y1n);
-    unit->m_y2n = zapgremlins(y2n);
-    unit->m_y3n = zapgremlins(y3n);
-    unit->m_y4n = zapgremlins(y4n);
+	unit->m_res = nextres;
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
 }
 
 void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
-    float* in = IN(0);
-    float* out = OUT(0);
-    float* fco = IN(1);
-    float* res = IN(2);
-    float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
+	float* in = IN(0);
+	float* out = OUT(0);
+	float* fco = IN(1);
+	float* res = IN(2);
+	float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
 
-    float xnm1 = unit->m_xnm1;
-    float y1nm1 = unit->m_y1nm1;
-    float y2nm1 = unit->m_y2nm1;
-    float y3nm1 = unit->m_y3nm1;
-    float y1n = unit->m_y1n;
-    float y2n = unit->m_y2n;
-    float y3n = unit->m_y3n;
-    float y4n = unit->m_y4n;
+	float xnm1 = unit->m_xnm1;
+	float y1nm1 = unit->m_y1nm1;
+	float y2nm1 = unit->m_y2nm1;
+	float y3nm1 = unit->m_y3nm1;
+	float y1n = unit->m_y1n;
+	float y2n = unit->m_y2n;
+	float y3n = unit->m_y3n;
+	float y4n = unit->m_y4n;
 
-    float kp, pp1d2, scale, xn, k, thisfco;
+	float kp, pp1d2, scale, xn, k, thisfco;
 
-    for (int i = 0; i < inNumSamples; i++) {
-	thisfco = fco[i] * fcon;
-	kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
-	pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
-	scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
-	k = res[i] * scale;
-	xn = in[i]; // make this similar to the CSound stuff for now... easier translation
-	xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+	for (int i = 0; i < inNumSamples; i++) {
+		thisfco = fco[i] * fcon;
+		kp = (3.6 * thisfco) - ((1.6 * thisfco) * thisfco) - 1.0;  /* Emperical tuning     */
+		pp1d2 = (kp + 1.0) * 0.5;              /* Timesaver                  */
+		scale = (float)exp((1.0 - (double)pp1d2 ) * 1.386249); /* Scaling factor  */
+		k = res[i] * scale;
+		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-	/* Four cascaded onepole filters (bilinear transform) */
-	y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
-	y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
-	y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
-	y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-	/* Clipper band limited sigmoid */
-	y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
-	xnm1  = xn;       /* Update Xn-1  */
-	y1nm1 = y1n;      /* Update Y1n-1 */
-	y2nm1 = y2n;      /* Update Y2n-1 */
-	y3nm1 = y3n;      /* Update Y3n-1 */
-	out[i] = y4n;
-    }
+		/* Four cascaded onepole filters (bilinear transform) */
+		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+		/* Clipper band limited sigmoid */
+		y4n   = y4n - (((y4n * y4n) * y4n) / 6.0);
+		xnm1  = xn;       /* Update Xn-1  */
+		y1nm1 = y1n;      /* Update Y1n-1 */
+		y2nm1 = y2n;      /* Update Y2n-1 */
+		y3nm1 = y3n;      /* Update Y3n-1 */
+		out[i] = y4n;
+	}
 
-    unit->m_xnm1 = zapgremlins(xnm1);
-    unit->m_y1nm1 = zapgremlins(y1nm1);
-    unit->m_y2nm1 = zapgremlins(y2nm1);
-    unit->m_y3nm1 = zapgremlins(y3nm1);
-    unit->m_y1n = zapgremlins(y1n);
-    unit->m_y2n = zapgremlins(y2n);
-    unit->m_y3n = zapgremlins(y3n);
-    unit->m_y4n = zapgremlins(y4n);
+	unit->m_xnm1 = zapgremlins(xnm1);
+	unit->m_y1nm1 = zapgremlins(y1nm1);
+	unit->m_y2nm1 = zapgremlins(y2nm1);
+	unit->m_y3nm1 = zapgremlins(y3nm1);
+	unit->m_y1n = zapgremlins(y1n);
+	unit->m_y2n = zapgremlins(y2n);
+	unit->m_y3n = zapgremlins(y3n);
+	unit->m_y4n = zapgremlins(y4n);
 }
 
 
