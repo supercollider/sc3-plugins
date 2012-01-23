@@ -1,0 +1,137 @@
+class:: TPV
+summary:: Tracking Phase Vocoder
+categories:: UGens>Analysis, UGens>FFT
+
+
+Description::
+
+Implementation of the McAulay and Quatieri 1986 sinusoidal model, as described in:
+
+McAulay, R. and Quatieri, T. (1986) emphasis::"Speech analysis/Synthesis based on a sinusoidal representation"::. IEEE Transactions on Acoustics, Speech, and Signal Processing 34(4): 744--754
+
+
+Classmethods::
+
+method::ar
+
+argument::chain
+[fft] - Audio input to track, which has been pre-analysed by the link::Classes/FFT:: UGen; see examples below for the expected FFT size
+
+argument::windowsize
+Window size used for FFT
+
+argument::hopsize
+hop size for FFT, typically half window size
+
+argument::maxpeaks
+Absolute maximum number of allowed peaks to be detected in the spectrum
+
+argument::currentpeaks
+Current number of allowed peaks to be detected in the spectrum
+
+argument::freqmult
+Resynthesis parameter to change frequency; currently causes a gross multiplication of frequency of all sinusoidal components, no envelope compensation
+
+argument::tolerance
+Search area for matching peaks; within tolerance spectral bins
+
+argument::noisefloor
+Minimum magnitude for a candidate peak
+
+
+Examples::
+
+code::
+b.free
+
+//assumes hop of half fftsize, fine
+b = Buffer.alloc(s,1024,1); //for sampling rates 44100 and 48000
+//b = Buffer.alloc(s,2048,1); //for sampling rates 88200 and 96000
+
+//d=Buffer.read(s,"sounds/a11wlk01.wav");
+d=Buffer.read(s,"sounds/break");
+
+
+(
+{
+
+var in, fft, output;
+
+in= SoundIn.ar(0); //PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+fft = FFT(b, in, wintype:1);
+
+output=TPV.ar(fft, 1024, 512, 70,MouseX.kr(1,70), MouseY.kr(0.25,3),4,0.2);
+
+//Out.ar(0,Pan2.ar(output));
+output
+}.play
+)
+
+(
+{
+
+var in, fft, output;
+
+in= PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+fft = FFT(b, in, wintype:1);
+
+output=TPV.ar(fft, 1024, 512, 50,50,1.0,MouseX.kr(0.1,100),MouseY.kr(-20,40).dbamp);
+
+//Out.ar(0,Pan2.ar(output));
+output
+}.play
+)
+
+
+(
+{
+
+var in, fft, output;
+
+in= PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+fft = FFT(b, in);
+
+output=TPV.ar(fft, 1024, 512, 1,1);
+
+output
+//Out.ar(0,output);
+}.plot(0.05, s, nil, -1.5, 1.5);
+)
+
+
+
+
+
+
+//residual
+
+b = Buffer.alloc(s,1024,1); //for sampling rates 44100 and 48000
+
+d=Buffer.read(s,"sounds/break");
+
+
+(
+{
+
+var in, fft, output;
+var input,inputAmp,threshhold,gate;
+
+in= SoundIn.ar(0); //PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+//inputAmp = Amplitude.kr(input);
+//threshhold = 0.001;	// noise gating threshold
+//gate = Lag.kr(inputAmp > threshhold, 0.01);
+//in= (input * gate);
+
+fft = FFT(b, in, wintype:1);
+
+output=TPV.ar(fft, 1024, 512, 50,50,1.0,4,0.2);
+
+//Out.ar(0,Pan2.ar(output));
+//delay by 512 samples for output, then phase measurement is from centre of frame, so
+output - DelayN.ar(in,0.1, (512+512)/44100)
+}.play
+)
+::

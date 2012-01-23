@@ -1,0 +1,34 @@
+class:: WaveletDaub
+summary:: decomposition into Daub4 wavelets, and reconstruction
+related:: Classes/WalshHadamard
+categories:: UGens>Analysis
+
+
+Description::
+
+Wavelet transform using the Daub4 basis.
+
+The plug-in demonstrates the transform in the context of a filter; choose how many of the strong::n:: basis elements to use in the reconstruction.
+
+
+Classmethods::
+
+method::ar
+
+argument::input
+Original signal to effect
+
+argument::n
+size of wavelet transform. Must be divisible by 64, the standard blocksize.
+
+argument::which
+Basis elements whose indices are below this number will be zeroed. The default 0 means the identity transform, all basis elements will be used in the reconstruction.
+
+
+Examples::
+
+code::
+{var n= 1024; WaveletDaub.ar(SoundIn.ar, n, MouseX.kr(0,n))}.play
+
+{var n= 1024; WaveletDaub.ar(Saw.ar(MouseY.kr(50,10000, 'exponential'),0.5), n, MouseX.kr(0,n))}.play
+::

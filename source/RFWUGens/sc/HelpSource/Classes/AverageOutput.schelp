@@ -1,0 +1,30 @@
+class:: AverageOutput
+summary:: calculates mean average of audio or control rate signal
+related:: Classes/RunningSum
+categories:: UGens>Analysis
+
+
+Description::
+
+The mean average output since the last received trigger.
+
+
+Classmethods::
+
+method::ar, kr
+
+argument::in
+input signal.
+
+argument::trig
+if changes from <= 0 to > 0, resets average and count to zero.
+
+
+Examples::
+
+code::
+// stepper cycles between 0 and 1, average hovers around 0.5
+a = { AverageOutput.kr(Stepper.kr(Impulse.kr(1), min: 0, max: 1)).poll }.play;
+
+a.free;
+::

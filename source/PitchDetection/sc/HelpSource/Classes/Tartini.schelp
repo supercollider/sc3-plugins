@@ -1,0 +1,157 @@
+class:: Tartini
+summary:: pitch tracker
+related:: Classes/Qitch, Classes/Pitch
+categories:: UGens>Analysis>Pitch
+
+
+Description::
+
+This alternative pitch follower uses autocorrelation like link::Classes/Pitch::, but with an adapted method, and calculated via FFT. There are some parameters for you to choose the window size and other aspects of the calculation, but a user who doesn't want to worry too much about this kind of stuff, please just use the defaults and don't worry about them.
+
+In technical terms, this UGen calculates a modified autocorrelation function following the method used in the Tartini open source (GNU GPL) pitch following software (http://miracle.otago.ac.nz/postgrads/tartini/)
+
+The algorithm is based on the following paper:
+Philip McLeod and Geoff Wyvill (2005) emphasis::"A Smarter Way to Find Pitch"::. ICMC Proceedings; 138-141.
+
+Note::
+For the default and standard values of N and k (512 and 256, 1024 and 512, 2048 and 1024) initialisation time of the UGen at run-time should be fast (due to precalculation when the plug-in loads). BUT, for nonstandard choices, the first time you instantiate a UGen there will be a CPU spike. strong::ADVANCED::- hack the code in the load() function to choose your own standard precalculated FFT sizes for fftw.
+::
+
+
+Classmethods::
+
+method::kr
+
+There are two outputs (see examples code below)
+definitionList::
+## freq || fundamental frequency trail
+## hasFreq || confidence in the estimate- 0 = no fundamental found, 1= fully confident, then also values inbetween- will be above 0.9 if really finding a strong periodicity
+::
+
+argument::in
+the audio rate input signal
+
+argument::threshold
+In autocorrelation function peak picking, chooses first peak within this threshold of the maximum peak. Leave it at 0.93 by default.
+
+argument::n
+data window size (on OS X without fftw, only 2048, 1024 and 512 supported, and k must be n/2)
+
+argument::k
+autocorrelation lags, actual FFT size will be n+k (this may lead to nonstandard non-power of 2 FFTs, fftw copes, don't worry about it...). It is recommended by Phil McLeod that you keep k at n/2 (if you set k=0 you will get that default) else at most 3*n/4.
+
+argument::overlap
+overlap size in samples (ie, 1024 window, 256 overlap means advance by 768 samples each time)
+
+argument::smallCutoff
+a parameter for determining when a peak is recorded in the autocorrelation function, advanced use only. Suggest you never put this too low, ie near zero, because then every possible lag in the autocorrelation becomes a potential peak, CPU cost goes up, and results won't necessarily be any good.
+
+
+Examples::
+
+(use headphones!)
+
+code::
+s = Server.local;
+
+
+//fast test of live pitch tracking, not careful with amplitude of input (see better example below)
+{Saw.ar(Tartini.kr(SoundIn.ar)[0],0.2)}.play
+
+
+
+(
+a= SynthDef("testtartini",{arg infreq=440;
+	var in, freq, hasFreq, out;
+
+	in=SinOsc.ar(infreq);
+
+	# freq, hasFreq = Tartini.kr(in);
+
+	freq.poll;
+
+	Out.ar(0,[SinOsc.ar(freq,0.1),in]);
+}).play(s);
+)
+
+a.set(\infreq,301);
+
+
+
+
+
+
+c=Buffer.read(s,"/Volumes/data/audio/nikkisitar/warmup.wav"); //sitar test file, try anything you have on your disk
+
+c.numFrames
+
+( //sample tracking
+SynthDef("pitchFollow1",{
+	var in, amp, freq, hasFreq, out;
+
+	in = PlayBuf.ar(1,c.bufnum, loop:1);
+	amp = Amplitude.kr(in, 0.05, 0.05);
+
+	# freq, hasFreq = Tartini.kr(in);
+
+	out = Mix.new(VarSaw.ar(freq * [0.5,1,2], 0, LFNoise1.kr(0.3,0.1,0.1), amp));
+
+	Out.ar(0,[out,in])
+}).play(s);
+)
+
+
+
+//analogous to example in the Pitch helpfile
+(
+SynthDef("pitchFollow1",{
+	var in, amp, freq, hasFreq, out;
+	in = Mix.new(SoundIn.ar([0,1]));
+	amp = Amplitude.kr(in, 0.05, 0.05);
+	# freq, hasFreq = Tartini.kr(in, 0.93,1024,512,512);
+	//freq = Lag.kr(freq.cpsmidi.round(1).midicps, 0.05);
+	out = Mix.new(VarSaw.ar(freq * [0.5,1,2], 0, LFNoise1.kr(0.3,0.1,0.1), amp));
+	6.do({
+		out = AllpassN.ar(out, 0.040, [0.040.rand,0.040.rand], 2)
+	});
+	Out.ar(0,out)
+}).play(s);
+)
+
+
+
+//testing weirder parameter settings (these are inconsistent, really a check on test code in plug-in)
+//very inefficient overlap, very fast reacting FFT, Mouse control of both thresholds- will force errors in certain ranges (maybe this is a fun effect)
+(
+SynthDef("pitchFollow1",{
+	var in, amp, freq, hasFreq, out;
+	in = Mix.new(SoundIn.ar([0,1]));
+	amp = Amplitude.kr(in, 0.05, 0.05);
+	# freq, hasFreq = Tartini.kr(in, MouseX.kr(0.5,1),512,1024,768, MouseY.kr(0.25,0.75)); //fast reacting
+
+	//freq = Lag.kr(freq.cpsmidi.round(1).midicps, 0.05);
+	out = Mix.new(VarSaw.ar(freq * [0.5,1,2], 0, LFNoise1.kr(0.3,0.1,0.1), amp));
+	6.do({
+		out = AllpassN.ar(out, 0.040, [0.040.rand,0.040.rand], 2)
+	});
+	Out.ar(0,out)
+}).play(s);
+)
+
+
+
+//check hasFreq values
+(
+a= SynthDef("testtartini",{
+	var in, freq, hasFreq, out;
+
+	in=SoundIn.ar(0);
+
+	# freq, hasFreq = Tartini.kr(in);
+
+	hasFreq.poll;
+
+	Out.ar(0,[SinOsc.ar(freq,0.1),in]);
+}).play(s);
+)
+::

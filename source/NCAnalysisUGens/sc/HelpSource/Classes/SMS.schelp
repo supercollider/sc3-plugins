@@ -1,0 +1,457 @@
+class:: SMS
+summary:: Spectral Modeling Synthesis
+categories:: UGens>Analysis
+
+
+Description::
+
+An implementation of the sines+noise model first described by Xavier Serra in his 1989 PhD thesis; an input sound is analysed in terms of sinusoidal components by a peak tracking phase vocoder. The error between the sinusoidal reconstruction and the original signal (the residual) is then modeled by a noise model of filtered white noise. The sines part and the noise part are separately resynthesised, allowing independent transformations.
+
+For technical details see:
+
+Xavier Serra and Julius O. Smith (1990) emphasis::"Spectral Modeling Synthesis: A Sound Analysis/Synthesis System Based on a Deterministic plus Stochastic Decomposition"::. Computer Music Journal 14(4): 12--24
+
+note::
+this plugin assumes block size of 64 and is optimised for 44100 sampling rate (internally, it uses 1024 point FFTs).
+::
+
+Classmethods::
+
+method::ar
+
+argument::input
+Audio rate input to be analysed
+
+argument::maxpeaks
+Absolute maximum number of allowed peaks to be detected in the spectrum
+
+argument::currentpeaks
+Current number of allowed peaks to be detected in the spectrum
+
+argument::tolerance
+Search area for matching peaks; within tolerance spectral bins
+
+argument::noisefloor
+Minimum magnitude for a candidate peak (measured as spectral magnitude)
+
+argument::freqmult
+Resynthesis parameter to change frequency; currently causes a gross multiplication of frequency of all sinusoidal components
+
+argument::freqadd
+Resynthesis parameter to change frequency; currently causes a gross addition of a frequency to all sinusoidal components
+
+argument::formantpreserve
+Even if changing the frequencies of sinusoidal partial tracks, re-impose the original magnitude spectrum so as to keep the formants (spectral envelope preservation). 0 is off, otherwise on (there is a small performance hit).
+
+argument::useifft
+Use IFFT based resynthesis, which is lower quality, but substantially more efficient
+
+argument::ampmult
+amplitude multiplier for internal compensation for window power loss within algorithm. Usually leave as default of 1.0.
+
+argument::graphicsbufnum
+Will fill a user provided buffer with sines + noise data; the buffer must be size 1 + 513 + 5*(maxsines). The first entry will be the number of sines active for that polled frame. Default for this argument is -1, meaning do not write any status data. See the example with live plotting at the base of this help file.
+
+
+Examples::
+
+code::
+//sine reconstruction left channel, noises on right
+(
+{
+
+	var in, fft, output;
+
+	in= SoundIn.ar(0);
+
+	output=SMS.ar(in, 50,MouseY.kr(1,50), 8, 0.3);  //or freqmult: MouseX.kr(0.5,4)
+
+	output
+}.play
+
+)
+
+
+
+//sum reconstruction channels to simulate effect of straight through
+(
+{
+
+	var in, fft, output;
+
+	in= SoundIn.ar(0);
+
+	output=SMS.ar(in, 50,MouseY.kr(1,50), 8, 0.3);  //or freqmult: MouseX.kr(0.5,4)
+
+	output.sum.dup
+}.play
+
+)
+
+
+
+//just noise residual
+
+d=Buffer.read(s,"sounds/a11wlk01.wav");
+
+(
+{
+
+	var in, fft, output;
+
+	in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+	output=SMS.ar(in, 50,50, MouseX.kr(1.0,10.0).round(1.0),MouseY.kr(0.1,20.0,'exponential'), 1.0);
+
+	Out.ar(0,Pan2.ar(output[1]));
+}.play
+
+)
+
+
+//frequency multiplication and shift with formant preservation
+
+(
+{
+
+	var in, fft, output;
+
+	in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+	output=SMS.ar(in, 60,60, 4.0,0.2, MouseX.kr(0.5,4), MouseY.kr(0,1000), 1.0);
+
+	Out.ar(0,Pan2.ar(output[0]));
+}.play
+)
+
+
+
+
+//transient detection via Pitch hasFreq output
+//could have freq input and transient detection input to SMS to control rendering
+(
+{
+
+var in, fft, sines, noise, freq, hasFreq;
+
+//in= SoundIn.ar(0);
+in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+#freq, hasFreq= Pitch.kr(in);
+
+#sines, noise=SMS.ar(in, 50,50, 8, 1.0, MouseX.kr(0.5,4));
+
+Pan2.ar(sines*(hasFreq.lag(0.01,0.01)) + LPF.ar(noise,MouseY.kr(100,10000,'exponential')),0.0)
+}.play
+)
+
+
+//alternative; only pass into SMS if not a transient region
+(
+{
+
+var in, fft, sines, noise, freq, hasFreq;
+
+//in= SoundIn.ar(0);
+in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+#freq, hasFreq= Pitch.kr(in);
+
+#sines, noise=SMS.ar(if(hasFreq,in, Silent.ar), 50,50, 8, 1.0, MouseX.kr(0.5,4));
+
+if(hasFreq,Pan2.ar(sines + LPF.ar(noise,MouseY.kr(100,10000,'exponential')), 0.0),0.25*in)
+
+}.play
+)
+
+
+
+
+
+
+//having fun
+(
+{
+
+	var in, fft, output;
+
+	in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+	output=SMS.ar(in, 60,60, 4.0,0.2, MouseX.kr(0.5,4), MouseY.kr(0.0001,10000,'exponential'), LFNoise0.kr(2,0.5,0.5).round(1));
+
+	Out.ar(0,Pan2.ar(AllpassC.ar(output[0],0.05,LFNoise2.kr(10,0.02,0.025),0.5) + CombL.ar(output[1],0.1,0.1,2),0.0));
+}.play
+)
+
+
+
+
+
+//having even more fun
+(
+{
+	var in, fft, output;
+
+	in=SoundIn.ar(0);
+
+	output=SMS.ar(in, 60,60, 4.0,0.1, MouseX.kr(0.01,10), MouseY.kr(-1000,1000), 0.0);
+
+	Out.ar(0,Pan2.ar(CombL.ar(output[1],0.02,0.02,0.5) + output[0]));
+}.play
+)
+
+
+
+
+
+
+//testing IFFT resynthesis
+(
+{
+
+	var in, fft, output;
+
+	in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+	output=SMS.ar(in, 300,MouseY.kr(1,300), 10.0,0.01, MouseX.kr(0.5,4), 0, 1.0, 1);
+
+	Out.ar(0,output);
+}.play
+)
+
+
+
+//just  sines
+
+(
+{
+
+	var in, fft, output;
+
+	in=PlayBuf.ar(1,d,BufRateScale.kr(d),1,0,1);
+
+	output=SMS.ar(in, 500,500, MouseX.kr(1.0,10.0).round(1.0),MouseY.kr(0.001,20.0,'exponential'), 1.0, 1.0,0,1);
+
+	Out.ar(0,Pan2.ar(output[0]));
+}.play
+
+)
+
+
+
+
+//having even more fun, this time with IFFT
+(
+{
+	var in, fft, output;
+
+	in=SoundIn.ar(0);
+
+	output=SMS.ar(in, 200,200, 4.0,0.1, MouseX.kr(0.01,10), MouseY.kr(-1000,1000), 0.0, useifft:1);
+
+	Out.ar(0,Pan2.ar(CombL.ar(output[1],0.02,0.02,0.5) + output[0]));
+}.play
+)
+
+
+
+
+
+//experimenting with ampmult
+(
+{
+	var in, fft, output;
+
+	in=SoundIn.ar(0);
+
+	output=SMS.ar(in, 200,200, 4.0,0.01,MouseY.kr(0.01,100,'exponential'),0, formantpreserve:1.0, useifft:1, ampmult:MouseX.kr(0.0,10.0));
+
+	Out.ar(0,output);
+}.play
+)
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+
+//drawing out sine trails
+
+b.free
+
+//buffer for getting data back from UGen
+b=Buffer.alloc(s,100*5*2+514,1)
+
+
+//sine reconstruction left channel, noises on right
+(
+{
+
+	var in, fft, output;
+
+	in= SoundIn.ar(0);
+
+	output=SMS.ar(in, 100,100, 8, 0.05, useifft:1, graphicsbufnum: b.bufnum);  //or freqmult: MouseX.kr(0.5,4)
+
+	output
+}.play
+
+)
+
+
+//get data back to language
+b.getn(0,1514,{|val| Post << val <<< nl; })
+
+
+
+//
+//frequency is (bin number/512.0) *  pi
+//1500*172 would be 258000 floats per second passed!
+
+//plot sines (512) only (not plotting noise for now but could do as (128 bands))
+(
+var data, basedata, updatedata, paintdata;
+var xperframe= 3;  //5 values
+var fps= 172; //172;
+var drawaccum=8; //to avoid too much redraw, accumulate this number of FFT frames worth of data, then plot; 8 is good compromise
+var updatesperwindow= 40; //22;
+var frameperwindow = drawaccum*updatesperwindow; //176//must be divisible by drawaccum //fps = about 172  = 44100/256
+var windowx = xperframe*frameperwindow;
+
+var windowy=640;
+var freqconvert= (512.0/pi); //(44100/1024.0)* // unit->m_nover2/pi
+var freq1, freq2, amp1, amp2, freq, amp;
+var temp;
+var black, white;
+var counter=0;  //for scrolling around
+var userview;
+var drawdataready=false, drawpos=0;
+var i, t;
+
+//var drawupdate = drawaccum/
+var bufferfetchwait = (1.0/172.0);
+var drawupdatex = drawaccum*xperframe;
+
+black= Integer.fromColor(Color.black);
+white= Integer.fromColor(Color.white);
+
+data= Array.fill(windowx*640);
+
+basedata= Int32Array.fill(drawupdatex*windowy,{black});
+
+updatedata=basedata.copy;
+
+i = SCImage.new(windowx@windowy);
+
+w = SCWindow.new("SCImage", Rect(0, 100, windowx+10, windowy+10)).front;
+w.onClose_({ t.stop; i.free; }); // free the image when the window is closed
+
+userview = SCUserView(w, w.view.bounds)
+.relativeOrigin_(false)
+//.focusColor_(Color.white.alpha_(0))
+//.resize_(5)
+.backgroundImage_(i)  //, 10
+.drawFunc_({arg view;
+	//image.drawInRect(view.bounds, image.bounds, 2, 1.0);
+	//userview.refreshInRect(Rect(10+(counter*drawupdatex),10,drawupdatex,windowy));
+
+	i.drawInRect(Rect(10+(counter*xperframe),10,drawupdatex,windowy),Rect(counter*xperframe,0,drawupdatex,windowy), 2, 1.0);
+});
+
+t= {
+
+	inf.do {
+
+		b.getn(0,1514,{|val|
+
+			var number = val[0].round(1.0).asInteger;
+			var drawshift= drawpos*xperframe;
+			//number.postln;
+
+			//updatedata=basedata.copy;
+
+			if(drawpos<drawaccum, {
+
+			number.do{|i|
+
+				var pos= 1+(5*i);  //5 values
+
+				//freq1, freq2, amp1, amp2, phase
+				freq1 = (freqconvert*val[pos]); //.round(1.0).asInteger.min(511);
+				freq2 = (freqconvert*val[pos+1]); //.round(1.0).asInteger.min(511);
+
+				//freq1 = freqconvert*val[pos];
+				freq= (freq1+freq2)*0.5;
+
+				//warping
+				//freq=  ((((freq1+freq2)*0.5)/511.0)**0.25)*511.0;
+
+				//[\freq1, freq1, \original, val[pos]].postln;
+				freq= 511-((freq).round(1.0).asInteger.min(511));
+				amp= (((val[pos+2] + val[pos+3])*0.5)*1024).min(1.0);
+
+				//[\freq, freq, \amp, amp].postln;
+
+				//goes across by rows then columns down page
+				//i*windowy+freq1
+				//(i*windowy+freq1).post; " ".post;
+				//Integer.fromColor(Color.white);
+				//was = white
+				xperframe.do{|i|  updatedata[drawshift+i+(freq*drawupdatex)]= Integer.fromColor(Color.green(amp));};
+
+				//" ".postln;
+
+			};
+
+			drawpos=drawpos+1;
+
+			if(drawpos==drawaccum,{drawdataready= true;});
+
+			});
+
+			if(drawdataready,{
+
+			drawdataready=false;
+
+			paintdata= updatedata.copy;
+
+			updatedata = basedata.copy;
+
+			drawpos=0;
+
+			{
+
+				counter=(counter+drawaccum)%frameperwindow;
+
+				i.setPixels(
+				paintdata,
+				Rect(counter*xperframe,0,drawupdatex,windowy)
+				);
+
+				//drawupdatex
+				//w.refresh
+				userview.refreshInRect(Rect(10+(counter*xperframe),10,drawupdatex,windowy));
+
+				//i.drawInRect(Rect(10+(counter*xperframe),10,xperframe,windowy), Rect(counter*xperframe,0,xperframe,windowy), 2, 1.0); // only a section
+			}.defer;
+
+
+			});
+
+
+		});
+
+		bufferfetchwait.wait;
+	}
+
+}.fork;
+
+
+
+
+
+)
+::

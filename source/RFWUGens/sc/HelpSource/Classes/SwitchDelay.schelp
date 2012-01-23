@@ -1,0 +1,84 @@
+class:: SwitchDelay
+summary:: feedback delay line implementing switch-and-ramp buffer jumping
+related:: Classes/CombN
+categories:: UGens>Delays
+
+
+Description::
+
+A feedback delay line which allows moving the buffer read position using the switch-and-ramp technique as described by Miller S. Puckette in his Theory and Techniques of Electronic Music book. http://crca.ucsd.edu/~msp/techniques/latest/book.pdf (chapter 4)
+
+Altering the buffer read position, in order to affect the perceived delay speed/timing, creates a discontinuity in the signal, typically causing unwanted audible artefacts. The switch-and-ramp technique seeks to neutralise these artefacts and allow switching with minimal clicks. See examples.
+
+
+Classmethods::
+
+method::ar
+
+argument::in
+a signal to be filtered
+
+argument::drylevel
+level of dry signal (default: 1.0)
+
+argument::wetlevel
+level of delayed signal (default: 1.0)
+
+argument::delaytime
+seconds to delay signal (default: 1.0)
+
+argument::delayfactor
+multiplier for feedback level, affects the length of the feedback tail (default 0.7). limited slightly below 1.0 to avoid speaker damaging mistakes
+
+argument::maxdelaytime
+buffer size (default 20.0)
+
+
+Examples::
+
+code::
+// before anything else
+s = Server.local.boot;
+b = Buffer.read(s, "sounds/a11wlk01.wav");
+
+// simple feedback delay
+(
+SynthDef('help-switchdelay-1', { arg out=0, bufnum;
+	Out.ar(out,
+		Pan2.ar(
+			SwitchDelay.ar(
+				PlayBuf.ar(numChannels: 1, bufnum: bufnum, loop: 0) * 0.5,
+				delaytime: 0.4,
+				delayfactor: 0.6,
+				wetlevel: 0.7
+			)
+		)
+	);
+}).send(s);
+)
+
+x = Synth('help-switchdelay-1', [\bufnum, b]);
+x.free;
+
+
+// this time, change the buffer read pointer periodically.
+(
+SynthDef('help-switchdelay-2', { arg out=0, bufnum, delaytime;
+	Out.ar(out,
+		Pan2.ar(
+			SwitchDelay.ar(
+				PlayBuf.ar(numChannels: 1, bufnum: bufnum, loop: 0) * 0.5,
+				wetlevel: 0.6,
+				delaytime: Select.kr(
+					Stepper.kr(Impulse.kr(0.5), 0, 0, 3),
+					#[ 0.02, 0.1, 0.725, 0.25 ]
+				)
+			)
+		)
+	);
+}).send(s);
+)
+
+x = Synth('help-switchdelay-2', [\bufnum, b, \loop, 0, \delaytime, 2.0]);
+x.free;
+::

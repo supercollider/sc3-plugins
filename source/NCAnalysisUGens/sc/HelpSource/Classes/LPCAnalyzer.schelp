@@ -1,0 +1,133 @@
+class:: LPCAnalyzer
+summary:: Live Linear Predictive Coding Analysis and Resynthesis
+categories:: UGens>Analysis
+
+
+Description::
+
+Linear predictive coding analysis on any arbitrary input signal. The spectrum of the input signal is modeled, and used to filter the source. This works most successfully if the source is spectrally flat to begin with, ie, an impulse train ( link::Classes/Impulse:: UGen ) or white noise ( link::Classes/WhiteNoise:: UGen ).
+
+The two big hits to CPU costs here are large n, causing peaky calculation hits once per window as autocorrelation coefficients are calculated, and p as determining the order of the filter which is fitted, and thus the per sample output calculation cost.
+
+(For more technicalities see John Makhoul (1975) emphasis::"Linear Prediction: A Tutorial Review"::. Proceedings of the IEEE 63(4).)
+
+
+Classmethods::
+
+method::ar
+
+argument::input
+Original signal to analyse with the LPC model
+
+argument::source
+Excitation to run through LPC derived filter
+
+argument::n
+Windowsize for analysis in samples; limits of 1<=n<=1024
+
+argument::p
+Number of poles used to model spectrum of input within one window
+
+argument::testE
+Whether to test for meeting of error condition, for variable number of poles solution up to p
+
+argument::delta
+Test value, close to but just below 1.
+
+argument::windowtype
+Windowing. 0 is rectangular window, abrupt swap of filter coefficients after every n samples. 1 is triangular window, and runs two LPCAnalyzers crossfading, for a smoother ride, at expense of double CPU cost.
+
+
+Examples::
+
+code::
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(440,0,0.2), 256, 50)}.play
+
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(440,0,0.2), 256, 50, windowtype:1)}.play
+
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(440,0,0.2), 128,  MouseX.kr(1,128))}.play
+
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(440,0,0.2), 1024,  MouseX.kr(1,128), windowtype:1)}.play
+
+
+{LPCAnalyzer.ar(SoundIn.ar,0.1*WhiteNoise.ar, 256, MouseX.kr(1,256))}.play
+
+//keep number of poles lower if pushing harder with bigger windows
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(MouseY.kr(100,1000),0,0.2), 1024,  MouseX.kr(1,128),1,0.9999, 1)}.play
+
+
+(
+{
+var source,amplitude, freq, hasFreq;
+
+source= SoundIn.ar;
+
+//no need, fitted filter tracks amplitudes, essentially
+//amplitude= Amplitude.kr(source);
+
+#freq,hasFreq= Pitch.kr(source);
+
+LPCAnalyzer.ar(source,if(hasFreq,Impulse.ar(freq),0.25*WhiteNoise.ar), 256,MouseX.kr(1,256), windowtype:1)
+
+}.play
+)
+
+
+//singing with myself after three seconds
+(
+{
+var source,amplitude, freq, hasFreq;
+
+source= SoundIn.ar;
+
+amplitude= Amplitude.kr(source);
+
+LPCAnalyzer.ar(source,CombC.ar(source,3.0,3.0,10.0), 256,MouseX.kr(1,256)).dup(2)
+
+}.play
+)
+
+(
+{
+var input,source;
+
+input= Resonz.ar(Saw.ar(SinOsc.kr([0.1,0.11],500,600)),LFNoise1.kr(LFNoise1.kr(4,3.5,7),700,2500),LFNoise2.kr(0.5,0.3,0.4));
+
+source= SoundIn.ar;
+
+LPCAnalyzer.ar(input,source, 64,MouseX.kr(1,64), windowtype:1)
+
+}.play
+)
+
+
+//test variable order
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(MouseX.kr(10,1000,'exponential'),0,0.2), 256, 256,1,0.999)}.play
+
+{LPCAnalyzer.ar(SoundIn.ar,Impulse.ar(MouseX.kr(10,1000,'exponential'),0,0.2), 256, 256,1,MouseY.kr(0.9,1.0).sqrt)}.play
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////
+
+//residual test assumes windowtype 0)
+(
+{
+var input,source;
+var delaytime= 1024.0/SampleRate.ir;
+
+input= SoundIn.ar;
+
+source= Impulse.ar(delaytime.reciprocal);
+
+(DelayN.ar(input,delaytime, delaytime)- LPCAnalyzer.ar(input,source,1024,MouseX.kr(1,256))).poll(10000)
+
+}.play
+)
+::
