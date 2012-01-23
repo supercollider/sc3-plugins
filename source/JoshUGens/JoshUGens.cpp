@@ -2487,7 +2487,7 @@ static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, flo
 
 void MoogVCF_Ctor(MoogVCF* unit)
 {
-	unit->m_fco = (IN0(1) * 2) / SAMPLERATE;
+	unit->m_fco = (IN0(1) * 2) * SAMPLEDUR;
 	unit->m_res = IN0(2);
 	unit->m_xnm1 = unit->m_y1nm1 = unit->m_y2nm1 = unit->m_y3nm1 = 0.0f;
 	unit->m_y1n = unit->m_y2n = unit->m_y3n = unit->m_y4n = 0.0f;
@@ -2585,7 +2585,7 @@ void MoogVCF_next_ki(MoogVCF *unit, int inNumSamples){
 	float nextfco = IN0(1);
 	float fco = unit->m_fco; // already normalized
 	float res = unit->m_res;
-	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+	float fcon = (nextfco * 2.0) * SAMPLEDUR;   // filt freq, normalized to 0 to Nyquist
 
 	float fcoslope = CALCSLOPE(fcon, fco);
 
@@ -2640,7 +2640,7 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 	float nextres = IN0(2);
 	float fco = unit->m_fco; // already normalized
 	float res = unit->m_res;
-	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+	float fcon = (nextfco * 2.0) * SAMPLEDUR;   // filt freq, normalized to 0 to Nyquist
 
 	float fcoslope = CALCSLOPE(fcon, fco);
 	float resslope = CALCSLOPE(nextres, res);
@@ -2696,7 +2696,7 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 	float nextfco = IN0(1);
 	float* res = IN(2);
 	float fco = unit->m_fco; // already normalized
-	float fcon = (nextfco * 2.0) / SAMPLERATE;   // filt freq, normalized to 0 to Nyquist
+	float fcon = (nextfco * 2.0) * SAMPLEDUR;   // filt freq, normalized to 0 to Nyquist
 
 	float fcoslope = CALCSLOPE(fcon, fco);
 
@@ -2750,7 +2750,7 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 	float* fco = IN(1);
 	float nextres = IN0(2);
 	float res = unit->m_res;
-	float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
+	float fcon = 2.0 * SAMPLEDUR;   // multiplier for filt freq, normalized to 0 to Nyquist
 
 	float resslope = CALCSLOPE(nextres, res);
 
@@ -2804,7 +2804,7 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 	float* out = OUT(0);
 	float* fco = IN(1);
 	float* res = IN(2);
-	float fcon = 2.0 / SAMPLERATE;   // multiplier for filt freq, normalized to 0 to Nyquist
+	float fcon = 2.0 * SAMPLEDUR;   // multiplier for filt freq, normalized to 0 to Nyquist
 
 	float xnm1 = unit->m_xnm1;
 	float y1nm1 = unit->m_y1nm1;
