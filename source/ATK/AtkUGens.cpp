@@ -2338,9 +2338,9 @@ void FoaPsychoShelf_next_a(FoaPsychoShelf *unit, int inNumSamples)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void load(InterfaceTable *inTable)
+PluginLoad(ATK)
 {
-    ft = inTable;
+	ft = inTable;
     
     DefineSimpleCantAliasUnit(FoaPanB);
     
