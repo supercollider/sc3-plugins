@@ -190,7 +190,7 @@ else()
 endif()
 
 BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
-             ${PitchDetectionLibs} "PitchDetection")
+             "${PitchDetectionLibs}" "PitchDetection")
 
 if (NOT APPLE)
 	find_package(FFTW3f)
