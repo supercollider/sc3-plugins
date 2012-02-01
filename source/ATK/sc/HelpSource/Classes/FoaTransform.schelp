@@ -1,0 +1,887 @@
+CLASS:: FoaTransform
+summary:: First Order Ambisonic (FOA) transformer
+categories:: Libraries>Ambisonic Toolkit>FOA>Transforming, UGens>Multichannel>Ambisonics
+related:: Classes/FoaXform
+
+DESCRIPTION::
+Transforms (spatial domain filter) a first order ambisonic signal (B-format). link::Classes/FoaTransform:: applies dynamic transforms, for static transforms see link::Classes/FoaXform::.
+
+
+
+NOTE::
+link::Classes/FoaTransform:: is a convenience wrapper around the various transformer UGens.
+::
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+argument:: in
+The input signal, an array: [in0, in1, ... inN]
+
+argument:: kind
+The kind of transform to apply.
+anchor::transforms::
+
+
+definitionList::
+## code:: 'rtt' :: || link::Classes/FoaRTT::
+## code:: 'mirror' :: || link::Classes/FoaMirror::
+## code:: 'directO' :: || link::Classes/FoaDirectO::
+## code:: 'direct' :: || link::Classes/FoaDirect::
+## code:: 'dominate' :: || link::Classes/FoaDominate::
+## code:: 'zoom' :: || link::Classes/FoaZoom::
+## code:: 'focus' :: || link::Classes/FoaFocus::
+## code:: 'push' :: || link::Classes/FoaPush::
+## code:: 'press' :: || link::Classes/FoaPress::
+## code:: 'asymmetry' :: || link::Classes/FoaAsymmetry::
+## code:: 'balance' :: || link::Classes/FoaZoomY##FoaBalance::
+## code:: 'nfc' :: || link::Classes/FoaNFC::
+## code:: 'proximity' :: || link::Classes/FoaProximity::
+::
+
+
+note:: strong:: Axial transforms ::
+
+definitionList::
+## code:: 'rotate' :: || link::Classes/FoaRotate::
+## code:: 'tilt' :: || link::Classes/FoaTilt::
+## code:: 'tumble' :: || link::Classes/FoaTumble::
+## code:: 'directX' :: || link::Classes/FoaDirectX::
+## code:: 'directY' :: || link::Classes/FoaDirectY::
+## code:: 'directZ' :: || link::Classes/FoaDirectZ::
+## code:: 'dominateX' :: || link::Classes/FoaDominateX::
+## code:: 'dominateY' :: || link::Classes/FoaDominateY::
+## code:: 'dominateZ' :: || link::Classes/FoaDominateZ::
+## code:: 'zoomX' :: || link::Classes/FoaZoomX::
+## code:: 'zoomY' :: || link::Classes/FoaZoomY::
+## code:: 'zoomZ' :: || link::Classes/FoaZoomZ::
+## code:: 'focusX' :: || link::Classes/FoaFocusX::
+## code:: 'focusY' :: || link::Classes/FoaFocusY::
+## code:: 'focusZ' :: || link::Classes/FoaFocusZ::
+## code:: 'pushX' :: || link::Classes/FoaPushX::
+## code:: 'pushY' :: || link::Classes/FoaPushY::
+## code:: 'pushZ' :: || link::Classes/FoaPushZ::
+## code:: 'pressX' :: || link::Classes/FoaPressX::
+## code:: 'pressY' :: || link::Classes/FoaPressY::
+## code:: 'pressZ' :: || link::Classes/FoaPressZ::
+::
+
+::
+
+
+argument::  ... args
+Arguments for the wrapped transformer UGens.
+
+
+
+EXAMPLES::
+
+The examples below are intended to briefly illustrate some of the first order tranform options made available in the Ambisonic Toolkit. The user is encouraged to carefully review the features of the individual link::#transforms:: to gain a deeper understanding of the flexibility of these tools.
+
+Available transformers include rotations, mirroring, directivity (spatial low pass fitering), dominance (image warping), and a variety of dominance related transforms.
+
+As the Ambisonic technique is a hierarchal system, numerous options for playback are possible. These include two channel stereo, two channel binaural, pantophonic and full 3D periphonic. With the examples below, we'll take advantage of this by first choosing a suitable decoder with with to audition.
+
+subsection:: Choose a decoder
+
+A number of decoders are defined below. Please choose one suitable for your system. Also, don't forget to define code:: ~renderDecode :: !
+
+note:: If you choose a kernel decoder, link::Classes/FoaDecoderKernel::, be sure to free the kernel after use. ::
+
+code::
+// ------------------------------------------------------------
+// switch to internal server, and boot
+(
+        s = Server.internal;
+        Server.default = s;
+        s.boot;
+)
+
+
+// ------------------------------------------------------------
+// choose a decoder
+
+// stereophonic / binaural
+~decoder = FoaDecoderMatrix.newStereo(131/2 * pi/180, 0.5) // Cardioids at 131 deg
+~decoder = FoaDecoderKernel.newUHJ                         // UHJ (kernel)
+~decoder = FoaDecoderKernel.newSpherical                   // synthetic binaural (kernel)
+~decoder = FoaDecoderKernel.newCIPIC                       // KEMAR binaural (kernel)
+
+
+// pantophonic (2D)
+~decoder = FoaDecoderMatrix.newQuad(k: 'dual')             // psycho optimised quad
+~decoder = FoaDecoderMatrix.newQuad(pi/6, 'dual')          // psycho optimised narrow quad
+~decoder = FoaDecoderMatrix.new5_0                         // 5.0
+~decoder = FoaDecoderMatrix.newPanto(6, k: 'dual')         // psycho optimised hex
+
+
+// periphonic (3D)
+~decoder = FoaDecoderMatrix.newPeri(k: 'dual')             // psycho optimised cube
+~decoder = FoaDecoderMatrix.newDiametric(                  // psycho optimised bi-rectangle
+    pi/180 * [[30, 0], [-30, 0], [90, 35.3], [-90, 35.3]],
+    'dual'
+)
+
+
+// inspect
+~decoder.kind
+
+
+// ------------------------------------------------------------
+// define ~renderDecode
+(
+~renderDecode = { arg in, decoder;
+    var kind;
+    var fl, bl, br, fr;
+    var fc, lo;
+    var sl, sr;
+    var flu, blu, bru, fru;
+    var fld, bld, brd, frd;
+    var slu, sru, sld, srd;
+        
+
+    kind = decoder.kind;
+    
+    case
+        { decoder.numChannels == 2 }
+            {
+                // decode to stereo (or binaural)
+                FoaDecode.ar(in, ~decoder)
+            }
+        { kind == 'quad' }
+            {
+                // decode (to quad)
+                #fl, bl, br, fr = FoaDecode.ar(in, ~decoder);
+
+                // reorder output to match speaker arrangement
+                [fl, fr, bl, br]
+            }
+        { kind == '5.0' }
+            {
+                // decode (to 5.0)
+                #fc, fl, bl, br, fr = FoaDecode.ar(in, ~decoder);
+                lo = Silent.ar;
+                                
+                // reorder output to match speaker arrangement
+                [fl, fr, fc, lo, bl, br]
+            }
+        { kind == 'panto' }
+            {
+                // decode (to hex)
+                #fl, sl, bl, br, sr, fr = FoaDecode.ar(in, ~decoder);
+                                
+                // reorder output to match speaker arrangement
+                [fl, fr, sl, sr, bl, br]
+            }
+        { kind == 'peri' }
+            {
+                // decode (to cube)
+                #flu, blu, bru, fru, fld, bld, brd, frd = FoaDecode.ar(in, ~decoder);
+                                
+                // reorder output to match speaker arrangement
+                [flu, fru, blu, bru, fld, frd, bld, brd]
+            }
+        { kind == 'diametric' }
+            {
+                // decode (to bi-rectangle)
+                #fl, fr, slu, sru, br, bl, srd, sld = FoaDecode.ar(in, ~decoder);
+                
+                // reorder output to match speaker arrangement
+                [fl, fr, bl, br, slu, sru, sld, srd]
+            };
+}
+)
+
+// ------------------------------------------------------------
+// now we're ready to try the examples below!
+// ------------------------------------------------------------
+::
+
+
+
+subsection:: Rotate (soundfile)
+
+Rotation is one of the most used soundfield transforms. In this case we'll it to centre the subject of a field recording.
+
+The soundfield is controlled by link::Classes/MouseX::, which specifies the rotation angle (pi to -pi; left to right of display).
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: A UGen type transformer, see link::Classes/FoaRotate:: for further details.::
+
+code::
+// ------------------------------------------------------------
+// rotate transformer
+// b-format soundfile read from disk
+
+// choose transformer
+~transformer = 'rotate'
+
+
+
+// read a whole sound into memory
+// remember to free the buffer later!
+// (boot the server, if you haven't!)
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Courville-Dialogue.wav")
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Hodges-Purcell.wav")
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Orfeo_Trio.wav")
+
+
+(
+{
+    var sig;                            // audio signal
+    var azim;                           // azimuth control
+
+
+    // display transformer & decoder
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // azimuth -> hard left     = back
+    //            centre        = centre
+    //            hard right    = back
+    azim = MouseX.kr(pi, -pi);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, azim);
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+
+// free buffer
+~sndbuf.free
+// ------------------------------------------------------------
+::
+
+note:: strong::Soundfile Credits::
+
+list::
+## D. Courville, "Comparative Surround Recording," Ambisonic Studio | Comparative Surround Recording, 2007. [Online]. Available: http://www.radio.uqam.ca/ambisonic/comparative_recording.html [Accessed: 26-Jul-2011].
+## P. Hodges, "Purcell - Passacaglia (King Arthur)," Sound of Space: ambisonic surround sound. [Online]. Available: http://soundofspace.com/ambisonic_files/52 [Accessed: 03-Nov-2011].
+## J. Leonard, "The Orfeo Trio & TetraMic," Sound of Space: ambisonic surround sound. [Online]. Available: http://soundofspace.com/ambisonic_files/41 [Accessed: 03-Nov-2011].
+
+::
+
+::
+
+
+
+subsection:: DominateX (soundfile)
+
+Dominance specified in gain is a classic Ambisonic production technique. Here we apply gain across the X axis. With these example recordings, we adjust both the stage width and the subject to reverb balance.
+
+The soundfield is controlled by link::Classes/MouseY::, which specifies the dominance gain (4.5 dB to -4.5 dB; top to bottom of display).
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: A UGen type transformer, see link::Classes/FoaDominateX:: for further details.::
+
+code::
+// ------------------------------------------------------------
+// dominateX transformer
+// b-format soundfile read from disk
+
+// choose transformer
+~transformer = 'dominateX'
+
+
+
+// read a whole sound into memory
+// remember to free the buffer later!
+// (boot the server, if you haven't!)
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Courville-Dialogue.wav")
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Hodges-Purcell.wav")
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Orfeo_Trio.wav")
+
+
+(
+{
+    var sig;                            // audio signal
+    var gain;                           // gain control
+
+
+    // display transformer & decoder
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // gain ---> top            = +4.5db for front
+    //            bottom        = -4.5db for front
+    gain = MouseY.kr(4.5, 4.5.neg);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, gain);
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+
+// free buffer
+~sndbuf.free
+// ------------------------------------------------------------
+::
+
+note:: strong::Soundfile Credits::
+
+list::
+## D. Courville, "Comparative Surround Recording," Ambisonic Studio | Comparative Surround Recording, 2007. [Online]. Available: http://www.radio.uqam.ca/ambisonic/comparative_recording.html [Accessed: 26-Jul-2011].
+## P. Hodges, "Purcell - Passacaglia (King Arthur)," Sound of Space: ambisonic surround sound. [Online]. Available: http://soundofspace.com/ambisonic_files/52 [Accessed: 03-Nov-2011].
+## J. Leonard, "The Orfeo Trio & TetraMic," Sound of Space: ambisonic surround sound. [Online]. Available: http://soundofspace.com/ambisonic_files/41 [Accessed: 03-Nov-2011].
+
+::
+
+::
+
+
+
+
+subsection:: Focus
+
+
+Here we encode four channels of decorrelated and comb filtered link::Classes/PinkNoise:: as a decorrelated soundfield, resulting in a maximally diffuse soundfield. link::Classes/FoaFocus:: is used to "focus" on various parts of the soundfield. At extremes, it becomes a planewave (infinite distance, in an anechoic environment) arriving from some direction. This technique gives the opportunity to continuously modulate between a directional and a diffuse soundfield.
+
+The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaFocus:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: A UGen type transformer, see link::Classes/FoaFocus:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// focus transformer
+// decorrelated, comb filtered pink noise source
+
+
+// define encoder matrix
+~encoder = FoaEncoderMatrix.newAtoB
+
+// choose transformer
+~transformer = 'focus'
+
+(
+{
+    var sig;				// audio signal
+    var angle, azim;			// angle and azimuth control
+    var freq;
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.kind).postln;
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // frequencies
+    freq = 220;
+
+    // angle ---> top 		= push to plane wave
+    //		  bottom	= omni-directional
+    angle = MouseY.kr(pi/2, 0);
+
+    // azimuth -> hard left 	= back
+    //		  centre 	= centre
+    //		  hard right 	= back
+    azim = MouseX.kr(pi, -pi);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PinkNoise.ar([1, 1, 1, 1]); // 4 channels decorrelated pink noise
+
+    // ------------------------------------------------------------
+    // comb filter
+    sig = HPF.ar(sig, freq);
+    sig = CombL.ar(sig, freq.reciprocal, freq.reciprocal, mul: 9.neg.dbamp);
+
+
+    // ------------------------------------------------------------
+    // encode
+    sig = FoaEncode.ar(sig, ~encoder);
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, angle, azim);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+::
+
+
+subsection:: Push and RTT
+
+
+Here we encode four channels of link::Classes/Klank:: resonated link::Classes/Dust:: from A-format. link::Classes/FoaPush:: is used to "push" the soundfield so that it becomes a planewave (infinite distance, in an anechoic environment) arriving from some direction. This technique gives the opportunity to continuously modulate between a directional and a spatially active soundfield. Additionally, link::Classes/FoaRTT:: is used to continuously reorient the granular stream so that individual A-format directions don't predominate, and the complete soundfield is filled with activity.
+
+The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformers, see link::Classes/FoaPush:: and link::Classes/FoaRTT:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// push and rtt transformer
+// granular klank stream source
+
+
+// define encoder matrix
+~encoder = FoaEncoderMatrix.newAtoB
+
+// choose transformer
+~transformer1 = 'rtt'
+~transformer2 = 'push'
+
+(
+{
+    var sig;				     // audio signal
+    var angle, azim;			// angle and azimuth control
+    var freq;
+
+    // ir...
+    var gain = -18;
+
+    var freqs = [50.0, 7000.0], gains = [-24, 0], rtimes = [0.1, 2.0];
+    var frequencies, amplitudes, ringTimes;
+    var numModes = 20;
+	
+    var density = 20;                  // grain/klank density
+
+    var rttFreq = 10 * density;
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.kind).postln;
+    "Ambisonic transforming via % transformer".format(~transformer1).postln;
+    "Ambisonic transforming via % transformer".format(~transformer2).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+
+    // calculate klank args
+    frequencies = Array.rand(numModes, freqs.at(0), freqs.at(1)).sort;
+    amplitudes = Array.rand(numModes, gains.at(0), gains.at(1)).sort.reverse.dbamp;
+    ringTimes = Array.rand(numModes, rtimes.at(0), rtimes.at(1)).sort.reverse;
+
+
+    // angle ---> top 		= push to plane wave
+    //		  bottom	= omni-directional
+    angle = MouseY.kr(pi/2, 0);
+
+    // azimuth -> hard left 	= back
+    //		  centre 	= centre
+    //		  hard right 	= back
+    azim = MouseX.kr(pi, -pi);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = Dust.ar(Array.fill(4, density / 4));
+
+    // ------------------------------------------------------------
+    // encode
+    sig = FoaEncode.ar(sig, ~encoder);
+
+    // ------------------------------------------------------------
+    // transform 1 (rtt)
+    sig = FoaTransform.ar(
+        sig,
+        ~transformer1,
+        LFSaw.ar(rttFreq, pi, add: pi),
+        LFSaw.ar(rttFreq**(1/3), pi, add: pi),
+        LFSaw.ar(rttFreq**(2/3), pi, add: pi)
+    );
+
+
+    // ------------------------------------------------------------
+    // Klank
+    sig = gain.dbamp * Klank.ar(
+        `[ frequencies, amplitudes, ringTimes ],
+        sig
+    );
+
+
+    // ------------------------------------------------------------
+    // transform 2 (push)
+    sig = FoaTransform.ar(sig, ~transformer2, angle, azim);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+::
+
+
+
+subsection:: X-axis: FocusX, ZoomX & PushX
+
+
+With this example we encode four channels of comb filtered link::Classes/Dust:: as planewaves arriving from the cardinal directions. link::Classes/FoaFocusX::, link::Classes/FoaZoomX:: and link::Classes/FoaPushX:: are used to distort the soundfield. At extremes, encoded planewaves are distorted to arrive from the same direction. This example allows one to get compare these transforms on the x-axis.
+
+The soundfield is controlled by link::Classes/MouseY::, with strong::angle:: varying between -pi/2 and pi/2. With the mouse in the centre of the display, the soundfield remains unchanged. Placed at the top or bottom of the display, the soundfield is distorted.
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformers, see link::Classes/FoaFocusX::, link::Classes/FoaZoomX:: & link::Classes/FoaPushX:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// x-axis transformers
+// comb filtered dust noise source, at cardinal points
+
+
+// define encoder matricies, for each cardinal point
+(
+~encoder = [ 
+    FoaEncoderMatrix.newDirection,
+    FoaEncoderMatrix.newDirection(pi/2),
+    FoaEncoderMatrix.newDirection(pi),
+    FoaEncoderMatrix.newDirection(pi.neg/2)
+]
+)
+
+// choose transformer
+~transformer = 'focusX'
+~transformer = 'zoomX'
+~transformer = 'pushX'
+
+(
+{
+    var sig;                            // audio signal
+    var angle;                          // angle control
+    var freq;
+    var density = 10;                   // grain density
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.at(0).kind).postln;
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // frequencies
+    freq = 220 * [ 4, 5, 7, 6 ] / 4;
+
+    // angle ---> top           = pi/2
+    //            bottom        = -pi/2
+    angle = MouseY.kr(pi/2, pi.neg/2);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = Dust.ar(Array.fill(4, density / 4));
+
+
+    // ------------------------------------------------------------
+    // comb filter
+    sig = BPF.ar(sig, freq, mul: 18.dbamp);
+    sig = CombL.ar(sig, freq.reciprocal, freq.reciprocal, mul: 9.neg.dbamp);
+
+
+    // ------------------------------------------------------------
+    // encode
+	sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
+    
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, angle);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+::
+
+
+subsection:: Y-axis: Balance and Asymmetry
+
+
+With with the link::#x-axis:_focusx,_zoomx_&_pushx#above example:: we encode four channels of comb filtered link::Classes/Dust:: as planewaves arriving from the cardinal directions. link::Classes/FoaZoomY:: and link::Classes/FoaAsymmetry:: are used to distort the soundfield. At extremes, encoded planewaves are distorted to arrive from the same direction. This example allows one to get compare these transforms on the x-axis.
+
+The soundfield is controlled by link::Classes/MouseX::, with strong::angle:: varying between -pi/2 and pi/2. With the mouse in the centre of the display, the soundfield remains unchanged. Placed at the left or right of the display, the soundfield is distorted.
+
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformers, see link::Classes/FoaZoomY:: and link::Classes/FoaAsymmetry:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// y-axis transformers
+// comb filtered dust noise source, at cardinal points
+
+
+// define encoder matricies, for each cardinal point
+(
+~encoder = [ 
+    FoaEncoderMatrix.newDirection,
+    FoaEncoderMatrix.newDirection(pi/2),
+    FoaEncoderMatrix.newDirection(pi),
+    FoaEncoderMatrix.newDirection(pi.neg/2)
+]
+)
+
+// choose transformer
+~transformer = 'balance'
+~transformer = 'asymmetry'
+
+(
+{
+    var sig;                            // audio signal
+    var angle;                          // angle control
+    var freq;
+    var density = 10;                   // grain density
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.at(0).kind).postln;
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // frequencies
+    freq = 220 * [ 4, 5, 7, 6 ] / 4;
+
+    // angle ---> left          = pi/2
+    //            right         = -pi/2
+    angle = MouseX.kr(pi/2, pi.neg/2);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = Dust.ar(Array.fill(4, density / 4));
+
+
+    // ------------------------------------------------------------
+    // comb filter
+    sig = BPF.ar(sig, freq, mul: 18.dbamp);
+    sig = CombL.ar(sig, freq.reciprocal, freq.reciprocal, mul: 9.neg.dbamp);
+
+
+    // ------------------------------------------------------------
+    // encode
+	sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
+    
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, angle);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+::
+
+
+
+subsection:: Proximity
+
+link::Classes/FoaProximity:: facilitates the introduction of the link::http://en.wikipedia.org/wiki/Proximity_effect_(audio)##proximity effect:: to encoded signals. At extremes, the proximity effect introduces a strong bass boost, as well as phase differences. The link::http://en.wikipedia.org/wiki/Proximity_effect_(audio)##proximity effect:: can be an important contributor to perceptions of nearness.
+
+
+The soundfield is controlled by link::Classes/MouseY::, with strong::distance:: varying between 0.05 and 0.5 meter. With the mouse at the bottom of the display, the soundfield receives the strongest effect, contributing to as sense of nearness.
+
+
+warning:: As link::Classes/FoaProximity:: includes a 1st-order integration, signals must be highpass filtered before application. link::Classes/HPF:: is usually a suitable choice to control low frequency boost.::
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformer, see link::Classes/FoaProximity:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// proximity transform
+// comb filtered dust noise source, panned across the front
+
+
+// define encoder matricies
+(
+~encoder = [ 
+    FoaEncoderMatrix.newDirection(pi/6),
+    FoaEncoderMatrix.newDirection(pi/12),
+    FoaEncoderMatrix.newDirection(pi.neg/12),
+    FoaEncoderMatrix.newDirection(pi.neg/6)
+]
+)
+
+// choose transformer
+~transformer = 'proximity'
+
+(
+{
+    var sig;                            // audio signal
+    var dist;                           // distance control
+    var freq;
+    var density = 10;                   // grain density
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.at(0).kind).postln;
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // frequencies
+    freq = 220 * [ 4, 5, 7, 6 ] / 4;
+
+    // dist  ---> top           = 0.5
+    //            bottom        = 0.05
+    dist = MouseY.kr(0.5, 0.05);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = Dust.ar(Array.fill(4, density / 4));
+
+
+    // ------------------------------------------------------------
+    // comb filter
+    sig = BPF.ar(sig, freq, mul: 18.dbamp);
+    sig = CombL.ar(sig, freq.reciprocal, freq.reciprocal, mul: 9.neg.dbamp);
+
+
+    // ------------------------------------------------------------
+    // encode
+    sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
+    
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, dist);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+::
+
+
+
+subsection:: NFC (soundfile)
+
+link::Classes/FoaNFC:: facilitates the reduction or removal of the link::http://en.wikipedia.org/wiki/Proximity_effect_(audio)##proximity effect:: from encoded signals. The link::http://en.wikipedia.org/wiki/Proximity_effect_(audio)##proximity effect:: can be an important contributor to perceptions of nearness.
+
+
+The soundfield is controlled by link::Classes/MouseY::, with strong::distance:: varying between 0.5 and 0.05 meter. With the mouse at the top of the display, the soundfield receives the strongest effect (removal), contributing to as sense of distance.
+
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformer, see link::Classes/FoaNFC:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// NFC transform
+// b-format soundfile read from disk
+
+
+
+
+// read a whole sound into memory
+// remember to free the buffer later!
+// (boot the server, if you haven't!)
+~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Anderson-Nearfield.wav")
+
+
+// choose transformer
+~transformer = 'nfc'
+
+
+(
+{
+    var sig;                            // audio signal
+    var dist;                           // distance control
+
+
+
+    // display encoder and decoder
+    "Ambisonic transforming via % transformer".format(~transformer).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // dist  ---> top           = 0.05
+    //            bottom        = 1.0
+    dist = MouseY.kr(0.05, 1.0);
+
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, ~transformer, dist);
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+
+// free buffer
+~sndbuf.free
+// ------------------------------------------------------------
+::
+
+
+
+note:: strong::Soundfile Credits::
+
+list::
+## Joseph Anderson, "Nearfield source," [unpublished recording]
+::
+
+::

@@ -1,0 +1,84 @@
+CLASS:: FoaSpeakerMatrix
+summary:: First Order Ambisonic (FOA) diametric decoder speaker matrices
+categories:: Libraries>Ambisonic Toolkit>Internals
+related:: Classes/FoaDecoderMatrix
+
+DESCRIPTION::
+Generates speaker matrices required by the Ambisonic Toolkit's first order diametric decoder, link::Classes/FoaDecoderMatrix#*newDiametric::. footnote:: link::Classes/FoaSpeakerMatrix:: is Heller's speaker matrix helper used to generate matricies for diamatric decoding. See: See: E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008. ::
+
+
+NOTE::
+In normal circumstances, the user will not call link::Classes/FoaSpeakerMatrix:: directly.
+::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+argument:: directions
+
+An array of directions for half of the loudspeaker feeds for the desired decoder. Specify in radians.
+
+Rank 1 arrays return pantophonic, while rank 2 arrays return periphonic. E.g.,
+code::
+// 2D:
+~directions = [ theta0, theta1, ... thetaN ];
+::
+code::
+// 3D:
+~directions = [ [ theta0, phi0 ], [ theta1, phi1 ], ... [ thetaN, phiN ] ];
+::
+
+argument:: k
+The k factor of the decoder. May be specified as a float: 0.5 to 1.0.
+
+
+METHOD:: newPositions
+
+argument:: positions
+An array of positions for half of the loudspeaker feeds for the desired decoder. Specify in cartesian coordinates.
+
+code::
+// 2D:
+~positions = [ [ x0, y0 ], [ x1, y1 ],  ... [ xN, yN ] ];
+::
+code::
+// 3D:
+~positions = [ [ x0, y0, z0 ], [ x1, y1, z1  ],  ... [ xN, yN, zN ] ];
+::
+
+
+argument:: k
+The k factor of the decoder. May be specified as a float: 0.5 to 1.0.
+
+
+
+
+
+
+INSTANCEMETHODS::
+
+private:: initDiametric, printOn
+
+
+METHOD:: dim
+Answers the number of decoder dimensions: 2D or 3D.
+
+
+METHOD:: numChannels
+Answers the number of loudspeaker feeds (output channels).
+
+
+METHOD:: positions
+Answers the position of loudspeaker feeds, in cartesian coordinates.
+
+
+
+METHOD:: matrix
+Answers the speaker matrix
+
+
+METHOD:: k
+Answer strong::k::
+

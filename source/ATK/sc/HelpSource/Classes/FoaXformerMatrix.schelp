@@ -1,0 +1,572 @@
+CLASS:: FoaXformerMatrix
+summary:: First Order Ambisonic (FOA) transformer matrices
+categories:: Libraries>Ambisonic Toolkit>FOA>Transforming
+related:: Classes/FoaXform
+
+DESCRIPTION::
+Generates transform matrices required by the Ambisonic Toolkit's first order (matrix) transformer, link::Classes/FoaXform::.
+
+
+
+CLASSMETHODS::
+
+METHOD:: newRotate
+Rotate around the z-axis.
+
+argument:: angle
+Rotation angle, in radians.
+
+discussion::
+A rotation of pi/2 will rotate a source at code:: [0, 0] :: to code:: [pi/2, 0] ::.
+
+note:: Corresponding UGen: link::Classes/FoaRotate:: ::
+
+
+METHOD:: newTilt
+Rotate around the x-axis.
+
+argument:: angle
+Rotation angle, in radians.
+
+discussion::
+A rotation of pi/2 will rotate a source at code:: [pi/2, 0] :: to code:: [0, pi/2] ::.
+
+note:: Corresponding UGen: link::Classes/FoaTilt:: ::
+
+
+METHOD:: newTumble
+Rotate around the y-axis.
+
+argument:: angle
+Rotation angle, in radians.
+
+discussion::
+A rotation of pi/2 will rotate a source at code:: [0, 0] :: to code:: [0, pi/2] ::.
+
+note:: Corresponding UGen: link::Classes/FoaTumble:: ::
+
+
+METHOD:: newRTT
+Rotate around the z, x and y axes.
+
+argument:: rotAngle
+Rotation angle around z-axis, in radians.
+
+argument:: tilAngle
+Rotation angle around x-axis, in radians.
+
+argument:: tumAngle
+Rotation angle around y-axis, in radians.
+
+discussion::
+link::#*newRotate#Rotate:: is followed by link::#*newTilt#Tilt:: and then link::#*newTumble#Tumble::.
+
+note:: Corresponding UGen: link::Classes/FoaRTT:: ::
+
+
+
+METHOD:: newMirrorO
+Mirror across the origin.
+
+discussion::
+A source at code:: [pi/4, pi/6] :: will be mirrored to code:: [-3/4*pi, -pi/6] ::.
+
+
+METHOD:: newMirrorX
+Mirror in the x-axis (across the y-z plane).
+
+discussion::
+A source at code:: [pi/4, pi/6] :: will be mirrored to code:: [3/4*pi, pi/6] ::.
+
+
+METHOD:: newMirrorY
+Mirror in the y-axis (across the x-z plane).
+
+discussion::
+A source at code:: [pi/4, pi/6] :: will be mirrored to code:: [-pi/4, pi/6] ::.
+
+
+METHOD:: newMirrorZ
+Mirror in the y-axis (across the x-z plane).
+
+discussion::
+A source at code:: [pi/4, pi/6] :: will be mirrored to code:: [pi/4, -pi/6] ::.
+
+
+METHOD:: newMirror
+Mirror across an arbitrary plane.
+
+argument:: theta
+Azimuth for the normal to the plane, in radians.
+
+argument:: phi
+Elevation for the normal to the plane, in radians.
+
+discussion::
+note:: Corresponding UGen: link::Classes/FoaMirror:: ::
+
+
+
+METHOD:: newDirectO
+Adjust the soundfield directivity (across the origin).
+
+argument:: angle
+The distortion angle, in radians. 0 to pi/2
+
+discussion::
+
+strong::Angle:: = 0 retains the current directivity of the soundfield. Increasing strong::angle:: towards pi/2 decreases the directivity, reducing the gains on the directional compenents to zero, and is equivalent to a spatial low-pass filter. The resulting image becomes omnidirectional or directionless.
+
+
+Imaging is illustrated link::Classes/FoaDirectO#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaDirectO:: ::
+
+
+METHOD:: newDirectX
+Adjust the soundfield directivity along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. 0 to pi/2
+
+discussion::
+
+strong::Angle:: = 0 retains the current directivity of the soundfield. Increasing strong::angle:: towards pi/2 decreases the directivity along the x-axis, reducing the gain on this axis to zero, and is equivalent to a spatial low-pass filter. The resulting image becomes directionless on the x-axis.
+
+Imaging is illustrated link::Classes/FoaDirectX#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaDirectX:: ::
+
+
+METHOD:: newDirectY
+Adjust the soundfield directivity along the y-axis.
+
+argument:: angle
+The distortion angle, in radians. 0 to pi/2
+
+discussion::
+
+strong::Angle:: = 0 retains the current directivity of the soundfield. Increasing strong::angle:: towards pi/2 decreases the directivity along the y-axis, reducing the gain on this axis to zero, and is equivalent to a spatial low-pass filter. The resulting image becomes directionless on the y-axis.
+
+Imaging is illustrated link::Classes/FoaDirectY#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaDirectY:: ::
+
+
+METHOD:: newDirectZ
+Adjust the soundfield directivity along the z-axis.
+
+argument:: angle
+The distortion angle, in radians. 0 to pi/2
+
+discussion::
+
+strong::Angle:: = 0 retains the current directivity of the soundfield. Increasing strong::angle:: towards pi/2 decreases the directivity along the z-axis, reducing the gain on this axis to zero, and is equivalent to a spatial low-pass filter. The resulting image becomes directionless on the z-axis.
+
+note:: Corresponding UGen: link::Classes/FoaDirectZ:: ::
+
+
+METHOD:: newDirect
+Adjust the soundfield directivity across an arbitrary plane.
+
+argument:: angle
+The distortion angle, in radians. 0 to pi/2
+
+argument:: theta
+Azimuth for the normal to the plane, in radians.
+
+argument:: phi
+Elevation for the normal to the plane, in radians.
+
+
+discussion::
+
+strong::Angle:: = 0 retains the current directivity of the soundfield. Increasing strong::angle:: towards pi/2 decreases the directivity along the normal defined by strong::theta:: and strong::phi::, reducing the gain on this normal to zero, and is equivalent to a spatial low-pass filter. The resulting image becomes directionless on the normal.
+
+note:: Corresponding UGen: link::Classes/FoaDirect:: ::
+
+
+
+
+METHOD:: newDominateX
+Apply dominance along the x-axis.
+
+argument:: gain
+Dominance gain, in dB.
+
+discussion:: Positive values of strong::gain:: increase the gain at code:: [0, 0] :: to strong::+gain:: dB, while decreasing the gain at code:: [pi, 0] :: to strong::-gain::. This simultaneously results in a distortion of the image towards code:: [0, 0] ::. Negative values of gain invert this distortion, distorting towards code:: [pi, 0] :: . The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaDominateX#figure#here::.
+
+
+note:: Corresponding UGen: link::Classes/FoaDominateX:: ::
+
+
+METHOD:: newDominateY
+Apply dominance along the y-axis.
+
+argument:: gain
+Dominance gain, in dB.
+
+discussion:: Positive values of strong::gain:: increase the gain at code:: [pi/2, 0] :: to strong::+gain:: dB, while decreasing the gain at code:: [-pi/2, 0] :: to strong::-gain::. This simultaneously results in a distortion of the image towards code:: [pi/2, 0] ::. Negative values of gain invert this distortion, distorting towards code:: [-pi/2, 0] :: . The default, 0, results in no change.
+
+
+note:: Corresponding UGen: link::Classes/FoaDominateY:: ::
+
+
+
+METHOD:: newDominateZ
+Apply dominance along the z-axis.
+
+argument:: gain
+Dominance gain, in dB.
+
+discussion:: Positive values of strong::gain:: increase the gain at code:: [0, pi/2] :: to strong::+gain:: dB, while decreasing the gain at code:: [0, -pi/2] :: to strong::-gain::. This simultaneously results in a distortion of the image towards code:: [0, pi/2] ::. Negative values of gain invert this distortion, distorting towards code:: [0, -pi/2] :: . The default, 0, results in no change.
+
+
+note:: Corresponding UGen: link::Classes/FoaDominateZ:: ::
+
+
+METHOD:: newDominate
+Apply dominance along an arbitrary axis.
+
+argument:: gain
+Dominance gain, in dB.
+
+argument:: theta
+Azimuth, in radians.
+
+argument:: phi
+Elevation, in radians.
+
+discussion:: Applies dominance along the axis defined by strong::theta:: and strong::phi::. See link::#*newDominateX::.
+
+note:: Corresponding UGen: link::Classes/FoaDominate:: ::
+
+
+
+
+METHOD:: newZoomX
+Apply zoom along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Zoom is a normailised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: increase gain at code:: [0, 0] ::, while reducing at code:: [pi, 0] ::. Negative values do the inverse. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaZoomX#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaZoomX:: ::
+
+
+
+METHOD:: newZoomY
+Apply zoom along the y-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Zoom is a normailised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: increase gain at code:: [pi/2, 0] ::, while reducing at code:: [-pi/2, 0] ::. Negative values do the inverse. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaZoomY#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaZoomY:: ::
+
+
+METHOD:: newZoomZ
+Apply zoom along the z-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Zoom is a normailised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: increase gain at code:: [0, pi/2] ::, while reducing at code:: [0, -pi/2] ::. Negative values do the inverse. The default, 0, results in no change.
+
+note:: Corresponding UGen: link::Classes/FoaZoomZ:: ::
+
+
+
+METHOD:: newZoom
+Apply zoom along an arbitrary axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+argument:: theta
+Azimuth, in radians.
+
+argument:: phi
+Elevation, in radians.
+
+
+discussion:: Applies zoom along the axis defined by strong::theta:: and strong::phi::. See link::#*newZoomX::.
+
+note:: Corresponding UGen: link::Classes/FoaZoom:: ::
+
+
+
+
+
+
+METHOD:: newFocusX
+Apply focus along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Focus is a normalised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: maintain gain at code:: [0, 0] ::, while reducing at code:: [pi, 0] ::. Negative values do the inverse. The default, 0, results in no change.
+
+In contrast with zoom, gain is maintained at 0dB in the direction of distortion.
+
+Imaging is illustrated link::Classes/FoaFocusX#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaFocusX:: ::
+
+
+METHOD:: newFocusY
+Apply focus along the y-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Focus is a normalised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: maintain gain at code:: [pi/2, 0] ::, while reducing at code:: [-pi/2, 0] ::. Negative values do the inverse. The default, 0, results in no change.
+
+In contrast with zoom, gain is maintained at 0dB in the direction of distortion.
+
+note:: Corresponding UGen: link::Classes/FoaFocusY:: ::
+
+
+
+METHOD:: newFocusZ
+Apply focus along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Focus is a normalised dominance variant, specified in terms of a distortion angle. Positive values of strong::angle:: maintain gain at code:: [0, pi/2] ::, while reducing at code:: [0, -pi/2] ::. Negative values do the inverse. The default, 0, results in no change.
+
+In contrast with zoom, gain is maintained at 0dB in the direction of distortion.
+
+note:: Corresponding UGen: link::Classes/FoaFocusZ:: ::
+
+
+
+METHOD:: newFocus
+Apply focus along an arbitrary axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+argument:: theta
+Azimuth, in radians.
+
+argument:: phi
+Elevation, in radians.
+
+discussion:: Applies focus along the axis defined by strong::theta:: and strong::phi::. See link::#*newFocusX::.
+
+note:: Corresponding UGen: link::Classes/FoaFocus:: ::
+
+
+
+METHOD:: newPushX
+Apply push along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Push is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: push the image towards code:: [0, 0] ::. Negative values push towards code:: [pi, 0] ::. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaPushX#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaPushX:: ::
+
+
+METHOD:: newPushY
+Apply push along the y-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Push is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: push the image towards code:: [pi/2, 0] ::. Negative values push towards code:: [-pi/2, 0] ::. The default, 0, results in no change.
+
+note:: Corresponding UGen: link::Classes/FoaPushY:: ::
+
+
+
+METHOD:: newPushZ
+Apply push along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Push is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: push the image towards code:: [0, pi/2] ::. Negative values push towards code:: [0, -pi/2] ::. The default, 0, results in no change.
+
+note:: Corresponding UGen: link::Classes/FoaPushZ:: ::
+
+
+METHOD:: newPush
+Apply push along an arbitrary axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+argument:: theta
+Azimuth, in radians.
+
+argument:: phi
+Elevation, in radians.
+
+discussion:: Applies push along the axis defined by strong::theta:: and strong::phi::. See link::#*PushX::.
+
+note:: Corresponding UGen: link::Classes/FoaPush:: ::
+
+
+
+
+
+
+METHOD:: newPressX
+Apply press along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Press is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: press the image towards code:: [0, 0] ::. Negative values press towards code:: [pi, 0] ::. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaPressX#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaPressX:: ::
+
+
+METHOD:: newPressY
+Apply press along the x-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Press is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: press the image towards code:: [pi/2, 0] ::. Negative values press towards code:: [-pi/2, 0] ::. The default, 0, results in no change.
+
+note:: Corresponding UGen: link::Classes/FoaPressY:: ::
+
+
+METHOD:: newPressZ
+Apply press along the z-axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Press is a dominance related transform, specified in terms of a distortion angle. Positive values of strong::angle:: press the image towards code:: [0, pi/2] ::. Negative values press towards code:: [0, -pi/2] ::. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaPressZ##here::.
+
+note:: Corresponding UGen: link::Classes/FoaPressZ:: ::
+
+
+METHOD:: newPress
+Apply press along an arbitrary axis.
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+argument:: theta
+Azimuth, in radians.
+
+argument:: phi
+Elevation, in radians.
+
+discussion:: Applies press along the axis defined by strong::theta:: and strong::phi::. See link::#*PressX::.
+
+note:: Corresponding UGen: link::Classes/FoaPress:: ::
+
+
+METHOD:: newAsymmetry
+Apply soundfield asymmetry
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: Positive values of strong::angle:: rotate code:: [0, -pi/2] :: towards code:: [0, 0] ::, and at pi/2 collapse the soundfield to a planewave. Negative values rotate code:: [0, pi/2] :: toowards code:: [0, 0] ::. The default, 0, results in no change.
+
+Imaging is illustrated link::Classes/FoaAsymmetry#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaAsymmetry:: ::
+
+
+
+METHOD:: newBalance
+Soundfield balance. A synonym for link::#*newZoomY#ZoomY::
+
+argument:: angle
+The distortion angle, in radians. -pi/2 to pi/2
+
+discussion:: See link::#*newZoomY#ZoomY::.
+
+Imaging is illustrated link::Classes/FoaBalance#figure#here::.
+
+note:: Corresponding UGen: link::Classes/FoaBalance:: ::
+
+
+
+
+
+
+INSTANCEMETHODS::
+
+private:: initMirrorChan, initMirrorX, initMirrorY, initMirrorZ, initMirrorO, initRotate, initTilt, initTumble, initDirectO, initDirectX, initDirectY, initDirectZ, initDominateX, initDominateY, initDominateZ, initZoomX, initZoomY, initZoomZ, initFocusX, initFocusY, initFocusZ, initPushX, initPushY, initPushZ, initPressX, initPressY, initPressZ, initAsymmetry, initRTT, initMirror, initDirect, initDominate, initZoom, initFocus, initPush, initPress, printOn
+
+
+METHOD:: kind
+Answers the kind of encoder
+
+discussion::
+
+code::
+// encoder
+~xformer = FoaXformerMatrix.newZoomX
+
+// inspect
+~encoder.kind
+::
+
+
+METHOD:: dim
+Answers the number of transformer dimensions: 3D.
+
+
+METHOD:: numChannels
+Answers the number of channels.
+
+discussion:: All Transformer matricies are square: 4.
+
+
+METHOD:: dirChannels
+A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-dirChannels:: and link::Classes/FoaDecoderMatrix#-dirChannels::.
+
+returns:: code:: [ inf, inf, inf , inf ] ::
+
+
+METHOD:: matrix
+Answers the transform matrix
+
+
+METHOD:: numOutputs
+A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-numOutputs:: and link::Classes/FoaDecoderMatrix#-numOutputs::.
+
+
+METHOD:: dirOutputs
+A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-dirOutputs:: and link::Classes/FoaDecoderMatrix#-dirOutputs::.
+
+
+METHOD:: numInputs
+A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-numInputs:: and link::Classes/FoaDecoderMatrix#-numInputs::.
+
+
+METHOD:: dirInputs
+A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-dirInputs:: and link::Classes/FoaDecoderMatrix#-dirInputs::.
+
+
+
+
+EXAMPLES::
+
+Please see link::Classes/FoaXform#Examples::.

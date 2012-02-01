@@ -1,0 +1,92 @@
+CLASS:: AtkMatrixMix
+summary:: Matrix mixer from the Ambisonic Toolkit (ATK)
+categories:: Libraries>Ambisonic Toolkit>Internals, UGens>Multichannel>Ambisonics
+related:: Classes/Mix, Classes/AtkKernelConv
+
+
+DESCRIPTION::
+Mix an link::Classes/Array:: of channels to an link::Classes/Array:: of channels.
+
+note::
+link::Classes/AtkMatrixMix:: is usually called internally by the Ambisonic Toolkit's encoders, transformers and decoders.
+::
+
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+argument:: in
+The input signal, an array.
+
+argument:: matrix
+The mixing matrix.
+
+argument:: mul
+Output will be multiplied by this value.
+
+argument:: add
+This value will be added to the output.
+
+returns::
+An array of channels.
+
+
+discussion::
+
+note:: In normal circumstances, the user will not call link::Classes/AtkMatrixMix:: directly.::
+
+
+
+EXAMPLES::
+
+subsection:: Monophonic to FOA
+code::
+// hand code a mono signal to a planewave in B-format
+(
+{ 
+    var matrix;
+    var sig;
+
+    // define encoding matrix
+    matrix = Matrix.with([
+        [ 2.sqrt.reciprocal ],
+        [ 1 ],
+        [ 0 ],
+        [ 0 ]
+    ]);
+
+    // pink noise
+    sig = PinkNoise.ar;
+
+    // encode
+    AtkMatrixMix.ar(sig, matrix);
+}.scope
+)
+::
+
+subsection:: Stereophonic to FOA
+code::
+// hand code a stereo signal to a +/-45deg in B-format
+(
+{ 
+    var matrix;
+    var sig;
+
+    // define encoding matrix
+    matrix = Matrix.with([
+        [ 2.sqrt.reciprocal, 2.sqrt.reciprocal ],
+        [ 2.sqrt.reciprocal, 2.sqrt.reciprocal ],
+        [ 2.sqrt.reciprocal, 2.sqrt.reciprocal.neg ],
+        [ 0,                 0 ]
+    ]);
+
+    // pink noise
+    sig = PinkNoise.ar([1, 1]);
+
+    // encode
+    AtkMatrixMix.ar(sig, matrix);
+}.scope
+)
+::

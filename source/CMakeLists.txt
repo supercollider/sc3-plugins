@@ -77,6 +77,7 @@ endmacro()
 #-----------------------
 
 set(PLUGIN_DIRS
+    ATK
     BatUGens
     BBCut2UGens
     BerlachUGens

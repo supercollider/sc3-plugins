@@ -1,0 +1,78 @@
+CLASS:: AtkKernelConv
+summary:: Kernel convolution from the Ambisonic Toolkit (ATK)
+categories:: Libraries>Ambisonic Toolkit>Internals, UGens>Multichannel>Ambisonics
+related:: Classes/Convolution2, Classes/AtkMatrixMix
+
+DESCRIPTION::
+Convolve an link::Classes/Array:: of channels to an link::Classes/Array:: of channels.
+
+note::
+link::Classes/AtkKernelConv:: is usually called internally by the Ambisonic Toolkit's encoders, transformers and decoders.
+::
+
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+argument:: in
+The input signal, an array.
+
+argument:: kernel
+The convolution kernel.
+
+argument:: mul
+Output will be multiplied by this value.
+
+argument:: add
+This value will be added to the output.
+
+returns::
+An array of channels.
+
+
+discussion::
+
+note:: In normal circumstances, the user will not call link::Classes/AtkKernelConv:: directly.::
+
+
+EXAMPLES::
+
+subsection:: Monophonic to decorrelated FOA
+code::
+// hand code a mono signal to a decorrelated soundfield in B-format
+// NOTE: the demonstrated kernel is not ideal for this task
+
+// define encoding kernel
+(
+var kernelSize;
+var scale;
+
+kernelSize = 256;
+scale = 24.neg.dbamp;
+
+~kernel = [[
+	Buffer.loadCollection(s, FloatArray.fill(kernelSize, {(3/2).sqrt * scale.rand2})),
+	Buffer.loadCollection(s, FloatArray.fill(kernelSize, {scale.rand2})),
+	Buffer.loadCollection(s, FloatArray.fill(kernelSize, {scale.rand2})),
+	Buffer.loadCollection(s, FloatArray.fill(kernelSize, {scale.rand2}))
+]]
+)
+
+// convolve
+(
+{ 
+    var sig;
+
+    // pink noise
+    sig = PinkNoise.ar;
+
+    // encode
+    AtkKernelConv.ar(sig, ~kernel);
+}.scope
+)
+
+// free kernel when finished
+~kernel.at(0).do({arg kern; kern.free})
+::

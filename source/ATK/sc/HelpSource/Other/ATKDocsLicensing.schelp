@@ -1,0 +1,14 @@
+title:: ATK Documentation License
+summary:: Ambisonic Toolkit Documentation License
+categories:: Libraries>Ambisonic Toolkit>Licensing
+related:: Other/ATKLicensing
+
+
+image::ccbysa3_88x31.png::
+
+link::Guides/Intro-to-the-ATK##Ambisonic Toolkit help documentation:: for SuperCollider is licensed under a link::http://creativecommons.org/licenses/by-sa/3.0/##Creative Commons Attribution-Share Alike 3.0 Unported License::.
+
+Executable Ambisonic Toolkit code for SuperCollider remains under the GPL as stated in the Ambisonic Toolkit's and SuperCollider's main link::Other/ATKLicensing##license conditions::.
+
+To supply attribution for a help document (which may have multiple contributors), unless otherwise indicated you may credit "Ambisonic Toolkit for SuperCollider 3 documentation contributors".
+
