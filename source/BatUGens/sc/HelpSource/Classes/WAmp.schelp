@@ -1,0 +1,26 @@
+CLASS:: WAmp
+SUMMARY:: windowed amplitude follower
+RELATED:: Classes/Amplitude, Classes/TrigAvg
+CATEGORIES:: UGens>Analysis>Amplitude
+
+DESCRIPTION::
+
+Averages and outputs the absolute value of incoming signals received between now and (now - winSize) seconds.
+
+CLASSMETHODS::
+
+METHOD::kr
+
+ARGUMENT::in
+Signal input.
+
+ARGUMENT::winSize
+The window size in seconds. Not modulatable.
+
+EXAMPLES::
+
+CODE::
+// Averaging WhiteNoise, 5 seconds.
+x = { WAmp.kr(WhiteNoise.ar(), 5).poll }.play;
+x.free;
+::

@@ -1,0 +1,29 @@
+CLASS:: TrigAvg
+SUMMARY:: triggered signal averager
+RELATED:: Classes/WAmp, Classes/Amplitude
+CATEGORIES:: UGens>Analysis, UGens>Maths
+
+DESCRIPTION::
+
+Averages the absolute values of its input between triggers.
+
+CLASSMETHODS::
+
+METHOD::kr
+
+ARGUMENT::in
+Signal Input
+
+ARGUMENT::trig
+When triggered, TrigAvg forgets the past average and starts averaging from zero.
+
+EXAMPLES::
+
+CODE::
+// average some values
+x = { TrigAvg.kr(MouseX.kr(0,1000).round(100), MouseY.kr(-1, 1)).poll }.play;
+x.free;
+
+x = { TrigAvg.kr(SinOsc.ar(1), Impulse.kr(0.5)).poll }.play;
+x.free;
+::

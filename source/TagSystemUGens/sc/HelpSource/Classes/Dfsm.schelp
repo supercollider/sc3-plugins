@@ -1,0 +1,140 @@
+CLASS:: Dfsm
+SUMMARY:: demand rate finite state machine
+RELATED:: Classes/Pfsm
+CATEGORIES:: UGens>Demand
+
+DESCRIPTION::
+Similar to link::Classes/Pfsm::, Dfsm implements a markov chain. Each state has a number of next states out of which one is randomly chosen.
+
+CLASSMETHODS::
+
+METHOD::new
+
+ARGUMENT::rules
+array in the format:
+CODE::
+[
+	[ entry states ],
+	item, [ next states ],
+	item, [ next states ],
+	...
+	end item
+ ]
+::
+Each strong::item:: can be a number, or a ugen, typically demand rate. If no strong::end item:: is given, strong::0.0:: is used as default.
+
+ARGUMENT::n
+number of items from each state to embed. If strong::inf::, they are embedded completely.
+
+ARGUMENT::rgen
+demand rate random number generator that should ouput values between 0.0 and 1.0. If a deterministic ugen is used, the choice of next states of the finite state machine can be controlled (i.e. 0 will allways choose the first, 1 always the last, else in between).
+
+EXAMPLES::
+
+CODE::
+s.boot;
+
+// random jumps
+(
+{
+	var a, b, trig = Impulse.kr(MouseX.kr(4, 100, 1));
+	a = Dfsm([[1], 1.5, [0, 1], 2.5, [0, 1]]);
+	b = Demand.kr(trig, 0, a).poll(trig);
+	SinOsc.ar(b * 200 + 300) * 0.1
+}.play
+);
+
+// 2.5 may come after 1.5, but not the other way round.
+(
+{
+	var a, b, trig = Impulse.kr(MouseX.kr(4, 100, 1));
+	a = Dfsm([[0], 1.5, [0, 0, 1], 2.5, [1, 2], 0.5, [0]]);
+	b = Demand.kr(trig, 0, a).poll(trig);
+	SinOsc.ar(b * 200 + 300) * 0.1
+}.play
+);
+
+
+
+// embed demand ugens, embed 2 of each, end with series of 4, 5, 3.
+(
+{
+	var a, n = 2, trig = Impulse.kr(MouseX.kr(4, 100, 1));
+	a = Dfsm([
+		[0], // entry states
+		Dseq([-2, -3], inf), [1],
+		Dseq([1, 2, 1.5], inf), [0, 0, 0, 1, 2],
+		Dseq([4, 5, 3], inf) // exit state
+	], n);
+	b = Demand.kr(trig, 0, a).poll(trig);
+	SinOsc.ar(b * 200 + 700) * 0.1
+}.play
+);
+
+
+// direct audification
+(
+{
+	var a, b, pseudorandomness;
+	pseudorandomness = Dswitch1((0..1000).scramble / 1000, Dwhite(0, 1, inf)
+		* MouseY.kr(1, 1000, 1));
+	a = {
+		var next = { { #[0, 1, 2, 3].choose } ! rrand(2, 5) };
+		var n = 2;
+		var d = Dfsm([
+			next.value,
+			Dseq([0, 0, 1], inf), next.value,
+			Dseq([-1, 0].clipExtend(10.rand + 2), inf), next.value,
+			Dseq([1, 0, -1, 0].clipExtend(10.rand + 4), inf), next.value,
+			Dwhite(0, 1, inf), next.value,
+			0
+		],
+		MouseX.kr(1, 1115, 1),
+		pseudorandomness
+		);
+		Pan2.ar(Duty.ar(SampleDur.ir, 0, d), LFNoise1.kr(1))
+	} ! 5;
+	a.sum * 0.1;
+}.play
+);
+::
+
+
+CODE::
+///////////////////////////////////////////
+// tests
+
+// reset test.
+(
+{
+	var a, trig = MouseButton.kr > 0.5;
+	a = Dfsm([[0], Dseq([-2, -3], inf), [1, 7], Dseq([0.1, 0.2], inf), [0, 1], Dseq([900], inf)]);
+	Demand.kr(trig, 0, a); // should end after final state.
+	Silent.ar;
+}.play
+);
+
+
+// reset test.
+(
+{
+	var a, trig = ;
+	a = Dfsm([[0], Dseq([-2, -3], inf), [1, 7], Dseq([0.1, 0.2], inf), [0, 1], Dseq([900], inf)]);
+	Demand.kr(trig, MouseButton.kr > 0.5, Dseq([a], inf));
+	Silent.ar;
+}.play
+);
+
+// embedding test
+(
+a = { |t_reset|
+	var trig = MouseButton.kr > 0.5;
+	a = Dfsm([[0], Dseq([-2, -3, -4], inf), [7], Dseq([0.1, 0.2], 1), [0, 1], Dseq([900, 90], inf)],
+		2);
+	Demand.kr(trig, t_reset, a);
+	Silent.ar;
+}.play
+);
+
+a.set(\t_reset, 1);
+::
