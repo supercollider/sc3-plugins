@@ -2622,7 +2622,7 @@ void MoogVCF_next_ii(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2673,7 +2673,7 @@ void MoogVCF_next_ki(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2729,7 +2729,7 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2785,7 +2785,7 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2840,7 +2840,7 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2892,7 +2892,7 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
 		/* Clipper band limited sigmoid */
-		y4n   = y4n - (((y4n * y4n) * y4n) * oneOverSix);
+		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
