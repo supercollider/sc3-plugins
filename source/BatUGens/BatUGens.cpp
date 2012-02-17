@@ -127,18 +127,18 @@ void MarkovSynth_Ctor(MarkovSynth *unit)
 
 	unit->trTableSize = (int)ceil(ZIN0(3));
 
-	unit->tBuffer = (int**)malloc(sizeof(int*) * unit->trTableSize);
+	unit->tBuffer = (int**)RTAlloc(unit->mWorld, sizeof(int*) * unit->trTableSize);
 	for(int i = 0; i < unit->trTableSize; i++)
 	{
-		unit->tBuffer[i] = (int*)malloc(sizeof(int) * 65537);
+		unit->tBuffer[i] = (int*)RTAlloc(unit->mWorld, sizeof(int) * 65537);
 	}
 
-	unit->bIndex = (int*)malloc(sizeof(int) * 65537);
+	unit->bIndex = (int*)RTAlloc(unit->mWorld, sizeof(int) * 65537);
 	for(int i = 0; i < 65537; i++)
 	{
 		unit->bIndex[i] = 0;
 	}
-	unit->wrIndex = (int*)malloc(sizeof(int) * 65537);
+	unit->wrIndex = (int*)RTAlloc(unit->mWorld, sizeof(int) * 65537);
 	for(int i = 0; i < 65537; i++)
 	{
 		unit->wrIndex[i] = 0;
@@ -157,12 +157,12 @@ void MarkovSynth_Dtor(MarkovSynth *unit)
 {
 	for(int i = 0; i < unit->trTableSize; i++)
 	{
-		free(unit->tBuffer[i]);
+		RTFree(unit->mWorld, unit->tBuffer[i]);
 	}
 
-	free(unit->tBuffer);
-	free(unit->bIndex);
-	free(unit->wrIndex);
+	RTFree(unit->mWorld, unit->tBuffer);
+	RTFree(unit->mWorld, unit->bIndex);
+	RTFree(unit->mWorld, unit->wrIndex);
 
 }
 
