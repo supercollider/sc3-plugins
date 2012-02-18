@@ -761,7 +761,7 @@ ProcEvents {
 			tmp = SynthDef(\procevtesttrig76234, {arg pedalin, id, dur = 2;
 					var ped;
 //					ped = RunningSum.rms(In.ar(pedalin), 0.1 * SampleRate.ir);
-					ped = Amplitude.kr(In.ar(pedalin));
+					ped = Amplitude.ar(In.ar(pedalin));
 					SendTrig.ar(Impulse.ar(10), id, ped);
 				});
 			tmp.writeDefFile;
@@ -769,16 +769,16 @@ ProcEvents {
 			tmp = SynthDef(\procevtrig2343, {arg pedalin = 2, id, trigwindow = 1,
 					mute = 1, scale = 1;
 				var in, delay, trig, pitch, hasPitch;
-//				in = Amplitude.kr(BPF.ar(In.ar(pedalin), 1000)) * mute;
-				in = In.ar(pedalin) * scale * mute;
+				in = Amplitude.ar(In.ar(pedalin)) * mute;
+//				in = In.ar(pedalin) * scale * mute;
 //				[in, in*scale, scale, mute].poll;
-//				delay = DelayN.ar(in, 0.01, 0.01);
-//				trig = (in / delay.max(0.00001)) > headroom.dbamp;
-				#pitch, hasPitch =
-					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
+				delay = DelayN.ar(in, 0.01, 0.01);
+				trig = (in / delay.max(0.00001));// > headroom.dbamp;
+//				#pitch, hasPitch =
+//					Pitch.kr(in, 100, 45, 75, peakThreshold: 0.5, ampThreshold: -60.dbamp);
 //				[pitch, hasPitch].poll;
-				SendTrig.kr(Trig1.kr(Lag.kr(hasPitch, 0.2) - 0.99, trigwindow), id, 1);
-				});
+				SendTrig.kr(Trig1.kr(trig > 24.dbamp, trigwindow), id, 1);
+				}).add;
 			tmp.writeDefFile;
 			srvrs.do({arg me; tmp.send(me)});
 			});
