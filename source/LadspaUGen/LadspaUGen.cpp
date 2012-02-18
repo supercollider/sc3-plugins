@@ -52,7 +52,7 @@ void LADSPA_Ctor(LADSPA *unit) {
     unit->handle = NULL;
     unit->requested_channels = (int) IN0(0);
     if(unit->requested_channels < 1) {
-        printf("LADSPA: Must request more than 0 channels\n");
+        Print("LADSPA: Must request more than 0 channels\n");
         unit->mDone = true;
         SETCALC(ClearUnitOutputs);
         return;
@@ -62,13 +62,13 @@ void LADSPA_Ctor(LADSPA *unit) {
     found = (const LADSPA_Descriptor**) bsearch(&keyp, &plugins[0], plugins_index, sizeof(LADSPA_Descriptor*), desc_cmp);
 
     if(!found) {
-        printf("LADSPA: ERROR, plugin %lu not found!\n",key.UniqueID);
+        Print("LADSPA: ERROR, plugin %lu not found!\n",key.UniqueID);
         unit->mDone = true;
         SETCALC(ClearUnitOutputs);
         return;
     } else {
         unit->desc = *found;
-        printf("LADSPA: Found plugin %lu (%s)\n",unit->desc->UniqueID,unit->desc->Name);
+        Print("LADSPA: Found plugin %lu (%s)\n",unit->desc->UniqueID,unit->desc->Name);
     }
 
     unit->handle = unit->desc->instantiate(unit->desc,SAMPLERATE);
@@ -76,19 +76,19 @@ void LADSPA_Ctor(LADSPA *unit) {
     int in_index = 2, out_index = 0;
     for(unsigned long i = 0; i < unit->desc->PortCount; i++) {
         if(LADSPA_IS_PORT_INPUT(unit->desc->PortDescriptors[i])) {
-            printf("IN %d: %s ",in_index,unit->desc->PortNames[i]);
+            Print("IN %d: %s ",in_index,unit->desc->PortNames[i]);
             unit->desc->connect_port(unit->handle,i,IN(in_index++));
         } else if(LADSPA_IS_PORT_OUTPUT(unit->desc->PortDescriptors[i])) {
-            printf("OUT %d: %s ",out_index,unit->desc->PortNames[i]);
+            Print("OUT %d: %s ",out_index,unit->desc->PortNames[i]);
             if(out_index<unit->requested_channels && LADSPA_IS_PORT_AUDIO(unit->desc->PortDescriptors[i]))
                 unit->desc->connect_port(unit->handle,i,OUT(out_index++));
             else
-                printf("SKIPPED ");
+                Print("SKIPPED ");
         }
         if(LADSPA_IS_PORT_CONTROL(unit->desc->PortDescriptors[i]))
-            printf("[control]\n");
+            Print("[control]\n");
         else if(LADSPA_IS_PORT_AUDIO(unit->desc->PortDescriptors[i]))
-            printf("[audio]\n");
+            Print("[audio]\n");
     }
 
     unit->plugin_channels = out_index;
@@ -114,7 +114,7 @@ void LADSPA_next( LADSPA *unit, int inNumSamples ) {
     unit->desc->run(unit->handle, inNumSamples);
     int i = unit->plugin_channels;
     while(i<unit->requested_channels) {
-        ZClear(inNumSamples, OUT(i));
+        ZClear(inNumSamples, ZOUT(i));
         i++;
     }
 }
@@ -147,7 +147,7 @@ PluginLoad(LadspaUGen)
 //        const LADSPA_Descriptor *p = plugins[i];
 //        printf("%03d: %lu (%s)\n",i,p->UniqueID,p->Label);
 //    }
-    printf("Found %d LADSPA plugins\n",plugins_index);
+    Print("Found %d LADSPA plugins\n",plugins_index);
 
 //    DefineDtorUnit(LADSPA);
     DefineDtorCantAliasUnit(LADSPA);
