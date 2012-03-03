@@ -205,10 +205,8 @@ struct Instruction : public Unit
 
 
 //WaveTerrain(bufnum, x, y, xsize, ysize, wrapbehaviour)
-struct WaveTerrain : public Unit
-{
-	int m_size, m_xsize, m_ysize;
-	float * m_terrain;
+struct WaveTerrain : public Unit {
+    //everything local to next function now, no persistent between block data
 };
 
 
@@ -3110,105 +3108,120 @@ void Instruction_next_a(Instruction *unit, int inNumSamples) {
 
 
 void WaveTerrain_Ctor(WaveTerrain* unit) {
-	//World *world = unit->mWorld;
-
-	uint32 bufnum = (uint32)ZIN0(0);
-
-	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
-
-	if (buf) {
-
-		//if (bufnum >= world->mNumSndBufs) bufnum = 0;
-		//unit->m_bufnum=bufnum;
-		//SndBuf *buf = world->mSndBufs + bufnum;
-
-		unit->m_size = buf->samples;
-
-		unit->m_xsize = (int)(ZIN0(3)+0.0001); //safety on round down
-
-		unit->m_ysize = (int)(ZIN0(4)+0.0001);
-
-		if((unit->m_xsize * unit->m_ysize)!= unit->m_size) {
-
-			printf("WaveTerrain: size mismatch between xsize*ysize and actual buffer size. UGen will output silence \n");
-			SETCALC(*ClearUnitOutputs);
-			return;
-		}
-
-		unit->m_terrain= buf->data;
-
-		SETCALC(WaveTerrain_next_a);
-	}
-
+    
+    SETCALC(WaveTerrain_next_a);
+    
 }
 
 void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
-
-	float * terrain = unit->m_terrain;
-
-	int xsize= unit->m_xsize;
-	int ysize= unit->m_ysize;
-	//int size= unit->m_size;
-
-	float *xin = IN(1);
-	float *yin = IN(2);
-
-	float *out = ZOUT(0);
-	float x, y, xindex, yindex;
-	int xfloor, yfloor, xnext, ynext;
-	float xprop,yprop;
-
-	float vll,vlr,vul,vur;
-
-	for (int j=0; j<inNumSamples;++j) {
-
-		x= xin[j]; //0.0 to 1.0
-		y= yin[j];
-
-		//safety
-		x= sc_wrap(x, 0.0f, 1.f);
-		y= sc_wrap(y, 0.0f, 1.f);
-
-		xindex= x*xsize;
-		yindex= y*ysize;
-
-//	if (xindex<0.0f)
-//			xindex=0.0f;
-//		else if (xindex>=xsize)
-//			xindex= xsize-0.00001;
-//
-//		if (yindex<0.0f)
-//			yindex=0.0f;
-//		else if (yindex>=ysize)
-//			yindex= ysize-0.00001;
-
-		//these are guaranteed in range from wrap above give or take floating point error on round down?
-		//added modulo because very occasional error with index up to xsize or ysize
-		xfloor= ((int)xindex)%xsize;
-		yfloor= ((int)yindex)%ysize;
-
-		//these aren't; needs further wrap
-		xnext= (xfloor+1)%xsize;
-		ynext= (yfloor+1)%ysize;
-
-		xprop= xindex-xfloor;
-		yprop= yindex-yfloor;
-
-		//printf("x %f, y %f, xfloor %d, yfloor %d, xnext, %d, ynext %d, xprop %f, yprop %f \n", x, y, xfloor, yfloor, xnext, ynext, xprop, yprop);
-
-		//now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
-
-		//format for terrain should be rows of xsize, indexed from lower left
-		vll= terrain[(xsize*yfloor)+ xfloor];
-		vlr= terrain[(xsize*yfloor)+ xnext];
-		vul= terrain[(xsize*ynext)+ xfloor];
-		vur= terrain[(xsize*ynext)+ xnext];
-
-		ZXP(out) = (1.0-xprop)*(vll+(yprop*(vul-vll))) + (xprop*(vlr+(yprop*(vur-vlr))));
-
-		//printf("%f \n",);
-	}
-
+    
+    int j;     
+    
+    float *out = ZOUT(0);
+    
+    uint32 bufnum = (uint32)ZIN0(0);
+    
+	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
+    
+    int works = 1; 
+    
+	if (buf) {
+        
+		int totalsize = buf->samples;
+        
+		int xsize = (int)(ZIN0(3)+0.0001); //safety on round down
+		int ysize = (int)(ZIN0(4)+0.0001);
+        
+		if((xsize * ysize)> totalsize) {
+            
+            //could set xsize and ysize to (int)sqrt(totalsize) but may not be desired result? 
+            //could set ysize to total/xsize too... unless xsize itself >totalsize
+            
+			//printf("WaveTerrain: size mismatch between xsize*ysize and actual buffer size. UGen will output silence \n");
+			works = 0; 		
+            
+        } else {
+            
+            float * terrain = buf->data;
+            
+            float *xin = IN(1);
+            float *yin = IN(2);
+            
+            
+            float x, y, xindex, yindex;
+            int xfloor, yfloor, xnext, ynext;
+            float xprop,yprop;
+            
+            float vll,vlr,vul,vur;
+            
+            for (int j=0; j<inNumSamples;++j) {
+                
+                x= xin[j]; //0.0 to 1.0
+                y= yin[j];
+                
+                //safety
+                x= sc_wrap(x, 0.0f, 1.f);
+                y= sc_wrap(y, 0.0f, 1.f);
+                
+                xindex= x*xsize;
+                yindex= y*ysize;
+                
+                //	if (xindex<0.0f)
+                //			xindex=0.0f;
+                //		else if (xindex>=xsize)
+                //			xindex= xsize-0.00001;
+                //
+                //		if (yindex<0.0f)
+                //			yindex=0.0f;
+                //		else if (yindex>=ysize)
+                //			yindex= ysize-0.00001;
+                
+                //these are guaranteed in range from wrap above give or take floating point error on round down?
+                //added modulo because very occasional error with index up to xsize or ysize
+                xfloor= ((int)xindex)%xsize;
+                yfloor= ((int)yindex)%ysize;
+                
+                //these aren't; needs further wrap
+                xnext= (xfloor+1)%xsize;
+                ynext= (yfloor+1)%ysize;
+                
+                xprop= xindex-xfloor;
+                yprop= yindex-yfloor;
+                
+                //printf("x %f, y %f, xfloor %d, yfloor %d, xnext, %d, ynext %d, xprop %f, yprop %f \n", x, y, xfloor, yfloor, xnext, ynext, xprop, yprop);
+                
+                //now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
+                
+                //format for terrain should be rows of xsize, indexed from lower left
+                vll= terrain[(xsize*yfloor)+ xfloor];
+                vlr= terrain[(xsize*yfloor)+ xnext];
+                vul= terrain[(xsize*ynext)+ xfloor];
+                vur= terrain[(xsize*ynext)+ xnext];
+                
+                ZXP(out) = (1.0-xprop)*(vll+(yprop*(vul-vll))) + (xprop*(vlr+(yprop*(vur-vlr))));
+                
+                //printf("%f \n",);
+            }
+            
+            
+        }
+        
+    } else {
+        
+        works = 0; 
+    }
+    
+    
+    //output silence for this block
+    if(works==0) {
+        
+        for (int j=0; j<inNumSamples;++j) 
+            ZXP(out) = 0.0f;
+            
+            }
+    
+    
+    
 }
 
 
