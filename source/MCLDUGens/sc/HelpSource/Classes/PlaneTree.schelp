@@ -1,7 +1,6 @@
 CLASS:: PlaneTree
 summary:: Tree classifier using (hyper)planes – UGen or language-side
 categories:: UGens
-related:: 
 
 DESCRIPTION::
 // Server-side (for use in synths):

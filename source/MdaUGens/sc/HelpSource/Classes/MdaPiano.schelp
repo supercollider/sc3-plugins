@@ -8,12 +8,10 @@ Description::
 
 A piano synthesiser emphasis::(originally a VST plugin by Paul Kellett, ported to SC by Dan Stowell)::. This UGen is not polyphonic (but can be retriggered to play notes in sequence).
 
-note::
-This UGen is stereo - it returns two channels, with a stereo "wideness" effect controlled by the strong::stereo:: argument. It has lots of parameters:
-
 classmethods::
 
 method::ar
+This UGen is stereo - it returns two channels, with a stereo "wideness" effect controlled by the strong::stereo:: argument. It has lots of parameters:
 
 argument::freq
 Frequency of the note

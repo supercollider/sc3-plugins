@@ -11,7 +11,9 @@ on Linux and /Library/Audio/Plug-Ins/LADSPA on Mac OS X.
 
 If you have Ardour installed, you can find lots of plugins in /Applications/Ardour.app/Contents/Plugins
 
-WARNING:: Some LADSPA plugins might not be real-time safe, if they allocate memory at initialization.
+WARNING::
+Some LADSPA plugins might not be real-time safe, if they allocate memory at initialization.
+::
 
 classmethods::
 private:: initClass

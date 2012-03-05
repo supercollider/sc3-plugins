@@ -1,7 +1,7 @@
 CLASS:: Goertzel
 summary:: Calculate a single DFT bin, to detect presence of a frequency
 categories:: UGens>Filters
-related:: 
+
 DESCRIPTION::
 The Goertzel algorithm is a way to calculate the magnitude and phase of a signal's content at a single specified frequency. It's the equivalent of running an FFT, and then only looking at the output corresponding to a single bin. If you're only interested in a small number of bins then it is more efficient; if you're interested in the majority of bins, you typically want to do an FFT instead.
 CLASSMETHODS::

@@ -1,7 +1,6 @@
 CLASS:: MeanTriggered
 summary:: Mean of recent values, triggered
 categories:: UGens>Filters
-related:: 
 
 DESCRIPTION::
 Calculates the mean of the most recent length values, but only paying attention to values input while the trigger is greater than zero. One application of this is to calculate a running mean of values coming from FFT analysis.

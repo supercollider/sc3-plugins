@@ -902,14 +902,13 @@ code::
 // ------------------------------------------------------------
 ::
 
-note:: strong::Soundfile Credits::
-
+note::
+strong::Soundfile Credits::
 list::
 ## Robert Mackay, "Augustine's Message," [unpublished recording]
 ## John Young, "Allting Runt Omkring," [unpublished recording]
 ::
-
-
+::
 
 subsection:: Directions encoder (soundfile)
 
@@ -973,7 +972,7 @@ code::
 ::
 
 note:: strong::Soundfile Credits::
-
 list::
 ## Scott Wilson, "Böse," [unpublished recording]
+::
 ::

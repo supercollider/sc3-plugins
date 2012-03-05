@@ -1,7 +1,6 @@
 CLASS:: InsideOut
 summary:: Distortion by subtracting magnitude from 1
 categories:: UGens>Filters
-related:: 
 
 DESCRIPTION::
 If the signal is positive, outputs (1 - input).

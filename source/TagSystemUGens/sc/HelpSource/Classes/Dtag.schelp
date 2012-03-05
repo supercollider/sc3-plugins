@@ -205,7 +205,6 @@ CODE::
 2 -> 01
 ::
 is written as CODE::[[0, 2], [1, 1, 0, 1], [0, 1]]::
-::
 
 SECTION::Emil Post's tag systems
 
@@ -275,4 +274,4 @@ CODE::
 ::
 
 In the metaphor of the tag game, the recycle parameter ( strong::r:: ) is the head start for the runaway writer before the tagger (see: http://en.wikipedia.org/wiki/Tag_%28game%29 )
-::
+

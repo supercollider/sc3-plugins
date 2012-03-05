@@ -1,7 +1,6 @@
 CLASS:: Getenv
 summary:: Read (numeric) shell environment variables into a synth
 categories:: UGens
-related:: 
 
 DESCRIPTION::
 Tries to grab a shell environment variable (with name key) and convert it to a floating-point value, which is output.

@@ -1,7 +1,6 @@
 CLASS:: RosslerL
 summary:: Rossler chaotic generator
 categories:: UGens>Generators>Chaotic
-related:: 
 
 DESCRIPTION::
 A strange attractor discovered by Otto Rossler based on work in chemical kinetics.

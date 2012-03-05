@@ -1,7 +1,6 @@
 CLASS:: GaussClass
 summary:: Gaussian classifier
 categories:: UGens
-related:: 
 
 DESCRIPTION::
 A Gaussian classifier, which classifies an input vector as belonging to one of the gaussian distributions defined in a specially-formatted Buffer.

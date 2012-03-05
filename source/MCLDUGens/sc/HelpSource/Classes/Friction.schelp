@@ -1,7 +1,7 @@
 CLASS:: Friction
 summary:: A physical model of a system with dry-friction. A chaotic filter.
 categories:: UGens>Filters
-related:: 
+
 DESCRIPTION::
 The input is treated as the driving force in a physical model of a mass resting on a belt, which can stick or slip relative to the belt (depending on the friction between the two). The input represents the position of the belt, and the mass is held approximately in place by a spring and a damper.
 The output is the position of the mass, which in very high-friction situations will be exactly the same as the input - but when the other forces can overcome the friction then stick-and-slip alternatiions will typically occur.
