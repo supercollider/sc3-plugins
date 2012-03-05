@@ -9,7 +9,7 @@ The Ambisonic Toolkit (ATK) brings together a number of classic and novel tools 
 
 The ATK's production model is illustrated below:
 
-image::atk-network.pdf#ATK paradigm::
+image::atknetwork.png#ATK paradigm::
 
 Here you'll see that the ATK breaks down the task of working with Ambisonics into three separate elements:
 
@@ -85,7 +85,7 @@ emphasis::Front::, emphasis::Left::, emphasis::Back-Left:: and emphasis::Back:: 
 With changing strong::angle::, we see the encoded planewaves both move towards the front of the image (to a single planewave at the extreme) and change gain in link::#zoom#ZoomX::. When strong::angle:: is 90 degrees, the planewave at emphasis::Front:: has been increased to 6dB, while emphasis::Back:: has disappeared. footnote::Decreased to -inf dB::
 
 anchor::zoom::
-image::zoom_fig.png#ZoomX imaging::
+image::../Classes/zoom_fig.png#ZoomX imaging::
 
 link::#push#PushX:: also distorts the incident angles of the encoded planewaves. However, here we see two differences with link::#zoom#ZoomX::. Firstly, the gains of the individual elements don't vary as considerably, and the encoded planewaves are illustrated as moving off the perimeter of the plot.
 
@@ -94,12 +94,12 @@ Moving from the edge of the diagram towards the centre emphasis::does not imply:
 With link::#push#PushX::, when strong::angle:: is 90 degrees, all encoded planewaves have been pushed to the front of the image, and gain is retained at 0 dB for all elements.
 
 anchor::push::
-image::push_fig.png#PushX imaging::
+image::../Classes/push_fig.png#PushX imaging::
 
 link::#direct#DirectO:: adjusts the directivity of the soundfield across the origin. Here we see all elements collapsing towards the centre of the plot. At this point the soundfield is omnidirectional, or directionless.
 
 anchor::direct::
-image::direct_fig.png#DirectO imaging::
+image::../Classes/direct_fig.png#DirectO imaging::
 
 See link::Classes/FoaZoomX::, link::Classes/FoaPushX:: and link::Classes/FoaDirectO:: for more details about these illustrated transforms.
 
