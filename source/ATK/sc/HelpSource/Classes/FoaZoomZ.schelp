@@ -17,17 +17,8 @@ CLASSMETHODS::
 
 METHOD:: ar
 
-argument:: w
-Input signal W.
-
-argument:: x
-Input signal X.
-
-argument:: y
-Input signal Y.
-
-argument:: z
-Input signal Z.
+argument:: in
+The B-format signal, an array: [w, x, y, z]
 
 argument:: angle
 The distortion angle, in radians. -pi/2 to pi/2

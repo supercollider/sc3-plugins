@@ -1818,6 +1818,10 @@ FoaDecoderKernel {
 		})
 	}
 
+	buffers { ^kernel.flat }
+	
+	kernelPaths { ^kernel.flat.collect({arg thisBuffer; thisBuffer.path}) }
+	
 	dim { ^kernel.shape.at(0) - 1}
 
 	numChannels { ^kernel.shape.at(1) }

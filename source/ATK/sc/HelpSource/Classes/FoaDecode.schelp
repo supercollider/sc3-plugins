@@ -14,7 +14,6 @@ METHOD:: ar
 argument:: in
 The B-format signal, an array: [w, x, y, z]
 
-
 argument:: decoder
 link::Classes/FoaDecoderMatrix:: or link::Classes/FoaDecoderKernel:: instance.
 
