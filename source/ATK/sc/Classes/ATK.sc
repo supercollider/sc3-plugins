@@ -119,9 +119,13 @@ Atk {
 		
 	*openUserSupportDir {
 		("open \"" ++ Atk.userSupportDir ++"\"").unixCmd({arg res, pid; 
-			if(res > 0, {"User Support Dir may not exist".warn})});
+			if(res > 0, {"User Support Dir may not exist. Run \n\tAtk.createUserSupportDir\nto create it".warn})});
 	}
 
+	*createUserSupportDir {
+		("mkdir \"" ++ Atk.userSupportDir ++ "\"").unixCmd;
+	}
+	
 	*openSystemSupportDir {
 		("open \"" ++ Atk.systemSupportDir ++"\"").unixCmd({arg res, pid; 
 			if(res > 0, {"System Support Dir may not exist".warn})});
