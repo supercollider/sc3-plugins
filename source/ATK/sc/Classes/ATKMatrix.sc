@@ -1651,7 +1651,7 @@ FoaXformerMatrix {
 
 FoaDecoderKernel {
 	var <kind, <subjectID;
-	var <kernel;
+	var <kernel, kernelBundle, kernelInfo;
 	var <dirChannels;
 	
 
@@ -1675,14 +1675,13 @@ FoaDecoderKernel {
 		
 		var kernelLibPath;
 		var decodersPath;
-		
 		kernelLibPath = PathName.new(
-			Platform.userAppSupportDir.dirname ++ "/ATK/kernels"
+			Atk.userKernelDir
 		);
 
 		if ( kernelLibPath.isFolder.not, {	// is kernel lib installed for all users?
 			PathName.new(					// no? set for single user
-				Platform.systemAppSupportDir.dirname ++ "/ATK/kernels"
+				Atk.systemKernelDir
 			)
 		});
 
@@ -1697,6 +1696,9 @@ FoaDecoderKernel {
 		var chans;
 		var sampleRate;
 		var errorMsg;
+		
+		kernelBundle = [0.0];
+		kernelInfo = [];
 		
 		// constants
 		chans = 2;			// stereo kernel
@@ -1793,6 +1795,9 @@ FoaDecoderKernel {
 						Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
 							action: { arg buf;
 								(
+									kernelBundle = kernelBundle.add(
+										buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+									kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 									"Kernel %, channel % loaded.".format(
 										kernelPath.fileName, chan
 									)
@@ -1820,7 +1825,9 @@ FoaDecoderKernel {
 
 	buffers { ^kernel.flat }
 	
-	kernelPaths { ^kernel.flat.collect({arg thisBuffer; thisBuffer.path}) }
+	kernelInfo { ^kernelInfo }
+	
+	kernelBundle { ^kernelBundle }
 	
 	dim { ^kernel.shape.at(0) - 1}
 
@@ -1836,7 +1843,6 @@ FoaDecoderKernel {
 	
 	dirInputs { ^this.numInputs.collect({ inf }) }
 
-
 	printOn { arg stream;
 		stream << this.class.name << "(" <<*
 			[kind, this.dim, this.numChannels, subjectID, this.kernelSize] <<")";
@@ -1849,7 +1855,7 @@ FoaDecoderKernel {
 
 FoaEncoderKernel {
 	var <kind, <subjectID;
-	var <kernel;
+	var <kernel, kernelBundle, kernelInfo;
 	var <dirChannels;
 	
 
@@ -1883,14 +1889,11 @@ FoaEncoderKernel {
 		var kernelLibPath;
 		var encodersPath;
 		
-		kernelLibPath = PathName.new(
-			Platform.userAppSupportDir.dirname ++ "/ATK/kernels"
-		);
+		kernelLibPath = PathName.new(Atk.userKernelDir);
 
 		if ( kernelLibPath.isFolder.not, {	// is kernel lib installed for all users?
 			PathName.new(					// no? set for single user
-				Platform.systemAppSupportDir.dirname ++ "/ATK/kernels"
-			)
+				Atk.systemKernelDir)
 		});
 
 		encodersPath	= PathName.new("/Foa/encoders");
@@ -1905,7 +1908,9 @@ FoaEncoderKernel {
 		var sampleRate;
 		var errorMsg;
 		
-
+		kernelBundle = [0.0];
+		kernelInfo = [];
+		
 		// init dirChannels (output channel (speaker) directions) and kernel sr
 		switch ( kind,
 			'super', {
@@ -2024,6 +2029,9 @@ FoaEncoderKernel {
 						Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
 							action: { arg buf;
 								(
+									kernelBundle = kernelBundle.add(
+										buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));	
+									kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 									"Kernel %, channel % loaded.".format(
 										kernelPath.fileName, chan
 									)
@@ -2048,6 +2056,12 @@ FoaEncoderKernel {
 			})
 		})
 	}
+
+	buffers { ^kernel.flat }
+	
+	kernelInfo { ^kernelInfo }
+	
+	kernelBundle { ^kernelBundle }
 
 	dim { ^kernel.shape.at(1) - 1}
 

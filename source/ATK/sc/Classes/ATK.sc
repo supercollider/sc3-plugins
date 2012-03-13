@@ -94,6 +94,39 @@
 //
 //---------------------------------------------------------------------
 
+Atk {
+	classvar <userSupportDir, <userSoundsDir, <userKernelDir;
+	classvar <systemSupportDir, <systemSoundsDir, <systemKernelDir;
+
+	*initClass {
+		userSupportDir = Platform.userAppSupportDir.dirname ++ "/ATK";		userSoundsDir = userSupportDir ++ "/sounds";
+		userKernelDir = userSupportDir ++ "/kernels";
+		systemSupportDir = Platform.systemAppSupportDir.dirname ++ "/ATK";		systemSoundsDir = systemSupportDir ++ "/sounds";
+		systemKernelDir = systemSupportDir ++ "/kernels";
+	}
+	
+	*userSupportDir_ {arg userSupportDirIn;
+		userSupportDir = userSupportDirIn;
+		userSoundsDir = userSupportDir ++ "/sounds";
+		userKernelDir = userSupportDir ++ "/kernels";
+	}
+	
+	*systemSupportDir_ {arg systemSupportDurIn;
+		systemSupportDir = systemSupportDurIn;
+		systemSoundsDir = systemSupportDir ++ "/sounds";
+		systemKernelDir = systemSupportDir ++ "/kernels";
+	}
+		
+	*openUserSupportDir {
+		("open \"" ++ Atk.userSupportDir ++"\"").unixCmd({arg res, pid; 
+			if(res > 0, {"User Support Dir may not exist".warn})});
+	}
+
+	*openSystemSupportDir {
+		("open \"" ++ Atk.systemSupportDir ++"\"").unixCmd({arg res, pid; 
+			if(res > 0, {"System Support Dir may not exist".warn})});
+	}	
+}
 
 FoaPanB : MultiOutUGen {
 	
@@ -354,7 +387,7 @@ AtkKernelConv {
 		// wrap input as array if needed, for mono inputs
 		in.isArray.not.if({ in = [in] });
 		
-		out = Mix.ar(
+		out = Mix.new(
 			kernel.shape.at(0).collect({ arg i;
 				kernel.shape.at(1).collect({ arg j;
 					Convolution2.ar(
