@@ -196,7 +196,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Chinook.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Leonard-Chinook.wav")
 
 
 (
@@ -267,7 +267,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Fireworks.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Leonard-Fireworks.wav")
 
 
 (
@@ -356,7 +356,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Orfeo_Trio.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Leonard-Orfeo_Trio.wav")
 
 
 (

@@ -224,9 +224,9 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Courville-Dialogue.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Hodges-Purcell.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Orfeo_Trio.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Courville-Dialogue.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Hodges-Purcell.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Leonard-Orfeo_Trio.wav")
 
 
 (
@@ -302,9 +302,9 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Courville-Dialogue.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Hodges-Purcell.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Leonard-Orfeo_Trio.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Courville-Dialogue.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Hodges-Purcell.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Leonard-Orfeo_Trio.wav")
 
 
 (
@@ -831,7 +831,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/b-format/Anderson-Nearfield.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/b-format/Anderson-Nearfield.wav")
 
 
 // choose transformer

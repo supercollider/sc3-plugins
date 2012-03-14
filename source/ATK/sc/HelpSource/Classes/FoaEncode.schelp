@@ -322,8 +322,8 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/a-format/Thomas_Mackay.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/a-format/Cross_Tenor_Sax.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/a-format/Thomas_Mackay.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/a-format/Cross_Tenor_Sax.wav")
 
 
 (
@@ -473,10 +473,10 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/The_City_Waites-The_Downfall.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/The_City_Waites-An_Old.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/Aurora_Surgit-Lux_Aeterna.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/Aurora_Surgit-Dies_Irae.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-The_Downfall.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-An_Old.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Lux_Aeterna.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Dies_Irae.wav")
 
 
 (
@@ -551,10 +551,10 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/The_City_Waites-The_Downfall.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/The_City_Waites-An_Old.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/Aurora_Surgit-Lux_Aeterna.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/stereo/Aurora_Surgit-Dies_Irae.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-The_Downfall.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-An_Old.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Lux_Aeterna.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Dies_Irae.wav")
 
 
 (
@@ -631,10 +631,10 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/uhj/Palestrina-O_Bone.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/uhj/Gabrieli-Canzon_Duodecimi.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/uhj/Cante_Flamenco-Alegrias.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/uhj/Waldteufel-The_Skaters.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/uhj/Palestrina-O_Bone.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/uhj/Gabrieli-Canzon_Duodecimi.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/uhj/Cante_Flamenco-Alegrias.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/uhj/Waldteufel-The_Skaters.wav")
 
 
 (
@@ -711,10 +711,10 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/zoomh2/Anderson-Waltz.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/zoomh2/Anderson-Steam.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/zoomh2/Anderson-Stape_Silver.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/zoomh2/Anderson-St_Peter_&_St_Paul.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/zoomh2/Anderson-Waltz.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/zoomh2/Anderson-Steam.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/zoomh2/Anderson-Stape_Silver.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/zoomh2/Anderson-St_Peter_&_St_Paul.wav")
 
 
 (
@@ -796,7 +796,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/zoomh2/Courville-Dialogue.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/zoomh2/Courville-Dialogue.wav")
 
 
 (
@@ -868,8 +868,8 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/multichannel/Mackay-Augustines_Message.wav")
-~sndbuf = Buffer.read(s, "sounds/ATK/multichannel/Young-Allting_Runt.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/multichannel/Mackay-Augustines_Message.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/multichannel/Young-Allting_Runt.wav")
 
 
 (
@@ -938,7 +938,7 @@ code::
 // read a whole sound into memory
 // remember to free the buffer later!
 // (boot the server, if you haven't!)
-~sndbuf = Buffer.read(s, "sounds/ATK/multichannel/Wilson-Bose.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/multichannel/Wilson-Bose.wav")
 
 
 (
