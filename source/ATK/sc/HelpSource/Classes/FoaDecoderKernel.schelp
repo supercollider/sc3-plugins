@@ -92,7 +92,7 @@ code::
 
 note:: The HRIRs from the link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database:: have been equalised (by inspection) to match the frequency response of link::#*newSpherical:: and link::#*newListen:: . ::
 
-warning:: The link::http://recherche.ircam.fr/equipes/salles/listen/##Listen HRTF database:: is measured at link::Classes/SampleRate:: = 44.1kHz. Make sure your link::Classes/Server:: is set to this rate.::
+warning:: The link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database:: is measured at link::Classes/SampleRate:: = 44.1kHz. Make sure your link::Classes/Server:: is set to this rate.::
 
 
 
