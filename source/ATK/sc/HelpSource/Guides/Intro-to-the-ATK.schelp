@@ -19,7 +19,7 @@ definitionlist::
 ## Monitor || Playback or render an Ambisonic soundfield.
 ::
 
-The below sections go into more detail as to the specifics of each task.
+The below sections go into more detail as to the specifics of each task. For examples that show more concise examples for usage in SynthDef and NRT, see link::Guides/ATK-SynthDef-Examples::
 
 
 section:: Authoring
