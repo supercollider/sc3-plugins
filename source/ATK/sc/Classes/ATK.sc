@@ -161,7 +161,7 @@ Foa : MultiOutUGen {
 
 	*checkChans {arg in;
 		(in.size < 4).if({
-			^in ++ (4 - in.size).collect({Silent.ar});
+			^[in] ++ (4 - in.size).collect({Silent.ar});
 		}, {
 			^in
 		});
@@ -414,7 +414,7 @@ AtkKernelConv {
 FoaUGen {
 	*checkChans {arg in;
 		(in.size < 4).if({
-			^in ++ (4 - in.size).collect({Silent.ar});
+			^[in] ++ (4 - in.size).collect({Silent.ar});
 		}, {
 			^in
 		});
@@ -457,7 +457,7 @@ FoaDecode : FoaUGen {
 			FoaDecoderMatrix, {
 
 				if ( decoder.shelfFreq.isNumber, { // shelf filter?
-					in = FoaPsychoShelf.ar(in.at(0), in.at(1), in.at(2), in.at(3),
+					in = FoaPsychoShelf.ar(in,
 						decoder.shelfFreq, decoder.shelfK.at(0), decoder.shelfK.at(1))
 				});
 
