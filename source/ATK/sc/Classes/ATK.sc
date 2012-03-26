@@ -161,7 +161,7 @@ Foa : MultiOutUGen {
 
 	*checkChans {arg in;
 		(in.size < 4).if({
-			^[in] ++ (4 - in.size).collect({Silent.ar});
+			^([in] ++ (4 - in.size).collect({Silent.ar})).flat;
 		}, {
 			^in
 		});
@@ -414,7 +414,7 @@ AtkKernelConv {
 FoaUGen {
 	*checkChans {arg in;
 		(in.size < 4).if({
-			^[in] ++ (4 - in.size).collect({Silent.ar});
+			^([in] ++ (4 - in.size).collect({Silent.ar})).flat;
 		}, {
 			^in
 		});
