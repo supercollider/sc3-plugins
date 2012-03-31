@@ -177,9 +177,11 @@ BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membran
              "" "MembraneUGens")
 
 # LadspaUGen
-BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "" "LadspaUGen")
-add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
-target_link_libraries(ladspalist dl)
+if(NOT WIN32)
+    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "" "LadspaUGen")
+    add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
+    target_link_libraries(ladspalist dl)
+endif()
 
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
@@ -198,6 +200,9 @@ if (NOT APPLE)
 	if (!FFTW3F_FOUND)
 		message(SEND_ERROR "Cannot find libfftw3f")
 	endif()
+
+    include_directories(${FFTW3F_INCLUDE_DIR})
+
 	set_property(TARGET PitchDetection
 		APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
 	if (SUPERNOVA)
@@ -263,7 +268,7 @@ endif()
 #--------
 
 # OSX plugins install is done in BUILD_PLUGIN macro
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+if (NOT APPLE)
     install(TARGETS ${plugins}
             DESTINATION ${INSTALL_DESTINATION})
 
@@ -271,8 +276,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
             DESTINATION ${INSTALL_DESTINATION_SUPERNOVA})
 endif()
 
+if(NOT WIN32)
 install(TARGETS ladspalist
         DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
+endif()
 
 # install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
 foreach (DIR ${PLUGIN_DIRS};${PLUGIN_DIRS_EXTRA})
