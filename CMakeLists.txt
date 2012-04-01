@@ -53,6 +53,10 @@ if (OSX_PACKAGE)
   add_subdirectory(osx_package)
 endif()
 
+if(WIN32)
+    install( FILES README_WINDOWS.txt DESTINATION . RENAME README.txt )
+endif()
+
 #############################################
 # CPack support
 
@@ -61,6 +65,7 @@ set(CPACK_PACKAGE_VERSION_MINOR 5)
 set(CPACK_PACKAGE_VERSION_PATCH dev)
 
 if(WIN32)
+    set(CPACK_GENERATOR ZIP)
     set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
     set(CPACK_MONOLITHIC_INSTALL 1)
 endif()
