@@ -1,0 +1,204 @@
+class::VMScan2D			
+summary::2D scanning pattern virtual machine
+related:: Classes/WaveTerrain
+categories:: UGens>Buffer
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Converts a buffer of virtual machine instructions into the synthesis of a 2D path.
+
+classmethods::
+
+method::ar
+
+
+argument::bufnum
+Number of buffer holding instructions on the server in the form of successive COMMAND/PARAM PAIRS
+
+The limited command set: 
+
+0 interpolate from last to new point over PARAM *5000 samples (ie down to about 10 Hz, sampling rate dependent) 
+
+1 new random point from (PARAM.rand,PARAM.rand)
+
+2 new point by perturbing last point by PARAM
+
+3 new point by interpolating from last point to its inversion (x,y) -> (1.0-x, 1.0-y)
+
+4 new point by interpolating (t=PARAM) last two points
+
+5 new point by scaling last point (multiply both x and y), scaling= PARAM
+
+6 new x position for point at PARAM
+
+7 new y position for point at PARAM
+
+8 do next command if probability PARAM
+
+9 goto instruction PARAM within the buffer
+
+
+In most cases, sensible values for PARAM are from 0.0 to 1.0!  But instruction 9 will need much larger address values. 
+
+Scanning paths are generated from successions of straight line segments. 
+
+
+
+Examples::
+
+code::
+
+(
+//create instruction set; just interpolate (0,0) -> (1,1) -> (0,1) -> (1,0) and loop, with 441 sample interpolation between each point
+c=[6,0,7,0,6,1,7,1,0,0.0882,6,0,7,1,0,0.0882,6,1,7,0,0,0.0882,6,0,7,0,0,0.0882,9,4]++Array.fill(50,0.0);
+d=Buffer.sendCollection(s, c, 1);
+)
+
+
+//create buffer for wave terrain. I want the equation z = 2*(((x/100)**2) + ((abs(sin(10*y))/50)**(1/3)))-1
+//over a 100 by 50 area
+
+//2d to 1d conversion follows index= y*rowlength+ x
+(
+var width= 100; //= num cols
+var height=50; //=num rows, though indexing bottom to top; i.e., standard Cartesian co-ordinates
+
+a=Array.fill(width*height,{arg i; 
+var xnow, ynow, x, y; 
+
+xnow= i%width;
+ynow= (i-xnow).div(width);
+
+x=xnow/width;
+y=ynow/height;
+
+2*(((x)**2) + ((abs(sin(10*y)))**(1/3)))-1
+});
+
+b=Buffer.sendCollection(s, a, 1);
+)
+
+
+(
+//test scanning virtual machine
+{
+var scan2d, wt; 
+
+scan2d= VMScan2D.ar(d.bufnum); 
+
+WaveTerrain.ar(b.bufnum,scan2d[0],scan2d[1],100,50)}.play
+)
+
+
+
+
+
+(
+//create instruction set; just interpolate (0,0) -> (1,1) -> (0,1) -> (1,0) and loop, with 441 sample interpolation between each point
+c=[6,0,7,0,1,1.0,1,0.5,0,rrand(0.05,0.2),6,1,7,1,0,0.0882,6,0,7,1,8,0.7,0,0.0882,8,0.4,1,0.5,6,1,7,0,0,0.0882,6,0,7,0,0,0.0882,9,4];
+d.sendCollection(c);
+)
+
+
+
+(
+//mouse control of path extent
+{
+var scan2d, wt; 
+
+scan2d= VMScan2D.ar(d.bufnum); 
+
+WaveTerrain.ar(b.bufnum,scan2d[0]*MouseX.kr,scan2d[1]*MouseY.kr,100,50)}.play
+)
+
+
+
+
+
+//random instruction sets
+(
+c=Array.fill(50,{arg i; if(i.even,{9.rand},{1.0.rand})});
+Post << c << nl;  //in case you like one
+d.sendCollection(c);
+)
+
+
+
+(
+t=Task({
+
+inf.do {
+
+c=Array.fill(50,{arg i; if(i.even,{9.rand},{1.0.rand})});
+d.sendCollection(c);
+
+exprand(0.05,1).wait;
+}
+
+}
+).play;
+)
+
+t.stop;
+
+
+//change terrain! 
+(
+var width= 100; //= num cols
+var height=50; //=num rows, though indexing bottom to top; i.e., standard Cartesian co-ordinates
+
+a=Array.fill(width*height,{arg i; 
+var xnow, ynow, x, y; 
+
+xnow= i%width;
+ynow= (i-xnow).div(width);
+
+x=xnow/width;
+y=ynow/height;
+
+(((1.3*(cos(rrand(1,2)*x+1.7))**2) - ((abs(sin(rrand(1.2,4.9)*y)))**(1/2)))).max(-1.0).min(1.0)
+
+});
+
+b.sendCollection(a);
+)
+
+
+
+
+
+//more considerate construction of instruction sets
+(
+c= Array.fill(40,{arg i; if(i.odd,{if(0.6.coin,{[0,exprand(0.005,0.5)]}, {[8,rrand(0.1,1.0),9,2*rrand(0,15)]})},{if(0.6.coin,{[[1,3,4,5].choose,[exprand(0.1,1.0),rrand(0.1,1.0),exprand(0.01,0.2)].choose]},{[6,1.0.rand,7,1.0.rand]})}); }).flatten.postln;
+Post << (c[0..79]) << nl;
+d.sendCollection(c[0..79]);
+)
+
+
+
+//presets
+(
+c= [ 5, 0.045032007298424, 0, 0.16829266097, 4, 0.21671941633821, 0, 0.097617059383181, 3, 0.039779075792183, 8, 0.60886644124985, 9, 28, 6, 0.6432192325592, 7, 0.42085599899292, 0, 0.49528216896303, 4, 0.99470864534378, 8, 0.84870989322662, 9, 12, 1, 0.47667115650489, 0, 0.49904105498093, 6, 0.78044593334198, 7, 0.5973949432373, 0, 0.0079938346573139, 6, 0.49935853481293, 7, 0.26820993423462, 0, 0.30518372109199, 6, 0.35976254940033, 7, 0.091889262199402, 0, 0.012580000107232, 6, 0.39456367492676, 7, 0.071749925613403, 8, 0.15818494558334, 9, 16, 6, 0.59569001197815, 7, 0.30783140659332, 8, 0.36180495023727, 9, 14, 3, 0.66818692684174, 8, 0.75634309053421, 9, 8, 6, 0.53690254688263, 7, 0.59401845932007, 0, 0.27458241967347, 4, 0.18244198560715, 8, 0.13642364740372, 9, 30, 6, 0.92603194713593, 7, 0.28209984302521, 0, 0.0090666346152647, 6, 0.078964591026306, 7, 0.50376713275909, 0, 0.077060097964172, 1, 0.94782749414444, 0, 0.012215198751997, 5, 0.08951347633044, 0, 0.23426103829321, 5, 0.97009623442827, 8, 0.95121469497681, 9, 12, 6, 0.30078971385956, 7, 0.27361023426056, 8, 0.56096186637878, 9, 16 ];
+d.sendCollection(c[0..79]);
+)
+
+
+
+//aaaaaaaah
+(
+c=[ 1, 0.012401115664331, 0, 0.0085625787306813, 6, 0.92073178291321, 7, 0.92452263832092, 0, 0.0067897107572423, 6, 0.52498006820679, 7, 0.89580702781677, 0, 0.0080293935557327, 1, 0.76127503778645, 8, 0.50952353477478, 9, 4, 1, 0.011272358865916, 8, 0.49296754598618, 9, 30, 5, 0.5126657733169, 8, 0.53715790510178, 9, 2, 5, 0.11751061316084, 0, 0.027315109664648, 6, 0.23468768596649, 7, 0.71995985507965, 0, 0.20785921190348, 6, 0.80761659145355, 7, 0.14734661579132, 0, 0.21667175878798, 6, 0.82812416553497, 7, 0.555588722229, 0, 0.26813978221146, 6, 0.62556290626526, 7, 0.89661765098572, 0, 0.0085612522419438, 6, 0.77029120922089, 7, 0.77577233314514, 0, 0.035287317732313, 5, 0.58347815275192, 0, 0.17061046232705, 6, 0.30991017818451, 7, 0.89471626281738, 8, 0.29139889478683, 9, 12 ];
+d.sendCollection(c);
+)
+
+
+
+
+//rrrar
+(
+c=[ 6, 0.62479221820831, 7, 0.84334719181061, 0, 0.12737253976876, 1, 0.34590717554092, 8, 0.90837938785553, 9, 14, 3, 0.64444444179535, 0, 0.0076382220180926, 6, 0.21171295642853, 7, 0.061154127120972, 0, 0.087469286732226, 5, 0.90200103839312, 8, 0.80244028568268, 9, 20, 4, 0.13062523433243, 0, 0.040084850746492, 1, 0.3471907625919, 0, 0.2711738771992, 5, 0.051819064032369, 0, 0.3250898321643, 4, 0.6964198589325, 8, 0.80261430740356, 9, 0, 1, 0.18071593046188, 8, 0.77187951803207, 9, 0, 1, 0.38054929971695, 8, 0.10199545621872, 9, 6, 5, 0.1556055188179, 0, 0.0079423607059602, 1, 0.16413666490274, 0, 0.015987433587358, 6, 0.89596319198608, 7, 0.27058398723602, 0, 0.096067733476108, 6, 0.81998920440674, 7, 0.4519407749176, 0, 0.35322635035146, 4, 0.025783616661822 ];
+d.sendCollection(c);
+)
+
+//additional ideas: polar co-ordinates, scanning paths on circle boundaries connecting two last points? 

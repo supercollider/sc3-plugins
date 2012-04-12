@@ -1,0 +1,19 @@
+class:: EnvFollow			
+summary:: Envelope Follower
+related:: Classes/EnvDetect
+categories:: UGens>Analysis
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Envelope follower from Hoffmann and Cook 2008 DAFx paper. 
+
+
+Examples::
+
+code::
+{ var source = SinOsc.ar(40); var env = EnvFollow.ar(source, 0.999); [source,env] }.plot(0.5)
+
+
+{ var source = SoundIn.ar; var env = EnvFollow.ar(source, MouseX.kr(0.9,0.999)); env }.play

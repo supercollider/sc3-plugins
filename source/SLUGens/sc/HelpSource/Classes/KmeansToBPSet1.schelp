@@ -1,0 +1,132 @@
+class:: KmeansToBPSet1			
+summary:: K-means Oscillator
+categories:: UGens>Generators
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+
+Description::
+Uses succesive iterations of a k-means clustering algorithm on random data with random initial means to form break points in a 2-D space. These are then converted to wavetables in output synthesis based on the oscillator frequency. 
+
+classmethods::
+
+method::ar
+
+argument::freq
+frequency of oscillator 
+argument::numdatapoints
+Initial number of data points
+argument::maxnummeans
+Maximum number of means allowed
+argument::nummeans
+current num means
+argument::tnewdata
+If a trigger is received, reset source data (k-rate)
+argument::tnewmeans
+If a trigger is received, reset means (k-rate)
+argument::soft
+Proportion to soften means update. If 1.0, immediate update, 0.0 no update, proportion inbetween amount to move from the old mean position to the new mean of the allocated cluster (ie soft k-means).
+argument::bufnum
+Number of a Buffer which contains positions for means and data points; see examples below  
+
+Examples::
+
+code::
+//defaults
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar,0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,20,8,8,Impulse.kr(5),0),0.0))}.play
+
+//softened
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,20,4,4,0,Impulse.kr(5),MouseX.kr(0.0,1.0)),0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,20,4,4,0,Impulse.kr(5)),0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,20,4,4,Impulse.kr(5,0.5),Impulse.kr(5)),0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(MouseX.kr(200,880),20,4,4,Impulse.kr(MouseY.kr(1,100,'exponential'),0.5),Impulse.kr(LFNoise1.kr(0.2,5,6))),0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,30,10,MouseY.kr(1,10,'linear'),Impulse.kr(2,0.5),Impulse.kr(LFNoise1.kr(0.2,5,6))),0.0))}.play
+
+
+//pushing up amount of data and num means (also increases CPU cost)
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(440,100,20,MouseY.kr(1,20,'linear'),Impulse.kr(0.2,0.5),Impulse.kr(LFNoise1.kr(0.23))),0.0))}.play
+
+
+//pushing up amount of data and num means (also increases CPU cost)
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(MouseX.kr(20,500,'exponential'),200,40,MouseY.kr(1,40,'linear'),Impulse.kr(0.57,0.5),Impulse.kr(LFNoise1.kr(0.53))),0.0))}.play
+
+
+//softening
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(MouseX.kr(20,500,'exponential'),200,20,20,Impulse.kr(0.57,0.5),Impulse.kr(LFNoise1.kr(0.53)),MouseY.kr(0.0,1.0)),0.0))}.play
+
+//softened
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(44+Dust.kr(10,10),30,10,10,Impulse.kr(0.1),Impulse.kr(LFNoise0.kr(0.4,0.2,0.3)),MouseX.kr(0.01,1.0,'exponential')-0.01),0.0))}.play
+
+
+//modulate
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(A2K.kr(44+KmeansToBPSet1.ar(MouseY.kr(0.1,1000,'exponential'),soft:0.1,mul:50,add:60)),30,10,10,Impulse.kr(0.1),Impulse.kr(LFNoise0.kr(0.4,0.2,0.3)),MouseX.kr(0.01,1.0,'exponential')-0.01),0.0))}.play
+
+
+//chordal sequence with character
+{Out.ar(0,Pan2.ar(Mix(0.1*KmeansToBPSet1.ar(220*[1,5/4,3/2,11/7],20,4,4,Impulse.kr(0.2),Impulse.kr(10),MouseX.kr(0.01,0.5,'exponential'))),0.0))}.play
+
+
+
+//using a Buffer to select positions for data and reset positions for means
+
+//maxmeans will be 5, 20 data points
+
+b = Buffer.alloc(s, (5+20)*2, 1); //buffer big enough
+
+//random positions- but they'll be the SAME random positions when resetting
+b.setn(0,Array.fill(50,{1.0.rand})); //set x,y points (in [0,1] by [0,1] for this UGen)
+
+
+{Out.ar(0,Pan2.ar(0.1*KmeansToBPSet1.ar(MouseX.kr(100,1000,'exponential'), 20, 5, 5, Impulse.kr(1), Impulse.kr(1), MouseY.kr(0.01,1.0),b.bufnum),0.0))}.play
+
+//change buffer when you like:
+
+//change data
+b.setn(0,Array.fill(40,{1.0.rand})); //set x,y points (in [0,1] by [0,1] for this UGen)
+
+//change means
+b.setn(40,Array.fill(10,{1.0.rand})); //set x,y points (in [0,1] by [0,1] for this UGen)
+
+
+//buffer version
+{Out.ar(0,Pan2.ar(Mix(0.1*KmeansToBPSet1.ar(220*[1,5/4,3/2,11/7],20,5,5,Impulse.kr(10),Impulse.kr(10),MouseX.kr(0.01,0.5,'exponential'), b.bufnum)),0.0))}.play
+
+
+//routine playing with mean initial positions
+(
+c= {inf.do{
+
+b.setn(40,Array.fill(10,{1.0.rand})); 
+
+ rrand(0.1,0.2).wait;}}.fork
+
+)
+c.stop;
+
+
+
+//routine playing with data positions
+
+(
+d= {inf.do{
+
+b.setn(0,Array.fill(40,{1.0.rand})); 
+
+ rrand(0.1,0.2).wait;}}.fork
+
+)
+
+c.stop;
+d.stop;

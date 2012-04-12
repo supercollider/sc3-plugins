@@ -1,0 +1,69 @@
+class:: SortBuf			
+summary:: Karplus-Strong via a sorting algorithm
+categories:: UGens>Buffer
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+In this UGen a target buffer gets sorted into increasing sample values over time- the sorting process causes gradual distortion. The sorting algorithm used is just a naive one of O(N^2) so effects are very dependent on sample length and sorting speed. It works best with small buffers and large sorting speeds will make it very CPU intensive.  
+
+SortBuf assumes that the sample rate of the target buffer is the same as the soundcard output sample rate. 
+
+classmethods::
+
+method::ar
+
+argument::bufnum
+target buffer, will be overwritten by the procedure. 
+argument::sortrate
+number of sorting iterations per play through of the buffer
+argument::reset
+restart the sorting procedure. 
+ 
+Examples::
+
+code::
+b= Buffer.read(s,"sounds/break",20000,10000);
+
+//gradual erosion
+(
+SynthDef("help-sortbuf",{arg bufnum;
+Out.ar(0,
+Pan2.ar( 
+SortBuf.ar(bufnum,LFNoise0.kr(5,50000,60000),0)
+,0.0))
+}).play(s,[\bufnum, b.bufnum]);
+)
+
+c= Buffer.read(s,"sounds/break",20000,10000);
+c.copy(b); //restore buffer
+
+
+//short 2000 sample buffer sorted over about 10 seconds
+b= Buffer.read(s,"sounds/break",20000,2000);
+{SortBuf.ar(b.bufnum,10000,1)}.play
+
+(
+s = Server.local;
+b = Buffer.alloc(s, 512, 1);
+c = Buffer.alloc(s, 512, 1);
+b.sine1(1.0/[1,2,3,4,5,6], true, true, true);
+c.sine1(1.0/[1,2,3,4,5,6], true, true, true);
+)
+
+(
+SynthDef("help-sortbuf2",{ arg out=0,bufnum=0;
+
+	SortBuf.ar(b.bufnum,1000,1); //attacking b over time
+
+	Out.ar(out,
+	//RLPF.ar(
+		Osc.ar(b.bufnum, MouseX.kr(20,100), 0, 0.5)
+	//	, MouseY.kr(200,4000),0.1)
+	)
+}).play(s,[\out, 0]);
+)
+
+c.copyData(b); //restore buffer
+

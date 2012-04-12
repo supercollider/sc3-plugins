@@ -1,0 +1,40 @@
+class:: EnvDetect			
+summary:: Envelope Follower Filter
+related:: Classes/EnvFollow 
+categories:: UGens>Analysis
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+Description::
+
+Code adapted from musicdsp.org for a simple envelope tracking filter. 
+
+classmethods::
+
+method::ar
+
+argument::in
+input
+argument::attack
+attack time in seconds
+argument::release
+relase time in seconds 
+
+Examples::
+
+code::
+(
+SynthDef("help-EnvDetect",{Out.ar(0,Pan2.ar(
+SinOsc.ar(440,0,0.3*EnvDetect.ar(LFNoise1.ar(20), MouseX.kr(0.001,0.1,'exponential'), MouseY.kr(0.001,0.1,'exponential'))) 
+,0.0))
+}).play
+)
+
+
+(
+SynthDef("help-EnvDetect",{Out.ar(0,Pan2.ar(
+LFSaw.ar(EnvDetect.ar(LFNoise1.ar(11,100,200), MouseX.kr(2,0.0001,'exponential'), MouseY.kr(2,0.0001,'exponential')),0,0.3*EnvDetect.ar(LFSaw.ar(7), MouseX.kr(0.001,1,'exponential'), MouseY.kr(0.001,1,'exponential'))) 
+,0.0))
+}).play
+)
+

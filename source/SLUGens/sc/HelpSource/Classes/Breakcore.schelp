@@ -1,0 +1,80 @@
+class:: Breakcore		
+
+summary:: breakcore simulator
+categories:: UGens>Generators>Chaotic
+
+keyword:: SLUGens
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+
+Description::
+
+This is noisy.
+
+( This UGen (C and SuperCollider code) was written on Feb 7 2005 in one hour in front of a live audience as part of the TOPLAP live coding jam at transmediale, Maria am Ostbahnhof, Berlin. 
+I haven't tried to clear it up after the event, only adding this notice; make what you can of it! )
+
+Examples::
+
+code::
+//duration in samples
+
+(60/183)*0.25*44100
+
+b = Buffer.alloc(s,44100);
+
+(
+~breakfilenames= Array.fill(9,{arg i; var str;
+str=("sounds/SCsamp/breaks/hiphop/hop"++(i+1).asString);
+
+if((i==3) || (i==5),{str=str++".aif"});
+str
+});
+
+~breakbeatlengths= [4,4,8,4,8,4,4,8,8];
+
+~breaks= Array.fill(~breakbeatlengths.size,{arg i; Buffer.read(s,~breakfilenames[i])});
+)
+
+(
+SynthDef("help-Breakcore",{ arg out=0, bufnum=0, target=0;
+var playbuf;
+
+playbuf=PlayBuf.ar(1,target, loop:1);
+
+	Out.ar(out,
+		Breakcore.ar(bufnum, playbuf, Impulse.kr(4),5512,0)*Line.kr(1,0,10,doneAction:2)
+	)
+}).play(s,[\bufnum,b.bufnum,\target,~breaks[0].bufnum]);
+)
+
+
+(
+SynthDef("help-Breakcore",{ arg out=0, bufnum;
+
+	Out.ar(out,
+		Breakcore.ar(bufnum, In.ar(8)*0.3, Impulse.kr(4),5512,0)*Line.kr(1,0,10,doneAction:2)
+	)
+}).play(s,[\bufnum,b.bufnum]);
+)
+
+
+(
+SynthDef("help-Breakcore",{ arg out=0, bufnum=0, target=0;
+var playbuf;
+
+playbuf=PlayBuf.ar(1,target,MouseX.kr(1,2), loop:1);
+//AudioIn.ar(1,0.1)
+	Out.ar(out,
+		Breakcore.ar(bufnum,playbuf , Impulse.kr(LFNoise0.kr(4,10,12)),LFNoise0.kr(8,1900,2000),0)	)
+}).play(s,[\bufnum,b.bufnum, \target, ~breaks[2].bufnum]);
+)
+
+
+
+(60/180)*44100*0.25
+
+
+3614/4
+
+
+::

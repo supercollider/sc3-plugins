@@ -1,0 +1,111 @@
+class:: Instruction			
+summary:: instruction synthesis (breakpoint set interpreter)
+categories:: UGens>Generators
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Converts a buffer of virtual machine instructions into synthesis. Based on breakpoint manipulation with linear interpolation. 
+
+classmethods::
+
+method::ar
+
+
+argument::bufnum
+Number of buffer holding instructions on the server in the form of successive COMMAND/PARAM PAIRS
+
+The limited command set: 
+
+0 interpolate from last to new breakpoint over PARAM *5000 samples (ie down to about 10 Hz, sampling rate dependent) 
+
+1 new random breakpoint from PARAM.rand2
+
+2 new breakpoint by perturbing last breakpoint amp by PARAM
+
+3 new breakpoint by interpolating from last breakpoint amp to its inversion
+
+4 new beakpoint by interpolating (t=PARAM) last two breakpoints (zero amp breakpoint by instruction (3,1) then (4,0.5))
+
+5 new breakpoint by damping last breakpoint amp (multiply by damping), damping= PARAM
+
+6 new breakpoint at amplitude +PARAM
+
+8 do next command if probability PARAM
+
+9 goto instruction PARAM within the buffer
+
+
+In most cases, sensible values for PARAM are from 0.0 to 1.0!  But instruction 9 will need much larger address values. 
+
+
+Examples::
+
+code::
+//random instruction sets
+(
+a=Array.fill(50,{arg i; if(i.even,{7.rand},{1.0.rand})});
+b=Buffer.sendCollection(s, a, 1);
+)
+//could be very loud! CAREFUL
+{Out.ar(0,Pan2.ar(0.5*Instruction.ar(b.bufnum),0.0))}.play
+
+(
+a=Array.fill(50,{arg i; if(i.even,{7.rand},{1.0.rand})});
+Post << a << nl;  //in case you like one
+b.sendCollection(a);
+)
+
+
+(
+t=Task({
+
+inf.do {
+
+a=Array.fill(50,{arg i; if(i.even,{7.rand},{1.0.rand})});
+b.sendCollection(a);
+
+exprand(0.05,1).wait;
+}
+
+}
+).play;
+)
+
+t.stop;
+
+
+//more considerate construction of instruction sets
+
+(
+a= Array.fill(40,{arg i; if(i.odd,{if(0.6.coin,{[0,exprand(0.005,0.05)]}, {[8,rrand(0.1,1.0),9,2*rrand(0,12)]})},{[rrand(1,6),[exprand(0.1,1.0),rrand(0.1,1.0),exprand(0.01,0.2)].choose]}); }).flatten;
+Post << a << nl;
+b=Buffer.sendCollection(s, a, 1);
+)
+
+//could be very loud! CAREFUL
+{Out.ar(0,Pan2.ar(0.5*Instruction.ar(b.bufnum),0.0))}.play
+
+(
+a= Array.fill(30,{arg i; if(i.odd,{if(0.6.coin,{[0,exprand(0.005,0.05)]}, {[8,rrand(0.1,1.0),9,2*rrand(0,12)]})},{[rrand(1,6),[exprand(0.1,1.0),rrand(0.1,1.0),exprand(0.01,0.2)].choose]}); }).flatten.postln;
+Post << a << nl;
+b.sendCollection(a);
+)
+
+
+{Out.ar(0,Pan2.ar(0.5*FreeVerb.ar(Resonz.ar(Instruction.ar(b.bufnum),MouseX.kr(1000,5000,'exponential'),MouseY.kr(0.01,1.0,'exponential'))),0.0))}.play
+
+
+//discovered sounds
+(
+a=[ 2, 0.98085289001465, 0, 0.0098705891385231, 3, 0.045249921951092, 8, 0.426873087883, 9, 12, 6, 0.042719216229536, 8, 0.38374520540237, 9, 22, 6, 0.040797999461159, 8, 0.71095678806305, 9, 8, 2, 0.18426358043098, 8, 0.96414197683334, 9, 10, 2, 0.064978396873361, 0, 0.014289879691635, 5, 0.015798983078423, 0, 0.038866613949307, 6, 0.030472403359923, 0, 0.036071279863708, 1, 0.046212260612025, 8, 0.610464823246, 9, 0, 1, 0.96948568820953, 0, 0.014026194255798, 3, 0.12740938462649, 0, 0.010742629527544, 1, 0.3477209756392, 8, 0.82419589757919, 9, 18, 6, 0.97822250127792, 0, 0.0073386436293812, 4, 0.1197158617971, 8, 0.37467901706696, 9, 20, 6, 0.023095168080617, 0, 0.0077425603088712 ];
+b.sendCollection(a);
+)
+
+
+(
+a=[ 3, 0.40293287038803, 0, 0.0099009671713598, 2, 0.1265909910202, 0, 0.013731463839874, 3, 0.23790548574176, 0, 0.0077773798350805, 3, 0.15899796225456, 8, 0.88809416294098, 9, 14, 2, 0.16874264604912, 0, 0.0054302242992324, 2, 0.065863798551897, 8, 0.31685080528259, 9, 6, 1, 0.025768143119174, 0, 0.022224710655753, 1, 0.021351216507072, 8, 0.45115448236465, 9, 24, 2, 0.91734998226166, 0, 0.0085382244719742, 1, 0.1098612352863, 0, 0.005935074104977, 5, 0.40578903363382, 8, 0.11921266317368, 9, 2, 6, 0.11252887270072, 0, 0.0066305213330409, 4, 0.51733835087186, 8, 0.78307151794434, 9, 14, 3, 0.86774248188551, 8, 0.54493169784546, 9, 4, 4, 0.46118148424678, 8, 0.21504091024399, 9, 4];
+b.sendCollection(a);
+)
+

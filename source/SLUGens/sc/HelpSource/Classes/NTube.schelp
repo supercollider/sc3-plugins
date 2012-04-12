@@ -1,0 +1,233 @@
+class:: NTube			
+summary:: physical modeling simulation; N tubes
+related:: Classes/TwoTube
+categories:: UGens>PhysicalModels
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Physical model; N tube sections with N-1 scattering junctions inbetween; relative areas determine k for each junction, where each junction has its own associated k. Delay lengths can be fractional and varied on the fly. Each junction also has an associated loss, as well as for the two outer feedback connections, giving N+1 loss factors.  
+
+Note: this UGen does not support multichannel expansion, due to the use of references.  
+
+All arrays passed in should be marked with reference symbols. 
+
+classmethods::
+
+method::ar
+
+
+argument::input
+Excitation to inject into the system
+argument::lossarray
+Amplitude loss factors in circulation, N+1 of them. If a single number rather than an array is given, the UGen uses this same loss factor duplicated N+1 times. 
+argument::karray
+N-1 scattering coefficient for junctions of adjacent tubes, usually -1<=k<=1
+argument::delaylengtharray
+Length in seconds of each tube's paired delay line (i.e., each waveguide section, N of them). There must be at least 2 samples per length at the synthesis sampling rate. 
+
+
+Examples::
+
+code::
+{(NTube.ar(WhiteNoise.ar, 0.97,`[0.5,-0.7],`[0.01,0.02,0.01])*0.1).dup}.play
+
+
+//can get it sound like respiration! 
+{(NTube.ar(WhiteNoise.ar*SinOsc.ar(0.5),`[0.97,1.0,1.0,1.0,0.97],`[0.5,MouseY.kr(-1.0,1.0),0.2],`([0.01,0.02,0.01,0.005]*MouseX.kr(0.01,1.0)))*0.1).dup}.play
+
+
+{(NTube.ar(PinkNoise.ar*SinOsc.ar(0.25),`[0.97,1.0,1.0,1.0,1.0,0.97],`[0.5,MouseY.kr(-1.0,1.0),0.2,-0.4],`([0.01,0.02,0.01,0.005,0.05]*MouseX.kr(0.001,1.0,'exponential')))*0.1).dup}.play
+
+
+//tap on microphone in 16 beat and move mouse around... 
+{(NTube.ar(SoundIn.ar,`[0.97,1.0,1.0,1.0,1.0,0.97],`[0.5,MouseY.kr(-1.0,1.0),0.2,-0.4],`([0.01,0.02,0.01,0.005,0.05]*MouseX.kr(0.001,1.0,'exponential')))*0.5).dup}.play
+
+
+//delays; why stereo? warning: quite piercing
+{(NTube.ar(Impulse.ar(MouseX.kr(16,1600))*MouseY.kr(0.0,1.0),`(Array.rand(11,0.95,0.99)),`(Array.series(9,0.8,-0.1)),`(Array.rand(10,0.01,0.05)) )*0.025).dup}.play
+
+
+
+//can end up doing a huge amount of recirculation warning: quite piercing
+{Limiter.ar(NTube.ar(Impulse.ar([MouseX.kr(16,1600), MouseX.kr(17,2700)])*MouseY.kr(0.0,1.0),`([0.87]++(0.99.dup(9))++[0.87]),`(Array.rand(9,0.8,1.0)),`(Array.fill(10,{0.01})) )*0.1,0.9,0.01)*0.1}.play
+
+
+//can end up doing a huge amount of recirculation 
+{((Limiter.ar(NTube.ar(Impulse.ar(440)*MouseX.kr(0.0,1.0),MouseY.kr(0.0,0.99),`(Array.rand(99,0.0,1.0)),`(Array.rand(100,0.0001,0.01)) ),0.99,0.01).min(1.0).max(-1.0))*0.1).dup(2)}.play
+
+
+//dynamic changing of loss factors is great
+(
+{
+var my= MouseY.kr(0.0,0.99);
+
+Limiter.ar(NTube.ar(PinkNoise.ar*EnvGen.ar(Env.perc(0.01,0.05),MouseX.kr(0.0,1.0)>0.5),my,`(Array.rand(49,0.0,1.0)),`(Array.rand(50,0.0001,0.01)) ),0.99,0.01).min(1.0).max(-1.0)
+}.play
+)
+
+
+
+//1-D vocal tract model: data for Ah sound for cross-sectional areas of vocal tract (see http://www-users.york.ac.uk/~dtm3/vocaltract.html and associated publications)
+//a=FileReader.read("/Users/nickcollins/Desktop/VowelAreaFunctions/MRI/JASAPaper/A-bart.txt"); 
+//
+//b= Array.fill(a.size.div(2),{|i| a[2*i][0]}); 
+//b.size
+//c= b[0..43].asFloat
+
+//run at higher sampling rate? 
+
+(
+var areassource= [ 0.45, 0.2, 0.26, 0.21, 0.32, 0.3, 0.33, 1.05, 1.12, 0.85, 0.63, 0.39, 0.26, 0.28, 0.23, 0.32, 0.29, 0.28, 0.4, 0.66, 1.2, 1.05, 1.62, 2.09, 2.56, 2.78, 2.86, 3.02, 3.75, 4.6, 5.09, 6.02, 6.55, 6.29, 6.27, 5.94, 5.28, 4.7, 3.87, 4.13, 4.25, 4.27, 4.69, 5.03 ];
+var areas; 
+var loss, karray, delayarray; 
+
+//convert to sequence of k 
+
+//average length of human male vocal tract 16.9cm (14.1cm adult female)  speed of sound 340.29 m/s. So delay of vocal tract is 
+//0.169/340.29 = 0.00049663522289812 seconds
+//0.0005*44100 is about 22 samples, so less than one sample per section of the throat if more than 22 measurements used! 
+//need higher sampling rate, or less sections in model
+
+//Loy p347, p358, Kelly Lochbaum junctions used in TubeN
+//k= (Z1-Z0)/(Z1+Z0); //Z inversely proportional to A 
+//k= ((A0-A1)/(A0A1))/((A0+A1)/(A0A1)) ie similar relation for Z 
+
+//take every 4th
+areas= Array.fill(11,{|i| areassource[4*i]}); 
+
+//about 2 samples delay for each section! 
+
+loss=0.99; 
+
+karray= Array.fill(10,{|i| (areas[i]-areas[i+1])/(areas[i]+areas[i+1])}); 
+
+//delayarray= Array.fill(11,{0.00049663522289812/11.0}); 
+delayarray= Array.fill(11,{0.000046}); //any smaller and Nyquist problems arise... 
+
+//Impulse too predictable, need a richer low pass filtered and frequency modulated glottal oscillation 
+//Dust.ar(MouseX.kr(100,400),0.9,0.1*PinkNoise.ar)
+{
+Limiter.ar(NTube.ar(PinkNoise.ar(0.3),loss, `karray, `delayarray , 0.5),0.99,0.01).min(1.0).max(-1.0)
+}.play
+
+)
+
+
+
+
+//Next patch only works properly at sampling rate of 192kHz! 
+(
+var areassource= [ 0.45, 0.2, 0.26, 0.21, 0.32, 0.3, 0.33, 1.05, 1.12, 0.85, 0.63, 0.39, 0.26, 0.28, 0.23, 0.32, 0.29, 0.28, 0.4, 0.66, 1.2, 1.05, 1.62, 2.09, 2.56, 2.78, 2.86, 3.02, 3.75, 4.6, 5.09, 6.02, 6.55, 6.29, 6.27, 5.94, 5.28, 4.7, 3.87, 4.13, 4.25, 4.27, 4.69, 5.03 ];
+var areas; 
+var loss, karray, delayarray; 
+
+areas= Array.fill(44,{|i| areassource[i]}); 
+
+loss=0.99; 
+
+karray= Array.fill(43,{|i| (areas[i]-areas[i+1])/(areas[i]+areas[i+1])}); 
+
+delayarray= Array.fill(44,{0.00049663522289812/44.0}); 
+
+{
+Limiter.ar(NTube.ar(Decay.ar(Impulse.ar(MouseX.kr(10,200)+LFNoise1.kr(7,4),0.0,0.5),MouseY.kr(0.01,0.2)),loss, `karray, `delayarray , 0.5),0.99,0.01).min(1.0).max(-1.0)
+}.play
+)
+
+
+
+
+
+//loud hammering
+(
+{
+var delays, source, loss, k; 
+var trigger;
+trigger= Impulse.kr(MouseY.kr(1,10));
+
+loss=`(Array.fill(7,{EnvGen.ar(Env([rrand(0.95,1.0),rrand(0.95,1.0),rrand(0.5,0.9),rrand(0.0,0.1)],[0.1,rrand(0.05,0.5),rrand(0.05,0.5)]),trigger)})); 
+k= `(Array.fill(5,{rrand(0.7,1.0)}));
+delays=`(Array.fill(6,{exprand(0.01,0.2)})); 
+
+delays.value.sum.postln;
+
+source= WhiteNoise.ar(0.5)*EnvGen.ar(Env([1,1,0],[delays.value.sum,0.0]), trigger);
+
+Out.ar(0,Pan2.ar(Limiter.ar(NTube.ar(source,loss, k, delays),0.99,0.01).min(1.0).max(-1.0),0.0)); 
+}.play
+
+)
+
+
+
+//could be piercing if sine frequencies put higher, also potentially high CPU cost, be careful 
+(
+var n=7; 
+
+SynthDef(\ntubefx,{|out=0|
+
+ReplaceOut.ar(out, Limiter.ar(In.ar(0,2),0.99,0.01))
+}).send(s); 
+
+SynthDef(\ntubehelp,{|out=0, dur=0.5, pan=0.0, amp=0.1, lagtime=0.1, freq=440|
+var env; 
+var lossarray, karray, delaylengtharray; 
+//Decay2.ar(Impulse.ar(freq),lagtime,0.01)
+var source= SinOsc.ar(freq)*(0.95+(Line.kr(0,1,0.2)*0.05*BrownNoise.ar)); 
+
+env= EnvGen.ar(Env([0,1,0.8,0.8,0],[0.01,0.01,dur,0.5]),doneAction:2); 
+
+lossarray = Control.names([\lossarray]).ir(Array.rand(n+1, 0.8,0.99));
+karray= Control.names([\karray]).ir(Array.rand(n-1, -0.5,0.5));
+delaylengtharray= Control.names([\delaylengtharray]).ir(Array.rand(n, 0.01,0.05));
+	
+Out.ar(out,Pan2.ar(LeakDC.ar(env*Limiter.ar(NTube.ar(amp*source,`lossarray, `karray, `delaylengtharray),0.99,0.01).min(1.0).max(-1.0)),pan)); 
+
+}).send(s); 
+)
+
+
+(
+var n=7; 
+var group= Group.basicNew(s,1); 
+
+t.stop;
+t={
+var durs; 
+var inverted; 
+var range= rrand(0.1,1.0); 
+var minloss= rrand(0.7,0.98);
+var maxloss= (minloss+rrand(0.0,0.1)).min(0.99); 
+var maxdur= rrand(0.001,0.05); 
+var fx= Synth.tail(group,\ntubefx); 
+
+durs= [0.01,0.1,0.2,0.5,1.0]; 
+inverted= durs.reverse.normalizeSum; 
+
+inf.do{
+
+if(0.1.coin) {range= rrand(0.1,1.0);}; 
+if(0.07.coin) {minloss= rrand(0.8,0.98); maxloss= (minloss+rrand(0.0,0.1)).min(0.99);}; 
+if(0.05.coin) {maxdur=exprand(0.0025,0.05)}; 
+
+a= Synth.head(group,\ntubehelp,[\dur, rrand(0.1,3.0), \freq, exprand(1,1000).round(30.0)+(3.rand2),\lagtime, rrand(0.001,0.1), \pan, rrand(-0.5,0.5), \amp, exprand(0.01,0.3), \lossarray, Array.rand(n+1, minloss,maxloss), \karray, Array.rand(n-1,range.neg,range), \delaylengtharray, Array.rand(n, 0.001, maxdur)]);
+
+//
+//s.bind({
+//a.set(\freq, exprand(1,4000),\lagtime, rrand(0.001,0.1), \pan, rrand(-0.1,0.1), \amp, exprand(0.01,0.5));
+//a.setn(\lossarray, Array.rand(n+1, minloss,maxloss));
+//a.setn(\karray, Array.rand(n-1,range.neg,range));
+//a.setn(\delaylengtharray, Array.rand(n, 0.001, maxdur));
+//}); 
+
+
+durs.wchoose(inverted).wait;
+};
+
+}.fork;
+)
+
+
+

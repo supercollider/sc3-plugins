@@ -1,0 +1,76 @@
+class::SpruceBudworm			
+summary::Spruce bud worm model equations
+categories:: UGens>Generators>Chaotic
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+One of a number found in A Brief History of Oscillators and Hair Styles of European Men AASU Math/CS Colloquium, April 2002. 
+
+Euler ODE solver implementation of a model of foliage and budworm density in Canadian forests ( a logistic model + predation).  
+
+x' = k1 x (1-x) - mu*y
+y' =  k2 *y * (1 - (y/alpha*x)) - (rho * (y**2/(beta**2 * x**2 + y**2)))
+
+All inputs can have .kr rate UGens plugged in.
+
+Nonlinear oscillators can blow up, treat with caution.
+
+classmethods::
+
+method::ar
+
+argument::reset
+If > 0.0, restart with new initial conditions sampled from initx, inity
+argument::rate
+update rate for a sample step
+argument::k1
+equation constant
+argument::k2
+equation constant
+argument::alpha
+equation constant
+argument::beta
+equation constant
+argument::mu
+equation constant
+argument::rho
+equation constant
+argument::initx
+reset value for x
+argument::inity
+reset value for y
+
+Examples::
+
+code::
+//listen to x and y output with defaults
+{Out.ar(0,0.5*SpruceBudworm.ar(0.0))}.play
+
+
+//be careful with rate range, can blow-up easily here, or just not sound
+{Out.ar(0,0.5*SpruceBudworm.ar(0.0,MouseX.kr(0.09,0.1)))}.play
+
+
+{Out.ar(0,0.5*SpruceBudworm.ar(0.0,,MouseX.kr(0.09,0.1),MouseY.kr(25.0,28.0)))}.play
+
+
+{Out.ar(0,0.5*SpruceBudworm.ar(Impulse.kr(MouseY.kr(1,50,'exponential')),0.1))}.play
+
+
+
+{Out.ar(0,Pan2.ar(0.5*(SpruceBudworm.ar(Impulse.kr(MouseX.kr(1,50)),0.1,24.8,0.5,initx:MouseY.kr(0.2,1.2))[0])))}.play
+
+
+{10.0*(SpruceBudworm.ar(Impulse.kr(Line.kr(1,200,0.1)),0.1,19.8,0.5,initx:0.6)[0]-1.0)}.plot(0.1)
+
+
+{10.0*(SpruceBudworm.ar(Impulse.kr(MouseX.kr(1,200)),0.1,19.8,0.5,initx:0.6)[0]-1.0)}.play
+
+
+{10.0*(SpruceBudworm.ar(Impulse.kr(MouseX.kr(1,200)),0.1,MouseY.kr(19,28),0.5,initx:0.6)[0]-1.0)}.play
+
+
+
+

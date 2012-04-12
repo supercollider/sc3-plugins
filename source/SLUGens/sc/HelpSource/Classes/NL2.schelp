@@ -1,0 +1,147 @@
+class:: NL2			
+summary:: Arbitrary Non Linear Filter Equation
+related:: Classes/NL
+categories:: UGens>Filters
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Represents the arbitrary non-linear filter difference equation in the time domain:
+
+y(n) = sum over terms of      constant * product of x terms at individual powers * product of y terms at individual powers
+
+This allows arbitrary crossterms in x and y, but is expensive to calculate. 
+
+Stability is definitely not guaranteed; most equations will quickly blow-up. See the guard arguments below. It is recommended that you stick to positive exponents for signals which are within -1 to 1, else explosion of values is inevitable. 
+
+(0.1)**(-1.26)  //negative exponents cause blowup for smaller signals abs(sig) < 1.0
+
+(1.1)**(2.26)  //positive exponents cause blowup for larger signals abs(sig) > 1.0
+
+You need to pass in the parameters via two buffers, of arbitrary size.
+
+classmethods::
+
+method::ar
+
+argument::input
+What do you want to filter?
+argument::bufnum
+A single buffer containing numcrossterms in the first index, then the specification of crossterms as (constant, num x terms, list of x index/exponent pairs, num y terms, list of y index/coefficient pairs). Buffer contents can be switched at run-time as longas this data format is strictly adherred to. 
+argument::maxasize
+Maximum index stored for previous outputs
+argument::maxbsize
+Maximum index stored for previous inputs
+argument::guard1
+Watch out for blow-up and reset if necessary; this is the value of the maximum absolute output allowed. 
+argument::guard2
+Watch out for blow-up and reset if necessary; this is the value of the maximum absolute change of output allowed. 
+
+On discovering blow-up, filter output is set back to zero for all stored outputs, so that feedback cannot occur.  
+
+Examples::
+
+code::
+(
+a=[2,   0.5, 1, 0, 1,  0,   -0.35, 0, 2, 5, 2, 3, 0.5]; //specification of crossterms
+c=Buffer.sendCollection(s, a, 1);
+)
+
+{SinOsc.ar(MouseX.kr(440,1760),0,0.2)}.play //without
+
+//subtle distortion
+{NL2.ar(SinOsc.ar(MouseX.kr(440,1760),0,0.5),c,1, 6).clip2(1.0)}.play //with
+
+
+
+//random buffers
+(
+a=[10]++(Array.fill(10,{var bsize, asize; bsize= rrand(1,3); asize=rrand(0,3); 
+
+[0.5.rand2,bsize]++(Array.fill(bsize,{[rrand(0,20), exprand(0.1,6)]}).flatten) ++ [asize] ++ (Array.fill(asize,{[rrand(0,20), exprand(0.1,6)]}).flatten);
+
+}).flatten);
+ //feedback coefficients
+c=Buffer.sendCollection(s, a, 1);
+)
+
+
+{NL2.ar(AudioIn.ar(1),c,21,21).clip2(1.0)}.play //with
+
+
+
+//WARNING; CAN BE VERY CPU EXPENSIVE AND NOISY!
+(
+//limited update
+r= {
+
+inf.do{
+var e; 
+var num; 
+
+num=rrand(2,10);
+
+
+e=[num]++(Array.fill(num,{var bsize, asize; bsize= rrand(1,3); asize=rrand(0,3); 
+
+[0.5.rand2,bsize]++(Array.fill(bsize,{[rrand(0,20), exprand(0.1,6)]}).flatten) ++ [asize] ++ (Array.fill(asize,{[rrand(0,20), exprand(0.1,6)]}).flatten);
+
+}).flatten);
+
+if(e.size<=a.size,{
+
+c.sendCollection(e);
+});
+
+
+1.0.wait;
+}
+}.fork; 
+)
+
+r.stop;
+
+
+
+
+
+
+
+
+
+
+//larger sparse arrays; some may lead to silence
+(
+a=[10]++(Array.fill(10,{var bsize, asize; bsize= rrand(1,2); asize=rrand(0,1); 
+
+[0.7.rand2,bsize]++(Array.fill(bsize,{[rrand(0,999), exprand(0.1,6)]}).flatten) ++ [asize] ++ (Array.fill(asize,{[rrand(0,999), exprand(0.1,6)]}).flatten);
+
+}).flatten);
+ //feedback coefficients
+c=Buffer.sendCollection(s, a, 1);
+)
+
+
+{NL2.ar(AudioIn.ar(1),c,1000,1000).clip2(1.0)}.play //with
+
+
+(
+var e; 
+var num; 
+
+num=rrand(2,10);
+
+e=[num]++(Array.fill(num,{var bsize, asize; bsize= rrand(1,2); asize=rrand(0,1); 
+
+[0.7.rand2,bsize]++(Array.fill(bsize,{[rrand(0,999), exprand(0.1,6)]}).flatten) ++ [asize] ++ (Array.fill(asize,{[rrand(0,999), exprand(0.1,6)]}).flatten);
+
+}).flatten);
+
+if(e.size<=a.size,{
+
+c.sendCollection(e);
+});
+
+)
+

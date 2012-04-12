@@ -1,0 +1,65 @@
+class:: Oregonator			
+summary:: Chemical reaction modelling Oscillator
+categories:: UGens>Generators>Chaotic
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Euler ODE solver implementation of the Oregonator equations (http://www.scholarpedia.org/article/Oregonator).  
+
+x' = epsilon* (q*y  - x*y + x*(1-x) ) 
+y' = mu* (-q*y -x*y +z)
+z' = x-y
+
+All inputs can have .kr rate UGens plugged in.
+
+The Oregonator can blow up, treat with caution. 
+
+classmethods::
+
+method::ar
+
+
+argument::reset
+If > 0.0, restart with new initial conditions sampled from initx, inity, initz
+argument::rate
+update rate for a sample step
+argument::epsilon
+equation constant
+argument::mu
+equation constant
+argument::q
+equation constant
+argument::initx
+reset value for x
+argument::inity
+reset value for y
+argument::initz
+reset value for z
+
+
+
+Examples::
+
+code::
+//hits fixed points too quickly
+{Out.ar(0,Pan2.ar(0.1*Oregonator.ar(Impulse.kr(10),MouseX.kr(0.01,1,'exponential')),0.0))}.play
+
+
+{Out.ar(0,Oregonator.ar(Impulse.kr(100),0.1, 0.1, 0.5, 0.2,initx:0.1, inity:-0.5, initz:0.7))}.plot(0.1)
+
+
+{Out.ar(0,Pan2.ar(0.1*Oregonator.ar(Impulse.kr(100),0.1, 0.1, 0.5, 0.2,initx:0.1, inity:-0.5, initz:MouseX.kr)[0],0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*Oregonator.ar(Impulse.kr(MouseX.kr(100,1000)),0.1, 0.2, 0.5, 0.2,initx:MouseY.kr, inity:-0.5, initz:0.5)[0],0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*Oregonator.ar(Impulse.kr(MouseX.kr(10,1000,'exponential')),0.3, 0.1,0.1, 0.2,initx:MouseY.kr(0.1,1.0), inity:-0.5, initz:0.5)[0],0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*Oregonator.ar(Impulse.kr(MouseX.kr(100,1000)),0.1, 0.2, 0.5, 0.2,initx:MouseY.kr, inity:-0.5, initz:0.5)[1],0.0))}.play
+
+
+{Out.ar(0,Pan2.ar(0.1*Mix(Oregonator.ar(Impulse.kr(MouseX.kr(10,1000)),0.1, 0.2, 0.5, 0.2,initx:MouseY.kr, inity:-0.5, initz:0.5)),0.0))}.play

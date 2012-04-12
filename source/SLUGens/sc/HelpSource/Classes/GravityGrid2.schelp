@@ -1,0 +1,109 @@
+class:: GravityGrid2		
+summary:: dynamical system simulation (Newtonian gravitational force)
+related:: Classes/GravityGrid
+categories:: UGens>Generators>Chaotic
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+Description::
+Fixed masses apply Newtonian gravitational force dynamics to a central moving mass which cannot escape the [-1, 1] grid in x or y. The position of the moving mass is sonified as an oscillator by its distance from the centre.   
+
+This is a relatively expensive oscillator to run. 
+
+classmethods::
+
+method::ar
+
+
+argument::reset
+Restart the moving mass at a random position within the square (k-rate input)
+argument::rate
+amount of position update per sample (k-rate)
+argument::newx
+kr input to be sampled for new x positions for the moving mass on reset
+argument::newy
+kr input to be sampled for new y positions for the moving mass on reset
+argument::bufnum
+Bufnum for a buffer containing weights and positions for the fixed influencing masses. In the format entry [0] is the number of masses, then 3 components (x, y, mass multiplier) for each mass in turn (see below). You can dynamically change this buffer as long as the data contents stay consistent- i.e. if you change suddenly to having twice as many masses, make sure you've provided x,y and weight values for them! 
+ 
+Examples::
+
+code::
+b = Buffer.alloc(s, 1+(25*3), 1); //mass buffer big enough for up to 25 masses
+
+b.setn(0,[5]++(Array.fill(5,{[1.0.rand2,1.0.rand2,rrand(0.1,1.0)]}).flatten)); //set weights
+
+{Pan2.ar(GravityGrid2.ar(Impulse.kr(1),MouseX.kr(0.1,1,'exponential'),LFNoise0.kr(1,0.8),LFNoise0.kr(1,0.8), b.bufnum),0.0)}.play
+
+(
+var n;
+
+n=rrand(1,20); //random number of masses
+
+b.setn(0,[n]++(Array.fill(n,{[1.0.rand2,1.0.rand2,rrand(0.1,1.0)]}).flatten)); //change weights to new random values
+)
+
+
+{Pan2.ar(GravityGrid2.ar(Impulse.kr(MouseY.kr(1,1000,'exponential')),MouseX.kr(0.1,1,'exponential'),LFNoise0.kr(1,0.8),LFNoise0.kr(1,0.8), b.bufnum),0.0)}.play
+
+
+
+//lower gravity
+(
+var n;
+
+n=rrand(1,20); //random number of masses
+
+b.setn(0,[n]++(Array.fill(n,{[1.0.rand2,1.0.rand2,0.01*rrand(0.1,1.0)]}).flatten)); //change weights to new random values
+)
+
+
+{Pan2.ar(GravityGrid2.ar(Impulse.kr(0),MouseX.kr(0.1,10,'exponential'),LFNoise0.kr(1,0.8),LFNoise0.kr(1,0.8), b.bufnum),0.0)}.play
+
+
+(
+//deliberate corners
+b.setn(0,[4]++(Array.fill(4,{arg i; [if(i<2,1,-1),if(i%2==0,1,-1),0.1*rrand(0.1,1.0)]}).flatten)); //set weights
+)
+
+
+(
+//deliberate corners further away
+b.setn(0,[4]++(Array.fill(4,{arg i; [if(i<2,rrand(1,2.3),-1),if(i%2==0,1,rrand(-1.1,-1.5)),0.1*rrand(0.1,1.0)]}).flatten)); //set weights
+)
+
+
+
+//very fun and noisy!
+{Pan2.ar(GravityGrid2.ar(Impulse.kr(0),MouseX.kr(1,1000,'exponential'),LFNoise0.kr(1,0.8),LFNoise0.kr(1,0.8), b.bufnum),0.0)}.play
+
+
+//if something fun turns up in the four mass version
+b.getn(0,13,{arg in; in.postln;})
+
+//here's one I made earlier
+b.setn(0, [ 4, 1, 1, 0.029076481238008, 1, -1, 0.061766054481268, -1, 1, 0.096376851201057, -1, -1, 0.09320655465126 ])
+
+//and another
+b.setn(0, [ 4, 1.4228951931, 1, 0.080506414175034, 1.3617297410965, -1.3782749176025, 0.027821443974972, -1, 1, 0.038790885359049, -1, -1.3663036823273, 0.047782249748707 ])
+
+
+
+
+//higher gravity but larger placement area outside box which constrains the moving particle
+(
+var n;
+
+n=rrand(1,20); //random number of masses
+
+b.setn(0,[n]++(Array.fill(n,{[5.0.rand2,5.0.rand2,exprand(0.1,100.0)]}).flatten)); //change weights to new random values
+)
+
+
+
+
+//noise piece
+{Resonz.ar(GravityGrid2.ar(Impulse.kr(LFNoise0.kr([0.2,0.3],7,8)),MouseX.kr(0.1,10)*[11.2,12.5], LFNoise0.kr(5.4,0.4),LFNoise0.kr(10,0.8), b.bufnum),SinOsc.ar(0.03,0,2000,3000),SinOsc.ar(0.03,0,0.3,0.4))}.play
+
+

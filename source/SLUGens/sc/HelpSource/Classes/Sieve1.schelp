@@ -1,0 +1,38 @@
+class:: Sieve1			
+summary:: Fuzzy sieve based synthesis
+categories:: UGens>Generators>Stochastic
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+keyword:: SLUGens
+
+
+
+Description::
+Implementation of Xenakis's idea of sieve based synthesis, generalized to use fuzzy (probabilistic) sieves. Sieves are stored in buffers and can be dynamically swapped. 
+
+
+Ariza, Chris 2009 “Sonifying Sieves: Synthesis and Signal Processing Applications of the Xenakis Sieve with Python and Csound.” In Proceedings of the International Computer Music Conference. San Francisco: International Computer Music Association.
+
+Examples::
+
+code::
+//MUST be a buffer with data in format [sizeofcurrentsieve,sieveentry1,sieveentry2,...] where currentsize always less than initially allocated buffer length -1. 
+
+{ Sieve1.ar(LocalBuf.newFrom([10]++({0.75.rand}!10)),MouseX.kr(2,100))*0.2}.play
+
+{ Sieve1.ar(LocalBuf.newFrom([88]++({[0.1.rand,0.5.rand].wchoose([0.8,0.2])}!88)),MouseX.kr(1,100))*0.2}.play
+
+b = Buffer.alloc(s,300); 
+
+b.setn(0, [88]++({[0.1.rand,0.5.rand].wchoose([0.8,0.2])}!88))
+
+{ Sieve1.ar(b,MouseX.kr(2,100),0)*0.2}.play
+
+//dynamically swap buffer
+b.setn(0, [8]++(1.0!8))
+
+b.setn(0, [8]++({rrand(0.1,1.0)}!8))
+
+b.setn(0, [18]++({[0.0,1.0].choose}!18))
+
+b.setn(0, [188]++({[0.0,rrand(0.96,1.0)].wchoose([0.3,0.7])}!188))
+
