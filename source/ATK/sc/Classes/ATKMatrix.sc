@@ -1685,7 +1685,7 @@ FoaDecoderKernel {
 			)
 		});
 
-		decodersPath	= PathName.new("/Foa/decoders");
+		decodersPath	= PathName.new("/FOA/decoders");
 
 		^kernelLibPath +/+ decodersPath +/+ PathName.new(kind.asString)
 	}

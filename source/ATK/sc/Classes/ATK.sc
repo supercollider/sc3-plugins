@@ -118,17 +118,24 @@ Atk {
 	}
 		
 	*openUserSupportDir {
-		("open \"" ++ Atk.userSupportDir ++"\"").unixCmd({arg res, pid; 
-			if(res > 0, {"User Support Dir may not exist. Run \n\tAtk.createUserSupportDir\nto create it".warn})});
+		File.exists(Atk.userSupportDir).if({
+			Atk.userSupportDir.openOS;
+		}, {
+			"User Support Dir may not exist. Run \n\tAtk.createUserSupportDir\nto create it".warn
+		})
 	}
 
 	*createUserSupportDir {
-		("mkdir \"" ++ Atk.userSupportDir ++ "\"").unixCmd;
+		File.mkdir(Atk.userSupportDir);
+//		("mkdir \"" ++ Atk.userSupportDir ++ "\"").unixCmd;
 	}
 	
 	*openSystemSupportDir {
-		("open \"" ++ Atk.systemSupportDir ++"\"").unixCmd({arg res, pid; 
-			if(res > 0, {"System Support Dir may not exist".warn})});
+		File.exists(Atk.systemSupportDir).if({
+			Atk.systemSupportDir.openOS;
+		}, {
+			"System Support Dir may not exist.".warn
+		})
 	}	
 }
 
