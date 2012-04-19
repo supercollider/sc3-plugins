@@ -1896,7 +1896,7 @@ FoaEncoderKernel {
 				Atk.systemKernelDir)
 		});
 
-		encodersPath	= PathName.new("/Foa/encoders");
+		encodersPath	= PathName.new("/FOA/encoders");
 
 		^kernelLibPath +/+ encodersPath +/+ PathName.new(kind.asString)
 	}
