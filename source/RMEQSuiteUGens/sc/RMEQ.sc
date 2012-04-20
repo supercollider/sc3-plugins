@@ -34,7 +34,7 @@ RMShelf2 : RMEQSuite {
 }
 
 
-Spreader : Panner {
+Spreader : MultiOutUGen {
 	*ar {arg in, theta = 1.5707963267949, filtsPerOctave = 8, mul = 1, add = 0;
 		^this.multiNew('audio', in, theta, filtsPerOctave).madd(mul, add);
 		}

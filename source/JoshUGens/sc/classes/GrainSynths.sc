@@ -11,7 +11,7 @@ JoshGrain : UGen {
 */
 	}
 
-JoshMultiChannelGrain : Panner {
+JoshMultiChannelGrain : MultiOutUGen {
 	*categories {^#["UGens>GranularSynthesis"]}
 	}
 

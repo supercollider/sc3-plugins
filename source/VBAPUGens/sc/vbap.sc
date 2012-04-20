@@ -566,7 +566,7 @@ VBAPSpeakerSet { // triplet or pair
 	}
 }
 
-VBAP : Panner {
+VBAP : MultiOutUGen {
 	// spread 0 - 100
 	*ar { arg numChans, in, bufnum, azimuth = 0.0, elevation = 1.0, spread = 0.0;
 		^this.multiNew('audio', numChans, in, bufnum, azimuth, elevation, spread )
