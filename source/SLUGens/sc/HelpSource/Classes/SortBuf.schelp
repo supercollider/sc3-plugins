@@ -66,4 +66,5 @@ SynthDef("help-sortbuf2",{ arg out=0,bufnum=0;
 )
 
 c.copyData(b); //restore buffer
+::
 

@@ -61,3 +61,4 @@ x.set(\threshold, 50.0)
 x.set(\hysteresis, 10.0)
 
 b.free;
+::

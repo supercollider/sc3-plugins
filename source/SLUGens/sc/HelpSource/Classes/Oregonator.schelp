@@ -63,3 +63,4 @@ code::
 
 
 {Out.ar(0,Pan2.ar(0.1*Mix(Oregonator.ar(Impulse.kr(MouseX.kr(10,1000)),0.1, 0.2, 0.5, 0.2,initx:MouseY.kr, inity:-0.5, initz:0.5)),0.0))}.play
+::

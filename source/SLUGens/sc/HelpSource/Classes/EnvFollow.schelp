@@ -17,3 +17,5 @@ code::
 
 
 { var source = SoundIn.ar; var env = EnvFollow.ar(source, MouseX.kr(0.9,0.999)); env }.play
+::
+

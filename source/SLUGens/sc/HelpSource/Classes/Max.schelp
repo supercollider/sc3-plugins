@@ -51,4 +51,4 @@ SinOsc.ar(LFNoise0.ar(20,300,400),0,0.1)
 }).play
 )
 
-
+::

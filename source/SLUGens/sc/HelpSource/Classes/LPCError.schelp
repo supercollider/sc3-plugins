@@ -28,7 +28,5 @@ code::
 
 {LPCError.ar(Resonz.ar(Mix(Saw.ar(100*[1,0.9,0.8,0.7,0.5])),1000,0.1,2), MouseX.kr(1,64))}.play
 
-
-
-
+::
 

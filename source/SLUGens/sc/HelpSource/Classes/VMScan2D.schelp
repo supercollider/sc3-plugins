@@ -202,3 +202,5 @@ d.sendCollection(c);
 )
 
 //additional ideas: polar co-ordinates, scanning paths on circle boundaries connecting two last points? 
+::
+

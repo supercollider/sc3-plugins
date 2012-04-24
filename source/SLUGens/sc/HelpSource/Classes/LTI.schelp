@@ -172,7 +172,6 @@ d=Buffer.sendCollection(s, b, 1);
 {LTI.ar(Saw.ar(LFNoise0.kr(10,4000,5000)), c.bufnum, d.bufnum,0.1)}.play
 
 //Also see [Convolution]
-
-
+::
 
 

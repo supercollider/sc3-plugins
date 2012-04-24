@@ -91,6 +91,4 @@ Resonz.ar(WeaklyNonlinear.ar(Saw.ar(MouseX.kr(50,2000,'exponential'),0.5),0,1,1,
 {Out.ar(0,Pan2.ar(0.1*WeaklyNonlinear.ar(SinOsc.ar(0,0,0.1),Impulse.kr(10),1,1,MouseX.kr(110,880,'exponential'),0,0,0.5,1,1,MouseY.kr(0,1.0)),0.0))}.play
 
 
-
-
-
+::
