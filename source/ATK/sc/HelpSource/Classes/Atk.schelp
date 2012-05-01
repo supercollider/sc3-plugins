@@ -9,7 +9,7 @@ The Atk class defines variables that may be used by the rest of the ATK library,
 
 CLASSMETHODS::
 
-METHOD:: userSupportDir_
+METHOD:: userSupportDir
 set the user support dir where ATK resources are located
 
 argument:: userSupportDirIn
