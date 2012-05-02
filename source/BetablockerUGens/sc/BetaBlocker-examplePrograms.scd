@@ -1,8 +1,9 @@
-BBlockerProgram.instructions.keys.asArray
+// all instructions explained
+BBlockerProgram.printDescs
 
-
-BBlockerProgram.findOpCodesFor("push")
-
+// search for functionality
+BBlockerProgram.find("push")
+BBlockerProgram.descOf('PSHL')
 
 // saw
 a = BBlockerProgram([\ORG, \INC, \JMP, 1]);

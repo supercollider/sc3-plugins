@@ -20,11 +20,11 @@ BBlockerProgram {
 		
 		identifier = identifier.asString.toLower;
 		^descs.select{|value, key|  
-			key.asString.toLower.contains(identifier) ||{value.toLower.contains(identifier)}}.keys
+			key.asString.toLower.contains(identifier) ||{value.toLower.contains(identifier)}}.indices
 	}
 	
 	*descOf{|key|
-		this.descs[key]
+		^this.descs[key]
 	}
 	
 	*printDescs {
@@ -106,34 +106,36 @@ BBlockerProgram {
 			)			
 		};
 				
-		descs = descs ? (
-			NOP:  "do nothing",
-			ORG:  "define relative origin address",
-			EQU:  "compare two topmost elements on stack, pop them, push result (0 or 1)",
-			JMP:  "jump to address specified in following slot",
-			JMPZ: "if stack returns 0, jump to address specified in following slot",
-			PSHL: "push value of slot specified by adress in following slot",
-			PSH:  "push value of slot specified by address specified by address in following slot",
-			PSHI: "push value like PSH but one more encapsulation",
-			POP:   "pop item from stack to slot specified by address in following slot",
-			POPI:  "pop item from stack to slot specified by address specified by address in following slot",
-			ADD: "perform addition (+) on first two elements on stack, pop them, push result",
-			SUB: "perform subtraction (-) on first two elements on the stack, pop them, push result",
-			INC: "increment value on stack",
-			DEC: "decrement value on stack",
-			AND: "perform bit-wise AND on first two elements on stack, pop them, push result",
-			OR:  "perform bit-wise  OR on first two elements on stack, pop them, push result",
-			XOR: "perform bit-wise XOR on first two elements on stack, pop them, push result",
-			NOT: "perform bit-wise NOT on first element on stack, pop it, push result",
-			ROR: "perform right shift  on first two elements on stack, pop them, push result",
-			ROL: "perform left shift   on first two elements on stack, pop them, push result",
-			PIP: "increment value specified by address in following slot (no stack involved)",
-			PDP: "decrement value specified by address in following slot (no stack involved)",
-			DUP: "push a copy (duplicate) of topmost value to the stack",
-			NOTE: "play note (here: NOP)",
-			VOX:  "play vox  (here: NOP)",
-			STOP: "stop program (here: NOP)"
-		);
+		descs.isNil.if({
+			descs = Order();
+			descs.put('NOP',  "do nothing");
+			descs.put('ORG', "define relative origin address");
+			descs.put('EQU', "compare two topmost elements on stack, pop them, push result (0 or 1)");
+			descs.put('JMP', "jump to address specified in following slot");
+			descs.put('PSH', "push value of slot specified by address specified by address in following slot");
+			descs.put('POP', "pop item from stack to slot specified by address in following slot");
+			descs.put('ADD', "perform addition (+) on first two elements on stack, pop them, push result");
+			descs.put('SUB', "perform subtraction (-) on first two elements on the stack, pop them, push result");
+			descs.put('INC', "increment value on stack");
+			descs.put('DEC', "decrement value on stack");
+			descs.put('AND', "perform bit-wise AND on first two elements on stack, pop them, push result");
+			descs.put('XOR', "perform bit-wise XOR on first two elements on stack, pop them, push result");
+			descs.put('NOT', "perform bit-wise NOT on first element on stack, pop it, push result");
+			descs.put('ROR', "perform right shift  on first two elements on stack, pop them, push result");
+			descs.put('ROL', "perform left shift   on first two elements on stack, pop them, push result");
+			descs.put('PIP', "increment value specified by address in following slot (no stack involved)");
+			descs.put('PDP', "decrement value specified by address in following slot (no stack involved)");
+			descs.put('DUP', "push a copy (duplicate) of topmost value to the stack");
+			descs.put('VOX', "play vox  (here: NOP)");
+			descs.put('JMPZ', "if stack returns 0, jump to address specified in following slot");
+			descs.put('PSHL', "push value of slot specified by adress in following slot");
+			descs.put('PSHI', "push value like PSH but one more encapsulation");
+			descs.put('POPI', "pop item from stack to slot specified by address specified by address in following slot");
+			descs.put('NOTE', "play note (here: NOP)");
+			descs.put('STOP', "stop program (here: NOP)");
+			descs.put('OR',  "perform bit-wise  OR on first two elements on stack, pop them, push result");
+		});
+
 	}
 	
 	ar {|rate, using, leak = false, vol = 1| // using is either Server or Buffer
