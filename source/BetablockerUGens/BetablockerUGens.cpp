@@ -150,7 +150,7 @@ void BBlockerBuf_Ctor(BBlockerBuf *unit)
 	unit->bblocker.init_thread(0);
 
 	unit->m_fbufnum = -1e9f;
-	unit->m_phase = 0.f;
+	unit->m_phase = 1.f;
 	unit->m_freqMul = unit->mRate->mSampleDur;
 	unit->m_lastFreq = ZIN0(1);
 	

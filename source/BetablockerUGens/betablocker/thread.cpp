@@ -146,8 +146,8 @@ u8 thread::at(u8 pos) const
 {
 	if (m_stack_pos>=0 && (pos <= m_stack_pos))
 	{
-//		return m_stack[m_stack_pos - pos];
-		return m_stack[pos];
+		return m_stack[m_stack_pos - pos];
+//		return m_stack[pos];
 	}
 	return 0;
 }
