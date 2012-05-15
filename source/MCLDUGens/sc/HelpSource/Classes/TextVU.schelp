@@ -1,7 +1,7 @@
 CLASS:: TextVU
-summary:: super-efficient sawtooth oscillator with low aliasing
+summary:: display level of a UGen as a textual meter
 categories:: UGens>Generators
-related:: Classes/PulseDPW
+related:: Classes/Poll
 
 DESCRIPTION::
 This behaves similar to Poll but displays its output as a textual "VU meter" visualisation (ranging from -60 to 0 dB). The class also automatically inserts an Amplitude analysis into the chain (you can modify this by supplying a function to the ana argument). Also, internally it ONLY RUNS AT CONTROL RATE, although it can analyse ar or kr inputs (and passes them back out again).

@@ -1,0 +1,82 @@
+class:: PV_MagSmoth
+summary:: Smooth spectral magnitudes over time
+categories::  UGens>FFT, UGens>Analysis
+related:: PV_MagSmear
+
+Description::
+
+Smooths out the magnitude of FFT bins over time using recursive averaging.
+
+For each bin, the calculation looks like:
+
+mag = (prevmag * factor) + (mag * (1-factor))
+
+
+classmethods::
+
+method::new
+
+argument::chain
+an fft chain
+
+argument::factor
+from 0 (no smoothing occurs) to 1 ("infinite" smoothing, magnitudes never change)
+
+
+Examples::
+
+code::
+
+s.boot;
+b = Buffer.alloc(s, 1024);
+c = Buffer.read(s, "sounds/a11wlk01.wav");
+
+(
+x = {
+var son, chain, out;
+
+son = PlayBuf.ar(1, c, loop: 1);
+
+chain = FFT(b, son);
+chain = PV_MagSmooth(chain, 1 - MouseX.kr(1, 0.00001, 1));
+
+out = IFFT(chain);
+
+(out * 0.3).dup
+
+}.play;
+)
+x.free;
+
+
+// This one subtracts the smoothed version away, to leave just the spiky bits!
+// This is a fairly well-known basis of noise-removal by spectral subtraction,
+// which works well if the noise is static or slow-changing while the signal 
+// is fast-changing.
+// In this demo, mouse left/right controls the amount of smoothing,
+//  and when the mousebutton is down you hear the "original" 
+//  (otherwise you hear the "cleaned" version).
+d = Buffer.alloc(s, 1024);
+(
+x = {
+var son, chain, chainorig, chainsmooth, out;
+
+son = PlayBuf.ar(1, c, loop: 1);
+
+chain = FFT(b, son);
+chainorig = PV_Copy(chain, d);
+chainsmooth = PV_MagSmooth(chain, 1 - MouseX.kr(1, 0.00001, 1));
+chain = PV_MagSubtract(chainorig, chainsmooth, 1);
+
+out = XFade2.ar(IFFT(chain), son, MouseButton.kr(-1,1));
+
+(out * 0.3).dup
+
+}.play;
+)
+x.free;
+
+
+b.free; c.free;
+::
+
