@@ -250,3 +250,35 @@ SOMAreaWr : UGen {
 		^this.multiNew('control', bufnum, netsize, numdims, nhood, gate, *inputdata)
 	}
 }
+
+KMeansRT : UGen {
+
+	*kr { |bufnum, inputdata, k=5, gate=1, reset=0|
+		inputdata = inputdata.asArray;
+		^this.multiNew('control', bufnum, k, gate, reset, *inputdata)
+	}
+}
+/*
+s.boot;
+k = 3;
+~ndims = 2;
+b = Buffer.alloc(s, k, ~ndims+1);
+(
+x = {
+	var trig = Impulse.kr(1);
+	var datum = ~ndims.collect{ TRand.kr(0, 10, trig).floor };
+	var classif = KMeansRT.kr(b, datum, k, trig);
+	datum  .poll(trig, "datum");
+	classif.poll(trig, "datum");
+	DC.ar(0);
+}.play;
+)
+
+
+*/
+
+
+
+
+
+
