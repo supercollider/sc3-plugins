@@ -184,18 +184,6 @@ void SOMTrain_Ctor(SOMTrain* unit)
 	double nhooddelta = nhood / traindur; // This is how much it decrements by, each occasion.
 
 	float weightfactor = ZIN0(6); // Scaling factor for how much the node "bends" towards the datum
-	//RM double alpha = ZIN0(6); // How much the node "bends" towards the datum
-	//RM double alphadelta = alpha / traindur; // This is how much it decrements by, each occasion.
-
-	/*
-	int totalnumnodes = (int)powf(ZIN0(2), ZIN0(3));
-	float mfactor = ((float)(traindur - totalnumnodes)) / (float)(totalnumnodes * (traindur - 1));
-	if(mfactor<=0.f){
-		if(unit->mWorld->mVerbosity > -1)
-			Print("SOMTrain warning: training weight factor \"m\" not positive - probably more nodes than training moments. Consider longer training!\n");
-		mfactor = 1.f / (float)(traindur - 1); // if numnodes were traindur/2, this would be what you'd get...
-	}
-	*/
 	float mfactor = traindur * 0.25f; // Empirical scaling - weight falls to half of its value after 0.25 of the training
 
 	// initialize the unit generator state variables.
@@ -207,8 +195,6 @@ void SOMTrain_Ctor(SOMTrain* unit)
 	unit->m_weightfactor   = weightfactor;
 	unit->m_mfactor   = mfactor;
 	unit->m_writeloc  = 0.f;
-	//RM unit->m_alpha      = alpha;
-	//RM unit->m_alphadelta = alphadelta;
 
 	// calculate one sample of output.
 	ZOUT0(0) = 0.f;
@@ -268,7 +254,6 @@ void SOMTrain_next(SOMTrain *unit, int inNumSamples)
 			}
 
 			// Save state to struct.
-			// NB Update "alpha" and "nhood" (both shrink slightly)
 			unit->m_nhood = unit->m_nhood - unit->m_nhooddelta;
 			++(unit->m_traincountup);
 			unit->m_traincountdown = traincountdown = traincountdown - 1;
