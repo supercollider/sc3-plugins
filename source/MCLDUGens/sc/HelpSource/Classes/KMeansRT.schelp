@@ -1,0 +1,101 @@
+CLASS:: KMeansRT
+summary:: k-means classification in real time
+categories:: UGens>Analysis
+related:: Classes/KMeans, Classes/NearestN
+
+DESCRIPTION::
+
+Performs online k-means classification, classifying each datapoint that comes in and updating the k-means centroids.
+
+The method is described in Algorithm B.1 of Brian McFee's 2012 thesis (http://cseweb.ucsd.edu/~bmcfee/papers/bmcfee_dissertation.pdf). McFee calls it "online Hartigan k-means".
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: bufnum
+a Buffer with "k" frames and "d + 1" channels (where d is the number of dimensions of input data. Each frame of the Buffer will hold data for a centroid (the centroid location, plus the final channel holds the effective number of points associated with the centroid).
+
+argument:: inputdata
+An array representing the input point. Num channels must match the dimensionality of the points in the dataset.
+
+argument:: k
+k is the number of centroids.
+
+argument:: gate
+The unit is active while gate > 0. While <=0, no search is performed and output is held steady
+
+argument:: reset
+If reset is greater than 0, the "flexibility" of the centroids is reset back to initial values (as if no data had been received).
+
+returns:: the cluster index with which the input datapoint has been associated.
+
+
+
+EXAMPLES::
+
+This example clusters every frame of a sound sample, using the spectral centroid of each frame, and sonifies the result:
+
+code::
+s.boot;
+k = 5;
+~ndims = 1;
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+~kbuf = Buffer.alloc(s, k, ~ndims+1)
+
+(
+x = {
+	var sig, chain, chaintrig, features, kbuf, classif, centroid, resynth;
+
+	// sig = AudioIn.ar;
+	sig = PlayBuf.ar(1, b, loop: 1);
+	chain = FFT(LocalBuf(512), sig);
+	chaintrig = chain > -0.001;
+
+	features = [SpecCentroid.kr(chain)]; // just one 1D feature here
+	classif = KMeansRT.kr(~kbuf, features, k, chaintrig);
+	classif.poll(chaintrig);
+
+	// Now we read the centroid position back out of the buffer and sonify
+	centroid = BufRd.kr(~ndims + 1, ~kbuf, classif, interpolation: 1).at(0);
+
+	resynth = SinOsc.ar(centroid, 0, 0.1);
+	[sig, resynth]
+}.play
+)
+
+x.free
+::
+
+This example clusters onsets:
+
+code::
+s.boot;
+k = 5;
+~ndims = 1;
+// Specify a stereo music recording you have locally.
+b = Buffer.cueSoundFile(s, "~/back_to_black.wav".standardizePath, 0, 2);
+~kbuf = Buffer.alloc(s, k, ~ndims+1)
+
+(
+x = {
+	var sig, chain, trig, features, kbuf, classif, centroid, resynth;
+
+	sig = DiskIn.ar(2, b.bufnum);
+
+	chain = FFT(LocalBuf(1024), sig.mean);
+	trig = Onsets.kr(chain);
+
+	features = [SpecCentroid.kr(chain)]; // just one 1D feature here
+	classif = KMeansRT.kr(~kbuf, features, k, trig);
+	classif.poll(trig);
+
+	resynth = Pulse.ar(classif.linexp(0, k, 100, 1000)) * 0.9 * EnvGen.ar(Env.perc, trig);
+	sig + resynth
+}.play
+)
+
+x.free;
+b.close; b.free;
+::
+
