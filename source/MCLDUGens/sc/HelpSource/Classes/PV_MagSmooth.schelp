@@ -1,4 +1,4 @@
-class:: PV_MagSmoth
+class:: PV_MagSmooth
 summary:: Smooth spectral magnitudes over time
 categories::  UGens>FFT, UGens>Analysis
 related:: PV_MagSmear
