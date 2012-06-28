@@ -2541,7 +2541,7 @@ fastexp (float p)
 
 static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, float & pp1d2, float & k)
 {
-	fco = std::min(fco, 1);
+	fco = std::min(fco, 1.f);
 	kp = (3.6f * fco) - ((1.6f * fco) * fco) - 1.0f;  /* Emperical tuning     */
 	pp1d2 = (kp + 1.0f) * 0.5f;              /* Timesaver                  */
 	float scale = fastexp((1.0f - pp1d2 ) * 1.386249f); /* Scaling factor  */
