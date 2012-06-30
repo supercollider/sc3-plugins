@@ -1,0 +1,38 @@
+class:: FeatureSave
+summary:: Storing feature data from UGens in NRT mode
+categories:: UGens>Analysis
+keyword:: NRT mode, feature data
+
+Description::
+
+Create files of feature data from analysis UGens in NRT mode.
+
+
+classmethods::
+
+method::kr
+
+argument::features 
+input feature array for sampling on triggers
+argument::trig
+Trigger input, one stored feature vector at each trigger. Note that trig must be at least (-0.01) to trigger, to allow bufnums of 0 to act as a trigger when driving things from FFT analysis
+
+Examples::
+
+code::
+
+//Should really only do this in NRT, but does work if low load in RT 
+(
+a = {
+	
+~featuresave = FeatureSave.kr(SinOsc.kr,Impulse.kr(10)-0.5);  
+	
+}.play		 
+)
+
+s.sendMsg("/u_cmd", a.nodeID, ~featuresave.synthIndex, "createfile", "testfile2.data")
+
+s.sendMsg("/u_cmd", a.nodeID, ~featuresave.synthIndex, "closefile")
+
+
+::

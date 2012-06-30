@@ -1,0 +1,77 @@
+class:: SensoryDissonance
+summary:: Perceptual feature modeling sensory dissonance
+related:: Classes/Chromagram
+categories:: UGens>Analysis
+keyword:: psychoacoustic measure, sensory dissonance
+
+Description::
+
+Sensory Dissonance model, measuring roughness between pairs of prominent spectral peaks. Follows the algorithm in William A. Sethares (1998) Consonance-Based Spectral Mappings. CMJ 22(1): 56-72. 
+
+In usual use, you probably won't care about the other arguments; just pass an FFT in, assuming FFT size 2048 by default. 
+
+
+classmethods::
+
+method::kr
+
+
+argument::fft
+input fft chain, that is, from an FFT UGen
+argument::maxpeaks
+Maximum number of spectral peaks detected; cannot be modulated, initialisation only. 
+argument::peakthreshold
+Minimum spectral power detection threshold for a peak 
+argument::norm
+Normalisation factor. Calculated for you in the UGen class if you don't provide one, but you can experiment here. In combination with the next argument and maxpeaks, allows you to have alternative range outputs if you so desire. 
+argument::clamp
+Clamps very high dissonances, in default mode will end up with sensory dissonance measure in range 0.0 to 1.0
+
+Examples::
+
+code::
+
+
+(
+{
+
+var in, fft, dissonance;
+
+//in = SinOsc.ar(MouseX.kr(100,1000),0,0.1);
+//in = Mix(SinOsc.ar([440,MouseX.kr(440,880)],0,0.1));  
+in= SoundIn.ar; 
+
+fft = FFT(LocalBuf(2048), in);
+
+dissonance=SensoryDissonance.kr(fft);
+
+dissonance.poll; 
+
+Out.ar(0,Pan2.ar(0.1*Blip.ar(100,(dissonance.sqrt)*200))); 
+}.play
+)
+
+
+
+//different fftsize, max num peaks, own normalisation, avoid clamping by setting high value (more CPU cost) 
+(
+{
+
+var in, fft, dissonance;
+
+//in = SinOsc.ar(MouseX.kr(100,1000),0,0.1);
+//in = Mix(SinOsc.ar([440,MouseX.kr(440,880)],0,0.1));  
+in= SoundIn.ar; 
+
+fft = FFT(LocalBuf(4096), in);
+
+dissonance=SensoryDissonance.kr(fft,500,1.0,1.0,999999);
+
+dissonance.poll; 
+
+Out.ar(0,SinOsc.ar(dissonance*0.1,0,0.1)); 
+}.play
+)
+
+
+::

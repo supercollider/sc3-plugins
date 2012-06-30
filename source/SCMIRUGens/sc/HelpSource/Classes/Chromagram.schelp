@@ -1,0 +1,135 @@
+class:: Chromagram
+summary:: Octave chroma band based representation of energy in a signal; Chromagram for nTET tuning systems with any base reference
+related:: Classes/SensoryDissonance
+categories:: UGens>Analysis
+keyword:: Chroma, pitch class, equal temperament, filter bank 
+
+Description::
+
+A chromagram, measuring the energy at particular chroma within an nTET tuning system. 
+
+
+Possible extension:  
+TODO: tritave and other non-standard octaves 
+TODO: Could have arbitrary tuning systems if precalculated the exact fft bin + interpolation data. 
+TODO: chroma as energy independent, relative to total fft energy in polled bins or whole spectrum?
+
+
+classmethods::
+
+method::kr
+
+
+argument::fft 
+input fft chain, that is, from an FFT UGen
+argument::fftsize
+FFT size, required for initialisation 
+argument::n
+Equal divisions of an octave, e.g. n=12 is 12TET, 12 steps in an octave
+argument::tuningbase
+Base frequency or tuning; will correspong to index 0 in results (conventionally, this would be a 'C' in 12TET, but its an arbitrary reference)
+argument::octaves
+Number of octaves considered from tuning base up
+argument::integrationflag
+Whether to integrate from frame to frame, off by default
+argument::coeff
+Coefficient of integration
+
+Examples::
+
+code::
+
+
+(
+{
+
+var in, fft, chroma;
+
+//in = SinOsc.ar(440,0,0.1); 
+in= SoundIn.ar; 
+
+fft = FFT(LocalBuf(2048), in);
+
+chroma=Chromagram.kr(fft);
+
+chroma.poll; 
+
+Out.ar(0,Pan2.ar(in)); 
+}.play
+)
+
+
+
+//n TET display 
+
+n= 12; //19, 24
+
+(
+x = {
+
+var in, fft, chroma;
+
+//in = SinOsc.ar(440,0,0.1); 
+in= SoundIn.ar; 
+
+fft = FFT(LocalBuf(2048), in);
+
+chroma=Chromagram.kr(fft, 2048, n);
+
+//chroma=Chromagram.kr(fft, 2048, n, 36.midicps, 7, 1, 0.9);
+
+Out.kr(0,chroma); 
+}.play; 
+
+c= Bus.new('control', 0, n); 
+
+)
+
+
+
+//poll coefficients snapshot
+c.getn(n,{arg val; {val.plot;}.defer}); 
+
+
+
+//Continuous graphical display of Chromagram values; free routine before closing window
+
+(
+var ms; 
+
+w=Window.new((n.asString)++" chroma coefficients", Rect(200,400,n*20+50,300));
+
+ms= MultiSliderView.new(w, Rect(10,10,n*20,280));
+
+ms.value_(Array.fill(n,0.0));
+ms.valueThumbSize_(20.0);
+ms.indexThumbSize_(20.0);
+ms.gap_(0);
+
+w.front;
+
+r= {
+
+inf.do{
+
+c.getn(n,{arg val; {ms.value_(val)}.defer}); 
+
+0.04.wait; //25 frames per second
+};
+
+}.fork;
+
+w.onClose = {
+r.stop;
+c.free;
+x.free;
+}; 
+
+)
+
+
+
+b.free;
+
+
+::

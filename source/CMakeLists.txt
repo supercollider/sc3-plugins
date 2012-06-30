@@ -92,6 +92,7 @@ set(PLUGIN_DIRS
     MdaUGens
     RFWUGens
     RMEQSuiteUGens
+    SCMIRUGens
     SLUGens
     SummerUGens
     TagSystemUGens
