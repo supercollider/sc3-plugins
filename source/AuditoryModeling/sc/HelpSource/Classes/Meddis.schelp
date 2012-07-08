@@ -1,0 +1,36 @@
+class:: Meddis
+summary:: Meddis cochlear hair cell model
+related:: Classes/Gammatone,Classes/HairCell
+categories:: UGens>Analysis, UGens>Filters
+
+Description::
+
+
+Implementation of a hair cell model based on Implementation details of a computation model of the inner hair-cell/auditory-nerve synapse 
+(Ray Meddis, Michael J. Hewitt and Trevor M. Shackleton JASA 87(4) April 1990)
+The model is currently hard-coded for the 'medium spontaneous rate' parameters.  
+The functional effect is like half wave rectification and low pass filtering, with a more physiologically plausible mechanism.
+
+Model output is scaled by 100 from the JASA paper settings to obtain a sensible output range for audio signals in SuperCollider.  
+
+classmethods::
+
+method::ar
+
+argument::input
+input to be processed (essentially, basilar membrane motion at a particular point, affecting an inner hair cell's stereocilia)
+ 
+
+
+Examples::
+
+code::
+
+//try passing a signal through the hair cell
+x = { Meddis.ar(SinOsc.ar(440)) }.play;
+x.free;
+
+//recursive hair cell compression
+{ Meddis.ar(Meddis.ar(SoundIn.ar)) }.play;
+
+::

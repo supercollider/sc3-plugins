@@ -1,0 +1,47 @@
+class:: DPW3Tri
+summary:: Triangle via 3rd order differerentiated polynomial waveform
+related:: Classes/DPW4Saw, Classes/BlitB3Tri
+categories:: UGens>Generators>Deterministic
+
+Description::
+
+Distortion creeps in for changes at low frequencies when under 200Hz. But very clean above that.
+
+classmethods::
+
+method::ar
+
+argument::freq 
+
+
+Examples::
+
+code::
+
+//distortion creeps in under 200Hz
+{ DPW3Tri.ar(XLine.kr(2000, 20, 10)) }.play; 
+
+//very fast sweeps can have transient distortion effects
+{ DPW3Tri.ar(MouseX.kr(200,12000,'exponential')) }.play;
+
+//compare:
+{LFTri.ar(MouseX.kr(200,12000,'exponential'))}.play
+
+
+//less efficient than LFTri
+{ Mix(DPW3Tri.ar(Array.rand(10,50,5000))*0.1) }.play;
+
+{ Mix(LFTri.ar(Array.rand(10,50,5000))*0.1) }.play;
+
+
+//triangle is integration of square wave; warning loud, not so kind 
+{Integrator.ar(Pulse.ar(MouseX.kr(440,8800),0.5),0.99)}.play
+
+//differentiation of triangle is square
+{HPZ1.ar(2.0*DPW3Tri.ar(MouseX.kr(440,8800)))}.play
+
+//compare
+{Pulse.ar(MouseX.kr(440,8800),0.5)}.play
+
+
+::

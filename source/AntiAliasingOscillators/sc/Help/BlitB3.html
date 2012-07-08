@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.32">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #102ac3}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #1200c4}
+span.s4 {color: #102ac3}
+span.s5 {color: #008225}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>BlitB3<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Band limted impulse generation</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>BlitB3.ar(freq, mul, add )</b></p>
+<p class="p2"><br></p>
+<p class="p1">Band limited impulse generator based on B-Spline interpolation of order 3. For technical details of this and the other BlitB3 UGens see:<span class="Apple-converted-space"> </span></p>
+<p class="p1">Juhan Nam, Vesa Valimaki, Jonathan S. Abel, and Julius O. Smith</p>
+<p class="p1">Efficient Antialiasing Oscillator Algorithms Using Low-Order Fractional Delay Filters</p>
+<p class="p1">IEEE Transactions on Audio, Speech, and Language Processing 18(4) May 2010, pp 773--785</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><b>See also:</b> </span>BlitB3Saw<span class="s2">, </span>BlitB3Square<span class="s2">, </span>BlitB3Tri<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5">{ <span class="s4">BlitB3</span>.ar(<span class="s4">XLine</span>.kr(10000, 20, 10), 0.5) }.play;</p>
+<p class="p4"><br></p>
+<p class="p5">//spot the aliasing</p>
+<p class="p5">{ <span class="s4">Impulse</span>.ar(<span class="s4">XLine</span>.kr(10000, 20, 10), 0.0, 0.5) }.play;</p>
+<p class="p4"><br></p>
+<p class="p6">//sawtooth</p>
+<p class="p7">x = { <span class="s4">LeakDC</span>.ar(<span class="s4">Integrator</span>.ar(<span class="s4">BlitB3</span>.ar(<span class="s4">MouseX</span>.kr(20,1000,<span class="s5">'exponential'</span>), 0.5), 0.99)) }.play;</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p6">//sawtooth; super-saw, can integrate mix</p>
+<p class="p6">//leaks dealt with one by one so don't accumulate</p>
+<p class="p5">x = {<span class="s4">Mix</span>(<span class="s4">LeakDC</span>.ar( <span class="s4">Integrator</span>.ar(<span class="s4">BlitB3</span>.ar(<span class="s4">MouseX</span>.kr(1,4)*[220,221,223,224], 0.125), 0.99)) ) }.play;</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p6">//sound very similar, but BlitB3 more efficient<span class="Apple-converted-space"> </span></p>
+<p class="p5">x = {<span class="s4">MoogFF</span>.ar(<span class="s4">Mix</span>(<span class="s4">LeakDC</span>.ar( <span class="s4">Integrator</span>.ar(<span class="s4">BlitB3</span>.ar(<span class="s4">MouseX</span>.kr(0.125,4)*[220,221,223,224], 0.125), 0.99)) ), <span class="s4">MouseY</span>.kr(200,10000,<span class="s5">'exponential'</span>),3) }.play;</p>
+<p class="p4"><br></p>
+<p class="p6">//comparison</p>
+<p class="p5">x = {<span class="s4">MoogFF</span>.ar(<span class="s4">Mix</span>(<span class="s4">LeakDC</span>.ar(<span class="s4">Saw</span>.ar(<span class="s4">MouseX</span>.kr(0.125,4)*[220,221,223,224], 0.125), 0.99) ), <span class="s4">MouseY</span>.kr(200,10000,<span class="s5">'exponential'</span>),3) }.play;</p>
+<p class="p4"><br></p>
+<p class="p8"><br></p>
+<p class="p6">//even more efficient; see BlitB3Saw help file</p>
+<p class="p7">x = {<span class="s4">MoogFF</span>.ar(<span class="s4">Mix</span>(<span class="s4">BlitB3Saw</span>.ar(<span class="s4">MouseX</span>.kr(0.125,4)*[220,221,223,224], 0.99, 0.125)), <span class="s4">MouseY</span>.kr(200,10000,<span class="s5">'exponential'</span>),3) }.play;</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+</body>
+</html>

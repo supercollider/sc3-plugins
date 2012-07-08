@@ -1,0 +1,48 @@
+class:: BlitB3
+summary:: Band limited impulse generation
+related:: Classes/BlitB3Saw, Classes/BlitB3Square, Classes/BlitB3Tri, Classes/Impulse
+categories:: UGens>Generators>Deterministic
+
+Description::
+
+Band limited impulse generator based on B-Spline interpolation of order 3. For technical details of this and the other BlitB3 UGens see: 
+Juhan Nam, Vesa Valimaki, Jonathan S. Abel, and Julius O. Smith
+Efficient Antialiasing Oscillator Algorithms Using Low-Order Fractional Delay Filters
+IEEE Transactions on Audio, Speech, and Language Processing 18(4) May 2010, pp 773--785
+
+classmethods::
+
+method::ar
+
+argument::freq 
+
+
+Examples::
+
+code::
+{ BlitB3.ar(XLine.kr(10000, 20, 10), 0.5) }.play;
+
+//spot the aliasing
+{ Impulse.ar(XLine.kr(10000, 20, 10), 0.0, 0.5) }.play;
+
+//sawtooth
+x = { LeakDC.ar(Integrator.ar(BlitB3.ar(MouseX.kr(20,1000,'exponential'), 0.5), 0.99)) }.play;
+
+
+//sawtooth; super-saw, can integrate mix
+//leaks dealt with one by one so don't accumulate
+x = {Mix(LeakDC.ar( Integrator.ar(BlitB3.ar(MouseX.kr(1,4)*[220,221,223,224], 0.125), 0.99)) ) }.play;
+
+
+
+//sound very similar, but BlitB3 more efficient 
+x = {MoogFF.ar(Mix(LeakDC.ar( Integrator.ar(BlitB3.ar(MouseX.kr(0.125,4)*[220,221,223,224], 0.125), 0.99)) ), MouseY.kr(200,10000,'exponential'),3) }.play;
+
+//comparison
+x = {MoogFF.ar(Mix(LeakDC.ar(Saw.ar(MouseX.kr(0.125,4)*[220,221,223,224], 0.125), 0.99) ), MouseY.kr(200,10000,'exponential'),3) }.play;
+
+
+//even more efficient; see BlitB3Saw help file
+x = {MoogFF.ar(Mix(BlitB3Saw.ar(MouseX.kr(0.125,4)*[220,221,223,224], 0.99, 0.125)), MouseY.kr(200,10000,'exponential'),3) }.play;
+
+::

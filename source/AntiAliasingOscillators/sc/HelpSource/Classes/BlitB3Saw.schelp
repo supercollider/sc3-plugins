@@ -1,0 +1,41 @@
+class:: BlitB3Saw
+summary:: BLIT derived sawtooth
+related:: Classes/Saw, Classes/DPW4Saw, Classes/BlitB3Square, Classes/BlitB3Tri
+categories:: UGens>Generators>Deterministic
+
+Description::
+
+Band limited impulse generator based on B-Spline interpolation of order 3, integrated to create a sawtooth waveform. 
+
+classmethods::
+
+method::ar
+
+
+argument::freq 
+Maximum frequency is a period of 4 samples, so a quarter of the sampling rate. You may start to hear aliasing over 5000 Hz or so, otherwise perceptually indistinguishable from an analog waveform.  
+
+argument::leak
+leaky coefficient. 0 would give back the impulses, higher numbers (up to near 1.0) fill out the inter-impulse space, integrating the waveform. 
+
+
+Examples::
+
+code::
+
+{ BlitB3Saw.ar(XLine.kr(1000, 20, 10)) }.play;
+
+//aliasing suddenly appears for very high frequencies
+{ BlitB3Saw.ar(MouseX.kr(10,10000,'exponential'),MouseY.kr(0.01,0.99)) }.play;
+
+//comparison
+{ Saw.ar(1000) }.play;
+{ BlitB3Saw.ar(1000) }.play;
+
+{ Mix(Saw.ar({rrand(10,1000)}!100,mul:0.01)) }.play;
+//definitely more efficient second method
+{ Mix(BlitB3Saw.ar({rrand(10,1000)}!100,mul:0.01)) }.play;
+
+//see also comparison in BlitB3 help file
+
+::

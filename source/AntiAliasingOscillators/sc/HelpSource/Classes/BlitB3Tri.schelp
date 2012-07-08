@@ -1,0 +1,39 @@
+class:: BlitB3Tri
+summary:: Bipolar BLIT derived triangle
+related:: Classes/BlitB3Saw, Classes/BlitB3Square, Classes/BlitB3, Classes/DPW3Tri
+categories:: UGens>Generators>Deterministic
+
+Description::
+
+Bipolar (alternates 1.0 and -1.0) band limited impulse generator based on B-Spline interpolation of order 3, integrated twice to create a triangle waveform. In this case, richer sound, but probably turns out not to be as useful (less efficient, distortion issues) as LFTri or an integration of square wave. But also see DPW3Tri. 
+
+classmethods::
+
+method::ar
+
+argument::freq 
+
+argument::leak
+
+argument::leak2 
+
+
+Examples::
+
+code::
+
+{ BlitB3Tri.ar(XLine.kr(1000, 20, 10)) }.play;
+
+//unfortunately, aliasing returns at higher frequencies (over 5000Hz or so) with a vengence
+{ BlitB3Tri.ar(MouseX.kr(20,8000,'exponential').poll,0.99,MouseY.kr(0.001,0.99)) }.play;
+
+//more efficient, some aliasing from 3000, but not so scary over 5000. Duller sound (less high harmonics included for lower fundamentals)
+{ LFTri.ar(MouseX.kr(20,8000,'exponential').poll) }.play;
+
+
+//comparison
+//LFTri version cheaper, and less aliasing! 
+x = { LFTri.ar(4000) }.play;
+x = { BlitB3Tri.ar(4000) }.play;
+
+::

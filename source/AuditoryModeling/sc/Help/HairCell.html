@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0500da}
+span.s3 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>HairCell<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Simple cochlear hair cell model</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>HairCell.ar(input, spontaneousrate=0, boostrate=200, restorerate=1000, loss=0.99, mul, add )</b></p>
+<p class="p1"><b>HairCell.kr(input, spontaneousrate=0, boostrate=200, restorerate=1000, loss=0.99, mul, add )</b></p>
+<p class="p2"><br></p>
+<p class="p1">Simple hair cell model. Greater size input (positive values only, ie only in one direction as in real inner hair cells) opens the ion channels more to receive chemicals at rate minrate+(input*rate). If the accumulated chemical reaches 1.0 units, the cell fires, going to output value 1.0, and then decaying each sample with a loss factor. There is a limited store of chemicals, which is constantly being replenished at rate <b>restorerate</b>. The flow variables here are frequencies; they state how many times the store could be replenished per second (<b>restorerate</b>), how long the hair cell takes to fire without any external input (spontaneous firing rate <b>spontaneousrate</b>, can be 0, otherwise baseline firing rate) and the amount that input boosts the chemical flow rate leading to cell fire (<b>boostrate</b>).<span class="Apple-converted-space">   </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>input</b> - input to be processed (essentially, basilar membrane motion at a particular point, pulling an inner hair cell's stereocilia)</p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> <span class="s2">Meddis</span></p>
+<p class="p2"><br></p>
+<p class="p3"><br></p>
+<p class="p4">//try passing a signal through the hair cell; it won't come out like a pure sine, more like an impulse train stimulated by that input</p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">SinOsc</span>.ar(440)),0.0) }.play;</p>
+<p class="p6"><br></p>
+<p class="p4">//modulation effects</p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">Saw</span>.ar(<span class="s3">MouseX</span>.kr(1,1000)),0.0,<span class="s3">MouseY</span>.kr(0.0,1000.0)),0.0) }.play;</p>
+<p class="p6"><br></p>
+<p class="p4">//constantly self oscillates at 5 Hz, talk through it to modulate from base rate...<span class="Apple-converted-space"> </span></p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">SoundIn</span>.ar,5.0,100),0.0) }.play;</p>
+<p class="p6"><br></p>
+<p class="p4">//sweeps and beeps</p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">Saw</span>.ar(<span class="s3">MouseX</span>.kr(1,10)),0,<span class="s3">MouseY</span>.kr(0,10000)),0.0) }.play;</p>
+<p class="p6"><br></p>
+<p class="p4">//store can run out of chemicals<span class="Apple-converted-space"> </span></p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">SinOsc</span>.ar(440),0,440,<span class="s3">MouseX</span>.kr(0,1000)),0.0) }.play;</p>
+<p class="p6"><br></p>
+<p class="p4">//raucous</p>
+<p class="p5">{ <span class="s3">Pan2</span>.ar(<span class="s3">HairCell</span>.ar(<span class="s3">Saw</span>.ar( <span class="s3">HairCell</span>.ar(<span class="s3">SoundIn</span>.ar,0,<span class="s3">MouseY</span>.kr(0,10000))*1000.0),<span class="s3">MouseX</span>.kr(0.0,1000.0),<span class="s3">MouseY</span>.kr(0.0,1000.0)),0.0) }.play;</p>
+</body>
+</html>

@@ -77,6 +77,7 @@ endmacro()
 #-----------------------
 
 set(PLUGIN_DIRS
+    AntiAliasingOscillators
     ATK
     BatUGens
     BBCut2UGens
@@ -102,6 +103,7 @@ set(PLUGIN_DIRS
 
 # plugins with extra lib
 set(PLUGIN_DIRS_EXTRA
+    AuditoryModeling
 	BetablockerUGens
     LadspaUGen
     MembraneUGens
@@ -169,6 +171,13 @@ install(DIRECTORY local DESTINATION "${INSTALL_DESTINATION_DISTRO}"
 # plugins with extras:
 #---------------------
 
+
+# AuditoryModeling
+file(GLOB AuditoryModelingSources AuditoryModeling/*cpp)
+
+BUILD_PLUGIN(AuditoryModeling "${AuditoryModelingSources}" "" "AuditoryModeling")
+
+
 #BetablockerUGens
 BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
              "" "BetablockerUGens")
@@ -194,6 +203,8 @@ endif()
 
 BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
              "${PitchDetectionLibs}" "PitchDetection")
+
+
 
 if (NOT APPLE)
 	find_package(FFTW3f)

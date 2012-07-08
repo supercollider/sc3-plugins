@@ -1,0 +1,47 @@
+class:: HairCell
+summary:: Simple cochlear hair cell model
+related:: Classes/Meddis,Classes/Gammatone
+categories:: UGens>Analysis, UGens>Filters
+
+Description::
+
+Simple hair cell model. Greater size input (positive values only, ie only in one direction as in real inner hair cells) opens the ion channels more to receive chemicals at rate minrate+(input*rate). If the accumulated chemical reaches 1.0 units, the cell fires, going to output value 1.0, and then decaying each sample with a loss factor. There is a limited store of chemicals, which is constantly being replenished at rate restorerate. The flow variables here are frequencies; they state how many times the store could be replenished per second (restorerate), how long the hair cell takes to fire without any external input (spontaneous firing rate spontaneousrate, can be 0, otherwise baseline firing rate) and the amount that input boosts the chemical flow rate leading to cell fire (boostrate).   
+
+
+
+classmethods::
+
+method::ar
+
+argument::input
+input to be processed (essentially, basilar membrane motion at a particular point, pulling an inner hair cell's stereocilia)
+
+argument::spontaneousrate
+argument::boostrate
+argument::restorerate
+argument::loss
+
+
+Examples::
+
+code::
+
+//try passing a signal through the hair cell; it won't come out like a pure sine, more like an impulse train stimulated by that input
+{ Pan2.ar(HairCell.ar(SinOsc.ar(440)),0.0) }.play;
+
+//modulation effects
+{ Pan2.ar(HairCell.ar(Saw.ar(MouseX.kr(1,1000)),0.0,MouseY.kr(0.0,1000.0)),0.0) }.play;
+
+//constantly self oscillates at 5 Hz, talk through it to modulate from base rate... 
+{ Pan2.ar(HairCell.ar(SoundIn.ar,5.0,100),0.0) }.play;
+
+//sweeps and beeps
+{ Pan2.ar(HairCell.ar(Saw.ar(MouseX.kr(1,10)),0,MouseY.kr(0,10000)),0.0) }.play;
+
+//store can run out of chemicals 
+{ Pan2.ar(HairCell.ar(SinOsc.ar(440),0,440,MouseX.kr(0,1000)),0.0) }.play;
+
+//raucous
+{ Pan2.ar(HairCell.ar(Saw.ar( HairCell.ar(SoundIn.ar,0,MouseY.kr(0,10000))*1000.0),MouseX.kr(0.0,1000.0),MouseY.kr(0.0,1000.0)),0.0) }.play;
+
+::

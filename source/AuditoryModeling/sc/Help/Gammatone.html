@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.32">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0500da}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cc0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0500da}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #0000c9}
+span.s4 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>Gammatone<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Single gammatone filter<span class="Apple-converted-space"> </span></b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Gammatone.ar(input, centrefrequency, bandwidth, mul, add )</b></p>
+<p class="p2"><br></p>
+<p class="p1">A bandpass filter, as used in auditory modeling; approximates the frequency selectivity of a haircell site on the basilar membrane in the cochlea.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><b>input</b> - input sound to filter.</p>
+<p class="p1"><b>centrefrequency</b> - Centre frequency. Default value is 440.0. Cannot be modulated.</p>
+<p class="p1"><b>bandwidth</b> - Bandwidth of filter. Default value is 200.0. Cannot be modulated.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><b>See also:</b> </span>Meddis, HairCell</p>
+<p class="p2"><br></p>
+<p class="p4"><br></p>
+<p class="p5">// what this example does</p>
+<p class="p6"><span class="s2">{ </span>Gammatone<span class="s2">.ar(</span>WhiteNoise.ar<span class="s2">) }.play;</span></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p7">//test sweeping frequency of sine input</p>
+<p class="p8">{ <span class="s3">Gammatone</span>.ar(<span class="s3">SinOsc</span>.ar(<span class="s3">MouseX</span>.kr(100,2000)),1000.0,500.0) }.play;</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p9">//create gammatone filterbank with filters centred on 88 piano keys</p>
+<p class="p8">(</p>
+<p class="p8"><span class="s4">var</span> outereargain, freqs, bandwidths;<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p8">freqs= <span class="s4">Array</span>.fill(88, {<span class="s4">|i|</span> (21+i).midicps});</p>
+<p class="p4"><br></p>
+<p class="p9">//bandwidths in Hz not angular frequency for calculations in Hohmann</p>
+<p class="p8">bandwidths= 24.7*(freqs*0.00437 +1);</p>
+<p class="p4"><br></p>
+<p class="p9">//could reduce these bandwidths, ie 0.125*bandwidths, as test of resonance<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p9">//calculated from ISO2002 100dB phon curve as approximation to sensitivity of outer ear</p>
+<p class="p8">outereargain = [ 0.080993772688853, 0.089237063418603, 0.097970525722848, 0.10876266808815, 0.12105360022674, 0.13407538922284, 0.14787149408674, 0.16167718172822, 0.17551213214451, 0.19016975152285, 0.20569895830538, 0.22220242493157, 0.2397154127401, 0.2582697769952, 0.27792744116278, 0.29856170337058, 0.32031587344117, 0.34336361377938, 0.36778184407609, 0.39203618886184, 0.41615498938524, 0.44170796842, 0.46878040665827, 0.49446634124901, 0.52001934250193, 0.54709180427952, 0.57577407840633, 0.60165721569576, 0.62782392863276, 0.6555465952902, 0.68491773749099, 0.72411898089945, 0.77354432147194, 0.82590864573464, 0.88138671475204, 0.90157113760596, 0.90157113760596, 0.90157113760596, 0.90157113760596, 0.91510438365248, 0.93321426408541, 0.95240101404735, 0.97272866753273, 0.98926474289463, 1.0053814152966, 1.0224564349105, 1.0405467880267, 1.052760426677, 1.061847894439, 1.071475731154, 1.0816760688321, 1.0839269140212, 1.0839269140212, 1.0839269140212, 1.0839269140212, 1.0817917022137, 1.0789305551391, 1.0758992754061, 1.0726877464002, 1.0605734918597, 1.0429115831426, 1.0241994426808, 1.0043746204451, 0.95672713285027, 0.89882037142901, 0.83747029478932, 0.77247215275345, 0.75895909569467, 0.74934344623004, 0.73915602049396, 0.72836281890006, 0.75972195442662, 0.81665861045357, 0.87698089623035, 0.94089013177825, 1.022563004048, 1.1129841925092, 1.2087821046319, 1.3102764570426, 1.3485952672556, 1.3833144995125, 1.4200982447533, 1.4590692653081, 1.4180204618623, 1.3674299412878, 1.3138311518147, 1.2570452124657, 1.1677392221542 ];</p>
+<p class="p4"><br></p>
+<p class="p9">//OK, make filterbank with 88 channels! mixed down for clarity...</p>
+<p class="p8">{<span class="s4">Mix</span>(<span class="s4">Gammatone</span>.ar(<span class="s4">WhiteNoise</span>.ar,freqs, bandwidths)*outereargain)}.play;</p>
+<p class="p4"><br></p>
+<p class="p9">//{Mix(Gammatone.ar(SoundIn.ar,freqs, bandwidths)*outereargain)}.play;</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p8">)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p7">//20 channels with ERB scale spacing of centre frequencies. With each filter channel put through Meddis haircell models, may simulate what a cochlear implant 'sounds' like</p>
+<p class="p4"><br></p>
+<p class="p8">(</p>
+<p class="p8"><span class="s3">var</span> outereargain, freqs, bandwidths;<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="s3">var</span> lowerbs, higherbs;<span class="Apple-converted-space"> </span></p>
+<p class="p8"><span class="s3">var</span> lowfreq, highfreq, numbands;</p>
+<p class="p8"><span class="s3">var</span> prop, erbsnow;<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p7">//create bank spaced equally in ERB scale units from lower frequency to higher</p>
+<p class="p8">lowfreq = 100.0;</p>
+<p class="p7"><span class="s2">highfreq= 8000.0; </span>//can increase this, maybe up to 16000.0?</p>
+<p class="p7"><span class="s2">numbands= 20; </span>//try increasing this, nice around 50 <span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p8">lowerbs = log10((lowfreq*0.00437 +1))*21.4;<span class="Apple-converted-space"> </span></p>
+<p class="p8">higherbs = log10((highfreq*0.00437 +1))*21.4;<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p8">freqs= <span class="s3">Array</span>.fill(numbands,{<span class="s3">arg</span> i;<span class="Apple-converted-space">   </span></p>
+<p class="p4"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span>prop= i.asFloat/(numbands-1);</p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>erbsnow= lowerbs+((prop)*(higherbs-lowerbs));<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span>228.8455*(pow(10, 0.046728972*erbsnow)-1);</p>
+<p class="p4"><br></p>
+<p class="p8">});</p>
+<p class="p4"><br></p>
+<p class="p8">bandwidths= 24.7*(freqs*0.00437 +1);</p>
+<p class="p4"><br></p>
+<p class="p7">//OK, make filterbank with 20 channels, passing each into Meddis model mixed down for clarity...</p>
+<p class="p4"><br></p>
+<p class="p8">{<span class="s3">Mix</span>(<span class="s3">Meddis</span>.ar(<span class="s3">Gammatone</span>.ar(<span class="s3">SoundIn</span>.ar,freqs, bandwidths)))}.play;</p>
+<p class="p4"><br></p>
+<p class="p8">)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p8">coded following:<span class="Apple-converted-space"> </span></p>
+<p class="p8">V Hohmann Frequency analysis and synthesis using a Gammatone filterbank Acta Acustica vol 88 (2002): 433--442</p>
+</body>
+</html>
