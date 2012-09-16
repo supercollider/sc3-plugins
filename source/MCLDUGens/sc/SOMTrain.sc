@@ -258,7 +258,7 @@ KMeansRT : UGen {
 		^this.multiNew('control', bufnum, k, gate, reset, *inputdata)
 	}
 	*getCentroid { |bufnum, classif, ndims|
-		^BufRd.kr(ndims + 1, bufnum, classif, interpolation: 1)[..ndims];
+		^BufRd.kr(ndims + 1, bufnum, classif, interpolation: 1)[..ndims-1];
 	}
 }
 
