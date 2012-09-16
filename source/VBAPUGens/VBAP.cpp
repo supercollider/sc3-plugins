@@ -616,8 +616,20 @@ static void VBAP_Ctor(VBAP* unit)
 	float fbufnum = ZIN0(1);
 	uint32 ibufnum = (uint32)fbufnum;
 	World *world = unit->mWorld;
-	if (ibufnum >= world->mNumSndBufs) ibufnum = 0;
-	SndBuf *buf = world->mSndBufs + ibufnum;
+
+	SndBuf *buf;
+	if (ibufnum >= world->mNumSndBufs) {
+		int localBufNum = ibufnum - world->mNumSndBufs;
+		Graph *parent = unit->mParent;
+		if(localBufNum <= parent->localBufNum) {
+			buf = parent->mLocalSndBufs + localBufNum;
+		} else {
+			buf = world->mSndBufs;
+		}
+	} else {
+		buf = world->mSndBufs + ibufnum;
+	}
+
 	int numvals = buf->samples;
 	unit->x_dimension = (int)(buf->data[datapointer++]);
 	unit->x_ls_amount = (int)(buf->data[datapointer++]);
