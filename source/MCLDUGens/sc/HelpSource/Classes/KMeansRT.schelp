@@ -31,6 +31,15 @@ If reset is greater than 0, the "flexibility" of the centroids is reset back to 
 returns:: the cluster index with which the input datapoint has been associated.
 
 
+METHOD:: getCentroid
+A convenience method (just a wrapper round BufRd really) that lets you access the centroid location, given a cluster index.
+argument:: bufnum
+the same buffer as is passed to .kr
+argument:: classif
+the classification index, i.e. the output from .kr
+argument:: ndims
+the number of dimensions ("d" in the above description)
+returns:: the "d"-dimensional current location of the centroid corresponding to index "classif".
 
 EXAMPLES::
 
@@ -57,7 +66,7 @@ x = {
 	classif.poll(chaintrig);
 
 	// Now we read the centroid position back out of the buffer and sonify
-	centroid = BufRd.kr(~ndims + 1, ~kbuf, classif, interpolation: 1).at(0);
+	centroid = KMeansRT.getCentroid(~kbuf, classif, ~ndims).at(0);
 
 	resynth = SinOsc.ar(centroid, 0, 0.1);
 	[sig, resynth]
