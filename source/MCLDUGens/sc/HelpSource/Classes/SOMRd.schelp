@@ -1,0 +1,70 @@
+CLASS:: SOMRd
+summary:: Map an input using a Self-Organising Map
+categories:: UGens>Analysis
+related:: Classes/SOMTrain
+
+DESCRIPTION::
+Once you have created a self-organising map using link::Classes/SOMTrain::, you can query it using SOMRd. This UGen takes an input vector (i.e. multichannel input) and outputs the co-ordinate of the best-matching node in the SOM, i.e. the node which is closest to the input vector (using Euclidean distance). It can run at control- or audio-rate.
+
+For some applications you might want to retrieve the best-matching template vector, i.e. the spatial location of the best-matching node, rather than just its index in the net. You can use SOMRd.coordsToBufIndex(coords, netsize) to find which Buffer frame contains that vector, and then use BufRd to pull the vector out. See examples...
+
+CLASSMETHODS::
+
+METHOD:: kr
+argument:: bufnum
+A reference to the buffer containing the SOM.
+argument:: inputdata
+An Array of the input signals for the net to map.
+argument:: netsize
+The size of the neural net along one dimension. Must match what you trained it with.
+argument:: numdims
+The dimensionality of the neural net. Choose from 1, 2, 3, or 4. Must match what you trained it with.
+argument:: gate
+A simple on-or-off control. When off (gate<=0) the incoming data is ignored (output stays constant).
+
+
+EXAMPLES::
+
+Here we'll assume you have a SOM trained as in the example from the SOMTrain helpfile, i.e. it's stored in variable ~som, with ~numnodes nodes, and a 1D net trained on 2D input data.
+
+code::
+// This simple example takes mouse X and Y coords onscreen and prints the co-ordinate of the nearest node.
+// Try drawing a big sinewave across the screen, like the one plotted in the SOMTrain helpfile.
+(
+x = {
+var coords;
+coords = SOMRd.kr(~som, [MouseX.kr(0, 2), MouseY.kr(1, -1)], ~numnodes, 1);
+coords.poll(4);
+}.play
+)
+
+// This is the same as above but then retrieves the "template vector" from the SOM and uses it for pitch/cutoff of a tone.
+// Top of screen = hi cutoff, bottom of screen = lo cutoff. Left = lo pitch, right = hi pitch.
+// Notice how the SOM mapping constrains what is possible, and you get the best resolution by following the sine curve.
+(
+x = {
+var coords, index, vec;
+coords = SOMRd.kr(~som, [MouseX.kr(0, 2), MouseY.kr(1, -1)], ~numnodes, 1);
+coords.poll(4);
+index = SOMRd.coordsToBufIndex(coords, ~numnodes);
+vec = BufRd.kr(2, ~som, index); // "vec" is of range [0 to 2, -1 to 1]
+MoogFF.ar(Saw.ar(vec[0].linexp(0, 2, 80, 400)), vec[1].linexp(-1, 1, 300, 15000), mul: 0.1).dup;
+}.play
+)
+
+// Audio-rate example, a slightly weird one.
+// Essentially this takes a "query" wave and looks it up in the map, therefore coercing it to a strange sort-of-sine-like shape.
+// Try this on the internal server and scope the results.
+(
+x = {
+var freq, query, coords, index, vec;
+freq = MouseX.kr(100, 400, 1);
+query = LFTri.ar(freq).range(1, -1);
+coords = SOMRd.ar(~som, [Saw.ar(freq).range(0, 2), query], ~numnodes, 1);
+index = SOMRd.coordsToBufIndex(coords, ~numnodes);
+vec = BufRd.ar(2, ~som, index);
+[query, vec[1]] * 0.1; // Output the vertical position from the map
+}.play
+)
+::
+

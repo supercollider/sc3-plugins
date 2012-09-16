@@ -1,0 +1,153 @@
+CLASS:: SOMTrain
+summary:: Create (train) a Self-Organising Map
+categories:: UGens>Analysis
+related:: Classes/SOMRd
+
+DESCRIPTION::
+This UGen trains a self-organising map (a well-known type of neural net), which is a system which learns to map a high-dimensional feed of input data onto a lower-dimensional array of "nodes". The neural net is stored in a Buffer. Once trained, the net can be analysed or can be used to transform other incoming data (using SOMRd).
+
+CLASSMETHODS::
+METHOD:: kr
+argument:: bufnum
+A reference to the buffer where the map will be created. Initialising the map is up to you (see below).
+
+argument:: inputdata
+An Array of the input signals for the net to learn.
+
+argument:: netsize
+The size of the neural net along one dimension.
+
+argument:: numdims
+The dimensionality of the neural net. Choose from 1, 2, 3, or 4.
+
+argument:: traindur
+The length of the training period; the number of data frames that will come in before the net gradually "freezes" into its final state
+
+argument:: nhood
+The initial size of the neighbourhood used in training. (The size always shrinks to zero as the training progresses.) The size is expressed as a fraction of netsize. Default is 0.5, and you probably don't need to change it.
+
+argument:: gate
+A simple on-or-off control. When off (gate<=0) the incoming data is ignored.
+
+argument:: initweight
+How heavily the algorithm weights the data points at first (the weighting always tails off to zero as the training progresses, in a reciprocal curve). Default is 1, and you usually don't need to change this.
+
+returns::
+The UGen outputs an array of three values: the number of data points still to come in before training finishes; the "reconstruction error" of the single data point that has most recently been input (the squared-distance between it and the node nearest it); and the frame index of the most recent matching node. The "reconstruction error" will vary a lot but should in general decrease as the net comes closer and closer to mapping the data well. The frame index gives a direct index into the Buffer, and can be converted to a multidimensional location in the SOM structure using SOMRd.bufIndexToCoords.
+
+
+Note: this UGen does not cope well if the buffer is freed or changed during running. For efficiency purposes, it doesn't keep checking the buffer while running; so you should avoid changing the buffer while the training is running.
+
+
+SECTION:: BUFFER SIZE AND NUMBER OF NODES/DIMENSIONS:
+
+
+The number of nodes in the net is defined by netsize AND numdims. 
+
+If the netsize is 10 and the numdims is 2, the actual number of nodes is 10 x 10 = 100. 
+
+Or if numdims is 3, the number of nodes is 10 x 10 x 10 = 1000.
+
+
+The buffer must contain the same number of frames as the number of nodes; and it must have the same number of channels as the inputdata array. The SOMTrain class provides a convenience function for allocating a buffer of the right size:
+
+
+~asuitablebuffer = SOMTrain.allocBuf(s, netsize, numdims, numinputdims); // Calls Buffer.alloc on your behalf
+
+
+SECTION:: INITIALISING THE MAP
+
+
+The values held by the SOM nodes must usually be initialised to some state before the training begins. In the literature on SOMs there are a couple of common options such as random intialisation, or initialisation using the principal components of the input data. It's up to you - since the map is just a regular Buffer object, you can use Buffer's loadCollection methods (etc) to fill the map in any way. However, the SOMTrain class provides a couple of conveniences:
+
+
+SOMTrain.initBufRand(b); // Each node gets an independent randomly-distributed co-ordinate (i.e. ignores where its neighbours might be)
+
+
+SOMTrain.initBufGrid(b, netsize, numdims, spinmatrix); // The nodes are initialised as a grid, oriented according to the supplied rotation matrix (nested array, size [numinputdims][numdims])
+
+
+SOMTrain.initBufGridRand(b, netsize, numdims); // The nodes are initialised as a grid, randomly oriented in the input space
+
+
+The first of these options is simple but not recommended: starting with a completely random arrangement of nodes is quite likely to lead to a resulting map with "twists" in it, which may be an unhelpful local-minimum solution.
+
+
+EXAMPLES::
+
+An SOM will try to fit a smooth-ish surface to the given data, so as a test case let's create a single sine-wave undulation in a Buffer, and see if a one-dimensional SOM can fit nicely to that sinewave. (For higher dimension examples see SOMTrain_2D_example, SOMTrain_3D_example)
+
+code::
+s.boot;
+~numnodes = 20;
+~traindur = 10000;
+// First create the data
+~dataspace = Buffer.alloc(s, s.sampleRate); // Let's have 1 second of data
+~dataspace.sine1([1], true, false);
+~dataspace.plot;
+// Allocate space for the SOM, and initialise it
+~som = SOMTrain.allocBuf(s, ~numnodes, 1, 2);
+// Typically wewouldn't recommend initBufRand, so let's use initBufGridRand:
+SOMTrain.initBufGridRand(~som, ~numnodes, 1, [1,0], 1.5);
+~som.plot(minval:nil.dup, maxval: nil.dup); // Quick peek at how the SOM nodes are initially positioned
+
+// Also, just for demonstration purposes, we're going to write the error values to a buffer so we can see how they evolve
+~errorvals = Buffer.alloc(s, ~traindur);
+
+// Now train the SOM. To train it with data "randomly sampled" from the data buffer, we just wiggle the phase around and feed [phase, val] to the SOM.
+(
+x = {
+var phase, val, remain, err, loc, trig;
+trig = 1;
+phase = WhiteNoise.kr.range(0, ~dataspace.numFrames-1);
+val = BufRd.kr(1, ~dataspace, phase, 1);
+phase.poll(trig, label: "phase");
+val.poll(trig, label: "val");
+// Note: phase is rescaled to 0--2 range here, so it can be similar range to other dimension
+# remain, err, loc = SOMTrain.kr(~som, [phase*2/s.sampleRate, val], ~numnodes, 1, ~traindur, nhood: 0.75, gate: trig);
+remain.poll(trig, label: "remain");
+err.poll(trig, label: "err");
+loc.poll(trig, label: "wrote at frame index");
+BufWr.kr(err.sqrt, ~errorvals, ~traindur-remain);
+Out.ar(0, Pan2.ar(K2A.ar(val) * 0.01));
+}.play
+)
+
+// Once the training is finished (i.e. once "remain" drops to zero):
+x.free;
+
+// We should be able to look at the 2D data points represented in the SOM and see if they line up with the sinewave.
+
+// This plot is nice if you have OctaveSC installed:
+o = OctaveSC.new;
+o.init
+(
+~som.loadToFloatArray(action: {|arr|
+o[\xtemp] = arr[0,2..].as(Array).postln;
+o[\ytemp] = arr[1,3..].as(Array).postln;
+o.("figure; hold off");
+o.("plot(xtemp, ytemp, '-@')");
+o.("hold on");
+o.("spls = [0:0.01:2]; plot(spls, sin(spls*2*pi/2))");
+});
+);
+
+// Otherwise here's a quick 2D plot in pure SC - does it look like the sinewave you started with?
+(
+~som.loadToFloatArray(action: {|arr| {
+w = GUI.window.new("SOM nodes", Rect(200, 800, 600, 600)); // SCWindow
+w.view.background = Color.white;
+(0,2..arr.size-1).do{|index|
+GUI.staticText.new(w, Rect(
+arr[index] * 600 / 2, 
+600 - (arr[index+1] + 1 * 300), 10, 10)).string_("x") // SCStaticText
+};
+w.front;
+}.defer})
+)
+
+
+// How do the errors look? Should be a very noisy curve gradually decreasing, but won't necessarily stabilise
+~errorvals.plot(maxval: nil, minval: nil);
+::
+
