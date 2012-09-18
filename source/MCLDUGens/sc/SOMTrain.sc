@@ -101,7 +101,7 @@ SOMTrain : MultiOutUGen {
 	*trainFromFile { | path, init=\gridrand, numdims=2, netsize=10, numruns=1, server, action, nhood=0.5, initweight=1 |
 		var sombuf, databuf, sf, numFramesToDo, dur, numFeatures;
 		if(server.isNil){ server = Server.default };
-		if(File.exists(path).not){ ^"File not found: %".format(path).error};
+		if(File.exists(path).not){ Error("File not found: %".format(path)).throw};
 		if(action.isNil){action = path.splitext[0] ++ "-SOMcoords.aiff"};
 
 		server.waitForBoot {
@@ -114,7 +114,7 @@ SOMTrain : MultiOutUGen {
 				"data file will play % time(s) though % data points, taking % seconds".format(numruns, sf.numFrames, dur).postln;
 				numFeatures = sf.numChannels;
 			}{
-				^"trainFromFile: Could not read header of data file %".format(path).error
+				Error("trainFromFile: Could not read header of data file %".format(path)).throw
 			};
 			sf.close;
 
@@ -124,15 +124,15 @@ SOMTrain : MultiOutUGen {
 				if(sf.openRead){
 					// Check that the init file has the expected numdims and netsize and numFeatures
 					if(sf.numChannels != numFeatures){
-						^"trainFromFile: data file has % features, yet % channels in init file %"
-									.format(numFeatures, sf.numChannels, init).error
+						Error("trainFromFile: data file has % features, yet % channels in init file %"
+						.format(numFeatures, sf.numChannels, init)).throw
 					};
 					if(sf.numFrames != (netsize ** numdims)){
-						^"trainFromFile: called with netsize=% and numdims=%, yet % frames in init file %"
-									.format(netsize, numdims, sf.numFrames, init).error
+						Error("trainFromFile: called with netsize=% and numdims=%, yet % frames in init file %"
+							.format(netsize, numdims, sf.numFrames, init)).throw
 					};
 				}{
-					^"trainFromFile: Could not read header of init file %".format(init).error
+					Error("trainFromFile: Could not read header of init file %".format(init)).throw
 				};
 				sf.close;
 			};
@@ -184,13 +184,13 @@ SOMRd : MultiOutUGen {
 
 	*kr { |bufnum, inputdata, netsize=10, numdims=2, gate=1|
 		if((numdims < 1) or: {numdims > 4})
-			{^"numdims must be between 1 and 4".error};
+		{Error("numdims must be between 1 and 4").throw};
 		inputdata = inputdata.asArray;
 		^this.multiNew('control', bufnum, netsize, numdims, gate, *inputdata)
 	}
 	*ar { |bufnum, inputdata, netsize=10, numdims=2, gate=1|
 		if((numdims < 1) or: {numdims > 4})
-			{^"numdims must be between 1 and 4".error};
+		{Error("numdims must be between 1 and 4").throw};
 		inputdata = inputdata.asArray;
 		^this.multiNew('audio', bufnum, netsize, numdims, gate, *inputdata)
 	}
