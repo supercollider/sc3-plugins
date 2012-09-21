@@ -58,7 +58,8 @@ if (OSX_PACKAGE)
 endif()
 
 if(WIN32)
-    install( FILES README_WINDOWS.txt DESTINATION . RENAME README.txt )
+    configure_file( README_WINDOWS.txt.in README_WINDOWS.txt)
+    install( FILES "${CMAKE_CURRENT_BINARY_DIR}/README_WINDOWS.txt" DESTINATION . RENAME README.txt )
 endif()
 
 #############################################
