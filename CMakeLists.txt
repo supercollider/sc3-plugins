@@ -19,6 +19,10 @@ else()
 	message(STATUS "Using SC source located at ${SC_PATH}")
 endif()
 
+include("${SC_PATH}/SCVersion.txt")
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
+message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
+
 option(SUPERNOVA "Build plugins for supernova")
 option(AY "Build with AY ugens" ON)
 option(QUARKS "Install plugins as quarks")
@@ -60,9 +64,9 @@ endif()
 #############################################
 # CPack support
 
-set(CPACK_PACKAGE_VERSION_MAJOR 3)
-set(CPACK_PACKAGE_VERSION_MINOR 5)
-set(CPACK_PACKAGE_VERSION_PATCH dev)
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 
 if(WIN32)
     set(CPACK_GENERATOR ZIP)
