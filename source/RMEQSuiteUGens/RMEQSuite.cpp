@@ -296,7 +296,7 @@ void Allpass1_next_a(Allpass1* unit, int inNumSamples)
 		    unit->m_a0 = a0 = -b1;
 		    }
 
-		float y0 = ZXP(in) + b1 * y1;
+		double y0 = ZXP(in) + b1 * y1;
 		ZXP(out) = a0 * y0 + a1 * y1;
 		y1 = y0;
 	);
@@ -328,7 +328,7 @@ void Allpass1_next_k(Allpass1* unit, int inNumSamples)
 	    }
 
 	LOOP(inNumSamples,
-		float y0 = ZXP(in) + b1 * y1;
+		double y0 = ZXP(in) + b1 * y1;
 		ZXP(out) = a0 * y0 + a1 * y1;
 		y1 = y0;
 
@@ -699,7 +699,7 @@ void RMShelf_next_a(RMShelf* unit, int inNumSamples)
 		    unit->m_a0 = a0 = -b1;
 		    }
 
-		float y0 = (curin = ZXP(in)) + b1 * y1;
+		double y0 = (curin = ZXP(in)) + b1 * y1;
 		allpass = (a0 * y0 + a1 * y1) * ksign;
 		ZXP(out) = 0.5 * (curin + allpass + (kabs * (curin - allpass)));
 		y1 = y0;
@@ -746,7 +746,7 @@ void RMShelf_next_k(RMShelf* unit, int inNumSamples)
 	    }
 
 	LOOP(inNumSamples,
-		float y0 = (curin = ZXP(in)) + b1 * y1;
+		double y0 = (curin = ZXP(in)) + b1 * y1;
 		allpass = (a0 * y0 + a1 * y1) * ksign;
 		ZXP(out) = 0.5 * (curin + allpass + (kabs * (curin - allpass)));
 
@@ -825,7 +825,7 @@ void RMShelf2_next_a(RMShelf2* unit, int inNumSamples)
 	float *in = ZIN(0);
 	float *freq = ZIN(1);
 	float *k = ZIN(2);
-	float curfreq, curk, ksign, kabs, y0, y0_2, sum, curin, allpass1, allpass2;
+	float curfreq, curk, ksign, kabs, sum, curin, allpass1, allpass2;
 	double wc, a0, a1, b1;
 	a0 = unit->m_a0;
 	a1 = unit->m_a1;
@@ -853,11 +853,11 @@ void RMShelf2_next_a(RMShelf2* unit, int inNumSamples)
 		    unit->m_k = curk;
 		    }
 
-		y0 = (curin = ZXP(in)) + b1 * y1;
+		double y0 = (curin = ZXP(in)) + b1 * y1;
 		allpass1 = a0 * y0 + a1 * y1;
 		y1 = y0;
 
-		y0_2 = allpass1 + b1 * y1_2;
+		double y0_2 = allpass1 + b1 * y1_2;
 		allpass2 = a0 * y0_2 + a1 * y1_2;
 		y1_2 = y0_2;
 
@@ -1079,7 +1079,7 @@ void Spreader_next_k(Spreader* unit, int inNumSamples)
 		    sig = curIn = in[j];
 
 		    for(int i = 0; i < unit->m_numFilts; i ++){
-			float y0 = sig + unit->m_b1[i] * unit->m_y1[i];
+			double y0 = sig + unit->m_b1[i] * unit->m_y1[i];
 			sig = unit->m_a0[i] * y0 + 1. * unit->m_y1[i];
 			unit->m_y1[i] = y0;
 			}
@@ -1099,7 +1099,7 @@ void Spreader_next_k(Spreader* unit, int inNumSamples)
 		    sig = curIn = in[j];
 
 		    for(int i = 0; i < unit->m_numFilts; i ++){
-			float y0 = sig + unit->m_b1[i] * unit->m_y1[i];
+			double y0 = sig + unit->m_b1[i] * unit->m_y1[i];
 			sig = unit->m_a0[i] * y0 + 1. * unit->m_y1[i];
 			unit->m_y1[i] = y0;
 			}
