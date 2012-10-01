@@ -1,0 +1,79 @@
+class:: SpectralEntropy
+summary:: Spectral feature extraction
+related:: Classes/SensoryDissonance
+categories:: UGens>Analysis
+keyword:: spectral entropy
+
+Description::
+
+Spectral Entropy, with a choice of number of sub-bands. If one band, a measure of general peakiness of the spectral distribution.  
+
+See: 
+SPECTRAL ENTROPY AS SPEECH FEATURES FOR SPEECH RECOGNITION Aik Ming Toh, Roberto Togneri and Sven Nordholm http://www.ee.uwa.edu.au/~roberto/research/theses/tr05-01.pdf
+
+Pass an FFT in.  
+
+
+classmethods::
+
+method::kr
+
+
+argument::fft
+input fft chain, that is, from an FFT UGen
+argument::fftsize
+Size of FFT buffer must be known in advance for pre-calculation 
+argument::numbands 
+Number of sub-bands for entropy calculation; spectral bins are collected in sub-bands, and the number of outputs of the UGen is numbands
+
+Examples::
+
+code::
+
+(
+{
+
+var in, fft, entropy;
+
+//in = SinOsc.ar(MouseX.kr(100,1000),0,0.1);
+//in = Mix(SinOsc.ar([440,MouseX.kr(440,880)],0,0.1));  
+in= SoundIn.ar; 
+
+fft = FFT(LocalBuf(2048), in);
+
+entropy=SpectralEntropy.kr(fft,2048,1);	//one output band (so full spectrum's entropy)
+
+entropy.poll; 
+
+Out.ar(0,Pan2.ar(0.1*Blip.ar(100,10*(entropy.sqrt)))); 
+}.play
+)
+
+
+
+
+(
+{
+
+var in, fft, entropy;
+var amplitude; 
+
+in= SoundIn.ar; 
+
+amplitude = Amplitude.kr(in); 
+
+fft = FFT(LocalBuf(1024), in);
+
+entropy=SpectralEntropy.kr(fft,1024,10);//10 bands
+
+entropy = entropy * (amplitude.min(0.2)*5.0); //scale by amplitude to avoid low amplitude noise issues
+
+entropy.poll; 
+
+//Out.ar(0,Pan2.ar(0.1*Blip.ar((entropy[0])*200,entropy[1].sqrt))); 
+
+Out.ar(0,Splay.ar(0.1*Blip.ar((entropy)*200,entropy.sqrt)));
+}.play
+)
+
+::

@@ -41,12 +41,31 @@ struct SensoryDissonance : public Unit
 
 
 
+//convert FFT 
+struct SpectralEntropy : public Unit  
+{
+	//float entropy_; 
+    
+    int numbands_; 
+    int fftsize_;
+    int * bandindices_; 
+    float * intensities_; 
+    float * entropies_; 
+    
+};
+
+
+
 
 extern "C" {  
 	
 	void SensoryDissonance_next_k(SensoryDissonance *unit, int inNumSamples);
 	void SensoryDissonance_Ctor(SensoryDissonance* unit);
 	void SensoryDissonance_Dtor(SensoryDissonance* unit);
+    
+    void SpectralEntropy_next_k(SpectralEntropy *unit, int inNumSamples);
+	void SpectralEntropy_Ctor(SpectralEntropy* unit);
+	void SpectralEntropy_Dtor(SpectralEntropy* unit);
 
 }
 
@@ -311,6 +330,172 @@ void SensoryDissonance_next_k( SensoryDissonance *unit, int inNumSamples ) {
 }
 
 
+
+
+
+
+void SpectralEntropy_Ctor( SpectralEntropy* unit ) {
+	
+	int i, j; 
+    
+    unit->fftsize_ = ZIN0(1);  
+    unit->numbands_ = ZIN0(2);
+    
+    int numbins = unit->fftsize_/2; //won't use actual Nyquist bin in this UGen
+
+    int split = numbins/(unit->numbands_); 
+    
+    if(split<1) {
+        
+        split = 1; 
+        unit->numbands_ = numbins; 
+    }
+    
+    
+    //will include guard element at top
+	unit->bandindices_ = (int *)RTAlloc(unit->mWorld, sizeof(int)*(unit->numbands_+1)); 
+    unit->entropies_ = (float *)RTAlloc(unit->mWorld, sizeof(float)*unit->numbands_); 
+    unit->intensities_ = (float *)RTAlloc(unit->mWorld, sizeof(float)*numbins); 
+    
+    for (i=0; i<unit->numbands_; ++i) {
+        
+        unit->entropies_[i] = 0.0f; 
+        
+        unit->bandindices_[i] = split*i; 
+        
+    }
+    
+    //guard can be one above actual final array slot index since always use less than in code below
+    unit->bandindices_[unit->numbands_] = numbins; //Nyquist position 
+	
+	SETCALC(SpectralEntropy_next_k);
+    
+    
+}
+
+
+void SpectralEntropy_Dtor(SpectralEntropy *unit)
+{
+	
+	RTFree(unit->mWorld, unit->bandindices_);
+	RTFree(unit->mWorld, unit->entropies_);
+	RTFree(unit->mWorld, unit->intensities_);
+    
+}
+
+
+
+
+void SpectralEntropy_next_k( SpectralEntropy *unit, int inNumSamples ) {
+    
+    int i,j; 
+    
+    int numbands = unit->numbands_; 
+    int * bandindices = unit->bandindices_; 
+    float * entropies = unit->entropies_; 
+    float * intensities = unit->intensities_; 
+    
+	//if input is legitimate buffer number: 
+	float fbufnum = ZIN0(0);
+	
+	//next FFT bufffer ready, update
+	//assuming at this point that buffer precalculated for any resampling
+	if (fbufnum > -0.01f) {
+		
+		int ibufnum = (uint32)fbufnum; 
+		
+		World *world = unit->mWorld;
+		SndBuf *buf; 
+		
+		if (ibufnum >= world->mNumSndBufs) {
+			int localBufNum = ibufnum - world->mNumSndBufs;
+			Graph *parent = unit->mParent;
+			if(localBufNum <= parent->localBufNum) {
+				buf = parent->mLocalSndBufs + localBufNum;
+			} else {
+				buf = world->mSndBufs;
+			}
+		} else {
+			buf = world->mSndBufs + ibufnum;
+		}
+              
+        if(unit->fftsize_ == buf->frames) {
+		
+		//make sure in real and imag form
+		//SCComplexBuf * complexbuf = ToComplexApx(buf);  
+		
+		float * data= (float *)ToComplexApx(buf);
+		
+		//float * data= buf->data;
+    
+		float real, imag; 
+        float intensity; 
+		
+        data[1] = 0.0f; //avoid issues with dc, nyquist packed together, just want dc here
+        
+        for  (j=0; j<numbands; ++j) {
+            
+            int start = bandindices[j]; 
+            int end = bandindices[j+1]; 
+            
+            float max = 0.0f; 
+            float entropysum = 0.0f; 
+            
+            //less than because of guard elements
+            for  (i=start; i<end; ++i) {
+                
+                int index = 2*i; 
+                real= data[index];			
+                imag= data[index+1];
+                intensity = (real*real) + (imag*imag);  
+                
+                intensities[i] = intensity; 
+                
+                if(intensity>max) {
+                    
+                    max = intensity; 
+                    
+                }
+                
+            }
+            
+            if(max>0.0f) {
+                
+                max = 1.0f/max; //will be used as straight multiplier in calculation now
+                
+                for  (i=start; i<end; ++i) {
+                        
+                    float prob = intensities[i] * max; 
+                    
+                    //negative worked in via -= 
+                    if(prob>0.0f) entropysum -= prob * log2(prob);  
+                    
+                    //leave sum alone otherwise, has no contribution if 0.0 probability
+                }
+                
+                entropies[j] = entropysum; 
+                
+            } else 
+                entropies[j] = 0.0f; 
+                   
+        }
+    
+            
+        }
+        
+	}
+	
+    for (i=0; i<numbands; ++i)
+		ZOUT0(i) = entropies[i];
+    
+	
+}
+
+
+
+
+
+
 PluginLoad(SensoryDissonance) {
 	
 	init_SCComplex(inTable);
@@ -318,7 +503,7 @@ PluginLoad(SensoryDissonance) {
 	ft = inTable;
 
 	DefineDtorCantAliasUnit(SensoryDissonance);
-		
+	DefineDtorCantAliasUnit(SpectralEntropy);	
 }
 
 
