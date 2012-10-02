@@ -131,7 +131,6 @@ GET_GCC_VERSION(gcc_version)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
-    set(INSTALL_DESTINATION_SUPERNOVA "lib/supernova/plugins")
     if (QUARKS)
         set(INSTALL_DESTINATION_LADSPALIST
                 "share/SuperCollider/SC3plugins/LadspaUGen")
@@ -145,7 +144,6 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     endif(QUARKS)
 else()
     set(INSTALL_DESTINATION "SC3plugins")
-    set(INSTALL_DESTINATION_SUPERNOVA "plugins_supernova")
     set(INSTALL_DESTINATION_LADSPALIST "SC3plugins/LadspaUGen")
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
@@ -281,16 +279,13 @@ endif()
 
 # OSX plugins install is done in BUILD_PLUGIN macro
 if (NOT APPLE)
-    install(TARGETS ${plugins}
+    install(TARGETS ${plugins} ${supernova_plugins}
             DESTINATION ${INSTALL_DESTINATION})
-
-    install(TARGETS ${supernova_plugins}
-            DESTINATION ${INSTALL_DESTINATION_SUPERNOVA})
 endif()
 
 if(NOT WIN32)
-install(TARGETS ladspalist
-        DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
+  install(TARGETS ladspalist
+    DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
 endif()
 
 # install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
