@@ -1,0 +1,83 @@
+CLASS:: MatchingP
+summary:: Real time sparse representation
+categories:: UGens>Analysis
+related:: Classes/FFT
+
+DESCRIPTION::
+This UGen analyses frames of input audio, a bit like link::Classes/FFT:: does, but using the assumption that most of the energy in each audio frame can be represented as a combination of a small number of "atoms". This is achieved using  STRONG::Matching Pursuit::, which is a standard technique in the field of EMPHASIS::sparse representations::.
+
+You must supply a "dictionary" of atoms, given as a Buffer. Each channel of the Buffer is one atom (this means the atoms all have to be the same length - but zero-padding is OK).
+
+This analysis is less efficient than FFT, so be careful of your CPU usage, and use small, short dictionaries if possible. It also outputs a lot of multichannel data.
+
+CLASSMETHODS::
+METHOD:: ar, kr
+argument:: dict
+The Buffer which holds the atoms. NOTE: in most use cases, the atoms should typically all be normalised so that they all have the same L2-norm (see examples below).
+argument:: in
+The input signal.
+argument:: dictsize
+The number of atoms (channels) in the dict.
+argument:: ntofind
+Specifies the number of activations to find in each frame - i.e. the number of atoms that are assumed to be "on" in each frame.
+argument:: hop
+The amount of hop between frames, expressed as a proportion of the dict length (like in link::Classes/FFT::). Maximum is 1.
+argument:: method
+Reserved. (Doesn't currently do anything.)
+
+returns::
+TELETYPE::[trigger, residual, index0, activ0, index1, activ1, ...]:: where TELETYPE::trigger:: indicates the moment when a frame has been processed, TELETYPE::residual:: gives the signal that remains after subtracting the contribution from the selected atoms, and each pair of outputs such as TELETYPE::index0, activ0:: indicates the index of the selected atom and the strength of its activation. This means there will be TELETYPE::ntofind * 2 + 2:: outputs in all.
+
+EXAMPLES::
+
+In this example we make a simple dictionary which happens to be quite similar to an un-windowed FFT basis, and then analyse it.
+
+code::
+~dictlen = 128;
+~dictsize = 64;
+~dictarr = ~dictsize.collect{|i|  sin(2pi*(i+1)*(1..~dictlen)/~dictlen)  };
+~dictarr = ~dictarr.collect{|a| a / a.squared.sum.sqrt }    // Here is where we L2 normalise all the atoms
+// The dictionary buffer:
+~dict = Buffer.loadCollection(s, ~dictarr.flop.flat, ~dictsize);
+~dict.plot
+
+// We'll output the activations to a bus too
+~ntofind = 2;
+~actbus = Bus.audio(s, ~ntofind * 2);
+
+(
+x={
+	var son, outputs, trig, residual, acts, indices, magnitudes, resynth, delayedson;
+	// Try one of these:
+	son = Pulse.ar(200 * SinOsc.kr(0.3).exprange(0.9, 1.1));
+	//son = PinkNoise.ar * LFPulse.kr(1);
+	//son = (PlayBuf.ar(~dictsize, ~dict, MouseX.kr(0.1, 2, 1). loop: 1) * ([0.1, 0.3, 0.5]++{0}.dup(~dictsize-3))).sum;
+	outputs = MatchingP.ar(~dict, son, ~dictsize, ntofind: ~ntofind);
+	trig = outputs[0];
+	residual = outputs[1];
+	acts = outputs[2..];
+	Out.ar(~actbus, acts);
+
+
+	// In the next part we'll resynthesise the sound.
+	// But you might like to mangle the 'acts' data to apply interesting FX:
+	# indices, magnitudes = acts.clump(2).flop;   // This makes it a bit convenient to apply manipulations
+	//magnitudes = magnitudes.collect{|a| a * 3 * SinOsc.ar(exprand(0.1, 10))};
+	//magnitudes = magnitudes.collect{|a| a * 3 * SinOsc.ar(LFNoise1.kr(10).exprange(0.1, 10))};
+	//magnitudes = magnitudes.collect{|a| DelayN.ar(a, 0.1, LFNoise1.kr(0.1).range(0, 0.1))};
+	//magnitudes = magnitudes.reverse;
+	//indices = ~dictsize - indices;
+	acts = [indices, magnitudes].flop.flat; // reconstruct
+
+	resynth = MatchingPResynth.ar(~dict, 0, trig, residual, *acts);
+	delayedson = DelayN.ar(son, delaytime:BufDur.ir(~dict));
+	//Amplitude.ar(resynth - delayedson, 0.1, 1).poll(1, "amplitude of reconstruction error");
+	[delayedson * 0.0001, resynth * 0.1];
+}.play
+)
+
+~actbus.scope
+
+s.scope
+
+::
