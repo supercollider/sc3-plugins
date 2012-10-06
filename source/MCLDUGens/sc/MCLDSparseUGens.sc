@@ -8,15 +8,18 @@ MatchingP : MultiOutUGen {
         }
         init { arg ... theInputs;
                 inputs = theInputs;
-                ^this.initOutputs(2 + theInputs[2], rate);
+                ^this.initOutputs(2 + (theInputs[3]*2), rate);
         }
         *categories { ^ #["UGens>Buffer", "UGens>Analysis"] }
 }
 
 MatchingPResynth : UGen {
-	// NB this is just for convenience and is not infallible - it doesn't handle overlapping activations correctly! fine if hop=1 though.
-	*ar { |dict=0, trig=0 ... activations|
-		^(PlayBuf.ar(activations.size, dict, trigger: trig, loop: 0) * activations).sum;
-	}
+        *ar { arg dict, method=0, trigger, residual=0 ... activs;
+                ^this.multiNewList(['audio', dict, method, (activs.size / 2), trigger, residual] ++ activs)
+        }
+        *kr { arg dict, method=0, trigger, residual=0 ... activs;
+                ^this.multiNewList(['control', dict, method, (activs.size / 2), trigger, residual] ++ activs)
+        }
+        *categories { ^ #["UGens>Buffer", "UGens>Analysis"] }
 }
 

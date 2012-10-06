@@ -26,24 +26,15 @@ argument:: method
 Reserved. (Doesn't currently do anything.)
 
 returns::
-TELETYPE::[trigger, residual, activ0, activ1, activ2, ...]:: where TELETYPE::trigger:: indicates the moment when a frame has been processed, TELETYPE::residual:: gives the signal that remains after subtracting the contribution from the selected atoms, and TELETYPE::activ0, activ1, activ2, ...:: are the activation strengths of each element in the dictionary (in order).
-
-Typically, exactly TELETYPE::ntofind:: of the activation strengths will be nonzero at any point, though it could be fewer.
+TELETYPE::[trigger, residual, index0, activ0, index1, activ1, ...]:: where TELETYPE::trigger:: indicates the moment when a frame has been processed, TELETYPE::residual:: gives the signal that remains after subtracting the contribution from the selected atoms, and each pair of outputs such as TELETYPE::index0, activ0:: indicates the index of the selected atom and the strength of its activation. This means there will be TELETYPE::ntofind * 2 + 2:: outputs in all.
 
 EXAMPLES::
-
-NOTE: because of the large number of channels involved, you may need to increase your server's number of wire-buffers (these are signal buffers internal to a synthdef):
-code::
-s.quit
-s.options.numWireBufs = 256;
-s.boot
-::
 
 In this example we make a simple dictionary which happens to be quite similar to an un-windowed FFT basis, and then analyse it.
 
 code::
 ~dictlen = 128;
-~dictsize = 64; //8;
+~dictsize = 64;
 ~dictarr = ~dictsize.collect{|i|  sin(2pi*(i+1)*(1..~dictlen)/~dictlen)  };
 ~dictarr = ~dictarr.collect{|a| a / a.squared.sum.sqrt }    // Here is where we L2 normalise all the atoms
 // The dictionary buffer:
@@ -51,35 +42,37 @@ code::
 ~dict.plot
 
 // We'll output the activations to a bus too
-~actbus = Bus.audio(s, ~dictsize);
+~ntofind = 2;
+~actbus = Bus.audio(s, ~ntofind * 2);
 
 (
 x={
-	var son, outputs, trig, residual, acts, resynth, delayedson;
-	// Homemade example which should be perfectly recoverable:
-	son = (PlayBuf.ar(~dictsize, ~dict, loop: 1) * ([0.1, 0.3, 0.5]++{0}.dup(~dictsize-3))).sum;
-	// Or you could try one of these:
+	var son, outputs, trig, residual, acts, indices, magnitudes, resynth, delayedson;
+	// Try one of these:
+	son = Pulse.ar(200 * SinOsc.kr(0.3).exprange(0.9, 1.1));
 	//son = PinkNoise.ar * LFPulse.kr(1);
-	//son = Pulse.ar(200 * SinOsc.kr(0.3).exprange(0.9, 1.1));
 	//son = (PlayBuf.ar(~dictsize, ~dict, MouseX.kr(0.1, 2, 1). loop: 1) * ([0.1, 0.3, 0.5]++{0}.dup(~dictsize-3))).sum;
-	outputs = MatchingP.ar(~dict, son, ~dictsize, ntofind:2);
+	outputs = MatchingP.ar(~dict, son, ~dictsize, ntofind: ~ntofind);
 	trig = outputs[0];
 	residual = outputs[1];
 	acts = outputs[2..];
 	Out.ar(~actbus, acts);
 
+
 	// In the next part we'll resynthesise the sound.
 	// But you might like to mangle the 'acts' data to apply interesting FX:
-	//acts = acts.collect{|a| a * 3 * SinOsc.ar(exprand(0.1, 10))};
-	//acts = acts.collect{|a| a * 3 * SinOsc.ar(LFNoise1.kr(10).exprange(0.1, 10))};
-	//acts = acts.collect{|a| DelayN.ar(a, 0.1, LFNoise1.kr(0.1).range(0, 0.1))};
-	//acts = acts.reverse;
-	//acts = acts.scramble;
+	# indices, magnitudes = acts.clump(2).flop;   // This makes it a bit convenient to apply manipulations
+	//magnitudes = magnitudes.collect{|a| a * 3 * SinOsc.ar(exprand(0.1, 10))};
+	//magnitudes = magnitudes.collect{|a| a * 3 * SinOsc.ar(LFNoise1.kr(10).exprange(0.1, 10))};
+	//magnitudes = magnitudes.collect{|a| DelayN.ar(a, 0.1, LFNoise1.kr(0.1).range(0, 0.1))};
+	//magnitudes = magnitudes.reverse;
+	//indices = ~dictsize - indices;
+	acts = [indices, magnitudes].flop.flat; // reconstruct
 
-	resynth = MatchingPResynth.ar(~dict, trig, *acts);
+	resynth = MatchingPResynth.ar(~dict, 0, trig, residual, *acts);
 	delayedson = DelayN.ar(son, delaytime:BufDur.ir(~dict));
 	//Amplitude.ar(resynth - delayedson, 0.1, 1).poll(1, "amplitude of reconstruction error");
-	[delayedson * 0.0001, residual + resynth * 0.1];
+	[delayedson * 0.0001, resynth * 0.1];
 }.play
 )
 
