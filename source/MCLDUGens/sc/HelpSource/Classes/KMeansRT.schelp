@@ -7,7 +7,7 @@ DESCRIPTION::
 
 Performs online k-means classification, classifying each datapoint that comes in and updating the k-means centroids.
 
-The method is described in Algorithm B.1 of Brian McFee's 2012 thesis (http://cseweb.ucsd.edu/~bmcfee/papers/bmcfee_dissertation.pdf). McFee calls it "online Hartigan k-means".
+The method is described in Algorithm B.1 of Brian McFee's 2012 thesis (http://cseweb.ucsd.edu/~bmcfee/papers/bmcfee_dissertation.pdf ). McFee calls it "online Hartigan k-means".
 
 
 CLASSMETHODS::
