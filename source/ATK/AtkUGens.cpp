@@ -48,29 +48,28 @@
 */
 
 /*
- //---------------------------------------------------------------------
- //	The Ambisonic Toolkit (ATK) is a soundfield kernel support library.
- //
- //
- //	The Ambisonic Toolkit (ATK) is intended to bring together a number of tools and
- //	methods for working with Ambisonic surround sound. The intention is for the toolset
- //	to be both ergonomic and comprehensive, providing both classic and novel algorithms
- //	to creatively manipulate and synthesise complex Ambisonic soundfields.
- //	
- //	The tools are framed for the user to think in terms of the soundfield kernel. By
- //	this, it is meant the ATK addresses the holistic problem of creatively controlling a
- //	complete soundfield, allowing and encouraging the composer to think beyond the placement
- //	of sounds in a sound-space and instead attend to the impression and image of a soundfield.
- //	This approach takes advantage of the model the Ambisonic technology presents, and is
- //	viewed to be the idiomatic mode for working with the Ambisonic technique.
- //	
- //	
- //	We hope you enjoy the ATK!
- //	
- //	For more information visit http://ambisonictoolkit.net/ or
- //	email info[at]ambisonictoolkit.net
- //
- //--------------------------------------------------------------------- 
+ ---------------------------------------------------------------------
+ The Ambisonic Toolkit (ATK) is a soundfield kernel support library.
+ 
+ The Ambisonic Toolkit (ATK) is intended to bring together a number of tools and
+ methods for working with Ambisonic surround sound. The intention is for the toolset
+ to be both ergonomic and comprehensive, providing both classic and novel algorithms
+ to creatively manipulate and synthesise complex Ambisonic soundfields.
+
+ The tools are framed for the user to think in terms of the soundfield kernel. By
+ this, it is meant the ATK addresses the holistic problem of creatively controlling 
+ a complete soundfield, allowing and encouraging the composer to think beyond the
+ placement of sounds in a sound-space and instead attend to the impression and image 
+ of a soundfield. This approach takes advantage of the model the Ambisonic
+ technology presents, and is viewed to be the idiomatic mode for working with the 
+ Ambisonic technique.
+
+ We hope you enjoy the ATK!
+
+ For more information visit http://ambisonictoolkit.net/ or
+ email j.anderson[at]ambisonictoolkit.net OR j.parmenter[at]ambisonictoolkit.net
+
+ ---------------------------------------------------------------------
 */
 
 
@@ -315,6 +314,17 @@ sinb = sin(elevation); \
 cosa = cos(azimuth); \
 cosb = cos(elevation); \
 
+// this could be optimised
+#define UNWRAPANGLE(next,prev) \
+if (fabs(fmod(next, twopi) - fmod(prev, twopi)) <= pi) \
+next = prev + fmod(next, twopi) - fmod(prev, twopi); \
+else \
+if ((fmod(next, twopi) - fmod(prev, twopi)) < 0) \
+next = prev +  fmod(next, twopi) - fmod(prev, twopi) + twopi; \
+else \
+next = prev + fmod(next, twopi) - fmod(prev, twopi) - twopi; \
+
+
 /* FoaPanB - basic encoder (places sound on the sphere) */
 
 void FoaPanB_Ctor(FoaPanB *unit)
@@ -485,17 +495,18 @@ void FoaRotate_next_k(FoaRotate *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
-	angleslope = CALCSLOPE(angle, unit->m_angle);
-	for(int i = 0; i < inNumSamples; i++){
-	    CALC_MATRIX
-	    unit->m_angle += angleslope;
-	    FILL_ROTATE_MATRIX
+        angleslope = CALCSLOPE(angle, unit->m_angle);
+        for(int i = 0; i < inNumSamples; i++){
+            CALC_MATRIX
+            unit->m_angle += angleslope;
+            FILL_ROTATE_MATRIX
 	}	
     } else {
-	for(int i = 0; i < inNumSamples; i++){
-	    CALC_MATRIX
-	}
+        for(int i = 0; i < inNumSamples; i++){
+            CALC_MATRIX
+        }
     }
     unit->matrix = matrix;
     unit->m_angle = angle;	
@@ -546,6 +557,7 @@ void FoaTilt_next_k(FoaTilt *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -607,6 +619,7 @@ void FoaTumble_next_k(FoaTumble *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -674,6 +687,7 @@ void FoaFocusX_next_k(FoaFocusX *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -740,6 +754,7 @@ void FoaFocusY_next_k(FoaFocusY *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -803,6 +818,7 @@ void FoaFocusZ_next_k(FoaFocusZ *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -861,6 +877,7 @@ void FoaDirectX_next_k(FoaDirectX *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -918,6 +935,7 @@ void FoaDirectY_next_k(FoaDirectY *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -975,6 +993,7 @@ void FoaDirectZ_next_k(FoaDirectZ *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1038,6 +1057,7 @@ void FoaPushX_next_k(FoaPushX *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1103,6 +1123,7 @@ void FoaPushY_next_k(FoaPushY *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1166,6 +1187,7 @@ void FoaPushZ_next_k(FoaPushZ *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1231,6 +1253,7 @@ void FoaPressX_next_k(FoaPressX *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1296,6 +1319,7 @@ void FoaPressY_next_k(FoaPressY *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1360,6 +1384,7 @@ void FoaPressZ_next_k(FoaPressZ *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1421,6 +1446,7 @@ void FoaZoomX_next_k(FoaZoomX *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1483,6 +1509,7 @@ void FoaZoomY_next_k(FoaZoomY *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1544,6 +1571,7 @@ void FoaZoomZ_next_k(FoaZoomZ *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	for(int i = 0; i < inNumSamples; i++){
@@ -1561,7 +1589,7 @@ void FoaZoomZ_next_k(FoaZoomZ *unit, int inNumSamples)
 }
 
 ////////////////////// FoaDominateX ///////////////////////
-// uses 'angle' var. 
+// uses 'gain' var (in dB).
 
 #define FILL_DOMINATEX_MATRIX \
 double dominate = pow(10, unit->m_gain * 0.05); \
@@ -1797,6 +1825,7 @@ void FoaDirectO_next_k(FoaDirectO *unit, int inNumSamples)
     float angle = IN0(4);
     float angleslope;
     
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 	angleslope = CALCSLOPE(angle, unit->m_angle);
 	FILL_DIRECT_MATRIX	
@@ -1865,6 +1894,7 @@ void FoaAsymmetry_next_k(FoaAsymmetry *unit, int inNumSamples)
     SETUP_TRANSFORMS
     float angle = IN0(4);
     float angleslope;
+    UNWRAPANGLE(angle, unit->m_angle);
     if(angle != unit->m_angle){
 		angleslope = CALCSLOPE(angle, unit->m_angle);
 		for(int i = 0; i < inNumSamples; i++){
