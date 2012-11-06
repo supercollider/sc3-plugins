@@ -38,13 +38,13 @@ SynthDef(\foaEncode2, {
 	var src, angle, azim, encoderMatrix, foa, decoderMatrix, out;
 	src = PinkNoise.ar(-6.dbamp);
 	// for the 'push' transform later
-	// angle ---> top           = push to plane wave
-	//            bottom        = omni-directional
+	// angle ---> top           = push to plane wave
+	//            bottom        = omni-directional
 	angle = MouseY.kr(pi/2, 0);
-	// azimuth -> hard left     = back
-	//            centre        = centre
-	//            hard right    = back
-	azim = MouseX.kr(pi, -pi);	
+	// azimuth -> hard left     = back
+	//            centre        = centre
+	//            hard right    = back
+	azim = MouseX.kr(pi, -pi);
 	// a matrix for an omni image
 	encoderMatrix = FoaEncoderMatrix.newOmni;
 	// Encode into our foa signal
@@ -66,15 +66,15 @@ a.free;
 a = Bus.audio(s, 4); // allocate four channels for routing
 
 SynthDef(\foaEncode3, {arg outBus, duration = 0.05, theta, phi;
-	var src, angle, azim, encoderMatrix, foa, decoderMatrix, out;
-	src = PinkNoise.ar(-6.dbamp) * 
-		EnvGen.kr(
-			Env([0, 1, 0], [0.5, 0.5], \sin), 
-			timeScale: duration, 
-			doneAction: 2);
-	// Encode into our foa signal
-	foa = FoaPanB.ar(src, theta, phi);
- 	Out.ar(outBus, foa);
+    var src, foa;
+    src = PinkNoise.ar(-6.dbamp) *
+        EnvGen.kr(
+            Env([0, 1, 0], [0.5, 0.5], \sin),
+            timeScale: duration,
+            doneAction: 2);
+    // Encode into our foa signal
+    foa = FoaPanB.ar(src, theta, phi);
+     Out.ar(outBus, foa);
 }).add;
 
 SynthDef(\foaDecode, {arg inBus;
@@ -163,7 +163,7 @@ score = Score.new;
 s.boot;
 cond = Condition.new;
 // get some info about the soundfile we are decoding for the Score requirements
-sndfile = SoundFile.new; 
+sndfile = SoundFile.new;
 sndfile.openRead(Atk.userSoundsDir ++ "/uhj/Palestrina-O_Bone.wav");
 sndfile.close;
 // we still need to boot the Server for now to allocate ids for the kernels
@@ -176,8 +176,8 @@ s.waitForBoot({
 	~encoder = FoaEncoderKernel.newUHJ;
 	~decoder = FoaDecoderKernel.newListen(1013);
 	s.sync(cond);
-	// the FoaEncoderKernel and FoaDecoderKernel classes will return 
-	// bundles that can be added to Score 
+	// the FoaEncoderKernel and FoaDecoderKernel classes will return
+	// bundles that can be added to Score
 	score.add(~encoder.kernelBundle);
 	score.add(~decoder.kernelBundle);
 	s.sync(cond);
@@ -193,13 +193,13 @@ s.waitForBoot({
 	noteBundle = noteBundle.addFirst(1.0);
 	score.add(noteBundle);
 	score.add([2.0 + sndfile.duration, [0]]  ); // add the needed dummy command to stop NRT
-	score.recordNRT("/tmp/trashme", "~/Desktop/myDecode.wav".standardizePath, 
+	score.recordNRT("/tmp/trashme", "~/Desktop/myDecode.wav".standardizePath,
 		sampleRate: 44100,
 		headerFormat: "WAVE",
 		sampleFormat: "float",
 		options: ServerOptions.new.numOutputBusChannels_(2)
 		);
-	~encoder.free; 
+	~encoder.free;
 	~decoder.free;
 })
 )
@@ -237,13 +237,13 @@ s.waitForBoot({
 		Out.ar(0, out);
 	});
 	score.add(sd.note(1.0, sndbuf.duration).buffer_(sndbuf));
-	score.write("~/Desktop/myDecode.wav".standardizePath, 
+	score.write("~/Desktop/myDecode.wav".standardizePath,
 		sampleRate: 44100,
 		headerFormat: "WAVE",
 		sampleFormat: "float",
 		options: ServerOptions.new.numOutputBusChannels_(2)
 		);
-	encoder.free; 
+	encoder.free;
 	decoder.free;
 })
 )

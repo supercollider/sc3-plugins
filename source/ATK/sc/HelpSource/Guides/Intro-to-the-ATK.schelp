@@ -211,12 +211,12 @@ code::
         { decoder.numChannels == 2 }
             {
                 // decode to stereo (or binaural)
-                FoaDecode.ar(in, ~decoder)
+                FoaDecode.ar(in, decoder)
             }
         { kind == 'quad' }
             {
                 // decode (to quad)
-                #fl, bl, br, fr = FoaDecode.ar(in, ~decoder);
+                #fl, bl, br, fr = FoaDecode.ar(in, decoder);
 
                 // reorder output to match speaker arrangement
                 [fl, fr, bl, br]
@@ -224,7 +224,7 @@ code::
         { kind == '5.0' }
             {
                 // decode (to 5.0)
-                #fc, fl, bl, br, fr = FoaDecode.ar(in, ~decoder);
+                #fc, fl, bl, br, fr = FoaDecode.ar(in, decoder);
                 lo = Silent.ar;
 
                 // reorder output to match speaker arrangement
@@ -233,7 +233,7 @@ code::
         { kind == 'panto' }
             {
                 // decode (to hex)
-                #fl, sl, bl, br, sr, fr = FoaDecode.ar(in, ~decoder);
+                #fl, sl, bl, br, sr, fr = FoaDecode.ar(in, decoder);
 
                 // reorder output to match speaker arrangement
                 [fl, fr, sl, sr, bl, br]
@@ -241,7 +241,7 @@ code::
         { kind == 'peri' }
             {
                 // decode (to cube)
-                #flu, blu, bru, fru, fld, bld, brd, frd = FoaDecode.ar(in, ~decoder);
+                #flu, blu, bru, fru, fld, bld, brd, frd = FoaDecode.ar(in, decoder);
 
                 // reorder output to match speaker arrangement
                 [flu, fru, blu, bru, fld, frd, bld, brd]
@@ -249,7 +249,7 @@ code::
         { kind == 'diametric' }
             {
                 // decode (to bi-rectangle)
-                #fl, fr, slu, sru, br, bl, srd, sld = FoaDecode.ar(in, ~decoder);
+                #fl, fr, slu, sru, br, bl, srd, sld = FoaDecode.ar(in, decoder);
 
                 // reorder output to match speaker arrangement
                 [fl, fr, bl, br, slu, sru, sld, srd]
