@@ -80,7 +80,7 @@ list::
 ::
 
 
-emphasis::Front::, emphasis::Left::, emphasis::Back-Left:: and emphasis::Back:: are noted with an associated gain, in dB. Individual planewaves are coloured with respect to the gain scale at the far left of the figures. 
+emphasis::Front::, emphasis::Left::, emphasis::Back-Left:: and emphasis::Back:: are noted with an associated gain, in dB. Individual planewaves are coloured with respect to the gain scale at the far left of the figures.
 
 With changing strong::angle::, we see the encoded planewaves both move towards the front of the image (to a single planewave at the extreme) and change gain in link::#zoom#ZoomX::. When strong::angle:: is 90 degrees, the planewave at emphasis::Front:: has been increased to 6dB, while emphasis::Back:: has disappeared. footnote::Decreased to -inf dB::
 
@@ -127,8 +127,21 @@ note:: All decoders presume loudspeakers are placed at equal radii from the orig
 See link::Classes/FoaDecode::, link::Classes/FoaDecoderMatrix:: and link::Classes/FoaDecoderKernel:: for more details about decoding.
 
 
-section:: Examples
+section:: Installation
 
+The ATK library for SuperCollider3 is distributed via the link::http://sc3-plugins.sourceforge.net##sc3-plugins:: project. If you're reading this document, these extensions have most likely been corectly installed.
+
+Additionally, the ATK has a number of dependencies. Please install the following:
+
+list::
+##link::http://quarks.svn.sourceforge.net/viewvc/quarks/MathLib/##MathLib:: Quark. See: link::Guides/UsingQuarks::
+
+##link::http://www.ambisonictoolkit.net/wiki/tiki-index.php?page=Downloads#ATK_Kernels#ATK Kernels::
+
+##link::http://www.ambisonictoolkit.net/wiki/tiki-index.php?page=Downloads#ATK_Example_Soundfiles#ATK Example Soundfiles::
+::
+
+section:: Examples
 
 The examples below are intended to briefly illustrate playback and imaging of soundfields with the ATK. The user is encouraged to explore the ATK's documentation to gain a deeper understanding of the flexibility of these tools.
 
@@ -190,10 +203,10 @@ code::
     var flu, blu, bru, fru;
     var fld, bld, brd, frd;
     var slu, sru, sld, srd;
-        
+
 
     kind = decoder.kind;
-    
+
     case
         { decoder.numChannels == 2 }
             {
@@ -213,7 +226,7 @@ code::
                 // decode (to 5.0)
                 #fc, fl, bl, br, fr = FoaDecode.ar(in, ~decoder);
                 lo = Silent.ar;
-                                
+
                 // reorder output to match speaker arrangement
                 [fl, fr, fc, lo, bl, br]
             }
@@ -221,7 +234,7 @@ code::
             {
                 // decode (to hex)
                 #fl, sl, bl, br, sr, fr = FoaDecode.ar(in, ~decoder);
-                                
+
                 // reorder output to match speaker arrangement
                 [fl, fr, sl, sr, bl, br]
             }
@@ -229,7 +242,7 @@ code::
             {
                 // decode (to cube)
                 #flu, blu, bru, fru, fld, bld, brd, frd = FoaDecode.ar(in, ~decoder);
-                                
+
                 // reorder output to match speaker arrangement
                 [flu, fru, blu, bru, fld, frd, bld, brd]
             }
@@ -237,7 +250,7 @@ code::
             {
                 // decode (to bi-rectangle)
                 #fl, fr, slu, sru, br, bl, srd, sld = FoaDecode.ar(in, ~decoder);
-                
+
                 // reorder output to match speaker arrangement
                 [fl, fr, bl, br, slu, sru, sld, srd]
             };
@@ -252,7 +265,7 @@ code::
 
 subsection:: Produced via the Ambisonic Toolkit
 
-The following three sound examples are excerpts from recordings produced via the ATK. 
+The following three sound examples are excerpts from recordings produced via the ATK.
 
 If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
 
