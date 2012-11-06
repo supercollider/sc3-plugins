@@ -329,7 +329,7 @@ The soundfield is controlled by link::Classes/MouseY::, which specifies the tran
 
 If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
 
-note:: See link::Classes/FoaTransformer:: for further details.::
+note:: See link::Classes/FoaTransform:: for further details.::
 
 code::
 // ------------------------------------------------------------

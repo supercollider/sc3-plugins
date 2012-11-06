@@ -31,7 +31,7 @@ An array of channels, the transformed B-format signal.
 
 EXAMPLES::
 
-The examples below are intended to briefly illustrate some of the first order tranform options made available in the Ambisonic Toolkit. The user is encouraged to carefully review the features of link::Classes/FoaXformMatrix:: to gain a deeper understanding of the flexibility of these tools.
+The examples below are intended to briefly illustrate some of the first order tranform options made available in the Ambisonic Toolkit. The user is encouraged to carefully review the features of link::Classes/FoaXformerMatrix:: to gain a deeper understanding of the flexibility of these tools.
 
 Available transformers include rotations, mirroring, directivity (spatial low pass fitering), dominance (image warping), and a variety of dominance related transforms.
 

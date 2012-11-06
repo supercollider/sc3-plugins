@@ -260,7 +260,7 @@ list::
 
 subsection:: Stereophonic encoder
 
-In this example we first encode a single channel of link::Classes/PinkNoise:: into a stereophonic signal with link::Classes/Pan2::. link::Classes/FoaZooom:: is then used to balance the soundfield across the x-axis (front/back).
+In this example we first encode a single channel of link::Classes/PinkNoise:: into a stereophonic signal with link::Classes/Pan2::. link::Classes/FoaZoom:: is then used to balance the soundfield across the x-axis (front/back).
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the left to right position of the stereo panned source and link::Classes/MouseY:: the link::Classes/FoaZoom:: front to back position (distortion angle). Moving the mouse in a circular motion results in a circular motion of the sound. footnote:: We don't advise using this approach for encoding monophonic sources. The technique illustrated link::#omnidirectional_encoder#here:: is the idiomatic method. If one desires a similar use of the mouse, link::Classes/MouseX:: and link::Classes/MouseY:: can be mapped appropriately to link::Classes/FoaPush::'s strong::angle::, strong::theta::, and strong::phi:: parameters. ::
 

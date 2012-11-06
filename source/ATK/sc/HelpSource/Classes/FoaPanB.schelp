@@ -16,10 +16,10 @@ METHOD:: ar
 argument:: in
 The input signal.
 
-argument:: theta
+argument:: azimuth
 Azimuth, in radians.
 
-argument:: phi
+argument:: elevation
 Elevation, in radians.
 
 argument:: mul

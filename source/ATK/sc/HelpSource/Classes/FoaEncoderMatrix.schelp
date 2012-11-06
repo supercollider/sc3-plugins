@@ -15,8 +15,7 @@ Omnidirectional encoder (monophonic).
 
 discussion:: An omnidirectional soundfield can be regarded in two ways: a soundfield with an infinite number of planewaves arriving in all directions, or a soundfield with no directions. In a well aligned, dampend studio environment, this usually sounds "in the head", while in concert hall listening usually appears as omnipresent.
 
-To control the soundfield, link::Classes/FoaPush:: and link::Classes/FoaFocus:: can be applied to either "push" or "focus" an omnidirectional soundfield into a planewave, giving the soundfield an angle of arrival. footnote:: In combination with distance scaling, link::-newOmni:: and link::Classes/FoaPush:: can be used to implement Menzies' "W-panning" technique. See: D. Menzies, "W-panning and O-format, tools for object spatialization," in Proceedings of the Audio Engineering Society 22nd International Conference on Virtual, Synthetic and Entertainment Audio, Espoo, Finland, 2002.::
-
+To control the soundfield, link::Classes/FoaPush:: and link::Classes/FoaFocus:: can be applied to either "push" or "focus" an omnidirectional soundfield into a planewave, giving the soundfield an angle of arrival. footnote:: In combination with distance scaling, link::#*newOmni:: and link::Classes/FoaPush:: can be used to implement Menzies' "W-panning" technique. See: D. Menzies, "W-panning and O-format, tools for object spatialization," in Proceedings of the Audio Engineering Society 22nd International Conference on Virtual, Synthetic and Entertainment Audio, Espoo, Finland, 2002.::
 
 
 
@@ -126,7 +125,7 @@ definitionList::
 ::
 
 
-discussion:: link::#-newDirections:: is the Ambisonic Toolkit's most versatile first order encoder. Arbitrary input loudspeaker and/or microphone arrays may be specified. 
+discussion:: link::#-newDirections:: is the Ambisonic Toolkit's most versatile first order encoder. Arbitrary input loudspeaker and/or microphone arrays may be specified.
 
 code::
 // Periphonic (3D) encoder, a 1/2 dome of 13 loudspeakers
@@ -248,7 +247,7 @@ table::
 ::
 
 
-discussion:: 
+discussion::
 The A-format encoder is often used in conjunction with the link::Classes/FoaDecoderMatrix#*newBtoA:: B-format decoder to form signal processing networks which preserve the spatial encoding as is described link::Classes/FoaDecoderMatrix#btoadiscuss#here::.
 
 On its own, link::#*newAtoB:: is often used to author immersive, periphonic (3D) decorrelated soundfields.
