@@ -159,8 +159,7 @@ extern "C"
 	rgen.s3 = s3;
 
 // this is Nick Collins's version of Gendyn distributions
-float Gendyn_distribution(int which, float a, float f);
-float Gendyn_distribution( int which, float a, float f) {
+static inline float Gendyn_distribution( int which, float a, float f) {
 	float temp, c;
 
 	if(a>1.0) a=1.0;
@@ -214,8 +213,7 @@ float Gendyn_distribution( int which, float a, float f) {
 	return 2*f-1.0;
 }
 
-float Mirroring (float lower, float upper, float in);
-float Mirroring (float lower, float upper, float in)
+static inline float Mirroring (float lower, float upper, float in)
 {
 	if(in>upper || in<lower) {
 		if(in<lower) {
