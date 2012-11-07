@@ -2548,6 +2548,12 @@ static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, flo
 	k = res * scale;
 }
 
+inline float MoogVCF_blowup_prevention(float f)
+{
+	const float oneOverSix = 1/6.0f;
+	return f - f * sc_min(2.f, f * f * oneOverSix);
+}
+
 void MoogVCF_Ctor(MoogVCF* unit)
 {
 	unit->m_fco = (IN0(1) * 2) * SAMPLEDUR;
@@ -2612,8 +2618,6 @@ void MoogVCF_next_ii(MoogVCF *unit, int inNumSamples){
 
 	float kp = unit->m_kp, pp1d2 = unit->m_pp1d2, k = unit->m_k;
 
-	const float oneOverSix = 1/6.0f;
-
 	for (int i = 0; i < inNumSamples; i++) {
 		float xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2623,8 +2627,7 @@ void MoogVCF_next_ii(MoogVCF *unit, int inNumSamples){
 		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
+		y4n   = MoogVCF_blowup_prevention(y4n);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2661,27 +2664,45 @@ void MoogVCF_next_ki(MoogVCF *unit, int inNumSamples){
 	float y3n = unit->m_y3n;
 	float y4n = unit->m_y4n;
 
-	const float oneOverSix = 1/6.0f;
+	if (fcoslope) {
+		for (int i = 0; i < inNumSamples; i++) {
+			float kp, pp1d2, xn, k;
+			MoogVCF_calc_parameters(fco, res, kp, pp1d2, k);
+			xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+			xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-	for (int i = 0; i < inNumSamples; i++) {
-		float kp, pp1d2, scale, xn, k;
+			/* Four cascaded onepole filters (bilinear transform) */
+			y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+			y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+			y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+			y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+			y4n   = MoogVCF_blowup_prevention(y4n);
+			xnm1  = xn;       /* Update Xn-1  */
+			y1nm1 = y1n;      /* Update Y1n-1 */
+			y2nm1 = y2n;      /* Update Y2n-1 */
+			y3nm1 = y3n;      /* Update Y3n-1 */
+			out[i] = y4n;
+			fco += fcoslope;
+		}
+	} else {
+		float kp, pp1d2, xn, k;
 		MoogVCF_calc_parameters(fco, res, kp, pp1d2, k);
-		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
-		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
+		for (int i = 0; i < inNumSamples; i++) {
+			xn = in[i]; // make this similar to the CSound stuff for now... easier translation
+			xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
 
-		/* Four cascaded onepole filters (bilinear transform) */
-		y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
-		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
-		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
-		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
-		xnm1  = xn;       /* Update Xn-1  */
-		y1nm1 = y1n;      /* Update Y1n-1 */
-		y2nm1 = y2n;      /* Update Y2n-1 */
-		y3nm1 = y3n;      /* Update Y3n-1 */
-		out[i] = y4n;
-		fco += fcoslope;
+			/* Four cascaded onepole filters (bilinear transform) */
+			y1n   = (xn  * pp1d2) + (xnm1  * pp1d2) - (kp * y1n);
+			y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
+			y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
+			y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
+			y4n   = MoogVCF_blowup_prevention(y4n);
+			xnm1  = xn;       /* Update Xn-1  */
+			y1nm1 = y1n;      /* Update Y1n-1 */
+			y2nm1 = y2n;      /* Update Y2n-1 */
+			y3nm1 = y3n;      /* Update Y3n-1 */
+			out[i] = y4n;
+		}
 	}
 
 	unit->m_fco = fcon; // store the normalized frequency
@@ -2717,10 +2738,8 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 	float y3n = unit->m_y3n;
 	float y4n = unit->m_y4n;
 
-	const float oneOverSix = 1/6.0f;
-
 	for (int i = 0; i < inNumSamples; i++) {
-		float kp, pp1d2, scale, xn, k;
+		float kp, pp1d2, xn, k;
 		MoogVCF_calc_parameters(fco, res, kp, pp1d2, k);
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2730,8 +2749,7 @@ void MoogVCF_next_kk(MoogVCF *unit, int inNumSamples){
 		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
+		y4n   = MoogVCF_blowup_prevention(y4n);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2772,11 +2790,8 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 	float y3n = unit->m_y3n;
 	float y4n = unit->m_y4n;
 
-	float kp, pp1d2, scale, xn, k;
-	const float oneOverSix = 1/6.0f;
-
 	for (int i = 0; i < inNumSamples; i++) {
-		float kp, pp1d2, scale, xn, k;
+		float kp, pp1d2, xn, k;
 		MoogVCF_calc_parameters(fco, res[i], kp, pp1d2, k);
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2786,8 +2801,7 @@ void MoogVCF_next_ka(MoogVCF *unit, int inNumSamples){
 		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
+		y4n   = MoogVCF_blowup_prevention(y4n);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2826,12 +2840,9 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 	float y3n = unit->m_y3n;
 	float y4n = unit->m_y4n;
 
-	float kp, pp1d2, scale, xn, k, thisfco;
-	const float oneOverSix = 1/6.0f;
-
 	for (int i = 0; i < inNumSamples; i++) {
 		float thisfco = fco[i] * fcon;
-		float kp, pp1d2, scale, xn, k;
+		float kp, pp1d2, xn, k;
 		MoogVCF_calc_parameters(thisfco, res, kp, pp1d2, k);
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
 		xn = xn - (k * y4n); /* Inverted feed back for corner peaking */
@@ -2841,8 +2852,7 @@ void MoogVCF_next_ak(MoogVCF *unit, int inNumSamples){
 		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
+		y4n   = MoogVCF_blowup_prevention(y4n);
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
@@ -2878,11 +2888,9 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 	float y3n = unit->m_y3n;
 	float y4n = unit->m_y4n;
 
-	const float oneOverSix = 1/6.0f;
-
 	for (int i = 0; i < inNumSamples; i++) {
 		float thisfco = fco[i] * fcon;
-		float kp, pp1d2, scale, xn, k;
+		float kp, pp1d2, xn, k;
 		MoogVCF_calc_parameters(thisfco, res[i], kp, pp1d2, k);
 
 		xn = in[i]; // make this similar to the CSound stuff for now... easier translation
@@ -2893,8 +2901,8 @@ void MoogVCF_next_aa(MoogVCF *unit, int inNumSamples){
 		y2n   = (y1n * pp1d2) + (y1nm1 * pp1d2) - (kp * y2n);
 		y3n   = (y2n * pp1d2) + (y2nm1 * pp1d2) - (kp * y3n);
 		y4n   = (y3n * pp1d2) + (y3nm1 * pp1d2) - (kp * y4n);
-		/* Clipper band limited sigmoid */
-		y4n   = y4n - ((y4n * y4n) * (y4n * oneOverSix));
+		y4n   = MoogVCF_blowup_prevention(y4n);
+
 		xnm1  = xn;       /* Update Xn-1  */
 		y1nm1 = y1n;      /* Update Y1n-1 */
 		y2nm1 = y2n;      /* Update Y2n-1 */
