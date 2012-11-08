@@ -2551,7 +2551,9 @@ static inline void MoogVCF_calc_parameters(float fco, float res, float & kp, flo
 inline float MoogVCF_blowup_prevention(float f)
 {
 	const float oneOverSix = 1/6.0f;
-	return f - f * sc_min(2.f, f * f * oneOverSix);
+	const float sqrt2 = std::sqrt(2.0);
+	f = sc_clip(f, -sqrt2, sqrt2);
+	return f - (f*f) * (f * oneOverSix);
 }
 
 void MoogVCF_Ctor(MoogVCF* unit)
