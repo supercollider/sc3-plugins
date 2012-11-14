@@ -1,7 +1,7 @@
 CLASS:: Squiz
 summary:: Wave squeezer. Maybe a kind of pitch shifter.
 categories:: UGens>Filters>Nonlinear
-related:: Classes/Waveloss
+related:: Classes/WaveLoss
 
 DESCRIPTION::
 A simplistic pitch-raising algorithm. It's not meant to sound natural; its sound is reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter, depending on the input.
