@@ -92,6 +92,7 @@ set(PLUGIN_DIRS
     LoopBufUGens
     MCLDUGens
     MdaUGens
+    NovaUGens
     RFWUGens
     RMEQSuiteUGens
     SCMIRUGens
@@ -105,7 +106,7 @@ set(PLUGIN_DIRS
 # plugins with extra lib
 set(PLUGIN_DIRS_EXTRA
     AuditoryModeling
-	BetablockerUGens
+    BetablockerUGens
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
@@ -122,7 +123,7 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 set(PLUGIN_EXTENSION ".so")
 
 if (APPLE OR WIN32)
-	set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
+    set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
     set(PLUGIN_EXTENSION ".scx")
 endif()
 

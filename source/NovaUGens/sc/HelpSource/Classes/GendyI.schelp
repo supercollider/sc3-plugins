@@ -1,0 +1,46 @@
+class:: GendyI
+summary:: Dynamic stochastic synthesis generator
+related:: Classes/Gendy1, Classes/Gendy2, Classes/Gendy3
+categories:: UGens>Generators>Stochastic
+
+
+Description::
+
+Adaption of Nick Collins's link::Classes/Gendy1:: UGen with different types of interpolations. Interpolations are adapted from
+Olli Niemitalo: Polynomial Interpolators for High-Quality Resampling of Oversampled Audio.
+
+note::Work in progress, interface might change::
+
+classmethods::
+
+method::ar, kr
+See link::Classes/GendyI#*ar:: for explanation of parameters. In addition, an instrument-rate teletype::interpolation:: parameter is added with the following semantics:
+
+table::
+## 0: || Sample&Hold (no interpolation).
+## 1: || Linear Interpolation.
+## 2: || Cubic (Heremite 4 point, 3rd order).
+## 3: || 2nd-order-osculating: 4 point, 5th order.
+## 4: || B-Spline (4 point, 3rd order).
+## 5: || B-Spline (6 point, 5rd order).
+## 6: || Optimal 2x (4 point, 3rd order).
+## 7: || Optimal 2x (6 point, 5rd order).
+::
+
+Examples::
+
+code::
+s.boot;
+s.freqscope; // check the spectra
+
+fork {
+	(0..7).do {|i|
+		x = play {
+			GendyI.ar(minfreq: 110 ! 2, maxfreq: 110, interpolation: i) * -20.dbamp
+		};
+		3.wait;
+		x.release;
+	}
+}
+
+::
