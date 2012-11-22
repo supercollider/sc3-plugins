@@ -55,7 +55,7 @@ set/get the location of the code::ladspalist:: binary, used to print a list of a
 examples::
 get a list of all plugins and decide which one you want:
 code::
-LADPSA.listPlugins;
+LADSPA.listPlugins;
 ::
 for example, glame lowpass iir with ID 1891:
 code::
