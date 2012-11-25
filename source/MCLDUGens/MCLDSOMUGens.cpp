@@ -665,14 +665,15 @@ void SOMAreaWr_Dtor(SOMAreaWr* unit)
 
 ////////////////////////////////////////////////////////////////////
 
+const int KMeansRT_inputsOffset = 5; // this unit has this many non-inputdata inputs
+
 void KMeansRT_Ctor(KMeansRT* unit)
 {
 	SETCALC(KMeansRT_next);
 	int k = (int)ZIN0(1); // like "netsize" in SOMs
 
 	// Infer the size of the "inputs" array which has been tagged on to the end of the arguments list.
-	const int inputsOffset = 4; // this unit has this many non-inputdata inputs
-	int numinputdims = unit->mNumInputs - inputsOffset;
+	int numinputdims = unit->mNumInputs - KMeansRT_inputsOffset;
 	// Allocate a comfy bit of memory where we'll put the input data while we process it
 	unit->m_inputdata = (float*)RTAlloc(unit->mWorld, numinputdims * sizeof(float));
 	// And here's where we'll cache the net coord of the best-node-so-far
@@ -737,37 +738,35 @@ void KMeansRT_next(KMeansRT *unit, int inNumSamples)
 	// Get the buffer and some other standard stuff...
 	SOM_GET_BUF
 	if(ZIN0(3) > 0.f){ // If reset
-		//printf("KMeansRT reset\n");
 		// set count back to zero for each cluster
 		for(int clust=0; clust < bufChannels; ++clust){
 			bufData[bufChannels * clust + (bufChannels - 1)] = 0.f;
 		}
 	}
 	if(ZIN0(2) > 0.f){ // If gate
-		//printf("KMeansRT gate\n");
-
 		int k = netsize;
 
 		// Get data inputs
 		for(int chan=0; chan<numinputdims; ++chan){
-			inputdata[chan] = ZIN0(chan + 4);
+			inputdata[chan] = ZIN0(chan + KMeansRT_inputsOffset);
 		}
 
 		KMeansRT_findnearest(bufData, inputdata, bestcoords, k, numinputdims);
 		int clusterIndex = bestcoords[0];
 
-		// now update the cluster
-		float *celldata = bufData + clusterIndex * (numinputdims + 1); // a float-pointer to the desired frame
-		float old_n_i = celldata[numinputdims]; // index of number count
-		float new_n_i = old_n_i + 1.f;
-		// the new centroid position is a mixture of old pos and input pos
-		for(int chan=0; chan<numinputdims; ++chan){
-			celldata[chan] = ((old_n_i / new_n_i) * celldata[chan])
-			               + (    (1.f / new_n_i) * inputdata[chan]);
-		}
-		celldata[numinputdims] = new_n_i;
-		// Save state to struct.
-		// TODO - actually I don't think any needs saving.
+		if(ZIN0(4) > 0.f){ // If learn gate
+			// now update the cluster
+			float *celldata = bufData + clusterIndex * (numinputdims + 1); // a float-pointer to the desired frame
+			float old_n_i = celldata[numinputdims]; // index of number count
+			float new_n_i = old_n_i + 1.f;
+			// the new centroid position is a mixture of old pos and input pos
+			for(int chan=0; chan<numinputdims; ++chan){
+				celldata[chan] = ((old_n_i / new_n_i) * celldata[chan])
+					       + (    (1.f / new_n_i) * inputdata[chan]);
+			}
+			celldata[numinputdims] = new_n_i;
+		} // end learn-gate check
+		// Save state to struct... - actually I don't think any needs saving.
 	} // End gate check
 
 	ZOUT0(0) = bestcoords[0]; // i.e. output cluster number selected for latest datum

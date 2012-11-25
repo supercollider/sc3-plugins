@@ -28,6 +28,9 @@ The unit is active while gate > 0. While <=0, no search is performed and output 
 argument:: reset
 If reset is greater than 0, the "flexibility" of the centroids is reset back to initial values (as if no data had been received).
 
+argument:: learn
+Normally, this unit learns at the same time as making decisions. If you don't want it to learn (i.e. you want the centroids in the buffer to remain unchanged, e.g. if you already learnt them in the past) you can set this argument to 0.
+
 returns:: the cluster index with which the input datapoint has been associated.
 
 

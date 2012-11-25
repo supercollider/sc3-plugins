@@ -253,9 +253,9 @@ SOMAreaWr : UGen {
 
 KMeansRT : UGen {
 
-	*kr { |bufnum, inputdata, k=5, gate=1, reset=0|
+	*kr { |bufnum, inputdata, k=5, gate=1, reset=0, learn=1|
 		inputdata = inputdata.asArray;
-		^this.multiNew('control', bufnum, k, gate, reset, *inputdata)
+		^this.multiNew('control', bufnum, k, gate, reset, learn, *inputdata)
 	}
 	*getCentroid { |bufnum, classif, ndims|
 		^BufRd.kr(ndims + 1, bufnum, classif, interpolation: 1)[..ndims-1];
