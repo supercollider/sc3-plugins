@@ -614,7 +614,7 @@ void SOMAreaWr_next(SOMAreaWr *unit, int inNumSamples)
 			Print("] to [%i", bestcoords[0]);
 			for(int k=1; k<numdims; ++k)
 				Print(", %i", bestcoords[k]);
-			Print("]±%i\n", nhood);
+			Print("] %i\n", nhood);
 			*/
 
 			size_t bytestowrite = numinputdims * sizeof(float);
