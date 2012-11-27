@@ -30,6 +30,7 @@ If reset is greater than 0, the "flexibility" of the centroids is reset back to 
 
 argument:: learn
 Controls whether the unit is learning from its input. If you set this to zero it will not learn, but will still output decisions. This is useful for applying a previously-learned clusterer without modifying it.
+This argument cannot be modulated: each time you use KMeansRT it is either learning from scratch, or using a fixed pre-learnt buffer.
 
 returns:: the cluster index with which the input datapoint has been associated.
 

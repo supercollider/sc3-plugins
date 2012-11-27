@@ -50,6 +50,7 @@ struct SOMAreaWr : public SOMUnit
 };
 struct KMeansRT : public SOMUnit
 {
+	bool m_learning;
 };
 
 
@@ -696,8 +697,12 @@ void KMeansRT_Ctor(KMeansRT* unit)
 		return;
 	}
 
-	// Zero it out
-	Clear(bufFrames * bufChannels, bufData);
+	bool learning = (ZIN0(4) > 0.f);
+	if(learning){
+		// Zero it out
+		Clear(bufFrames * bufChannels, bufData);
+	};
+	unit->m_learning = learning;
 
 	// initialize the unit generator state variables.
 	unit->m_netsize    = k;
@@ -737,7 +742,8 @@ void KMeansRT_next(KMeansRT *unit, int inNumSamples)
 {
 	// Get the buffer and some other standard stuff...
 	SOM_GET_BUF
-	if(ZIN0(3) > 0.f){ // If reset
+	bool learning = unit->m_learning;
+	if(learning && (ZIN0(3) > 0.f)){ // If reset
 		// set count back to zero for each cluster
 		for(int clust=0; clust < bufChannels; ++clust){
 			bufData[bufChannels * clust + (bufChannels - 1)] = 0.f;
@@ -754,7 +760,7 @@ void KMeansRT_next(KMeansRT *unit, int inNumSamples)
 		KMeansRT_findnearest(bufData, inputdata, bestcoords, k, numinputdims);
 		int clusterIndex = bestcoords[0];
 
-		if(ZIN0(4) > 0.f){ // If learn gate
+		if(learning){
 			// now update the cluster
 			float *celldata = bufData + clusterIndex * (numinputdims + 1); // a float-pointer to the desired frame
 			float old_n_i = celldata[numinputdims]; // index of number count
