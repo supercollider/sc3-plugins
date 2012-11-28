@@ -1,22 +1,26 @@
 ------------------------------------------------------------------------
-Supercollider ${PROJECT_VERSION} Plugins for Windows)
+Supercollider ${PROJECT_VERSION} Plugins for Windows
 ------------------------------------------------------------------------
 
 Before installation, please uninstall any previous version of the
 plugins from your system.
 
 To install the plugins, place the SC3plugins folder into one of the
-SuperCollider extension folders:
+SuperCollider extension folders listed below, depending on your
+operating system and installation type:
 
-A) For a system-wide installation: C:\\SuperCollider\Extensions\
+Windows 7 / Vista:
 
-B) For a user-only installation: <user directory>\SuperCollider\Extensions\
+- System-wide installation:
+  C:\ProgramData\SuperCollider\Extensions
 
-In case of user-only installation, the <user directory> above should be
-replaced with:
+- User-only installation:
+  C:\Users\<username>\AppData\SuperCollider\Extensions
 
-A) On Windows 7: C:\\Users\<username>
+Windows XP:
 
-B) On Windows XP: C:\\Documents and Settings\<username>
+- System-wide installation:
+  C:\Documents and Settings\All Users\Application Data\SuperCollider\Extensions
 
-...and the <username> above should be replaced with your user name, in both cases.
+- User-only installation:
+  C:\Documents and Settings\<username>\Application Data\SuperCollider\Extensions
