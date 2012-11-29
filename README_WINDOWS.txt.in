@@ -15,7 +15,7 @@ Windows 7 / Vista:
   C:\ProgramData\SuperCollider\Extensions
 
 - User-only installation:
-  C:\Users\<username>\AppData\SuperCollider\Extensions
+  C:\Users\<USERNAME>\AppData\Local\SuperCollider\Extensions
 
 Windows XP:
 
@@ -23,4 +23,4 @@ Windows XP:
   C:\Documents and Settings\All Users\Application Data\SuperCollider\Extensions
 
 - User-only installation:
-  C:\Documents and Settings\<username>\Application Data\SuperCollider\Extensions
+  C:\Documents and Settings\<username>\Local Settings\Application Data\SuperCollider\Extensions
