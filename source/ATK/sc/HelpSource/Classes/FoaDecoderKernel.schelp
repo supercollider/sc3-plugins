@@ -20,18 +20,15 @@ argument:: kernelSize
 argument:: server
 link::Classes/Server:: on which to load kernel.
 
-discussion:: For production work targeting stereo output, the authors advise using UHJ, as Ambisonic UHJ stereo is the native Ambisonic stereo format. 
+discussion:: For production work targeting stereo output, the authors advise using UHJ, as Ambisonic UHJ stereo is the native Ambisonic stereo format.
 
 
 
 METHOD:: newSpherical
-Synthetic spherical head model HRTF decoder. footnote::See: R. O. Duda, "Modeling head related transfer functions," in Proceedings of the Twenty-Seventh Annual Asilomar Conference on Signals, Systems and Computers, Asilomar, CA, 1993.::
+Synthetic spherical head model HRTF footnote::See: R. O. Duda, "Modeling head related transfer functions," in Proceedings of the Twenty-Seventh Annual Asilomar Conference on Signals, Systems and Computers, Asilomar, CA, 1993.:: decoder, equalised for the diffuse field.
 
 argument:: subjectID
 0 to 9
-
-argument:: kernelSize
-256, 512, 1024, 2048, 4096, 8192
 
 argument:: server
 link::Classes/Server:: on which to load kernel.
@@ -44,7 +41,7 @@ The strong::subjectID:: argument varies to suit listener head width, with 0 the 
 
 
 METHOD:: newListen
-Measured HRTF decoder, with measurements from IRCAM's link::http://recherche.ircam.fr/equipes/salles/listen/##Listen HRTF database::. footnote::See: link::http://recherche.ircam.fr/equipes/salles/listen/::::
+Measured HRTF decoder, with measurements from IRCAM's link::http://recherche.ircam.fr/equipes/salles/listen/##Listen HRTF database:: footnote::See: link::http://recherche.ircam.fr/equipes/salles/listen/:::: equalised for the diffuse field.
 
 argument:: subjectID
 1002 to 1059 (51 in total) warning:: strong::subjectID::s are not entirely contiguous.::
@@ -52,7 +49,7 @@ argument:: subjectID
 argument:: server
 link::Classes/Server:: on which to load kernel.
 
-discussion:: 
+discussion::
 The user is advised to audition strong::subjectID::s to find a suitable choice. If an invalid strong::subjectID:: is chosen, valid choices are returned.
 
 
@@ -69,7 +66,7 @@ warning:: The link::http://recherche.ircam.fr/equipes/salles/listen/##Listen HRT
 
 
 METHOD:: newCIPIC
-Measured HRTF decoder, with measurements from the University of California Davis' link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database::. footnote::See: link::http://interface.cipic.ucdavis.edu/sound/hrtf.html::::
+Measured HRTF decoder, with measurements from the University of California Davis' link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database:: footnote::See: link::http://interface.cipic.ucdavis.edu/sound/hrtf.html:::: equalised for the diffuse field.
 
 argument:: subjectID
 3 to 165 (45 in total) warning:: strong::subjectID::s are not entirely contiguous.::
@@ -78,7 +75,7 @@ argument:: server
 link::Classes/Server:: on which to load kernel.
 
 
-discussion:: 
+discussion::
 The link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database:: provides two link::http://www.gras.dk/00012/00330/##KEMAR dummy:: measurements. strong::subjectID:: = 21 is the large pinnae dummy and strong::subjectID:: = 165 is the small pinnae dummy.
 
 The user is advised to audition strong::subjectID::s to find a suitable choice. If an invalid strong::subjectID:: is chosen, valid choices are returned.
