@@ -6,3 +6,7 @@ source/local/*.sc
 source/local/*.schelp
 source/local/*.html
 *.patch
+
+*~
+*.orig
+
