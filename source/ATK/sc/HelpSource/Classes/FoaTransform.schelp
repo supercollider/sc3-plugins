@@ -329,6 +329,7 @@ code::
 subsection:: Push and RTT
 
 
+
 Here we encode four channels of link::Classes/Klank:: resonated link::Classes/Dust:: from A-format. link::Classes/FoaPush:: is used to "push" the soundfield so that it becomes a planewave (infinite distance, in an anechoic environment) arriving from some direction. This technique gives the opportunity to continuously modulate between a directional and a spatially active soundfield. Additionally, link::Classes/FoaRTT:: is used to continuously reorient the granular stream so that individual A-format directions don't predominate, and the complete soundfield is filled with activity.
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
@@ -433,6 +434,112 @@ code::
 )
 // ------------------------------------------------------------
 ::
+
+
+
+subsection:: Push and RTT with Spread Encoder (soundfile)
+
+
+Here we encode the mono component of a stereo soundfile via the link::Classes/FoaEncoderKernel#*newSpread:: encoder. link::Classes/FoaPush:: is used to "push" the soundfield so that it becomes a planewave (infinite distance, in an anechoic environment) arriving from some direction. This technique gives the opportunity to continuously modulate between a directional and a spatially spread soundfield. Additionally, link::Classes/FoaRTT:: is used to continuously reorient the frequency spread soundfield so that individual frequencies are moved throughout the space, and the complete soundfield is constantly in motion.
+
+The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: UGen type transformers, see link::Classes/FoaPush::, link::Classes/FoaRTT:: and link::Classes/FoaEncoderKernel#*newSpread:: for further details.::
+
+
+code::
+// ------------------------------------------------------------
+// push and rtt transformer
+// spreader encoder
+// stereo soundfile read from disk
+
+
+// define encoder matrix
+~encoder = FoaEncoderKernel.newSpread(0000)
+~encoder = FoaEncoderKernel.newSpread(0001)
+~encoder = FoaEncoderKernel.newSpread(0006)
+~encoder = FoaEncoderKernel.newSpread(0008)
+~encoder = FoaEncoderKernel.newSpread(0010)
+~encoder = FoaEncoderKernel.newSpread(0012)
+
+// free kernel (when you swap encoders!)
+~encoder.free
+
+// inspect
+~encoder
+~encoder.kind
+~encoder.numChannels
+~encoder.dirChannels * 180/pi
+
+
+// read a whole sound into memory
+// remember to free the buffer later!
+// (boot the server, if you haven't!)
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-The_Downfall.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/The_City_Waites-An_Old.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Lux_Aeterna.wav")
+~sndbuf = Buffer.read(s, Atk.userSoundsDir ++ "/stereo/Aurora_Surgit-Dies_Irae.wav")
+
+// free buffer (when you swap buffers!)
+~sndbuf.free
+
+
+(
+{
+    var sig;                            // audio signal
+    var angle, azim;                    // angle and azimuth control
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.kind).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // angle ---> top           = push to plane wave
+    //            bottom        = omni-directional
+    angle = MouseY.kr(pi/2, 0);
+
+    // azimuth -> hard left     = back
+    //            centre        = centre
+    //            hard right    = back
+    azim = MouseX.kr(pi, -pi);
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = 0.5 * sig.sum; // to mono
+
+
+    // ------------------------------------------------------------
+    // encode
+    sig = FoaEncode.ar(sig, ~encoder);
+
+    // ------------------------------------------------------------
+    // transform
+	sig = FoaRTT.ar(sig,
+		LFNoise2.kr(1.0/5.0, pi),
+		LFNoise2.kr(1.0/5.0, pi),
+		LFNoise2.kr(1.0/5.0, pi)
+	);
+    sig = FoaTransform.ar(sig, 'push', angle, azim);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+
+// free buffer
+~sndbuf.free
+// free kernel
+~encoder.free
+// ------------------------------------------------------------
+::
+
 
 
 

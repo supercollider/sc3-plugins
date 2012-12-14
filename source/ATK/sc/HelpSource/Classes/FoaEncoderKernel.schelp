@@ -37,6 +37,23 @@ discussion:: The UHJ encoder offers access to numerous published recordings foot
 note:: For optimal performance, use a dual-band decoder ( code::'dual':: ) for monitoring. See discussion link::Classes/FoaDecoderMatrix#decoder_k#here::. ::
 
 
+METHOD:: newSpread
+Frequency spreading mono encoder.
+
+argument:: subjectID
+0 to 12. Specifies the number of bands per octave of the frequency spreader. 0 returns 1 band per octave, etc.
+
+argument:: kernelSize
+512, 1024, 2048, 4096, 8192, 16384
+
+argument:: server
+link::Classes/Server:: on which to load kernel.
+
+discussion:: The frequency spreading technique encodes a monophonic signal into B-format by smoothly rotating the signal across the soundfield sphere, by frequency.
+
+note:: As the number of bands per octaves increases, more time domain artefacts are introduced. This is usually heard as smearing in time.::
+
+
 
 INSTANCEMETHODS::
 private:: initPath, initKernel, printOn

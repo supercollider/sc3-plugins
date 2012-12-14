@@ -1883,12 +1883,16 @@ FoaEncoderKernel {
 	var <dirChannels;
 
 
-	*newUHJ { arg kernelSize = 512, server = Server.default;
+	*newUHJ { arg kernelSize = nil, server = Server.default;
 		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server);
 	}
 
-	*newSuper { arg kernelSize = 512, server = Server.default;
+	*newSuper { arg kernelSize = nil, server = Server.default;
 		^super.newCopyArgs('super', 0).initKernel(kernelSize, server);
+	}
+
+	*newSpread { arg subjectID = 0006, kernelSize = 2048, server = Server.default;
+		^super.newCopyArgs('spread', subjectID).initKernel(kernelSize, server);
 	}
 
 	// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
@@ -1946,6 +1950,11 @@ FoaEncoderKernel {
 				dirChannels = [ inf, inf ];
 				sampleRate = server.sampleRate.asString;
 				chans = 3;					// [w, x, y]
+			},
+			'spread', {
+				dirChannels = [ inf ];
+				sampleRate = server.sampleRate.asString;
+				chans = 4;					// [w, x, y, z]
 			}
 
 	// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
@@ -1970,6 +1979,18 @@ FoaEncoderKernel {
 //				chans = 4;					// [w, x, y, z]
 //			}
 		);
+
+		// init kernelSize if need be
+		if ( kernelSize == nil, {
+			kernelSize = Dictionary.newFrom([
+				'None', 512,
+				'44100', 512,
+				'48000', 512,
+				'88200', 1024,
+				'96000', 1024,
+				'192000', 2048,
+			]).at(sampleRate.asSymbol)
+		});
 
 
 		// init kernel root, generate subjectPath and kernelFiles
