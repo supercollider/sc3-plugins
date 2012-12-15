@@ -1895,6 +1895,10 @@ FoaEncoderKernel {
 		^super.newCopyArgs('spread', subjectID).initKernel(kernelSize, server);
 	}
 
+	*newDiffuse { arg subjectID = 0003, kernelSize = 2048, server = Server.default;
+		^super.newCopyArgs('diffuse', subjectID).initKernel(kernelSize, server);
+	}
+
 	// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
 	// (http://isophonics.net/content/room-impulse-response-data-set)
 	//
@@ -1954,6 +1958,11 @@ FoaEncoderKernel {
 			'spread', {
 				dirChannels = [ inf ];
 				sampleRate = server.sampleRate.asString;
+				chans = 4;					// [w, x, y, z]
+			},
+			'diffuse', {
+				dirChannels = [ inf ];
+				sampleRate = "None";
 				chans = 4;					// [w, x, y, z]
 			}
 

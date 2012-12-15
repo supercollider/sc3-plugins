@@ -191,6 +191,80 @@ code::
 ::
 
 
+subsection:: Frequency diffusion encoder
+
+
+Encoded as a frequency diffused soundfield, link::Classes/PinkNoise:: is used as the example sound source. This sounds as diffused across the soundfield, with the various frequency components appearing in various places, with various phases. link::Classes/FoaPush:: is used to "push" the omnidirectional soundfield so that it becomes a planewave (infinite distance, in an anechoic environment) arriving from some direction.
+
+The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains spread. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
+
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+
+note:: A kernel type encoder, see link::Classes/FoaEncoderKernel#*newDiffuse:: for further details.::
+
+warning:: Kernel encoders require special care. Allow the kernel time to load before attempting to use. Additionally, the kernel buffer should be freed through the use of link::Classes/FoaEncoderKernel#-free:: after use.::
+
+code::
+// ------------------------------------------------------------
+// frequency diffusion encoder
+// mono pink noise source
+
+
+// define encoder kernel
+~encoder = FoaEncoderKernel.newDiffuse
+
+// inspect
+~encoder.kind
+~encoder.numChannels
+~encoder.dirChannels
+
+(
+{
+    var sig;                            // audio signal
+    var angle, azim;                    // angle and azimuth control
+
+
+    // display encoder and decoder
+    "Ambisonic encoding via % encoder".format(~encoder.kind).postln;
+    "Ambisonic decoding via % decoder".format(~decoder.kind).postln;
+
+    // angle ---> top           = push to plane wave
+    //            bottom        = omni-directional
+    angle = MouseY.kr(pi/2, 0);
+
+    // azimuth -> hard left     = back
+    //            centre        = centre
+    //            hard right    = back
+    azim = MouseX.kr(pi, -pi);
+
+    // ------------------------------------------------------------
+    // test sig
+    sig = PinkNoise.ar;                         // mono pink noise
+
+
+    // ------------------------------------------------------------
+    // encode
+    sig = FoaEncode.ar(sig, ~encoder);
+
+    // ------------------------------------------------------------
+    // transform
+    sig = FoaTransform.ar(sig, 'push', angle, azim);
+
+
+
+    // ------------------------------------------------------------
+    // decode (via ~renderDecode)
+    ~renderDecode.value(sig, ~decoder)
+
+}.scope;
+)
+// ------------------------------------------------------------
+
+// free kernel
+~encoder.free
+::
+
+
 subsection:: A to B encoder
 
 
@@ -238,7 +312,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PinkNoise.ar([1, 1, 1, 1]); // 4 channels decorrelated pink noise
+    sig = -3.dbamp * PinkNoise.ar([1, 1, 1, 1]); // 4 channels decorrelated pink noise
 
 
     // ------------------------------------------------------------

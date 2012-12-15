@@ -54,6 +54,22 @@ discussion:: The frequency spreading technique encodes a monophonic signal into 
 note:: As the number of bands per octaves increases, more time domain artefacts are introduced. This is usually heard as smearing in time.::
 
 
+METHOD:: newDiffuse
+Frequency diffusion mono encoder.
+
+argument:: subjectID
+0 to 5. Specifies the amount of phase dispersion of the frequency diffuser. 0 is low, 5 is high.
+
+argument:: kernelSize
+512, 1024, 2048, 4096, 8192, 16384
+
+argument:: server
+link::Classes/Server:: on which to load kernel.
+
+discussion:: The frequency diffusion technique encodes a monophonic signal into B-format by randomising the phase of the signal across the soundfield sphere, by frequency.
+
+note:: As the diffusion increases, more time domain artefacts are introduced. This is usually heard as smearing in time.::
+
 
 INSTANCEMETHODS::
 private:: initPath, initKernel, printOn
