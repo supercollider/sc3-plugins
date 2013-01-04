@@ -25,50 +25,51 @@
  * DFM-1 coefficient look-up.
  */
 
+/**
+ * Highest frequency of self-oscillation (as fraction of audio sample rate).
+ *
+ * The filter can still ring above this frequency, however, this is the
+ * maximum frequency at which oscillations can be sustained.
+ */
+
+static const double MAX_OSC_FREQ = 0.1640625;
+
+/**
+ * Number of octaves.
+ *
+ * The top octave is always fs/2 down to fs/4, so the number of octaves
+ * determines the lowest frequency for which a coefficient is stored. For
+ * example, if the maximum expected sample rate is 192kHz, then the lowest
+ * filter cutoff frequency is 192000 / 2^(n+1), where n is the number of
+ * octaves.
+ */
+
+static const int OCTAVES = 16;
+
+/**
+ * Number of steps per octave.
+ */
+
+static const int STEPS = 32;
+
+/**
+ * Lowest frequency in look-up table (as fraction of audio sample rate).
+ */
+
+static const double MIN_LUT_FREQ = 1.0 / 131072.0;
+
+/**
+ * Highest frequency in look-up table (as fraction of audio sample rate).
+ */
+
+static const double MAX_LUT_FREQ = 0.5 - 1.0 / (STEPS * 4.0) - 0.001;
+
+
 class Dfm1Lut {
 
   private:
     
     static const double lut[];
-  
-    /**
-     * Highest frequency of self-oscillation (as fraction of audio sample rate).
-     *
-     * The filter can still ring above this frequency, however, this is the
-     * maximum frequency at which oscillations can be sustained.
-     */
-  
-    static const double MAX_OSC_FREQ = 0.1640625;
-  
-    /**
-     * Number of octaves.
-     *
-     * The top octave is always fs/2 down to fs/4, so the number of octaves
-     * determines the lowest frequency for which a coefficient is stored. For
-     * example, if the maximum expected sample rate is 192kHz, then the lowest
-     * filter cutoff frequency is 192000 / 2^(n+1), where n is the number of
-     * octaves.
-     */
-  
-    static const int OCTAVES = 16;
-    
-    /**
-     * Number of steps per octave.
-     */
-  
-    static const int STEPS = 32;
-  
-    /**
-     * Lowest frequency in look-up table (as fraction of audio sample rate).
-     */
-  
-    static const double MIN_LUT_FREQ = 1.0 / 131072.0; 
-  
-    /**
-     * Highest frequency in look-up table (as fraction of audio sample rate).
-     */
-  
-    static const double MAX_LUT_FREQ = 0.5 - 1.0 / (STEPS * 4.0) - 0.001;
   
   public:
   

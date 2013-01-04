@@ -52,16 +52,17 @@ struct Dfm1State {
  * A 12dB-per-octave low pass resonant filter, switchable to 6dB-per-octave high pass. 
  */
 
+static const double NOISE = 0.00001; // Minimum component noise level
+static const double HEADROOM = 0.05; // Headroom for output signals (some noise is added after)
+static const double POST_GAIN = (1.0 - 0.05) * 3.0 / 2.0; // Compensates attenuation of loud signals
+static const double PRE_GAIN = 1.0 / (1.0 - 0.05) * 3.0 / 2.0; // Sets the overall gain to unity
+static const double NOISE_GAIN = 0.05; // Filter noisiness
+static const double N = 0.55032120814910446; // = (1/6)^(1/3) for the distortion transfer function
+
+
 class Dfm1 {
 
   private:
-    
-    static const double NOISE = 0.00001; // Minimum component noise level
-    static const double HEADROOM = 0.05; // Headroom for output signals (some noise is added after)
-    static const double POST_GAIN = (1.0 - 0.05) * 3.0 / 2.0; // Compensates attenuation of loud signals
-    static const double PRE_GAIN = 1.0 / (1.0 - 0.05) * 3.0 / 2.0; // Sets the overall gain to unity
-    static const double NOISE_GAIN = 0.05; // Filter noisiness
-    static const double N = 0.55032120814910446; // = (1/6)^(1/3) for the distortion transfer function
     
     static double checkValue(double pi); // Checks for parameter denormalisation errors
   
