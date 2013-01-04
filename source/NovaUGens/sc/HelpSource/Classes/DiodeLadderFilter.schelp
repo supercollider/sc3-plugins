@@ -1,0 +1,40 @@
+class:: DiodeLadderFilter
+summary:: Diode Ladder LPF
+categories:: UGens>Filters
+
+
+description::
+
+Emulation of the 303 diode ladder low pass filter, adapted from Dominique Wurtz (compare this thread on kvraudio: link::http://www.kvraudio.com/forum/viewtopic.php?t=346155::). It uses a high-pass filter in the feedback path,
+which can be modulated at control-rate.
+
+classmethods::
+
+method::ar
+
+argument::freq
+cutoff frequency
+
+argument::q
+filter q
+
+argument::feedbackHPF
+cutoff frequency of the feedback HPF.
+
+Examples::
+
+code::
+s.boot;
+
+(
+{
+	var cutoff = Env([110, 880, 220 * [2, 1], 880 * [8, 16], 110], [0.5, 0.25, 0.15, 0.10] * 0.08, \exp).circle.ar * XLine.ar(0.25, 16, 60);
+	var q = Line.kr(0, 1, 60);
+	var saw = Saw.ar([220, 220.3] * Env([0.5, 0.5, 4], [5, 0.1], \exp).circle.ar);
+
+	DiodeLadderFilter.ar(saw, cutoff, q) * -20.dbamp
+
+}.play
+)
+
+::

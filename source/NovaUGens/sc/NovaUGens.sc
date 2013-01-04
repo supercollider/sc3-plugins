@@ -9,3 +9,9 @@ GendyI : UGen {
         ^this.multiNew('control', ampdist, durdist, adparam, ddparam, minfreq, maxfreq, ampscale, durscale, initCPs, knum ? initCPs, interpolation).madd( mul, add )
     }
 }
+
+DiodeLadderFilter : Filter {
+    *ar { arg sig, freq = 440, q = 0.2, feedbackHPF = 1000, mul = 1.0, add = 0.0;
+        ^this.multiNew('audio', sig, freq, q, feedbackHPF).madd( mul, add )
+    }
+}
