@@ -57,7 +57,7 @@ public:
 		std::fill(z, z + 5, 0);
 		q = hpCutoff = std::numeric_limits<float>::signaling_NaN();
 
-		if (inRate(0) == calc_FullRate)
+		if (inRate(1) == calc_FullRate)
 			set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_akk>();
 		else
 			set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_k>();
@@ -92,6 +92,11 @@ private:
 			double x = ZXP(inSig);
 			ZXP(outSig) = tick(x, a, a2, a_inv, b, b2, c, g, g0, z0, z1, z2, z3, z4);
 		}
+		z[0] = z0;
+		z[1] = z1;
+		z[2] = z2;
+		z[3] = z3;
+		z[4] = z4;
 	}
 
 	void next_akk(int inNumSamples)
@@ -165,7 +170,8 @@ private:
 	void calcFilterCoefficients(const double newFreq, double & a, double & a2, double & a_inv,
 								double & b, double & b2, double & c, double & g, double & g0)
 	{
-		const double fc = newFreq * sampleDur();
+		double fc = newFreq * sampleDur();
+		fc = sc_clip(fc, 0, 0.25);
 		a = M_PI * fc; // PI is Nyquist frequency
 //		a = 2 * tan(0.5*a); // dewarping, not required with 2x oversampling
 
