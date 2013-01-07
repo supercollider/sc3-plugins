@@ -170,8 +170,8 @@ private:
 	void calcFilterCoefficients(const double newFreq, double & a, double & a2, double & a_inv,
 								double & b, double & b2, double & c, double & g, double & g0)
 	{
-		double fc = newFreq * sampleDur();
-		fc = sc_clip(fc, 0, 0.25);
+		double fc = sc_max(10, newFreq) * sampleDur();
+		fc = sc_min(fc, 0.25);
 		a = M_PI * fc; // PI is Nyquist frequency
 //		a = 2 * tan(0.5*a); // dewarping, not required with 2x oversampling
 
@@ -187,14 +187,15 @@ private:
 
 	void setFeedbackHPF(double fc)
 	{
+		hpCutoff = fc;
 		const double K = fc * M_PI;
 		ah = (K - 2) / (K + 2);
 		bh = 2 / (K + 2);
 	}
 
-	void set_q(double q)
+	void set_q(double q_)
 	{
-		q = sc_clip(q, 0, 1);
+		q = sc_clip(q_, 0, 1);
 		k = 20 * q;
 		A = 1 + 0.5*k; // resonance gain compensation
 	}
