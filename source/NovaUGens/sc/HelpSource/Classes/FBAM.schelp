@@ -1,0 +1,36 @@
+class:: FBAM
+summary:: Feedback Amplitude Modulation
+categories:: UGens>Filters
+
+
+description::
+
+Basic Feedback Amplitude Modulation as introduced in "Feedback Amplitude Modulation Synthesis" by Jari Kleimola, Victor Lazzarini, Vesa Välimäki and Joseph Timoney (link::http://asp.eurasipjournals.com/content/2011/1/434378/##EURASIP Journal on Advances in Signal Processing 2011, 2011:434378::).
+
+classmethods::
+
+method::ar
+
+argument::in
+input signal
+
+argument::feedback
+feedback coefficient.
+
+note::this argument has an impact on the stability of the system. Values over 1 tend to cause foldover distortion, though the exact limits
+depend on the input signal.::
+
+
+Examples::
+
+code::
+s.boot;
+
+(
+{
+    var sig = SinOsc.ar([220, 220.3]);
+	FBAM.ar(sig, LFTri.kr([0.3, 0.4]).range(0, 1.2)) * -20.dbamp
+}.freqscope
+)
+
+::

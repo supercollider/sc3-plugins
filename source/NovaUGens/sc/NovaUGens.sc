@@ -15,3 +15,9 @@ DiodeLadderFilter : Filter {
         ^this.multiNew('audio', sig, freq, q, feedbackHPF).madd( mul, add )
     }
 }
+
+FBAM : PureUGen {
+    *ar { arg sig, feedback = 0.1, mul = 1.0, add = 0.0;
+        ^this.multiNew('audio', sig, feedback).madd( mul, add )
+    }
+}
