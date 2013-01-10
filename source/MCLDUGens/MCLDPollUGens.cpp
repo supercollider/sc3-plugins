@@ -69,7 +69,7 @@ void TextVU_Ctor(TextVU* unit)
 	// Now we want to initialise the set of cutoffs, where the first is -60dB and last is 0dB.
 	unit->m_cutoffs = (float*)RTAlloc(unit->mWorld, width * sizeof(float));
 	unit->m_vustring  = (char*)RTAlloc(unit->mWorld, (width+1) * sizeof(char));
-	unit->m_vustring[width] = NULL;
+	unit->m_vustring[width] = 0;
 	float cutstep = 60.f / (float)(width-1);
 	float db = -60.f;
 	for(size_t i=0; i<width; ++i){
