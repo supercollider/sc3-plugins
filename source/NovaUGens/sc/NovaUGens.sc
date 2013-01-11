@@ -21,3 +21,13 @@ FBAM : PureUGen {
         ^this.multiNew('audio', sig, feedback).madd( mul, add )
     }
 }
+
+PulseDPW2 : PureUGen {
+	*ar { arg freq = 220, width = 0.5, phase = 0.0, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', freq, width, phase.linlin(-1, 1, -pi, pi)).madd( mul, add )
+	}
+
+	*kr { arg freq = 220, width = 0.5, phase = 0.0, mul = 1.0, add = 0.0;
+		^this.multiNew('control', freq, width, phase.linlin(-1, 1, -pi, pi)).madd( mul, add )
+	}
+}
