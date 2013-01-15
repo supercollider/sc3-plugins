@@ -92,7 +92,6 @@ set(PLUGIN_DIRS
     LoopBufUGens
     MCLDUGens
     MdaUGens
-    NovaUGens
     RFWUGens
     RMEQSuiteUGens
     SCMIRUGens
@@ -114,7 +113,6 @@ set(PLUGIN_DIRS_EXTRA
     StkUGens
     TJUGens
 )
-
 
 set(plugins "")
 set(supernova_plugins "")
@@ -272,6 +270,11 @@ if (APPLE AND gcc_version MATCHES "4\\.0.*")
 else()
     file(GLOB TJUGensSources TJUGens/*.cpp)
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
+endif()
+
+if (NOVA_UGENS)
+    list(APPEND PLUGIN_DIRS_EXTRA NovaUGens)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 

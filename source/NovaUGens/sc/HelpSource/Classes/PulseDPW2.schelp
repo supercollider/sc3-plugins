@@ -1,6 +1,6 @@
 class:: PulseDPW2
-summary:: Feedback Amplitude Modulation
-categories:: UGens>Filters>Nonlinear
+summary:: Pulse wave generator
+categories:: UGens>Generators
 related:: Classes/Pulse, Classes/PulseDPW
 
 

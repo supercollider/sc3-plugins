@@ -24,8 +24,55 @@
 
 static InterfaceTable *ft;
 
+template <typename FloatType>
+struct ScalarSignal
+{
+	ScalarSignal(FloatType value):
+		value(value)
+	{}
+
+	FloatType consume() const
+	{
+		return value;
+	}
+
+	FloatType value;
+};
+
+template <typename FloatType>
+struct SlopeSignal
+{
+	SlopeSignal(FloatType value, FloatType slope):
+		value(value), slope(slope)
+	{}
+
+	FloatType consume()
+	{
+		FloatType ret = value;
+		value += slope;
+		return ret;
+	}
+
+	FloatType value, slope;
+};
+
+template <typename FloatType>
+struct AudioSignal
+{
+	AudioSignal(const FloatType * pointer):
+		pointer(pointer)
+	{}
+
+	FloatType consume()
+	{
+		return *pointer++;
+	}
+
+	const FloatType * pointer;
+};
+
 struct PulseDPW2:
-		public SCUnit
+	public SCUnit
 {
 public:
 	PulseDPW2():
@@ -39,53 +86,136 @@ public:
 		mPhase0 = sc_wrap(phase, -1.0f, 1.0f);
 		mPhase1 = sc_wrap(phase + width + width, -1.0f, 1.0f);
 
-		set_calc_function<PulseDPW2, &PulseDPW2::next_k>();
+		switch (inRate(0)) {
+		case calc_ScalarRate:
+		{
+			float freq = in0(0);
+			float scale;
+			double phaseIncrement;
+			updateFrequency<true>(freq, scale, phaseIncrement);
+
+			set_calc_function<PulseDPW2, &PulseDPW2::next_i>();
+			break;
+		}
+
+		case calc_BufRate:
+			set_calc_function<PulseDPW2, &PulseDPW2::next_k>();
+			break;
+
+		case calc_FullRate:
+			set_calc_function<PulseDPW2, &PulseDPW2::next_a>();
+		}
 	}
 
 private:
+	template <typename FloatType>
+	inline SlopeSignal<FloatType> makeSlope(FloatType last, FloatType next)
+	{
+		return SlopeSignal<FloatType>(last, calcSlope(next, last));
+	}
+
+	template <typename FloatType>
+	inline ScalarSignal<FloatType> makeScalar(FloatType value)
+	{
+		return ScalarSignal<FloatType>(value);
+	}
+
+	void next_i(int inNumSamples)
+	{
+		float scale = mScale;
+		double phaseIncrement = mPhaseIncrement;
+
+		next(inNumSamples, makeScalar(scale), makeScalar(phaseIncrement));
+	}
+
 	void next_k(int inNumSamples)
 	{
 		float freq = in0(0);
-		float * outSig = zout(0);
-
-		float scale;
-		double phaseIncrement;
-		if (freq != mFreq) {
-			// we simulate negative frequencies by scaling positive frequencies by -1
-			float absScale = freq >= 0 ? 1 : -1;
-			freq = std::abs(freq);
-
-			mFreq = freq;
-			float sampleDuration = sampleDur();
-			freq = freq * 2 * sampleDuration;
-			scale = mScale = absScale / (4.f * freq * ( 1.f - freq * sampleDuration));
-			phaseIncrement = mPhaseIncrement = freq;
+		if (freq == mFreq) {
+			next_i(inNumSamples);
 		} else {
-			scale = mScale;
-			phaseIncrement = mPhaseIncrement;
-		}
+			float lastScale = mScale;
+			double lastPhaseIncrement = mPhaseIncrement;
 
+			float nextScale;
+			double nextPhaseIncrement;
+			updateFrequency<true>(freq, nextScale, nextPhaseIncrement);
+			next(inNumSamples, makeSlope(lastScale, nextScale), makeSlope(lastPhaseIncrement, nextPhaseIncrement));
+		}
+	}
+
+	void next_a(int inNumSamples)
+	{
 		float lastVal0 = mLastVal0;
 		float lastVal1 = mLastVal1;
 		double phase0 = mPhase0;
 		double phase1 = mPhase1;
 
+		float * outSig = zout(0);
+
+		AudioSignal<float> freq(in(0));
+
+		loop(inNumSamples, [&] {
+			double phaseIncrement;
+			float scale;
+
+			updateFrequency(freq.consume(), scale, phaseIncrement);
+
+			ZXP(outSig) = tick(phase0, phase1, phaseIncrement, lastVal0, lastVal1, scale);
+		});
+
+		mLastVal0 = lastVal0;
+		mLastVal1 = lastVal1;
+		mPhase0 = phase0;
+		mPhase1 = phase1;
+	}
+
+	template <typename ScaleType, typename PhaseType>
+	inline void next(int inNumSamples, ScaleType scale, PhaseType phaseIncrement)
+	{
+		float lastVal0 = mLastVal0;
+		float lastVal1 = mLastVal1;
+		double phase0 = mPhase0;
+		double phase1 = mPhase1;
+
+		float * outSig = zout(0);
 		LOOP(inNumSamples >> 1,
-			float out0 = tick(phase0, phase1, phaseIncrement, lastVal0, lastVal1, scale);
-			float out1 = tick(phase0, phase1, phaseIncrement, lastVal0, lastVal1, scale);
+			float out0 = tick(phase0, phase1, phaseIncrement.consume(), lastVal0, lastVal1, scale.consume());
+			float out1 = tick(phase0, phase1, phaseIncrement.consume(), lastVal0, lastVal1, scale.consume());
 
 			ZXP(outSig) = out0;
 			ZXP(outSig) = out1;
 		);
 
 		LOOP(inNumSamples & 1,
-			 ZXP(outSig) = tick(phase0, phase1, phaseIncrement, lastVal0, lastVal1, scale);
+			ZXP(outSig) = tick(phase0, phase1, phaseIncrement.consume(), lastVal0, lastVal1, scale.consume());
 		);
 
 		mLastVal0 = lastVal0;
 		mLastVal1 = lastVal1;
 		mPhase0 = phase0;
 		mPhase1 = phase1;
+	}
+
+	template <bool StoreUpdate = true>
+	inline void updateFrequency(float freq, float & scale, double & phaseIncrement)
+	{
+		// we simulate negative frequencies by scaling positive frequencies by -1
+		const float absScale = freq >= 0 ? 1 : -1;
+		freq = std::abs(freq);
+
+		mFreq = freq;
+
+		const float sampleDuration = sampleDur();
+		freq = freq * 2 * sampleDuration;
+
+		scale = absScale / (4.f * freq * ( 1.f - freq * sampleDuration));
+		phaseIncrement = freq;
+
+		if (StoreUpdate) {
+			mScale = scale;
+			mPhaseIncrement = phaseIncrement;
+		}
 	}
 
 	static inline double incrementPhase(double phase, double phaseIncrement)
