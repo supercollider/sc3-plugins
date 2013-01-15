@@ -42,15 +42,36 @@ private:
 
 		feedback = sc_clip(feedback, 0.0, 1.9); // really depends on the frequency
 
-		for (int i = 0; i != inNumSamples; ++i) {
-			const float x = ZXP(inSig);
-			const float out = x * (1 + zm1 * feedback);
+		loop (inNumSamples >> 2, [&] {
+			const float x0 = ZXP(inSig);
+			const float x1 = ZXP(inSig);
+			const float x2 = ZXP(inSig);
+			const float x3 = ZXP(inSig);
 
-			zm1 = out;
-			ZXP(outSig) = out;
-		}
+			float out0 = tick(x0, zm1, feedback);
+			float out1 = tick(x1, zm1, feedback);
+			float out2 = tick(x2, zm1, feedback);
+			float out3 = tick(x3, zm1, feedback);
+
+			ZXP(outSig) = out0;
+			ZXP(outSig) = out1;
+			ZXP(outSig) = out2;
+			ZXP(outSig) = out3;
+		});
+
+		loop(inNumSamples & 3, [&] {
+			const float x = ZXP(inSig);
+			ZXP(outSig) = tick(x, zm1, feedback);
+		});
 
 		zm1_ = zm1;
+	}
+
+	static float tick (float x, float & zm1, float feedback)
+	{
+		const float out = x * (1 + zm1 * feedback);
+		zm1 = out;
+		return out;
 	}
 
 	float zm1_;
