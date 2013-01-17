@@ -1835,12 +1835,14 @@ FoaDecoderKernel {
 	}
 
 	free {
+		var path;
 		kernel.shape.at(0).do({ arg i;
 			kernel.shape.at(1).do({ arg j;
+				path = kernel.at(i).at(j).path;
 				kernel.at(i).at(j).free;
 				(
 					"Kernel %, channel % freed.".format(
-						PathName.new(kernel.at(i).at(j).path).fileName, j
+						PathName.new(path).fileName, j
 					)
 				).postln
 			})
@@ -2099,12 +2101,14 @@ FoaEncoderKernel {
 	}
 
 	free {
+		var path;
 		kernel.shape.at(0).do({ arg i;
 			kernel.shape.at(1).do({ arg j;
+				path = kernel.at(i).at(j).path;
 				kernel.at(i).at(j).free;
 				(
 					"Kernel %, channel % freed.".format(
-						PathName.new(kernel.at(i).at(j).path).fileName, j
+						PathName.new(path).fileName, j
 					)
 				).postln
 			})
