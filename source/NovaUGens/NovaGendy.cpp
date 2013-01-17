@@ -110,7 +110,7 @@ inline Float bspline_6p_5o(Float phase, Float ym2, Float ym1, Float y0, Float y1
 
 // adapted from Nick's Gendy
 template <typename Float>
-static Float Gendyn_distribution( int which, Float a, Float f)
+static inline Float Gendyn_distribution( int which, Float a, Float f)
 {
 	using namespace std;
 	Float temp, c;

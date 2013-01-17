@@ -9,3 +9,25 @@ GendyI : UGen {
         ^this.multiNew('control', ampdist, durdist, adparam, ddparam, minfreq, maxfreq, ampscale, durscale, initCPs, knum ? initCPs, interpolation).madd( mul, add )
     }
 }
+
+DiodeLadderFilter : Filter {
+    *ar { arg sig, freq = 440, q = 0.2, feedbackHPF = 1000, mul = 1.0, add = 0.0;
+        ^this.multiNew('audio', sig, freq, q, feedbackHPF).madd( mul, add )
+    }
+}
+
+FBAM : PureUGen {
+    *ar { arg sig, feedback = 0.1, mul = 1.0, add = 0.0;
+        ^this.multiNew('audio', sig, feedback).madd( mul, add )
+    }
+}
+
+PulseDPW2 : PureUGen {
+	*ar { arg freq = 220, width = 0.5, phase = 0.0, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', freq, width, phase.linlin(-1, 1, -pi, pi)).madd( mul, add )
+	}
+
+	*kr { arg freq = 220, width = 0.5, phase = 0.0, mul = 1.0, add = 0.0;
+		^this.multiNew('control', freq, width, phase.linlin(-1, 1, -pi, pi)).madd( mul, add )
+	}
+}

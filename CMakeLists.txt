@@ -33,6 +33,7 @@ option(QUARKS "Install plugins as quarks")
 option(OSX_PACKAGE "Package dmg for Apple")
 option(IN_PLACE_BUILD "Build and install in cmake build folder" ON)
 option(NOVA_SIMD "Build VBAP with nova-simd support." ON)
+option(NOVA_UGENS "Build nova ugens (requires c++11 compliant compiler)." OFF)
 
 if (NOVA_SIMD)
   add_definitions(-DNOVA_SIMD)
