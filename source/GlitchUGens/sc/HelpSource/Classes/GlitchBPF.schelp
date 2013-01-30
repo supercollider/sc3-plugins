@@ -1,0 +1,42 @@
+class:: GlitchBPF
+summary:: backward compatibility
+related:: Classes/BPF
+categories:: UGens>Filters>Linear
+
+
+Description::
+
+October 2012 BPF was changed to use double-precision floats (git commit: 72412f63affa94f69e2ea7539e21831a1d0d3e01). GlitchBPF can be used as drop-in replacements to get the old behavior back. Good for very noise and glitchy sounds where the filter [nearly] blows up.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::in
+The input signal.
+
+argument::freq
+Cutoff frequency in Hertz.
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+Examples::
+
+code::
+//code that utilizes the glitch.
+//warning!  extremely loud.
+//note: might not sound the same on all soundcards
+(
+{GlitchBPF.ar(
+	BrownNoise.ar(1.dup),
+	0.5,
+	Saw.kr(1, 10)
+)}.play;
+)
+::
