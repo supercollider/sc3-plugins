@@ -17,7 +17,10 @@ argument::in
 The input signal.
 
 argument::freq
-Cutoff frequency in Hertz.
+Centre frequency in Hertz.
+
+argument::rq
+The reciprocal of Q. Q is conventionally defined as cutoffFreq / bandwidth, meaning rq = (bandwidth / cutoffFreq).
 
 argument::mul
 Output will be multiplied by this value.
@@ -34,9 +37,9 @@ code::
 //note: might not sound the same on all soundcards
 (
 {GlitchBPF.ar(
-	BrownNoise.ar(1.dup),
-	0.5,
-	Saw.kr(1, 10)
+    ClipNoise.ar(1.dup),
+    0.5,
+    SinOsc.kr(1, 10)
 )}.play;
 )
 ::

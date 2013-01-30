@@ -18,8 +18,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-//after sc3.4 HPF/RHPF were changed to use double-precision floats (svn revision: 10300 - 8sep2010).
-//GlitchHPF/GlitchRHPF can be used as drop-in replacements to get the old behaviour back.
+//after sc3.4 HPF/RHPF were changed to use double-precision floats (svn revision: 10300 - 8sep2010).  and later also BPF, BRF.
+//GlitchHPF/GlitchRHPF/GlitchBPF/GlitchBRF can all be used as drop-in replacements to get the old behaviour back.
 
 #include "SC_PlugIn.h"
 
@@ -33,6 +33,16 @@ struct GlitchRHPF : public Unit
 struct GlitchHPF : public Unit
 {
 	float m_y1, m_y2, m_a0, m_b1, m_b2, m_freq;
+};
+
+struct GlitchBPF : public Unit
+{
+	float m_y1, m_y2, m_a0, m_b1, m_b2, m_freq, m_bw;
+};
+
+struct GlitchBRF : public Unit
+{
+	float m_y1, m_y2, m_a0, m_a1, m_b2, m_freq, m_bw;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +59,14 @@ extern "C"
 	void GlitchHPF_next(GlitchHPF *unit, int inNumSamples);
 	void GlitchHPF_next_1(GlitchHPF *unit, int inNumSamples);
 	void GlitchHPF_Ctor(GlitchHPF* unit);
+
+    void GlitchBPF_next(GlitchBPF *unit, int inNumSamples);
+	void GlitchBPF_next_1(GlitchBPF *unit, int inNumSamples);
+	void GlitchBPF_Ctor(GlitchBPF* unit);
+
+	void GlitchBRF_next(GlitchBRF *unit, int inNumSamples);
+	void GlitchBRF_next_1(GlitchBRF *unit, int inNumSamples);
+	void GlitchBRF_Ctor(GlitchBRF* unit);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,12 +365,323 @@ void GlitchHPF_next_1(GlitchHPF* unit, int inNumSamples)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void GlitchBPF_Ctor(GlitchBPF* unit)
+{
+	//printf("GlitchBPF_Reset\n");
+	if (unit->mBufLength == 1) {
+		SETCALC(GlitchBPF_next_1);
+	} else {
+		SETCALC(GlitchBPF_next);
+	};
+	unit->m_a0 = 0.f;
+	unit->m_b1 = 0.f;
+	unit->m_b2 = 0.f;
+	unit->m_y1 = 0.f;
+	unit->m_y2 = 0.f;
+	unit->m_freq = 0.f;
+	unit->m_bw = 0.f;
+	ZOUT0(0) = 0.f;
+}
+
+void GlitchBPF_next(GlitchBPF* unit, int inNumSamples)
+{
+	//printf("GlitchBPF_next\n");
+
+	float *out = ZOUT(0);
+	float *in = ZIN(0);
+	float freq = ZIN0(1);
+	float bw = ZIN0(2);
+
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float a0 = unit->m_a0;
+	float b1 = unit->m_b1;
+	float b2 = unit->m_b2;
+
+	if (freq != unit->m_freq || bw != unit->m_bw) {
+
+		float pfreq = freq * unit->mRate->mRadiansPerSample;
+		float pbw   = bw   * pfreq * 0.5f;
+
+		float C = 1.f / tan(pbw);
+		float D = 2.f * cos(pfreq);
+
+		float next_a0 = 1.f / (1.f + C);
+		float next_b1 = C * D * next_a0 ;
+		float next_b2 = (1.f - C) * next_a0;
+
+		float a0_slope = (next_a0 - a0) * unit->mRate->mFilterSlope;
+		float b1_slope = (next_b1 - b1) * unit->mRate->mFilterSlope;
+		float b2_slope = (next_b2 - b2) * unit->mRate->mFilterSlope;
+		LOOP(unit->mRate->mFilterLoops,
+             y0 = ZXP(in) + b1 * y1 + b2 * y2;
+             ZXP(out) = a0 * (y0 - y2);
+
+             y2 = ZXP(in) + b1 * y0 + b2 * y1;
+             ZXP(out) = a0 * (y2 - y1);
+
+             y1 = ZXP(in) + b1 * y2 + b2 * y0;
+             ZXP(out) = a0 * (y1 - y0);
+
+             a0 += a0_slope;
+             b1 += b1_slope;
+             b2 += b2_slope;
+             );
+		LOOP(unit->mRate->mFilterRemain,
+             y0 = ZXP(in) + b1 * y1 + b2 * y2;
+             ZXP(out) = a0 * (y0 - y2);
+             y2 = y1;
+             y1 = y0;
+             );
+
+		unit->m_freq = freq;
+		unit->m_bw = bw;
+		unit->m_a0 = a0;
+		unit->m_b1 = b1;
+		unit->m_b2 = b2;
+	} else {
+		LOOP(unit->mRate->mFilterLoops,
+             y0 = ZXP(in) + b1 * y1 + b2 * y2;
+             ZXP(out) = a0 * (y0 - y2);
+
+             y2 = ZXP(in) + b1 * y0 + b2 * y1;
+             ZXP(out) = a0 * (y2 - y1);
+
+             y1 = ZXP(in) + b1 * y2 + b2 * y0;
+             ZXP(out) = a0 * (y1 - y0);
+             );
+		LOOP(unit->mRate->mFilterRemain,
+             y0 = ZXP(in) + b1 * y1 + b2 * y2;
+             ZXP(out) = a0 * (y0 - y2);
+             y2 = y1;
+             y1 = y0;
+             );
+	}
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_y2 = zapgremlins(y2);
+}
+
+void GlitchBPF_next_1(GlitchBPF* unit, int inNumSamples)
+{
+	//printf("GlitchBPF_next_1\n");
+
+	float in = ZIN0(0);
+	float freq = ZIN0(1);
+	float bw = ZIN0(2);
+
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float a0 = unit->m_a0;
+	float b1 = unit->m_b1;
+	float b2 = unit->m_b2;
+
+	if (freq != unit->m_freq || bw != unit->m_bw) {
+
+		float pfreq = freq * unit->mRate->mRadiansPerSample;
+		float pbw   = bw   * pfreq * 0.5;
+
+		float C = 1.f / tan(pbw);
+		float D = 2.f * cos(pfreq);
+
+		float a0 = 1.f / (1.f + C);
+		float b1 = C * D * a0 ;
+		float b2 = (1.f - C) * a0;
+
+		y0 = in + b1 * y1 + b2 * y2;
+		ZOUT0(0) = a0 * (y0 - y2);
+		y2 = y1;
+		y1 = y0;
+
+		unit->m_freq = freq;
+		unit->m_bw = bw;
+		unit->m_a0 = a0;
+		unit->m_b1 = b1;
+		unit->m_b2 = b2;
+	} else {
+		y0 = in + b1 * y1 + b2 * y2;
+		ZOUT0(0) = a0 * (y0 - y2);
+		y2 = y1;
+		y1 = y0;
+	}
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_y2 = zapgremlins(y2);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void GlitchBRF_Ctor(GlitchBRF* unit)
+{
+	//printf("GlitchBRF_Reset\n");
+	if (unit->mBufLength == 1) {
+		SETCALC(GlitchBRF_next_1);
+	} else {
+		SETCALC(GlitchBRF_next);
+	};
+	unit->m_a0 = 0.f;
+	unit->m_a1 = 0.f;
+	unit->m_b2 = 0.f;
+	unit->m_y1 = 0.f;
+	unit->m_y2 = 0.f;
+	unit->m_freq = 0.f;
+	unit->m_bw = 0.f;
+	ZOUT0(0) = 0.f;
+}
+
+
+void GlitchBRF_next(GlitchBRF* unit, int inNumSamples)
+{
+	//printf("GlitchBRF_next\n");
+
+	float *out = ZOUT(0);
+	float *in = ZIN(0);
+	float freq = ZIN0(1);
+	float bw = ZIN0(2);
+
+	float ay;
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float a0 = unit->m_a0;
+	float a1 = unit->m_a1;
+	float b2 = unit->m_b2;
+
+	if (freq != unit->m_freq || bw != unit->m_bw) {
+		float pfreq = freq * unit->mRate->mRadiansPerSample;
+		float pbw   = bw   * pfreq * 0.5f;
+
+		float C = tan(pbw);
+		float D = 2.f * cos(pfreq);
+
+		float next_a0 = 1.f / (1.f + C);
+		float next_a1 = -D * next_a0;
+		float next_b2 = (1.f - C) * next_a0;
+
+		float a0_slope = (next_a0 - a0) * unit->mRate->mFilterSlope;
+		float a1_slope = (next_a1 - a1) * unit->mRate->mFilterSlope;
+		float b2_slope = (next_b2 - b2) * unit->mRate->mFilterSlope;
+
+		LOOP(unit->mRate->mFilterLoops,
+             ay = a1 * y1;
+             y0 = ZXP(in) - ay - b2 * y2;
+             ZXP(out) = a0 * (y0 + y2) + ay;
+
+             ay = a1 * y0;
+             y2 = ZXP(in) - ay - b2 * y1;
+             ZXP(out) = a0 * (y2 + y1) + ay;
+
+             ay = a1 * y2;
+             y1 = ZXP(in) - ay - b2 * y0;
+             ZXP(out) = a0 * (y1 + y0) + ay;
+
+             a0 += a0_slope;
+             a1 += a1_slope;
+             b2 += b2_slope;
+             );
+		LOOP(unit->mRate->mFilterRemain,
+             ay = a1 * y1;
+             y0 = ZXP(in) - ay - b2 * y2;
+             ZXP(out) = a0 * (y0 + y2) + ay;
+             y2 = y1;
+             y1 = y0;
+             );
+
+		unit->m_freq = freq;
+		unit->m_bw = bw;
+		unit->m_a0 = a0;
+		unit->m_a1 = a1;
+		unit->m_b2 = b2;
+	} else {
+		LOOP(unit->mRate->mFilterLoops,
+             ay = a1 * y1;
+             y0 = ZXP(in) - ay - b2 * y2;
+             ZXP(out) = a0 * (y0 + y2) + ay;
+
+             ay = a1 * y0;
+             y2 = ZXP(in) - ay - b2 * y1;
+             ZXP(out) = a0 * (y2 + y1) + ay;
+
+             ay = a1 * y2;
+             y1 = ZXP(in) - ay - b2 * y0;
+             ZXP(out) = a0 * (y1 + y0) + ay;
+             );
+		LOOP(unit->mRate->mFilterRemain,
+             ay = a1 * y1;
+             y0 = ZXP(in) - ay - b2 * y2;
+             ZXP(out) = a0 * (y0 + y2) + ay;
+             y2 = y1;
+             y1 = y0;
+             );
+	}
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_y2 = zapgremlins(y2);
+
+}
+
+
+void GlitchBRF_next_1(GlitchBRF* unit, int inNumSamples)
+{
+	//printf("GlitchBRF_next_1\n");
+
+	float in = ZIN0(0);
+	float freq = ZIN0(1);
+	float bw = ZIN0(2);
+
+	float ay;
+	float y0;
+	float y1 = unit->m_y1;
+	float y2 = unit->m_y2;
+	float a0 = unit->m_a0;
+	float a1 = unit->m_a1;
+	float b2 = unit->m_b2;
+
+	if (freq != unit->m_freq || bw != unit->m_bw) {
+		float pfreq = freq * unit->mRate->mRadiansPerSample;
+		float pbw   = bw   * pfreq * 0.5f;
+
+		float C = tan(pbw);
+		float D = 2.f * cos(pfreq);
+
+		float a0 = 1.f / (1.f + C);
+		float a1 = -D * a0;
+		float b2 = (1.f - C) * a0;
+
+		ay = a1 * y1;
+		y0 = in - ay - b2 * y2;
+		ZOUT0(0) = a0 * (y0 + y2) + ay;
+		y2 = y1;
+		y1 = y0;
+
+		unit->m_freq = freq;
+		unit->m_bw = bw;
+		unit->m_a0 = a0;
+		unit->m_a1 = a1;
+		unit->m_b2 = b2;
+	} else {
+
+		ay = a1 * y1;
+		y0 = in - ay - b2 * y2;
+		ZOUT0(0) = a0 * (y0 + y2) + ay;
+		y2 = y1;
+		y1 = y0;
+
+	}
+	unit->m_y1 = zapgremlins(y1);
+	unit->m_y2 = zapgremlins(y2);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 PluginLoad(Filter)
 {
 	ft = inTable;
 
 	DefineSimpleUnit(GlitchHPF);
 	DefineSimpleUnit(GlitchRHPF);
+    DefineSimpleUnit(GlitchBPF);
+	DefineSimpleUnit(GlitchBRF);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,6 +19,9 @@ The input signal.
 argument::freq
 Cutoff frequency in Hertz.
 
+argument::rq
+The reciprocal of Q (bandwidth / cutoffFreq).
+
 argument::mul
 Output will be multiplied by this value.
 
@@ -30,13 +33,15 @@ Examples::
 
 code::
 //code that utilizes the glitch.
-//warning!  extremely loud.
-//note: might not sound the same on all soundcards
 (
-{GlitchBRF.ar(
-	BrownNoise.ar(1.dup),
-	0.5,
-	Saw.kr(1, 10)
-)}.play;
+s.waitForBoot{
+	SynthDef(\birdy, {|out= 0, amp= 0.1, freq= 1000, atk= 0.01, rel= 0.05, cur= -4, gate= 1|
+		var env= EnvGen.kr(Env.asr(atk, 1, rel, cur), gate, doneAction:2);
+		var src= SinOsc.ar(0.11, GlitchBRF.ar(SinOsc.ar(SinOsc.ar(0.12).exprange(1, freq), 2pi), 1/SinOsc.ar(0.13).range(1, #[99, 100])));
+		Out.ar(out, Limiter.ar(LeakDC.ar(src*amp)));
+	}).add;
+	s.sync;
+	Synth(\birdy, [\amp, 0.15]);
+};
 )
 ::
