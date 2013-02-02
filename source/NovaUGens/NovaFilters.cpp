@@ -47,6 +47,48 @@ static InterfaceTable *ft;
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+
+typedef enum {scalar, slope} ArgType;
+
+template <int ArgType>
+struct QParameter
+{};
+
+template <>
+struct QParameter<scalar>
+{
+	QParameter(double k, double A):
+		k_(k), A_(A)
+	{}
+
+	void getParameters(double & k, double & A)
+	{
+		k = k_;
+		A = A_;
+	}
+
+	double k_, A_;
+};
+
+template <>
+struct QParameter<slope>
+{
+	QParameter(double k, double kSlope, double A, double ASlope):
+		k_(k), kSlope_(kSlope), A_(A), ASlope_(ASlope)
+	{}
+
+	void getParameters(double & k, double & A)
+	{
+		k = k_;
+		A = A_;
+		k_ += kSlope_;
+		A_ += ASlope_;
+	}
+
+	double k_, A_;
+	double kSlope_, ASlope_;
+};
+
 // TODO: add some oversampling
 struct DiodeLadderFilter:
 	public SCUnit
@@ -55,23 +97,82 @@ public:
 	DiodeLadderFilter()
 	{
 		std::fill(z, z + 5, 0);
-		q = hpCutoff = std::numeric_limits<float>::signaling_NaN();
+		hpCutoff = std::numeric_limits<float>::signaling_NaN();
 
-		if (inRate(1) == calc_FullRate)
-			set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_akk>();
-		else
-			set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_k>();
+		float newQ = in0(2);
+		set_q(newQ);
+
+		if (inRate(1) == calc_FullRate) {
+			switch (inRate(2)) {
+			case calc_ScalarRate:
+				set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_xi<true> >();
+				break;
+
+			case calc_BufRate:
+			default:
+				set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_xk<true> >();
+				break;
+			}
+		} else {
+			switch (inRate(2)) {
+			case calc_ScalarRate:
+				set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_xi<false> >();
+				break;
+
+			case calc_BufRate:
+			default:
+				set_calc_function<DiodeLadderFilter, &DiodeLadderFilter::next_xk<false> >();
+				break;
+			}
+		}
 	}
 
 private:
-	void next_k(int inNumSamples)
+	template <bool AudioRateFrequency, typename QParam>
+	void next(int inNumSamples, QParam & qParameter)
+	{
+		if (AudioRateFrequency)
+			next_a(inNumSamples, qParameter);
+		else
+			next_k(inNumSamples, qParameter);
+	}
+
+	template <bool AudioRateFrequency>
+	void next_xi(int inNumSamples)
+	{
+		QParameter<scalar> qParam(m_k, m_A);
+		next<AudioRateFrequency>(inNumSamples, qParam);
+	}
+
+	template <bool AudioRateFrequency>
+	void next_xk(int inNumSamples)
+	{
+		float newQ = in0(2);
+		newQ = sc_clip(newQ, 0, 1);
+
+		if (newQ != q) {
+			double oldA = m_A, oldk = m_k;
+			double newA, newk;
+
+			update_kA(newQ, newk, newA);
+			m_A = newA;
+			m_k = newk;
+
+			double kSlope = calcSlope(newk, oldk);
+			double ASlope = calcSlope(newA, oldA);
+
+			QParameter<slope> qParam(oldk, kSlope, oldA, ASlope);
+			next<AudioRateFrequency>(inNumSamples, qParam);
+		} else {
+			next_xi<AudioRateFrequency>(inNumSamples);
+		}
+	}
+
+	template <typename QParam>
+	void next_k(int inNumSamples, QParam & qParameter)
 	{
 		float newFreq        = in0(1);
-		float newQ           = in0(2);
 		float newHPCutoff    = in0(3);
-
-		if (q != newQ)
-			set_q(newQ);
 
 		if (newHPCutoff != hpCutoff)
 			setFeedbackHPF(newHPCutoff * sampleDur());
@@ -90,7 +191,11 @@ private:
 
 		for (int i = 0; i != inNumSamples; ++i) {
 			double x = ZXP(inSig);
-			ZXP(outSig) = tick(x, a, a2, a_inv, b, b2, c, g, g0, z0, z1, z2, z3, z4);
+			double A, k;
+
+			qParameter.getParameters(k, A);
+
+			ZXP(outSig) = tick(x, a, a2, a_inv, b, b2, c, g, g0, z0, z1, z2, z3, z4, k, A);
 		}
 		z[0] = z0;
 		z[1] = z1;
@@ -99,13 +204,10 @@ private:
 		z[4] = z4;
 	}
 
-	void next_akk(int inNumSamples)
+	template <typename QParam>
+	void next_a(int inNumSamples, QParam & qParameter)
 	{
-		float newQ           = in0(2);
 		float newHPCutoff    = in0(3);
-
-		if (q != newQ)
-			set_q(newQ);
 
 		if (newHPCutoff != hpCutoff)
 			setFeedbackHPF(newHPCutoff * sampleDur());
@@ -125,8 +227,11 @@ private:
 			double a, a_inv, a2, b, b2, c, g, g0;
 			calcFilterCoefficients(freq, a, a2, a_inv, b, b2, c, g, g0);
 
+			double k, A;
+			qParameter.getParameters(k, A);
+
 			double x = ZXP(inSig);
-			ZXP(outSig) = tick(x, a, a2, a_inv, b, b2, c, g, g0, z0, z1, z2, z3, z4);
+			ZXP(outSig) = tick(x, a, a2, a_inv, b, b2, c, g, g0, z0, z1, z2, z3, z4, k, A);
 		}
 		z[0] = z0;
 		z[1] = z1;
@@ -136,7 +241,7 @@ private:
 	}
 
 	double tick(double x, double a, double a2, double ainv, double b, double b2, double c, double g, double g0,
-				double & z0, double & z1, double & z2, double & z3, double & z4)
+				double & z0, double & z1, double & z2, double & z3, double & z4, double k, double A)
 	{
 		// current state
 		const double s0 = (a2*a*z0 + a2*b*z1 + z2*(b2 - 2*a2)*a + z3*(b2 - 3*a2)*b) * c;
@@ -196,6 +301,11 @@ private:
 	void set_q(double q_)
 	{
 		q = sc_clip(q_, 0, 1);
+		update_kA(q_, m_k, m_A);
+	}
+
+	static void update_kA(double q, double & k, double & A)
+	{
 		k = 20 * q;
 		A = 1 + 0.5*k; // resonance gain compensation
 	}
@@ -206,7 +316,7 @@ private:
 	}
 
 	float q, hpCutoff;
-	double k, A;
+	double m_k, m_A;
 	double z[5];
 	double ah, bh;
 };
