@@ -59,7 +59,7 @@ private:
 		newFeedback = sc_clip(newFeedback, 0.0, 1.9); // really depends on the frequency
 
 		if (newFeedback != fb_) {
-			auto fb = makeSlope(fb_, newFeedback);
+			auto fb = makeSlope(newFeedback, fb_);
 			fb_ = newFeedback;
 			next<false>(inNumSamples, fb);
 		} else

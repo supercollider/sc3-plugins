@@ -140,7 +140,7 @@ private:
 			float nextScale;
 			double nextPhaseIncrement;
 			updateFrequency<true>(freq, nextScale, nextPhaseIncrement);
-			next(inNumSamples, makeSlope(lastScale, nextScale), makeSlope(lastPhaseIncrement, nextPhaseIncrement));
+			next(inNumSamples, makeSlope(nextScale, lastScale), makeSlope(nextPhaseIncrement, lastPhaseIncrement));
 		}
 	}
 
