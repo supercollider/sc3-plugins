@@ -24,53 +24,6 @@
 
 static InterfaceTable *ft;
 
-template <typename FloatType>
-struct ScalarSignal
-{
-	ScalarSignal(FloatType value):
-		value(value)
-	{}
-
-	FloatType consume() const
-	{
-		return value;
-	}
-
-	FloatType value;
-};
-
-template <typename FloatType>
-struct SlopeSignal
-{
-	SlopeSignal(FloatType value, FloatType slope):
-		value(value), slope(slope)
-	{}
-
-	FloatType consume()
-	{
-		FloatType ret = value;
-		value += slope;
-		return ret;
-	}
-
-	FloatType value, slope;
-};
-
-template <typename FloatType>
-struct AudioSignal
-{
-	AudioSignal(const FloatType * pointer):
-		pointer(pointer)
-	{}
-
-	FloatType consume()
-	{
-		return *pointer++;
-	}
-
-	const FloatType * pointer;
-};
-
 struct PulseDPW2:
 	public SCUnit
 {
@@ -108,18 +61,6 @@ public:
 	}
 
 private:
-	template <typename FloatType>
-	inline SlopeSignal<FloatType> makeSlope(FloatType last, FloatType next)
-	{
-		return SlopeSignal<FloatType>(last, calcSlope(next, last));
-	}
-
-	template <typename FloatType>
-	inline ScalarSignal<FloatType> makeScalar(FloatType value)
-	{
-		return ScalarSignal<FloatType>(value);
-	}
-
 	void next_i(int inNumSamples)
 	{
 		float scale = mScale;
@@ -159,7 +100,7 @@ private:
 			double phaseIncrement;
 			float scale;
 
-			updateFrequency(freq.consume(), scale, phaseIncrement);
+			updateFrequency<false>(freq.consume(), scale, phaseIncrement);
 
 			ZXP(outSig) = tick(phase0, phase1, phaseIncrement, lastVal0, lastVal1, scale);
 		});
@@ -204,8 +145,6 @@ private:
 		const float absScale = freq >= 0 ? 1 : -1;
 		freq = std::abs(freq);
 
-		mFreq = freq;
-
 		const float sampleDuration = sampleDur();
 		freq = freq * 2 * sampleDuration;
 
@@ -213,6 +152,7 @@ private:
 		phaseIncrement = freq;
 
 		if (StoreUpdate) {
+			mFreq = freq;
 			mScale = scale;
 			mPhaseIncrement = phaseIncrement;
 		}
