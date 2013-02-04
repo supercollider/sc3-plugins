@@ -17,12 +17,12 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "SC_PlugIn.hpp"
+#include "NovaUGensCommon.hpp"
 
 static InterfaceTable *ft;
 
 struct FBAM:
-	public SCUnit
+	public NovaUnit
 {
 public:
 	FBAM():
@@ -50,7 +50,7 @@ private:
 	void next_i(int inNumSamples)
 	{
 		auto fb = makeScalar(fb_);
-		next<false>(inNumSamples, fb);
+		next(inNumSamples, fb);
 	}
 
 	void next_k(int inNumSamples)
@@ -61,18 +61,18 @@ private:
 		if (newFeedback != fb_) {
 			auto fb = makeSlope(newFeedback, fb_);
 			fb_ = newFeedback;
-			next<false>(inNumSamples, fb);
+			next(inNumSamples, fb);
 		} else
 			next_i(inNumSamples);
 	}
 
 	void next_a(int inNumSamples)
 	{
-		auto fb = makeSignal(1);
-		next<true>(inNumSamples, fb);
+		auto fb = makeSignal(1, [](float f) { return sc_clip(f, 0.f, 1.f);});
+		next(inNumSamples, fb);
 	}
 
-	template <bool clip, typename FeedBack>
+	template <typename FeedBack>
 	void next(int inNumSamples, FeedBack & fb)
 	{
 		const float * inSig = zin(0);
@@ -86,10 +86,10 @@ private:
 			const float x2 = ZXP(inSig);
 			const float x3 = ZXP(inSig);
 
-			float fb0 = clip ? sc_clip(fb.consume(), 0, 1.9) : fb.consume();
-			float fb1 = clip ? sc_clip(fb.consume(), 0, 1.9) : fb.consume();
-			float fb2 = clip ? sc_clip(fb.consume(), 0, 1.9) : fb.consume();
-			float fb3 = clip ? sc_clip(fb.consume(), 0, 1.9) : fb.consume();
+			float fb0 = fb.consume();
+			float fb1 = fb.consume();
+			float fb2 = fb.consume();
+			float fb3 = fb.consume();
 
 			float out0 = tick(x0, zm1, fb0);
 			float out1 = tick(x1, zm1, fb1);
@@ -104,7 +104,7 @@ private:
 
 		loop(inNumSamples & 3, [&] {
 			const float x = ZXP(inSig);
-			float feedback = clip ? sc_clip(fb.consume(), 0, 1.9) : fb.consume();
+			float feedback = fb.consume();
 			ZXP(outSig) = tick(x, zm1, feedback);
 		});
 
