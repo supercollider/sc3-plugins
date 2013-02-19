@@ -53,6 +53,10 @@ BBlockerProgram {
 		^Buffer.loadCollection(server, this.makeCollection, 1, action) 
 	}
 	
+	makeLocalBuf {
+		^this.makeCollection.as(LocalBuf)
+	}
+	
 	fillBuffer {|buffer|
 		buffer.loadCollection(this.makeCollection);
 	}
