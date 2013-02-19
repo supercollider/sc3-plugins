@@ -1,7 +1,7 @@
 sc3-plugins: community collection of UGen plugins for SuperCollider
 ===================================================================
 
-SuperCollider "UGen" plugins are extensions for the [SuperCollider](http://supercollider.sourceforge.net/) audio synthesis server (see also [quarks](http://quarks.sourceforge.net/) to extend the programming language). For community discussion and support see the [SuperCollider mailing lists](http://supercollider.sourceforge.net/mod/resource/view.php?id=41).
+SuperCollider "UGen" plugins are extensions for the [SuperCollider](http://supercollider.sourceforge.net/) audio synthesis server (see also [quarks](http://quarks.sourceforge.net/) to extend the programming language). For community discussion and support see the [SuperCollider mailing lists](http://www.birmingham.ac.uk/facilities/BEAST/research/supercollider/mailinglist.aspx).
 
 Downloads are available from https://sourceforge.net/projects/sc3-plugins/files/
 
@@ -127,6 +127,8 @@ Here is an automatically-generated list of what's available in the download (it'
 * [Gendy5](http://doc.sccode.org/Classes/Gendy5.html)
 * [GendyI](http://doc.sccode.org/Classes/GendyI.html)
 * [Getenv](http://doc.sccode.org/Classes/Getenv.html)
+* [GlitchBPF](http://doc.sccode.org/Classes/GlitchBPF.html)
+* [GlitchBRF](http://doc.sccode.org/Classes/GlitchBRF.html)
 * [GlitchHPF](http://doc.sccode.org/Classes/GlitchHPF.html)
 * [GlitchRHPF](http://doc.sccode.org/Classes/GlitchRHPF.html)
 * [Goertzel](http://doc.sccode.org/Classes/Goertzel.html)
