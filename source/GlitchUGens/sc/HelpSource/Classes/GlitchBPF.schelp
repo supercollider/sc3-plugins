@@ -1,7 +1,7 @@
 class:: GlitchBPF
 summary:: backward compatibility
 related:: Classes/BPF
-categories:: UGens>Filters>Linear
+categories:: UGens>Filters>Linear, UGens>Filters>GlitchUGens
 
 
 Description::
