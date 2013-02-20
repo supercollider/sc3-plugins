@@ -86,6 +86,7 @@ set(PLUGIN_DIRS
     BhobUGens
     BlackrainUGens
     ConcatUGens
+	DEINDUGens
     DistortionUGens
     GlitchUGens
     JoshUGens
