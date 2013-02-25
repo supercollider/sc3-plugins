@@ -581,7 +581,7 @@ struct Dfsm : public Unit
 	int *m_nextstate_sizes;
 	int m_current_state;
 	int m_current_state_offset;
-	int m_count;
+	float m_count;
 	int m_end;
 };
 
