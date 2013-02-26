@@ -198,6 +198,13 @@ void NearestN_Ctor(NearestN* unit){
 	{
 		GET_BUF
 
+		if((int)bufChannels != (ndims + 3)){
+			Print("NearestN: number of channels in buffer (%i) != number of input dimensions (%i) + 3\n",
+				  bufChannels, ndims);
+			SETCALC(*ClearUnitOutputs);
+			return;
+		}
+
 		// initialize the unit generator state variables.
 		unit->m_ndims     = ndims;
 		unit->m_num       = num;
@@ -283,13 +290,6 @@ void NearestN_ascend(const int fromLeaf, const int asFarAs, const int ndims, con
 void NearestN_next(NearestN *unit, int inNumSamples){
 	GET_BUF
 	int ndims = unit->m_ndims;
-	if((int)bufChannels != (ndims + 3)){
-		Print("NearestN: number of channels in buffer (%i) != number of input dimensions (%i) + 3\n",
-			  bufChannels, ndims);
-		SETCALC(*ClearUnitOutputs);
-		return;
-	}
-
 	int num   = unit->m_num;
 	float* bestlist = unit->m_bestlist;
 	float* inputdata = unit->m_inputdata;
