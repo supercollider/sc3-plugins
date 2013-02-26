@@ -195,20 +195,22 @@ void NearestN_Ctor(NearestN* unit){
 
 	// Get the buffer reference, and check that the size and num channels matches what we expect.
 	unit->m_fbufnum = -1e9f;
-	GET_BUF
+	{
+		GET_BUF
 
-	if((int)bufChannels != (ndims + 3)){
-		Print("NearestN: number of channels in buffer (%i) != number of input dimensions (%i) + 3\n",
-									bufChannels, ndims);
-		SETCALC(*ClearUnitOutputs);
-		return;
+		if((int)bufChannels != (ndims + 3)){
+			Print("NearestN: number of channels in buffer (%i) != number of input dimensions (%i) + 3\n",
+				  bufChannels, ndims);
+			SETCALC(*ClearUnitOutputs);
+			return;
+		}
+
+		// initialize the unit generator state variables.
+		unit->m_ndims     = ndims;
+		unit->m_num       = num;
+
+		SETCALC(NearestN_next);
 	}
-
-	// initialize the unit generator state variables.
-	unit->m_ndims     = ndims;
-	unit->m_num       = num;
-
-	SETCALC(NearestN_next);
 	NearestN_next(unit, 1);
 }
 
