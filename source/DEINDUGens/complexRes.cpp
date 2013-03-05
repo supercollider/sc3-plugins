@@ -50,7 +50,7 @@ void ComplexRes_Ctor(ComplexRes* unit)
 	unit->mX = 0.0; // First state (real part)
 	unit->mY = 0.0; // Second state (imaginary part)
 	unit->mFreq = 10;
-	unit->mNormCoeff = unit->mRes/(1.0-unit->mRes*unit->mRes);
+	unit->mNormCoeff = (1.0-unit->mRes*unit->mRes)/unit->mRes;
 	unit->mcoeffX = unit->mRes * cos(TWOPI * unit->mFreq / SAMPLERATE);
 	unit->mcoeffY = unit->mRes * sin(TWOPI * unit->mFreq / SAMPLERATE);
 
@@ -80,7 +80,7 @@ void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
 	
 	if (decay != unit->mDecay){
 		res = exp(-1.0/(decay*SAMPLERATE));
-		normCoeff = res/(1.0-res*res);
+		normCoeff = (1.0-res*res)/res;
 		unit->mDecay = decay;
 		unit->mRes = res;
 		unit->mNormCoeff = normCoeff;
@@ -130,7 +130,7 @@ void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
 	
 	if (decay != unit->mDecay || freq != unit->mFreq){
 		res = exp(-1.0/(decay*SAMPLERATE));
-		normCoeff = res/(1.0-res*res);
+		normCoeff = (1.0-res*res)/res;
 		ang = freq * TWOPI / SAMPLERATE;
 		coeffX = res*cos(ang);
 		coeffY = res*sin(ang);
