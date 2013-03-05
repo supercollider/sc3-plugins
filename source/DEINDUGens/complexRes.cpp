@@ -15,6 +15,7 @@ struct ComplexRes : public Unit
 	double mRes; // Filter resonance coefficient (0...1)
 	double mX; // First state (real part)
 	double mY; // Second state (imaginary part)
+	double mNormCoeff; // Normalisation gain
 };
 
 // declare unit generator functions
@@ -49,6 +50,7 @@ void ComplexRes_Ctor(ComplexRes* unit)
 	unit->mX = 0.0; // First state (real part)
 	unit->mY = 0.0; // Second state (imaginary part)
 	unit->mFreq = 10;
+	unit->mNormCoeff = 1/(2*(1-unit->mRes));
 	unit->mcoeffX = unit->mRes * cos(TWOPI * unit->mFreq / SAMPLERATE);
 	unit->mcoeffY = unit->mRes * sin(TWOPI * unit->mFreq / SAMPLERATE);
 
@@ -74,14 +76,18 @@ void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
 	float decay = IN0(2);
 	double oldX = unit->mX;
 	double oldY = unit->mY;
-	double res,ang,coeffX,coeffY,X,Y;
+	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
 	if (decay != unit->mDecay){
 		res = exp(-1.0/(decay*SAMPLERATE));
+		normCoeff = 1/(2*(1-res));
 		unit->mDecay = decay;
 		unit->mRes = res;
+		unit->mNormCoeff = normCoeff;
+		
 	} else {
 		res = unit->mRes;
+		normCoeff = unit->mNormCoeff;
 	};
 	// perform a loop for the number of samples in the control period.
 	// If this unit is audio rate then inNumSamples will be 64 or whatever
@@ -95,7 +101,7 @@ void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
 		
 		X = coeffX*oldX - coeffY*oldY + in[i];
 		Y = coeffY*oldX + coeffX*oldY;
-		out[i] = Y;
+		out[i] = Y * normCoeff;
 		
 		oldX = X;
 		oldY = Y;
@@ -120,10 +126,11 @@ void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
 	float decay = IN0(2);
 	double oldX = unit->mX;
 	double oldY = unit->mY;
-	double res,ang,coeffX,coeffY,X,Y;
+	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
 	if (decay != unit->mDecay || freq != unit->mFreq){
 		res = exp(-1.0/(decay*SAMPLERATE));
+		normCoeff = 1/(2*(1-res));
 		ang = freq * TWOPI / SAMPLERATE;
 		coeffX = res*cos(ang);
 		coeffY = res*sin(ang);
@@ -132,10 +139,12 @@ void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
 		unit->mFreq = freq;
 		unit->mcoeffX = coeffX;
 		unit->mcoeffY = coeffY;
+		unit->mNormCoeff = normCoeff;
 	} else {
 		 res = unit->mRes;
 		 coeffX = unit->mcoeffX;
 		 coeffY = unit->mcoeffY;
+		 normCoeff = unit->mNormCoeff;
 	};
 	// perform a loop for the number of samples in the control period.
 	// If this unit is audio rate then inNumSamples will be 64 or whatever
@@ -145,7 +154,7 @@ void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
 	{
 		X = coeffX*oldX - coeffY*oldY + in[i];
 		Y = coeffY*oldX + coeffX*oldY;
-		out[i] = Y;
+		out[i] = Y*normCoeff;
 		
 		oldX = X;
 		oldY = Y;
