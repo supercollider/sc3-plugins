@@ -263,6 +263,11 @@ struct GendyN : public SCUnit
 		mIndex = 0;
 
 		Float * chunk = (Float*)RTAlloc(mWorld, mMemorySize * sizeof(Float) * 2);
+		if (chunk == nullptr) {
+			mMemoryAmp = nullptr;
+			mCalcFunc = ft->fClearUnitOutputs;
+			return;
+		}
 
 		mMemoryAmp = chunk;
 		mMemoryDur = chunk + mMemorySize;
@@ -292,7 +297,8 @@ struct GendyN : public SCUnit
 
 	~GendyN()
 	{
-		RTFree(mWorld, mMemoryAmp);
+		if (mMemoryAmp)
+			RTFree(mWorld, mMemoryAmp);
 	}
 
 	template <int Interpolator>
