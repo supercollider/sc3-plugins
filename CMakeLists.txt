@@ -34,6 +34,28 @@ option(OSX_PACKAGE "Package dmg for Apple")
 option(IN_PLACE_BUILD "Build and install in cmake build folder" ON)
 option(NOVA_SIMD "Build VBAP with nova-simd support." ON)
 option(NOVA_UGENS "Build nova ugens (requires c++11 compliant compiler)." OFF)
+option(CPP11 "Build with c++11." OFF)
+option(NATIVE "Optimize for this specific machine." OFF)
+option(DSO_VISIBILITY "Hide private symbols." OFF)
+
+if(${CMAKE_CXX_COMPILER} MATCHES clang)
+	set(CMAKE_COMPILER_IS_CLANG 1)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
+	if(DSO_VISIBILITY)
+		add_definitions(-fvisibility=hidden)
+	endif()
+
+	if(NATIVE)
+		add_definitions(-march=native)
+	endif()
+
+	if(CPP11)
+		add_definitions(-std=c++11)
+	endif()
+endif()
+
 
 if (NOVA_SIMD)
   add_definitions(-DNOVA_SIMD)
