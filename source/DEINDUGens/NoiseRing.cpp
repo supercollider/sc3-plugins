@@ -38,7 +38,7 @@ void DNoiseRing_Ctor(DNoiseRing *unit)
 	unit->state = 0;
 
 	DNoiseRing_next(unit, 0);
-	printf("initial unit state: %d,\n", unit->state);
+	// printf("initial unit state: %d,\n", unit->state);
 	OUT0(0) = 0.f;
 }
 
@@ -92,7 +92,7 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 		
 		OUT0(0) = (float) x;
 	} else {
-		printf("\tin else\n");
+		// printf("\tin else\n");
 		unit->state = trand(s1, s2, s3);
 		RESETINPUT(0);
 		RESETINPUT(1);
