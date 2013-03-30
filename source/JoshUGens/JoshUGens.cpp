@@ -3073,7 +3073,7 @@ void CombLP_next_aa(CombLP *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -3101,7 +3101,7 @@ void CombLP_next_aa(CombLP *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -3170,7 +3170,7 @@ void CombLP_next_aa_z(CombLP *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
@@ -3217,7 +3217,7 @@ void CombLP_next_aa_z(CombLP *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
@@ -3271,7 +3271,7 @@ void CombLP_next_kk(CombLP *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1.f - std::fabs(coef)) * value) + (coef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);
 			out[i] = lastsamp = onepole; //value;
 			iwrphase++;
@@ -3302,7 +3302,7 @@ void CombLP_next_kk(CombLP *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1.f - std::fabs(curcoef)) * value) + (curcoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);
 			out[i] = lastsamp = onepole; //value;
 			feedbk += feedbk_slope;
@@ -3373,7 +3373,7 @@ void CombLP_next_kk_z(CombLP *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1.f - std::fabs(coef)) * value) + (coef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);
 			out[i] = lastsamp = onepole; //value;
 			}
@@ -3422,7 +3422,7 @@ void CombLP_next_kk_z(CombLP *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1.f - std::fabs(curcoef)) * value) + (curcoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + (feedbk * onepole);
 			out[i] = lastsamp = onepole; //value;
 			}
@@ -3477,7 +3477,7 @@ void CombLP_next_ak(CombLP *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1.f - std::fabs(coef)) * value) + (coef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -3507,7 +3507,7 @@ void CombLP_next_ak(CombLP *unit, int inNumSamples)
 			float d2 = dlybuf[irdphase2 & mask];
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1.f - std::fabs(curcoef)) * value) + (curcoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -3577,7 +3577,7 @@ void CombLP_next_ak_z(CombLP *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(coef)) * value) + (coef * lastsamp);
+			float onepole = ((1.f - std::fabs(coef)) * value) + (coef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
@@ -3626,7 +3626,7 @@ void CombLP_next_ak_z(CombLP *unit, int inNumSamples)
 					d3 = dlybuf[irdphase3 & mask];
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
-			float onepole = ((1. - fabs(curcoef)) * value) + (curcoef * lastsamp);
+			float onepole = ((1.f - std::fabs(curcoef)) * value) + (curcoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
@@ -3684,7 +3684,7 @@ void CombLP_next_ka(CombLP *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			iwrphase++;
@@ -3712,7 +3712,7 @@ void CombLP_next_ka(CombLP *unit, int inNumSamples)
 			float d3 = dlybuf[irdphase3 & mask];
 			float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			feedbk += feedbk_slope;
@@ -3781,7 +3781,7 @@ void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
@@ -3828,7 +3828,7 @@ void CombLP_next_ka_z(CombLP *unit, int inNumSamples)
 				}
 				float value = cubicinterp(frac, d0, d1, d2, d3);
 			float thiscoef = coef[i];
-			float onepole = ((1. - fabs(thiscoef)) * value) + (thiscoef * lastsamp);
+			float onepole = ((1.f - std::fabs(thiscoef)) * value) + (thiscoef * lastsamp);
 			dlybuf[iwrphase & mask] = thisin + feedbk * onepole;
 			out[i] = lastsamp = onepole;
 			}
