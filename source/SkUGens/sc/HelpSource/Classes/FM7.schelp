@@ -1,18 +1,22 @@
-FM7 -- Phase modulation oscillator matrix
+class:: FM7
+summary:: Phase modulation oscillator matrix.
+categories::  UGens>Generators>Deterministic
 
-FM7 implements a 6x6 oscillator matrix, where each oscillator's phase can be
-modulated by any of the other oscillators' output.
+Description::
+FM7 implements a 6x6 oscillator matrix, where each oscillator's phase can be modulated by any of the other oscillators' output.
 
 The UGen expects two (flattened) matrices: one for specifying the oscillator
 parameters frequency (control rate), phase (initialization only) and amplitude
 (control rate):
 
+code::
 [ [ 300, 0,    1   ],
   [ 400, pi/2, 1   ],
   [ 730, 0,    0.5 ],
   [ 0,   0,    0   ],
   [ 0,   0,    0   ],
   [ 0,   0,    0   ] ]
+::
 
 The modulation matrix specifies the amount of modulation each oscillator
 output has on another oscillator's phase. Row i in the matrix refer to
@@ -21,6 +25,7 @@ modulation in radians.
 
 The UGen outputs the six individual oscillator signals.
 
+code::
 (
 {
 	var ctls, mods, chans;
@@ -122,3 +127,4 @@ Routine.run{
 				(Fold.ar(FM7.ar(ctls, mods).slice(chans), -0.3, 0.8) * [1, 1, 1, 1, LFPar.kr(0.05).range(-40.dbamp, -60.dbamp)]).clump(2).sum;
 			}.play)
 )
+::
