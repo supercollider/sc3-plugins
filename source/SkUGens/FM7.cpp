@@ -298,10 +298,10 @@ void FM7_Ctor(FM7 *unit)
     FM7_next_ki(unit, 1);
 }
 
-void load(InterfaceTable *inTable)
+PluginLoad(FM7)
 {
     ft = inTable;
-    (*ft->fDefineUnit)("FM7", sizeof(FM7), (UnitCtorFunc)&FM7_Ctor, 0, 0);
+    DefineSimpleUnit(FM7);
 }
 
 // EOF
