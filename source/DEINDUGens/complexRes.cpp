@@ -16,6 +16,7 @@ struct ComplexRes : public Unit
 	double mX; // First state (real part)
 	double mY; // Second state (imaginary part)
 	double mNormCoeff; // Normalisation gain
+	double mAng;
 };
 
 // declare unit generator functions
@@ -38,10 +39,18 @@ void ComplexRes_Ctor(ComplexRes* unit)
 	// 1. set the calculation function.
 	if (INRATE(1) == calc_FullRate) {
 		// if the frequency argument is audio rate
-		SETCALC(ComplexRes_next_a);
+		if (INRATE(2) == calc_FullRate) {
+			SETCALC(ComplexRes_next_aa);
+		} else {
+			SETCALC(ComplexRes_next_ak)
+		}
 	} else {
 		// if the frequency argument is control rate (or a scalar).
-		SETCALC(ComplexRes_next_k);
+		if (INRATE(2) == calc_FullRate) {
+			SETCALC(ComplexRes_next_ka);
+		} else {
+			SETCALC(ComplexRes_next_kk)
+		}		
 	}
 
 	// 2. initialize the unit generator state variables.
@@ -64,8 +73,51 @@ void ComplexRes_Ctor(ComplexRes* unit)
 // The calculation function executes once per control period
 // which is typically 64 samples.
 
-// calculation function for an audio rate frequency argument
-void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
+
+// calculation function for an audio rate frequency argument and audio rate decay argument
+void ComplexRes_next_aa(ComplexRes *unit, int inNumSamples)
+{
+	// get the pointer to the output buffer
+	float *out = OUT(0);
+
+	// get the pointer to the input buffer
+	float *in = IN(0);
+	float *freq = IN(1);
+	float *decay = IN(2);
+	double oldX = unit->mX;
+	double oldY = unit->mY;
+	double res,ang,coeffX,coeffY,X,Y,normCoeff;
+	
+	// perform a loop for the number of samples in the control period.
+	// If this unit is audio rate then inNumSamples will be 64 or whatever
+	// the block size is. If this unit is control rate then inNumSamples will
+	// be 1.
+	for (int i=0; i < inNumSamples; ++i)
+	{
+		res = exp(-1.0/(decay[i]*SAMPLERATE));
+		normCoeff = (1.0-res*res)/res;
+		ang = (freq[i]/SAMPLERATE)*TWOPI;
+		coeffX = res*cos(ang);
+		coeffY = res*sin(ang);
+		
+		X = coeffX*oldX - coeffY*oldY + in[i];
+		Y = coeffY*oldX + coeffX*oldY;
+		out[i] = Y * normCoeff;
+		
+		oldX = X;
+		oldY = Y;
+	}
+
+	// store the states back to the struct
+	unit->mX = zapgremlins(oldX);
+	unit->mY = zapgremlins(oldY);
+}
+
+//////////////////////////////////////////////////////////////////
+
+
+// calculation function for an audio rate frequency argument and control rate decay argument
+void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 {
 	// get the pointer to the output buffer
 	float *out = OUT(0);
@@ -79,7 +131,7 @@ void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
 	if (decay != unit->mDecay){
-		res = exp(-1.0/(decay*SAMPLERATE));
+		res = exp(-1.0/((decay+unit->mDecay)*0.5*SAMPLERATE));
 		normCoeff = (1.0-res*res)/res;
 		unit->mDecay = decay;
 		unit->mRes = res;
@@ -114,8 +166,55 @@ void ComplexRes_next_a(ComplexRes *unit, int inNumSamples)
 
 //////////////////////////////////////////////////////////////////
 
-// calculation function for a control rate frequency argument
-void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
+// calculation function for a control rate frequency argument and control rate decay argument
+void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
+{
+	// get the pointer to the output buffer
+	float *out = OUT(0);
+
+	// get the pointer to the input buffer
+	float *in = IN(0);
+	float freq = IN0(1);
+	float *decay = IN(2);
+	double oldX = unit->mX;
+	double oldY = unit->mY;
+	double res,ang,coeffX,coeffY,X,Y,normCoeff;
+	
+	if (freq != unit->mFreq){
+		ang = (freq+unit->mFreq)*0.5 * TWOPI / SAMPLERATE;
+		unit->mFreq = freq;
+		unit->mAng = ang;
+	} else {
+		ang = unit->mAng;
+	};
+	// perform a loop for the number of samples in the control period.
+	// If this unit is audio rate then inNumSamples will be 64 or whatever
+	// the block size is. If this unit is control rate then inNumSamples will
+	// be 1.
+	for (int i=0; i < inNumSamples; ++i)
+	{
+		res = exp(-1.0/(decay[i]*SAMPLERATE));
+		normCoeff = (1.0-res*res)/res;
+		coeffX = res*cos(ang);
+		coeffY = res*sin(ang);
+		X = coeffX*oldX - coeffY*oldY + in[i];
+		Y = coeffY*oldX + coeffX*oldY;
+		out[i] = Y*normCoeff;
+		
+		oldX = X;
+		oldY = Y;
+	}
+
+	// store the states back to the struct
+	unit->mX = zapgremlins(oldX);
+	unit->mY = zapgremlins(oldY);
+	
+}
+
+
+
+// calculation function for a control rate frequency argument and control rate decay argument
+void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 {
 	// get the pointer to the output buffer
 	float *out = OUT(0);
@@ -129,9 +228,9 @@ void ComplexRes_next_k(ComplexRes *unit, int inNumSamples)
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
 	if (decay != unit->mDecay || freq != unit->mFreq){
-		res = exp(-1.0/(decay*SAMPLERATE));
+		res = exp(-1.0/((decay+unit->mDecay)*0.5*SAMPLERATE));
 		normCoeff = (1.0-res*res)/res;
-		ang = freq * TWOPI / SAMPLERATE;
+		ang = (freq+unit->mFreq)*0.5 * TWOPI / SAMPLERATE;
 		coeffX = res*cos(ang);
 		coeffY = res*sin(ang);
 		unit->mDecay = decay; // If the parameters have changed, store them back in the struct
