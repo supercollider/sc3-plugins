@@ -136,7 +136,7 @@ void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 		res = exp(-1.0/((decay+unit->mDecay)*0.5*SAMPLERATE));
 		normCoeff = (1.0-res*res)/res;
 		unit->mDecay = decay;
-		unit->mRes = res;
+		unit->mRes = exp(-1.0/(decay*SAMPLERATE));
 		unit->mNormCoeff = normCoeff;
 		
 	} else {
