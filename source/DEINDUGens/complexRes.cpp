@@ -185,7 +185,7 @@ void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 	if (freq != unit->mFreq){
 		ang = (freq+unit->mFreq)*0.5 * TWOPI / SAMPLERATE;
 		unit->mFreq = freq;
-		unit->mAng = ang;
+		unit->mAng = freq * TWOPI / SAMPLERATE;
 	} else {
 		ang = unit->mAng;
 	};
@@ -236,16 +236,18 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 		coeffX = res*cos(ang);
 		coeffY = res*sin(ang);
 		unit->mDecay = decay; // If the parameters have changed, store them back in the struct
-		unit->mRes = res;
+		unit->mRes = exp(-1.0/((decay)*SAMPLERATE));
 		unit->mFreq = freq;
-		unit->mcoeffX = coeffX;
-		unit->mcoeffY = coeffY;
+		unit->mAng =  freq * TWOPI / SAMPLERATE;
+		unit->mcoeffX = res*cos(unit->mAng);
+		unit->mcoeffY = res*sin(unit->mAng);
 		unit->mNormCoeff = normCoeff;
 	} else {
 		 res = unit->mRes;
 		 coeffX = unit->mcoeffX;
 		 coeffY = unit->mcoeffY;
 		 normCoeff = unit->mNormCoeff;
+		 ang = unit->mAng;
 	};
 	// perform a loop for the number of samples in the control period.
 	// If this unit is audio rate then inNumSamples will be 64 or whatever
@@ -256,7 +258,6 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 		X = coeffX*oldX - coeffY*oldY + in[i];
 		Y = coeffY*oldX + coeffX*oldY;
 		out[i] = Y*normCoeff;
-		
 		oldX = X;
 		oldY = Y;
 	}
