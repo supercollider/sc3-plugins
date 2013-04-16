@@ -44,14 +44,14 @@ void ComplexRes_Ctor(ComplexRes* unit)
 		if (INRATE(2) == calc_FullRate) {
 			SETCALC(ComplexRes_next_aa);
 		} else {
-			SETCALC(ComplexRes_next_ak)
+			SETCALC(ComplexRes_next_ak);
 		}
 	} else {
 		// if the frequency argument is control rate (or a scalar).
 		if (INRATE(2) == calc_FullRate) {
 			SETCALC(ComplexRes_next_ka);
 		} else {
-			SETCALC(ComplexRes_next_kk)
+			SETCALC(ComplexRes_next_kk);
 		}		
 	}
 
@@ -66,7 +66,7 @@ void ComplexRes_Ctor(ComplexRes* unit)
 	unit->mcoeffY = unit->mRes * sin(TWOPI * unit->mFreq / SAMPLERATE);
 
 	// 3. calculate one sample of output.
-	ComplexRes_next_k(unit, 1);
+	ComplexRes_next_kk(unit, 1);
 }
 
 
