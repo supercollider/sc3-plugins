@@ -20,8 +20,10 @@ struct ComplexRes : public Unit
 };
 
 // declare unit generator functions
-static void ComplexRes_next_a(ComplexRes *unit, int inNumSamples);
-static void ComplexRes_next_k(ComplexRes *unit, int inNumSamples);
+static void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples);
+static void ComplexRes_next_aa(ComplexRes *unit, int inNumSamples);
+static void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples);
+static void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples);
 static void ComplexRes_Ctor(ComplexRes* unit);
 
 
