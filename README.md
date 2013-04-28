@@ -197,6 +197,7 @@ Here is an automatically-generated list of what's available in the download (it'
 * [Fhn2DN](http://doc.sccode.org/Classes/Fhn2DN.html)
 * [FilterComparisons](http://doc.sccode.org/Classes/FilterComparisons.html)
 * [FitzHughNagumo](http://doc.sccode.org/Classes/FitzHughNagumo.html)
+* [FM7](http://doc.sccode.org/Classes/FM7.html)
 * [Foa](http://doc.sccode.org/Classes/Foa.html)
 * [FoaAsymmetry](http://doc.sccode.org/Classes/FoaAsymmetry.html)
 * [FoaBalance](http://doc.sccode.org/Classes/FoaBalance.html)
