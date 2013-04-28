@@ -110,6 +110,7 @@ set(PLUGIN_DIRS_EXTRA
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
+	OteyPianoUGens
     PitchDetection
     StkUGens
     TJUGens
@@ -192,6 +193,10 @@ if(NOT WIN32)
     target_link_libraries(ladspalist dl)
 endif()
 
+# OteyPianoUGens
+BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
+             "" "OteyPianoUGens")
+			 
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 if(APPLE)
