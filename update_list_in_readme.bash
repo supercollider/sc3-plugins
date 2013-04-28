@@ -15,4 +15,3 @@ done
 
 # copy the finished readme back into place
 mv -f "$TEMPPATH" "$READMEPATH"
-
