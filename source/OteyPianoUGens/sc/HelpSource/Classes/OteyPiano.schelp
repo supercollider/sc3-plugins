@@ -1,0 +1,56 @@
+class:: OteyPiano
+summary:: Piano physical model.
+categories:: UGens>PhysicalModels
+
+
+Description::
+
+Digital wave guide physical model of a piano wrapping the code provided by Clayton Otey.
+
+It is important to release synth once finished because because it is CPU expensive.
+
+
+Classmethods::
+
+method::ar
+
+argument::freq
+Sound frequency.
+
+argument::amp
+Key pulsation strenght. Betwen 0 and 1.
+
+argument::gate
+Releases synth when value is 0.
+
+argument::release
+Release time in seconds.
+
+
+Examples::
+
+code::
+(
+x = {OteyPiano.ar(50,0.5)}.play;
+)
+x.free;
+
+//Define piano synthdef
+(
+SynthDef(\help_oteypiano, { |out=0, freq=440, amp=0.5, gate=1|
+    var son = OteyPiano.ar(freq, amp, gate);
+    DetectSilence.ar(son, 0.001, doneAction:2);
+    Out.ar(out, Pan2.ar(son * 0.1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
+}).add;
+)
+
+//Use it.
+(
+Pbind(
+    \instrument, \help_oteypiano,
+    \delta, 1,
+    \dur, 3,
+	\degree, Pseq([1,3,5], inf)
+).play;
+)
+::
