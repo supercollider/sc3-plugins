@@ -111,7 +111,7 @@ set(PLUGIN_DIRS_EXTRA
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
-    OteyPianoUGens
+	OteyPianoUGens
     PitchDetection
     StkUGens
     TJUGens
@@ -197,7 +197,7 @@ endif()
 # OteyPianoUGens
 BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
              "" "OteyPianoUGens")
-             
+			 
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 if(APPLE)
@@ -212,27 +212,27 @@ BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
 
 
 if (NOT APPLE)
-    find_package(FFTW3f)
+	find_package(FFTW3f)
 
-    if (!FFTW3F_FOUND)
-        message(SEND_ERROR "Cannot find libfftw3f")
-    endif()
+	if (!FFTW3F_FOUND)
+		message(SEND_ERROR "Cannot find libfftw3f")
+	endif()
 
     include_directories(${FFTW3F_INCLUDE_DIR})
 
-    set_property(TARGET PitchDetection
-        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
-    if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova
-            APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
-    endif()
+	set_property(TARGET PitchDetection
+		APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+	if (SUPERNOVA)
+		set_property(TARGET PitchDetection_supernova
+			APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+	endif()
 else()
-    set_property(TARGET PitchDetection
-    APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
-    if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova
-        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
-    endif()
+	set_property(TARGET PitchDetection
+	APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+	if (SUPERNOVA)
+		set_property(TARGET PitchDetection_supernova
+		APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+	endif()
 endif()
 
 # StkUGens
