@@ -315,6 +315,7 @@ Here is an automatically-generated list of what's available in the download (it'
 * [NLFiltN](http://doc.sccode.org/Classes/NLFiltN.html)
 * [NTube](http://doc.sccode.org/Classes/NTube.html)
 * [Oregonator](http://doc.sccode.org/Classes/Oregonator.html)
+* [OteyPiano](http://doc.sccode.org/Classes/OteyPiano.html)
 * [Perlin3](http://doc.sccode.org/Classes/Perlin3.html)
 * [PlaneTree](http://doc.sccode.org/Classes/PlaneTree.html)
 * [Plorenz](http://doc.sccode.org/Classes/Plorenz.html)
