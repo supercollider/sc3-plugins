@@ -27,6 +27,7 @@ extern void loadTPV(InterfaceTable *inTable);
 extern void loadWaveletDaub(InterfaceTable *inTable);
 extern void loadWalshHadamard(InterfaceTable *inTable);
 extern void loadLPCAnalyzer(InterfaceTable *inTable);
+extern void loadMedianSeparation(InterfaceTable *inTable);
 
 
 //void load(InterfaceTable *inTable)
@@ -44,5 +45,5 @@ PluginLoad(NCAnalysis)
 	loadWaveletDaub(inTable);
 	loadWalshHadamard(inTable);
 	loadLPCAnalyzer(inTable);
-
+    loadMedianSeparation(inTable);
 }

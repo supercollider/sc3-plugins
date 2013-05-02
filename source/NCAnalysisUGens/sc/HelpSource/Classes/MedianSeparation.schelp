@@ -1,0 +1,117 @@
+class:: MedianSeparation
+summary:: Separate harmonic and percussive parts of a signal
+categories:: UGens>Analysis, UGens>FFT
+
+Description::
+
+Implementation of source separation model outlined in:
+
+Derry FitzGerald (2010) "Harmonic/Percussive Separation using Median Filtering" International Conference on Digital Audio Effects (DAFx)
+
+The algorithm can work quite effectively, though you may hear spectral artefacts in the reconstruction depending on the nature of your input signal. Try it on piano sounds to hear really beautiful separation. There are various parameters to the analysis, and I've generalised the original algorithm a little, allowing mean separation as well as median (which is much cheaper CPU cost). Higher quality separation necessarily requires greater latency in calculation. 
+
+
+Classmethods::
+
+method::new
+fft, fftharmonic, fftpercussive, fftsize=1024, mediansize=17, hardorsoft=0, p=2, medianormax=0
+argument::fft
+Audio input to track, which has been pre-analysed by the link::Classes/FFT:: UGen; see examples below
+
+argument::fftharmonic
+Output FFT buffer for writing the harmonic part
+
+argument::fftpercussive
+Output FFT buffer for writing the percussive part
+
+argument::fftsize
+The algorithm needs to know the FFT size at constructor time, so pass it in here (all of the buffers for the previous three input arguments should have this size). 
+
+argument::mediansize
+How many FFT frames and bands to take a median over. The median in the horizontal direction (strength of tonal consistency, harmonic element) is compared to that in the vertical (percussiveness) to determine if a particular spectral bin will belong to the harmonic or percussive reconstruction. 
+
+argument::hardorsoft
+A flag, 0 for hard, 1 for soft. Hard separation is an either/or for allocation; soft allows a blended sound based on the relative levels of horizontal versus vertical. Each may lead to artefacts, experiment. 
+
+argument::p
+A factor from the paper for the soft assignment. Default of 2 is the paper default; 1 would be a linear proportional assignment. 
+
+argument::medianormax
+Defaults to using median algorithm, but a lower CPU cost mean (average) can be used via this argument. 
+
+Examples::
+
+code::
+
+//minimal example
+(
+{
+var harmonic, percussive; 	
+var source = SoundIn.ar; 
+var fft = FFT(LocalBuf(1024),source);
+
+#harmonic,percussive = MedianSeparation(fft,FFTTrigger(LocalBuf(1024)),FFTTrigger(LocalBuf(1024)),1024,17);
+
+[IFFT(harmonic),IFFT(percussive)]	//reconstruct harmonic to left ear, percussive to right
+
+}.play
+)
+
+
+
+
+
+//another way, and working on sound file 
+
+//PV_Copy not actually needed, can use LocalBufs as above, but illustrative
+
+//explicit assignment of FFT buffers
+(
+~fftsize = 2048; //4096; //1024; 
+a = Buffer.alloc(s,~fftsize,1);
+b = Buffer.alloc(s,~fftsize,1);
+c = Buffer.alloc(s,~fftsize,1);
+)
+
+//choose a sound file from your machine 
+d = Buffer.read(s,Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+d = Buffer.read(s,"/data/audio/bigaudio/toanalyse/gospastic4bar.wav");
+d = Buffer.read(s,"/data/audio/mirdata/beettest.wav");
+d = Buffer.read(s,"/data/audio/mirdata/pixiesivebeentired.wav");
+d = Buffer.read(s,"/data/audio/mirdata/Schubot/newtrainingset/schubert1.wav");
+
+d.numChannels //should be mono for code below; MedianSeparation expects mono input
+
+(
+{
+var harmonic, percussive; 	
+var source = PlayBuf.ar(1,d,loop:1); 
+var fft = FFT(a,source,0.5); //can try overlap 0.25
+
+harmonic = PV_Copy(fft, b);
+percussive = PV_Copy(fft, c);
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,17); //may have more artefacts than smooth separation
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,27); //increase size of median calculation, extra CPU cost
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,7); //cheaper for shorter, but lower quality
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,17,medianormax:1); //much cheaper for mean rather than median, but rougher separation
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,5,medianormax:1); //cheap and cheerful, very rough
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,17,1,2); //soft separation, less artefacts, more mixed results though
+
+//#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,17,1,4,medianormax:1); //weird separation
+
+//fine for piano if shorter windows
+#harmonic,percussive = MedianSeparation(fft,harmonic,percussive,~fftsize,7); //window 1024 rougher, 2048 passable, 4096 best. CPU cost low
+
+[IFFT(harmonic),IFFT(percussive)] 		
+}.play
+)
+
+
+
+::
