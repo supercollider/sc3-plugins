@@ -347,6 +347,14 @@ void SMS_Ctor(SMS* unit) {
 	unit->m_outputoldnoise = (float*)RTAlloc(unit->mWorld, (unit->m_nover2) * sizeof(float));
 	unit->m_outputnewnoise= (float*)RTAlloc(unit->mWorld, (unit->m_nover2) * sizeof(float));
 
+    for(int i=0; i<unit->m_nover2; ++i) {
+        unit->m_outputold[i] = 0.f;
+        unit->m_outputnew[i] = 0.f;
+        unit->m_outputoldnoise[i] = 0.f;
+        unit->m_outputnewnoise[i] = 0.f;
+    }
+    
+    
 	//1024 samples worth
 	unit->m_straightresynthesis=(float*)RTAlloc(unit->mWorld, unit->m_windowsize * sizeof(float));
 	//double hopsize samples worth
@@ -752,6 +760,10 @@ void SMS_next(SMS *unit, int numSamples)
 		++outputpos;
 	}
 
+    //safety (especially for first time round when waiting to collect full input window) 
+    if(outputpos>=unit->m_nover4) 
+        outputpos = 0; 
+    
 	unit->m_outputpos = outputpos;
 
 }
@@ -1205,6 +1217,8 @@ float ampmult= unit->m_ampmult; //(1.0/unit->m_windowsize); //unit->m_useifft? 1
 
 float ampcheck= ZIN0(4); //0.001
 
+    float temp1, position, refinement; 
+    
 //could restrict not to go above nover4!
 for (i=2; i<(nover2-1); ++i) {
 
@@ -1216,11 +1230,33 @@ for (i=2; i<(nover2-1); ++i) {
 
 		//should I be preserving phase?
 
-		//could use cubic interpolation// successive parabolic interpolation to refine peak location; or should have zero padded
-		newpeaks[numnewpeaks].mag = mag * ampmult; //must divide by fftsize before resynthesis!
-		newpeaks[numnewpeaks].freq =(i-1)*angmult; //*freqmult; //if should be angular frequency per sample, divide by T
+        //quadratic interpolation formula 
+        
+        //temp1 should be greater than zero since mag is a local peak
+        temp1= prevmag+nextmag-(2*mag);
+        
+        if(temp1>0.00001) {
+            position=(prevmag-nextmag)/(2*temp1);
+            refinement = (0.5*temp1*(position*position)) + (0.5*(nextmag-prevmag)*position) + mag;
+        } {
+        
+            position= 0.f; 
+            refinement = mag; 
+            
+        
+        }
+            
+		//parabolic interpolation to refine peak location used here
+		newpeaks[numnewpeaks].mag = refinement * ampmult; //was mag*ampmult must divide by fftsize before resynthesis!
+		newpeaks[numnewpeaks].freq =(i-1+position)*angmult; //was (i-1)*angmult *freqmult; //if should be angular frequency per sample, divide by T
 		newpeaks[numnewpeaks].phase =p->bin[i-1].phase;
 
+        //old
+//        newpeaks[numnewpeaks].mag = mag * ampmult; //was mag*ampmult must divide by fftsize before resynthesis!
+//		newpeaks[numnewpeaks].freq =(i-1)*angmult; //was (i-1)*angmult *freqmult; //if should be angular frequency per sample, divide by T
+//		newpeaks[numnewpeaks].phase =p->bin[i-1].phase;
+//        
+        
 		++numnewpeaks;
 	}
 

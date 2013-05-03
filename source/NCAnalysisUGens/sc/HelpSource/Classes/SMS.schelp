@@ -92,7 +92,7 @@ code::
 
 //just noise residual
 
-d=Buffer.read(s,"sounds/a11wlk01.wav");
+d=Buffer.read(s,Platform.resourceDir +/+ "sounds/a11wlk01.wav");
 
 (
 {
