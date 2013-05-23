@@ -51,39 +51,31 @@ void DNoiseRing_Dtor(DNoiseRing *unit)
 
 void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 {
-	// printf("in next 0 \n");
-	float change = DEMANDINPUT_A(0, inNumSamples);
-	float chance = DEMANDINPUT_A(1, inNumSamples);
-	uint shift = (uint) DEMANDINPUT_A(2, inNumSamples);
-	uint numBits = (uint) DEMANDINPUT_A(3, inNumSamples);
+	float change    =        DEMANDINPUT_A(0, inNumSamples);
+	float chance    =        DEMANDINPUT_A(1, inNumSamples);
+	uint shift      = (uint) DEMANDINPUT_A(2, inNumSamples);
+	uint numBits    = (uint) DEMANDINPUT_A(3, inNumSamples);
+	uint resetvalue = (uint) DEMANDINPUT_A(4, inNumSamples);
 
-	// printf("in next 1\n");
+	// get random state
 	RGET
-	// printf("in next 2\n");
 	
 	
 	if (inNumSamples) {// calc one sample
-		// printf("\tin calc\n");
 		uint x = unit->state;
 		
-		// bitwise rotate right			
+		// bitwise rotate right
 		uint lsbs = x & ((1 << shift) - 1);
 		x = (x >> shift) | (lsbs << (numBits-shift));
 		
 		float coin = frand(s1, s2, s3);
 		if(coin < change){
-			// printf("change! %f < %f\n", coin, change);
-
 			float flipUp = frand(s1, s2, s3);
 			// printf("\t%f < %f: ", flipUp, chance);
 			if (flipUp < chance){
-				// printf("11111\n");
-
 				// set bit0 to 1
 				x |= 1;
 			} else {
-				// printf("00000\n");
-
 				// set bit0 to 0
 				x &= ~1;
 			}
@@ -92,13 +84,15 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 		
 		OUT0(0) = (float) x;
 	} else {
-		// printf("\tin else\n");
-		unit->state = trand(s1, s2, s3);
+		// printf("reset to %d\n", resetvalue);
+		unit->state = resetvalue; //trand(s1, s2, s3);
 		RESETINPUT(0);
 		RESETINPUT(1);
 		RESETINPUT(2);
 		RESETINPUT(3);
+		// do not reset the resetvalue slot
 	}
+	// save random state
 	RPUT
 }
 
