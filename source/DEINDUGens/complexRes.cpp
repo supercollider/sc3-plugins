@@ -2,6 +2,9 @@
 #define TWOPI 6.283185307179586
 #define PI 3.141592653589793
 
+// NaNs are not equal to any floating point number
+// static const float uninitializedControl = std::numeric_limits<float>::quiet_NaN();
+
 // InterfaceTable contains pointers to functions in the host (server).
 static InterfaceTable *ft;
 
@@ -56,14 +59,17 @@ void ComplexRes_Ctor(ComplexRes* unit)
 	}
 
 	// 2. initialize the unit generator state variables.
-	unit->mDecay = 0.1;
+	unit->mDecay = IN0(2);
 	unit->mRes = exp(-1.0/(unit->mDecay * SAMPLERATE)); // Filter resonance coefficient (0...1)
 	unit->mX = 0.0; // First state (real part)
 	unit->mY = 0.0; // Second state (imaginary part)
-	unit->mFreq = 10;
+	unit->mFreq = IN0(1);
 	unit->mNormCoeff = (1.0-unit->mRes*unit->mRes)/unit->mRes;
 	unit->mcoeffX = unit->mRes * cos(TWOPI * unit->mFreq / SAMPLERATE);
 	unit->mcoeffY = unit->mRes * sin(TWOPI * unit->mFreq / SAMPLERATE);
+	// unit->mNormCoeff = uninitializedControl;
+	// unit->mcoeffX = uninitializedControl;
+	// unit->mcoeffY = uninitializedControl;
 
 	// 3. calculate one sample of output.
 	ComplexRes_next_kk(unit, 1);
@@ -138,7 +144,6 @@ void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 		unit->mDecay = decay;
 		unit->mRes = exp(-1.0/(decay*SAMPLERATE));
 		unit->mNormCoeff = normCoeff;
-		
 	} else {
 		res = unit->mRes;
 		normCoeff = unit->mNormCoeff;
@@ -243,11 +248,11 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 		unit->mcoeffY = res*sin(unit->mAng);
 		unit->mNormCoeff = normCoeff;
 	} else {
-		 res = unit->mRes;
-		 coeffX = unit->mcoeffX;
-		 coeffY = unit->mcoeffY;
-		 normCoeff = unit->mNormCoeff;
-		 ang = unit->mAng;
+		res = unit->mRes;
+		coeffX = unit->mcoeffX;
+		coeffY = unit->mcoeffY;
+		normCoeff = unit->mNormCoeff;
+		ang = unit->mAng;
 	};
 	// perform a loop for the number of samples in the control period.
 	// If this unit is audio rate then inNumSamples will be 64 or whatever
