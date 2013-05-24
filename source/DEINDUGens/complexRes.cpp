@@ -2,9 +2,6 @@
 #define TWOPI 6.283185307179586
 #define PI 3.141592653589793
 
-// NaNs are not equal to any floating point number
-// static const float uninitializedControl = std::numeric_limits<float>::quiet_NaN();
-
 // InterfaceTable contains pointers to functions in the host (server).
 static InterfaceTable *ft;
 
@@ -31,14 +28,6 @@ static void ComplexRes_Ctor(ComplexRes* unit);
 
 
 //////////////////////////////////////////////////////////////////
-
-// Ctor is called to initialize the unit generator.
-// It only executes once.
-
-// A Ctor usually does 3 things.
-// 1. set the calculation function.
-// 2. initialize the unit generator state variables.
-// 3. calculate one sample of output.
 void ComplexRes_Ctor(ComplexRes* unit)
 {
 	// 1. set the calculation function.
@@ -77,18 +66,11 @@ void ComplexRes_Ctor(ComplexRes* unit)
 
 
 //////////////////////////////////////////////////////////////////
-
-// The calculation function executes once per control period
-// which is typically 64 samples.
-
-
-// calculation function for an audio rate frequency argument and audio rate decay argument
+// audio rate frequency and audio rate decay
 void ComplexRes_next_aa(ComplexRes *unit, int inNumSamples)
 {
-	// get the pointer to the output buffer
 	float *out = OUT(0);
 
-	// get the pointer to the input buffer
 	float *in = IN(0);
 	float *freq = IN(1);
 	float *decay = IN(2);
@@ -96,10 +78,6 @@ void ComplexRes_next_aa(ComplexRes *unit, int inNumSamples)
 	double oldY = unit->mY;
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
-	// perform a loop for the number of samples in the control period.
-	// If this unit is audio rate then inNumSamples will be 64 or whatever
-	// the block size is. If this unit is control rate then inNumSamples will
-	// be 1.
 	for (int i=0; i < inNumSamples; ++i)
 	{
 		res = exp(-1.0/(decay[i]*SAMPLERATE));
@@ -122,15 +100,11 @@ void ComplexRes_next_aa(ComplexRes *unit, int inNumSamples)
 }
 
 //////////////////////////////////////////////////////////////////
-
-
-// calculation function for an audio rate frequency argument and control rate decay argument
+// audio rate frequency and control rate decay
 void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 {
-	// get the pointer to the output buffer
 	float *out = OUT(0);
 
-	// get the pointer to the input buffer
 	float *in = IN(0);
 	float *freq = IN(1);
 	float decay = IN0(2);
@@ -138,6 +112,7 @@ void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 	double oldY = unit->mY;
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
+	// update params
 	if (decay != unit->mDecay){
 		res = exp(-1.0/((decay+unit->mDecay)*0.5*SAMPLERATE));
 		normCoeff = (1.0-res*res)/res;
@@ -148,10 +123,8 @@ void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 		res = unit->mRes;
 		normCoeff = unit->mNormCoeff;
 	};
-	// perform a loop for the number of samples in the control period.
-	// If this unit is audio rate then inNumSamples will be 64 or whatever
-	// the block size is. If this unit is control rate then inNumSamples will
-	// be 1.
+
+	// render signal
 	for (int i=0; i < inNumSamples; ++i)
 	{
 		ang = (freq[i]/SAMPLERATE)*TWOPI;
@@ -166,20 +139,17 @@ void ComplexRes_next_ak(ComplexRes *unit, int inNumSamples)
 		oldY = Y;
 	}
 
-	// store the states back to the struct
+	// store states back to struct
 	unit->mX = zapgremlins(oldX);
 	unit->mY = zapgremlins(oldY);
 }
 
 //////////////////////////////////////////////////////////////////
-
-// calculation function for a control rate frequency argument and control rate decay argument
+// control rate frequency and audio rate decay
 void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 {
-	// get the pointer to the output buffer
 	float *out = OUT(0);
 
-	// get the pointer to the input buffer
 	float *in = IN(0);
 	float freq = IN0(1);
 	float *decay = IN(2);
@@ -187,6 +157,7 @@ void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 	double oldY = unit->mY;
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
+	// update params
 	if (freq != unit->mFreq){
 		ang = (freq+unit->mFreq)*0.5 * TWOPI / SAMPLERATE;
 		unit->mFreq = freq;
@@ -194,10 +165,8 @@ void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 	} else {
 		ang = unit->mAng;
 	};
-	// perform a loop for the number of samples in the control period.
-	// If this unit is audio rate then inNumSamples will be 64 or whatever
-	// the block size is. If this unit is control rate then inNumSamples will
-	// be 1.
+
+	// render signal
 	for (int i=0; i < inNumSamples; ++i)
 	{
 		res = exp(-1.0/(decay[i]*SAMPLERATE));
@@ -212,7 +181,7 @@ void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 		oldY = Y;
 	}
 
-	// store the states back to the struct
+	// store states back to struct
 	unit->mX = zapgremlins(oldX);
 	unit->mY = zapgremlins(oldY);
 	
@@ -220,13 +189,12 @@ void ComplexRes_next_ka(ComplexRes *unit, int inNumSamples)
 
 
 
-// calculation function for a control rate frequency argument and control rate decay argument
+//////////////////////////////////////////////////////////////////
+// control rate frequency and control rate decay
 void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 {
-	// get the pointer to the output buffer
 	float *out = OUT(0);
 
-	// get the pointer to the input buffer
 	float *in = IN(0);
 	float freq = IN0(1);
 	float decay = IN0(2);
@@ -234,6 +202,7 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 	double oldY = unit->mY;
 	double res,ang,coeffX,coeffY,X,Y,normCoeff;
 	
+	// update params
 	if (decay != unit->mDecay || freq != unit->mFreq){
 		res = exp(-1.0/((decay+unit->mDecay)*0.5*SAMPLERATE));
 		normCoeff = (1.0-res*res)/res;
@@ -254,10 +223,8 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 		normCoeff = unit->mNormCoeff;
 		ang = unit->mAng;
 	};
-	// perform a loop for the number of samples in the control period.
-	// If this unit is audio rate then inNumSamples will be 64 or whatever
-	// the block size is. If this unit is control rate then inNumSamples will
-	// be 1.
+
+	// render signal
 	for (int i=0; i < inNumSamples; ++i)
 	{
 		X = coeffX*oldX - coeffY*oldY + in[i];
@@ -267,17 +234,17 @@ void ComplexRes_next_kk(ComplexRes *unit, int inNumSamples)
 		oldY = Y;
 	}
 
-	// store the states back to the struct
+	// store states back to struct
 	unit->mX = zapgremlins(oldX);
 	unit->mY = zapgremlins(oldY);
 	
 }
 
 
-// the entry point is called by the host when the plug-in is loaded
+// the entry point is called by host when plug-in is loaded
 PluginLoad(ComplexRes)
 {
-	// InterfaceTable *inTable implicitly given as argument to the load function
+	// InterfaceTable *inTable implicitly given as argument to load function
 	ft = inTable; // store pointer to InterfaceTable
 
 	DefineSimpleUnit(ComplexRes);

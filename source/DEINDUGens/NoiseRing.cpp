@@ -6,12 +6,6 @@
 // # define MAXFLOAT FLT_MAX
 // #endif
 
-//#include <unistd.h>
-// randomer
-//#include <cstdlib>
-
-
-
 // InterfaceTable contains pointers to functions in the host (server).
 static InterfaceTable *ft;
 
@@ -45,7 +39,6 @@ void DNoiseRing_Ctor(DNoiseRing *unit)
 void DNoiseRing_Dtor(DNoiseRing *unit)
 {
 	// unit->~DNoiseRing();
-	
 }
 
 
@@ -55,11 +48,10 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 	float chance    =        DEMANDINPUT_A(1, inNumSamples);
 	uint shift      = (uint) DEMANDINPUT_A(2, inNumSamples);
 	uint numBits    = (uint) DEMANDINPUT_A(3, inNumSamples);
-	uint resetvalue = (uint) DEMANDINPUT_A(4, inNumSamples);
+	uint initialState = (uint) DEMANDINPUT_A(4, inNumSamples);
 
 	// get random state
 	RGET
-	
 	
 	if (inNumSamples) {// calc one sample
 		uint x = unit->state;
@@ -71,7 +63,6 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 		float coin = frand(s1, s2, s3);
 		if(coin < change){
 			float flipUp = frand(s1, s2, s3);
-			// printf("\t%f < %f: ", flipUp, chance);
 			if (flipUp < chance){
 				// set bit0 to 1
 				x |= 1;
@@ -84,13 +75,12 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 		
 		OUT0(0) = (float) x;
 	} else {
-		// printf("reset to %d\n", resetvalue);
-		unit->state = resetvalue; //trand(s1, s2, s3);
+		unit->state = initialState; //trand(s1, s2, s3);
 		RESETINPUT(0);
 		RESETINPUT(1);
 		RESETINPUT(2);
 		RESETINPUT(3);
-		// do not reset the resetvalue slot
+		// do not reset the initialState slot
 	}
 	// save random state
 	RPUT
@@ -99,11 +89,9 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 
 
 //////////////////////////////
-
-// the entry point is called by the host when the plug-in is loaded
 PluginLoad(NoiseRing)
 {
-	// InterfaceTable *inTable implicitly given as argument to the load function
-	ft = inTable; // store pointer to InterfaceTable
+	// InterfaceTable *inTable implicitly given as argument to load function
+	ft = inTable;
 	DefineDtorUnit(DNoiseRing);
 }
