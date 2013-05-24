@@ -6,7 +6,7 @@
 static InterfaceTable *ft;
 
 // declare struct to hold unit generator state
-struct DiodeRing : public Unit
+struct DiodeRingMod : public Unit
 {
 	double v_b;
 	double v_l;
@@ -16,9 +16,9 @@ struct DiodeRing : public Unit
 };
 
 // declare unit generator functions
-static void DiodeRing_next_aa(DiodeRing *unit, int inNumSamples);
+static void DiodeRingMod_next_aa(DiodeRingMod *unit, int inNumSamples);
 
-static void DiodeRing_Ctor(DiodeRing* unit);
+static void DiodeRingMod_Ctor(DiodeRingMod* unit);
 
 //static float DiodeTransfer(float input);
 
@@ -45,10 +45,10 @@ float DiodeTransfer(float input, float v_b,float v_l,float h, float diodeCurveCo
 // 1. set the calculation function.
 // 2. initialize the unit generator state variables.
 // 3. calculate one sample of output.
-void DiodeRing_Ctor(DiodeRing* unit)
+void DiodeRingMod_Ctor(DiodeRingMod* unit)
 {
 	// 1. set the calculation function.
-	SETCALC(DiodeRing_next_aa);
+	SETCALC(DiodeRingMod_next_aa);
 
 	unit->v_b = 0.2;
 	unit->v_l = 0.6;
@@ -60,7 +60,7 @@ void DiodeRing_Ctor(DiodeRing* unit)
 
 
 	// 3. calculate one sample of output.
-	DiodeRing_next_aa(unit, 1);
+	DiodeRingMod_next_aa(unit, 1);
 }
 
 
@@ -71,7 +71,7 @@ void DiodeRing_Ctor(DiodeRing* unit)
 
 
 // calculation function for an audio rate frequency argument and audio rate decay argument
-void DiodeRing_next_aa(DiodeRing *unit, int inNumSamples)
+void DiodeRingMod_next_aa(DiodeRingMod *unit, int inNumSamples)
 {
 	// get the pointer to the output buffer
 	float *out = OUT(0);
@@ -109,10 +109,10 @@ void DiodeRing_next_aa(DiodeRing *unit, int inNumSamples)
 
 
 // the entry point is called by the host when the plug-in is loaded
-PluginLoad(DiodeRing)
+PluginLoad(DiodeRingMod)
 {
 	// InterfaceTable *inTable implicitly given as argument to the load function
 	ft = inTable; // store pointer to InterfaceTable
 
-	DefineSimpleUnit(DiodeRing);
+	DefineSimpleUnit(DiodeRingMod);
 }
