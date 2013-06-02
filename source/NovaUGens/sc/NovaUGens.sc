@@ -31,3 +31,21 @@ PulseDPW2 : PureUGen {
 		^this.multiNew('control', freq, width, phase.linlin(-1, 1, -pi, pi)).madd( mul, add )
 	}
 }
+
+NovaSinOsc : UGen {
+	*ar { arg freq, phase = 0, interpolation = 1, mul=1.0, add=0.0;
+		^this.multiNew('audio', freq, phase, interpolation).madd( mul, add )
+	}
+	*kr { arg freq, phase = 0, interpolation = 1, mul=1.0, add=0.0;
+		^this.multiNew('audio', freq, phase, interpolation).madd( mul, add )
+	}
+}
+
+NovaOsc : UGen {
+	*ar { arg buf, freq, phase = 0, interpolation = 1, mul=1.0, add=0.0;
+		^this.multiNew('audio', buf, freq, phase, interpolation).madd( mul, add )
+	}
+	*kr { arg buf, freq, phase = 0, interpolation = 1, mul=1.0, add=0.0;
+		^this.multiNew('audio', buf, freq, phase, interpolation).madd( mul, add )
+	}
+}

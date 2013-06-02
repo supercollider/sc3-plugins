@@ -1,0 +1,44 @@
+TITLE:: NovaSinOsc
+summary:: High-precision sine wavetable oscillator
+categories:: UGens>Generators>Deterministic
+related:: Classes/FSinOsc, Classes/SinOscFB
+
+DESCRIPTION::
+
+Similar to link::Classes/SinOsc::, but uses a more precise phase calculation algorithm, leading to less frequency quantization.
+
+CLASSMETHODS::
+
+method::ar, kr
+
+argument::freq
+Frequency in Hertz.
+
+argument::phase
+Phase offset or modulator in radians.
+
+argument::interpolation
+Interpolation algorithm: (0: sample&hold, 1: linear interpolation, 2: 4-point lagrange interpolation)
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+
+EXAMPLES::
+
+code::
+{ NovaSinOsc.ar(200, 0) * -20.dbamp ! 2 }.play;
+
+// modulate freq
+{ NovaSinOsc.ar(XLine.kr(2000, 200), 0) * -20.dbamp ! 2 }.play;
+
+// modulate freq
+{ NovaSinOsc.ar(NovaSinOsc.ar(XLine.kr(1, 1000, 9), 0, mul: 200, add: 800)) * -20.dbamp ! 2}.play;
+
+// modulate phase
+{ NovaSinOsc.ar(800, NovaSinOsc.ar(XLine.kr(1, 1000, 9), 0, mul: 2pi) * -20.dbamp ! 2 }.play;
+
+::
