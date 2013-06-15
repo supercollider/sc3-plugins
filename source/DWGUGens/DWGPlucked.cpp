@@ -1,4 +1,4 @@
-#include "dwglib/dwg.cpp"
+#include "dwglib/DWG.cpp"
 #define MAXDELAY 1024
 InterfaceTable *ft;
 
