@@ -87,6 +87,7 @@ set(PLUGIN_DIRS
     BlackrainUGens
     ConcatUGens
     DistortionUGens
+    DWGUGens
     GlitchUGens
     JoshUGens
     LoopBufUGens
