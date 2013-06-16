@@ -10,6 +10,9 @@ extern  InterfaceTable *ft;
 #endif
 void volcar(const char *_Message, const char *_File, unsigned _Line);
 
+#define NOASSERTS
+
+#ifndef NOASSERTS
 #define assertv(_Expression) \
  (void) \
  ((!!(_Expression)) || \
@@ -18,8 +21,14 @@ void volcar(const char *_Message, const char *_File, unsigned _Line);
  (void) \
  ((!!(_Expression)) || \
   (volcar(#_Expression#msg,__FILE__,__LINE__),0))
+#else
+#define assertv(aa) ((void)0)
+#define assertv2(aa,bb) ((void)0)
+#endif
 
-//#define assertv(aa) ((void)0)
+#define XSTR(x) STR(x)
+#define STR(x) #x
+
 #define NumElements(_BUF) (sizeof(_BUF)/sizeof(_BUF[0]))
 #define SNumElements(_BUF) (sizeof(_BUF)/sizeof(_BUF[0]))
 
@@ -122,7 +131,7 @@ class CircularBuffer2POWSizedT : public CircularBufferTBase<size>
 {
 	public:
 	int mask;
-	static_assert(ispowerof2(size),"Size mus be power of two!!!");
+	//static_assert(ispowerof2(size),"Size mus be power of two!!!");
 	CircularBuffer2POWSizedT(){mask = size - 1;//Print("CircularBuffer2POWSizedT\n");
 		//assertv(ispowerof2(size));
 		
@@ -669,9 +678,10 @@ struct FilterC1C3 : public LTITv<1,1>
 	float c3;
 	FilterC1C3(){c1 = 0;c3 = 0; freq = 0;};
 	void setcoeffs(float freq,float c1,float c3){
-		//if(this->freq == freq && this->c1 == c1 && this->c3 == c3)
-		if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->c1,c1) && approximatelyEqual(this->c3,c3))
+		if(this->freq == freq && this->c1 == c1 && this->c3 == c3)
 			return;
+		//if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->c1,c1) && approximatelyEqual(this->c3,c3))
+			//return;
 			float g = 1.0 - c1/freq; 
 			float b = 4.0*c3+freq;
 			float a1 = (-b+sqrt(b*b-16.0*c3*c3))/(4.0*c3);
@@ -717,7 +727,7 @@ struct FDN8{
 	float o[8];
 	float b[8];
 	float c[8];
-	int lengths[8] = {37,87,181,271,359,593,688,721};//{37, 87, 181,271, 359, 492, 687, 721};//{37,87,181,271,359,592,687,721};
+	int lengths[8];// = {37,87,181,271,359,593,688,721};//{37, 87, 181,271, 359, 492, 687, 721};//{37,87,181,271,359,592,687,721};
 };
 
 struct ThirianDispersion{
@@ -730,7 +740,8 @@ struct ThirianDispersion{
 			this->B = 0.0;
 			return;
 		}
-		if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->B,B) && this->M==M)
+		//if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->B,B) && this->M==M)
+		if(this->freq==freq && this->B==B && this->M==M)
 			return;
 		float D = ValimakiDispersion(B,freq,M);
 		//if(D <=1)

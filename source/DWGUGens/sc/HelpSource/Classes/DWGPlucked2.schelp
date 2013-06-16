@@ -72,7 +72,7 @@ Pbind(
     \instrument, \help_dwgplucked,
     \scale ,a,
     \delta , Pseq([1,0.5,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,1,1]*0.25,inf),
-    \dur , 4,
+    \dur , 2,
     \degree, Pseq([1,8,8,8,8,8,8,-6,Prand([9,10,11],1),1,7,8]-8, inf),
     \amp , Pwhite(0.2,0.8),
     \c3 , Pseq([Pseq([1400],24),Pseq([300],24)],inf),
