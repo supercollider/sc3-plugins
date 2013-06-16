@@ -102,7 +102,7 @@ BowSoundBoard :: BowSoundBoard(Unit *unit){
 	float mix = ZIN0(3);
 	float len[8];
 	for(int i=0;i<8;i++)
-		len[i] = ZIN0(3+i);
+		len[i] = ZIN0(4+i);
 	//shaping1.setcoeffs(500.0,SAMPLERATE,10,Biquad::biquadtype::notch);
 	//shaping2.setcoeffs(200.0,SAMPLERATE,1.0,Biquad::biquadtype::high);
 	//shaping3.setcoeffs(800.0,SAMPLERATE,1.0,Biquad::biquadtype::low);
