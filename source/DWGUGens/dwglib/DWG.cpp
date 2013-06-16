@@ -1,6 +1,6 @@
 #include "DWG.hpp"
-#include "simd_binary_arithmetic.hpp"
-#include "simd_horizontal_functions.hpp"
+//#include "simd_binary_arithmetic.hpp"
+//#include "simd_horizontal_functions.hpp"
 
 void volcar(const char *_Message, const char *_File, unsigned _Line)
 {
@@ -95,6 +95,7 @@ long Nchoose(long n, long k) {
     }
   return answer;
 }
+/*
 ///////////////////////////////////////////
 //returns Sum(i=0,n-1) A[i]*B[i]
 //Buf, A and B must have same memory alignement
@@ -127,6 +128,7 @@ float convolve_reversed(float *Buf,float *A,float *B,int n,int aligj)
 	}
 	return sum;
 }
+*/
 //////////////////////////////////////////
 //include local buffer test in one place
 static SndBuf * ConvGetBuffer(Unit * unit, uint32 bufnum, const char * ugenName, int inNumSamples)
