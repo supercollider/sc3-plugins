@@ -52,7 +52,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
 	endif()
 
 	if(CPP11)
-		add_definitions(-std=c++11)
+		LIST(APPEND CMAKE_CXX_FLAGS -std=c++11)
 	endif()
 endif()
 
