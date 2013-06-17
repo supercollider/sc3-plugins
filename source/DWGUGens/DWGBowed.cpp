@@ -64,12 +64,16 @@ struct DWGBowed : public DWGBowedSimple
 	int SolveHyperbolicm1(float vdeltap,float fb,float &sol);
 	int SolveHyperbolicM1(float vdeltap,float fb,float &sol);
 	float Bow2(float vb,float fb,float vsr_plus_vsl);
-	const static float mus = 0.8;
-	const static float mud = 0.3;
-	const static float mue = 0.2;
+	const static float mus ;//= 0.8;
+	const static float mud ;//= 0.3;
+	const static float mue ;//= 0.2;
 	int stickslip;
 	float Z;
 };
+const float DWGBowed::mus = 0.8;
+const float DWGBowed::mud = 0.3;
+const float DWGBowed::mue = 0.2;
+
 SCWrapClass(DWGBowed);
 DWGBowed::DWGBowed(Unit* unit):DWGBowedSimple(unit),stickslip(0){ SETCALC(DWGBowed_next);}
 ////////////////////////////////////////////////////
