@@ -115,7 +115,7 @@ void BowSoundBoard_next(BowSoundBoard *unit, int inNumSamples){
 	float *out = OUT(0);
 	float *in = IN(0);
 	float signal;
-	for(int i; i < inNumSamples; i++){
+	for(int i=0; i < inNumSamples; i++){
 		signal = unit->fdn.go(in[i]);
 		//signal += unit->shaping1.filter(signal);
 		//signal = unit->shaping2.filter(signal);
