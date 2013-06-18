@@ -2582,7 +2582,7 @@ void MoogVCF_Ctor(MoogVCF* unit)
 				SETCALC(MoogVCF_next_ka); // k-rate fco and res
 				break;
 			case calc_BufRate:
-				SETCALC(MoogVCF_next_ka); // k-rate fco, k-rate res
+				SETCALC(MoogVCF_next_kk); // k-rate fco, k-rate res
 				break;
 			default:
 				SETCALC(MoogVCF_next_ki); // k-rate fco, i-rate res
