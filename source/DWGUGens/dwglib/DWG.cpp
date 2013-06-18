@@ -1,3 +1,21 @@
+/*
+ *
+ *    Copyright (C) 2013 Victor Bombi
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include "DWG.hpp"
 //#include "simd_binary_arithmetic.hpp"
 //#include "simd_horizontal_functions.hpp"
@@ -254,7 +272,8 @@ float FDN8 :: go(float in)
   float i[8];
 
   for(int j=0;j<8;j++) {
-    i[j] = b[j] * in;
+    //i[j] = b[j] * in;
+	i[j] = in;
     for(int k=0;k<8;k++) {
       i[j] += A[j][k] * o[k];
     }
@@ -264,6 +283,7 @@ float FDN8 :: go(float in)
   for(int j=0;j<8;j++) {
 	delay[j].push(i[j]);
     o[j] = decay[j].filter(delay[j].delay(lengths[j]));
+	o[j] = zapgremlins(o[j]);
     out += c[j] * o[j]*.5;
   }
   

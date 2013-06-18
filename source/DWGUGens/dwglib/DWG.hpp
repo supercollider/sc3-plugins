@@ -1,3 +1,21 @@
+/*
+ *
+ *    Copyright (C) 2013 Victor Bombi
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #ifndef __dwg_sc3__
 #define __dwg_sc3__
 
@@ -332,7 +350,7 @@ class LTITv
 		for(int i=0; i < pAl2; i++)
 			sum -= KernelA[howmany + i]*cbufout.Buffer[i];
 			
-		sum = zapgremlins(sum);
+		//sum = zapgremlins(sum);
 		cbufout.push(sum);
 		return sum;
 	}
@@ -372,7 +390,7 @@ class LTITv<1,1>
 		//float sum=0.;
 		float sum = KernelB*cbuf;
 		sum -= KernelA*cbufout;	
-		sum = zapgremlins(sum);
+		//sum = zapgremlins(sum);
 		cbufout = sum;
 		return sum;
 	}
@@ -537,7 +555,7 @@ struct LTIv
 		for(int i=0; i < pAl2; i++)
 			sum -= KernelA[howmany + i]*cbufout.Buffer[i];
 			
-		sum = zapgremlins(sum);
+		//sum = zapgremlins(sum);
 		cbufout.push(sum);
 		return sum;
 	}
