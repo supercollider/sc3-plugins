@@ -16,7 +16,7 @@ DWGBowedTor : UGen
 		^this.multiNew('audio',freq, velb, force, gate,pos,release,c1,c3,impZ,fB,mistune,c1tor,c3tor,iZtor);
 	}
 }
-BowSoundBoard : UGen
+DWGSoundBoard : UGen
 {
 	*ar { arg inp=0,c1=20,c3=20,mix=0.8,d1=199,d2=211,d3=223,d4=227,d5=229,d6=233,d7=239,d8=241;
 		^this.multiNew('audio',inp,c1,c3,mix,d1,d2,d3,d4,d5,d6,d7,d8);

@@ -307,8 +307,10 @@ class LTITv
 	float KernelA[kernel_sizeA];
 	CircularBufferT<kernel_sizeB> cbuf;
 	CircularBufferT<kernel_sizeA>  cbufout;
+	bool dirty_grdel;
+	float grdel;
 
-	LTITv(){//Print("LTITv\n");
+	LTITv():dirty_grdel(true){//Print("LTITv\n");
 	};
 	void push(float a){
 		cbuf.push(a);
@@ -318,6 +320,7 @@ class LTITv
 			KernelB[i] = KB[i];
 		for(int i=0;i<kernel_sizeA;i++)
 			KernelA[i] = KA[i];
+		dirty_grdel = true;
 	}
 	float pushConvol(float a){
 		push(a);
@@ -355,7 +358,11 @@ class LTITv
 		return sum;
 	}
 	float groupdelay(float f,float FS){
-		return ::groupdelay(f,KernelB,kernel_sizeB,KernelA,kernel_sizeA,FS);
+		if(dirty_grdel){
+			grdel = ::groupdelay(f,KernelB,kernel_sizeB,KernelA,kernel_sizeA,FS);
+			dirty_grdel = false;
+		}
+		return grdel;
 	}
 };
 //////////////specialization
@@ -367,8 +374,9 @@ class LTITv<1,1>
 	float KernelA;
 	float cbuf;
 	float  cbufout;
-
-	LTITv():cbuf(0),cbufout(0),KernelB(0),KernelA(0){//Print("LTITv especialized\n");
+	bool dirty_grdel;
+	float grdel;
+	LTITv():cbuf(0),cbufout(0),KernelB(0),KernelA(0),dirty_grdel(true){//Print("LTITv especialized\n");
 	};
 	void push(float a){
 		cbuf = a;
@@ -376,6 +384,7 @@ class LTITv<1,1>
 	void setKernel(float KB[],float KA[]){
 			KernelB = KB[0];
 			KernelA = KA[0];
+			dirty_grdel = true;
 	}
 	float pushConvol(float a){
 		push(a);
@@ -395,7 +404,11 @@ class LTITv<1,1>
 		return sum;
 	}
 	float groupdelay(float f,float FS){
-		return ::groupdelay(f,&KernelB,1,&KernelA,1,FS);
+		if(dirty_grdel){
+			grdel = ::groupdelay(f,&KernelB,1,&KernelA,1,FS);
+			dirty_grdel = false;
+		}
+		return grdel;
 	}
 };
 //////////////////////////////////////////////////////////
@@ -656,6 +669,7 @@ struct Biquad : public LTITv<3,2>
 			KernelB[2] = (1+4*a2)/d;
 			break;
 		}
+		this->dirty_grdel = true;
 	}
 };
 template<int N>
@@ -686,6 +700,7 @@ struct ThirianT : public LTITv<N+1,N>
 				this->KernelA[k-1] = (float)ak;
 				this->KernelB[N-k] = (float)ak;
 			}
+			this->dirty_grdel = true;
 		//}
 	}
 };
@@ -710,6 +725,7 @@ struct FilterC1C3 : public LTITv<1,1>
 			this->freq = freq;
 			this->c1 = c1;
 			this->c3 = c3;
+			this->dirty_grdel = true;
 		//}
 	}
 };
@@ -782,6 +798,20 @@ struct ThirianDispersion{
 		for(int i=0; i<M ;i++)
 			out = dispersion[i].filter(out);
 		return out;
+	}
+};
+struct DCBlocker:public LTITv<2,1>{
+	float R;
+	DCBlocker():R(0){setcoeffs(0.995);};
+	void setcoeffs(float R){
+		if(this->R == R)
+			return;
+		float g = (1 + R)/2;
+		KernelB[0] = g;
+		KernelB[1] = -g;
+		KernelA[0] = -R;
+		this->R = R;
+		this->dirty_grdel = true;
 	}
 };
 #endif

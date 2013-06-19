@@ -76,6 +76,7 @@ void DWGBowedSimple::Release(float trig,float *out,int NumSamples){
 struct DWGBowed : public DWGBowedSimple
 {
 
+	DCBlocker dcblock;
 	ThirianDispersion disper;
 	DWGBowed(Unit* unit);
 
@@ -96,6 +97,7 @@ SCWrapClass(DWGBowed);
 DWGBowed::DWGBowed(Unit* unit):DWGBowedSimple(unit),stickslip(0){ SETCALC(DWGBowed_next);}
 ////////////////////////////////////////////////////
 struct DWGBowedTor:public DWGBowed{
+	DCBlocker dcblock2;
 	LagrangeT<MAXDELAY> DWGF2[2];
 	FilterC1C3 Loss2;
 	DWGBowedTor(Unit* unit);
@@ -106,7 +108,7 @@ DWGBowedTor::DWGBowedTor(Unit* unit):DWGBowed(unit){ SETCALC(DWGBowedTor_next);}
 /////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////
-struct BowSoundBoard : public Unit
+struct DWGSoundBoard : public Unit
 {
 	FDN8 fdn;
 	float c1b;
@@ -114,11 +116,11 @@ struct BowSoundBoard : public Unit
 	//Biquad shaping1;
 	//Biquad shaping2;
 	//Biquad shaping3;
-	BowSoundBoard(Unit *unit);
-	~BowSoundBoard(){};
+	DWGSoundBoard(Unit *unit);
+	~DWGSoundBoard(){};
 };
-SCWrapClass(BowSoundBoard);
-BowSoundBoard :: BowSoundBoard(Unit *unit){
+SCWrapClass(DWGSoundBoard);
+DWGSoundBoard :: DWGSoundBoard(Unit *unit){
 	c1b = ZIN0(1);
 	c3b = ZIN0(2);
 	float mix = ZIN0(3);
@@ -130,10 +132,10 @@ BowSoundBoard :: BowSoundBoard(Unit *unit){
 	//shaping3.setcoeffs(800.0,SAMPLERATE,1.0,Biquad::biquadtype::low);
 	fdn.setlengths(len);
 	fdn.setcoeffs(c1b,c3b,mix,SAMPLERATE);
-	SETCALC(BowSoundBoard_next);
+	SETCALC(DWGSoundBoard_next);
 }
 
-void BowSoundBoard_next(BowSoundBoard *unit, int inNumSamples){
+void DWGSoundBoard_next(DWGSoundBoard *unit, int inNumSamples){
 	float *out = OUT(0);
 	float *in = IN(0);
 	float signal;
@@ -238,7 +240,7 @@ float DWGBowed::Bow2(float vb,float fb,float vsr_plus_vsl){
 						this->stickslip = 1;
 						return ret + vdeltap;
 					}else{
-						show("stick failed \n");
+						show("stick failed ");
 						return 0;
 					}
 				}
@@ -251,7 +253,7 @@ float DWGBowed::Bow2(float vb,float fb,float vsr_plus_vsl){
 						this->stickslip = -1;
 						return ret + vdeltap;
 					}else{
-						show("stick failed2 \n");
+						show("stick failed2 ");
 						return 0;
 					}
 				}
@@ -271,7 +273,7 @@ float DWGBowed::Bow2(float vb,float fb,float vsr_plus_vsl){
 					this->stickslip = -1;
 					return ret + vdeltap;
 				}else{
-					show("slip 1 failed2 \n");
+					show("slip 1 failed2 ");
 					return 0;
 				}
 			}
@@ -290,13 +292,13 @@ float DWGBowed::Bow2(float vb,float fb,float vsr_plus_vsl){
 					this->stickslip = 1;
 					return ret + vdeltap;
 				}else{
-					show("slip -1 failed2 \n");
+					show("slip -1 failed2 ");
 					return 0;
 				}
 			}
 		}
 	}
-	show("imposible state\n");
+	show("imposible state");
 	return 0;
 }
 
@@ -338,6 +340,7 @@ void DWGBowed_next(DWGBowed *unit, int inNumSamples)
 		PMAS = unit->DWGF[0].delay(del1);
 		PMAS2 = unit->Loss.filter(PMAS);
 		PMAS2 = unit->disper.filter(PMAS2);
+		PMAS2 = unit->dcblock.filter(PMAS2);
 		PMENOS = unit->DWGF[1].delay(del1);
 		
 		unit->DWGF[1].push(-PMAS2);
@@ -388,7 +391,8 @@ void DWGBowedTor_next(DWGBowedTor *unit, int inNumSamples)
 	lossdelay = unit->Loss2.groupdelay(freq2,SAMPLERATE);
 	deltot = SAMPLERATE/freq2;
 	float del2 = (deltot - lossdelay )*0.5 - 1;
-
+	del2 = sc_max(del2,1);
+	//Print("del2 %g \n",del2); 
 	float PMAS,PMAS2;
 	float PMENOS,OUT1,OUT2;
 	for (int i=0; i < inNumSamples; ++i)
@@ -404,6 +408,7 @@ void DWGBowedTor_next(DWGBowedTor *unit, int inNumSamples)
 		PMAS = unit->DWGF[0].delay(del1);
 		PMAS2 = unit->Loss.filter(PMAS);
 		PMAS2 = unit->disper.filter(PMAS2);
+		PMAS2 = unit->dcblock.filter(PMAS2);
 		PMENOS = unit->DWGF[1].delay(del1);
 		
 		unit->DWGF[1].push(-PMAS2);
@@ -416,6 +421,7 @@ void DWGBowedTor_next(DWGBowedTor *unit, int inNumSamples)
 		
 		PMAS = unit->DWGF2[0].delay(del2);
 		PMAS2 = unit->Loss2.filter(PMAS);
+		PMAS2 = unit->dcblock2.filter(PMAS2);
 		PMENOS = unit->DWGF2[1].delay(del2);
 		
 		unit->DWGF2[1].push(-PMAS2);
@@ -478,5 +484,5 @@ PluginLoad(DWGBowed)
 	DefineDtorUnit(DWGBowed);
 	DefineDtorUnit(DWGBowedTor);
 	DefineDtorUnit(DWGBowedSimple);
-	DefineDtorUnit(BowSoundBoard);
+	DefineDtorUnit(DWGSoundBoard);
 }

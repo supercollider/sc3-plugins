@@ -23,7 +23,7 @@ argument::force
 Bow normal force.
 
 argument::gate
-Releases synth when value is 0.
+Releases synth when value changes from >0 to 0.
 
 argument::pos
 Relative bow position from 0 to 1.
@@ -46,12 +46,11 @@ code::
 SynthDef(\help_dwgbowed, { |out=0, freq=440, amp=0.5,force=1, gate=1,pos=0.07,c1=0.25,c3=31,pan=0|
 	var vib = Gendy1.kr(1,1,1,1,0.1, 4,mul:0.003,add:1);
 	var son = DWGBowedSimple.ar(freq*vib, amp,force, gate,pos,0.1,c1,c3);
-	son = BowSoundBoard.ar(son);
+	son = DWGSoundBoard.ar(son);
 	son = BPF.ar(son,118,1)+son;
 	son = BPF.ar(son,430,1)+son;
 	son = BPF.ar(son,490,1)+son;
 	son = LPF.ar(son,6000);
-    DetectSilence.ar(son, 0.0001, doneAction:2);
     Out.ar(out, Pan2.ar(son * 0.1, pan));
 }).add;
 )

@@ -248,7 +248,7 @@ CircularBufferBase::~CircularBufferBase(){
 
 void FDN8::setlengths(float len[8]){
 	for(int i=0;i<8;i++)
-		lengths[i] = len[i];
+		lengths[i] = sc_min(len[i],1024);
 }
 //Householder Feedback Matrix
 void FDN8::setcoeffs(float c1, float c3, float mix, float Fs){

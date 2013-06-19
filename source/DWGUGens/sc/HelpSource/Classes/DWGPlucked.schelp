@@ -19,7 +19,7 @@ argument::amp
 Key pulsation strenght. Betwen 0 and 1.
 
 argument::gate
-Releases synth when value is 0.
+Releases synth when value changes from >0 to 0.
 
 argument::pos
 Relative pluck position from 0 to 1.
