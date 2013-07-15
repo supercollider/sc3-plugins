@@ -38,7 +38,7 @@ option(CPP11 "Build with c++11." OFF)
 option(NATIVE "Optimize for this specific machine." OFF)
 option(DSO_VISIBILITY "Hide private symbols." OFF)
 
-if(${CMAKE_CXX_COMPILER} MATCHES clang)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	set(CMAKE_COMPILER_IS_CLANG 1)
 endif()
 
@@ -52,7 +52,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
 	endif()
 
 	if(CPP11)
-		LIST(APPEND CMAKE_CXX_FLAGS -std=c++11)
+		set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
+		if(CMAKE_COMPILER_IS_CLANG)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+		endif()
 	endif()
 endif()
 
