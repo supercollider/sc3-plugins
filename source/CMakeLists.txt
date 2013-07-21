@@ -57,6 +57,11 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
     list(APPEND plugins ${PLUGIN_NAME})
     target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
+    if(APPLE)
+    install(TARGETS ${PLUGIN_NAME}
+                DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
+    endif()
+
     if(SUPERNOVA)
         add_library(${PLUGIN_NAME}_supernova MODULE ${PLUGIN_SOURCES})
         target_link_libraries(${PLUGIN_NAME}_supernova ${PLUGIN_LIBS})
@@ -64,12 +69,12 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
         list(APPEND supernova_plugins ${PLUGIN_NAME}_supernova)
         set_property(TARGET ${PLUGIN_NAME}_supernova
                      PROPERTY COMPILE_DEFINITIONS SUPERNOVA)
+        if(APPLE)
+            install(TARGETS ${PLUGIN_NAME}
+                    DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
+        endif()
     endif()
 
-    if (APPLE)
-        install(TARGETS ${PLUGIN_NAME}
-                DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
-    endif()
 endmacro()
 
 
