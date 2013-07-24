@@ -28,6 +28,7 @@
 
 
 #include "SC_PlugIn.h"
+#include <stdio.h>
 
 // macros to put rgen state in registers
 #define RGET \

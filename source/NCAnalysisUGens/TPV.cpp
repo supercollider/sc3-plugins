@@ -42,6 +42,7 @@
 
 //const int g_maxpeaks = 80;
 #include "NCAnalysis.h"
+#include <stdio.h>
 
 
 //cubic interpolation of phase parameters for formula (37) where t is from 0 to 1 as interpolation parameter

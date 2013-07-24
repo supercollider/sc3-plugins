@@ -22,6 +22,7 @@
 //SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.informatics.sussex.ac.uk/users/nc81/
 
 #include "SC_PlugIn.h"
+#include <stdio.h>
 
 //#define SLUGENSRESEARCH 1
 
