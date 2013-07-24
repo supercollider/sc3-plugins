@@ -1,4 +1,5 @@
 #include "SC_PlugIn.h"
+#include <stdio.h>
 
 // realtime Matching Pursuit ugen
 // (c) Dan Stowell 2012. All rights reserved.

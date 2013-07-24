@@ -71,6 +71,7 @@ use or for distribution:
 #include "SC_PlugIn.h"
 #include <cmath>
 #include <limits>
+#include <stdio.h>
 
 #ifdef NOVA_SIMD
 #include "simd_memory.hpp"
