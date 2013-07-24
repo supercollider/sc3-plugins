@@ -46,6 +46,7 @@
 
 
 #include "NCAnalysis.h"
+#include <stdio.h>
 
 //#include "FFT_UGens.h"
 //

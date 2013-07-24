@@ -37,6 +37,7 @@
 
 #include "SC_PlugIn.h"
 #include "SC_fftlib.h"
+#include <stdio.h>
 
 //helpful constants
 //#define PI 3.1415926535898f

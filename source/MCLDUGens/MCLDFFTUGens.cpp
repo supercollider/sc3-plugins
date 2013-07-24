@@ -22,6 +22,7 @@ FFT analysis and phase vocoder UGens for SuperCollider, by Dan Stowell.
 #include "SC_fftlib.h"
 #include "SC_PlugIn.h"
 #include "FFT_UGens.h"
+#include <stdio.h>
 
 // Used by PV_MagLog
 #define SMALLEST_NUM_FOR_LOG 2e-42
