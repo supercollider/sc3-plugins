@@ -7898,10 +7898,10 @@ PluginLoad(JoshGrain)
 	DefineSimpleCantAliasUnit(BufGrainBF);
 	DefineSimpleCantAliasUnit(BufGrainBBF);
 	DefineSimpleCantAliasUnit(BufGrainIBF);
-	DefineSimpleCantAliasUnit(GrainInJ);
-	DefineSimpleCantAliasUnit(GrainSinJ);
-	DefineSimpleCantAliasUnit(GrainBufJ);
-	DefineSimpleCantAliasUnit(GrainFMJ);
+	DefineDtorCantAliasUnit(GrainInJ);
+	DefineDtorCantAliasUnit(GrainSinJ);
+	DefineDtorCantAliasUnit(GrainBufJ);
+	DefineDtorCantAliasUnit(GrainFMJ);
 
 }
 
