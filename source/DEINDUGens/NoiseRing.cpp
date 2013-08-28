@@ -8,7 +8,7 @@
 
 // InterfaceTable contains pointers to functions in the host (server).
 static InterfaceTable *ft;
-
+typedef unsigned int uint;
 // declare struct to hold unit generator state
 struct DNoiseRing : public Unit
 {
