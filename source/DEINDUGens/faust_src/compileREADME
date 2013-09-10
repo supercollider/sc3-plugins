@@ -1,0 +1,7 @@
+cd  faust_src
+faust -a supercollider.cpp $OPTIONS "$SRCDIR/$f" -o "$TMP/${f%.dsp}.cpp"
+faust -xml reverb.dsp -o /dev/null
+faust2sc --prefix DEIND reverb.dsp.xml > DEINDreverb.sc
+cp jprev.h ..
+cp DEINDreverb.sc ../sc/
+cp reverb.cpp ../DEINDreverb.cpp

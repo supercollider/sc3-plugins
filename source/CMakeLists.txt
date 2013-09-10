@@ -91,7 +91,6 @@ set(PLUGIN_DIRS
     BhobUGens
     BlackrainUGens
     ConcatUGens
-	DEINDUGens
     DistortionUGens
     DWGUGens
     GlitchUGens
@@ -114,6 +113,7 @@ set(PLUGIN_DIRS
 set(PLUGIN_DIRS_EXTRA
     AuditoryModeling
     BetablockerUGens
+    DEINDUGens
     LadspaUGen
     MembraneUGens
     NCAnalysisUGens
@@ -188,6 +188,12 @@ BUILD_PLUGIN(AuditoryModeling "${AuditoryModelingSources}" "" "AuditoryModeling"
 #BetablockerUGens
 BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
              "" "BetablockerUGens")
+
+# DEINDUGens
+include_directories(DEINDUGens/include)
+BUILD_PLUGIN(DEINDUgens
+"DEINDUGens/DEINDreverb.cpp;DEINDUGens/DiodeRingMod.cpp;DEINDUGens/NoiseRing.cpp;DEINDUGens/complexRes.cpp" 
+             "" "DEINDUgens")
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
