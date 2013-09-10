@@ -52,7 +52,32 @@ Ndef(\tiickle).edit
 s.reboot
 
 Ndef(\tiickle, {
-	DiodeRingMod.ar(SinOsc.ar(3000 * ([1, 1.1, 1.2] * SinOsc.ar(100).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3, 0, 0.04) * 0.1}).play
+}).play
+
+
+
+
+
+
+Ndef(\tiickle, {
+	var index = 0;
+	Bend({ |original|
+		[original, original.isNumber, index].postln;
+		if(original.isNumber) {
+			original = NamedControl.kr("bend_"++index, original);
+			index = index + 1;	
+		};
+		original;
+	}, {
+		DiodeRingMod.ar(SinOsc.ar(3000 * ([1, 1.1, 1.2] * 
+			SinOsc.ar(100).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3, 0, 0.04) * 0.1
+	})
+})
+
+
+Ndef(\tiickle).edit
+
+
 
 
 
