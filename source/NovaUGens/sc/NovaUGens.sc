@@ -49,3 +49,11 @@ NovaOsc : UGen {
 		^this.multiNew('audio', buf, freq, phase, interpolation).madd( mul, add )
 	}
 }
+
+
+NovaDiskOut : UGen {
+        *ar { arg channelArray, filename;
+                var args = [channelArray.size] ++ channelArray ++ [filename.size] ++ filename.asString.collectAs(_.ascii, Array);
+                ^this.multiNew('audio', *args)
+        }
+}
