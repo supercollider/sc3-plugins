@@ -141,6 +141,7 @@ public:
 	{
 		std::fill(z, z + 5, 0);
 
+		freq               = in0(1);
 		float newQ         = in0(2);
 		float newHPCutoff  = in0(3);
 		set_q(newQ);
