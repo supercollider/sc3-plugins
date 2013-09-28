@@ -62,7 +62,6 @@ struct DiskOutThread
 		mPool(NumberOfElements + 8)
 	{
 		using namespace std;
-		printf("DiskOutThread\n");
 
 		loop(NumberOfElements, [&](){
 			Cmd * cmd = new Cmd();
@@ -72,7 +71,6 @@ struct DiskOutThread
 
 		mRunning = true;
 		mThread = move(thread(bind(&DiskOutThread::cmdLoop, this)));
-		printf("DiskOutThread\n");
 	}
 
 	~DiskOutThread()
