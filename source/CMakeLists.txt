@@ -285,12 +285,6 @@ else()
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
-if (NOVA_UGENS)
-    list(APPEND PLUGIN_DIRS_EXTRA NovaUGens)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    FIND_AND_BUILD_PLUGINS(NovaUGens)
-endif()
-
 
 #--------
 # INSTALL
