@@ -190,10 +190,22 @@ BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;Betablocker
              "" "BetablockerUGens")
 
 # DEINDUGens
+BUILD_PLUGIN(DiodeRingMod
+"DEINDUGens/DiodeRingMod.cpp"
+             "" "DiodeRingMod")
+BUILD_PLUGIN(NoiseRing
+"DEINDUGens/NoiseRing.cpp"
+             "" "NoiseRing")
+BUILD_PLUGIN(complexRes
+"DEINDUGens/complexRes.cpp"
+             "" "complexRes")
 include_directories(DEINDUGens/include)
-BUILD_PLUGIN(DEINDUgens
-"DEINDUGens/DEINDreverb.cpp;DEINDUGens/DiodeRingMod.cpp;DEINDUGens/NoiseRing.cpp;DEINDUGens/complexRes.cpp" 
-             "" "DEINDUgens")
+BUILD_PLUGIN(JPverb
+"DEINDUGens/JPverb.cpp" 
+             "" "JPverb")
+			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
+			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"

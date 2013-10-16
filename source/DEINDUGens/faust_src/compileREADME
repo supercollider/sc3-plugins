@@ -1,7 +1,9 @@
-cd  faust_src
-faust -a supercollider.cpp $OPTIONS "$SRCDIR/$f" -o "$TMP/${f%.dsp}.cpp"
-faust -xml reverb.dsp -o /dev/null
-faust2sc --prefix DEIND reverb.dsp.xml > DEINDreverb.sc
-cp jprev.h ..
-cp DEINDreverb.sc ../sc/
-cp reverb.cpp ../DEINDreverb.cpp
+# cd  faust_src
+faust -a SuperCollider.cpp JPverb.dsp -o JPverb.cpp
+
+cp jprev.h ../include
+cp JPverb.sc ../sc/
+cp JPverb.cpp ..
+
+# compile by hand:
+# g++ -O3 -DNO_LIBSNDFILE -DSC_DARWIN -DSC_FAUST_PREFIX="\"\"" -bundle -I. -I/localvol/sound/src/supercollider/include/{plugin_interface,common,server} -I/usr/local/lib/faust/ -Dmydsp=JPVERB -o JPverb.scx JPverb.cpp
