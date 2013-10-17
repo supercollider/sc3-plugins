@@ -1,5 +1,5 @@
 //-----------------------------------------------------
-// name: "JPverb"
+// name: "JPverbRaw"
 // version: "1.0"
 // author: "Julian Parker"
 // license: "none"
@@ -430,7 +430,7 @@ class mydsp : public dsp {
 	float 	fRec1[2];
   public:
 	static void metadata(Meta* m) 	{ 
-		m->declare("name", "JPverb");
+		m->declare("name", "JPverbRaw");
 		m->declare("version", "1.0");
 		m->declare("author", "Julian Parker");
 		m->declare("license", "none");
@@ -671,7 +671,7 @@ class mydsp : public dsp {
 		instanceInit(samplingFreq);
 	}
 	virtual void buildUserInterface(UI* interface) {
-		interface->openVerticalBox("JPverb");
+		interface->openVerticalBox("JPverbRaw");
 		interface->addHorizontalSlider("damp", &fslider2, 0.0f, 0.0f, 0.999f, 0.0001f);
 		interface->addHorizontalSlider("earlyDiff", &fslider1, 0.707f, 0.0f, 0.99f, 0.001f);
 		interface->addHorizontalSlider("highBand", &fslider4, 2e+03f, 1e+03f, 1e+04f, 0.1f);

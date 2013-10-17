@@ -1,9 +1,11 @@
 # cd  faust_src
-faust -a SuperCollider.cpp JPverb.dsp -o JPverb.cpp
+faust -a SuperCollider.cpp JPverbRaw.dsp -o JPverbRaw.cpp
 
 cp jprev.h ../include
-cp JPverb.sc ../sc/
-cp JPverb.cpp ..
+cp JPverbRaw.cpp ..
+# symbolically linked
+# cp JPverb.sc ../sc/
+
 
 # compile by hand:
-# g++ -O3 -DNO_LIBSNDFILE -DSC_DARWIN -DSC_FAUST_PREFIX="\"\"" -bundle -I. -I/localvol/sound/src/supercollider/include/{plugin_interface,common,server} -I/usr/local/lib/faust/ -Dmydsp=JPVERB -o JPverb.scx JPverb.cpp
+# g++ -O3 -DNO_LIBSNDFILE -DSC_DARWIN -DSC_FAUST_PREFIX="\"\"" -bundle -I./include -I/localvol/sound/src/supercollider/include/{plugin_interface,common,server} -I/usr/local/lib/faust/ -Dmydsp=JPVERB -o JPverbRaw.scx JPverbRaw.cpp

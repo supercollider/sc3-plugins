@@ -201,7 +201,7 @@ BUILD_PLUGIN(complexRes
              "" "complexRes")
 include_directories(DEINDUGens/include)
 BUILD_PLUGIN(JPverb
-"DEINDUGens/JPverb.cpp" 
+"DEINDUGens/JPverbRaw.cpp" 
              "" "JPverb")
 			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
 			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 

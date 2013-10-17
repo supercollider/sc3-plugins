@@ -1,4 +1,4 @@
-declare name        "JPverb";
+declare name        "JPverbRaw";
 declare version     "1.0";
 declare author      "Julian Parker";
 declare license     "none";
