@@ -1,0 +1,66 @@
+TITLE:: ComplexRes
+summary:: FM-modulable resonating filter
+categories:: UGens>Filters>Linear
+RELATED:: Classes/Resonz,Classes/Formlet, Classes/RHPF, Classes/RLPF, Classes/Ringz
+
+
+DESCRIPTION::
+A resonating filter which can be modulated in its resonating frequency at audio rate without blowing up.
+Implements the filter structure found in the paper EMPHASIS::Dynamic FM synthesis using a network of complex resonator filters:: by Julian Parker and Till Bovermann (2013).
+
+CLASSMETHODS::
+private:: categories
+
+METHOD:: ar
+
+argument::in
+input signal
+
+argument::freq
+resonating frequency, can be modulated at audiorate.
+
+argument::decay
+decaytime in seconds
+
+returns::
+A UGen.
+
+EXAMPLES::
+code::{[0.1,0.1]*ComplexRes.ar(Pulse.ar(0.1,0.001,0.1),50+ 5000*SinOsc.ar(50),0.5)}.play;::
+
+Feed forward network (core part):
+link::http://sccode.org/1-4V6::
+code::
+// FM network
+dst = freqs.inject([filterIn, 0], {|in, freq, i|
+  tmpIter = ComplexRes.ar( filterIn,
+    freq + (fms[i] * in[0]),
+    decays[i] );
+  [ tmpIter * amps[i], in[1] + tmpIter ] });
+dst = Mix.ar(dst * [1,  amps.sum * numNodes.reciprocal]);
+::
+
+Recursive network (core part):
+link::http://sccode.org/1-4V7::
+code::
+feedbacks = LocalIn.ar(numOscs);
+
+filterIn = preAmp * in;
+oscs = freqs.inject([], {|oscArray, freq, i|
+  tmpOsc = ComplexRes.ar(filterIn, 
+    freq
+    + oscArray.inject(0, {|sum, osc, j| 
+      // modulators from already instantiated oscs
+      sum + (feedbacks[j] * modParams[i][j]) })
+    + (numOscs - 1 - Array.iota(numOscs - (i))).inject(0, {|sum, g| 
+      // modulators from to be instantiated oscs
+      sum + (feedbacks[g] * modParams[i][g]) }),
+    decays[i]
+  );
+  oscArray ++ tmpOsc;
+}); // end inject
+
+LocalOut.ar(oscs); // feedback is pre-"fader"
+filterOut = oscs * amps * postAmp;
+::
+Full code can be found on link::http://tai-studio.org/index.php/projects/deind/complexres/:: (search for "Full code examples").

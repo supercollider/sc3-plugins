@@ -1,0 +1,40 @@
+TITLE:: DiodeRingMod
+summary:: Ring modulation based on a physical model of a diode.
+categories:: UGens>PhysicalModels, UGens>Filters
+RELATED:: Overviews/Operators#.*
+
+DESCRIPTION::
+Ring modulation based on a physical model of a diode.
+
+CLASSMETHODS::
+private:: categories
+
+METHOD:: ar
+
+argument::car
+The carrier
+
+argument::mod
+The modulator
+
+returns::
+A UGen.
+
+EXAMPLES::
+code::
+{DiodeRingMod.ar(SinOsc.ar(3700 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 0.5, 0, 0.04) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(18000 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/6, 0, 0.02) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(1800 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * LFPulse.ar(10.3).range(1/6, 1/2), 0, 0.02) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(800 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/32, 0, 0.2) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(400 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/32, 0, 0.2) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(200 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/32, 0, 0.2) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(100 * ([1, 1.1, 1.2] * SinOsc.ar(200).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/32, 0, 0.2) * 0.1}.play
+
+{DiodeRingMod.ar(SinOsc.ar(40 * ([1, 1.1, 1.2] * SinOsc.ar(50).range(1, 2))), SinOsc.ar(100 * [0.75, 1, 0.5])).sum * 0.2 * LFPulse.ar(10.3 * 1/32, 0, 0.4) * 0.5}.play
+::
