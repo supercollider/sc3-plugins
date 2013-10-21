@@ -1,10 +1,13 @@
 # cd  faust_src
 faust -a SuperCollider.cpp JPverbRaw.dsp -o JPverbRaw.cpp
+faust -a SuperCollider.cpp GreyholeRaw.dsp -o GreyholeRaw.cpp
 
 cp jprev.h ../include
 cp JPverbRaw.cpp ..
+cp GreyholeRaw.cpp ..
 # symbolically linked
 # cp JPverb.sc ../sc/
+# cp Greyhole.sc ../sc/
 
 
 # compile by hand:

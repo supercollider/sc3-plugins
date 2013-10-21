@@ -1,0 +1,49 @@
+TITLE:: Greyhole
+summary:: algorithmic delay
+categories:: UGens>Delays
+RELATED:: Classes/GreyholeRaw, Classes/JPverb
+
+DESCRIPTION::
+An algorithmic delay.
+
+image::Greyhole-logo-small.png::
+
+CLASSMETHODS::
+private:: categories
+
+METHOD:: ar
+
+argument::in
+The input. Either an array of two audio signals, or one audiosignal.
+
+argument::delayTime
+Sets approximate delay time in seconds. (0.1..60)
+
+argument::damp
+Controls damping of high-frequencies as the delay decays. 0 is no damping, 1 is very strong damping (0..1)
+
+argument::size
+Scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound quite metallic. (0.5..5)
+
+argument::diff
+Sets shape of the diffusion unit. Values greater than 0.707 produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+
+argument::feedback
+amount of feedback for the delay line. (0..1)
+
+argument::modDepth
+Sets depth of delay-line modulation in samples. Use in combination with mFreq to set amount of chorusing within the structure. (0..50)
+
+argument::modFreq
+Sets frequency of delay-line modulation. Use in combination with mDepth to set amount of chorusing within the structure. (0..10)
+
+returns::
+A UGen.
+
+EXAMPLES::
+
+a plot:
+code:: { LFPulse.ar(Line.kr(100, 800, 0.1)) }.plot(0.1); ::
+
+50 Hz wave:
+code:: { LFPulse.ar(50) * 0.1 }.play; ::  

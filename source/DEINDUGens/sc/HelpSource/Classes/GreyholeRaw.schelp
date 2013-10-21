@@ -1,0 +1,56 @@
+TITLE:: GreyholeRaw
+summary:: algorithmic delay
+categories:: UGens>Delays
+RELATED:: Classes/Greyhole, Classes/JPverb
+
+DESCRIPTION::
+An algorithmic delay. 
+
+
+
+
+CLASSMETHODS::
+private:: categories
+
+METHOD:: ar
+*ar { | in1, in2, damping(0.0), delaytime(2.0), diffusion(0.5), feedback(0.9), moddepth(0.1), modfreq(2.0), size(1.0) |
+    ^this.multiNew('audio', in1, in2, damping, delaytime, diffusion, feedback, moddepth, modfreq, size)
+
+
+argument::in1
+Left channel
+
+argument::in2
+Right channel
+
+argument::damping
+Controls damping of high-frequencies as the delay decays. 0 is no damping, 1 is very strong damping (0..1)
+
+argument::delaytime
+Sets approximate delay time in seconds. (0.1..60)
+
+argument::diffusion
+Sets shape of the diffusion unit. Values greater than 0.707 produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+
+argument::feedback
+amount of feedback for the delay line. (0..1)
+
+argument::moddepth
+Sets depth of delay-line modulation in samples. Use in combination with mFreq to set amount of chorusing within the structure. (0..50)
+
+argument::modfreq
+Sets frequency of delay-line modulation. Use in combination with mDepth to set amount of chorusing within the structure. (0..10)
+
+argument::size
+Scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound quite metallic. (0.5..5)
+
+returns::
+A UGen.
+
+EXAMPLES::
+
+a plot:
+code:: { LFPulse.ar(Line.kr(100, 800, 0.1)) }.plot(0.1); ::
+
+50 Hz wave:
+code:: { LFPulse.ar(50) * 0.1 }.play; ::  

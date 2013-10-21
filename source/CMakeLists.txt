@@ -206,6 +206,12 @@ BUILD_PLUGIN(JPverb
 			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
 			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
 			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+BUILD_PLUGIN(Greyhole
+"DEINDUGens/GreyholeRaw.cpp" 
+             "" "Greyhole")
+			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
+			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
