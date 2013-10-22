@@ -1,11 +1,13 @@
 TITLE:: JPverbRaw
 summary:: Raw version of the JPverb algorithmic reverberator, designed to produce long tails with chorusing
 categories:: UGens>Reverbs
-related:: Classes/JPverb
+related:: Overviews/DEIND, Classes/JPverb
 
 DESCRIPTION::
 An algorithmic reverb, inspired by the lush chorused sound of certain vintage Lexicon and Alesis reverberation units. Designed to sound great with synthetic sound sources, rather than sound like a realistic space.
 For more convinience, please use  LINK::Classes/JPverb::
+
+Developed as part of the LINK::Overviews/DEIND:: project.
 
 CLASSMETHODS::
 private:: categories

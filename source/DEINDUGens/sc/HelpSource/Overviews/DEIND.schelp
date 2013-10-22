@@ -1,0 +1,34 @@
+title:: DEIND
+summary:: Ugen collection developed within the DEIND project
+categories:: Libraries
+related:: Classes/JPverb, Classes/Greyhole, Classes/ComplexRes, Classes/DiodeRingMod, Classes/DNoiseRing
+
+description:: 
+
+image::DEIND.png::
+
+The UGens and Classes in this package were originally developed within the project EMPHASIS::Electronic digital music practice for Neurodiverse People:: in 2013.
+
+The project aimed to connect people with autistic spectrum disorder with the field of contemporary electronic and digital music practice. In pursuit of this, people with severe autistic spectrum disorders were invited to take part in the design process of electronic instruments.
+To facilitate music practice, we aimed for a holistic instrument experience rather than a modular approach in which the underlying modules of electronic instruments – interface/mapping/sound synthesis – would become too evident and possibly confuse the player too much.
+
+The close integration of target group members encouraged a bilateral learning process: on the one hand, there is an intense and fruitful experience for the participants, on the other hand, it opened opportunities for the researchers to identify challenges that are specific to this group yet reveal new perspectives on the broader view of their research area.
+
+As the implementation platform was SuperCollider and the project employed a DSP expert, one of these opportunities was the design and implementation of specific unit generators to support the development of the instruments. Though aimed at the specific needs in the project, the resulting UGens are generic enough to be of use also outside of the project, which is why we publish them here.
+
+For more information on the project, please visit http://tai-studio.org/index.php/projects/deind/ .
+
+SECTION:: UGens
+
+DEFINITIONLIST::
+## LINK::Classes/JPverb::
+|| Algorithmic reverberator, designed to produce long and rich reverberant tails
+## LINK::Classes/Greyhole::
+|| A complex echo-like effect
+## LINK::Classes/ComplexRes::
+|| FM-modulable resonating filter
+## LINK::Classes/DiodeRingMod::
+|| Ring modulation based on the physical model of a diode
+## LINK::Classes/DNoiseRing::
+|| Demand rate implementation of a Wiard noise ring
+::

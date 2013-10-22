@@ -1,12 +1,17 @@
 TITLE:: ComplexRes
 summary:: FM-modulable resonating filter
 categories:: UGens>Filters>Linear
-RELATED:: Classes/Resonz,Classes/Formlet, Classes/RHPF, Classes/RLPF, Classes/Ringz
+RELATED:: Overviews/DEIND, Classes/Resonz,Classes/Formlet, Classes/RHPF, Classes/RLPF, Classes/Ringz
 
 
 DESCRIPTION::
 A resonating filter which can be modulated in its resonating frequency at audio rate without blowing up.
-Implements the filter structure found in the paper EMPHASIS::Dynamic FM synthesis using a network of complex resonator filters:: by Julian Parker and Till Bovermann (2013).
+Implements the filter structure found in
+
+Julian Parker and Till Bovermann (2013): EMPHASIS::Dynamic FM synthesis using a network of complex resonator filters::
+
+Developed as part of the LINK::Overviews/DEIND:: project.
+
 
 CLASSMETHODS::
 private:: categories
@@ -47,12 +52,12 @@ feedbacks = LocalIn.ar(numOscs);
 
 filterIn = preAmp * in;
 oscs = freqs.inject([], {|oscArray, freq, i|
-  tmpOsc = ComplexRes.ar(filterIn, 
+  tmpOsc = ComplexRes.ar(filterIn,
     freq
-    + oscArray.inject(0, {|sum, osc, j| 
+    + oscArray.inject(0, {|sum, osc, j|
       // modulators from already instantiated oscs
       sum + (feedbacks[j] * modParams[i][j]) })
-    + (numOscs - 1 - Array.iota(numOscs - (i))).inject(0, {|sum, g| 
+    + (numOscs - 1 - Array.iota(numOscs - (i))).inject(0, {|sum, g|
       // modulators from to be instantiated oscs
       sum + (feedbacks[g] * modParams[i][g]) }),
     decays[i]

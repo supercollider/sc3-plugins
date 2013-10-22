@@ -1,10 +1,13 @@
 TITLE:: DiodeRingMod
-summary:: Ring modulation based on a physical model of a diode.
+summary:: Ring modulation based on the physical model of a diode.
 categories:: UGens>PhysicalModels, UGens>Filters
-RELATED:: Overviews/Operators#.*
+RELATED:: Overviews/DEIND, Overviews/Operators#.*
 
 DESCRIPTION::
 Ring modulation based on a physical model of a diode.
+
+Developed as part of the LINK::Overviews/DEIND:: project.
+
 
 CLASSMETHODS::
 private:: categories

@@ -1,12 +1,12 @@
 TITLE:: GreyholeRaw
 summary:: algorithmic delay
 categories:: UGens>Delays
-RELATED:: Classes/Greyhole, Classes/JPverb
+RELATED:: Overviews/DEIND, Classes/Greyhole, Classes/JPverb
 
 DESCRIPTION::
 An algorithmic delay. 
 
-
+Developed as part of the LINK::Overviews/DEIND:: project.
 
 
 CLASSMETHODS::

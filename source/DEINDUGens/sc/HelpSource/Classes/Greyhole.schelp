@@ -1,13 +1,21 @@
 TITLE:: Greyhole
-summary:: algorithmic delay
+summary:: A complex echo-like effect
 categories:: UGens>Delays
-RELATED:: Classes/GreyholeRaw, Classes/JPverb
+RELATED:: Overviews/DEIND, Classes/JPverb, Classes/GreyholeRaw
 
 DESCRIPTION::
-An algorithmic delay.
-STRONG::Please increase server realtime memory for this to work properly::
-
 image::Greyhole-logo-small.png::
+
+A complex echo-like effect, inspired by the classic Eventide effect of a similar name. The effect consists of a diffuser (like a mini-reverb) connected in a feedback system with a long modulated delay-line. Excels at producing spacey washes of sound.
+
+Developed as part of the LINK::Overviews/DEIND:: project.
+
+
+NOTE::Please increase server realtime memory for this to work properly::
+code::
+s.options.memSize_(65536 * 4);
+s.reboot;
+::
 
 CLASSMETHODS::
 private:: categories
@@ -15,31 +23,31 @@ private:: categories
 METHOD:: ar
 
 argument::in
-The input. Either an array of two audio signals, or one audiosignal.
+either an array of two audio signals, or one audiosignal.
 
 argument::delayTime
-Sets approximate delay time in seconds. (0.1..60)
+approximate delay time in seconds. (0.1..60)
 
 argument::damp
-Controls damping of high-frequencies as the delay decays. 0 is no damping, 1 is very strong damping (0..1)
+damping of high-frequencies as the delay decays. 0 is no damping, 1 is very strong damping (0..1)
 
 argument::size
-Scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound quite metallic. (0.5..5)
+scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound metallic. (0.5..5)
 
 argument::diff
-Sets shape of the diffusion unit. Values greater than 0.707 produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+controls pattern of echoes produced by the diffuser. At very low values, the diffuser acts like a delay-line whose length is controlled by the 'size' parameter. Medium values produce a slow build-up of echoes, giving the sound a reversed-like quality. Values of 0.707 or greater than  produce smooth exponentially decaying echoes. (0..1)
 
 argument::feedback
-amount of feedback for the delay line. (0..1)
+amount of feedback through the system. Sets the number of repeating echoes. A setting of 1.0 produces infinite sustain. (0..1)
 
 argument::modDepth
-Sets depth of delay-line modulation in samples. Use in combination with mFreq to set amount of chorusing within the structure. (0..50)
+depth of delay-line modulation. Use in combination with mFreq to produce chorus and pitch-variations in the echoes. (0..1)
 
 argument::modFreq
-Sets frequency of delay-line modulation. Use in combination with mDepth to set amount of chorusing within the structure. (0..10)
+frequency of delay-line modulation. Use in combination with mFreq to produce chorus and pitch-variations in the echoes. (0..10)
 
 returns::
-A UGen.
+a UGen
 
 EXAMPLES::
 

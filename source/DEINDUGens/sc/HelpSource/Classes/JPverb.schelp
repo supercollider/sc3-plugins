@@ -1,14 +1,20 @@
 TITLE:: JPverb
-summary:: algorithmic reverberator, designed to produce long tails with chorusing
+summary:: Algorithmic reverberator, designed to produce long and rich reverberant tails.
 categories:: UGens>Reverbs
-RELATED:: Classes/JPverbRaw, Classes/Greyhole
+RELATED:: Overviews/DEIND, Classes/Greyhole, Classes/JPverbRaw
 
 DESCRIPTION::
+image::JPverb-logo-small.png::
 An algorithmic reverb, inspired by the lush chorused sound of certain vintage Lexicon and Alesis reverberation units. Designed to sound great with synthetic sound sources, rather than sound like a realistic space.
 
-STRONG::Please increase server realtime memory for this to work properly::
+Developed as part of the LINK::Overviews/DEIND:: project.
 
-image::JPverb-logo-small.png::
+NOTE::Please increase server realtime memory for this to work properly::
+code::
+s.options.memSize_(65536 * 4);
+s.reboot;
+::
+
 
 CLASSMETHODS::
 private:: categories
@@ -16,43 +22,43 @@ private:: categories
 METHOD:: ar
 
 argument::in
-The input to the Reverb. Either an array of two audio signals, or one audiosignal.
+input to the reverb. Either an array of two audio signals, or one audiosignal.
 
 argument::t60
-Sets approximate reverberation time in seconds (T60 - the time for the reverb to decay 60db). Does not effect early reflections. (0.1..60)
+approximate reverberation time in seconds (T60 - the time for the reverb to decay 60db). Does not effect early reflections. (0.1..60)
 
 argument::damp
-Controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping (0..1)
+controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping (0..1)
 
 argument::size
-Scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound quite metallic. (0.5..5)
+scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound metallic. (0.5..5)
 
 argument::earlyDiff
-Sets shape of early reflections. Values of > 0.707 produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+controls shape of early reflections. Values of 0.707 or more produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
 
 argument::modDepth
-Sets depth of delay-line modulation in samples. Use in combination with mFreq to set amount of chorusing within the structure. (0..50)
+depth of delay-line modulation. Use in combination with modFreq to set amount of chorusing within the structure. (0..1)
 
 argument::modFreq
-Sets frequency of delay-line modulation. Use in combination with mDepth to set amount of chorusing within the structure. (0..10)
+frequency of delay-line modulation. Use in combination with modDepth to set amount of chorusing within the structure. (0..10)
 
 argument::low
-Sets multiplier for the reverberation time within the low band. (0..1)
+multiplier for the reverberation time within the low band. (0..1)
 
 argument::mid
-Sets multiplier for the reverberation time within the mid band. (0..1)
+multiplier for the reverberation time within the mid band. (0..1)
 
 argument::high
-Sets multiplier for the reverberation time within the high band. (0..1)
+multiplier for the reverberation time within the high band. (0..1)
 
 argument::lowcut
-Sets frequency at which the crossover between the low and mid bands of the reverb occurs. (100..6000)
+frequency at which the crossover between the low and mid bands of the reverb occurs. (100..6000)
 
 argument::highcut
-Sets frequency at which the crossover between the mid and high bands of the reverb occurs. (1000..10000)
+frequency at which the crossover between the mid and high bands of the reverb occurs. (1000..10000)
 
 returns::
-A UGen.
+a UGen.
 
 EXAMPLES::
 code::

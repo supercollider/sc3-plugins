@@ -1,7 +1,7 @@
 TITLE:: DNoiseRing
 summary:: Demand rate implementation of a Wiard noise ring
 categories:: UGens>Demand
-RELATED:: Classes/Duty, Classes/Demand
+RELATED:: Overviews/DEIND, Classes/Duty, Classes/Demand
 
 
 DESCRIPTION::
@@ -10,6 +10,7 @@ Demand rate implementation of a Wiard noise ring.
 EMPHASIS::In latter model synthesizers, digital noise sources began to appear in place of analog ones. Traditionally, a psuedo-random shift register set up for optimal length. By optimal length, it is meant that every state of all available bits will appear at some time, but the order is unknown. Essentially a counter that counts in an unknown order. This represents the maximum state of information "entropy" available for that number of bits. But music has close self-similarity over short periods of time. That is, it repeats itself with changes appearing slowly. This shift register generator is designed to give control of the rate of appearance of new information. It has a tight set of controls over how random it actually is and how fast change occurs.::
 (text from http://mamonu.weebly.com/wiard-noisering.html)
 
+Developed as part of the LINK::Overviews/DEIND:: project.
 
 CLASSMETHODS::
 private:: categories
