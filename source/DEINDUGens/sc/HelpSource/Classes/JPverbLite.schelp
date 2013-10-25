@@ -1,0 +1,95 @@
+TITLE:: JPverbLite
+summary:: A lighter version of the JPverb algorithmic reverberator, designed to produce long and rich reverberant tails (with fewer parameters and lighter CPU load).
+categories:: UGens>Reverbs
+RELATED:: Overviews/DEIND, Classes/Greyhole, Classes/JPverb
+
+DESCRIPTION::
+image::JPverb-logo-small.png::
+An algorithmic reverb, based on the LINK::Classes/JPverb:: reverb. This "light" version offers fewer parameters, but sounds very similar to the full-sized version (at its default settings).  Does not offer the chorusing feature (modulation of delay lines) or reverb time multipliers for different frequency bands.  In exchange for these limitations (and somewhat less dense reflections), it uses approximately half the CPU of the full version.
+
+The original JPverb was developed as part of the LINK::Overviews/DEIND:: project, and this UGen is simply a stripped-down version of it.
+
+NOTE::You may need to increase server realtime memory for this to work properly::
+code::
+s.options.memSize_(65536 * 4);
+s.reboot;
+::
+
+
+CLASSMETHODS::
+private:: categories
+
+METHOD:: ar
+
+argument::in
+input to the reverb. Either an array of two audio signals (stereo), or one audio signal.
+
+argument::t60
+approximate reverberation time in seconds (T60 - the time for the reverb to decay 60db). Does not effect early reflections. (0.1..60)
+
+argument::damp
+controls damping of high frequencies as the reverb decays. 0 is no damping, 1 is very strong damping (0..1)
+
+argument::size
+scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound metallic. (0.5..5)
+
+argument::earlyDiff
+controls shape of early reflections. Values of 0.707 or more produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+
+returns::
+a UGen.
+
+EXAMPLES::
+code::
+(
+s.options.memSize_(65536 * 2);
+s.reboot;
+
+Spec.add(\t60, [0.1, 60, \exp]);
+Spec.add(\damp, [0, 1]);
+Spec.add(\size, [0.5, 3]);
+Spec.add(\earlyDiff, [0, 1]);
+)
+
+Ndef(\src).clear
+(
+Ndef(\src, {
+	var trig = Dust.ar(2, 0.5);
+	trig = Pan2.ar(trig, TRand.ar(-1.0, 1.0, trig));
+	Decay2.ar(trig, 0.005, 0.03, WhiteNoise.ar)
+});
+
+Ndef(\reverb, {
+    var src = Ndef(\src).ar * \amp.kr(1);
+    src = JPverbLite.ar(
+        src,
+        \t60.kr(1),
+        \damp.kr(0),
+        \size.kr(1),
+        \earlyDiff.kr(0.707)
+    );
+}).fadeTime_(1);
+)
+
+Ndef(\reverb).play
+Ndef(\src).play
+
+Ndef('reverb').set('amp', 0.9, 'damp', 0.67, 'size', 0.95, 't60', 16, 'earlyDiff', 0.42);
+
+// Dreamverb
+Ndef('reverb').set('amp', 0.66, 'damp', 0.31, 'size', 2.8, 't60', 60, 'earlyDiff', 0.42);
+
+Ndef('reverb').set('amp', 0.66, 'damp', 0.67, 'size', 0.95, 't60', 60, 'earlyDiff', 0.42);
+
+Ndef('reverb').set('amp', 0.38, 'damp', 0.29, 'size', 0.62, 't60', 4.0, 'earlyDiff', 0.77);
+
+Ndef('reverb').set('amp', 0.66, 'damp', 0.875, 'size', 0.5, 't60', 0.165, 'earlyDiff', 0.7);
+
+Ndef('reverb').set('amp', 0.66, 'damp', 0.875, 'size', 0.5, 't60', 0.165, 'earlyDiff', 0.8);
+
+Ndef('reverb').set('amp', 0.66, 'damp', 0.37, 'size', 1, 't60', 5.2, 'earlyDiff', 0.3);
+Ndef('reverb').set('earlyDiff', 1);
+
+Ndef(\src).edit;
+Ndef(\reverb).edit;
+::

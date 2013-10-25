@@ -14,7 +14,7 @@ gi = 1.618;
 depth = 5;
 wet = hslider("wet",0.5,0.0,1.0,0.01);
 early_diff = hslider("earlyDiff", 0.707, 0.0 ,0.99,0.001);
-size = 1;
+size = hslider("size",1.0, 0.5,3.0,0.01);
 T60 = hslider("t60",1.0,0.1,60.0,0.1);
 damping = hslider("damp",0.0,0.0,0.999,0.0001);
 calib = 1.7; // Calibration constant given by T60 in seconds when fb = 0.5
@@ -53,8 +53,8 @@ with
 reverb = (	( bus(4) :> par(i,2,smooth(damping)) : diffuser(PI/4,early_diff,55,240) : diffuser(PI/4,early_diff,215,85) : diffuser(PI/4,early_diff,115,190) : diffuser(PI/4,early_diff,175,145)
 	
 			) ~(
-				seq(i,5,diffuser(PI/4,0.707,10+30*i,110 + 30*i) ) : par(i,2, fdelay1a(8192,(prime_delays(size*(54+150*i)) : smooth_init(0.995,prime_delays(size*(54+150*i)))) -1 )) :
-				seq(i,5,diffuser(PI/4,0.707,125+30*i, 25+30*i) ) : par(i,2, fdelay1a(8192,(prime_delays(size*(134-100*i)) : smooth_init(0.995,prime_delays(size*(134-100*i)))) -1 )) :
+				seq(i,3,diffuser(PI/4,0.707,10+30*i,110 + 30*i) ) : par(i,2, fdelay1a(8192,(prime_delays(size*(54+150*i)) : smooth_init(0.995,prime_delays(size*(54+150*i)))) -1 )) :
+				seq(i,3,diffuser(PI/4,0.707,125+30*i, 25+30*i) ) : par(i,2, fdelay1a(8192,(prime_delays(size*(134-100*i)) : smooth_init(0.995,prime_delays(size*(134-100*i)))) -1 )) :
 				par(i,2,*(fb))
 			));
 
