@@ -91,7 +91,7 @@ struct Gendy4 : public Unit
 	float* mMemoryDur;
 };
 
-struct Gendy0 : public Unit
+struct Gendy5 : public Unit
 {
 	double mPhase;
 	float mAmp, mDur, mSpeed;
@@ -142,9 +142,9 @@ extern "C"
 	void Gendy4_Ctor(Gendy4* unit);
 	void Gendy4_Dtor(Gendy4* unit);
 
-	void Gendy0_next_k(Gendy0 *unit, int inNumSamples);
-	void Gendy0_Ctor(Gendy0* unit);
-	void Gendy0_Dtor(Gendy0* unit);
+	void Gendy5_next_k(Gendy5 *unit, int inNumSamples);
+	void Gendy5_Ctor(Gendy5* unit);
+	void Gendy5_Dtor(Gendy5* unit);
 };
 
 #define RGET \
@@ -807,9 +807,9 @@ void Gendy4_next_k(Gendy4 *unit, int inNumSamples) {
 	unit->mCurve = curve;
 }
 
-void Gendy0_Ctor( Gendy0* unit ) {
+void Gendy5_Ctor( Gendy5* unit ) {
 
-	SETCALC(Gendy0_next_k);
+	SETCALC(Gendy5_next_k);
 	unit->mPhase = 1.f;
 	unit->mAmp = 0.0;
 
@@ -829,13 +829,13 @@ void Gendy0_Ctor( Gendy0* unit ) {
 	}
 }
 
-void Gendy0_Dtor(Gendy0 *unit)
+void Gendy5_Dtor(Gendy5 *unit)
 {
 	RTFree(unit->mWorld, unit->mMemoryAmp);
 	RTFree(unit->mWorld, unit->mMemoryDur);
 }
 
-void Gendy0_next_k(Gendy0 *unit, int inNumSamples) {
+void Gendy5_next_k(Gendy5 *unit, int inNumSamples) {
 
 	float *out = ZOUT(0);
 
@@ -900,7 +900,7 @@ PluginLoad(BhobNoise)
 	DefineSimpleUnit(TGaussRand);
 	DefineSimpleUnit(TBetaRand);
 	DefineDtorUnit(Gendy4);
-	DefineDtorUnit(Gendy0);
+	DefineDtorUnit(Gendy5);
 }
 
 ////////////////////////////////////////////////////////////////////
