@@ -231,7 +231,7 @@ BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cp
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 if(APPLE)
-    set (PitchDetectionLibs "-framework vecLib")
+    set (PitchDetectionLibs "-framework Accelerate")
 else()
     set (PitchDetectionLibs ${FFTW3F_LIBRARY})
 endif()
@@ -284,7 +284,7 @@ BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 # NCAnalysisUGens
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
 if(APPLE)
-    set (NCAnalysisLibs "-framework vecLib")
+    set (NCAnalysisLibs "-framework Accelerate")
 else()
     set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
