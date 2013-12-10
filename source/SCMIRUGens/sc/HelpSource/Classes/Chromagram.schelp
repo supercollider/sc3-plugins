@@ -2,17 +2,15 @@ class:: Chromagram
 summary:: Octave chroma band based representation of energy in a signal; Chromagram for nTET tuning systems with any base reference
 related:: Classes/SensoryDissonance
 categories:: UGens>Analysis
-keyword:: Chroma, pitch class, equal temperament, filter bank 
+keyword:: Chroma, pitch class, equal temperament, filter bank
 
 Description::
 
-A chromagram, measuring the energy at particular chroma within an nTET tuning system. 
+A chromagram, measuring the energy at particular chroma within an nTET tuning system.
 
 
-Possible extension:  
-TODO: tritave and other non-standard octaves 
-TODO: Could have arbitrary tuning systems if precalculated the exact fft bin + interpolation data. 
-TODO: chroma as energy independent, relative to total fft energy in polled bins or whole spectrum?
+Possible extension:
+TODO: Could have arbitrary tuning systems if precalculated the exact fft bin + interpolation data.
 
 
 classmethods::
@@ -20,10 +18,10 @@ classmethods::
 method::kr
 
 
-argument::fft 
+argument::fft
 input fft chain, that is, from an FFT UGen
 argument::fftsize
-FFT size, required for initialisation 
+FFT size, required for initialisation
 argument::n
 Equal divisions of an octave, e.g. n=12 is 12TET, 12 steps in an octave
 argument::tuningbase
@@ -34,6 +32,11 @@ argument::integrationflag
 Whether to integrate from frame to frame, off by default
 argument::coeff
 Coefficient of integration
+argument::octaveratio
+Default of 2 is a 'normal' octave; other ratios are possible, e.g. Bohlen-Pierce scale uses 13 equal divisions over the ratio of 3 for a 'tritave'
+argument::perframenormalize
+Defaults to off, but if set to 1 will normalize each frame with respect to itself (as long as there is non-negligible power), potentially providing a more robust measure for comparison between frames (each frame will have then a normalized distribution over chroma, independent of volume)
+
 
 Examples::
 
@@ -45,22 +48,22 @@ code::
 
 var in, fft, chroma;
 
-//in = SinOsc.ar(440,0,0.1); 
-in= SoundIn.ar; 
+//in = SinOsc.ar(440,0,0.1);
+in= SoundIn.ar;
 
 fft = FFT(LocalBuf(2048), in);
 
 chroma=Chromagram.kr(fft);
 
-chroma.poll; 
+chroma.poll;
 
-Out.ar(0,Pan2.ar(in)); 
+Out.ar(0,Pan2.ar(in));
 }.play
 )
 
 
 
-//n TET display 
+//n TET display
 
 n= 12; //19, 24
 
@@ -69,8 +72,8 @@ x = {
 
 var in, fft, chroma;
 
-//in = SinOsc.ar(440,0,0.1); 
-in= SoundIn.ar; 
+//in = SinOsc.ar(440,0,0.1);
+in= SoundIn.ar;
 
 fft = FFT(LocalBuf(2048), in);
 
@@ -78,24 +81,24 @@ chroma=Chromagram.kr(fft, 2048, n);
 
 //chroma=Chromagram.kr(fft, 2048, n, 36.midicps, 7, 1, 0.9);
 
-Out.kr(0,chroma); 
-}.play; 
+Out.kr(0,chroma);
+}.play;
 
-c= Bus.new('control', 0, n); 
+c= Bus.new('control', 0, n);
 
 )
 
 
 
 //poll coefficients snapshot
-c.getn(n,{arg val; {val.plot;}.defer}); 
+c.getn(n,{arg val; {val.plot;}.defer});
 
 
 
 //Continuous graphical display of Chromagram values; free routine before closing window
 
 (
-var ms; 
+var ms;
 
 w=Window.new((n.asString)++" chroma coefficients", Rect(200,400,n*20+50,300));
 
@@ -112,7 +115,7 @@ r= {
 
 inf.do{
 
-c.getn(n,{arg val; {ms.value_(val)}.defer}); 
+c.getn(n,{arg val; {ms.value_(val)}.defer});
 
 0.04.wait; //25 frames per second
 };
@@ -123,13 +126,37 @@ w.onClose = {
 r.stop;
 c.free;
 x.free;
-}; 
+};
 
 )
 
 
 
 b.free;
+
+
+
+//Bohlen-Pierce over 3 tritaves, normalized results per frame
+(
+{
+
+var in, fft, chroma;
+
+//in = SinOsc.ar(440,0,0.1);
+in= SoundIn.ar;
+
+fft = FFT(LocalBuf(2048), in);
+
+chroma=Chromagram.kr(fft,2048,13,octaves:3,octaveratio:3,perframenormalize:1);
+
+chroma.poll;
+
+Out.ar(0,Pan2.ar(in));
+}.play
+)
+
+
+
 
 
 ::
