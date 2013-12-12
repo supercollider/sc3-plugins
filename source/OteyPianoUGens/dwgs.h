@@ -1,10 +1,11 @@
 #ifndef DWGS_H
 #define DWGS_H
-
 #include "filter.h"
 #include "SC_PlugIn.h"
 extern InterfaceTable *ft;
 extern World * gWorld;
+#include "DWG.hpp"
+
 
 class dwg_node {
  public:
@@ -66,7 +67,7 @@ class dwg {
 
 class dwgs {
  public:
-  dwgs(float f, float Fs, float inpos, float c1, float c3, float B, float Z, float Zb, float Zh); 
+  dwgs(float f, float Fs, float inpos, float c1, float c3, float B, float Z, float Zb, float Zh,Unit *unit); 
   ~dwgs();
    void* operator new(size_t sz){
 		return RTAlloc(gWorld, sizeof(dwgs));
@@ -78,10 +79,11 @@ class dwgs {
    float go_hammer(float load);
    float go_soundboard(float load);
 
-  Filter dispersion[4];
-  Filter lowpass;
-  Filter fracdelay;
-  
+  ThirianT<2> dispersion[4];
+  FilterC1C3 lowpass;
+  //Filter fracdelay;
+  //Thirian *fracdelay2;
+  LagrangeT<1024> fracdelay3;
   int M;
   dwg *d[4];
 };

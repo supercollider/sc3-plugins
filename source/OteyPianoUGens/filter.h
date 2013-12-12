@@ -1,6 +1,6 @@
 #ifndef FILTER_H
 #define FILTER_H
-
+#define PI 3.14159265358979
 #define SINC_COEFFS 128
 
 struct Filter {
@@ -18,14 +18,15 @@ struct Delay {
   float *x;
   //float *y;
 };
-
+/*
 enum biqaudtype {
   pass = 0,
   low,
   high,
   notch
 };
-
+*/
+float Db(float B, float f, int M);
 long choose(long n, long k);
 float probe_delay(Delay *c, int pos);
 float groupdelay(Filter *c, float f, float Fs);

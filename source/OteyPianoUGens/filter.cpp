@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "types.h"
+
 
 #include "SC_PlugIn.h"
 extern InterfaceTable *ft;
@@ -47,8 +47,8 @@ float Db(float B, float f, int M) {
   float D = exp(Cd - Ikey*kd);
   return D;
 }
-
-
+void complex_divide(float Hn[2], float Hd[2], float H[2]) ;
+/*
 void complex_divide(float Hn[2], float Hd[2], float H[2]) 
 {
   float magn = sqrt(Hn[0]*Hn[0] + Hn[1]*Hn[1]);
@@ -60,7 +60,7 @@ void complex_divide(float Hn[2], float Hd[2], float H[2])
   H[0] = mag*cos(arg);
   H[1] = mag*sin(arg);
 }
-
+*/
 float groupdelay(Filter *c, float f, float Fs) 
 {
   float df = 5;
@@ -153,7 +153,7 @@ void loss(float f0, float fs, float c1, float c3, Filter *c)
 
   c->n = 1;
 }
-
+/*/
 void biquad(float f0, float fs, float Q, int type, Filter *c)
 {
   c->x = (float *)RTAlloc(gWorld,sizeof(float[3]));//new float[3];
@@ -197,7 +197,7 @@ void biquad(float f0, float fs, float Q, int type, Filter *c)
 
   c->n = 2;
 }
-
+*/
 void thirian(float D, int N, Filter *c) 
 {
   c->x =(float *)RTAlloc(gWorld,sizeof(float[N+1]));// new float[N+1];

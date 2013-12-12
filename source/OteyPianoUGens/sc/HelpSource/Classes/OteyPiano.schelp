@@ -17,14 +17,74 @@ method::ar
 argument::freq
 Sound frequency.
 
-argument::amp
-Key pulsation strenght. Betwen 0 and 1.
+argument::vel
+Key pulsation velocity. Betwen 0 and 1.
 
 argument::gate
 Releases synth when value is 0.
 
 argument::release
 Release time in seconds.
+
+argument::rmin
+minimum string radio
+
+argument::rmax
+maximun string radio
+
+argument::rampl
+radius left sigmoidal shape.
+
+argument::rampr
+radius right sigmoidal shape.
+
+argument::rcore
+cord nucleus radio.
+
+argument::lmin
+minimum string length.
+
+argument::lmax
+maximum string length.
+
+argument::lampl
+lenght left sigmoidal shape.
+
+argument::lampr
+lenght right sigmoidal shape.
+
+argument::rho
+string density multiplier.
+
+argument::e
+young modulus multiplier.
+
+argument::zb
+bridge impedance multiplier.
+
+argument::zh
+hammer impedance multiplier.
+
+argument::mh
+mass hammer multiplier.
+
+argument::k
+force hammer multiplier.
+
+argument::alpha
+hysteresys hammer multiplier.
+
+argument::p
+stiffness_exponent_hammer multiplier.
+
+argument::hpos
+hammer position. (0 to 1)
+
+argument::loss
+string loss factor. 
+
+argument::detune
+detuning among 3 strings.
 
 
 Examples::
@@ -37,10 +97,9 @@ x.free;
 
 //Define piano synthdef
 (
-SynthDef(\help_oteypiano, { |out=0, freq=440, amp=0.5, gate=1|
-    var son = OteyPiano.ar(freq, amp, gate);
-    DetectSilence.ar(son, 0.001, doneAction:2);
-    Out.ar(out, Pan2.ar(son * 0.1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
+SynthDef(\help_oteypiano, { |out=0, freq=440, amp=0.5, gate=1,rho=1|
+	var son = OteyPiano.ar(freq, amp, gate, rho:rho);
+	Out.ar(out, Pan2.ar(son * 0.1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
 }).add;
 )
 
@@ -50,7 +109,8 @@ Pbind(
     \instrument, \help_oteypiano,
     \delta, 1,
     \dur, 3,
-	\degree, Pseq([1,3,5], inf)
+	\degree, Pseq([1,3,5], inf),
+	\rho, Pwhite(0.1,3) //comment this line to get standart sound
 ).play;
 )
 ::
