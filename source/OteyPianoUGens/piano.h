@@ -1,14 +1,15 @@
 #ifndef PIANO_H
 #define PIANO_H
 
-float TUNE[3] = { 1, 1.0003, 0.9996 };
+float TUNE[3] = { 0, 1, -1 };
 #define NUM_NOTES 128
 
 #include "filter.h"
 #include "dwgs.h"
 #include "reverb.h"
 #include "hammer.h"
-#include "types.h"
+
+
 
 #define nlongres 8
 #include "SC_PlugIn.h"
@@ -17,14 +18,16 @@ World * gWorld;
 
 class Piano {
  public:
-  Piano(float f, float Fs, float v0,World * _world=0);
+
+  Piano(Unit * unit=0);
   ~Piano();
+
+ void init(float f, float Fs, float velocity, float minr,float maxr,float ampr,float centerr, float mult_radius_core_string, float minL,float maxL,float ampL,float centerL, float mult_density_string, float mult_modulus_string, float mult_impedance_bridge, float mult_impedance_hammer, float mult_mass_hammer, float mult_force_hammer, float mult_hysteresis_hammer, float mult_stiffness_exponent_hammer, float position_hammer, float mult_loss_filter,float detune);
+
   long go(float *out, int samples);
   float getResampleRatio();
- // static void fillFrequencyTable();
-  //static double freqTable[NUM_NOTES];    
-	//must pass in world since not stored yet
-	struct World * world;
+
+	Unit * unit;
 	/*
 	void* operator new(size_t sz, World* wd){//, InterfaceTable * ft) {
 		return RTAlloc(wd, sizeof(Piano));
@@ -38,18 +41,20 @@ class Piano {
 
 		RTFree(lpc->world, (Piano*)pObject);
 	}*/
-	void* operator new(size_t sz){
+	
+  void* operator new(size_t sz){
 		return RTAlloc(gWorld, sizeof(Piano));
 	}
 	void operator delete(void* pObject) {
 		RTFree(gWorld, (Piano*)pObject);
 	}
+
+  //float amp;
   float v0;
-  //long samples;
-  long sample;
+  //long sample;
   float Fs;
-  float t;
-  float dt;
+  //float t;
+  //float dt;
   float Z;
   float Zb;
   float Zh;
@@ -58,10 +63,10 @@ class Piano {
   int nstrings;
   dwgs *string[3];
   Hammer *hammer;
-  Reverb *soundboard;
-  Filter shaping1;
-  Filter shaping2;
-  Filter shaping3;
+  //Reverb *soundboard;
+  //Filter shaping1;
+  //Filter shaping2;
+  //Filter shaping3;
 };
 
 #endif

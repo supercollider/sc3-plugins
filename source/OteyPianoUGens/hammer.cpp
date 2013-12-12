@@ -1,5 +1,4 @@
 #include "hammer.h"
-#include "types.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -25,7 +24,7 @@ Hammer :: Hammer(float f, float Fs, float m, float K, float p, float Z, float al
 Hammer :: ~Hammer() {
 }
 
-float Hammer :: load(float t, float vin) {
+float Hammer :: load(float vin) {
   for(int k=0;k<S;k++) {
     float up;
     up = (x>0)?pow(x,p):0;
