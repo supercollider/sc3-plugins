@@ -1,9 +1,32 @@
 #include "dwgs.h"
-#include "types.h"
 #include <math.h>
 #include <stdio.h>
 
-dwgs :: dwgs(float f, float Fs, float inpos, float c1, float c3, float B, float Z, float Zb, float Zh) 
+
+void Thiriandispersion(float B, float f, int M, ThirianT<2> *c)
+{
+  int N = 2;
+  float D;
+  D = Db(B,f,M);
+	//Print("D dispersion %g\n",D);
+  if(D<=1.0) {
+
+	c->setcoeffs(1);
+	//for(int i = 0;i<=N;i++)
+	//	Print("KernelB %d %g\n",i,c->KernelB[i]);
+	//for(int i = 0;i<N;i++)
+	//	Print("KernelA %d %g\n",i,c->KernelA[i]);
+  } else {
+    //thirian(D,N,c);
+	c->setcoeffs(D);
+	/*
+	for(int i = 0;i<=N;i++)
+		Print("KernelB %d %g\n",i,c->KernelB[i]);
+	for(int i = 0;i<N;i++)
+		Print("KernelA %d %g\n",i,c->KernelA[i]);*/
+  }
+}
+dwgs :: dwgs(float f, float Fs, float inpos, float c1, float c3, float B, float Z, float Zb, float Zh,Unit* unit) 
 {
   float deltot = Fs/f;
   int del1 = (int)(inpos*0.5*deltot);
@@ -12,31 +35,46 @@ dwgs :: dwgs(float f, float Fs, float inpos, float c1, float c3, float B, float 
 
   if(f > 400) {
     M = 1;
-    thiriandispersion(B,f,M,&(dispersion[0]));
+    Thiriandispersion(B,f,M,&(dispersion[0]));
   } else {
     M = 4;
     for(int m=0;m<M;m++)
-      thiriandispersion(B,f,M,&(dispersion[m]));
+      Thiriandispersion(B,f,M,&(dispersion[m]));
   }
-  float dispersiondelay = M*groupdelay(&(dispersion[0]),f,Fs);
-  loss(f,Fs,c1,c3,&lowpass);
-  float lowpassdelay = groupdelay(&lowpass,f,Fs);
+  //float dispersiondelay = M*groupdelay(&(dispersion[0]),f,Fs);
+  float dispersiondelay = M*dispersion[0].groupdelay(f,Fs);
+  
+  //loss(f,Fs,c1,c3,&lowpass);
+  //float lowpassdelay = groupdelay(&lowpass,f,Fs);
+	lowpass.setcoeffs(f,c1,c3);
+	float lowpassdelay = lowpass.groupdelay(f,Fs);
 
   int del2 = (int)(0.5*(deltot-2.0*del1)-dispersiondelay);
-  int del3 = (int)(0.5*(deltot-2.0*del1)-lowpassdelay-5.0);
+  int del3 = 1;//(int)(0.5*(deltot-2.0*del1)-lowpassdelay-5.0);
+  //float del3 = (0.5*(deltot-2.0*del1)-lowpassdelay-1);
   if(del2 < 2)
     del2 = 1;
+	//Print("del3 %g\n",del3);
   if(del3 < 2)
     del3 = 1;
   
   float D = (deltot-(float)(del1+del1+del2+del3+dispersiondelay+lowpassdelay));
-  thirian(D,(int)D,&fracdelay);
-  float tuningdelay = groupdelay(&fracdelay,f,Fs);
-
+  
+  //thirian(D,(int)D,&fracdelay);
+  //float tuningdelay = groupdelay(&fracdelay,f,Fs);
+	//Print("fractional delay %g  unit %p\n",D,unit);
+	
+	
+	//fracdelay2 = new(unit) Thirian(unit,D,(int)D);
+	fracdelay3.setdelay(D);
+	float tuningdelay= D;//fracdelay3.groupdelay(f,Fs);
+	//fracdelay3.setdelay(del3);
+	
  // printf("total delay = %g/%g, leftdel = %d/%d, rightdel = %d/%d, dispersion delay = %g, lowpass delay = %g, fractional delay = %g/%g\n",del1+del1+del2+del3+dispersiondelay+lowpassdelay+tuningdelay,deltot, del1, del1, del2, del3, dispersiondelay, lowpassdelay, tuningdelay,D);
 
   d[0] = new dwg(Z,del1,del1,0,this);
   d[1] = new dwg(Z,del2,del3,1,this);
+  //d[1] = new dwg(Z,del2,1,1,this);
   d[2] = new dwg(Zb,0,0,0,this);
   d[3] = new dwg(Zh,0,0,0,this);
 
@@ -60,15 +98,17 @@ dwgs :: ~dwgs()
 {
   for(int k=0;k<4;k++)
     delete d[k];
-	destroy_filter(&lowpass);
-	destroy_filter(&fracdelay);
+	//destroy_filter(&lowpass);
+	//destroy_filter(&fracdelay);
+	//delete fracdelay2;
+	/*
 	if(M==1){
 		destroy_filter(&(dispersion[0]));
 	}else{
 		for(int k=0;k<4;k++)
 			destroy_filter(&(dispersion[k]));
 		
-	}
+	}*/
 }
 
 dwg_node :: dwg_node(float z) {
@@ -194,15 +234,20 @@ void dwg :: update() {
   float a = (loadl - l->a[0]);
   if(commute) {
     for(int m=0;m<parent->M;m++) {
-      a = filter(a,&(parent->dispersion[m]));
+      //a = filter(a,&(parent->dispersion[m]));
+	  a = parent->dispersion[m].filter(a);
     }
   }
   l->a[1] = a;
   
   a = (loadr - r->a[1]);
   if(commute) {
-    a = filter(a,&(parent->lowpass));
-    a = filter(a,&(parent->fracdelay));
+   // a = filter(a,&(parent->lowpass));
+	a = parent->lowpass.filter(a);
+    //a = filter(a,&(parent->fracdelay));
+	//a = parent->fracdelay2->filter(a);
+	parent->fracdelay3.push(a);
+	a = parent->fracdelay3.delay();
   }
   r->a[0] = a;
 }
