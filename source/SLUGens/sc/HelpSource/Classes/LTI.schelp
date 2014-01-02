@@ -1,8 +1,10 @@
-class:: LTI			
+class:: LTI
 summary:: Linear Time Invariant General Filter Equation
 categories:: UGens>Filters
-//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
 keyword:: SLUGens
+
+SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins
+http:// www.sussex.ac.uk/Users/nc81/index.html
 
 
 Description::
@@ -34,50 +36,52 @@ Examples::
 
 code::
 (
-a=[0.02,-0.01]; //feedback coefficients
-b=[1,0.7,0,0,0,0,-0.8,0,0,0,0,0.9,0,0,0,-0.5,0,0,0,0,0,0,0.25,0.1,0.25]; //feedforward coefficients
-c=Buffer.sendCollection(s, a, 1);
-d=Buffer.sendCollection(s, b, 1);
+a = [0.02, -0.01]; // feedback coefficients
+b = [1, 0.7, 0, 0, 0, 0, -0.8, 0, 0, 0, 0, 0.9, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0.25, 0.1, 0.25]; // feedforward coefficients
+c = Buffer.sendCollection(s, a, 1);
+d = Buffer.sendCollection(s, b, 1);
 )
 
-{LTI.ar(AudioIn.ar,c.bufnum, d.bufnum)}.play
+{ LTI.ar(SoundIn.ar([0, 1]), c.bufnum, d.bufnum) }.play
 
 
-//Note- you cannot update buffers during playback unless you stay within the initially allocated sizes
+// Note- you cannot update buffers during playback unless you stay within the initially allocated sizes
 
 (
-a=Array.fill(100,{0.0}); //feedback coefficients
-b=Array.rand(100,-0.5,0.5); //feedforward coefficients
-b[0]=1;
-c=Buffer.sendCollection(s, a, 1);
-d=Buffer.sendCollection(s, b, 1);
+a = Array.fill(100, { 0.0 }); // feedback coefficients
+b = Array.rand(100, -0.5, 0.5); // feedforward coefficients
+b[0] = 1;
+c = Buffer.sendCollection(s, a, 1);
+d = Buffer.sendCollection(s, b, 1);
 )
 
-{LTI.ar(AudioIn.ar,c.bufnum, d.bufnum)}.play
+{ LTI.ar(SoundIn.ar([0, 1]), c.bufnum, d.bufnum) }.play
 
 
 (
-b=Array.rand(100,-0.5,0.5); //feedforward coefficients
-b[0]=1;
+b = Array.rand(100, -0.5, 0.5); // feedforward coefficients
+b[0] = 1;
 d.sendCollection(b);
 )
 
-//may explode...
+// may explode...
 
 (
-10.do({arg i; a[100.rand]=rrand(-0.1,0.1)}); //feedforward coefficients
+10.do({ arg i; a[100.rand] = rrand(-0.1, 0.1) }); // feedforward coefficients
 c.sendCollection(a);
 )
 
-//from a routine
+// from a routine
 (
-e={inf.do {
+e = {
+	inf.do {
+		b = Array.rand(100, -0.5, 0.5); // feedforward coefficients
+		b[0] = 1;
+		d.sendCollection(b);
+		0.1.wait;
+	}
 
-b=Array.rand(100,-0.5,0.5); //feedforward coefficients
-b[0]=1;
-d.sendCollection(b);
-
-0.1.wait; }}.fork
+}.fork
 )
 
 e.stop;
@@ -85,93 +89,83 @@ e.stop;
 
 
 
-//Code for testing and trying coefficients:
+// Code for testing and trying coefficients:
 
-//given two arrays of filter coefficients, calculate an impulse response over 1024 samples, then the fft gives approximate frequency gain and phase response 
+// given two arrays of filter coefficients, calculate an impulse response over 1024 samples, then the fft gives approximate frequency gain and phase response
 
 
 (
-var size = 1024, real, imag, cosTable, complex; 
-var a,b;
-var lastn,lastindex,num;
+var size = 1024, real, imag, cosTable, complex;
+var a, b;
+var lastn, lastindex, num;
 var y, max;
 
-a=[0.02,0.05,0,0,0.01]; //feedback coefficients
+a = [0.02, 0.05, 0, 0, 0.01]; // feedback coefficients
 
-b=[1,1,-0.5,0,0,0,-0.6,0.7]; //feedforward coefficients
+b = [1, 1, -0.5, 0, 0, 0, -0.6, 0.7]; // feedforward coefficients
 
-//check poles of a are inside the unit circle by factorising the complex polynomial? 
-//this procedure uses only a finite impulse response so may give fallacious results of stability
+// check poles of a are inside the unit circle by factorising the complex polynomial?
+// this procedure uses only a finite impulse response so may give fallacious results of stability
 
-num=a.size;
+num = a.size;
+lastn = Array.fill(num, { 0 });
+lastindex = 0;
 
-lastn=Array.fill(num,{0});
-
-lastindex=0;
-
-real = Signal.fill(size, {arg i;  
-
-y=if(i<(b.size),{b[i]},{0});
-
-y= y+((a.collect({arg val,j;  val*(lastn.wrapAt(lastindex+num-1-j));})).sum);
-
-lastn[lastindex]=y;
-
-lastindex=(lastindex+1)%num;
-
-y
+real = Signal.fill(size, { arg i;
+	y = if(i < b.size) { b[i] } { 0 };
+	y = y + ((a.collect({ arg val, j; val*(lastn.wrapAt(lastindex + num-1-j)); })).sum);
+	lastn[lastindex] = y;
+	lastindex = (lastindex + 1) % num;
+	y
 });
 
 imag = Signal.newClear(size);
 
 cosTable = Signal.fftCosTable(size);
 
-complex = fft(real, imag, cosTable); 
+complex = fft(real, imag, cosTable);
 
-a=complex.postln;
+a = complex.postln;
 [real, (complex.magnitude), (complex.phase) ].flop.flat
-	.plot("fft", Rect(0,0, 1024 + 8, 500), numChannels: 3);
+.plot("fft", Rect(0, 0, 1024 + 8, 500), numChannels: 3);
 
-max=0;
-
-y=complex.magnitude;
-
-y.do{arg val; if(val>max,{max=val;})};
-
+max = 0;
+y = complex.magnitude;
+y.do { arg val; if(val > max, { max = val }) };
 max
 )
 
 
-//how to create the arbitrary filter from its difference equation coefficients? Need a new UGen (LTI)- or use Csound
+// how to create the arbitrary filter from its difference equation coefficients? Need a new UGen (LTI)- or use Csound
 
 (
-a=[0.02,0.05,0,0,0.01]; //feedback coefficients
-b=[1,1,-0.5,0,0,0,-0.6,0.7]; //feedforward coefficients
-c=Buffer.sendCollection(s, a, 1);
-d=Buffer.sendCollection(s, b, 1);
+a = [0.02, 0.05, 0, 0, 0.01]; // feedback coefficients
+b = [1, 1, -0.5, 0, 0, 0, -0.6, 0.7]; // feedforward coefficients
+c = Buffer.sendCollection(s, a, 1);
+d = Buffer.sendCollection(s, b, 1);
 )
 
-{Impulse.ar(1)}.play
+{ Impulse.ar(1) }.play
 
-{LTI.ar(Impulse.ar(1), c.bufnum, d.bufnum)}.play
+{ LTI.ar(Impulse.ar(1), c.bufnum, d.bufnum) }.play
 
-{LTI.ar(AudioIn.ar(1), c.bufnum, d.bufnum)}.play
+{ LTI.ar(SoundIn.ar([0, 1]), c.bufnum, d.bufnum) }.play
 
 
 (
-a=[0.01,-0.01]; //Array.fill(10,{rrand(0.001,0.01)}); //feedback coefficients
-b=[1]++Array.fill(100,{exprand(0.1,1)}); //feedforward coefficients
-c=Buffer.sendCollection(s, a, 1);
-d=Buffer.sendCollection(s, b, 1);
+a = [0.01, -0.01]; // Array.fill(10, { rrand(0.001, 0.01) }); // feedback coefficients
+b = [1] ++ Array.fill(100, { exprand(0.1, 1) }); // feedforward coefficients
+c = Buffer.sendCollection(s, a, 1);
+d = Buffer.sendCollection(s, b, 1);
 )
 
 
-//piercing, careful!
-{Saw.ar(LFNoise0.kr(10,4000,5000))}.play
+// piercing, careful!
+{ Saw.ar(LFNoise0.kr(10, 4000, 5000)) }.play
 
-{LTI.ar(Saw.ar(LFNoise0.kr(10,4000,5000)), c.bufnum, d.bufnum,0.1)}.play
+{ LTI.ar(Saw.ar(LFNoise0.kr(10, 4000, 5000)), c.bufnum, d.bufnum, 0.1) }.play
 
-//Also see [Convolution]
+// Also see [Convolution]
 ::
 
 
