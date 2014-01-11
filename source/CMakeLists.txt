@@ -309,7 +309,9 @@ else()
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
-
+if (NOVA_DISK_IO)
+  add_subdirectory(NovaDiskIO)
+endif()
 #--------
 # INSTALL
 #--------
