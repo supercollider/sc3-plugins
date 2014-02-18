@@ -1,7 +1,7 @@
 CLASS:: FFTCrest
 summary:: Spectral crest measure
 categories:: UGens>Analysis, UGens>FFT
-related:: Classes/FFTFlatness
+related:: 
 
 DESCRIPTION::
 Given an FFT chain, this produces the spectral crest measure, which is an indicator of the "peakiness" of the spectral energy distribution. For example, white noise should produce a flat (non-peaky) spectrum, and therefore a low value for the spectral crest.
