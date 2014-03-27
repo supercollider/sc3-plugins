@@ -384,7 +384,7 @@ FoaDecoderMatrix {
 		});
 
 		// initialise k
-		k = this.initK2D(k);
+		k = this.initK3D(k);
 
 
 		// build decoder matrix
