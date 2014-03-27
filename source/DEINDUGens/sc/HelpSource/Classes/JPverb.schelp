@@ -125,7 +125,8 @@ Ndef('reverb').set('lowx', 0.84375, 'amp', 0.66015625, 'damp', 0.875, 'size', 0.
 
 
 Ndef(\src).edit
-Ndef(\reverb).edit;::
+Ndef(\reverb).edit;
+::
 
 
 For the Verber piece ( see http://tai-studio.org/index.php/jpverb-greyhole/ ), the following source was used:

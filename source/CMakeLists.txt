@@ -225,13 +225,13 @@ if(NOT WIN32)
 endif()
 
 # OteyPianoUGens
-BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
+BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/DWG.cpp;OteyPianoUGens/reverb.cpp"
              "" "OteyPianoUGens")
              
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 if(APPLE)
-    set (PitchDetectionLibs "-framework vecLib")
+    set (PitchDetectionLibs "-framework Accelerate")
 else()
     set (PitchDetectionLibs ${FFTW3F_LIBRARY})
 endif()
@@ -284,7 +284,7 @@ BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 # NCAnalysisUGens
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
 if(APPLE)
-    set (NCAnalysisLibs "-framework vecLib")
+    set (NCAnalysisLibs "-framework Accelerate")
 else()
     set (NCAnalysisLibs ${FFTW3F_LIBRARY})
 endif()
@@ -309,7 +309,9 @@ else()
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
-
+if (NOVA_DISK_IO)
+  add_subdirectory(NovaDiskIO)
+endif()
 #--------
 # INSTALL
 #--------

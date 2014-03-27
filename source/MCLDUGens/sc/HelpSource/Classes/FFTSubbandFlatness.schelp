@@ -1,7 +1,7 @@
 CLASS:: FFTSubbandFlatness
 summary:: Spectral flatness, divided into subbands
 categories:: UGens>Analysis, UGens>FFT
-related:: Classes/FFTFlatness, Classes/FFTSubbandPower
+related:: Classes/FFTSubbandPower
 
 DESCRIPTION::
 Calculates the spectral flatness measure, in the same manner as FFTFlatness, but divides the spectrum into (adjacent, non-overlapping) subbands, so returns separate measures for the different subbands.

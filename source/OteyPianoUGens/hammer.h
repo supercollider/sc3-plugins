@@ -14,7 +14,7 @@ public:
 	void operator delete(void* pObject) {
 		RTFree(gWorld, (Hammer*)pObject);
 	}
-  float load(float t, float vin);
+  float load( float vin);
 
   float dt;
   float dti;
