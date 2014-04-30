@@ -5,7 +5,7 @@ ProcMod {
 		<starttime, <window, gui = false, <button, <process, retrig = false, <isReleasing = false,
 		oldgroups, <>clock, <env, <>server, <envbus, <releasetime, uniqueClock = false,
 		<tempo = 1, oldclocks, <composite, midiAmp, ccCtrl, midiChan, midiCtrl,
-		midiAmpSpec, midiPort, <>pevents, <about, closeable, <>info;
+		midiAmpSpec, midiPort, <>pevents, <about, closeable, <>info, peakView;
 	var recordPM, <>recordpath;
 	classvar addActions, writeDefs;
 
@@ -297,8 +297,8 @@ ProcMod {
 
 	// ProcMod.gui should create a small GUI that will control the ProcMod - start / stop, amp
 	// if trig is notNil, it should be a $char or a midi keynum. This will toggle the ProcMod
-	gui {arg bounds = Rect(0, 0, 400, 70), upperLevel = 6, lowerLevel = -inf, parent, trig;
-		var slider, numbox, winw, winh, dbspec, xspace, yspace, trigstr;
+	gui {arg bounds = Rect(0, 0, 500, 70), upperLevel = 6, lowerLevel = -inf, parent, trig, showMeters = false;
+		var slider, numbox, winw, winh, dbspec, xspace, yspace, trigstr, buttonWidth, sliderWidth, meter;
 		gui = true;
 		trigstr = trig.notNil.if({"("++trig++")"}, {""});
 		closeable = false;
@@ -317,7 +317,8 @@ ProcMod {
 		xspace = composite.decorator.gap.x * 1.5;
 		yspace = composite.decorator.gap.y * 1.5;
 		window.onClose_({gui = false; (isRunning || isReleasing).if({this.kill})});
-		button = GUI.button.new(composite, Rect(0, 0, winw * 0.3 - xspace, winh * 0.8 - yspace))
+		buttonWidth = showMeters.if({0.25}, {0.3});
+		button = GUI.button.new(composite, Rect(0, 0, winw * buttonWidth - xspace, winh * 0.8 - yspace))
 			.states_([
 				["start " ++ this.id ++ trigstr, Color.black, Color(0.3, 0.7, 0.3, 0.3)],
 				["stop " ++ this.id ++ trigstr, Color.black, Color(0.7, 0.3, 0.3, 0.3)],
@@ -332,7 +333,8 @@ ProcMod {
 				actions[me.value].value;
 				});
 		dbspec = [lowerLevel, upperLevel, \db].asSpec;
-		slider = GUI.slider.new(composite, Rect(winw * 0.3, 0, winw * 0.5 - xspace,
+		sliderWidth = showMeters.if({0.45}, {0.5});
+		slider = GUI.slider.new(composite, Rect(winw * 0.3, 0, winw * sliderWidth - xspace,
 				winh * 0.8 - yspace))
 			.value_(dbspec.unmap(amp.ampdb).quantize(0.01))
 			.action_({arg me;
@@ -348,6 +350,14 @@ ProcMod {
 				this.amp_(me.value.dbamp);
 				slider.value_(dbspec.unmap(me.value));
 				});
+		(showMeters && this.isKindOf(ProcModR)).if({
+			peakView = LevelIndicator(composite, Rect(winw * 0.8, 0, winw * 0.1 - xspace, winh * 0.8 - yspace))
+			.warning_(0.5)
+			.critical_(0.9)
+			.drawsPeak_(true)
+			.numTicks_(9)
+			.numMajorTicks_(3);
+		});
 		trig.notNil.if({
 			case
 				{
@@ -393,22 +403,29 @@ ProcMod {
 			4 -> 4
 			];
 		writeDefs = true;
-//		StartUp.add({//
-//		SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;//
-//			var env;//
-//			env = EnvGen.kr(//
-//				Control.names(\env).kr(Env.newClear(30)), pgate, //
+//		StartUp.add({
+//
+//		SynthDef(\procmodenv_5216, {arg pgate = 1, outbus, amp = 1, timeScale = 1, lag = 0.01;
+//
+//			var env;
+//
+//			env = EnvGen.kr(
+//
+//				Control.names(\env).kr(Env.newClear(30)), pgate,
+//
 //					1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
-//			Out.kr(outbus, env);//
+//			Out.kr(outbus, env);
+//
 //		}).writeDefFile;
-//		})//
+//		})
+//
 	}
 }
 
 ProcModR : ProcMod {
 	var <routebus, <procout, <isRecording = false, <notegroup, <numChannels,
 		<>headerFormat = "aiff", <>sampleFormat = "int16", <hdr, oldhdrs;
-	var <processor;
+	var <processor, ampOscDef;
 	classvar addActions, writeDefs;
 
 // if numChannels is not nil, enter routing mode
@@ -434,7 +451,12 @@ ProcModR : ProcMod {
 			for(1, 16, {arg i;
 					tmp = SynthDef((\procmodroute_8723_ ++ i).asSymbol, {arg inbus, outbus,
 							amp = 1, lag = 0.01;
-						Out.ar(outbus, In.ar(inbus, i) * Lag2.kr(amp, lag));
+					var ampVal, peakVal, out;
+					out =  In.ar(inbus, i) * Lag2.kr(amp, lag);
+					peakVal = PeakFollower.ar(out);//.asArray.mean;
+					ampVal = Amplitude.ar(out, 0.05, 0.05);//.asArray.mean;
+					SendReply.kr(Impulse.kr(20), '/pmodAmpTrack', [peakVal, ampVal].flat);
+						Out.ar(outbus,out);
 					});
 					tmp.writeDefFile;
 					srvrs.do({arg me; tmp.send(me)});
@@ -442,11 +464,14 @@ ProcModR : ProcMod {
 			for(1, 16, {arg i;
 					tmp = SynthDef((\procmodroute_8723_env_ ++ i).asSymbol, {arg inbus, outbus,
 							pgate = 1, amp = 1, timeScale = 1, lag = 0.01;
-						var sig;
+						var sig, ampVal, peakVal;
 						sig = In.ar(inbus, i) *
 							EnvGen.kr(
 								Control.names(\env).kr(Env.newClear(30)), pgate,
 									1, 0, timeScale, doneAction: 13) * Lag2.kr(amp, lag);
+					peakVal = PeakFollower.ar(sig);//.asArray.mean;
+					ampVal = Amplitude.ar(sig, 0.01, 0.05);//.asArray.mean;
+					SendReply.kr(Impulse.kr(20), '/pmodAmpTrack', [peakVal, ampVal].flat);
 						ReplaceOut.ar(inbus, sig);
 						Out.ar(outbus, sig);
 					});
@@ -497,6 +522,20 @@ ProcModR : ProcMod {
 		var thisfun, port;
 		clock = clock ?? {uniqueClock = true; TempoClock.new(tempo)};
 		isRunning.not.if({
+			ampOscDef = OSCdef(id, {arg ... args; (peakView.notNil and:{args[0][1] == envnode}).if({
+				{
+					var msg, peaks, amps;
+					msg = args[0];
+					//args.postln;
+					peaks = numChannels.collect({arg i; msg[3+i]});
+					peaks.postln;
+					amps = numChannels.collect({arg i; msg[3+numChannels+i]});
+					amps.postln;
+					peakView.peakLevel = peaks.maxItem;
+					peakView.value = amps.maxItem;
+				}.defer;
+			});
+				}, '/pmodAmpTrack');
 			isRunning = true;
 			responder.notNil.if({responder.add});
 			midiAmp.if({
@@ -581,7 +620,7 @@ ProcModR : ProcMod {
 
 	release {arg reltime;
 		var curproc, curresp, curgroup, currelfunc, newrelval, curclock, curhdr, curroute,
-			curccctrl;
+			curccctrl, curAmpDef;
 		curproc = process;
 		curresp = responder;
 		curccctrl = ccCtrl;
@@ -590,6 +629,7 @@ ProcModR : ProcMod {
 		currelfunc = releaseFunc;
 		curhdr = hdr;
 		curroute = routebus;
+		curAmpDef = ampOscDef;
 		uniqueClock.if({curclock = clock; clock = nil});
 		isRunning.if({
 			onReleaseFunc.value;
@@ -610,11 +650,11 @@ ProcModR : ProcMod {
 				oldhdrs = oldhdrs.add(curhdr);
 				curclock.sched(newrelval, {
 					this.clear(curproc, curresp, curgroup, currelfunc, curclock,
-					curhdr, curroute, curccctrl)
+					curhdr, curroute, curccctrl, curAmpDef)
 					})
 				}, {
 				this.clear(curproc, curresp, curgroup, currelfunc, curclock,
-					curhdr, curroute, curccctrl)
+					curhdr, curroute, curccctrl, curAmpDef)
 				});
 			});
 		// if retriggerable... clear out group now
@@ -628,7 +668,7 @@ ProcModR : ProcMod {
 		}
 
 	kill {
-		var curproc, curresp, curgroup, currelfunc, oldclock, curhdr, curroute, curccctrl;
+		var curproc, curresp, curgroup, currelfunc, oldclock, curhdr, curroute, curccctrl, curAmpDef;
 		curproc = process;
 		curresp = responder;
 		curccctrl = ccCtrl;
@@ -636,6 +676,7 @@ ProcModR : ProcMod {
 		currelfunc = releaseFunc;
 		curhdr = hdr;
 		curroute = routebus;
+		curAmpDef = ampOscDef;
 		isRunning.if({server.sendMsg(\n_free, curgroup)});
 		isReleasing.if({oldgroups.do({arg me; server.sendMsg(\n_free, me)})});
 		uniqueClock.if({clock.clear; oldclock = clock; clock = nil});
@@ -643,11 +684,11 @@ ProcModR : ProcMod {
 		oldhdrs.do({arg me; me.stop});
 		curproc.stop;
 		this.clear(curproc, curresp, curgroup, currelfunc, oldclock,
-			curhdr, curroute, curccctrl);
+			curhdr, curroute, curccctrl, curAmpDef);
 		isRunning = false;
 	}
 
-	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute, oldccctrl;
+	clear {arg oldproc, oldresp, oldgroup, oldrelfunc, oldclock, oldhdr, oldroute, oldccctrl, oldAmpDef;
 		oldproc.notNil.if({this.stopprocess(oldproc)});
 		oldroute.notNil.if({
 			server.audioBusAllocator.free(oldroute);
@@ -655,6 +696,10 @@ ProcModR : ProcMod {
 		oldhdr.notNil.if({
 			oldhdr.stop;
 			oldhdrs.remove(oldhdr);
+		});
+		oldAmpDef.notNil.if({
+			oldAmpDef.free;
+			oldAmpDef = nil;
 		});
 		server.sendMsg(\n_free, oldgroup);
 		oldgroups.remove(oldgroup);
@@ -825,7 +870,8 @@ ProcEvents {
 				}
 			};
 		// for the GUI if needed
-//		bounds = GUI.window.screenBounds;	//
+//		bounds = GUI.window.screenBounds;
+//
 	}
 
 	index_ {arg nextIdx;
@@ -838,7 +884,8 @@ ProcEvents {
 			eventButton.valueAction_(eventButton.value + 1);
 			}, {
 			this.play(index);
-			index = index + 1;			});
+			index = index + 1;
+			});
 	}
 
 	record {arg path, argTimeStamp = true, argHeaderFormat = 'aiff', argSampleFormat = 'int16';
@@ -1577,12 +1624,14 @@ ProcSink {
 		rows = (numProcs / columns).ceil;
 		proc.pevents_(this);
 		{
-		procWindow.bounds_(Rect(procWindow.bounds.left, procWindow.bounds.top,
-			procWindow.bounds.width, rows * (baseheight * 1.3) +
+			procWindow.bounds_(Rect(procWindow.bounds.left, procWindow.bounds.top,
+				procWindow.bounds.width, rows * (baseheight * 1.3) +
 				(procWindow.view.decorator.gap.x * 2)));
-		thisHeight = baseheight;
-		thisWidth = (procWindow.bounds.width / columns) - (procWindow.view.decorator.gap.x * 4);
-		actions = [
+			thisHeight = baseheight;
+			thisWidth = (procWindow.bounds.width / columns) - (procWindow.view.decorator.gap.x * 4);
+			proc.gui(Rect(0, 0, thisWidth, thisHeight), upperLevel, lowerLevel, procWindow, showMeters: true);
+		/*
+			actions = [
 			{
 				proc.release;
 				saveProcEv.if({
@@ -1636,6 +1685,7 @@ ProcSink {
 				proc.amp = newamp.dbamp;
 				slide.value_(spec.unmap(newamp));
 				});
+			*/
 		}.defer;
 		// why does this need to be contiually reset?
 		procWindow.onClose_({this.kill});
