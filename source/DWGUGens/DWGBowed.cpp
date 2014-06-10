@@ -77,7 +77,7 @@ struct DWGBowed : public DWGBowedSimple
 {
 
 	DCBlocker dcblock;
-	ThirianDispersion disper;
+	ThirianDispersion<4> disper;
 	DWGBowed(Unit* unit);
 
 	int SolveHyperbolicm1(float vdeltap,float fb,float &sol);
@@ -317,7 +317,7 @@ void DWGBowed_next(DWGBowed *unit, int inNumSamples)
 	unit->Z = ZIN0(8);
 	float B = ZIN0(9)/100000;
 
-	unit->disper.setcoeffs(freq,B,4);
+	unit->disper.setcoeffs(freq,B);
 	float disperdelay = unit->disper.groupdelay(SAMPLERATE);
 	//Print("disperdellay %g\n",disperdelay);
 	
@@ -377,7 +377,7 @@ void DWGBowedTor_next(DWGBowedTor *unit, int inNumSamples)
 	float factra = unit->Z/unit->Ztra;
 	float factor = unit->Z/unit->Ztor;
 	
-	unit->disper.setcoeffs(freq,B,4);
+	unit->disper.setcoeffs(freq,B);
 	float disperdelay = unit->disper.groupdelay(SAMPLERATE);
 	//Print("disperdellay %g\n",disperdelay);
 	
