@@ -105,6 +105,63 @@ void DWGPlucked_next(DWGPlucked *unit, int inNumSamples)
 }
 
 /////////////////////////////////////////
+//DWGPluckedStiff////////////////////////////////////////////////////
+
+struct DWGPluckedStiff : public DWGPlucked
+{
+	ThirianDispersion<4> disper;
+	DWGPluckedStiff(Unit* unit);
+};
+SCWrapClass(DWGPluckedStiff);
+
+DWGPluckedStiff::DWGPluckedStiff(Unit* unit):DWGPlucked(unit)
+{
+    SETCALC(DWGPluckedStiff_next);
+}
+
+void DWGPluckedStiff_next(DWGPluckedStiff *unit, int inNumSamples)
+{
+	float *out = OUT(0);
+	float freq = ZIN0(0);
+	float amp = ZIN0(1);
+	float trig = ZIN0(2);
+	float pos = ZIN0(3);
+
+	float c1 = ZIN0(4);
+	float c3 = std::max(ZIN0(5),(float)1e-9);
+	float *in = IN(6);
+	float B = ZIN0(8)/100000;
+
+	unit->disper.setcoeffs(freq,B);
+	float disperdelay = unit->disper.groupdelay(SAMPLERATE);
+	
+	unit->Loss.setcoeffs(freq,c1,c3);
+	float lossdelay = unit->Loss.groupdelay(freq,SAMPLERATE);
+	float deltot = SAMPLERATE/freq;
+	float del1 = (deltot - lossdelay - disperdelay)*0.5 - 1;
+
+	float PMAS,PMAS2;
+	float PMENOS;
+	for (int i=0; i < inNumSamples; ++i)
+	{
+		unit->DWGF[0].add(in[i],pos*del1);
+		unit->DWGF[1].add(in[i],del1*(1-pos));
+		
+		PMAS = unit->DWGF[0].delay(del1);
+		PMAS2 = unit->Loss.filter(PMAS);
+		PMAS2 = unit->disper.filter(PMAS2);
+		PMENOS = unit->DWGF[1].delay(del1);
+		
+		unit->DWGF[1].push(-PMAS2);
+		unit->DWGF[0].push(-PMENOS);
+		
+		out[i] = PMAS + PMAS2;
+			
+	}
+	unit->Release(trig,out,inNumSamples);
+}
+
+/////////////////////////////////////////
 //DWGPlucked2////////////////////////////////////////////////////
 
 struct DWGPlucked2 : public DWGPlucked
@@ -187,5 +244,6 @@ PluginLoad(DWGPlucked)
 {
 	ft = inTable;
 	DefineDtorUnit(DWGPlucked);
+	DefineDtorUnit(DWGPluckedStiff);
 	DefineDtorUnit(DWGPlucked2);
 }

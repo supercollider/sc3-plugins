@@ -763,19 +763,19 @@ struct FDN8{
 	float c[8];
 	int lengths[8];// = {37,87,181,271,359,593,688,721};//{37, 87, 181,271, 359, 492, 687, 721};//{37,87,181,271,359,592,687,721};
 };
-
+template<int M>
 struct ThirianDispersion{
-	int M;
+
 	float freq;
 	float B;
 	ThirianT<2> dispersion[4];
-	void setcoeffs(float freq,float B,int M){
+	void setcoeffs(float freq,float B){
 		if(B==0){
 			this->B = 0.0;
 			return;
 		}
-		//if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->B,B) && this->M==M)
-		if(this->freq==freq && this->B==B && this->M==M)
+
+		if(this->freq==freq && this->B==B) 
 			return;
 		float D = ValimakiDispersion(B,freq,M);
 		//if(D <=1)
@@ -784,7 +784,7 @@ struct ThirianDispersion{
 			dispersion[i].setcoeffs(D);
 		this->freq = freq;
 		this->B = B;
-		this->M = M;
+
 	}
 	float groupdelay(float FS){
 		if(B==0)
