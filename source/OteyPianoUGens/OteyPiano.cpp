@@ -57,6 +57,8 @@ float DWGReverb :: reverb(float in)
   for(int j=0;j<8;j++) {
 	delay[j].push(i[j]);
     o[j] = decay[j].filter(delay[j].delay(lengths[j]));
+	kill_denormals(o[j]);
+	//o[j] = zapgremlins(o[j]);
     out += c[j] * o[j]*.5;
   }
   
