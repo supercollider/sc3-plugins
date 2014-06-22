@@ -1,0 +1,55 @@
+class:: KeyMode
+summary:: Find best correlated key mode with chromagram between major, minor and chromatic cluster
+categories:: UGens>Analysis>Pitch
+related:: Classes/KeyTrack, Classes/KeyClarity
+
+description::
+A key mode tracker where output 0 = major, 1 = minor, 2 = chromatic (cluster). 
+
+Based on a pitch class profile of energy across FFT bins, matching this to templates for major, minor and 7 note cluster chromatic scales in all transpositions. It assumes a 440 Hz concert A reference. The winning mode is based on the strength of the match, e.g. maximal correlation with key profiles for either major, minor or chromatic cluster (appropriately normalised to a probability distribution summing to 1.0). 
+
+classmethods::
+
+method:: kr
+
+argument:: chain
+[fft] Audio input to track. This must have been pre-analysed by a 4096 size FFT. No other FFT sizes are valid except as noted below.
+code::
+// With standard hop of half FFT size = 2048 samples
+b = Buffer.alloc(s,4096,1); // for sampling rates 44100 and 48000
+//b = Buffer.alloc(s,8192,1); // for sampling rates 88200 and 96000
+::
+
+argument:: keydecay
+[sk] Number of seconds for the influence of a window on the final key decision to decay by 40dB (to 0.01 its original value).
+
+argument:: chromaleak
+[sk] Each frame, the chroma values are set to the previous value multiplied by the chromadecay. 0.0 will start each frame afresh with no memory.
+
+examples::
+
+code::
+d = Buffer.read(s, "/data/audio/mirdata/pixiesivebeentired.wav")
+
+d = Buffer.read(s,"/data/audio/mirdata/Beethoven8mvt4.wav")
+
+b = Buffer.alloc(s, 4096, 1); // for sampling rates 44100 and 48000
+
+(
+{
+var in, fft, resample;
+var mode;
+
+in = PlayBuf.ar(1, d, BufRateScale.kr(d), 1, 0, 1);
+
+fft = FFT(b, in);
+
+mode=KeyMode.kr(fft, 2.0, 0.5);
+
+mode.poll;
+
+Out.ar(0,Pan2.ar(in));
+}.play
+)
+::
+
