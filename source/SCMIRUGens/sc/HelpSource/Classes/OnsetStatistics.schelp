@@ -1,0 +1,56 @@
+TITLE:: OnsetStatistics
+summary:: Extract basic statistics from a series of onset triggers
+categories:: UGens>Analysis
+related:: Classes/Onsets, Classes/AttackSlope
+
+DESCRIPTION::
+The UGen records all trigger (onset) events and their times within its window of operation. Basic statistics are calculated over the onsets and inter-onset-intervals, namely, the  
+
+CLASSMETHODS::
+
+METHOD:: kr
+Operate feature extraction at control rate
+
+ARGUMENT:: input
+Triggers at the control rate input are stored with their associated time of activation
+
+ARGUMENT:: windowsize
+Size of operating window (from now into the past) in seconds. Any onset triggers within this time are taken into account
+
+ARGUMENT:: hopsize
+Not used at present, re-calculates every block
+
+returns:: (describe returnvalue here)
+[0] Density of onsets (number of triggers) in the window 
+[1] Mean of IOIs (in seconds)
+[2] Standard deviation of IOIs 
+
+
+EXAMPLES::
+
+code::
+
+//[0] density (number of onsets in window)
+//[1] mean IOI
+//[2] variance IOI
+
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav")
+
+//minimal example
+(
+{
+	//var source = SoundIn.ar;
+
+	var source = PlayBuf.ar(1,b,loop:1);
+	
+	var onsetanalysis =
+	OnsetStatistics.kr(Onsets.kr(FFT(LocalBuf(512),source),0.125),2.0);
+
+	onsetanalysis.poll(10);
+
+	source
+}.play; 
+)
+
+
+::

@@ -1,0 +1,80 @@
+TITLE:: AttackSlope
+summary:: Detect onsets and assess the nature of the attack slope
+categories:: UGens>Analysis
+related:: Classes/Onsets, Classes/OnsetStatistics
+
+DESCRIPTION::
+Detects onsets using an energy based detection function, and then assesses the nature of the attack slope in various ways. 
+
+CLASSMETHODS::
+
+METHOD:: kr
+control rate feature extraction
+
+ARGUMENT:: input
+audio input
+
+ARGUMENT:: windowsize
+Size in samples of the operating window for detection
+
+ARGUMENT:: peakpicksize
+parameter of onset detection
+
+ARGUMENT:: leak
+parameter of onset detection
+
+ARGUMENT:: energythreshold
+parameter of onset detection
+
+ARGUMENT:: sumthreshold
+parameter of onset detection
+
+ARGUMENT:: mingap
+Do not retrigger for detected onsets unless this number of control periods has elapsed
+
+ARGUMENT:: numslopesaveraged
+number of slopes to average (number of previous slopes to store)
+
+returns:: (describe returnvalue here)
+//[0] onset trigger (can be used as an onset detector)
+//[1] corrected to minima time of last onset
+//[2] most recent slope measurement
+//[3] average slope calculation 
+//[4] raw detection function
+//[5] raw peakpick function
+
+
+EXAMPLES::
+
+code::
+//[0] onset trigger 
+//[1] corrected to minima time of last onset
+//[2] most recent slope measurement
+//[3] average slope calculation 
+//[4] raw detection function
+//[5] raw peakpick function
+ 
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav")
+//minimal example
+(
+{	
+//var source = SoundIn.ar; 
+var source = PlayBuf.ar(1,b,loop:1);
+var slopeanalysis = AttackSlope.kr(source,peakpicksize:20,sumthreshold:40); 
+
+//slopeanalysis.poll;
+
+K2A.ar(slopeanalysis);
+
+//old now [4,5,1]
+//K2A.ar([slopeanalysis[0],100*slopeanalysis[1],slopeanalysis[2]])
+
+//K2A.ar([slopeanalysis[0],100*slopeanalysis[1],slopeanalysis[2]])
+
+
+}.plot(10.0,minval:0.0,maxval:1.0)
+)
+
+
+
+::
