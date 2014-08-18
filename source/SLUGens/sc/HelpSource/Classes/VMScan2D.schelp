@@ -2,7 +2,7 @@ class::VMScan2D
 summary::2D scanning pattern virtual machine
 related:: Classes/WaveTerrain
 categories:: UGens>Buffer
-//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://composerprogrammer.com/index.html
 keyword:: SLUGens
 
 

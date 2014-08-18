@@ -1,4 +1,4 @@
-//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.informatics.sussex.ac.uk/users/nc81/
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins http://composerprogrammer.com/index.html
 
 SortBuf : UGen
 {
@@ -219,7 +219,7 @@ EnvFollow : UGen {
 	*ar { arg input, decaycoeff = 0.99, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', input, decaycoeff).madd(mul, add)
 	}
-	
+
 	*kr { arg input, decaycoeff = 0.99, mul = 1.0, add = 0.0;
 		^this.multiNew('control', input, decaycoeff).madd(mul, add)
 	}
@@ -232,7 +232,7 @@ Sieve1 : UGen {
 	*ar { arg bufnum, gap = 2, alternate=1, mul = 1.0, add = 0.0;
 		^this.multiNew('audio', bufnum, gap, alternate).madd(mul, add)
 	}
-	
+
 	*kr { arg bufnum, gap = 2, alternate=1, mul = 1.0, add = 0.0;
 		^this.multiNew('control', bufnum, gap, alternate).madd(mul, add)
 	}
@@ -243,7 +243,7 @@ Oregonator : MultiOutUGen
 	*ar { arg reset=0, rate=0.01, epsilon=1.0, mu=1.0, q=1.0, initx=0.5,inity=0.5,initz=0.5, mul = 1.0, add = 0.0;
 		^this.multiNew('audio',reset,rate, epsilon, mu, q, initx,inity, initz).madd(mul, add);
 	}
-	
+
 	init { arg ... theInputs;
 		inputs = theInputs;
 		^this.initOutputs(3, rate);
@@ -256,7 +256,7 @@ Brusselator : MultiOutUGen
 	*ar { arg reset=0, rate=0.01, mu=1.0, gamma=1.0, initx=0.5,inity=0.5, mul = 1.0, add = 0.0;
 		^this.multiNew('audio',reset,rate, mu, gamma, initx,inity).madd(mul, add);
 	}
-	
+
 	init { arg ... theInputs;
 		inputs = theInputs;
 		^this.initOutputs(2, rate);
@@ -269,7 +269,7 @@ SpruceBudworm : MultiOutUGen
 	*ar { arg reset=0, rate=0.1, k1= 27.9, k2= 1.5, alpha = 0.1, beta = 10.1, mu=0.3, rho=10.1, initx=0.9,inity=0.1,mul = 1.0, add = 0.0;
 		^this.multiNew('audio',reset,rate, k1, k2, alpha, beta, mu, rho,initx,inity).madd(mul, add);
 	}
-	
+
 	init { arg ... theInputs;
 		inputs = theInputs;
 		^this.initOutputs(2, rate);

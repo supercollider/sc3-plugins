@@ -2,7 +2,7 @@ class::WeaklyNonlinear2
 summary::Weakly Nonlinear Oscillator
 related:: Classes/WeaklyNonlinear
 categories:: UGens>Generators>Chaotic
-//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.sussex.ac.uk/Users/nc81/index.html
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://composerprogrammer.com/index.html
 keyword:: SLUGens
 
 

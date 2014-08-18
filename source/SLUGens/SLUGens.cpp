@@ -19,7 +19,7 @@
  */
 
 //UGens by Nick Collins
-//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins, http://www.informatics.sussex.ac.uk/users/nc81/
+//SLUGens released under the GNU GPL as extensions for SuperCollider 3, by Nick Collins http://composerprogrammer.com/index.html
 
 #include "SC_PlugIn.h"
 #include <stdio.h>
