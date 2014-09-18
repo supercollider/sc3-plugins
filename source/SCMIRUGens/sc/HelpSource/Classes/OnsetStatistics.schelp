@@ -4,7 +4,7 @@ categories:: UGens>Analysis
 related:: Classes/Onsets, Classes/AttackSlope
 
 DESCRIPTION::
-The UGen records all trigger (onset) events and their times within its window of operation. Basic statistics are calculated over the onsets and inter-onset-intervals, namely, the  
+The UGen records all trigger (onset) events and their times within its window of operation. Basic statistics are calculated over the onsets and inter-onset-intervals.  
 
 CLASSMETHODS::
 

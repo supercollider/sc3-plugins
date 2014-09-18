@@ -1,0 +1,48 @@
+TITLE:: BeatStatistics
+summary:: Extracts statistics on a beat histogram
+categories:: UGens>Analysis
+related:: Classes/OnsetStatistics, Classes/BeatTrack, Classes/BeatTrack2
+
+DESCRIPTION::
+A beat histogram is formed using a perceptual onset detection frontend, then leaky integrators for each of 100 periodicities. On the ensuing histogram, statistics are taken.  
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+Operate feature extraction at control rate
+
+ARGUMENT:: fft
+Output of FFT UGen
+
+returns::
+[0] entropy of beat histogram
+
+[1] ratio of the largest to the second largest entries in the beat histogram
+
+
+EXAMPLES::
+
+code::
+
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav")
+
+//minimal example
+(
+{
+	//var source = SoundIn.ar;
+
+	var source = PlayBuf.ar(1,b,loop:1);
+	
+	var analysis =
+	BeatStatistics.kr(FFT(LocalBuf(1024),source));
+
+	analysis.poll(100);
+
+	source
+}.play; 
+)
+
+
+
+::
