@@ -13,14 +13,13 @@ FFT
 
 BeatStatistics : MultiOutUGen
 {
-	//windowsize,hopsize
-	*kr { arg fft;
-		^this.multiNew('control',fft);
+	*kr { arg fft, leak = 0.995, numpreviousbeats=4;
+		^this.multiNew('control',fft, leak, numpreviousbeats);
 	}
 
 	init { arg ... theInputs;
 		inputs = theInputs;
-		^this.initOutputs(2, rate);
+		^this.initOutputs(4, rate);
 	}
 
 }

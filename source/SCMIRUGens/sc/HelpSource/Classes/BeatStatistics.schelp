@@ -4,7 +4,7 @@ categories:: UGens>Analysis
 related:: Classes/OnsetStatistics, Classes/BeatTrack, Classes/BeatTrack2
 
 DESCRIPTION::
-A beat histogram is formed using a perceptual onset detection frontend, then leaky integrators for each of 100 periodicities. On the ensuing histogram, statistics are taken.  
+A beat histogram is formed using a perceptual onset detection frontend, then leaky integrators for each of 100 periodicities. On the ensuing histogram, statistics are taken.
 
 
 CLASSMETHODS::
@@ -20,6 +20,11 @@ returns::
 
 [1] ratio of the largest to the second largest entries in the beat histogram
 
+[2] diversity (Simpson's D measure) of beat histogram
+
+[3] metricity (consistency of high energy histogram entries to integer multiples or divisors of strongest entry)
+
+
 
 EXAMPLES::
 
@@ -33,14 +38,14 @@ b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav")
 	//var source = SoundIn.ar;
 
 	var source = PlayBuf.ar(1,b,loop:1);
-	
+
 	var analysis =
 	BeatStatistics.kr(FFT(LocalBuf(1024),source));
 
 	analysis.poll(100);
 
 	source
-}.play; 
+}.play;
 )
 
 

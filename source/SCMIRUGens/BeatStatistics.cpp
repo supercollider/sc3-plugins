@@ -69,6 +69,7 @@ struct BeatStatistics : Unit {
     //statistics output
     float entropy_;
     float toptworatio_;
+    float diversity_;
     float metricity_;
     
 };
@@ -139,6 +140,7 @@ void BeatStatistics_Ctor(BeatStatistics* unit)
     
     unit->entropy_ = 0.f;
     unit->toptworatio_ = 0.f;
+    unit->diversity_ = 0.f;
     unit->metricity_ = 0.f;
     
 	unit->mCalcFunc = (UnitCalcFunc)&BeatStatistics_next;
@@ -175,9 +177,8 @@ void BeatStatistics_next(BeatStatistics *unit, int wrongNumSamples)
 	//control rate output
 	ZOUT0(0)=unit->entropy_;
     ZOUT0(1)=unit->toptworatio_;
-    //ZOUT0(2)=unit->metricity_;
-    
-    
+    ZOUT0(2)=unit->diversity_;
+    ZOUT0(3)=unit->metricity_;
     
 }
 
@@ -336,6 +337,15 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
 	
     float total = 0.f;
     
+    //0.995 default for accumulator
+    float leak = ZIN0(1);
+    
+    int numpreviousbeats = ZIN0(2);
+    
+    if(numpreviousbeats<1) numpreviousbeats = 1;
+    if(numpreviousbeats>4) numpreviousbeats = 4;
+    
+    
 	//update leaky integrators
 	for (i=0; i<numperiods; ++i) {
 		
@@ -348,7 +358,7 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
 		float basepos = ( storepos + numpreviousvalues );
 		
         if(value>0.0000001f) {
-		for (k=1; k<=4; ++k) {
+		for (k=1; k<=numpreviousbeats; ++k) {
 			
 			float posthen = fmod( basepos - (k*periodtotest), numpreviousvalues);
 			
@@ -370,7 +380,7 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
 		//0.996
         //avoid denormal accumulation just in case
         if(crosscomby[i]>0.000001f)
-            crosscomby[i] = (crosscomby[i] * 0.995) + sumup;
+            crosscomby[i] = (crosscomby[i] * leak) + sumup;
         else
             crosscomby[i] = sumup;
         
@@ -397,6 +407,9 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
     float entropy = 0.f;
     float largest = 0.f;
     float secondlargest = 0.f;
+    float diversity = 1.0f;
+    float metricity = 1.f;
+    int largestindex = 0;
     
     for (i=0; i<numperiods; ++i) {
         
@@ -406,6 +419,7 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
             
             secondlargest = largest;
             largest = now;
+            largestindex = i;
             
         } else if (now>secondlargest) {
             
@@ -414,10 +428,38 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
         
         if (now>0.00001f) {
         
-            entropy -= now * log(now);
+            entropy -= now * log2(now);
         }
         
+        diversity -= now*now;
+        
     }
+    
+    float topperiod = g_periods[largestindex];
+    float relativeperiod;
+    
+    //knowing largest, score energy in others relative to this with weighting based on how metrically related period is (e.g. look for near integer ratios)
+    for (i=0; i<numperiods; ++i) {
+     
+        float now = crosscomby[i]*totalmult;
+        float periodnow = g_periods[i];
+        
+        if(periodnow<topperiod)
+            relativeperiod = topperiod/periodnow;
+        else
+            relativeperiod = periodnow/topperiod;
+        
+        float offinteger = relativeperiod - (int)relativeperiod;
+        
+        if(offinteger>0.5) offinteger = 1.f - offinteger;
+        
+        //if(offinteger<0.05) offinteger = 0.f;
+        //else offinteger *= 5.0;
+        
+        metricity -= offinteger*now; //penalty for energy at off integer multiples/divisors
+        
+    }
+    
     
     float ratio = 0.f;
     
@@ -428,12 +470,13 @@ void BeatStatistics_calculate(BeatStatistics *unit, uint32 ibufnum)
     }
 
     //proportion largest versus total?
+    //printf("diffsum %f, value %f \n",diffsum, value);
     //printf("entropy %f toptworatio %f \n",entropy,ratio);
-    
     
     unit->entropy_ = entropy;
     unit->toptworatio_ = ratio;
-    //unit->metricity_ = 0.f
+    unit->diversity_ = diversity;
+    unit->metricity_ = metricity;
     
 
 	//float keyleak= ZIN0(1); //fade parameter to 0.01 for histogram in seconds, convert to FFT frames
