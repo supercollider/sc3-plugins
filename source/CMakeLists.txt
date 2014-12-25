@@ -58,7 +58,7 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
     target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
     if(APPLE)
-    install(TARGETS ${PLUGIN_NAME}
+        install(TARGETS ${PLUGIN_NAME}
                 DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
     endif()
 
@@ -70,7 +70,7 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
         set_property(TARGET ${PLUGIN_NAME}_supernova
                      PROPERTY COMPILE_DEFINITIONS SUPERNOVA)
         if(APPLE)
-            install(TARGETS ${PLUGIN_NAME}
+            install(TARGETS ${PLUGIN_NAME}_supernova
                     DESTINATION ${INSTALL_DESTINATION}/${PLUGIN_DIR})
         endif()
     endif()
