@@ -202,7 +202,11 @@ LPCFile : File {
 		}
 
 	asUGenInput {^buffer}
-	free { this.server.sendMsg(\b_free, buffer); buffer = nil }
+	free {
+		this.server.sendMsg(\b_free, buffer);
+		this.server.bufferAllocator.free(buffer);
+		buffer = nil
+	}
 	bufnum {^buffer}
 	asControlInput { ^buffer }
 	}
