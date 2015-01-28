@@ -202,7 +202,7 @@ LPCFile : File {
 		}
 
 	asUGenInput {^buffer}
-	free {buffer.free}
+	free { this.server.sendMsg(\b_free, buffer); buffer = nil }
 	bufnum {^buffer}
 	asControlInput { ^buffer }
 	}
