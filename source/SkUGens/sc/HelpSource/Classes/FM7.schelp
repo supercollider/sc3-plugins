@@ -1,15 +1,22 @@
 class:: FM7
 summary:: Phase modulation oscillator matrix.
-categories::  UGens>Generators>Deterministic
+categories:: UGens>Generators>Deterministic
 
 Description::
 FM7 implements a 6x6 oscillator matrix, where each oscillator's phase can be modulated by any of the other oscillators' output.
 
-The UGen expects two (flattened) matrices: one for specifying the oscillator
-parameters frequency (control rate), phase (initialization only) and amplitude
-(control rate):
+classmethods::
+
+method::ar
+
+The UGen expects two matrices: one for oscillator parameter control, one for phase modulation. It outputs six channels, one for each oscillator. To select specific outputs, you can use array methods like code::at(indices):: or code::slice(indices)::.
+
+argument::ctlMatrix
+
+specifies the three parameters strong::frequency:: (can be modulated at control rate), strong::phase:: (set at initialization only) and strong::amplitude::.(control rate):
 
 code::
+// freq, phase, amp
 [ [ 300, 0,    1   ],
   [ 400, pi/2, 1   ],
   [ 730, 0,    0.5 ],
@@ -17,6 +24,8 @@ code::
   [ 0,   0,    0   ],
   [ 0,   0,    0   ] ]
 ::
+
+argument::modMatrix
 
 The modulation matrix specifies the amount of modulation each oscillator
 output has on another oscillator's phase. Row i in the matrix refer to
@@ -30,25 +39,93 @@ code::
 {
 	var ctls, mods, chans;
 	ctls = [
-		[XLine.kr(300, 310, 4), 0, 1],
-		[XLine.kr(300, 310, 8), 0, 1],
-		[0, 0, 1],
-		[0, 0, 1],
-		[0, 0, 1],
-		[0, 0, 1]
+		// freq, phase, amp
+		[LFNoise1.kr(0.5).range(300, 310), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 310), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1]
 	];
 	mods = [
-		[Line.kr(0, 0.001, 2), Line.kr(0.1, 0, 4), 0, 0, 0, 0],
-		[Line.kr(0, 6, 1), 0, 0, 0, 0, 0],
+		[Line.kr(0, 0.001, 2), Line.kr(0.1, 0, 4), 0, MouseY.kr(0, 6), 0, 0],
+		[MouseX.kr(0, 6), 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0]
 	];
 	chans = [0, 1];
-	FM7.ar(ctls, mods).slice(chans) * -12.dbamp;
+	FM7.ar(ctls, mods).slice(chans) * -12.dbamp; // using "slice" to select specific channels
 }.play;
 )
+::
+
+method::arAlgo
+
+Provided a number for a wiring (called 'algorithm' in the FM-world), returns an instance that has this setup. Three of them are currently implemented.
+
+argument::algo
+
+The id of the algorithms [0..2]
+
+argument::ctlMatrix
+
+See above.
+
+argument::feedback
+
+One global parameter used in all places where the interconnections result in feedback.
+
+code::
+(
+{
+	var ctls = [
+		// freq, phase, amp
+		[LFNoise1.kr(0.5).range(300, 310), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 310), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+		[LFNoise1.kr(0.5).exprange(3, 100), 0, 1]
+	];
+	FM7.arAlgo(1, ctls, MouseX.kr(0, 2))
+}.play
+
+)
+
+
+::
+
+section::Examples
+
+code::
+
+(
+{
+	var ctls, mods, chans, freq;
+	freq = LFNoise0.kr(3).exprange(200, 310);
+	ctls = [
+		// freq, phase, amp
+		[freq, 0, 1],
+		[freq, 0, 1],
+		[LFNoise2.kr(0.5).exprange(3, 80), 0, 1],
+		[LFNoise2.kr(0.5).exprange(3, 800), 0, 1],
+		[LFNoise2.kr(0.5).exprange(3, 800), 0, 1],
+		[LFNoise2.kr(0.5).exprange(0.3, 10), 0, 1]
+	];
+	mods = [
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseX.kr(0, 3),
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseY.kr(0, 3),
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseY.kr(0, 3),
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseX.kr(0, 3),
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseY.kr(0, 3),
+		{ LFNoise1.kr(0.5).max(0) } ! 6 * MouseY.kr(0, 3)
+	];
+	chans = FM7.ar(ctls, mods).slice([0, 1]) * -12.dbamp;
+}.play;
+)
+
 
 (
 // Courtesy Fredrik Olofsson (2008)
