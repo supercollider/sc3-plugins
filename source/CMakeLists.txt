@@ -98,6 +98,7 @@ set(PLUGIN_DIRS
     LoopBufUGens
     MCLDUGens
     MdaUGens
+    Neuromodules
     RFWUGens
     RMEQSuiteUGens
     SCMIRUGens
