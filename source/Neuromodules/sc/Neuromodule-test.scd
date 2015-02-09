@@ -101,6 +101,12 @@ in1 and in2 are theta1 / theat2
 { Duty.ar(0.1, 0, DNeuromodule2(MouseX.kr(-2, 3), MouseY.kr(-2, 3), 0.1, 0.3, -3, 2, -2, 0)) * 0.03 }.play
 { Duty.ar(SampleDur.ir, 0, DNeuromodule2(MouseX.kr(-2, 3), MouseY.kr(-2, 3), 0.1, 0.3, -3, 2, -2, 0)) * 0.03 }.play
 
+{ Duty.ar(0.2, 0, DNeuromodule2(2, Dseq([-1, -2, -3]), 0.1, 0.3, -3, 2, -2, 0).dpoll, doneAction:2); 0.0 }.play
+{ Duty.ar(0.2, 0, DNeuromodule2(2, -1, 0.1, 0.3, -3, 2, -2, 0).dpoll, MouseButton.kr); 0.0 }.play
+
+
+
+
 
 
 
