@@ -1,7 +1,7 @@
 TITLE:: JPverb
 summary:: Algorithmic reverberator, designed to produce long and rich reverberant tails.
 categories:: UGens>Reverbs
-RELATED:: Overviews/DEIND, Classes/Greyhole, Classes/JPverbRaw
+RELATED:: Overviews/DEIND, Classes/Greyhole, Classes/JPverbRaw, Classes/JPverbLite
 
 DESCRIPTION::
 image::JPverb-logo-small.png::
@@ -83,10 +83,10 @@ Spec.add(\highband, [1000, 10000, \exp]);
 Ndef(\src).clear
 (
 Ndef(\src, {
-    //SoundIn.ar([0, 1])
-    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
+    //SoundIn.ar([0, 1])
+    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
 });
-	
+
 Ndef(\reverb, {
 	var src = Ndef(\src).ar * \amp.kr(1);
 	src = JPverb.ar(

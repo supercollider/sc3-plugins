@@ -1,9 +1,9 @@
 title:: DEIND
 summary:: Ugen collection developed within the DEIND project
 categories:: Libraries
-related:: Classes/JPverb, Classes/Greyhole, Classes/ComplexRes, Classes/DiodeRingMod, Classes/DNoiseRing
+related:: Classes/JPverb, Classes/JPverbLite, Classes/Greyhole, Classes/ComplexRes, Classes/DiodeRingMod, Classes/DNoiseRing
 
-description:: 
+description::
 
 image::DEIND.png::
 
@@ -23,6 +23,8 @@ SECTION:: UGens
 DEFINITIONLIST::
 ## LINK::Classes/JPverb::
 || Algorithmic reverberator, designed to produce long and rich reverberant tails
+## LINK::Classes/JPverbLite::
+|| A light-weight version of the algorithmic reverberator, designed to produce long and rich reverberant tails.  Uses about 50% of the CPU of the full version.
 ## LINK::Classes/Greyhole::
 || A complex echo-like effect
 ## LINK::Classes/ComplexRes::

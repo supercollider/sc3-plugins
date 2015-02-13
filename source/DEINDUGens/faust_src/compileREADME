@@ -1,11 +1,28 @@
 # cd  faust_src
 faust -a SuperCollider.cpp JPverbRaw.dsp -o JPverbRaw.cpp
+faust -a SuperCollider.cpp JPverbLiteRaw.dsp -o JPverbLiteRaw.cpp
 faust -a SuperCollider.cpp GreyholeRaw.dsp -o GreyholeRaw.cpp
+
+# Manually put the following #ifdef around the definition of SC_FAUST_PREFIX,
+# in the generated .cpp files (otherwise SC won't find your compiled plugin).
+# Or, you could use sed.
+
+# The following works on OS X, at least, to modify the SC_FAUST_PREFIX line
+(the command consists of three lines to be run at once, because of the need to
+insert newlines):
+sed 's/#define SC_FAUST_PREFIX "Faust"/#if \!defined(SC_FAUST_PREFIX)\
+&\
+#endif/g' JPverbLiteRaw.cpp > JPverbLiteRaw_fixed.cpp
+
+# (Rename, etc, as appropriate)
+
 
 cp jprev.h ../include
 cp JPverbRaw.cpp ..
+cp JPverbLiteRaw.cpp ..
 cp GreyholeRaw.cpp ..
 # symbolically linked
+# ln -s ../sc/JPverbLite.sc .
 # cp JPverb.sc ../sc/
 # cp Greyhole.sc ../sc/
 
