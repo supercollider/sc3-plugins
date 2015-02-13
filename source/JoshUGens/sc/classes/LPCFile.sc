@@ -124,11 +124,14 @@ LPCFile : File {
 	loadToBuffer {
 		var c, numcycles, tmp;
 		c = Condition.new;
-		this.loadToSignal;
 		Routine.run{
+			this.server.sendMsg(\b_free, buffer);
 			this.server.sync(c);
 			this.loadToSignal;
-			tmp = Buffer.loadCollection(this.server, signal);
+			tmp = Buffer.alloc(this.server, signal.size, 1, bufnum: buffer);
+			this.server.sync(c);
+			tmp.loadCollection(signal, action: { c.unhang });
+			c.hang;
 			buffer = tmp.bufnum;
 			("LPC data loaded to buffer "++ buffer.asString).postln;
 			}
@@ -199,7 +202,11 @@ LPCFile : File {
 		}
 
 	asUGenInput {^buffer}
-	free {buffer.free}
+	free {
+		this.server.sendMsg(\b_free, buffer);
+		this.server.bufferAllocator.free(buffer);
+		buffer = nil
+	}
 	bufnum {^buffer}
 	asControlInput { ^buffer }
 	}
