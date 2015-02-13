@@ -1,0 +1,80 @@
+class:: DWGPluckedStiff
+summary:: Plucked physical model.
+categories:: UGens>PhysicalModels
+
+
+Description::
+
+Digital wave guide physical model of a plucked instrument.
+It implements inharmonicity due to string stiffness acording to J. Rauhala and V. Välimäki, Tunable dispersion filter design for piano synthesis, IEEE
+Signal Processing Letters, vol. 13, no. 5, pp. 253256,
+2006.
+
+Classmethods::
+
+method::ar
+
+argument::freq
+Sound frequency.
+
+argument::amp
+Key pulsation strenght. Betwen 0 and 1.
+
+argument::gate
+Releases synth when value changes from >0 to 0.
+
+argument::pos
+Relative pluck position from 0 to 1.
+
+argument::c1
+Inverse of DC decay time.
+
+argument::c3
+Hight frequency loss factor.
+
+argument::inp
+Plucking signal. Could be first part of plucked sample for doing conmuted synthesis.
+
+argument::release
+Release time in seconds.
+
+argument::fB
+Inharmonicity factor.
+
+
+Examples::
+
+code::
+//Define pluck synthdef
+(
+SynthDef(\help_dwgpluckedstiff, { |out=0, freq=440, amp=0.5, gate=1, c3=20, pan=0,fB = 80|
+	var env = Env.new([0,1, 1, 0],[0.001,0.006, 0.0005],[5,-5, -8]);
+	var inp = amp * LFClipNoise.ar(2000) * EnvGen.ar(env,gate);
+    var son = DWGPluckedStiff.ar(freq, amp, gate,0.1,1,c3,inp,fB);
+    DetectSilence.ar(son, 0.001, doneAction:2);
+    Out.ar(out, Pan2.ar(son * 0.1, pan));
+}).add;
+)
+
+//Use it.
+(
+a = Scale.new(
+    #[0, 1, 3, 5, 7, 8, 10],
+    12,
+    Tuning.new([0, 0.75, 2, 3.5, 4, 5, 6, 7, 8, 9, 10, 11]),
+    "Custom"
+);
+
+Pbind(
+    \instrument, \help_dwgpluckedstiff,
+    \scale ,a,
+    \delta , Pseq([1,0.5,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,1,1]*0.25,inf),
+    \dur , 2,
+    \degree, Pseq([1,8,8,8,8,8,8,-6,Prand([9,10,11],1),1,7,8]-8, inf),
+    \amp , Pwhite(0.2,0.8),
+    \c3 , Pseq([Pseq([1400],24),Pseq([300],24)],inf),
+    \pan , Pwhite(-1,1),
+	\fB , Pseq([0,80,400],inf),
+).play;
+)
+::

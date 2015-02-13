@@ -768,7 +768,7 @@ struct ThirianDispersion{
 
 	float freq;
 	float B;
-	ThirianT<2> dispersion[4];
+	ThirianT<2> dispersion[M];
 	void setcoeffs(float freq,float B){
 		if(B==0){
 			this->B = 0.0;

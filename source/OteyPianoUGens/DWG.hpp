@@ -67,6 +67,7 @@ void volcar(const char *_Message, const char *_File, unsigned _Line);
 void classname##_Ctor(classname* unit){new(unit) classname(unit);}\
 void classname##_Dtor(classname* unit){unit->~classname();}
 
+void kill_denormals(float &val);
 
 inline bool approximatelyEqual(float a, float b, float epsilon = 1e-7f)
 {
@@ -381,6 +382,7 @@ class LTITv
 			sum -= KernelA[howmany + i]*cbufout.Buffer[i];
 			
 		//sum = zapgremlins(sum);
+		kill_denormals(sum);
 		cbufout.push(sum);
 		return sum;
 	}
