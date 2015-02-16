@@ -40,12 +40,30 @@ struct DNeuromodule2 : public Unit
 	double x1, x2;
 };
 
+struct DNeuromodule : public Unit
+{
+	int m_size;
+	
+	double *m_theta;
+	double *m_x;
+	double *m_weights;
+	double *m_x_temp;
+};
+
 extern "C"
 {
 	void DNeuromodule2_Ctor(DNeuromodule2 *unit);
 	void DNeuromodule2_reset(DNeuromodule2 *unit, int inNumSamples);
 	void DNeuromodule2_end(DNeuromodule2 *unit);
 	void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples);
+	
+	void DNeuromodule_Ctor(DNeuromodule *unit);
+	void DNeuromodule_Dtor(DNeuromodule *unit);
+	void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples);
+	void DNeuromodule_end(DNeuromodule *unit);
+	void DNeuromodule_next(DNeuromodule *unit, int inNumSamples);
+	void Neuromodule_initInputs(DNeuromodule *unit, int size);
+	
 }
 
 
@@ -104,7 +122,7 @@ void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples)
 		OUT0(0) = (float) x1;
 		OUT0(1) = (float) x2;
 		
-	} else {
+	} else {
 		
 		DNeuromodule2_reset(unit, inNumSamples);
 		
@@ -152,6 +170,153 @@ void DNeuromodule2_Ctor(DNeuromodule2 *unit)
 }
 
 
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////
+
+void Neuromodule_initInputs(DNeuromodule *unit, int size)
+{
+	int memsize = size * sizeof(double);
+	int numWeights = size * size;
+	
+	
+	unit->m_theta = (double*)RTAlloc(unit->mWorld, memsize);
+	memset(unit->m_theta, 0, memsize);
+	
+	unit->m_x = (double*)RTAlloc(unit->mWorld, memsize);
+	memset(unit->m_x, 0, memsize);
+	
+	unit->m_weights = (double*)RTAlloc(unit->mWorld, numWeights);
+	memset(unit->m_weights, 0, numWeights);
+	
+	unit->m_x_temp = (double*)RTAlloc(unit->mWorld, memsize);
+	memset(unit->m_x_temp, 0, memsize);
+
+	
+}
+
+void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
+{
+	
+	
+	if(inNumSamples) {
+		
+		int size = unit->m_size;
+		int numWeights = size * size;
+		
+		
+		// printf("theta: ");
+		
+		// THETA
+		for(int i=0; i < size; i++) {
+			double val = (double) DEMANDINPUT_A(i + 1, inNumSamples);
+			if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+			//printf("%f ", val);
+			unit->m_theta[i] = val;
+		}
+		
+		// printf("x: ");
+		
+		
+		
+		// printf("weights: ");
+		
+		// WEIGHTS
+		for(int i=0; i < numWeights; i++) {
+			double val = (double) DEMANDINPUT_A(i + 1 + size + size, inNumSamples);
+			if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+		// 	printf("%f ", val);
+			unit->m_weights[i] = val;
+		}
+		
+		
+		// keep normalized old values in a temporary array
+		// so that we can overwrite the original directly
+		
+		for(int i=0; i < size; i++) {
+			unit->m_x_temp[i] = std::tanh(unit->m_x[i]);
+		}
+		
+		// iterate over all other values for each values and calcuate their contribution by weights.
+		
+		// printf("outputs: \n");
+		for(int i=0; i < size; i++) {
+			double xval;
+			xval = unit->m_theta[i];
+			for(int j=0; j < size; j++) {
+				// printf("x = %f + %f * %f\n", xval, unit->m_weights[i * size + j], unit->m_x_temp[j]);
+				xval += unit->m_weights[i * size + j] * unit->m_x_temp[j];
+			}
+			xval = zapgremlins(xval);
+			unit->m_x[i] = xval;
+			// printf("-> %f ", xval);
+			OUT0(i) = (float) xval;
+		}
+		
+		//printf("\n");
+
+		
+	} else {
+		
+		DNeuromodule_reset(unit, inNumSamples);
+		
+	}
+	
+	
+}
+
+void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples)
+{
+	int size = unit->m_size;
+	for(int i =	0; i < size; i++) {
+		RESETINPUT(i + 1);
+		
+	}
+	// initial X
+	for(int i=0; i < size; i++) {
+		double val = (double) DEMANDINPUT_A(i + 1 + size, inNumSamples);
+		if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+		// printf("%f ", val);
+		unit->m_x[i] = val;
+		OUT0(i) = val;
+	}
+}
+
+void DNeuromodule_end(DNeuromodule *unit)
+{
+	
+	for(int i =	0; i < unit->m_size; i++) {
+		OUT0(i) = NAN;
+	}
+	
+}
+
+
+void DNeuromodule_Ctor(DNeuromodule *unit)
+{
+	
+	SETCALC(DNeuromodule_next);
+	unit->m_size = sc_max((int) IN0(0), 0);
+	Neuromodule_initInputs(unit, unit->m_size);
+	
+	
+	DNeuromodule_reset(unit, 0);
+}
+
+void DNeuromodule_Dtor(DNeuromodule *unit)
+{
+	RTFree(unit->mWorld, unit->m_theta);
+	RTFree(unit->mWorld, unit->m_x);
+	RTFree(unit->mWorld, unit->m_weights);
+	RTFree(unit->mWorld, unit->m_x_temp);
+}
+
+
 //////////////////////////////////////////////////////
 
 
@@ -160,5 +325,6 @@ PluginLoad(TagSystem)
 {
 	ft = inTable;
 	DefineSimpleUnit(DNeuromodule2);
+	DefineDtorUnit(DNeuromodule);
 	
 }

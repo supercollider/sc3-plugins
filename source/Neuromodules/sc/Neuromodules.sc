@@ -45,4 +45,21 @@ DNeuromodule2 : MultiOutDemandUGen {
 
 }
 
+DNeuromodule : MultiOutDemandUGen {
+
+	*new { |numChannels, theta, x, weights|
+		^super.multiNew(\demand, *[numChannels] ++ theta ++ x ++ weights )
+	}
+
+	init { arg numChannels ... theInputs;
+		inputs = [numChannels] ++ theInputs;
+		channels = numChannels.collect { |i|
+			OutputProxy(rate, this, i)
+		};
+		^channels
+	}
+	checkInputs { ^this.checkNInputs(1) } // TODO: check.
+
+}
+
 
