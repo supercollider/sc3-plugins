@@ -220,10 +220,6 @@ void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
 			unit->m_theta[i] = val;
 		}
 		
-		// printf("x: ");
-		
-		
-		
 		// printf("weights: ");
 		
 		// WEIGHTS
@@ -273,13 +269,14 @@ void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
 void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples)
 {
 	int size = unit->m_size;
-	for(int i =	0; i < size; i++) {
-		RESETINPUT(i + 1);
-		
+	int size_end = size * size + 2 * size + 1;
+	
+	for(int i =	1; i < size_end; i++) {
+		RESETINPUT(i);
 	}
-	// initial X
+	// initialize x
 	for(int i=0; i < size; i++) {
-		double val = (double) DEMANDINPUT_A(i + 1 + size, inNumSamples);
+		double val = (double) IN(i + 1 + size)[inNumSamples];
 		if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
 		// printf("%f ", val);
 		unit->m_x[i] = val;
@@ -303,7 +300,6 @@ void DNeuromodule_Ctor(DNeuromodule *unit)
 	SETCALC(DNeuromodule_next);
 	unit->m_size = sc_max((int) IN0(0), 0);
 	Neuromodule_initInputs(unit, unit->m_size);
-	
 	
 	DNeuromodule_reset(unit, 0);
 }

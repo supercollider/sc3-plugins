@@ -1,0 +1,43 @@
+CLASS:: Dneuromodule
+SUMMARY:: demand rate dynamic neural network
+CATEGORIES:: UGens>Demand
+
+DESCRIPTION::
+The discrete time dynamics of a neural network can be described by initial state, bias, and the weights of the influence between the nodes. This demand rate ugen simulates the bahavior for any number of nodes.
+
+For background information, see Frank Pasemann's publications: link::http://dblp1.uni-trier.de/pers/hd/p/Pasemann:Frank::
+
+CLASSMETHODS::
+
+METHOD::new
+
+ARGUMENT::numChannels
+Number of cells, and also number of output channels.
+
+ARGUMENT::theta
+Bias for each node. Should be an array on code::numChannels:: size. This argument is also the usual way to define an input into the node. It can contain demand rate ugens or any other ugens or numbers.
+
+ARGUMENT::x
+Initial value of each node. Should be an array on code::numChannels:: size.
+
+ARGUMENT::weights
+An code::n x n:: matrix of inter-node connections. Should be an array of code::numChannels * numChannels:: size. It can contain demand rate ugens or any other ugens or numbers.
+
+
+EXAMPLES::
+
+CODE::
+(
+{
+	var dt, module, m;
+	dt = 0.001;
+	module = DNeuromodule(2,
+			theta: [MouseX.kr(-2, 2), MouseY.kr(-2, 2)],
+			x: [0.1, 0.3],
+			weights: [-3, 2, -2, 0]
+	);
+	m = Duty.ar(dt, 0, module).lag3(dt);
+	SinOsc.ar(m * 400 + 600) * 0.1
+}.play
+)
+::

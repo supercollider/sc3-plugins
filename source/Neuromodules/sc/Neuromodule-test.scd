@@ -11,7 +11,7 @@ in1 and in2 are theta1 / theat2
 
 */
 
-
+Dtag
 (
 {
 	var module =  DNeuromodule(2, [MouseX.kr(-2, 3), MouseY.kr(-2, 3)], [0.1, 0.3], [-3, 2, -2, 0]);
@@ -24,7 +24,7 @@ in1 and in2 are theta1 / theat2
 {
 	var module =  DNeuromodule(2, [MouseX.kr(-2, 3), MouseY.kr(-2, 3)], [0.1, 0.3], [-3, 2, -2, 0]);
 	var sig = Duty.ar(0.2, 0, module.dpoll);
-	Blip.ar(sig, 150) * 0.1;
+	Blip.ar(sig * 30, 150) * 0.1;
 
 }.play
 )
@@ -32,6 +32,21 @@ in1 and in2 are theta1 / theat2
 {
 	var module =  DNeuromodule(2, [MouseX.kr(-2, 3), MouseY.kr(-2, 3)], [0.1, 0.3], [-3, 2, -2, 0]);
 	var sig = Duty.kr(0.2, 0, module);
+	0.0
+
+}.play
+)
+
+/////////////////////
+
+(
+{
+	var args = [[-2, 2], [0.1, 0.3], [-3, 2, -2, 0]];
+	var module =  DNeuromodule(2, *args);
+	var module2 =  DNeuromodule2(*args);
+	var sig = Duty.kr(0.2, 0, module.dpoll("module 1"));
+	var sig2 = Duty.kr(0.2, 0, module2.dpoll("module 2"));
+
 	0.0
 
 }.play
