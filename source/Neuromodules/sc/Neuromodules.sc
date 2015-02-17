@@ -27,7 +27,7 @@ MultiOutDemandUGen : DUGen {
 }
 
 
-DNeuromodule2 : MultiOutDemandUGen {
+Dneuromodule2 : MultiOutDemandUGen {
 
 	*new { |in1 = 0, in2 = 0, x1 = 0, x2 = 0, w11 = 0, w12 = 0, w21 = 0, w22 = 0|
 		^super.multiNew(\demand, in1, in2, x1 = 0, x2 = 0, w11, w12, w21, w22)
@@ -45,10 +45,18 @@ DNeuromodule2 : MultiOutDemandUGen {
 
 }
 
-DNeuromodule : MultiOutDemandUGen {
+Dneuromodule : MultiOutDemandUGen {
 
 	*new { |numChannels, theta, x, weights|
 		^super.multiNew(\demand, *[numChannels] ++ theta ++ x ++ weights )
+	}
+
+	*ar { |dt, numChannels, theta, x, weights|
+		^Duty.ar(dt, 0, this.new(numChannels, theta, x, weights))
+	}
+
+	*kr { |dt, numChannels, theta, x, weights|
+		^Duty.ar(dt, 0, this.new(numChannels, theta, x, weights))
 	}
 
 	init { arg numChannels ... theInputs;

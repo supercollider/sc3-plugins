@@ -35,12 +35,12 @@ static InterfaceTable *ft;
 
 #define MAXCHANNELS 32
 
-struct DNeuromodule2 : public Unit
+struct Dneuromodule2 : public Unit
 {
 	double x1, x2;
 };
 
-struct DNeuromodule : public Unit
+struct Dneuromodule : public Unit
 {
 	int m_size;
 	
@@ -52,17 +52,17 @@ struct DNeuromodule : public Unit
 
 extern "C"
 {
-	void DNeuromodule2_Ctor(DNeuromodule2 *unit);
-	void DNeuromodule2_reset(DNeuromodule2 *unit, int inNumSamples);
-	void DNeuromodule2_end(DNeuromodule2 *unit);
-	void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples);
+	void Dneuromodule2_Ctor(Dneuromodule2 *unit);
+	void Dneuromodule2_reset(Dneuromodule2 *unit, int inNumSamples);
+	void Dneuromodule2_end(Dneuromodule2 *unit);
+	void Dneuromodule2_next(Dneuromodule2 *unit, int inNumSamples);
 	
-	void DNeuromodule_Ctor(DNeuromodule *unit);
-	void DNeuromodule_Dtor(DNeuromodule *unit);
-	void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples);
-	void DNeuromodule_end(DNeuromodule *unit);
-	void DNeuromodule_next(DNeuromodule *unit, int inNumSamples);
-	void Neuromodule_initInputs(DNeuromodule *unit, int size);
+	void Dneuromodule_Ctor(Dneuromodule *unit);
+	void Dneuromodule_Dtor(Dneuromodule *unit);
+	void Dneuromodule_reset(Dneuromodule *unit, int inNumSamples);
+	void Dneuromodule_end(Dneuromodule *unit);
+	void Dneuromodule_next(Dneuromodule *unit, int inNumSamples);
+	void Neuromodule_initInputs(Dneuromodule *unit, int size);
 	
 }
 
@@ -72,7 +72,7 @@ enum {
 };
 
 
-void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples)
+void Dneuromodule2_next(Dneuromodule2 *unit, int inNumSamples)
 {
 	double x1, x2;
 	
@@ -91,18 +91,18 @@ void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples)
 		 */
 		
 		double theta1 = (double) DEMANDINPUT_A(0, inNumSamples);
-		if(sc_isnan(theta1)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(theta1)) { Dneuromodule2_end(unit); return; }
 		double theta2 = (double) DEMANDINPUT_A(1, inNumSamples);
-		if(sc_isnan(theta2)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(theta2)) { Dneuromodule2_end(unit); return; }
 		
 		double w11 = (double) DEMANDINPUT_A(4, inNumSamples);
-		if(sc_isnan(w11)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(w11)) { Dneuromodule2_end(unit); return; }
 		double w12 = (double) DEMANDINPUT_A(5, inNumSamples);
-		if(sc_isnan(w12)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(w12)) { Dneuromodule2_end(unit); return; }
 		double w21 = (double) DEMANDINPUT_A(6, inNumSamples);
-		if(sc_isnan(w21)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(w21)) { Dneuromodule2_end(unit); return; }
 		double w22 = (double) DEMANDINPUT_A(7, inNumSamples);
-		if(sc_isnan(w22)) { DNeuromodule2_end(unit); return; }
+		if(sc_isnan(w22)) { Dneuromodule2_end(unit); return; }
 		
 		
 		x1 = theta1 + w11 * x1_limit + w12 * x2_limit;
@@ -124,14 +124,14 @@ void DNeuromodule2_next(DNeuromodule2 *unit, int inNumSamples)
 		
 	} else {
 		
-		DNeuromodule2_reset(unit, inNumSamples);
+		Dneuromodule2_reset(unit, inNumSamples);
 		
 	}
 	
 	
 }
 
-void DNeuromodule2_reset(DNeuromodule2 *unit, int inNumSamples)
+void Dneuromodule2_reset(Dneuromodule2 *unit, int inNumSamples)
 {
 	float x1, x2;
 	for(int i =	0; i < 8; i++) {
@@ -151,7 +151,7 @@ void DNeuromodule2_reset(DNeuromodule2 *unit, int inNumSamples)
 	
 }
 
-void DNeuromodule2_end(DNeuromodule2 *unit)
+void Dneuromodule2_end(Dneuromodule2 *unit)
 {
 	
 	for(int i =	0; i < 2; i++) {
@@ -162,11 +162,11 @@ void DNeuromodule2_end(DNeuromodule2 *unit)
 
 
 
-void DNeuromodule2_Ctor(DNeuromodule2 *unit)
+void Dneuromodule2_Ctor(Dneuromodule2 *unit)
 {
 	
-	SETCALC(DNeuromodule2_next);
-	DNeuromodule2_reset(unit, 0);
+	SETCALC(Dneuromodule2_next);
+	Dneuromodule2_reset(unit, 0);
 }
 
 
@@ -179,7 +179,7 @@ void DNeuromodule2_Ctor(DNeuromodule2 *unit)
 
 //////////////////////////////////////////////////////
 
-void Neuromodule_initInputs(DNeuromodule *unit, int size)
+void Neuromodule_initInputs(Dneuromodule *unit, int size)
 {
 	int memsize = size * sizeof(double);
 	int numWeights = size * size;
@@ -200,7 +200,7 @@ void Neuromodule_initInputs(DNeuromodule *unit, int size)
 	
 }
 
-void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
+void Dneuromodule_next(Dneuromodule *unit, int inNumSamples)
 {
 	
 	
@@ -215,7 +215,7 @@ void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
 		// THETA
 		for(int i=0; i < size; i++) {
 			double val = (double) DEMANDINPUT_A(i + 1, inNumSamples);
-			if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+			if(sc_isnan(val)) { Dneuromodule_end(unit); return; }
 			//printf("%f ", val);
 			unit->m_theta[i] = val;
 		}
@@ -225,7 +225,7 @@ void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
 		// WEIGHTS
 		for(int i=0; i < numWeights; i++) {
 			double val = (double) DEMANDINPUT_A(i + 1 + size + size, inNumSamples);
-			if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+			if(sc_isnan(val)) { Dneuromodule_end(unit); return; }
 		// 	printf("%f ", val);
 			unit->m_weights[i] = val;
 		}
@@ -259,14 +259,14 @@ void DNeuromodule_next(DNeuromodule *unit, int inNumSamples)
 		
 	} else {
 		
-		DNeuromodule_reset(unit, inNumSamples);
+		Dneuromodule_reset(unit, inNumSamples);
 		
 	}
 	
 	
 }
 
-void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples)
+void Dneuromodule_reset(Dneuromodule *unit, int inNumSamples)
 {
 	int size = unit->m_size;
 	int size_end = size * size + 2 * size + 1;
@@ -277,14 +277,14 @@ void DNeuromodule_reset(DNeuromodule *unit, int inNumSamples)
 	// initialize x
 	for(int i=0; i < size; i++) {
 		double val = (double) IN(i + 1 + size)[inNumSamples];
-		if(sc_isnan(val)) { DNeuromodule_end(unit); return; }
+		if(sc_isnan(val)) { Dneuromodule_end(unit); return; }
 		// printf("%f ", val);
 		unit->m_x[i] = val;
 		OUT0(i) = val;
 	}
 }
 
-void DNeuromodule_end(DNeuromodule *unit)
+void Dneuromodule_end(Dneuromodule *unit)
 {
 	
 	for(int i =	0; i < unit->m_size; i++) {
@@ -294,17 +294,17 @@ void DNeuromodule_end(DNeuromodule *unit)
 }
 
 
-void DNeuromodule_Ctor(DNeuromodule *unit)
+void Dneuromodule_Ctor(Dneuromodule *unit)
 {
 	
-	SETCALC(DNeuromodule_next);
+	SETCALC(Dneuromodule_next);
 	unit->m_size = sc_max((int) IN0(0), 0);
 	Neuromodule_initInputs(unit, unit->m_size);
 	
-	DNeuromodule_reset(unit, 0);
+	Dneuromodule_reset(unit, 0);
 }
 
-void DNeuromodule_Dtor(DNeuromodule *unit)
+void Dneuromodule_Dtor(Dneuromodule *unit)
 {
 	RTFree(unit->mWorld, unit->m_theta);
 	RTFree(unit->mWorld, unit->m_x);
@@ -320,7 +320,7 @@ void DNeuromodule_Dtor(DNeuromodule *unit)
 PluginLoad(TagSystem)
 {
 	ft = inTable;
-	DefineSimpleUnit(DNeuromodule2);
-	DefineDtorUnit(DNeuromodule);
+	DefineSimpleUnit(Dneuromodule2);
+	DefineDtorUnit(Dneuromodule);
 	
 }

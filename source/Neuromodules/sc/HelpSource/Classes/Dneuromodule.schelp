@@ -1,18 +1,24 @@
 CLASS:: Dneuromodule
-SUMMARY:: demand rate dynamic neural network
+SUMMARY:: discrete time neurodynamics
 CATEGORIES:: UGens>Demand
 
 DESCRIPTION::
 The discrete time dynamics of a neural network can be described by initial state, bias, and the weights of the influence between the nodes. This demand rate ugen simulates the bahavior for any number of nodes.
 
-For background information, see Frank Pasemann's publications: link::http://dblp1.uni-trier.de/pers/hd/p/Pasemann:Frank::
+The implementation follows the paper: Frank Pasemann, Complex dynamics and the structure of small neural networks, Network: Comput. Neural Syst. 13 (2002) p. 195–216.
+
+In the core, Dneuromodule implements the following formula:
+
+image::neuromodule.png::
+
+As transfer function (sigma) code::tanh:: is used.
 
 CLASSMETHODS::
 
 METHOD::new
 
 ARGUMENT::numChannels
-Number of cells, and also number of output channels.
+Number of nodes that represent cells, which is also the number of output channels of the UGen.
 
 ARGUMENT::theta
 Bias for each node. Should be an array on code::numChannels:: size. This argument is also the usual way to define an input into the node. It can contain demand rate ugens or any other ugens or numbers.
@@ -21,7 +27,7 @@ ARGUMENT::x
 Initial value of each node. Should be an array on code::numChannels:: size.
 
 ARGUMENT::weights
-An code::n x n:: matrix of inter-node connections. Should be an array of code::numChannels * numChannels:: size. It can contain demand rate ugens or any other ugens or numbers.
+An code::n x n:: matrix of inter-node connections that represent synapses. Should be an array of code::numChannels * numChannels:: size. It can contain demand rate ugens or any other ugens or numbers.
 
 
 EXAMPLES::
