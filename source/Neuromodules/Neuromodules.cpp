@@ -35,10 +35,6 @@ static InterfaceTable *ft;
 
 #define MAXCHANNELS 32
 
-struct Dneuromodule2 : public Unit
-{
-	double x1, x2;
-};
 
 struct Dneuromodule : public Unit
 {
@@ -52,132 +48,14 @@ struct Dneuromodule : public Unit
 
 extern "C"
 {
-	void Dneuromodule2_Ctor(Dneuromodule2 *unit);
-	void Dneuromodule2_reset(Dneuromodule2 *unit, int inNumSamples);
-	void Dneuromodule2_end(Dneuromodule2 *unit);
-	void Dneuromodule2_next(Dneuromodule2 *unit, int inNumSamples);
-	
 	void Dneuromodule_Ctor(Dneuromodule *unit);
 	void Dneuromodule_Dtor(Dneuromodule *unit);
 	void Dneuromodule_reset(Dneuromodule *unit, int inNumSamples);
 	void Dneuromodule_end(Dneuromodule *unit);
 	void Dneuromodule_next(Dneuromodule *unit, int inNumSamples);
 	void Neuromodule_initInputs(Dneuromodule *unit, int size);
-	
 }
 
-
-enum {
-	theta1 = 0, theta2, x1, x2, w11, w12, w21, w22 // these seem to be unreliable.
-};
-
-
-void Dneuromodule2_next(Dneuromodule2 *unit, int inNumSamples)
-{
-	double x1, x2;
-	
-	if(inNumSamples) {
-		double x1_limit = std::tanh(unit->x1);
-		double x2_limit = std::tanh(unit->x2);
-		
-		/*
-		 double theta1 = (double) DEMANDINPUT_A(theta1, inNumSamples);
-		 double theta2 = (double) DEMANDINPUT_A(theta1, inNumSamples);
-		 
-		 double w11 = (double) DEMANDINPUT_A(w11, inNumSamples);
-		 double w12 = (double) DEMANDINPUT_A(w12, inNumSamples);
-		 double w21 = (double) DEMANDINPUT_A(w21, inNumSamples);
-		 double w22 = (double) DEMANDINPUT_A(w22, inNumSamples);
-		 */
-		
-		double theta1 = (double) DEMANDINPUT_A(0, inNumSamples);
-		if(sc_isnan(theta1)) { Dneuromodule2_end(unit); return; }
-		double theta2 = (double) DEMANDINPUT_A(1, inNumSamples);
-		if(sc_isnan(theta2)) { Dneuromodule2_end(unit); return; }
-		
-		double w11 = (double) DEMANDINPUT_A(4, inNumSamples);
-		if(sc_isnan(w11)) { Dneuromodule2_end(unit); return; }
-		double w12 = (double) DEMANDINPUT_A(5, inNumSamples);
-		if(sc_isnan(w12)) { Dneuromodule2_end(unit); return; }
-		double w21 = (double) DEMANDINPUT_A(6, inNumSamples);
-		if(sc_isnan(w21)) { Dneuromodule2_end(unit); return; }
-		double w22 = (double) DEMANDINPUT_A(7, inNumSamples);
-		if(sc_isnan(w22)) { Dneuromodule2_end(unit); return; }
-		
-		
-		x1 = theta1 + w11 * x1_limit + w12 * x2_limit;
-		x2 = theta2 + w21 * x1_limit + w22 * x2_limit;
-		
-		//	printf("x1 = %f  x2 = %f\n", x1, x2);
-		//	printf("x1 = %f  x2 = %f, theta1 = %f, theat2 = %f, w11 = %f, w12 = %f, w21 = %f, w22 = %f\n", x1, x2, theta1, theta2, w11, w12, w21, w22);
-		
-		x1 = zapgremlins(x1);
-		x2 = zapgremlins(x2);
-		
-		
-		unit->x1 = x1;
-		unit->x2 = x2;
-		
-		
-		OUT0(0) = (float) x1;
-		OUT0(1) = (float) x2;
-		
-	} else {
-		
-		Dneuromodule2_reset(unit, inNumSamples);
-		
-	}
-	
-	
-}
-
-void Dneuromodule2_reset(Dneuromodule2 *unit, int inNumSamples)
-{
-	float x1, x2;
-	for(int i =	0; i < 8; i++) {
-		RESETINPUT(i);
-	}
-	x1 = DEMANDINPUT_A(2, inNumSamples);
-	x2 = DEMANDINPUT_A(3, inNumSamples);
-	
-	unit->x1 = (double) x1;
-	unit->x2 = (double) x2;
-	
-	OUT0(0) = x1;
-	OUT0(1) = x2;
-	
-	unit->x1 = (double) x1;
-	unit->x2 = (double) x2;
-	
-}
-
-void Dneuromodule2_end(Dneuromodule2 *unit)
-{
-	
-	for(int i =	0; i < 2; i++) {
-		OUT0(i) = NAN;
-	}
-	
-}
-
-
-
-void Dneuromodule2_Ctor(Dneuromodule2 *unit)
-{
-	
-	SETCALC(Dneuromodule2_next);
-	Dneuromodule2_reset(unit, 0);
-}
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////
 
 void Neuromodule_initInputs(Dneuromodule *unit, int size)
 {
@@ -320,7 +198,6 @@ void Dneuromodule_Dtor(Dneuromodule *unit)
 PluginLoad(TagSystem)
 {
 	ft = inTable;
-	DefineSimpleUnit(Dneuromodule2);
 	DefineDtorUnit(Dneuromodule);
 	
 }

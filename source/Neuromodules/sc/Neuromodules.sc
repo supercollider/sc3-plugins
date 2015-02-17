@@ -27,24 +27,6 @@ MultiOutDemandUGen : DUGen {
 }
 
 
-Dneuromodule2 : MultiOutDemandUGen {
-
-	*new { |in1 = 0, in2 = 0, x1 = 0, x2 = 0, w11 = 0, w12 = 0, w21 = 0, w22 = 0|
-		^super.multiNew(\demand, in1, in2, x1 = 0, x2 = 0, w11, w12, w21, w22)
-	}
-
-	init { arg ... theInputs;
-		inputs = theInputs;
-		channels = [
-			OutputProxy(rate, this, 0),
-			OutputProxy(rate, this, 1)
-		];
-		^channels
-	}
-	checkInputs { ^this.checkNInputs(1) } // TODO: check.
-
-}
-
 Dneuromodule : MultiOutDemandUGen {
 
 	*new { |numChannels, theta, x, weights|
