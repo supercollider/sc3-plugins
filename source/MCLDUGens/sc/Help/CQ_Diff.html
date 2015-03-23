@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!-- Translation from RTF performed by UnRTF, version 0.21.9 -->
+<!--font table contains 0 fonts total-->
+<!--invalid font number 0-->
+</head>
+<body><b><font size="5"><font color="#000000">CQ_Diff Logarithmic spectral difference measure<!--invalid font number 1-->
+</font></font></b><font size="5"><font color="#000000"><span style="font-size:20pt"><br>
+<span style="font-size:9pt"><br>
+</span></span></font></font><!--invalid font number 0-->
+<b><font size="3"><font color="#000000">CQ_Diff.kr(in1, in2, databufnum)<br>
+<br>
+</font></font></b><!--invalid font number 2-->
+<font color="#000000">A measure of spectral difference. Uses the &quot;Constant Q&quot; transformation to analyse on a logarithmic frequency scale, which hopefully avoids one problem with difference measures based directly on FFT bin differences, namely that its linear frequency scale can end up prioritising the higher frequencies. The comparison is still quite crude, however. Weighting of frequency bins according to known perceptual curves would be one way to improve the comparison, but has not been implemented here.<br>
+<br>
+The constant Q code has largely been stolen from the <u>[Qitch]</u> UGen. As with that UGen, you MUST initialise it with a suitable auxiliary data file - please read the Qitch helpfile for more details.<br>
+<br>
+<br>
+</font><!--invalid font number 0-->
+<b><font color="#000000">Example:<br>
+</font></b><!--invalid font number 2-->
+<font color="#000000"><br>
+</font><!--invalid font number 1-->
+<span style="font-size:9pt"><font color="#000000">s = <font color="#0000bf">Server<font color="#000000">.local.boot;<br>
+<br>
+</font></font></font></span><font color="#000000">b = <font color="#0000bf">Buffer<font color="#000000">.read(s, <font color="#606060">&quot;QspeckernN2048SR44100.wav&quot;<font color="#000000">); <br>
+<font color="#bf0000">//this line is absolutely essential! You must load the data required by the UGen! <font color="#000000"><br>
+</font></font></font></font></font></font></font><font color="#000000"><br>
+( <font color="#bf0000">// The left and right channel will be compared...<font color="#000000"><br>
+x = { <font color="#0000bf">|f1=440, f2=440, n1=0, n2=0, v1=1, v2=1|<font color="#000000"><br>
+ [<br>
+ <font color="#0000bf">SinOsc<font color="#000000">.ar(f1, 0, 0.3) + <font color="#0000bf">WhiteNoise<font color="#000000">.ar(n1) * v1,<br>
+ <font color="#0000bf">SinOsc<font color="#000000">.ar(f2, 0, 0.3) + <font color="#0000bf">WhiteNoise<font color="#000000">.ar(n2) * v2<br>
+ ]<br>
+}.play(s);<br>
+)<br>
+<br>
+(<br>
+y = {<br>
+ <font color="#0000bf">var<font color="#000000"> l,r;<br>
+ <br>
+ # l, r = <font color="#0000bf">In<font color="#000000">.ar([0,1]);<br>
+ <br>
+ <font color="#0000bf">CQ_Diff<font color="#000000">.kr(l, r, b.bufnum).poll(3, <font color="#606060">&quot;CQ_Diff:&quot;<font color="#000000">);<br>
+}.play(s, addAction: <font color="#007300">\addToTail<font color="#000000">);<br>
+)<br>
+<br>
+</font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font><font color="#bf0000">// Now vary the left and right channels...<font color="#000000"><br>
+x.set(<font color="#007300">\f1<font color="#000000">, 439);<br>
+x.set(<font color="#007300">\f1<font color="#000000">, 139);<br>
+x.set(<font color="#007300">\f1<font color="#000000">, 1440);<br>
+x.set(<font color="#007300">\f1<font color="#000000">, 440);<br>
+x.set(<font color="#007300">\n1<font color="#000000">, 0.1);<br>
+x.set(<font color="#007300">\n1<font color="#000000">, 0.3);<br>
+x.set(<font color="#007300">\n1<font color="#000000">, 0.9);<br>
+x.set(<font color="#007300">\n1<font color="#000000">, 0.0);<br>
+x.set(<font color="#007300">\v1<font color="#000000">, 0.0);<br>
+x.set(<font color="#007300">\v2<font color="#000000">, 0.0);<br>
+<font color="#bf0000"><br>
+</font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font><font color="#000000">x.free;<br>
+</font><font color="#bf0000">// Also try it with this test signal:<font color="#000000"><br>
+(<br>
+x = { <font color="#0000bf">|f1=440, f2=440|<font color="#000000"><br>
+ [<br>
+ <font color="#0000bf">LPF<font color="#000000">.ar(<font color="#0000bf">WhiteNoise<font color="#000000">.ar, f1),<br>
+ <font color="#0000bf">LPF<font color="#000000">.ar(<font color="#0000bf">WhiteNoise<font color="#000000">.ar, f2)<br>
+ ]<br>
+}.play(s);<br>
+)<font color="#bf0000"><br>
+</font></font></font></font></font></font></font></font></font></font></font></font></font></body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!-- Translation from RTF performed by UnRTF, version 0.21.9 -->
+<!--font table contains 0 fonts total-->
+<!--invalid font number 0-->
+</head>
+<body><b><font size="5"><font color="#000000">RosslerL Rossler chaotic generator<br>
+<!--invalid font number 1-->
+</font></font></b><font size="5"><font color="#000000"><font size="3"><br>
+<!--invalid font number 0-->
+<b># x, y, z = RosslerL.ar(freq, a, b, c, h, xi, yi, zi, mul, add)<br>
+<!--invalid font number 1-->
+</b><br>
+<!--invalid font number 0-->
+<b>freq<!--invalid font number 1-->
+</b> - iteration frequency in Hertz<br>
+<!--invalid font number 0-->
+<b>a, b, c<!--invalid font number 1-->
+</b>- equation variables<br>
+<!--invalid font number 0-->
+<b>h<!--invalid font number 1-->
+</b> - integration time step<br>
+<!--invalid font number 0-->
+<b>xi<!--invalid font number 1-->
+</b> - initial value of x<br>
+<!--invalid font number 0-->
+<b>yi<!--invalid font number 1-->
+</b> - initial value of y<br>
+<!--invalid font number 0-->
+<b>zi<!--invalid font number 1-->
+</b> - initial value of z<br>
+</font></font></font><!--invalid font number 2-->
+<span style="font-size:9pt"><font color="#000000"><br>
+</font></span><!--invalid font number 1-->
+<font size="3"><font color="#000000">A strange attractor discovered by Otto Rossler based on work in chemical kinetics.<!--invalid font number 2-->
+<span style="font-size:9pt"><br>
+<!--invalid font number 1-->
+<font size="3">The system is composed of three ordinary differential equations:<br>
+ <br>
+ x' = - y - z<br>
+ y' = x + ay<br>
+ z' = b + z(x - c)<!--invalid font number 2-->
+<span style="font-size:9pt"><br>
+<br>
+<!--invalid font number 1-->
+<font size="3">The time step amount<!--invalid font number 0-->
+<b>h<!--invalid font number 1-->
+</b>determines the rate at which the ODE is evaluated. Higher values will increase the<br>
+rate, but cause more instability. A safe choice is the default amount of 0.05.<br>
+<br>
+The following examples treat RosslerL as a single-output UGen (i.e. using x only):<br>
+</font></span></font></span></font></font><!--invalid font number 2-->
+<span style="font-size:9pt"><font color="#000000"><br>
+<font color="#bf0000">// vary frequency - these parameters are for &quot;one-pulse&quot; orbit<font color="#000000"><br>
+{ <font color="#0000bf">RosslerL<font color="#000000">.ar(<font color="#0000bf">MouseX<font color="#000000">.kr(20, <font color="#0000bf">SampleRate<font color="#000000">.ir), 0.36, 0.35, 4.5) * 0.3 }.play(s);<br>
+<br>
+<font color="#bf0000">// randomly modulate params<font color="#000000"><br>
+(<br>
+{ <font color="#0000bf">RosslerL<font color="#000000">.ar(<br>
+ <font color="#0000bf">SampleRate<font color="#000000">.ir, <br>
+ 0.2, <font color="#bf0000">// First variable tends to lead to NaN if modulated in this example<font color="#000000"><br>
+ <font color="#0000bf">LFNoise0<font color="#000000">.kr(1, 0.01, 0.2),<br>
+ <font color="#0000bf">LFNoise0<font color="#000000">.kr(1, 0.2, 0.7)<br>
+) * 0.2 }.play(s);<br>
+)<br>
+<br>
+<font color="#bf0000">// as a frequency control<font color="#000000"><br>
+{ <font color="#0000bf">SinOsc<font color="#000000">.ar(<font color="#0000bf">Lag<font color="#000000">.ar(<font color="#0000bf">RosslerL<font color="#000000">.ar(<font color="#0000bf">MouseX<font color="#000000">.kr(1, 200)))*800+900)*0.4 }.play(s);<br>
+</font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></span><!--invalid font number 1-->
+<font size="3"><font color="#000000"><br>
+<br>
+An example utilising the three different outputs as pitch, PWM and pan values (respectively):<br>
+<br>
+</font></font><!--invalid font number 2-->
+<span style="font-size:9pt"><font color="#000000">(<br>
+{<br>
+# x,y,z = <font color="#0000bf">RosslerL<font color="#000000">.ar(<font color="#0000bf">MouseX<font color="#000000">.kr(1, 200));<br>
+<font color="#0000bf">Pan2<font color="#000000">.ar(<font color="#0000bf">Pulse<font color="#000000">.ar(x.range(100,1000), y.range(0,1), 0.3), z)<br>
+}.play(s)<br>
+)<br>
+</font></font></font></font></font></font></font></font></font></span><!--invalid font number 1-->
+<font size="3"><font color="#000000"><br>
+</font></font></body>
+</html>
