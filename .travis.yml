@@ -1,8 +1,7 @@
 compiler:
- - gcc
+ - objective-c
 
 os:
- - linux
  - osx
 
 cache:
