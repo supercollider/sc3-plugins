@@ -1,5 +1,4 @@
-compiler:
- - objective-c
+language: objective-c
 
 os:
  - osx
