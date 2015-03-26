@@ -20,7 +20,7 @@ before_install:
  - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
  - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
  - iflin sudo update-alternatives --auto gcc
- - git checkout https://github.com/supercollider/supercollider.git
+ - git clone https://github.com/supercollider/supercollider.git
 
 before_script:
  - mkdir BUILD
