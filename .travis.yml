@@ -41,7 +41,7 @@ deploy:
  # github releases - only tags
  - provider: releases
    api_key:
-     secure: YN33x5V66b6xepehiEoIm2+UNdbjAPvgrg713F5FdTmWfmuPbLYX6a9zYQYYQ0ZO6w5kofBuWZKL1arw0ABYgUE9kmnNFgx8nR//wsfOnCcgvhGHMXpImzhWX3tPelCW4gyEBF0w8tmN9o4CCC5dcjgHJcpz/q8+eCfg0VeZOZE=
+     secure: LuPXEOO4NA0MJIPyDVEuFrIx+iuAhbxVhgW/p2wSxLZR9rbnhAlnZrCGmVmx0Jrj8BJs7YQ+70xg4fXC+bb/GJ7RommGbYNpF4njMqcEILoOXV3v8yuRc4Ojlu6ePUaHIiQbGsyc2+Hf3/nl+RTWGTcRvuZDa49VpPACQBR7p3g=
    file: $HOME/artifacts/Plugins-$COMMIT_NAME.zip
    prerelease: true
    skip_cleanup: true
