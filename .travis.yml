@@ -1,0 +1,60 @@
+compiler:
+ - gcc
+
+os:
+ - linux
+ - osx
+
+cache:
+ - apt
+ - bundler
+
+before_install:
+ - ifmac () { if [[ $TRAVIS_OS_NAME == osx ]]; then eval $@; fi; }
+ - iflin () { if [[ $TRAVIS_OS_NAME == linux ]]; then eval $@; fi; }
+ - ifmac brew install cmake || true
+ - iflin sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+ - iflin sudo add-apt-repository -y ppa:andykimpe/cmake  # backport of cmake 2.8.12
+ - iflin sudo add-apt-repository -y ppa:ondrej/php5 # libicu-dev 52
+ - iflin sudo apt-get update
+ - iflin sudo apt-get install libicu-dev=52.1-1+debphp.org~precise+1 gcc-4.7 g++-4.7 aptitude build-essential libjack-dev libsndfile1-dev libasound2-dev libavahi-client-dev libreadline6-dev libfftw3-dev libxt-dev libudev-dev pkg-config cmake=2.8.12.2-3 subversion libstdc++5
+ - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
+ - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
+ - iflin sudo update-alternatives --auto gcc
+
+before_script:
+ - mkdir BUILD
+ - cd BUILD
+ - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release ..
+
+script:
+ - make install
+ - export COMMIT_NAME=$TRAVIS_COMMIT
+ - ifmac mkdir -p $HOME/artifacts
+ - ifmac zip -r $HOME/artifacts/Plugins-$COMMIT_NAME.zip SC3plugins
+
+before_deploy:
+ # required for github releases
+ - git fetch --tags
+
+deploy:
+ # github releases - only tags
+ - provider: releases
+   api_key:
+     secure: YN33x5V66b6xepehiEoIm2+UNdbjAPvgrg713F5FdTmWfmuPbLYX6a9zYQYYQ0ZO6w5kofBuWZKL1arw0ABYgUE9kmnNFgx8nR//wsfOnCcgvhGHMXpImzhWX3tPelCW4gyEBF0w8tmN9o4CCC5dcjgHJcpz/q8+eCfg0VeZOZE=
+   file: $HOME/artifacts/Plugins-$COMMIT_NAME.zip
+   prerelease: true
+   skip_cleanup: true
+   on:
+     condition: $TRAVIS_OS_NAME = osx
+     tags: true
+     all_branches: true
+
+notifications:
+  on_success: change
+  on_failure: change
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/51b9b53ca50a7bfca97d
+    on_success: change
+    on_failure: always
