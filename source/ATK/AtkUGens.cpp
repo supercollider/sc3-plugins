@@ -265,27 +265,25 @@ extern "C"
 }
 
 inline float calcmatrixval(float coef, float curval){
-    float val;
-    if(coef == 0.){
-	val = 0.;
-    } else {
-	if(coef == 1.){
-	    val = curval;
-	} else {
-	    val = coef * curval;
-	}
-    }
-    return val;
+    return coef * curval;
 }
 
 // can perhaps optimize a bit here ... check for 0s???
 #define CALC_MATRIX \
 float curvals[4] = {Win[i], Xin[i], Yin[i], Zin[i]}; \
 for(int j = 0; j < 4; j++){ \
-Wout[i] += calcmatrixval(matrix.coefs[0][j], curvals[j]); \
-Xout[i] += calcmatrixval(matrix.coefs[1][j], curvals[j]); \
-Yout[i] += calcmatrixval(matrix.coefs[2][j], curvals[j]); \
-Zout[i] += calcmatrixval(matrix.coefs[3][j], curvals[j]); \
+float wAdd = calcmatrixval(matrix.coefs[0][j], curvals[j]); \
+float xAdd = calcmatrixval(matrix.coefs[1][j], curvals[j]); \
+float yAdd = calcmatrixval(matrix.coefs[2][j], curvals[j]); \
+float zAdd = calcmatrixval(matrix.coefs[3][j], curvals[j]); \
+float wNew = Wout[i] + wAdd; \
+float xNew = Xout[i] + xAdd; \
+float yNew = Yout[i] + yAdd; \
+float zNew = Zout[i] + zAdd; \
+Wout[i] = wNew; \
+Xout[i] = xNew; \
+Yout[i] = yNew; \
+Zout[i] = zNew; \
 } 
 
 #define SETUP_TRANSFORMS \
