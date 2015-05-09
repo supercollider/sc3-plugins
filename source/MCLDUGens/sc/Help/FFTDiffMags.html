@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!-- Translation from RTF performed by UnRTF, version 0.21.9 -->
+<!--font table contains 0 fonts total-->
+<!--invalid font number 0-->
+</head>
+<body><b><font size="5"><font color="#000000">FFTDiffMags A simple spectral difference measure<!--invalid font number 1-->
+</font></font></b><font size="5"><font color="#000000"><span style="font-size:9pt"><br>
+<br>
+<!--invalid font number 2-->
+<font size="3">Compares the spectra of two signals, finding the magnitude of the difference for each frequency bin. These differences are averaged onto the (control-rate) output.<br>
+</font></span></font></font><!--invalid font number 1-->
+<span style="font-size:9pt"><font color="#bf0000"><br>
+</font></span><!--invalid font number 0-->
+<b><font size="3"><font color="#000000"> FFTDiffMags.kr(chain1, chain2)<br>
+</font></font></b><!--invalid font number 1-->
+<span style="font-size:9pt"><font color="#bf0000"> <br>
+</font></span><!--invalid font number 2-->
+<font size="3"><font color="#000000">Note that this crude measure works on a bin-by-bin basis and is not clever enough to detect higher-order similarities between spectra (such as general treble/bass balance).<br>
+<br>
+See also PV_DiffMags which performs the same calculation but doesn't sum the difference values - it leaves them in the frequency-domain buffer for further use.<br>
+</font></font><!--invalid font number 1-->
+<span style="font-size:9pt"><font color="#000000"><br>
+<br>
+<font color="#bf0000">// How different are the spectra of square waves at different PWM settings?<font color="#000000"><br>
+<font color="#bf0000">// This test outputs two square waves, one of whose PWM is controlled by <font color="#000000"><br>
+<font color="#bf0000">// MouseX - in the middle of the screen, the PWMs match,<font color="#000000"><br>
+<font color="#bf0000">// but at either side they are more different.<font color="#000000"><br>
+<font color="#bf0000">// Watch the output to channel 0 to see the shape of the returned signal<font color="#000000"><br>
+<br>
+<font color="#0000bf">Server<font color="#000000">.default_(s = <font color="#0000bf">Server<font color="#000000">.internal.boot);<br>
+b = <font color="#0000bf">Buffer<font color="#000000">.alloc(s, 1024, 1);<br>
+c = <font color="#0000bf">Buffer<font color="#000000">.alloc(s, 1024, 1);<br>
+(<br>
+{<br>
+<font color="#0000bf">var<font color="#000000"> chain1, chain2, chain, sig1, sig2, difference;<br>
+sig1 = <font color="#0000bf">Pulse<font color="#000000">.ar(100, <font color="#0000bf">MouseX<font color="#000000">.kr(0.1, 0.9));<br>
+sig2 = <font color="#0000bf">Pulse<font color="#000000">.ar(100, 0.5);<br>
+chain1 = <font color="#0000bf">FFT<font color="#000000">(b.bufnum, sig1);<br>
+chain2 = <font color="#0000bf">FFT<font color="#000000">(c.bufnum, sig2);<br>
+difference = <font color="#0000bf">FFTDiffMags<font color="#000000">.kr(chain1, chain2);<br>
+<br>
+difference.poll(1, <font color="#606060">&quot;difference between spectra:&quot;<font color="#000000">);<br>
+<font color="#000000"><br>
+[sig1, sig2] * 0.1;<br>
+}.scope<br>
+)</font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></span></body>
+</html>

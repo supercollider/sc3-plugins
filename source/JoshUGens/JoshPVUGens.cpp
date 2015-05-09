@@ -230,7 +230,7 @@ struct PV_PitchShift : PV_Unit
 
 extern "C"
 {
-	#include "fftlib.h"
+	#include "SC_fftlib.h"
 
 	void load(InterfaceTable *inTable);
 

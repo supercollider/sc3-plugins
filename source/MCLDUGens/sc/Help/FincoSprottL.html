@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!-- Translation from RTF performed by UnRTF, version 0.21.9 -->
+<!--font table contains 0 fonts total-->
+<!--invalid font number 0-->
+</head>
+<body><b><font size="5"><font color="#000000">FincoSprottL<!--invalid font number 1-->
+</font></font></b><font size="5"><font color="#000000"><font size="3"><!--invalid font number 0-->
+<b> Yet another chaotic system UGen<br>
+<br>
+</b></font></font></font><!--invalid font number 2-->
+<span style="font-size:9pt"><font color="#000000"># x,y,z = <font color="#0000bf">FincoSprottL<font color="#000000">.ar(freq, a, h, xi, yi, zi, mul, add)<!--invalid font number 0-->
+<b><font size="3"><br>
+</font></b></font></font></font></span><font color="#000000"><br>
+</font><!--invalid font number 2-->
+<font color="#000000">The &quot;system L&quot; described by Lucas Finco and Clint Sprott:<br>
+http://sprott.physics.wisc.edu/chaos/finco/abs.html<br>
+<br>
+The system is defined by:<br>
+<br>
+</font><!--invalid font number 3-->
+<b><span style="font-size:16pt"><font color="#000000"><center>d<!--invalid font number 4-->
+<i>x<!--invalid font number 3-->
+</i>/d<!--invalid font number 4-->
+<i>t<!--invalid font number 3-->
+</i> =<!--invalid font number 4-->
+<i>y<!--invalid font number 3-->
+</i>+<!--invalid font number 4-->
+<i>z<!--invalid font number 5-->
+</i></font></span></b><span style="font-size:16pt"><font color="#000000"><!--invalid font number 6-->
+&#8232;<b>d<!--invalid font number 4-->
+<i>y<!--invalid font number 3-->
+</i>/d<!--invalid font number 4-->
+<i>t<!--invalid font number 3-->
+</i> =<!--invalid font number 4-->
+<i>a<!--invalid font number 3-->
+</i>|<!--invalid font number 4-->
+<i>x<!--invalid font number 3-->
+</i>| -<!--invalid font number 4-->
+<i>y<!--invalid font number 5-->
+</i></b><!--invalid font number 6-->
+&#8232;<b>d<!--invalid font number 4-->
+<i>z<!--invalid font number 3-->
+</i>/d<!--invalid font number 4-->
+<i>t<!--invalid font number 3-->
+</i> = 1 -<!--invalid font number 4-->
+<i>x<!--invalid font number 2-->
+</i></b><font size="3"><br>
+</font></font></span></center>
+<font color="#000000"><br>
+See also <u>[FincoSprottM]</u> and <u>[FincoSprottS]<br>
+<br>
+</u>Examples using just the x value:<span style="font-size:9pt"><font color="#bf0000"><br>
+<br>
+// Vary the freq with the mouse<font color="#000000"><br>
+{ <font color="#0000bf">FincoSprottL<font color="#000000">.ar(<font color="#0000bf">MouseX<font color="#000000">.kr(20, <font color="#0000bf">SampleRate<font color="#000000">.ir)).poll(2) * 0.3 }.play(s);<br>
+<br>
+</font></font></font></font></font></font></font></font></span></font><font color="#bf0000">// Vary the parameter &quot;a&quot;.<br>
+// NB the parameter affects the amplitude, so this example is clipped<font color="#000000"><br>
+{ <font color="#0000bf">FincoSprottL<font color="#000000">.ar(<font color="#0000bf">SampleRate<font color="#000000">.ir, a:<font color="#0000bf">LFNoise0<font color="#000000">.kr(1).range(1, 3)).poll(2).softclip * 0.3 }.play(s);<br>
+<br>
+<br>
+</font></font></font></font></font></font></font></font><font size="3"><font color="#000000">An example utilising the three different outputs as pitch, PWM and pan values (respectively):<br>
+</font></font><!--invalid font number 1-->
+<font color="#000000"><br>
+</font><!--invalid font number 2-->
+<span style="font-size:9pt"><font color="#000000">(<br>
+{<br>
+# x,y,z = <font color="#0000bf">FincoSprottL<font color="#000000">.ar(<font color="#0000bf">MouseX<font color="#000000">.kr(1, 200));<br>
+<font color="#0000bf">Pan2<font color="#000000">.ar(<font color="#0000bf">Pulse<font color="#000000">.ar(x.range(100,1000), y.range(0,1), 0.3), z + 0.95)<br>
+}.play(s)<br>
+)<br>
+</font></font></font></font></font></font></font></font></font></span><!--invalid font number 1-->
+<font size="3"><font color="#000000"><br>
+</font></font></body>
+</html>
