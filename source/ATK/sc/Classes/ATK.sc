@@ -459,9 +459,9 @@ FoaUGen {
 FoaDecode : FoaUGen {
 	*ar { arg in, decoder, mul = 1, add = 0;
 		in = this.checkChans(in);
-		switch ( decoder.class, 
 
-			FoaDecoderMatrix, {
+		case
+			{ decoder.isKindOf(FoaDecoderMatrix) } {
 
 				if ( decoder.shelfFreq.isNumber, { // shelf filter?
 					in = FoaPsychoShelf.ar(in,
@@ -469,12 +469,10 @@ FoaDecode : FoaUGen {
 				});
 
 				^AtkMatrixMix.ar(in, decoder.matrix, mul, add)
-			},
-			
-			FoaDecoderKernel, {
-				^AtkKernelConv.ar(in, decoder.kernel, mul, add)
 			}
-		)
+			{ decoder.isKindOf(FoaDecoderKernel) } {
+				^AtkKernelConv.ar(in, decoder.kernel, mul, add)
+			};
 	}
 }
 
@@ -487,16 +485,13 @@ FoaEncode : FoaUGen {
 		
 		var out;
 
-		switch ( encoder.class, 
-
-			FoaEncoderMatrix, {
+		case
+			{ encoder.isKindOf(FoaEncoderMatrix) } {
 				out = AtkMatrixMix.ar(in, encoder.matrix, mul, add)
-			},
-			
-			FoaEncoderKernel, {
-				out = AtkKernelConv.ar(in, encoder.kernel, mul, add)
 			}
-		);
+			{ encoder.isKindOf(FoaEncoderKernel) } {
+				out = AtkKernelConv.ar(in, encoder.kernel, mul, add)
+			};
 
 //		if ( out.size < 4, {			// 1st order, fill missing harms with zeros
 //			
