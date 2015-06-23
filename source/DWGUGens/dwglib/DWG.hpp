@@ -74,6 +74,8 @@ inline bool approximatelyEqual(float a, float b, float epsilon = 1e-7f)
 	float absb = fabs(b);
 	return fabs(a - b) <= ( (absa < absb ? absb : absa) * epsilon);
 }
+float PhaseDelay(float f,float* B,int sizeB,float* A,int sizeA,float FS);
+float PhaseDelayDerive(float omega,float* B,int sizeB,float* A,int sizeA,float delta=0.0005);
 float groupdelay(float f,float *B,int sizeB,float *A,int sizeA,float FS);
 long Nchoose(long n, long k);
 float ValimakiDispersion(float B, float f, int M);
@@ -364,6 +366,16 @@ class LTITv
 		}
 		return grdel;
 	}
+	float phasedelay(float f,float FS){
+		//return ::PhaseDelay(f,KernelB,kernel_sizeB,KernelA,kernel_sizeA,FS);
+		//if(dirty_phdel){
+			float grpdel = groupdelay(f,FS);
+			float omega = 2.0*M_PI*f/FS;
+			float phdel = grpdel - omega*::PhaseDelayDerive(omega,KernelB,kernel_sizeB,KernelA,kernel_sizeA);
+			//dirty_phdel = false;
+		//}
+		return phdel;
+	}
 };
 //////////////specialization
 template<>
@@ -409,6 +421,16 @@ class LTITv<1,1>
 			dirty_grdel = false;
 		}
 		return grdel;
+	}
+	float phasedelay(float f,float FS){
+		//return ::PhaseDelay(f,&KernelB,1,&KernelA,1,FS);
+		//if(dirty_phdel){
+			float grpdel = groupdelay(f,FS);
+			float omega = 2.0*M_PI*f/FS;
+			float phdel = grpdel - omega*::PhaseDelayDerive(omega,&KernelB,1,&KernelA,1);
+			//dirty_phdel = false;
+		//}
+		return phdel;
 	}
 };
 //////////////////////////////////////////////////////////
@@ -779,7 +801,7 @@ struct ThirianDispersion{
 			return;
 		float D = ValimakiDispersion(B,freq,M);
 		//if(D <=1)
-		//	printf("D es %g\n",D);
+			//Print("D es %g\n",D);
 		for(int i=0; i<M ;i++)
 			dispersion[i].setcoeffs(D);
 		this->freq = freq;
@@ -790,6 +812,11 @@ struct ThirianDispersion{
 		if(B==0)
 			return 0;
 		return M*dispersion[0].groupdelay(freq,FS);
+	}
+	float phasedelay(float FS){
+		if(B==0)
+			return 0;
+		return M*dispersion[0].phasedelay(freq,FS);
 	}
 	float filter(float a){
 		if(B==0)

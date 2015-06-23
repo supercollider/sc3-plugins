@@ -50,28 +50,36 @@ DWGBowedSimple::DWGBowedSimple(Unit* unit){
 }
 void DWGBowedSimple::Release(float trig,float *out,int NumSamples){
 	
-	if(this->m_trig <=0 && trig > 0){
+	if(this->m_trig <=0.0f && trig > 0.0f){
 		this->m_trig = trig;
 	}
-	if((this->m_trig >0 && trig <= 0)){
+	if((this->m_trig >0.0f && trig <= 0.0f)){
 		int relcount = this->relcount;
 		float rellevel = this->rellevel;
 		float rellevelstep = this->rellevelstep;
 		
 		for(int i=0; i<NumSamples; i++){
-			if(relcount > 0){
+			//if(relcount > 0){
 				rellevel -= rellevelstep;
+				rellevel = std::max(0.0f, rellevel);
 				relcount--;
-			}
+			//}
 			out[i] *=rellevel;
 		}
-		if(relcount <=0)
+		if(relcount <=0 && rellevel == 0.0f)
 			DoneAction(2,this);
 			
 		this->relcount = relcount;
 		this->rellevel = rellevel;
 	}
 }
+////////////////////////////////////////////////////
+struct DWGBowedStk : public DWGBowedSimple
+{
+	DWGBowedStk(Unit* unit);
+};
+SCWrapClass(DWGBowedStk);
+DWGBowedStk::DWGBowedStk(Unit* unit):DWGBowedSimple(unit){ SETCALC(DWGBowedStk_next);}
 ////////////////////////////////////////////////////
 struct DWGBowed : public DWGBowedSimple
 {
@@ -168,6 +176,16 @@ float Bow(float vb,float fb,float vsr_plus_vsl){
 	float vdeltap = vb - (vsr_plus_vsl);
 	float ref = BowTable(vdeltap,fb);
 	return ref * vdeltap;
+}
+
+float BowStk(float vb,float fb,float vsr_plus_vsl){
+	float vdeltap = vb - (vsr_plus_vsl);
+	float slope = ( 5.0 - (4.0 * fb) );
+	float sample = vdeltap + 0.001; //offset
+	sample *= slope;
+	sample = fabs( sample ) + 0.75;
+	sample =  pow( sample, -4.0 );
+	return sample;
 }
 /////////////////////////////////////////
 float hyperbolicbow(float deltav,float fb){
@@ -477,6 +495,49 @@ void DWGBowedSimple_next(DWGBowedSimple *unit, int inNumSamples)
 	unit->Release(trig,out,inNumSamples);
 }
 
+void DWGBowedStk_next(DWGBowedStk *unit, int inNumSamples)
+{
+
+	float *out = OUT(0);
+	float freq = ZIN0(0);
+	float bowvelocity = ZIN0(1);
+	float bowforce = ZIN0(2);
+	float trig = ZIN0(3);
+	float pos = ZIN0(4);
+
+	float c1 = ZIN0(6);
+	float c3 = std::max(ZIN0(7),(float)1e-9);
+
+	
+	unit->Loss.setcoeffs(freq,c1,c3);
+	float lossdelay = unit->Loss.groupdelay(freq,SAMPLERATE);
+	float deltot = SAMPLERATE/freq;
+	float del1 = (deltot - lossdelay)*0.5 - 1;
+
+
+	float PMAS,PMAS2;
+	float PMENOS;
+	for (int i=0; i < inNumSamples; ++i)
+	{
+		float vel = unit->DWGF[0].get(pos*del1) + unit->DWGF[1].get(del1*(1-pos));
+		vel = BowStk(bowvelocity,bowforce,vel);
+		//vel = unit->Bow2(bowvelocity,bowforce,vel);
+		unit->DWGF[0].add(vel,pos*del1);
+		unit->DWGF[1].add(vel,del1*(1-pos));
+		
+		PMAS = unit->DWGF[0].delay(del1);
+		PMAS2 = unit->Loss.pushConvol(PMAS);
+		PMENOS = unit->DWGF[1].delay(del1);
+		
+		unit->DWGF[1].push(-PMAS2);
+		unit->DWGF[0].push(-PMENOS);
+		
+		out[i] = PMAS;// + PMAS2;
+
+	}
+	unit->Release(trig,out,inNumSamples);
+}
+
 /////////////////////////////////////////
 PluginLoad(DWGBowed)
 {
@@ -484,5 +545,6 @@ PluginLoad(DWGBowed)
 	DefineDtorUnit(DWGBowed);
 	DefineDtorUnit(DWGBowedTor);
 	DefineDtorUnit(DWGBowedSimple);
+	DefineDtorUnit(DWGBowedStk);
 	DefineDtorUnit(DWGSoundBoard);
 }
