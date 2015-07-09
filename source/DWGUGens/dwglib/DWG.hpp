@@ -79,6 +79,8 @@ float PhaseDelayDerive(float omega,float* B,int sizeB,float* A,int sizeA,float d
 float groupdelay(float f,float *B,int sizeB,float *A,int sizeA,float FS);
 long Nchoose(long n, long k);
 float ValimakiDispersion(float B, float f, int M);
+void kill_denormals(float &val);
+void kill_denormals(double &val);
 ///////////////////////////
 //Circular BufferT
 template<int size>
@@ -224,7 +226,49 @@ class LagrangeT : public CircularBuffer2POWSizedT<size>
 	float delay(){return delay(actdelay);}
 };
 
+//1st order lagrange fractional delay
+template<int size>
+class Lagrange1T : public CircularBuffer2POWSizedT<size>
+{
 
+	public:
+	float lastdelay;
+	float h[2];
+	int ptL;
+	float actdelay;
+	Lagrange1T()
+	{
+		actdelay = 0;
+		lastdelay = 0;
+		ptL = CalcCoeffs(0);
+		//Print("LAGRANGE construc\n");
+	}
+	int CalcCoeffs(float delay)
+	{
+		int intd =(int) delay;
+		float Dm1 = delay - (float)intd;
+		h[0] = (1.0 - Dm1);
+		h[1] = Dm1;
+		return intd ;
+	}
+	float delay(float pos)
+	{
+		assertv(size >= pos);
+		if (pos != lastdelay){
+			ptL = CalcCoeffs(pos);
+			lastdelay = pos;
+		}
+		//return this->Buffer[(this->pointer - (int)pos) & this->mask];
+		float sum = 0;
+		for(int i=0; i < 2; i++){
+			sum += this->Buffer[(this->pointer + ptL + i) & this->mask]*h[i];
+		}
+		//DUMPONNAN(sum);
+		return sum;
+	}
+	void setdelay(float del){actdelay = del;}
+	float delay(){return delay(actdelay);}
+};
 
 template<float * Kernel,int kernel_size>
 class ConvolverT
@@ -840,5 +884,236 @@ struct DCBlocker:public LTITv<2,1>{
 		this->R = R;
 		this->dirty_grdel = true;
 	}
+};
+
+struct KL_Junction{
+    Unit * unit;
+    float k;
+    float inR;
+    float inL;
+    float outR;
+    float outL;
+    KL_Junction(Unit * unit):inR(0),inL(0),outR(0),outL(0),k(0){this->unit = unit;};
+    void* operator new(size_t sz, Unit* unit) {
+        //Print("KL_Junction new\n");
+		void * ptr = NULL;
+        ptr = RTAlloc(unit->mWorld,sz);
+        /*
+        if(ptr==NULL)
+            Print("Null pointer\n");
+        else
+            Print("not Null pointer\n");*/
+        return ptr;
+	}
+    void operator delete(void* pObject) {
+		//Print("KL_Junction delete\n");
+		KL_Junction * obj = (KL_Junction*)pObject;
+		RTFree(obj->unit->mWorld, pObject);
+	}
+    void set_areas(float a1,float a2){
+        float num = a1 - a2;
+        if (num == 0.0)
+            k = 0.0;
+        else
+            k = num/(a1 + a2);
+        /*
+        if(a1 < 1e-18)
+            lossR = 0.0;
+        else
+            lossR = 1.0 - std::min(lossF/sqrt(a1),1.0);
+        if(a2 < 1e-18)
+            lossL = 0.0;
+        else
+            lossL = 1.0 - std::min(lossF/sqrt(a2),1.0);
+        */
+    }
+    void go(){
+        //inR *= lossR;
+        //inL *= lossL;
+        outR = inR*(1.0 + k) - inL*k;
+        outL = inL*(1.0 - k) + inR*k;
+        kill_denormals(outR);
+        kill_denormals(outL);
+    }
+};
+
+struct KL_JunctionU{
+    Unit * unit;
+    float k;
+    float inR;
+    float inL;
+    float outR;
+    float outL;
+    KL_JunctionU(Unit * unit):inR(0),inL(0),outR(0),outL(0),k(0){this->unit = unit;};
+    void* operator new(size_t sz, Unit* unit) {
+        //Print("KL_Junction new\n");
+		void * ptr = NULL;
+        ptr = RTAlloc(unit->mWorld,sz);
+        /*
+        if(ptr==NULL)
+            Print("Null pointer\n");
+        else
+            Print("not Null pointer\n");*/
+        return ptr;
+	}
+    void operator delete(void* pObject) {
+		//Print("KL_Junction delete\n");
+		KL_Junction * obj = (KL_Junction*)pObject;
+		RTFree(obj->unit->mWorld, pObject);
+	}
+    void set_areas(float a1,float a2){
+        float num = a1 - a2;
+        if (num == 0.0)
+            k = 0.0;
+        else
+            k = num/(a1 + a2);
+        /*
+        if(a1 < 1e-18)
+            lossR = 0.0;
+        else
+            lossR = 1.0 - std::min(lossF/sqrt(a1),1.0);
+        if(a2 < 1e-18)
+            lossL = 0.0;
+        else
+            lossL = 1.0 - std::min(lossF/sqrt(a2),1.0);
+        */
+    }
+    void go(){
+        //inR *= lossR;
+        //inL *= lossL;
+        outR = inR*(1.0 - k) - inL*k;
+        outL = inL*(1.0 + k) + inR*k;
+        kill_denormals(outR);
+        kill_denormals(outL);
+    }
+};
+template<int N>
+class NJunction{
+    public:
+    float in[N];
+    float out[N];
+    float alpha[N];
+    /*
+    void* operator new(size_t sz, Unit* unit) {
+        return RTAlloc(unit->mWorld,sz);
+	}
+    void operator delete(void* pObject) {
+		//Print("KL_Junction delete\n");
+		NJunction * obj = (NJunction*)pObject;
+		RTFree(obj->unit->mWorld, pObject);
+	}*/
+    NJunction(){
+        Print("NJunction const\n");
+        for(int i=0;i<N;i++){
+            in[i]=0;
+            out[i]=0;
+        }
+    }
+    void Init(){
+        Print("NJunction init\n");
+        for(int i=0;i<N;i++){
+            in[i]=0;
+            out[i]=0;
+        }
+    }
+    void calc_alpha(float *areas){
+        float Sa = 0;
+        for(int i=0;i<N;i++)
+            Sa += areas[i];
+        for(int i=0;i<N;i++)
+            alpha[i] = 2.0*areas[i]/Sa;
+    }
+    void go(){
+        float PJ=0;
+        for(int i=0;i<N;i++)
+            PJ += alpha[i]*in[i];
+        for(int i=0;i<N;i++)
+            out[i] = PJ - in[i];
+    }
+};
+template<int N>
+class NJunctionU{
+    public:
+    float in[N];
+    float out[N];
+    float alpha[N];
+    /*
+    void* operator new(size_t sz, Unit* unit) {
+        return RTAlloc(unit->mWorld,sz);
+	}
+    void operator delete(void* pObject) {
+		//Print("KL_Junction delete\n");
+		NJunction * obj = (NJunction*)pObject;
+		RTFree(obj->unit->mWorld, pObject);
+	}*/
+    NJunctionU(){
+        Print("NJunctionU const\n");
+        for(int i=0;i<N;i++){
+            in[i]=0;
+            out[i]=0;
+        }
+    }
+    void Init(){
+        Print("NJunctionU init\n");
+        for(int i=0;i<N;i++){
+            in[i]=0;
+            out[i]=0;
+        }
+    }
+    void calc_alpha(float *areas){
+        float Sa = 0;
+        for(int i=0;i<N;i++)
+            Sa += areas[i];
+        for(int i=0;i<N;i++)
+            alpha[i] = 2.0*areas[i]/Sa;
+    }
+    void go(){
+        float UJ=0;
+        for(int i=0;i<N;i++)
+            UJ += in[i];
+        for(int i=0;i<N;i++)
+            out[i] = in[i] - alpha[i] * UJ;
+    }
+};
+class TUBE{
+    Unit * unit;
+    public:
+    Lagrange1T<1024> Rline;
+    Lagrange1T<1024> Lline;
+    float inR;
+    float inL;
+    float outR;
+    float outL;
+    float del;
+    float loss;
+    void* operator new(size_t sz, Unit* unit) {
+        //Print("TUBE new\n");
+		void * ptr = NULL;
+        ptr = RTAlloc(unit->mWorld,sz);
+
+        return ptr;
+	}
+    void operator delete(void* pObject) {
+		TUBE * obj = (TUBE*)pObject;
+		RTFree(obj->unit->mWorld, pObject);
+	}
+    TUBE(Unit * unit):inR(0),inL(0),outR(0),outL(0),del(0.0),loss(1){
+        //Print("TUBE constructor\n");
+        this->unit = unit;
+    }
+    void set_area(float a1,float lossF)
+    {
+        if(a1 < 1e-18)
+            loss = 0.0;
+        else
+            loss = 1.0 - std::min(lossF/sqrt(a1),1.0);
+
+    }
+    void go(){
+        Rline.push(inR);
+        Lline.push(inL);
+        outR = loss*Rline.delay(del);
+        outL = loss*Lline.delay(del);
+    }
 };
 #endif

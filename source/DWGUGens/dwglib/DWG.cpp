@@ -24,6 +24,18 @@ void volcar(const char *_Message, const char *_File, unsigned _Line)
 {
 	Print("assertion %s ,%s:%d\n",_Message,_File,_Line);
 }
+void kill_denormals(float &val)
+{
+	static const float anti_denormal = 1e-18;
+	val += anti_denormal;
+	val -= anti_denormal;
+}
+void kill_denormals(double &val)
+{
+	static const double anti_denormal = 1e-18;
+	val += anti_denormal;
+	val -= anti_denormal;
+}
 float ValimakiDispersion(float B, float f, int M) {
   float C1,C2,k1,k2,k3;
   if(M==4) {
