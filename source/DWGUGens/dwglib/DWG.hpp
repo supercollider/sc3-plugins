@@ -225,6 +225,61 @@ class LagrangeT : public CircularBuffer2POWSizedT<size>
 	void setdelay(float del){actdelay = del;}
 	float delay(){return delay(actdelay);}
 };
+//3rd order lagrange fractional multitap delay
+template<int size,int taps>
+class LagrangeMtapT : public CircularBuffer2POWSizedT<size>
+{
+
+	public:
+	float lastdelay[taps];
+	float h[taps][4];
+	int ptL[taps];
+	//float actdelay;
+	LagrangeMtapT()
+	{
+		//actdelay = 0;
+        for(int i=0;i<taps;i++){
+            lastdelay[i] = 0.0;
+            ptL[i] = CalcCoeffs(0.0,i);
+        }
+	}
+	int CalcCoeffs(float delay,int tap)
+	{
+		int intd =(int) delay;
+		float Dm1 = delay - (float)intd;
+		intd -= 1.;
+		float D = Dm1 + 1;
+		float Dm2 = Dm1 - 1;
+		float Dm3 = Dm1 - 2;
+		float DxDm1 = D * Dm1;
+		//float Dm1xDm2 = Dm1 * Dm2;
+		float Dm2xDm3 = Dm2 *Dm3;
+		h[tap][0] = (-1/6.)* Dm1 * Dm2xDm3;
+		h[tap][1] = 0.5 * D * Dm2xDm3;
+		h[tap][2] = -0.5 * DxDm1 * Dm3;
+		h[tap][3] = (1/6.) * DxDm1 * Dm2;
+		//Print("LagrangeT CalcCoefs %d coefs %.34g %.39g %.39g %.39g delay %g\n",intd - 1,h[0],h[1],h[2],h[3],delay);
+        //printf("LagrangeMtap calc %f, %d\n",delay,tap);
+		return intd ;
+	}
+	float delay(float pos,int tap)
+	{
+		assertv(size >= pos);
+		if (pos != lastdelay[tap]){
+			ptL[tap] = CalcCoeffs(pos,tap);
+			lastdelay[tap] = pos;
+		}
+		//return this->Buffer[(this->pointer - (int)pos) & this->mask];
+		float sum = 0;
+		for(int i=0; i < 4; i++){
+			sum += this->Buffer[(this->pointer + ptL[tap] + i) & this->mask]*h[tap][i];
+		}
+		//DUMPONNAN(sum);
+		return sum;
+	}
+	//void setdelay(float del){actdelay = del;}
+	//float delay(){return delay(actdelay);}
+};
 
 //1st order lagrange fractional delay
 template<int size>
@@ -308,6 +363,10 @@ class LTIT
 	};
 	void push(float a){
 		cbuf.push(a);
+	}
+    float filter(float a){
+		push(a);
+		return Convol();
 	}
 	float pushConvol(float a){
 		push(a);
@@ -888,7 +947,7 @@ struct DCBlocker:public LTITv<2,1>{
 
 struct KL_Junction{
     Unit * unit;
-    float k;
+    float k,one_plus_k,one_minus_k;
     float inR;
     float inL;
     float outR;
@@ -916,6 +975,8 @@ struct KL_Junction{
             k = 0.0;
         else
             k = num/(a1 + a2);
+        one_plus_k = 1.0 + k;
+        one_minus_k = 1.0 - k;
         /*
         if(a1 < 1e-18)
             lossR = 0.0;
@@ -930,8 +991,8 @@ struct KL_Junction{
     void go(){
         //inR *= lossR;
         //inL *= lossL;
-        outR = inR*(1.0 + k) - inL*k;
-        outL = inL*(1.0 - k) + inR*k;
+        outR = inR*(one_plus_k) - inL*k;
+        outL = inL*(one_minus_k) + inR*k;
         kill_denormals(outR);
         kill_denormals(outL);
     }
