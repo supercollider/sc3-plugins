@@ -15,7 +15,7 @@ public:
 		RTFree(gWorld, (Hammer*)pObject);
 	}
   float load( float vin);
-
+  float trigger(float v);
   float dt;
   float dti;
   float x;

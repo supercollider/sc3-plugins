@@ -23,7 +23,10 @@ Hammer :: Hammer(float f, float Fs, float m, float K, float p, float Z, float al
 
 Hammer :: ~Hammer() {
 }
-
+float Hammer::trigger(float v){
+      this->v0 = v;
+   this->v = v;
+}
 float Hammer :: load(float vin) {
   for(int k=0;k<S;k++) {
     float up;

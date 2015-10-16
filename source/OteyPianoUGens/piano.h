@@ -26,6 +26,7 @@ class Piano {
 
   long go(float *out, int samples);
   float getResampleRatio();
+  void trigger(float v);
 
 	Unit * unit;
 	/*

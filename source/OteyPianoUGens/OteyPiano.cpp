@@ -65,6 +65,10 @@ float DWGReverb :: reverb(float in)
   return mix*out + (1.0-mix)*in;
 }
 ///////////////////////////////////////////////////////
+void Piano::trigger(float v){
+    this->v0 = v;
+    hammer->trigger(v);
+}
 long Piano :: go(float *out, int samples) 
 {
   long n = 0;
@@ -340,8 +344,12 @@ void OteyPianoStrings_Dtor(OteyPianoStrings* unit) {
 void OteyPianoStrings_next(OteyPianoStrings *unit, int inNumSamples) {
 
 	float * out = OUT(0);
+    float velocity = ZIN0(1);
 	float gate = ZIN0(2);
+    if (gate > 0.0)
+        unit->piano.trigger(velocity*10.0);
 	unit->piano.go(out,inNumSamples);
+    /*
 	if(gate == 0.0){
 		int relcount = unit->relcount;
 		float rellevel = unit->rellevel;
@@ -360,6 +368,7 @@ void OteyPianoStrings_next(OteyPianoStrings *unit, int inNumSamples) {
 		unit->relcount = relcount;
 		unit->rellevel = rellevel;
 	}
+    */
 }
 OteyPiano::OteyPiano(Unit *unit):piano(unit){
 
