@@ -133,10 +133,10 @@ void DWGPluckedStiff_next(DWGPluckedStiff *unit, int inNumSamples)
 	float B = ZIN0(8)/100000;
 
 	unit->disper.setcoeffs(freq,B);
-	float disperdelay = unit->disper.groupdelay(SAMPLERATE);
-	
+	float disperdelay = unit->disper.phasedelay(SAMPLERATE);
+	//Print("diff %f\n",disperdelay - unit->disper.groupdelay(SAMPLERATE));
 	unit->Loss.setcoeffs(freq,c1,c3);
-	float lossdelay = unit->Loss.groupdelay(freq,SAMPLERATE);
+	float lossdelay = unit->Loss.phasedelay(freq,SAMPLERATE);
 	float deltot = SAMPLERATE/freq;
 	float del1 = (deltot - lossdelay - disperdelay)*0.5 - 1;
 

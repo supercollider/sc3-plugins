@@ -24,6 +24,18 @@ void volcar(const char *_Message, const char *_File, unsigned _Line)
 {
 	Print("assertion %s ,%s:%d\n",_Message,_File,_Line);
 }
+void kill_denormals(float &val)
+{
+	static const float anti_denormal = 1e-18;
+	val += anti_denormal;
+	val -= anti_denormal;
+}
+void kill_denormals(double &val)
+{
+	static const double anti_denormal = 1e-18;
+	val += anti_denormal;
+	val -= anti_denormal;
+}
 float ValimakiDispersion(float B, float f, int M) {
   float C1,C2,k1,k2,k3;
   if(M==4) {
@@ -100,6 +112,32 @@ float groupdelay(float f,float *B,int sizeB,float *A,int sizeA,float FS){
 	float c[2] ; complex_divide(Num,AxB,c);
 	return c[0];
 }
+////
+void evalpoly(float omega,float* B,int sizeB,float* A,int sizeA,float H[2]){
+	float HB[2];
+	float HA[2];
+	evalpolyB(omega,B,sizeB,HB);
+	evalpolyA(omega,A,sizeA,HA);
+	complex_divide(HB,HA,H);
+}
+float PhaseIIR(float omega,float* B,int sizeB,float* A,int sizeA){
+	float C[2];
+	evalpoly(omega,B,sizeB,A,sizeA,C);
+	return atan2(C[1],C[0]);
+}
+float PhaseDelayDerive(float omega,float* B,int sizeB,float* A,int sizeA,float delta){
+	float omega1 = omega - delta;
+	float omega2 = omega + delta;
+	float p1 = PhaseIIR(omega1,B,sizeB,A,sizeA);
+	float p2 = PhaseIIR(omega2,B,sizeB,A,sizeA);
+	return (-omega1*p2 + omega2*p1)/(2*delta*omega1*omega2);
+}
+float PhaseDelay(float f,float* B,int sizeB,float* A,int sizeA,float FS){
+	float grpdel = ::groupdelay(f,B,sizeB,A,sizeA,FS);
+	float omega = 2.0*M_PI*f/FS;
+	return grpdel - omega*PhaseDelayDerive(omega,B,sizeB,A,sizeA);
+}
+///
 long Nchoose(long n, long k) {
   long divisor = 1;
   long multiplier = n;
