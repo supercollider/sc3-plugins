@@ -5,11 +5,13 @@ categories:: UGens>PhysicalModels
 
 Description::
 
+Should not use this class but OteyPianoString instead (see example) for having only one soundboard for all strings which is more efficient.
+
 Digital wave guide physical model of a piano wrapping the code provided by Clayton Otey.
 
 It is important to release synth once finished because because it is CPU expensive.
 
-Should not use this class but OteyPianoString instead (see example)
+
 
 Classmethods::
 
@@ -98,8 +100,8 @@ x.free;
 
 //Define piano synthdef
 (
-SynthDef(\help_oteypiano, { |out=0, freq=440, amp=0.5,rho=1|
-	var son = OteyPiano.ar(freq, amp, rho:rho);
+SynthDef(\help_oteypiano, { |out=0, freq=440,gate=1, amp=0.5,rho=1|
+	var son = OteyPiano.ar(freq, amp, rho:rho)*EnvGen.ar(Env.asr(0,1,0.1),gate,doneAction:2);
 	Out.ar(out, Pan2.ar(son * 0.1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
 }).add;
 )
