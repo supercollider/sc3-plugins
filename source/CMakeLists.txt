@@ -232,7 +232,7 @@ if(NOT WIN32)
 endif()
 
 # OteyPianoUGens
-BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/DWG.cpp;OteyPianoUGens/reverb.cpp"
+BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
              "" "OteyPianoUGens")
              
 # PitchDetectionUGens
