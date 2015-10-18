@@ -6,7 +6,7 @@ supercollider wrapped by Victor Bombi
 #include <stdlib.h>
 #include "piano.h"
 #include <string.h>
-
+#include "../DWGUGens/dwglib/DWG.cpp"
 //#include "DWGReverb.cpp"
 ///////////////////////////////////////////////////////
 
@@ -65,6 +65,10 @@ float DWGReverb :: reverb(float in)
   return mix*out + (1.0-mix)*in;
 }
 ///////////////////////////////////////////////////////
+void Piano::trigger(float v){
+    this->v0 = v;
+    hammer->trigger(v);
+}
 long Piano :: go(float *out, int samples) 
 {
   long n = 0;
@@ -79,6 +83,7 @@ long Piano :: go(float *out, int samples)
     for(int k=0;k<nstrings;k++) {
       vstring += string[k]->input_velocity();
     }
+
     float hload = hammer->load(vstring/nstrings);
     float load = 0;
 	/*
@@ -137,7 +142,7 @@ float sigmoidal(float midi,float minV,float maxV,float ampL,float ampR){
 	float val = offset + escale/(1 + exp(i));
 	return val;
 }
-void Piano :: init(float f, float Fs, float velocity, float minr,float maxr,float amprl,float amprr, float mult_radius_core_string, float minL,float maxL,float ampLl,float ampLr, float mult_density_string, float mult_modulus_string, float mult_impedance_bridge, float mult_impedance_hammer, float mult_mass_hammer, float mult_force_hammer, float mult_hysteresis_hammer, float mult_stiffness_exponent_hammer, float position_hammer, float mult_loss_filter,float detune)
+void Piano :: init(float f, float Fs, float velocity, float minr,float maxr,float amprl,float amprr, float mult_radius_core_string, float minL,float maxL,float ampLl,float ampLr, float mult_density_string, float mult_modulus_string, float mult_impedance_bridge, float mult_impedance_hammer, float mult_mass_hammer, float mult_force_hammer, float mult_hysteresis_hammer, float mult_stiffness_exponent_hammer, float position_hammer, float mult_loss_filter,float detune,int hammer_type)
 {
   //this->amp = amp * 100.0;
   float f0 = 27.5;
@@ -194,14 +199,18 @@ void Piano :: init(float f, float Fs, float velocity, float minr,float maxr,floa
     string[k] = new dwgs(f*(1.0+TUNE[k]*detune),Fs,pos,c1,c3,B,Z,Zb+(nstrings-1)*Z,Zh,unit);
   }
 
-  //float a = -1.0/4.0;
- // float mix = 1;
-  //soundboard = new Reverb(c1b,c3b,a,mix,Fs);
-  hammer = new Hammer(f,Fs,m,K,p,Z,alpha,v0);
+
+  switch (hammer_type){
+      case 1:
+            hammer = new StulovHammer(f,Fs,m,K,p,Z,alpha,v0);
+            break;
+      case 2:
+            hammer = new BanksHammer(f,Fs,m,K,p,Z,alpha,v0);
+            break;
+      default:
+        hammer = new StulovHammer(f,Fs,m,K,p,Z,alpha,v0);
+  }  
     
-  //biquad(500.0,Fs,10,notch,&shaping1);
-  //biquad(200.0,Fs,1.0,high,&shaping2);
-  //biquad(800.0,Fs,1.0,low,&shaping3);
 //Print("f = %g, r = %g mm, L = %g, T = %g, hammer = %g, Z = %g, K = %g, B = %g midi%g alpha=%g p= %g m= %g\n",f,1000*r,L,T,pos,Z,K,B,midinote,alpha,p,m);
 //Print("f = %g, r = %g, rold = %g mm, L = %g, Lold = %g, T = %g, Z = %g\n",f,1000*r,1000*rold,L,Lold,T,Z);
 }
@@ -210,27 +219,20 @@ Piano :: ~Piano() {
   for(int k=0;k<nstrings;k++) {
     delete string[k];
   } 
-	//destroy_filter(&shaping1);
-	//destroy_filter(&shaping2);
-	//destroy_filter(&shaping3);
+
   delete hammer;
-  //delete soundboard;
+
 }
 
 struct OteyPianoStrings : public Unit
 {
 	Piano piano;
-	int relcount;
-	float rellevel;
-	float rellevelstep;
 	OteyPianoStrings(Unit *unit):piano(unit){};
 };
 struct OteyPiano : public Unit
 {
 	Piano  piano;
-	int relcount;
-	float rellevel;
-	float rellevelstep;
+
 	float c1b;
 	float c3b;
 	DWGReverb soundboard;
@@ -299,7 +301,6 @@ void OteyPianoStrings_Ctor(OteyPianoStrings* unit) {
 	float freq = ZIN0(inpos++);
 	float velocity = ZIN0(inpos++);
 	float gate = ZIN0(inpos++);
-	float release = ZIN0(inpos++);
 	float minr = ZIN0(inpos++);
 	float maxr = ZIN0(inpos++);
 	float amprl = ZIN0(inpos++);
@@ -320,46 +321,29 @@ void OteyPianoStrings_Ctor(OteyPianoStrings* unit) {
 	float ph = ZIN0(inpos++);
 	float loss = ZIN0(inpos++);
 	float detune = ZIN0(inpos++);
+    int hammer_type = ZIN0(inpos++);
 	
-  unit->relcount = SAMPLERATE * release;
-	unit->rellevel = 1.0;
-	unit->rellevelstep = 1.0/(float)unit->relcount;
 	gWorld = unit->mWorld;
 	//unit->piano= (Piano*) new Piano(unit);
 	new(unit) OteyPianoStrings(unit);
-	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,amprl,amprr,rcore,minl,maxl,ampll,amplr,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune);
+	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,amprl,amprr,rcore,minl,maxl,ampll,amplr,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune,hammer_type);
 	SETCALC(OteyPianoStrings_next);
 }
 
 void OteyPianoStrings_Dtor(OteyPianoStrings* unit) {
 	unit->~OteyPianoStrings();
-	//should work via overloaded delete
-	//delete unit->piano;
+
 }
 
 void OteyPianoStrings_next(OteyPianoStrings *unit, int inNumSamples) {
 
 	float * out = OUT(0);
+    float velocity = ZIN0(1);
 	float gate = ZIN0(2);
+    if (gate > 0.0)
+        unit->piano.trigger(velocity*10.0);
 	unit->piano.go(out,inNumSamples);
-	if(gate == 0.0){
-		int relcount = unit->relcount;
-		float rellevel = unit->rellevel;
-		float rellevelstep = unit->rellevelstep;
-		
-		for(int i=0; i<inNumSamples; i++){
-			if(relcount > 0){
-				rellevel -= rellevelstep;
-				relcount--;
-			}
-			out[i] *=rellevel;
-		}
-		if(relcount <=0)
-			DoneAction(2,unit);
-			
-		unit->relcount = relcount;
-		unit->rellevel = rellevel;
-	}
+
 }
 OteyPiano::OteyPiano(Unit *unit):piano(unit){
 
@@ -373,7 +357,6 @@ void OteyPiano_Ctor(OteyPiano* unit) {
 	float freq = ZIN0(inpos++);
 	float velocity = ZIN0(inpos++);
 	float gate = ZIN0(inpos++);
-	float release = ZIN0(inpos++);
 	float minr = ZIN0(inpos++);
 	float maxr = ZIN0(inpos++);
 	float ampr = ZIN0(inpos++);
@@ -394,27 +377,27 @@ void OteyPiano_Ctor(OteyPiano* unit) {
 	float ph = ZIN0(inpos++);
 	float loss = ZIN0(inpos++);
 	float detune = ZIN0(inpos++);
+    int hammer_type = ZIN0(inpos++);
 
-  unit->relcount = SAMPLERATE * release;
-	unit->rellevel = 1.0;
-	unit->rellevelstep = 1.0/(float)unit->relcount;
 	gWorld = unit->mWorld;
 	new(unit) OteyPiano(unit);
-	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,ampr,centerr,rcore,minl,maxl,ampl,centerl,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune);
+	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,ampr,centerr,rcore,minl,maxl,ampl,centerl,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune,hammer_type);
 
 	SETCALC(OteyPiano_next);
 }
 
 void OteyPiano_Dtor(OteyPiano* unit) {
-	//should work via overloaded delete
-	//delete unit->piano;
+
 	unit->~OteyPiano();
 }
 
 void OteyPiano_next(OteyPiano *unit, int inNumSamples) {
 
 	float * out = OUT(0);
+    float velocity = ZIN0(1);
 	float gate = ZIN0(2);
+    if (gate > 0.0)
+        unit->piano.trigger(velocity*10.0);
 	unit->piano.go(out,inNumSamples);
 	float signal;
 	for(int i; i < inNumSamples; i++){
@@ -424,6 +407,7 @@ void OteyPiano_next(OteyPiano *unit, int inNumSamples) {
 		signal += unit->shaping3.filter(signal);
 		out[i] = signal;
 	}
+    /*
 	if(gate == 0.0){
 		int relcount = unit->relcount;
 		float rellevel = unit->rellevel;
@@ -442,6 +426,7 @@ void OteyPiano_next(OteyPiano *unit, int inNumSamples) {
 		unit->relcount = relcount;
 		unit->rellevel = rellevel;
 	}
+    */
 }
 
 PluginLoad(OteyPianoStrings){

@@ -5,9 +5,12 @@ categories:: UGens>PhysicalModels
 
 Description::
 
+Should not use this class but OteyPianoString instead (see example) for having only one soundboard for all strings which is more efficient.
+
 Digital wave guide physical model of a piano wrapping the code provided by Clayton Otey.
 
 It is important to release synth once finished because because it is CPU expensive.
+
 
 
 Classmethods::
@@ -20,11 +23,9 @@ Sound frequency.
 argument::vel
 Key pulsation velocity. Betwen 0 and 1.
 
-argument::gate
-Releases synth when value is 0.
+argument::t_gate
+Retriggers note, use a TriggerControl for not retriggering continuosly.
 
-argument::release
-Release time in seconds.
 
 argument::rmin
 minimum string radio
@@ -86,6 +87,8 @@ string loss factor.
 argument::detune
 detuning among 3 strings.
 
+argument::hammer_type
+1 is Stulov model, 2 is Banks model.
 
 Examples::
 
@@ -97,8 +100,8 @@ x.free;
 
 //Define piano synthdef
 (
-SynthDef(\help_oteypiano, { |out=0, freq=440, amp=0.5, gate=1,rho=1|
-	var son = OteyPiano.ar(freq, amp, gate, rho:rho);
+SynthDef(\help_oteypiano, { |out=0, freq=440,gate=1, amp=0.5,rho=1|
+	var son = OteyPiano.ar(freq, amp, rho:rho)*EnvGen.ar(Env.asr(0,1,0.1),gate,doneAction:2);
 	Out.ar(out, Pan2.ar(son * 0.1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
 }).add;
 )
@@ -110,7 +113,7 @@ Pbind(
     \delta, 1,
     \dur, 3,
 	\degree, Pseq([1,3,5], inf),
-	\rho, Pwhite(0.1,3) //comment this line to get standart sound
+	\rho, Pwhite(0.1,3) //comment this line to get standard sound
 ).play;
 )
 ::

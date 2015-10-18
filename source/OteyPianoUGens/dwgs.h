@@ -4,8 +4,8 @@
 #include "SC_PlugIn.h"
 extern InterfaceTable *ft;
 extern World * gWorld;
-#include "DWG.hpp"
-
+//#include "DWG.hpp"
+#include "../DWGUGens/dwglib/DWG.hpp"
 
 class dwg_node {
  public:

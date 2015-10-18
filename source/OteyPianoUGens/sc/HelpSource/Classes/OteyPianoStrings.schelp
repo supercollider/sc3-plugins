@@ -22,11 +22,8 @@ Sound frequency.
 argument::vel
 Key pulsation velocity. Betwen 0 and 1.
 
-argument::gate
-Releases synth when value is 0.
-
-argument::release
-Release time in seconds.
+argument::t_gate
+Retriggers note, use a TriggerControl for not retriggering continuosly.
 
 argument::rmin
 minimum string radio
@@ -88,14 +85,16 @@ string loss factor.
 argument::detune
 detuning among 3 strings.
 
+argument::hammer_type
+1 is Stulov model, 2 is Banks model.
 
 Examples::
 
 code::
 //Define piano synthdef and soundboard
 (
-SynthDef(\help_oteypianostring, { |out=0, freq=440, amp=0.5, gate=1,rho=1|
-    var son = OteyPianoStrings.ar(freq, amp, gate, rho:rho);
+SynthDef(\help_oteypianostring, { |out=0, freq=440,gate=1, amp=0.5,rho=1|
+    var son = OteyPianoStrings.ar(freq, amp, rho:rho)*EnvGen.ar(Env.asr(0,1,0.1),gate,doneAction:2);
     Out.ar(out, Pan2.ar(son * 1, LinLin.kr(freq,36.midicps,90.midicps,-0.75,0.75)));
 }).add;
 
