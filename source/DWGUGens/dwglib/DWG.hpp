@@ -1064,14 +1064,14 @@ class NJunction{
 		RTFree(obj->unit->mWorld, pObject);
 	}*/
     NJunction(){
-        Print("NJunction const\n");
+        //Print("NJunction const\n");
         for(int i=0;i<N;i++){
             in[i]=0;
             out[i]=0;
         }
     }
     void Init(){
-        Print("NJunction init\n");
+        //Print("NJunction init\n");
         for(int i=0;i<N;i++){
             in[i]=0;
             out[i]=0;
@@ -1108,14 +1108,14 @@ class NJunctionU{
 		RTFree(obj->unit->mWorld, pObject);
 	}*/
     NJunctionU(){
-        Print("NJunctionU const\n");
+        //Print("NJunctionU const\n");
         for(int i=0;i<N;i++){
             in[i]=0;
             out[i]=0;
         }
     }
     void Init(){
-        Print("NJunctionU init\n");
+        //Print("NJunctionU init\n");
         for(int i=0;i<N;i++){
             in[i]=0;
             out[i]=0;
