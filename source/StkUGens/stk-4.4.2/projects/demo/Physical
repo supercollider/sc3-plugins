@@ -1,1 +1,0 @@
-wish < tcl/Physical.tcl | ./demo Clarinet -or -ip

@@ -273,19 +273,19 @@ else()
 endif()
 
 # StkUGens
-file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
-file(GLOB UnneededSTKSources "StkUGens/stk-4.4.2/src/Rt*.cpp"
-                             "StkUGens/stk-4.4.2/src/Inet*.cpp"
-                             "StkUGens/stk-4.4.2/src/Socket.cpp"
-                             "StkUGens/stk-4.4.2/src/Tcp*.cpp"
-                             "StkUGens/stk-4.4.2/src/UdpSocket.cpp"
-                             "StkUGens/stk-4.4.2/src/Thread.cpp"
-                             "StkUGens/stk-4.4.2/src/Mutex.cpp"
+file(GLOB STKSources "StkUGens/stk-4.4.4/src/*.cpp")
+file(GLOB UnneededSTKSources "StkUGens/stk-4.4.4/src/Rt*.cpp"
+                             "StkUGens/stk-4.4.4/src/Inet*.cpp"
+                             "StkUGens/stk-4.4.4/src/Socket.cpp"
+                             "StkUGens/stk-4.4.4/src/Tcp*.cpp"
+                             "StkUGens/stk-4.4.4/src/UdpSocket.cpp"
+                             "StkUGens/stk-4.4.4/src/Thread.cpp"
+                             "StkUGens/stk-4.4.4/src/Mutex.cpp"
 )
 list(REMOVE_ITEM STKSources ${UnneededSTKSources})
-include_directories(StkUGens/stk-4.4.2)
-include_directories(StkUGens/stk-4.4.2/include)
-include_directories(StkUGens/stk-4.4.2/src/include)
+include_directories(StkUGens/stk-4.4.4)
+include_directories(StkUGens/stk-4.4.4/include)
+include_directories(StkUGens/stk-4.4.4/src/include)
 BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 
 # NCAnalysisUGens
