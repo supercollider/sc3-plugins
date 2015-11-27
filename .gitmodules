@@ -1,3 +1,6 @@
 [submodule "libs/nova-simd"]
 	path = libs/nova-simd
 	url = git://github.com/timblechmann/nova-simd.git
+[submodule "source/StkInst/stk"]
+	path = source/StkInst/stk
+	url = https://github.com/thestk/stk.git
