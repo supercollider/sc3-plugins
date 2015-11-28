@@ -120,7 +120,6 @@ set(PLUGIN_DIRS_EXTRA
     NCAnalysisUGens
     OteyPianoUGens
     PitchDetection
-    StkInst
     StkUGens
     TJUGens
 )
@@ -274,29 +273,8 @@ else()
 endif()
 
 # StkInst
-file(GLOB STKinstSources "StkInst/stk/src/*.cpp")
-file(GLOB UnneededSTKinstSources "StkInst/stk/src/Rt*.cpp"
-                             "StkInst/stk/src/Inet*.cpp"
-                             "StkInst/stk/src/Socket.cpp"
-                             "StkInst/stk/src/Tcp*.cpp"
-                             "StkInst/stk/src/UdpSocket.cpp"
-                             "StkInst/stk/src/Thread.cpp"
-                             "StkInst/stk/src/Mutex.cpp"
-)
-list(REMOVE_ITEM STKinstSources ${UnneededSTKinstSources})
-include_directories(StkInst/stk)
-include_directories(StkInst/stk/include)
-include_directories(StkInst/stk/src/include)
+add_subdirectory(StkInst)
 
-include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-add_definitions("-D_STK_DEBUG_") 
-
-TEST_BIG_ENDIAN(is_big_endian)
-if(NOT is_big_endian)
-	add_definitions("-D__LITTLE_ENDIAN__")
-endif()
-
-BUILD_PLUGIN(StkInst "StkInst/StkInst.cpp;${STKinstSources}" "" "StkInst")
 # StkUGens
 file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
 file(GLOB UnneededSTKSources "StkUGens/stk-4.4.2/src/Rt*.cpp"
