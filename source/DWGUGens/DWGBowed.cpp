@@ -146,6 +146,7 @@ DWGSoundBoard :: DWGSoundBoard(Unit *unit){
 void DWGSoundBoard_next(DWGSoundBoard *unit, int inNumSamples){
 	float *out = OUT(0);
 	float *in = IN(0);
+	unit->fdn.mix = ZIN0(3);
 	float signal;
 	for(int i=0; i < inNumSamples; i++){
 		signal = unit->fdn.go(in[i]);
