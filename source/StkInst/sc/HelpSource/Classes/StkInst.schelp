@@ -1,0 +1,85 @@
+TITLE:: StkInst
+summary:: Wrapping Synthesis toolkit.
+related:: Classes/Stk, Classes/StkGlobals
+categories:: UGens>PhysicalModels
+
+
+Description::
+
+Wrapping of Synthesis toolkit physical model instruments
+https://ccrma.stanford.edu/software/stk/index.html
+
+Classmethods::
+
+method::ar
+
+argument::instNumber
+The number identifying which instrument is used (Can be setted with Stk Array)
+
+argument::freq
+Sound frequency.
+
+argument::gate
+Does noteOn on 0 to 1 changes and noteOff on 1 to 0 changes.
+
+argument::onamp
+Amplitude used on noteOn.
+
+argument::offamp
+Amplitude used on noteOff.
+
+argument::args
+Array of control numbers and control values (most of them 0-128) according to Stk.
+
+
+
+Examples::
+
+code::
+//Define bow synthdef
+(
+SynthDef(\helpStkbowed,{arg out=0,freq=220,gate=1,amp=1,bowpressure = 64, bowposition = 17, vibfreq=50, vibgain=1, loudness=128;
+	var sig,env;
+	env = EnvGen.kr(Env.asr(0,1,0.1),gate,doneAction:2);
+	sig = StkInst.ar(Stk.at("Bowed"),freq, gate, amp, 0.5,[2,bowpressure,4,bowposition,11,vibfreq,1,vibgain,128,loudness])*env;
+	Out.ar(out, sig.dup);
+}).add;
+)
+
+//Use it.
+(
+
+Pbind(
+    \instrument, \helpStkbowed,
+    \dur , 0.25,
+    \degree, Pseq([1,5,7+3], inf),
+    \amp , Pseq([0.9,0.7,0.5],inf),
+	\bowposition , Pseq([10,20,30,40,50,60],inf)
+).play;
+)
+
+//now a instrument that uses waveforms///////////////////
+//first set rawfilepath to let Stk know where to look
+{StkGlobals.ar(1,1,Platform.userExtensionDir ++"/SC3Plugins/StkInst/rawwaves")}.play;
+
+//Define mandolin synthdef
+(
+SynthDef(\helpMandolin,{arg out=0,freq=220,gate=1,amp=1;
+	var sig,env;
+	env = EnvGen.kr(Env.asr(0,1,0.1),gate,doneAction:2);
+	sig = StkInst.ar(Stk.at("Mandolin"),freq, gate, amp, 0.5)*env;
+	Out.ar(out, sig.dup);
+}).add;
+)
+
+//Use it.
+(
+
+Pbind(
+    \instrument, \helpMandolin,
+    \dur , 0.25,
+    \degree, Pseq([1,5,7+3], inf),
+    \amp , Pseq([0.9,0.7,0.5],inf),
+).play;
+)
+::

@@ -272,6 +272,9 @@ else()
     endif()
 endif()
 
+# StkInst
+add_subdirectory(StkInst)
+
 # StkUGens
 file(GLOB STKSources "StkUGens/stk-4.4.2/src/*.cpp")
 file(GLOB UnneededSTKSources "StkUGens/stk-4.4.2/src/Rt*.cpp"
@@ -287,6 +290,8 @@ include_directories(StkUGens/stk-4.4.2)
 include_directories(StkUGens/stk-4.4.2/include)
 include_directories(StkUGens/stk-4.4.2/src/include)
 BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
+
+
 
 # NCAnalysisUGens
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
