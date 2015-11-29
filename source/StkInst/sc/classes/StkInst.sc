@@ -15,8 +15,8 @@ Stk{
 		names.do({arg item,i; namenumber[item] = i;});
 	}
 
-	*at { arg preset;
-		^namenumber[preset];
+	*at { arg name;
+		^namenumber[name];
 	}
 }
 
