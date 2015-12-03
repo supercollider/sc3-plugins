@@ -5,7 +5,7 @@ project (${PROJECT})
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/stk)
 
-if(NOT EXISTS ${STKDIR})
+if(NOT EXISTS ${STKDIR}/src)
    message(FATAL_ERROR "Should use submodule update to get Stk")
 endif()
 
@@ -17,6 +17,7 @@ file(GLOB UnneededSTKSources "${STKDIR}/src/Rt*.cpp"
                              "${STKDIR}/src/UdpSocket.cpp"
                              "${STKDIR}/src/Thread.cpp"
                              "${STKDIR}/src/Mutex.cpp"
+                             "${STKDIR}/src/Messager.cpp"
 )
 #message(WARNING ${STKSources})
 list(REMOVE_ITEM STKSources ${UnneededSTKSources})
