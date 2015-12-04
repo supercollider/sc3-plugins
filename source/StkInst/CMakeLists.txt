@@ -6,7 +6,7 @@ include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/stk)
 
 if(NOT EXISTS ${STKDIR}/src)
-   message(FATAL_ERROR "Should use submodule update to get Stk")
+   message(FATAL_ERROR "Should use git submodule update and git submodule init to get Stk")
 endif()
 
 file(GLOB STKSources "${STKDIR}/src/*.cpp")
