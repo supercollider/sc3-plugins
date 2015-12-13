@@ -3,14 +3,16 @@ set(PROJECT "StkInst")
 project (${PROJECT})
 
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/stk)
 
-if(NOT EXISTS ${STKDIR}/src)
-   message(FATAL_ERROR "Should use git submodule update and git submodule init to get Stk")
-endif()
+if(NOT SYSTEM_STK)
+    set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/stk)
 
-file(GLOB STKSources "${STKDIR}/src/*.cpp")
-file(GLOB UnneededSTKSources "${STKDIR}/src/Rt*.cpp"
+    if(NOT EXISTS ${STKDIR}/src)
+       message(FATAL_ERROR "Should use git submodule update and git submodule init to get Stk")
+    endif()
+
+    file(GLOB STKSources "${STKDIR}/src/*.cpp")
+    file(GLOB UnneededSTKSources "${STKDIR}/src/Rt*.cpp"
                              "${STKDIR}/src/Inet*.cpp"
                              "${STKDIR}/src/Socket.cpp"
                              "${STKDIR}/src/Tcp*.cpp"
@@ -18,13 +20,13 @@ file(GLOB UnneededSTKSources "${STKDIR}/src/Rt*.cpp"
                              "${STKDIR}/src/Thread.cpp"
                              "${STKDIR}/src/Mutex.cpp"
                              "${STKDIR}/src/Messager.cpp"
-)
-#message(WARNING ${STKSources})
-list(REMOVE_ITEM STKSources ${UnneededSTKSources})
-include_directories(${STKDIR})
-include_directories(${STKDIR}/include)
-include_directories(${STKDIR}/src/include)
-
+    )
+    #message(WARNING ${STKSources})
+    list(REMOVE_ITEM STKSources ${UnneededSTKSources})
+    include_directories(${STKDIR})
+    include_directories(${STKDIR}/include)
+    include_directories(${STKDIR}/src/include)
+endif()
 
 include_directories(${SC_PATH}/include/plugin_interface)
 include_directories(${SC_PATH}/include/common)
@@ -42,7 +44,9 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mstackrealign")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
-add_definitions("-D_STK_DEBUG_") 
+if(NOT SYSTEM_STK)
+    add_definitions("-D_STK_DEBUG_")
+endif()
 
 TEST_BIG_ENDIAN(is_big_endian)
 if(NOT is_big_endian)
@@ -50,17 +54,20 @@ if(NOT is_big_endian)
 endif()
 
 add_library(${PROJECT} MODULE ${PROJECT}.cpp ${STKSources})
+if(SYSTEM_STK)
+    target_link_libraries(${PROJECT} ${STK_LIBRARY})
+endif()
 if(SUPERNOVA)
-add_library(${PROJECT}_supernova MODULE ${PROJECT}.cpp ${STKSources})
-set_property(TARGET ${PROJECT}_supernova APPEND PROPERTY COMPILE_DEFINITIONS  "SUPERNOVA")
-include_directories(${SC_PATH}/external_libraries
+    add_library(${PROJECT}_supernova MODULE ${PROJECT}.cpp ${STKSources})
+    set_property(TARGET ${PROJECT}_supernova APPEND PROPERTY COMPILE_DEFINITIONS  "SUPERNOVA")
+    include_directories(${SC_PATH}/external_libraries
                     ${SC_PATH}/external_libraries/boost-lockfree
                     ${SC_PATH}/external_libraries/nova-simd
                     ${SC_PATH}/external_libraries/nova-tt
                     )
-include_directories(${SC_PATH}/external_libraries/boost)
-include_directories(${SC_PATH}/external_libraries/nova-simd)
-add_definitions("-DNOVA_SIMD")
+    include_directories(${SC_PATH}/external_libraries/boost)
+    include_directories(${SC_PATH}/external_libraries/nova-simd)
+    add_definitions("-DNOVA_SIMD")
 endif()
 
 #install
@@ -77,4 +84,6 @@ else()
 endif()
 
 install(DIRECTORY "sc/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}" PATTERN "*")
-install(DIRECTORY "stk/rawwaves/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}/rawwaves" PATTERN "*.raw")
+if(NOT SYSTEM_STK)
+    install(DIRECTORY "stk/rawwaves/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}/rawwaves" PATTERN "*.raw")
+endif()

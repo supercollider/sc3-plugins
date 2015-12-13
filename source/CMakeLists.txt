@@ -210,15 +210,15 @@ include_directories(DEINDUGens/include)
 BUILD_PLUGIN(JPverb
 "DEINDUGens/JPverbRaw.cpp" 
              "" "JPverb")
-			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
-			 set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
 BUILD_PLUGIN(Greyhole
 "DEINDUGens/GreyholeRaw.cpp" 
              "" "Greyhole")
-			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
-			 set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
@@ -272,26 +272,30 @@ else()
     endif()
 endif()
 
-# StkInst
-add_subdirectory(StkInst)
-
 # StkUGens
-file(GLOB STKSources "StkUGens/stk-4.4.4/src/*.cpp")
-file(GLOB UnneededSTKSources "StkUGens/stk-4.4.4/src/Rt*.cpp"
+if(SYSTEM_STK)
+    find_package(STK)
+    add_definitions(-DSYSTEM_STK)
+    include_directories(${STK_INCLUDE_DIR})
+    BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp" ${STK_LIBRARY} "StkUGens")
+    add_subdirectory(StkInst)
+else()
+    add_subdirectory(StkInst)
+    file(GLOB STKSources "StkUGens/stk-4.4.4/src/*.cpp")
+    file(GLOB UnneededSTKSources "StkUGens/stk-4.4.4/src/Rt*.cpp"
                              "StkUGens/stk-4.4.4/src/Inet*.cpp"
                              "StkUGens/stk-4.4.4/src/Socket.cpp"
                              "StkUGens/stk-4.4.4/src/Tcp*.cpp"
                              "StkUGens/stk-4.4.4/src/UdpSocket.cpp"
                              "StkUGens/stk-4.4.4/src/Thread.cpp"
                              "StkUGens/stk-4.4.4/src/Mutex.cpp"
-)
-list(REMOVE_ITEM STKSources ${UnneededSTKSources})
-include_directories(StkUGens/stk-4.4.4)
-include_directories(StkUGens/stk-4.4.4/include)
-include_directories(StkUGens/stk-4.4.4/src/include)
-BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
-
-
+    )
+    list(REMOVE_ITEM STKSources ${UnneededSTKSources})
+    include_directories(StkUGens/stk-4.4.4)
+    include_directories(StkUGens/stk-4.4.4/include)
+    include_directories(StkUGens/stk-4.4.4/src/include)
+    BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
+endif()
 
 # NCAnalysisUGens
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
