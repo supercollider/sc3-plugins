@@ -226,7 +226,7 @@ BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membran
 
 # LadspaUGen
 if(NOT WIN32)
-    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "" "LadspaUGen")
+    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "dl" "LadspaUGen")
     add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
     target_link_libraries(ladspalist dl)
 endif()
@@ -237,24 +237,28 @@ BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cp
              
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
+
 if(APPLE)
     set (PitchDetectionLibs "-framework Accelerate")
 else()
+    find_package(FFTW3f)
+    if (!FFTW3F_FOUND)
+        message(SEND_ERROR "Cannot find libfftw3f")
+    endif()
     set (PitchDetectionLibs ${FFTW3F_LIBRARY})
 endif()
 
 BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
              "${PitchDetectionLibs}" "PitchDetection")
 
-
-
-if (NOT APPLE)
-    find_package(FFTW3f)
-
-    if (!FFTW3F_FOUND)
-        message(SEND_ERROR "Cannot find libfftw3f")
+if (APPLE)
+    set_property(TARGET PitchDetection
+    APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+    if (SUPERNOVA)
+        set_property(TARGET PitchDetection_supernova
+        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
     endif()
-
+else()
     include_directories(${FFTW3F_INCLUDE_DIR})
 
     set_property(TARGET PitchDetection
@@ -262,13 +266,6 @@ if (NOT APPLE)
     if (SUPERNOVA)
         set_property(TARGET PitchDetection_supernova
             APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
-    endif()
-else()
-    set_property(TARGET PitchDetection
-    APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
-    if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova
-        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
     endif()
 endif()
 
