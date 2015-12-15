@@ -252,20 +252,15 @@ BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
              "${PitchDetectionLibs}" "PitchDetection")
 
 if (APPLE)
-    set_property(TARGET PitchDetection
-    APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+    set_property(TARGET PitchDetection APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
     if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova
-        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
+        set_property(TARGET PitchDetection_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
     endif()
 else()
     include_directories(${FFTW3F_INCLUDE_DIR})
-
-    set_property(TARGET PitchDetection
-        APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+    set_property(TARGET PitchDetection APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
     if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova
-            APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
+        set_property(TARGET PitchDetection_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
     endif()
 endif()
 
