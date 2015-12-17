@@ -5,9 +5,9 @@ project (${PROJECT})
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 
 if(NOT SYSTEM_STK)
-    set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/stk)
+    set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/stk)
 
-    if(NOT EXISTS ${STKDIR}/src)
+    if(NOT EXISTS ${STKDIR}/include/Stk.h)
        message(FATAL_ERROR "Should use git submodule update and git submodule init to get Stk")
     endif()
 
@@ -21,7 +21,6 @@ if(NOT SYSTEM_STK)
                              "${STKDIR}/src/Mutex.cpp"
                              "${STKDIR}/src/Messager.cpp"
     )
-    #message(WARNING ${STKSources})
     list(REMOVE_ITEM STKSources ${UnneededSTKSources})
     include_directories(${STKDIR})
     include_directories(${STKDIR}/include)

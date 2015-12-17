@@ -2,8 +2,15 @@ cmake_minimum_required (VERSION 2.8)
 project (sc3-plugins)
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libs/nova-simd/simd_memory.hpp)
-        message(FATAL_ERROR "nova-simd submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
+  message(FATAL_ERROR "nova-simd submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
 endif()
+
+if (NOT SYSTEM_STK)
+  if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libs/stk/include/Stk.h)
+    message(FATAL_ERROR "stk submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
+  endif()
+endif()
+
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
                       ${CMAKE_MODULE_PATH})

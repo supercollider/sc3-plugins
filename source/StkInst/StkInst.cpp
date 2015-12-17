@@ -3,34 +3,34 @@ InterfaceTable *ft;
 World * gWorld;
 
 // STK Instrument Classes
-#include "Clarinet.h"
-#include "BlowHole.h"
-#include "Saxofony.h"
-#include "Flute.h"
-#include "Brass.h"
-#include "BlowBotl.h"
-#include "Bowed.h"
-#include "Plucked.h"
-#include "StifKarp.h"
-#include "Sitar.h"
-#include "Mandolin.h"
-#include "Rhodey.h"
-#include "Wurley.h"
-#include "TubeBell.h"
-#include "HevyMetl.h"
-#include "PercFlut.h"
-#include "BeeThree.h"
-#include "FMVoices.h"
-#include "VoicForm.h"
-#include "Moog.h"
-#include "Simple.h"
-#include "Drummer.h"
-#include "BandedWG.h"
-#include "Shakers.h"
-#include "ModalBar.h"
-#include "Mesh2D.h"
-#include "Resonate.h"
-#include "Whistle.h"
+#include <Clarinet.h>
+#include <BlowHole.h>
+#include <Saxofony.h>
+#include <Flute.h>
+#include <Brass.h>
+#include <BlowBotl.h>
+#include <Bowed.h>
+#include <Plucked.h>
+#include <StifKarp.h>
+#include <Sitar.h>
+#include <Mandolin.h>
+#include <Rhodey.h>
+#include <Wurley.h>
+#include <TubeBell.h>
+#include <HevyMetl.h>
+#include <PercFlut.h>
+#include <BeeThree.h>
+#include <FMVoices.h>
+#include <VoicForm.h>
+#include <Moog.h>
+#include <Simple.h>
+#include <Drummer.h>
+#include <BandedWG.h>
+#include <Shakers.h>
+#include <ModalBar.h>
+#include <Mesh2D.h>
+#include <Resonate.h>
+#include <Whistle.h>
 
 /*
 void* operator new (unsigned int size)
