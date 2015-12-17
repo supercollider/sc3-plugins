@@ -4,3 +4,6 @@
 [submodule "source/StkInst/stk"]
 	path = source/StkInst/stk
 	url = https://github.com/thestk/stk.git
+[submodule "libs/stk"]
+	path = libs/stk
+	url = https://github.com/thestk/stk.git
