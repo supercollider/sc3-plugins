@@ -21,7 +21,7 @@
 
 extern "C"
 {
-#include "TLSF-2.4.6/src/tlsf.h"
+#include <tlsf.h>
 }
 
 #include <array>
