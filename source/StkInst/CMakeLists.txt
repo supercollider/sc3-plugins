@@ -84,5 +84,5 @@ endif()
 
 install(DIRECTORY "sc/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}" PATTERN "*")
 if(NOT SYSTEM_STK)
-    install(DIRECTORY "stk/rawwaves/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}/rawwaves" PATTERN "*.raw")
+    install(DIRECTORY "${STKDIR}/rawwaves/" DESTINATION "${INSTALL_DESTINATION_DISTRO}/${PROJECT}/rawwaves" PATTERN "*.raw")
 endif()
