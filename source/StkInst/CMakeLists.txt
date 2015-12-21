@@ -5,7 +5,7 @@ project (${PROJECT})
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 
 if(NOT SYSTEM_STK)
-    set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/stk)
+    set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../external_libraries/stk)
 
     if(NOT EXISTS ${STKDIR}/include/Stk.h)
        message(FATAL_ERROR "Should use git submodule update and git submodule init to get Stk")

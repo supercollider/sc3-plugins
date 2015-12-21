@@ -280,19 +280,19 @@ if(SYSTEM_STK)
     add_subdirectory(StkInst)
 else()
     add_subdirectory(StkInst)
-    file(GLOB STKSources "../libs/stk/src/*.cpp")
-    file(GLOB UnneededSTKSources "../libs/stk/src/Rt*.cpp"
-                             "../libs/stk/src/Inet*.cpp"
-                             "../libs/stk/src/Socket.cpp"
-                             "../libs/stk/src/Tcp*.cpp"
-                             "../libs/stk/src/UdpSocket.cpp"
-                             "../libs/stk/src/Thread.cpp"
-                             "../libs/stk/src/Mutex.cpp"
+    file(GLOB STKSources "../external_libraries/stk/src/*.cpp")
+    file(GLOB UnneededSTKSources "../external_libraries/stk/src/Rt*.cpp"
+                             "../external_libraries/stk/src/Inet*.cpp"
+                             "../external_libraries/stk/src/Socket.cpp"
+                             "../external_libraries/stk/src/Tcp*.cpp"
+                             "../external_libraries/stk/src/UdpSocket.cpp"
+                             "../external_libraries/stk/src/Thread.cpp"
+                             "../external_libraries/stk/src/Mutex.cpp"
     )
     list(REMOVE_ITEM STKSources ${UnneededSTKSources})
-    include_directories(../libs/stk)
-    include_directories(../libs/stk/include)
-    include_directories(../libs/stk/src/include)
+    include_directories(../external_libraries/stk)
+    include_directories(../external_libraries/stk/include)
+    include_directories(../external_libraries/stk/src/include)
     BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
 endif()
 
