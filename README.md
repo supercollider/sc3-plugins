@@ -1,112 +1,110 @@
-# sc3-plugins
-## Community collection of UGen plugins for SuperCollider
+# SC3-plugins
 
-- [Description](#description)
-- [Installation](#installation)
-  - [Cmake build system](#how-to-use-the-cmake-build-system)
-  - [Options](#options)
-  - [Starting over](#starting-over)
-- [Adding plugins](#adding-plugins)
-- [Creating a package](#creating-a-package)
-  - [dmg](#dmg)
-  - [tgz/zip](#tgz/zip)
-- [List of plugins](#list-of-plugins)
 
-# Description
+This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
+An installation extends the functionality of SuperCollider by additional UGens that run on `scsynth`, the SuperCollider audio synthesis server.
 
-SuperCollider "UGen" plugins are extensions for the [SuperCollider](http://supercollider.github.io) audio synthesis server (see also [quarks](http://quarks.sourceforge.net/) to extend the programming language). For community discussion and support see the [SuperCollider mailing lists](http://www.birmingham.ac.uk/facilities/BEAST/research/supercollider/mailinglist.aspx).
+**Note:** Extensions for the SuperCollider programming language are something structurally different. They are collected within the [Quarks](http://quarks.sourceforge.net/) packaging system.
 
-Downloads are available from [Sourceforge project page](https://sourceforge.net/projects/sc3-plugins/files/).
+For community discussion and support see the [SuperCollider mailing lists](http://www.birmingham.ac.uk/facilities/BEAST/research/supercollider/mailinglist.aspx) and the [github issue tracker](https://github.com/supercollider/sc3-plugins/issues).
 
-Here is an [automatically-generated list](#list-of-plugins) of what's available in the download (it's a listing of the helpfiles).
 
-# Installation
+## Download
 
-### How to use the cmake build system
+Compiled releases are available from the [github release page](https://github.com/supercollider/sc3-plugins/releases). For older versions (2013). see the [sourceforge project page](http://sourceforge.net/projects/sc3-plugins/files/).
 
-Make a directory for the cmake build files to go into:
+To compile from source (see below), either download a tarball or clone the repository from the [sc-plugins github page](https://github.com/supercollider/sc3-plugins).
 
-* `sc3-plugins/$ mkdir build && cd build`
+## Binary install
 
-* `sc3-plugins/build/$ cmake ..`
+Copy the contents of the tarball/`dmg` to your SuperCollider extensions folder.
+You can find out which one that is by evaluating 
 
-It assumes you have the supercollider header include files located in `/usr/include/SuperCollider/`
+```
+Platform.userExtensionDir
+```
 
-If you have them in another location:
+from within SuperCollider. Alternatively, you may install the extensions system-wide by copying to 
 
-* `sc3-plugins/build/$ cmake -DSC_PATH=/path/to/sc3source/ ..`
+```
+Platform.systemExtensionDir
+```
 
-and then:
 
-* `sc3-plugins/build/$ make`
+## Compile from source
 
-* `sc3-plugins/build/$ make install`
+As SuperCollider, the sc3-plugins collectiton uses the `cmake` build system for configuration and compilation. Follow the steps below to compile and install the collection.
+
+Make a directory for the `cmake` build files:
+
+```shell
+sc3-plugins/$ mkdir build && cd build
+sc3-plugins/build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
+```
+
+If no `SC_PATH` is provided the build system assumes the SuperCollider include files in `/usr/include/SuperCollider/`.
+
+```shell
+sc3-plugins/build/$ make
+sc3-plugins/build/$ make install
+```
 
 On OSX, the plugins will end up in `sc3-plugins/build/SC3plugins`.
-Copy *SC3plugins* folder into `/Library/Application Support/SuperCollider/Extensions` (or into a user specific `~/Library` folder).
+Copy the `SC3plugins` folder to you Extensions folder (you find out which one that is by evaluating `Platform.userExtensionDir` from within SuperCollider).
 
-WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to
-specify it by disabling `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
+WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
 
-### Options
+### Cmake Options
 
-* To set the install target: (default on linux `/usr/local`)
-
-`sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
-
-* (OSX ONLY) Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX` (default=ON)
-
-`sc3-plugins/build/$ cmake -DIN_PLACE_BUILD=ON`
-
-* Build the plugins as quarks: (default 'OFF')
-
-`sc3-plugins/build/$ cmake -DQUARKS=ON ..`
-
-* Build supernova-plugins: (default 'OFF')
-
-`sc3-plugins/build/$ cmake -DSUPERNOVA=ON ..`
-
-* Print all cmake options:
-
-`sc3-plugins/build/$ cmake -L ..`
++ Set install target 
+    * (default on linux `/usr/local`)
+    * `sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
++ Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX` 
+    * (OSX ONLY, default=ON)
+    * `sc3-plugins/build/$ cmake -DIN_PLACE_BUILD=ON`
++ Build the plugins as quarks
+    * (default 'OFF')
+    * `sc3-plugins/build/$ cmake -DQUARKS=ON ..`
++ Build supernova-plugins
+    * (default 'OFF')
+    * `sc3-plugins/build/$ cmake -DSUPERNOVA=ON ..`
++ Print all cmake options
+    * `sc3-plugins/build/$ cmake -L ..`
 
 ### Starting over
 
 If something went wrong and you want to start from scratch, delete everything in the build directory that you made:
 
-`sc3-plugins/build/$ make uninstall` (only if you did `make install` before)
+```shell
+sc3-plugins/build/$ make uninstall # only if you did `make install` before
+sc3-plugins/build/$ rm -r *
+```
 
-`sc3-plugins/build/$ rm -r *`
+## Adding plugins to the repository
 
-# Adding plugins
+A SuperCollider plugin is a collection of UGens (and their supporting files) with a shared prefix in their name.
+If you add a new plugin, please keep to the following pattern:
 
-If you add a new plugin, please keep to this pattern:
+1. Add a folder in the `source` directory named ```<prefix>UGens```
+where `prefix` means whichever standard pattern in the file name you have for your UGens. All source files go into this directory and its subdirectories.
+2. SuperCollider-specific files (`.sc|.schelp|...`) should be located in a subdirectory named `sc`.
+3. If your plugin makes use of external libraries that should be part of the sc-plugins sources (e.g. via ```git-submodule```), add them to `sc3-plugins/external_libraries/`.
+As an example, the `GlitchUGens` plugin directory lists as:
+    * `source/GlitchUGens/GlitchUGens.cpp`
+    * `source/GlitchUGens/sc/GlitchUGens.sc`
+    * `source/GlitchUGens/sc/HelpSource/Classes/GlitchBPF.schelp`
+    * `source/GlitchUGens/sc/HelpSource/Classes/GlitchBRF.schelp`
+    * `source/GlitchUGens/sc/HelpSource/Classes/GlitchHPF.schelp`
+    * `source/GlitchUGens/sc/HelpSource/Classes/GlitchRHPF.schelp`
+4. Add your folder to the `PLUGIN_DIRS` list in `sc3-plugins/source/CMakeLists.txt`.
+5. For the Quark-installable option, there is a SuperCollider script called `Generate_Quark.scd` in `sc3-plugins/quarks/`. Evaluating it indexes the base directory of the extensions for each UGen, and Help-file in each plugin directory.
+It then creates a help file for your plugin that lists all classes and help files, as well as a `.quark` file for your plugin in the `build/DIRECTORY` folder.
 
-Add a folder in the `source` directory, that ends with "UGens", and starting with whichever standard pattern in the filename you have for the UGens.
-Your source files should go into this directory. Beware, all your sc-specific files (`sc|schelp|...`) should go into a `sc` subdirectory.
+# Packaging
 
-e.g. the GLitchUGens comprise:
+## How to create a DiskImage (OSX)
 
-* `source/GlitchUGens/GlitchUGens.cpp`
-* `source/GlitchUGens/sc/GlitchUGens.sc`
-* `source/GlitchUGens/sc/HelpSource/Classes/GlitchBPF.schelp`
-* `source/GlitchUGens/sc/HelpSource/Classes/GlitchBRF.schelp`
-* `source/GlitchUGens/sc/HelpSource/Classes/GlitchHPF.schelp`
-* `source/GlitchUGens/sc/HelpSource/Classes/GlitchRHPF.schelp`
-
-then edit `sc3-plugins/source/CMakeLists.txt` and add your folder to `PLUGIN_DIRS`.
-
-
-For the Quark-installable option, there is a document Generate_Quark.scd in `quarks` folder, which also creates a help file, listing all the classes and helpfiles.
-It indexes the base directory of the Extensions for each UGen, and help, and Help that are in each directory.
-
-It also creates a Quark file that goes in the `build/DIRECTORY` folder.
-
-# Creating a package
-
-To package SC3-plugins:
-
-### dmg (osx)
+To create an OSX DiskImage, follow these steps on an OSX machine:
 
 ```shell
 sc3-plugins/$ mkdir build && cd build
@@ -114,26 +112,27 @@ sc3-plugins/build/$ cmake -DSC_PATH=/PATH/TO/SC -DOSX_PACKAGE=1 ..
 sc3-plugins/build/$ make && make install
 ```
 
-The dmg image will be generated in `sc3-plugins/build/build_osx`.
-The dmg image will contain `License.txt`, `README.txt` and `SC3plugins`.
-note: the quarks DIRECTORY is included in the dmg by default.
+The DiskImage will be generated in `./sc3-plugins/build/build_osx` containing 
 
-### tgz/zip
++ a `License.txt`, 
++ this `README.txt`, and 
++ the `SC3plugins` folder.
++ Note: the quarks ```DIRECTORY```-folder is also included by default.
+
+## How to create a tarball/zip-file
 
 ```shell
 sc3-plugins/$ mkdir build && cd build
 sc3-plugins/build/$ cmake -DSC_PATH=/PATH/TO/SC ..
+sc3-plugins/build/$ cpack -G [TGZ|ZIP] # choose your package format
 ```
-
-and then, with your chosen PKG_FORMAT (TGZ|ZIP):
-
-`sc3-plugins/build/$ cpack -G PKG_FORMAT`
 
 The package will end up in `sc3-plugins/build`.
 
 # List of plugins
 
-Here is an automatically-generated list of what's available in the download (it's a listing of the helpfiles):
+An auto-generated list of what plugins are available in this repository, linking to the autogenerated helpfiles:
+
 * [AmplitudeMod](http://doc.sccode.org/Classes/AmplitudeMod.html)
 * [AnalyseEvents2](http://doc.sccode.org/Classes/AnalyseEvents2.html)
 * [ArrayMax](http://doc.sccode.org/Classes/ArrayMax.html)
