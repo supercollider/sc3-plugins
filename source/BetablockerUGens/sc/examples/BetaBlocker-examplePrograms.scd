@@ -1,20 +1,28 @@
 // all instructions explained
 BBlockerProgram.printDescs
+BBlockerProgram.instructions
 
 // search for functionality
 BBlockerProgram.find("push")
 BBlockerProgram.descOf('PSHL')
 
-// saw
-a = BBlockerProgram([\ORG, \INC, \JMP, 1]);
 
-x = a.play(19000)
+s.boot;
+// saw
+a = BBlockerProgram([\ORG, \INC, \JMP, 1, \EQU]);
+b = a.collection
+b === a.collection(false)
+b === a.collection(true)
+
+
+x = a.play(10000 + SinOsc.ar(10));
+SinOsc.ar(0).linlin(-1, 1, 10000, 19000))
 x.free
 
 a.plot(duration: 0.15)
 
 // impulse
-a = BBlockerProgram([\ORG, \NOT, \JMP, 1]); x = a.play;
+a = BBlockerProgram([\ORG, \NOT, \NOT, \NOP, \NOP, \NOP, \NOP, \NOP, \JMP, 1]); x = a.play(190);
 a.plot(duration: 0.001)
 
 // pulse
@@ -67,7 +75,7 @@ a.plot(leak: false, duration: 0.5)
 
 x = a.play(300, leak: true, vol: 0.025);
 x.free;
-// get the actual program sent as a buffer 
+// get the actual program sent as a buffer
 a.collection.postcs; ""
 
 a.plot(duration: 0.5)

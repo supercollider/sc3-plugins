@@ -1,0 +1,219 @@
+TITLE:: BBlockerProgram
+summary:: Convenience class to create and store BetaBlocker programs
+categories:: Convenience
+related:: Classes/BBlockerBuf, Classes/BBlockerProgram
+
+DESCRIPTION::
+Convenience class to create and store assembly programs for the BetaBlocker VChip. 
+
+See http://tai-studio.org/index.php/chipinterpretations/ for details.
+
+image::betablocker-01-small.png::
+
+
+CLASSMETHODS::
+
+
+METHOD:: new
+creates a new BBlocker program:
+
+code::
+// sawtooth ramp
+a = BBlockerProgram([\ORG, \INC, \JMP, 1]);
+::
+
+ARGUMENT:: program
+Mixed array of instructions (Symbols) and Integers (will be interpreted either as instructions or as values for unary instructions like code::\JMP:: or code::\PHSL::).
+
+
+
+
+METHOD:: instructions
+all instructions 
+
+
+METHOD:: descs
+all descriptions
+
+
+
+
+METHOD:: printDescs
+print description for each instruction
+
+
+
+METHOD:: find
+search for command
+
+ARGUMENT:: identifier
+search term
+
+returns:: array of commands
+
+
+
+METHOD:: descOf
+find description for command
+
+ARGUMENT:: key
+command
+
+returns:: description string
+
+
+
+
+
+
+
+
+
+
+
+INSTANCEMETHODS::
+
+
+METHOD:: fillBuffer
+fill Buffer with compiled code.
+
+ARGUMENT:: buffer
+buffer to be filled.
+
+
+
+
+
+METHOD:: program
+
+returns:: the program
+
+
+
+METHOD:: makeBuffer
+create a Buffer and fill it with conpiled code.
+
+ARGUMENT:: server
+instance of Server on which the Buffer is created
+
+ARGUMENT:: action
+action to be evaluated after successful buffer creation
+
+returns:: the Buffer
+
+
+
+
+METHOD:: collection
+array with code::256:: entries containing the codeified program.
+
+ARGUMENT:: force
+if code::true::, force re-computation.
+
+
+METHOD:: asLocalBuf
+
+returns:: compiled program as a LocalBuf object
+
+
+
+METHOD:: play
+play program.
+
+ARGUMENT:: rate
+rate of operation
+
+ARGUMENT:: using
+instance of link::Classes/Server:: or link::Classes/Buffer::.
+If a buffer is given, this is used to load the program into.
+
+ARGUMENT:: leak
+if code::true::, encapsulate output by a link::Classes/LeakDC::.
+
+ARGUMENT:: vol
+attenuation
+
+returns:: link::Classes/Synth:: evaluating and playing the program.
+
+
+
+METHOD:: ar
+
+server playback.
+
+ARGUMENT:: rate
+rate of operation
+
+ARGUMENT:: using
+instance of link::Classes/Server:: or link::Classes/Buffer::.
+If a buffer is given, this is used to load the program into.
+
+ARGUMENT:: leak
+if code::true::, encapsulate output by a link::Classes/LeakDC::.
+
+ARGUMENT:: vol
+attenuation
+
+
+METHOD:: fillUpRandom
+if code::true::, fill remaining space in collection/link::Classes/Buffer:: with random numbers between code::0:: and code::255::. 
+
+METHOD:: scope
+
+run program and scope it. 
+
+ARGUMENT:: rate
+rate of operation
+
+ARGUMENT:: using
+instance of link::Classes/Server:: or link::Classes/Buffer::.
+If a buffer is given, this is used to load the program into.
+
+ARGUMENT:: leak
+if code::true::, encapsulate output by a link::Classes/LeakDC::.
+
+ARGUMENT:: vol
+attenuation
+
+
+
+
+
+
+
+
+METHOD:: plot
+
+run program and plot its results.
+
+ARGUMENT:: rate
+rate of operation
+
+ARGUMENT:: using
+instance of link::Classes/Server:: or link::Classes/Buffer::.
+If a buffer is given, this is used to load the program into.
+
+ARGUMENT:: leak
+if code::true::, encapsulate output by a link::Classes/LeakDC::.
+
+ARGUMENT:: duration
+time to run in seconds.
+
+
+
+
+METHOD:: decompile
+decompile content of collection.
+
+ARGUMENT:: force
+if code::true::, force re-write of (intermediately used) collection.
+
+
+returns:: program
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::

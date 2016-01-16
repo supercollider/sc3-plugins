@@ -1,10 +1,10 @@
 CLASS:: DetaBlockerBuf
-summary:: A Demand UGen running an adapted BetaBlocker VChip
+summary:: Demand version of the BetaBlocker VChip
 categories:: UGens>Demand
-related:: Classes/BetaBlocker01, Reference/BetaBlocker
+related:: Classes/BBlockerBuf, Classes/BBlockerProgram
 
 DESCRIPTION::
-A Demand Rate BetaBlocker UGen with a shared heap.
+Demand Rate BetaBlocker UGen with a heap possibly shared with other instances.
 
 
 CLASSMETHODS::
