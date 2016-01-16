@@ -10,3 +10,13 @@ source/local/*.html
 *~
 *.orig
 
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+cmake_uninstall.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
