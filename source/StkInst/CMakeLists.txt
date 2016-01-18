@@ -47,9 +47,13 @@ if(NOT SYSTEM_STK)
     add_definitions("-D_STK_DEBUG_")
 endif()
 
-TEST_BIG_ENDIAN(is_big_endian)
-if(NOT is_big_endian)
+IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm") # explicit arm test here because TEST_BIG_ENDIAN() below halts build on arm
     add_definitions("-D__LITTLE_ENDIAN__")
+else()
+    TEST_BIG_ENDIAN(is_big_endian)
+    if(NOT is_big_endian)
+        add_definitions("-D__LITTLE_ENDIAN__")
+    endif()
 endif()
 
 add_library(${PROJECT} MODULE ${PROJECT}.cpp ${STKSources})
