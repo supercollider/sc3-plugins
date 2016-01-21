@@ -55,6 +55,7 @@ EnvDetect : UGen
 	*ar { arg in, attack=100, release=0;
 		^this.multiNew('audio', in, attack, release);
 	}
+	checkInputs { ^if(rate === \audio) { this.checkSameRateAsFirstInput } }
 }
 
 FitzHughNagumo : UGen
