@@ -7,6 +7,9 @@ MultiOutDemandUGen : DUGen {
 	}
 
 	initOutputs { arg numChannels, rate;
+		if(numChannels.isNil or: { numChannels < 1 }, {
+			Error("%: wrong number of channels (%)".format(this, numChannels)).throw
+		});
 		channels = Array.fill(numChannels, { arg i;
 			OutputProxy(rate, this, i);
 		});
