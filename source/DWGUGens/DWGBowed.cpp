@@ -118,43 +118,39 @@ DWGBowedTor::DWGBowedTor(Unit* unit):DWGBowed(unit){ SETCALC(DWGBowedTor_next);}
 //////////////////////////////////////////////////////////////
 struct DWGSoundBoard : public Unit
 {
-	FDN8 fdn;
+	FDNC1C3<8,1024> fdn;
 	float c1b;
 	float c3b;
-	//Biquad shaping1;
-	//Biquad shaping2;
-	//Biquad shaping3;
+    void getargs(Unit* unit,bool force=false);
 	DWGSoundBoard(Unit *unit);
 	~DWGSoundBoard(){};
 };
 SCWrapClass(DWGSoundBoard);
 DWGSoundBoard :: DWGSoundBoard(Unit *unit){
-	c1b = ZIN0(1);
+    getargs(unit,true);
+	SETCALC(DWGSoundBoard_next);
+}
+void DWGSoundBoard::getargs(Unit *unit,bool force)
+{
+    c1b = ZIN0(1);
 	c3b = ZIN0(2);
 	float mix = ZIN0(3);
 	float len[8];
 	for(int i=0;i<8;i++)
 		len[i] = ZIN0(4+i);
-	//shaping1.setcoeffs(500.0,SAMPLERATE,10,Biquad::biquadtype::notch);
-	//shaping2.setcoeffs(200.0,SAMPLERATE,1.0,Biquad::biquadtype::high);
-	//shaping3.setcoeffs(800.0,SAMPLERATE,1.0,Biquad::biquadtype::low);
+    //optimize when values don change?
 	fdn.setlengths(len);
 	fdn.setcoeffs(c1b,c3b,mix,SAMPLERATE);
-	SETCALC(DWGSoundBoard_next);
 }
-
 void DWGSoundBoard_next(DWGSoundBoard *unit, int inNumSamples){
 	float *out = OUT(0);
 	float *in = IN(0);
-	unit->fdn.mix = ZIN0(3);
-	float signal;
+    unit->getargs(unit);
+    unit->fdn.go(in,out,inNumSamples);
+    /*
 	for(int i=0; i < inNumSamples; i++){
-		signal = unit->fdn.go(in[i]);
-		//signal += unit->shaping1.filter(signal);
-		//signal = unit->shaping2.filter(signal);
-		//signal += unit->shaping3.filter(signal);
-		out[i] = signal;
-	}
+		out[i] = unit->fdn.go(in[i]);
+	}*/
 }
 
 /////////////////////////////////////////////////////
