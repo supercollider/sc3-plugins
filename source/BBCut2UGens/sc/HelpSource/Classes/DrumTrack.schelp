@@ -1,0 +1,133 @@
+class:: DrumTrack
+summary:: Crosscorrelation search and drum pattern matching beat tracker
+categories:: UGens>Analysis
+
+description::
+
+Crosscorrelation search and drum pattern matching beat tracker, as described in:
+
+N Collins. Drum Track: Beat Induction from an Acoustic Drum Kit with Synchronised Scheduling. Proceedings of the International Computer Music Conference (ICMC), Barcelona, Sept 4-9, 2005
+
+(with special reference to the work of Jean Laroche on cross correlation/dynamic programming and Masataka Goto on drum detection and pattern spotting).
+
+This beat tracker was devised for concert applications in tracking an acoustic drum kit, but can also be used on polyphonic audio (for pop signals with drums). 
+
+There are four k-rate outputs, being ticks at quarter, eighth and sixteenth level from the determined beat, and the current detected tempo. 
+
+Tempi of 90bpm to 190bpm are the allowed options. A tempo weighting prior can be set via a 100 float buffer. The default is a flat profile; the concert allowed for drum and bass speed drumming. 
+
+classmethods::
+
+method:: kr
+
+argument:: in
+Audio input to track
+
+argument:: lock
+If this argument is greater than 0.5, the tracker will lock at its current periodicity and continue from the current phase. Whilst it updates the model's phase and period, this is not reflected in the output until lock goes back below 0.5.  
+
+You might want to play around with the following parameters, their meaning is explained in the academic paper.
+
+argument:: dynleak
+Coefficient of leaky integrator in causal dynamic programming routine
+
+argument:: tempowt
+Weighting for tempo transition cost
+
+argument:: phasewt
+Weighting for phase transition cost
+
+argument:: basswt
+Weighting for low frequency evidence
+
+argument:: patternwt
+Weighting for drum pattern evidence
+
+argument:: prior
+If a nonnegative integer, denotes a 100 float Buffer where a weighting curve for tempi resides, from 90 bpm to 189 bpm in steps of 1.
+
+argument:: kicksensitivity
+Multiplier for the kick drum detector's sensitivity. 1.0 is the default, increase for less senstive, decrease for more.
+
+argument:: snaresensitivity
+Multiplier for the snare drum detector's sensitivity. 1.0 is the default, increase for less senstive, decrease for more.
+
+argument:: debugmode
+0 for no debug information; 1 prints information on winning drum pattern matches and transitions to new phases/periods. 2 prints whenever a kick or snare is detected to help with fine tuning the kick and snare sensitivity.  
+
+examples::
+
+code::
+
+//choose some file you want to track off your hard drive (mono)
+b=Buffer.read(s,"/Volumes/data/stevebeattrack/samples/051.wav");
+
+(
+a= SynthDef(\help_drumtrack,{arg vol=1.0, beepvol=1.0, lock=0, kick=1, snare=1;
+var trackb,trackh,trackq,tempo;
+var source, beep;
+
+source= PlayBuf.ar(1,b.bufnum,1.0,1,0,1);
+
+#trackb,trackh,trackq,tempo=DrumTrack.kr(source, lock,kicksensitivity:kick,snaresensitivity:snare,debugmode:2);
+
+beep= SinOsc.ar(1000,0.0,Decay.kr(trackb,0.1));
+
+Out.ar(0,Pan2.ar((vol*source)+(beepvol*beep),0.0));
+
+}).play;
+)
+
+a.set(\vol,0.0);
+
+a.set(\beepvol,1.0);
+
+a.set(\kick,0.2);
+a.set(\snare,0.7);
+
+a.set(\lock,1); //fix it rigidly from current phase/period solution
+
+a.set(\lock,0); //unfix, back to tracking
+
+
+
+
+
+
+
+//track audio in (try clapping a beat or beatboxing, but allow up to 6 seconds for tracking to begin) and spawning stuff at quarters, eighths and sixteenths
+
+//tempo prior
+
+(
+var mean, stddev, constant;
+mean=30;
+stddev=10;
+constant= -0.5/(stddev.squared); //no need for front term on Gaussian since normalizeSum ignores 1/(stddev*(2pi.sqrt));
+
+a = (Array.fill(100,{arg i; exp(((i-mean).squared)*constant)})).normalizeSum; //Gaussian around 120 bpm (=index 30)
+
+Post << a << nl;
+b = Buffer.sendCollection(s, a, 1, 0, {arg buf; "finished".postln;});
+)
+        
+(
+SynthDef(\help_drumtrack2,{
+var trackb,trackh,trackq,tempo;
+var source;
+var bsound,hsound,qsound;
+
+source= AudioIn.ar(1);
+
+#trackb,trackh,trackq,tempo=DrumTrack.kr(source,prior:(b.bufnum));
+
+bsound= Pan2.ar(LPF.ar(WhiteNoise.ar*(Decay.kr(trackb,0.05)),1000),0.0);
+
+hsound= Pan2.ar(BPF.ar(WhiteNoise.ar*(Decay.kr(trackh,0.05)),3000,0.66),-0.5);
+
+qsound= Pan2.ar(HPF.ar(WhiteNoise.ar*(Decay.kr(trackq,0.05)),5000),0.5);
+
+Out.ar(0, bsound+hsound+qsound);
+}).play;
+)
+::
