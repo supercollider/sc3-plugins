@@ -46,11 +46,11 @@ if(APPLE OR WIN32)
 endif()
     
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
-    IF(NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm")
+    IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^(x86|amd64|i.86)")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mstackrealign")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mstackrealign")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     endif()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 add_library(${PROJECT} MODULE ${PROJECT}.cpp ${STKSources})

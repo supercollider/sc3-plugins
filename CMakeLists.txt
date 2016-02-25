@@ -52,7 +52,7 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
     add_definitions(-fvisibility=hidden)
-    IF(NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm")
+    IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^(x86|amd64|i.86)")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   -msse -msse2")
         set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
         if(NOT APPLE AND NOT CMAKE_COMPILER_IS_CLANG)
