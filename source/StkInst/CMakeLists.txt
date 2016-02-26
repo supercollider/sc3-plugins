@@ -24,7 +24,7 @@ if(NOT SYSTEM_STK)
     include_directories(${STKDIR}/include)
     include_directories(${STKDIR}/src/include)
 
-    include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+    include (TestBigEndian)
     TEST_BIG_ENDIAN(is_big_endian)
     if(NOT is_big_endian)
         add_definitions("-D__LITTLE_ENDIAN__")

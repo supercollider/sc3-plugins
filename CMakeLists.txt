@@ -53,8 +53,8 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
     add_definitions(-fvisibility=hidden)
 
-    include (${CMAKE_ROOT}/Modules/CheckCCompilerFlag.cmake)
-    include (${CMAKE_ROOT}/Modules/CheckCXXCompilerFlag.cmake)
+    include (CheckCCompilerFlag)
+    include (CheckCXXCompilerFlag)
 
     CHECK_C_COMPILER_FLAG(-msse HAS_SSE)
     CHECK_CXX_COMPILER_FLAG(-msse HAS_CXX_SSE)
