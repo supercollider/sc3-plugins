@@ -2,7 +2,7 @@
 // name: "GreyholeRaw"
 // version: "1.0"
 // author: "Julian Parker"
-// license: "none"
+// license: "GPL2+"
 // copyright: "(c) Julian Parker 2013"
 //
 // Code generated with Faust 0.9.62 (http://faust.grame.fr)
