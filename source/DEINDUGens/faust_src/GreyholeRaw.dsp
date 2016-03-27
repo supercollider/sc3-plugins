@@ -1,7 +1,7 @@
 declare name        "GreyholeRaw";
 declare version     "1.0";
 declare author      "Julian Parker";
-declare license     "none";
+declare license     "GPL2+";
 declare copyright   "(c) Julian Parker 2013";
 
 

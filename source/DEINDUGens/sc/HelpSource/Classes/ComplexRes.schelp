@@ -31,7 +31,7 @@ returns::
 A UGen.
 
 EXAMPLES::
-code::{[0.1,0.1]*ComplexRes.ar(Pulse.ar(0.1,0.001,0.1),50+ 5000*SinOsc.ar(50),0.5)}.play;::
+code::{ComplexRes.ar(Pulse.ar(0.1,0.001,0.1),50+ 5000*SinOsc.ar(50),0.5)}.play;::
 
 Feed forward network (core part):
 link::http://sccode.org/1-4V6::

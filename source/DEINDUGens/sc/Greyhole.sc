@@ -1,3 +1,7 @@
+// author: Julian Parker
+// license: GPL2+
+// year: 2013
+
 Greyhole {
 	*ar { | in, delayTime(2.0), damp(0.0), size(1.0), diff(0.707), feedback(0.9), modDepth(0.1), modFreq(2.0)|
 		in = in.asArray;

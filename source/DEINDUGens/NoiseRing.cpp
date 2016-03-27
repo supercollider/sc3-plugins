@@ -1,3 +1,11 @@
+//-----------------------------------------------------
+// name: "NoiseRing"
+// version: "1.0"
+// author: "Julian Parker & Till Bovermann"
+// license: "GPL2+"
+// copyright: "(c) Julian Parker & Till Bovermann 2013"
+//-----------------------------------------------------
+
 #include "SC_PlugIn.h"
 // #include <stdio.h>
 

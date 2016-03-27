@@ -1,3 +1,6 @@
+// author: Julian Parker
+// license: GPL2+
+// year: 2013
 
 JPverb {
 	*ar { | in, t60(1.0), damp(0.0), size(1.0), earlyDiff(0.707), modDepth(0.1), modFreq(2.0), low(1.0), mid(1.0), high(1.0), lowcut(500.0), highcut(2000.0)|

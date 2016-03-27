@@ -1,3 +1,11 @@
+//-----------------------------------------------------
+// name: "DiodeRingMog"
+// version: "1.0"
+// author: "Julian Parker & Till Bovermann"
+// license: "GPL2+"
+// copyright: "(c) Julian Parker & Till Bovermann 2013"
+//-----------------------------------------------------
+
 #include "SC_PlugIn.h"
 #define TWOPI 6.283185307179586
 #define PI 3.141592653589793
