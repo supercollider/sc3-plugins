@@ -2,8 +2,6 @@ cmake_minimum_required (VERSION 2.8)
 set(PROJECT "StkInst")
 project (${PROJECT})
 
-include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-
 if(NOT SYSTEM_STK)
     set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../external_libraries/stk)
 
@@ -25,6 +23,14 @@ if(NOT SYSTEM_STK)
     include_directories(${STKDIR})
     include_directories(${STKDIR}/include)
     include_directories(${STKDIR}/src/include)
+
+    include (TestBigEndian)
+    TEST_BIG_ENDIAN(is_big_endian)
+    if(NOT is_big_endian)
+        add_definitions("-D__LITTLE_ENDIAN__")
+    endif()
+
+    add_definitions("-D_STK_DEBUG_")
 endif()
 
 include_directories(${SC_PATH}/include/plugin_interface)
@@ -38,26 +44,11 @@ if(APPLE OR WIN32)
     set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
 endif()
     
-if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
-    IF(NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mstackrealign")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mstackrealign")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif()
-endif()
-if(NOT SYSTEM_STK)
-    add_definitions("-D_STK_DEBUG_")
-endif()
-
-TEST_BIG_ENDIAN(is_big_endian)
-if(NOT is_big_endian)
-    add_definitions("-D__LITTLE_ENDIAN__")
-endif()
-
 add_library(${PROJECT} MODULE ${PROJECT}.cpp ${STKSources})
 if(SYSTEM_STK)
     target_link_libraries(${PROJECT} ${STK_LIBRARY})
 endif()
+
 if(SUPERNOVA)
     add_library(${PROJECT}_supernova MODULE ${PROJECT}.cpp ${STKSources})
     set_property(TARGET ${PROJECT}_supernova APPEND PROPERTY COMPILE_DEFINITIONS  "SUPERNOVA")

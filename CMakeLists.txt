@@ -52,14 +52,40 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
     add_definitions(-fvisibility=hidden)
-    IF(NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   -msse -msse2")
-        set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
-        if(NOT APPLE AND NOT CMAKE_COMPILER_IS_CLANG)
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
-        endif()
+
+    include (CheckCCompilerFlag)
+    include (CheckCXXCompilerFlag)
+
+    CHECK_C_COMPILER_FLAG(-msse HAS_SSE)
+    CHECK_CXX_COMPILER_FLAG(-msse HAS_CXX_SSE)
+
+    if (HAS_SSE)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse")
     endif()
+    if (HAS_CXX_SSE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse")
+    endif()
+
+    CHECK_C_COMPILER_FLAG(-msse2 HAS_SSE2)
+    CHECK_CXX_COMPILER_FLAG(-msse2 HAS_CXX_SSE2)
+
+    if (HAS_SSE2)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+    endif()
+    if (HAS_CXX_SSE2)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+    endif()
+
+    CHECK_C_COMPILER_FLAG(-mfpmath=sse HAS_FPMATH_SSE)
+    CHECK_CXX_COMPILER_FLAG(-mfpmath=sse HAS_CXX_FPMATH_SSE)
+
+    if (HAS_FPMATH_SSE)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse")
+    endif()
+    if (HAS_CXX_FPMATH_SSE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
+    endif()
+
 	if(NATIVE)
 		add_definitions(-march=native)
 	endif()
@@ -123,3 +149,4 @@ if(WIN32)
 endif()
 
 include(CPack)
+
