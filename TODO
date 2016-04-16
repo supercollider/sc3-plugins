@@ -2,3 +2,4 @@ TODO:
 - fix MCLD*.cpp.OFF so they build
 - fix TJUGens so they build with gcc-4.0 on osx
 - remove scfft_old (MCLD, NCAnalysis and PitchDetection use it)
+- mtm: add my own change to get travis on it
