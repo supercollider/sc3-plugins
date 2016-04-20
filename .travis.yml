@@ -61,12 +61,12 @@ deploy:
      all_branches: true
 # github releases - only tags
  - provider: releases
-   api_key: $GITHUB_RELEASES_KEY
+   api_key: $GITHUB_KEY
    file: $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip
    prerelease: true
    skip_cleanup: true
    on:
-     condition: $TRAVIS_OS_NAME = osx && ! -z $GITHUB_RELEASES_KEY
+     condition: $TRAVIS_OS_NAME = osx && ! -z $GITHUB_KEY
      tags: true
      all_branches: true
 after-deploy:
