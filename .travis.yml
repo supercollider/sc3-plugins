@@ -35,12 +35,15 @@ before_deploy:
  # required for github releases
  - git fetch --tags
  - export BUILD_PREFIX=$TRAVIS_REPO_SLUG/$TRAVIS_OS_NAME
- - export FWD_HTML='<html><head><meta http-equiv="refresh" content="0; url=Plugins-'$TRAVIS_COMMIT'.zip" /></head></html>'
+ - export S3_BUILDS_LOCATION=builds/$BUILD_PREFIX
+ - export S3_URL=https://supercollider.s3.amazonaws.com/$S3_BUILDS_LOCATION/Plugins-$TRAVIS_COMMIT.zip
+ - export FWD_HTML='<html><head><meta http-equiv="refresh" content="0; url='$S3_URL'" /></head></html>'
  # put everything to be archived in artifacts/
  - mkdir -p "$HOME/artifacts/${TRAVIS_BRANCH%/*}"
  - mkdir -p "$HOME/artifacts/${TRAVIS_TAG%/*}"
  - echo $FWD_HTML > $HOME/artifacts/$TRAVIS_BRANCH-latest.html
  - 'if [[ $TRAVIS_TAG != "head" ]]; then echo $FWD_HTML > $HOME/artifacts/$TRAVIS_TAG.html; fi;'
+ - echo S3 Build Location: $S3_URL
 
 deploy:
  # s3 upload - every commit
@@ -49,7 +52,7 @@ deploy:
    secret_access_key: $AWS_SECRET
    bucket: supercollider
    local-dir: $HOME/artifacts
-   upload-dir: builds/$BUILD_PREFIX
+   upload-dir: $S3_BUILDS_LOCATION
    region: us-west-2
    skip_cleanup: true
    endpoint: s3-us-west-2.amazonaws.com
