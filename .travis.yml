@@ -43,7 +43,6 @@ before_deploy:
  - mkdir -p "$HOME/artifacts/${TRAVIS_TAG%/*}"
  - echo $FWD_HTML > $HOME/artifacts/$TRAVIS_BRANCH-latest.html
  - 'if [[ $TRAVIS_TAG != "head" ]]; then echo $FWD_HTML > $HOME/artifacts/$TRAVIS_TAG.html; fi;'
- - echo S3 Build Location: $S3_URL
 
 deploy:
  # s3 upload - every commit
@@ -70,6 +69,9 @@ deploy:
      condition: $TRAVIS_OS_NAME = osx && ! -z $GITHUB_RELEASES_KEY
      tags: true
      all_branches: true
+after-deploy:
+ - "echo S3 Build Location: $S3_URL"
+
 
 notifications:
   on_success: change
