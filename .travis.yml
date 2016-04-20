@@ -60,7 +60,7 @@ deploy:
 # github releases - only tags
  - provider: releases
    api_key:
-     secure: l2RJysBqtHTTi3qTVGXKCpsAkC/4evMukTsAmV9GSILdDuU1CMue1pSGpYqduQvKV3nn7UHClc3ah8yqRWn8xnSB8Eo9JX03dO8v29ury9F5FzceH0DARIB8iXMQXMM4MXm2R4xrGZDgLfwehr9PsXx/ZO90b24ffbEIY2Ji9nMOb9tGoPe4gUQo1DhsrBUInu+tKNJWS/1HfH2BrYRo4Y5EN1l/gx/LVjg7cWgeRS7BriBNAd1M1Qi7FmRKoknZPlrp6TOSjYZUaJEl/KMihdCrrKGQAxi9lEHCeVbTixMQwripId3c+tsC9tgIpQ0uBijdVR42J49xaGxJu03TaI8pL37kHvEZCVmFymwH5YIuoGdNLf9gaxOEBzeHmAxbZjnapAhHny4X9hT+DewgDb8o86eJ3ujTg6dDMHggjyrD1EdSHLnV0WDhJM8KpaozpIiR5XbIvalhUDFjQgsfeyYDp0FbioQgJUjWe8/JAkffqNibEjYdAs2ZngulM9B9QyeZpdFkR+ztz3Y1tCqKdz3XzD50Ai2/u4fVeB6qWL+HtDL1irZGG8lCwmNT8k/0u8d5yuEvA6qwv+Nw5jzvDqiq1VhTmxWJ8fOpYP4bsfG0EFrd9d8T7Bzdhi+IsV4daRLO21uFoHANG5kHKRWkApcmvzP3ts7N2WCgS/cC8nE= 
+     secure: l2RJysBqtHTTi3qTVGXKCpsAkC/4evMukTsAmV9GSILdDuU1CMue1pSGpYqduQvKV3nn7UHClc3ah8yqRWn8xnSB8Eo9JX03dO8v29ury9F5FzceH0DARIB8iXMQXMM4MXm2R4xrGZDgLfwehr9PsXx/ZO90b24ffbEIY2Ji9nMOb9tGoPe4gUQo1DhsrBUInu+tKNJWS/1HfH2BrYRo4Y5EN1l/gx/LVjg7cWgeRS7BriBNAd1M1Qi7FmRKoknZPlrp6TOSjYZUaJEl/KMihdCrrKGQAxi9lEHCeVbTixMQwripId3c+tsC9tgIpQ0uBijdVR42J49xaGxJu03TaI8pL37kHvEZCVmFymwH5YIuoGdNLf9gaxOEBzeHmAxbZjnapAhHny4X9hT+DewgDb8o86eJ3ujTg6dDMHggjyrD1EdSHLnV0WDhJM8KpaozpIiR5XbIvalhUDFjQgsfeyYDp0FbioQgJUjWe8/JAkffqNibEjYdAs2ZngulM9B9QyeZpdFkR+ztz3Y1tCqKdz3XzD50Ai2/u4fVeB6qWL+HtDL1irZGG8lCwmNT8k/0u8d5yuEvA6qwv+Nw5jzvDqiq1VhTmxWJ8fOpYP4bsfG0EFrd9d8T7Bzdhi+IsV4daRLO21uFoHANG5kHKRWkApcmvzP3ts7N2WCgS/cC8nE=
    file: $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip
    prerelease: true
    skip_cleanup: true
@@ -68,7 +68,6 @@ deploy:
      condition: $TRAVIS_OS_NAME = osx
      tags: true
      all_branches: true
-
 notifications:
   on_success: change
   on_failure: change
