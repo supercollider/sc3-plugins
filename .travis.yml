@@ -1,79 +1,77 @@
 language: objective-c
-
 os:
- - osx
-
+- osx
 cache:
- - apt
- - bundler
-
+- apt
+- bundler
 before_install:
- - ifmac () { if [[ $TRAVIS_OS_NAME == osx ]]; then eval $@; fi; }
- - iflin () { if [[ $TRAVIS_OS_NAME == linux ]]; then eval $@; fi; }
- - ifmac brew install cmake || true
- - iflin sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
- - iflin sudo add-apt-repository -y ppa:andykimpe/cmake  # backport of cmake 2.8.12
- - iflin sudo add-apt-repository -y ppa:ondrej/php5 # libicu-dev 52
- - iflin sudo apt-get update
- - iflin sudo apt-get install libicu-dev=52.1-1+debphp.org~precise+1 gcc-4.7 g++-4.7 aptitude build-essential libfftw3-dev libxt-dev pkg-config cmake=2.8.12.2-3 libstdc++5
- - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
- - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
- - iflin sudo update-alternatives --auto gcc
- - git clone https://github.com/supercollider/supercollider.git
-
+- ifmac () { if [[ $TRAVIS_OS_NAME == osx ]]; then eval $@; fi; }
+- iflin () { if [[ $TRAVIS_OS_NAME == linux ]]; then eval $@; fi; }
+- ifmac brew install cmake || true
+- iflin sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- iflin sudo add-apt-repository -y ppa:andykimpe/cmake
+- iflin sudo add-apt-repository -y ppa:ondrej/php5
+- iflin sudo apt-get update
+- iflin sudo apt-get install libicu-dev=52.1-1+debphp.org~precise+1 gcc-4.7 g++-4.7
+  aptitude build-essential libfftw3-dev libxt-dev pkg-config cmake=2.8.12.2-3 libstdc++5
+- iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave
+  /usr/bin/g++ g++ /usr/bin/g++-4.6
+- iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 --slave
+  /usr/bin/g++ g++ /usr/bin/g++-4.7
+- iflin sudo update-alternatives --auto gcc
+- git clone https://github.com/supercollider/supercollider.git
 before_script:
- - mkdir BUILD
- - cd BUILD
- - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider ..
-
+- mkdir BUILD
+- cd BUILD
+- cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider
+  ..
 script:
- - make install
- - ifmac mkdir -p $HOME/artifacts
- - ifmac zip -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
-
+- make install
+- ifmac mkdir -p $HOME/artifacts
+- ifmac zip -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
 before_deploy:
- # required for github releases
- - git fetch --tags
- - export BUILD_PREFIX=$TRAVIS_REPO_SLUG/$TRAVIS_OS_NAME
- - export FWD_HTML='<html><head><meta http-equiv="refresh" content="0; url=Plugins-'$TRAVIS_COMMIT'.zip" /></head></html>'
- # put everything to be archived in artifacts/
- - mkdir -p "$HOME/artifacts/${TRAVIS_BRANCH%/*}"
- - mkdir -p "$HOME/artifacts/${TRAVIS_TAG%/*}"
- - echo $FWD_HTML > $HOME/artifacts/$TRAVIS_BRANCH-latest.html
- - 'if [[ $TRAVIS_TAG != "head" ]]; then echo $FWD_HTML > $HOME/artifacts/$TRAVIS_TAG.html; fi;'
-
+- git fetch --tags
+- export BUILD_PREFIX=$TRAVIS_REPO_SLUG/$TRAVIS_OS_NAME
+- export FWD_HTML='<html><head><meta http-equiv="refresh" content="0; url=Plugins-'$TRAVIS_COMMIT'.zip"
+  /></head></html>'
+- mkdir -p "$HOME/artifacts/${TRAVIS_BRANCH%/*}"
+- mkdir -p "$HOME/artifacts/${TRAVIS_TAG%/*}"
+- echo $FWD_HTML > $HOME/artifacts/$TRAVIS_BRANCH-latest.html
+- if [[ $TRAVIS_TAG != "head" ]]; then echo $FWD_HTML > $HOME/artifacts/$TRAVIS_TAG.html;
+  fi;
 deploy:
- # s3 upload - every commit
- - provider: s3
-   access_key_id: $AWS_KEY
-   secret_access_key: $AWS_SECRET
-   bucket: supercollider
-   local-dir: $HOME/artifacts
-   upload-dir: builds/$BUILD_PREFIX
-   region: us-west-2
-   skip_cleanup: true
-   endpoint: s3-us-west-2.amazonaws.com
-   acl: public_read
-   on:
-     condition: $TRAVIS_OS_NAME = osx
-     all_branches: true
-# github releases - only tags
- - provider: releases
-   api_key:
-     secure: l2RJysBqtHTTi3qTVGXKCpsAkC/4evMukTsAmV9GSILdDuU1CMue1pSGpYqduQvKV3nn7UHClc3ah8yqRWn8xnSB8Eo9JX03dO8v29ury9F5FzceH0DARIB8iXMQXMM4MXm2R4xrGZDgLfwehr9PsXx/ZO90b24ffbEIY2Ji9nMOb9tGoPe4gUQo1DhsrBUInu+tKNJWS/1HfH2BrYRo4Y5EN1l/gx/LVjg7cWgeRS7BriBNAd1M1Qi7FmRKoknZPlrp6TOSjYZUaJEl/KMihdCrrKGQAxi9lEHCeVbTixMQwripId3c+tsC9tgIpQ0uBijdVR42J49xaGxJu03TaI8pL37kHvEZCVmFymwH5YIuoGdNLf9gaxOEBzeHmAxbZjnapAhHny4X9hT+DewgDb8o86eJ3ujTg6dDMHggjyrD1EdSHLnV0WDhJM8KpaozpIiR5XbIvalhUDFjQgsfeyYDp0FbioQgJUjWe8/JAkffqNibEjYdAs2ZngulM9B9QyeZpdFkR+ztz3Y1tCqKdz3XzD50Ai2/u4fVeB6qWL+HtDL1irZGG8lCwmNT8k/0u8d5yuEvA6qwv+Nw5jzvDqiq1VhTmxWJ8fOpYP4bsfG0EFrd9d8T7Bzdhi+IsV4daRLO21uFoHANG5kHKRWkApcmvzP3ts7N2WCgS/cC8nE= 
-   file: $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip
-   prerelease: true
-   skip_cleanup: true
-   on:
-     condition: $TRAVIS_OS_NAME = osx
-     tags: true
-     all_branches: true
-
+  matrix:
+  - provider: s3
+    access_key_id: $AWS_KEY
+    secret_access_key: $AWS_SECRET
+    bucket: supercollider
+    local-dir: $HOME/artifacts
+    upload-dir: builds/$BUILD_PREFIX
+    region: us-west-2
+    skip_cleanup: true
+    endpoint: s3-us-west-2.amazonaws.com
+    acl: public_read
+    on:
+      condition: $TRAVIS_OS_NAME = osx
+      all_branches: true
+  - provider: releases
+    api_key:
+      secure: l2RJysBqtHTTi3qTVGXKCpsAkC/4evMukTsAmV9GSILdDuU1CMue1pSGpYqduQvKV3nn7UHClc3ah8yqRWn8xnSB8Eo9JX03dO8v29ury9F5FzceH0DARIB8iXMQXMM4MXm2R4xrGZDgLfwehr9PsXx/ZO90b24ffbEIY2Ji9nMOb9tGoPe4gUQo1DhsrBUInu+tKNJWS/1HfH2BrYRo4Y5EN1l/gx/LVjg7cWgeRS7BriBNAd1M1Qi7FmRKoknZPlrp6TOSjYZUaJEl/KMihdCrrKGQAxi9lEHCeVbTixMQwripId3c+tsC9tgIpQ0uBijdVR42J49xaGxJu03TaI8pL37kHvEZCVmFymwH5YIuoGdNLf9gaxOEBzeHmAxbZjnapAhHny4X9hT+DewgDb8o86eJ3ujTg6dDMHggjyrD1EdSHLnV0WDhJM8KpaozpIiR5XbIvalhUDFjQgsfeyYDp0FbioQgJUjWe8/JAkffqNibEjYdAs2ZngulM9B9QyeZpdFkR+ztz3Y1tCqKdz3XzD50Ai2/u4fVeB6qWL+HtDL1irZGG8lCwmNT8k/0u8d5yuEvA6qwv+Nw5jzvDqiq1VhTmxWJ8fOpYP4bsfG0EFrd9d8T7Bzdhi+IsV4daRLO21uFoHANG5kHKRWkApcmvzP3ts7N2WCgS/cC8nE=
+    file: $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip
+    prerelease: true
+    skip_cleanup: true
+    on:
+      condition: $TRAVIS_OS_NAME = osx
+      tags: true
+      all_branches: true
+  username: mtmccrea
+  password:
+    secure: F5huRE0c71pA5UGU1/qpHZCyATrz16ZjnC3s4XSQgSuXuvyLOowg5VUUYMicP+RvAURPyez8E0i6Cc7GR7YK5P/u80dhvesNSzC+aqdSYHI4WfuRdlvZ8IS6i2z//wndQFZVrTbeGB+eOWy1MRgY0m6BNFjHBeL98k1oiSiAeW7/hszhALbIQy1kdCscD2LVrJNN1+I7+AcIb/5QVwudBgLD+2UZiwTuGdJLeTeDgLo6JihHx5/XlYoJejO/t4gB33+riaQy16TcR1Z40zEQ9CeEYFkIeVI2SgllmonfBw9S5r1B+KcvBBbWj0BxHCvW0XLb4RBJizgUodeQ6PAeMf2k+8TSk1anrXIPWyuCOfv0LAPlP8XwfL7+26QNOjJB88AHtl0qzzJqG0Vi3W5NSBBPzTXBZDo/EBjF5v9/nSRqU4UjdLmGCOMMXScnIrx8ZcB7mQ5ufNdeLw+uqqVDkw4WmBq3PNL9soACC6NhF6W1f6nZI/ChHKGWJtCu26dbCUZ2sK2uM61Id1/ulXyjeFZqH7/OjYh2hLNPsEzghtkUeOQytKpNH8XSjVSoLLSdo0Y68Y3qw2qd9dl4MQllCgq44ioibluJNtEho15A9IfHZN38BIryxjlZ58EKVpfoNbn6sjMxh6gJ6cAdC8NStWVmoD9isVkG/UvSoQkMi6k=
 notifications:
   on_success: change
   on_failure: change
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/51b9b53ca50a7bfca97d
+    - https://webhooks.gitter.im/e/51b9b53ca50a7bfca97d
     on_success: change
     on_failure: always
