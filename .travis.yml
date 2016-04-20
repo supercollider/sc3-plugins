@@ -29,7 +29,7 @@ before_script:
 script:
  - make install
  - ifmac mkdir -p $HOME/artifacts
- - ifmac zip -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
+ - ifmac zip -q -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
 
 before_deploy:
  # required for github releases
@@ -55,7 +55,7 @@ deploy:
    endpoint: s3-us-west-2.amazonaws.com
    acl: public_read
    on:
-     condition: $TRAVIS_OS_NAME = osx
+     condition: $TRAVIS_OS_NAME = osx && ! -z $AWS_KEY && ! -z $AWS_SECRET
      all_branches: true
 # github releases - only tags
  - provider: releases
@@ -64,7 +64,7 @@ deploy:
    prerelease: true
    skip_cleanup: true
    on:
-     condition: $TRAVIS_OS_NAME = osx
+     condition: $TRAVIS_OS_NAME = osx && ! -z $GITHUB_RELEASES_KEY
      tags: true
      all_branches: true
 
