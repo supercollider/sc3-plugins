@@ -64,6 +64,9 @@ deploy:
       condition: $TRAVIS_OS_NAME = osx
       tags: true
       all_branches: true
+  username: mtmccrea
+  password:
+    secure: F5huRE0c71pA5UGU1/qpHZCyATrz16ZjnC3s4XSQgSuXuvyLOowg5VUUYMicP+RvAURPyez8E0i6Cc7GR7YK5P/u80dhvesNSzC+aqdSYHI4WfuRdlvZ8IS6i2z//wndQFZVrTbeGB+eOWy1MRgY0m6BNFjHBeL98k1oiSiAeW7/hszhALbIQy1kdCscD2LVrJNN1+I7+AcIb/5QVwudBgLD+2UZiwTuGdJLeTeDgLo6JihHx5/XlYoJejO/t4gB33+riaQy16TcR1Z40zEQ9CeEYFkIeVI2SgllmonfBw9S5r1B+KcvBBbWj0BxHCvW0XLb4RBJizgUodeQ6PAeMf2k+8TSk1anrXIPWyuCOfv0LAPlP8XwfL7+26QNOjJB88AHtl0qzzJqG0Vi3W5NSBBPzTXBZDo/EBjF5v9/nSRqU4UjdLmGCOMMXScnIrx8ZcB7mQ5ufNdeLw+uqqVDkw4WmBq3PNL9soACC6NhF6W1f6nZI/ChHKGWJtCu26dbCUZ2sK2uM61Id1/ulXyjeFZqH7/OjYh2hLNPsEzghtkUeOQytKpNH8XSjVSoLLSdo0Y68Y3qw2qd9dl4MQllCgq44ioibluJNtEho15A9IfHZN38BIryxjlZ58EKVpfoNbn6sjMxh6gJ6cAdC8NStWVmoD9isVkG/UvSoQkMi6k=
 notifications:
   on_success: change
   on_failure: change
