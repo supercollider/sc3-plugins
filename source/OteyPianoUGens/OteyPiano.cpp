@@ -277,7 +277,7 @@ void OteySoundBoard_next(OteySoundBoard *unit, int inNumSamples){
 	float *out = OUT(0);
 	float *in = IN(0);
 	float signal;
-	for(int i; i < inNumSamples; i++){
+	for(int i = 0; i < inNumSamples; i++){
 		signal = unit->soundboard.reverb(in[i]);
 		signal += unit->shaping1.filter(signal);
 		signal = unit->shaping2.filter(signal);
@@ -400,7 +400,7 @@ void OteyPiano_next(OteyPiano *unit, int inNumSamples) {
         unit->piano.trigger(velocity*10.0);
 	unit->piano.go(out,inNumSamples);
 	float signal;
-	for(int i; i < inNumSamples; i++){
+	for(int i = 0; i < inNumSamples; i++){
 		signal = unit->soundboard.reverb(out[i]);
 		signal += unit->shaping1.filter(signal);
 		signal = unit->shaping2.filter(signal);
