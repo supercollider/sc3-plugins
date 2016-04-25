@@ -1,26 +1,111 @@
-------------------------------------------------------------------------
 Supercollider ${PROJECT_VERSION} Plugins for Windows
-------------------------------------------------------------------------
+====================================================
 
-Before installation, please uninstall any previous version of the
-plugins from your system.
+Currently there are two releases of sc3-plugins, a 64- and a 32-bit version.
+Only the 32-bit release contains the plugin-versions required for SuperNova, the
+alternative sound server. There is no 64-bit version of supernova for Windows
+yet. Note that you can use the 32-bit version of SC and plugins without
+problems on a 64-bit Windows version.
 
-To install the plugins, place the SC3plugins folder into one of the
-SuperCollider extension folders listed below, depending on your
-operating system and installation type:
+The release used must fit your SuperCollider version. So for 32-bit SuperCollider
+download 32-bit sc3-plugins, for 64-bit SC choose 64-bit sc3- plugins. If you
+want to use supernova, you can only use the 32-bit version of both SC and
+sc3-plugins. SC 32-bit is by default installed to `C:\Program Files (x86)`,
+whereas SC 64-bit is installed to `C:\Program Files`. You should see the SC
+application folder on SuperCollider startup when the location of the
+SCClassLibrary is displayed in the post-window.
 
-Windows 7 / Vista:
+This release of sc3-plugins cannot be used with SC 3.6.x, sc3-plugins only work
+within the same minor-version ('6' or '7') of SC. If you forgot which SC-version
+you use: for the minor version, check the SC menu-entry `Help/About`.
 
-- System-wide installation:
-  C:\ProgramData\SuperCollider\Extensions
+If you want to compile sc3-plugins yourself please consult the general
+SuperCollider ReadMe provided with the Windows version.
 
-- User-only installation:
-  C:\Users\<USERNAME>\AppData\Local\SuperCollider\Extensions
 
-Windows XP:
+## Installation
 
-- System-wide installation:
-  C:\Documents and Settings\All Users\Application Data\SuperCollider\Extensions
+Before installation, please uninstall any previous version of the plugins from
+your system. You may want to back the old version up, just in case.
 
-- User-only installation:
-  C:\Documents and Settings\<username>\Local Settings\Application Data\SuperCollider\Extensions
+Installing the 64-bit version is a bit different from installing the 32-bit
+version.
+
+*Note*: the `include folder` system in the SC-IDE does not support including
+binary plugins yet, you need to place the plugins in the `Extensions` folder.
+
+*Note*: the 64-bit release of the sc3-plugins is experimental. Please provide
+feedback about your experiences with it in the SC mailing list.
+
+
+### 64-bit
+
+SCWin-3.7-64 is compiled with Visual Studio 2013/12, whereas the sc3-plugins are
+compiled with MinGW 5.3. Therefore the MinGW "runtime libraries" need to be
+added to the folder in which `scsynth.exe` resides, i.e. the SuperCollider
+*application folder*. The three runtime libraries are bundled with the
+sc3-plugins release in a separate zip-file. They need to be extracted and moved
+to the SC application folder. This is most likely:
+
+    C:\Program Files\SuperCollider-<sc-version>
+
+The zip-files containing the actual plugins (binaries, class- and help-folders)
+can be extracted and moved as is to the SuperCollider *extensions folder*, which
+is a folder called `Extensions` in the SC support directory. This folder is
+different from the application folder and can be a bit tricky to find because
+its grand-parent-folder (`AppData`) is not shown in the File Explorer by
+default. You may have to choose `View/Hidden Files` first. On a standard system
+the folder should be found here:
+
+    C:\Users\<username>\AppData\Local\SuperCollider
+
+The safest way to identify the exact path is to evaluate in SC:
+
+    Platform.userAppSupportDir
+
+If the actual `Extensions`-folder does not exist yet, create it and move the
+sc3-plugins folder there. You should end up with a folder structure similar to
+this:
+
+    C:\Users\<username>\AppData\Local\SuperCollider\Extensions\SC3plugins
+
+*Note*: if the MinGW runtime libraries are not moved to the application folder,
+or if for some reason wrong versions are used, you will get error-messages like
+these when the server is booted:
+
+*** ERROR: LoadLibrary 'C:\Users\<username>\AppData\Local\SuperCollider\Extensions\SC3plugins\BBCut2UGens.scx' err 'The specified module could not be found.
+*** ERROR: LoadLibrary 'C:\Users\<username>\AppData\Local\SuperCollider\Extensions\SC3plugins\BetablockerUGens.scx' err 'The specified module could not be found.
+...
+
+
+### 32-bit
+
+Note that the zip-file provided in the release contains two folders: `plugins`
+and `sc3-plugins-classes`. The former contains the plugin binaries (*.scx), the
+later the class- and help-files. While the name of the later can be changed to
+your liking, the binaries must be contained in a folder called `plugins`. This
+is a requirement of supernova.
+
+Both folders need to go into the SuperCollider *extensions folder*, which is a
+folder called `Extensions` in the SC *support* folder. This folder can be a bit
+tricky to find because its grand-parent-folder (`AppData`) is not shown in the
+File Explorer by default. You may have to choose `View/Hidden Files` first. On a
+standard system the folder should be found here:
+
+    C:\Users\<username>\AppData\Local\SuperCollider
+
+The safest way to identify the exact path is to evaluate in SC:
+
+    Platform.userAppSupportDir
+
+If the actual `Extensions`-folder does not exist yet, create it and move the
+sc3-plugins folder there. You should end up with a folder structure similar
+to this:
+
+    C:\Users\<username>\AppData\Local\SuperCollider\Extensions\plugins
+    C:\Users\<username>\AppData\Local\SuperCollider\Extensions\sc3-plugins-classes
+
+
+*Note*: It should also be possible to install the plugins to:
+
+    Platform.systemAppSupportDir
