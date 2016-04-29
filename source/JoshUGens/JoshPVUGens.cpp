@@ -8,7 +8,8 @@
  */
 
 //third party Phase Vocoder UGens
-
+#include <vector>
+#include <algorithm>
 #include "SC_fftlib.h"
 #include "FFT_UGens.h"
 #include "SCComplex.h"
@@ -966,6 +967,21 @@ void PV_MagMap_next(PV_MagMap* unit, int inNumSamples)
 
 
 /* a function for sorting floats */
+#ifdef _WIN32
+bool isfloatgreater(float a, float b);
+bool isfloatgreater(float a, float b)
+{
+	return (a < b);
+}
+
+
+bool isfloatless(float a, float b);
+bool isfloatless(float a, float b)
+{
+	return (a > b);
+}
+
+#else
 int isfloatgreater(const void *a, const void *b);
 int isfloatgreater (const void *a, const void *b)
 {
@@ -975,7 +991,6 @@ int isfloatgreater (const void *a, const void *b)
   return (*fa > *fb) - (*fa < *fb);
 }
 
-
 int isfloatless(const void *a, const void *b);
 int isfloatless (const void *a, const void *b)
 {
@@ -984,6 +999,7 @@ int isfloatless (const void *a, const void *b)
 
   return (*fa < *fb) - (*fa > *fb);
 }
+#endif
 
 void PV_MaxMagN_Ctor(PV_MaxMagN *unit)
 {
@@ -998,7 +1014,12 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 
 	SCPolarBuf *p = ToPolarApx(buf);
 
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> magarray(numbins);
+#else
 	float magarray[numbins];
+#endif
 
 	for (int i = 0; i < numbins; ++i){
 	    magarray[i] = 0.f;
@@ -1007,7 +1028,11 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
+#ifdef _WIN32
+	std::sort(magarray.begin(), magarray.end(), isfloatless);
+#else
 	qsort(magarray, numbins, sizeof (float), isfloatless);
+#endif
 	float minmag = magarray[(int)numpars];
 	for (int i = 0; i < numbins; ++i){
 	    if (p->bin[i].mag <= minmag) p->bin[i].mag = 0.f;
@@ -1027,7 +1052,12 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 
 	SCPolarBuf *p = ToPolarApx(buf);
 
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> magarray(numbins);
+#else
 	float magarray[numbins];
+#endif
 
 	for (int i = 0; i < numbins; ++i){
 	    magarray[i] = 0.f;
@@ -1036,7 +1066,11 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
-	qsort(magarray, numbins, sizeof (float), isfloatgreater);
+#ifdef _WIN32
+	std::sort(magarray.begin(), magarray.end(), isfloatgreater);
+#else
+	qsort(magarray, numbins, sizeof(float), isfloatless);
+#endif
 
 	float maxmag = magarray[(int)numpars];
 
@@ -1975,7 +2009,12 @@ void PV_BinPlayBuf_first(PV_BinPlayBuf* unit, int inNumSamples)
 	if(numBins > numbins) numBins = numbins;
     }
 
-    float bins[numbins];
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> bins(numbins);
+#else
+	float bins[numbins];
+#endif
 
     for(int i = 0; i < numbins; i++) bins[i] = 0.f;
     for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
@@ -2068,7 +2107,12 @@ void PV_BinPlayBuf_next(PV_BinPlayBuf* unit, int inNumSamples)
 	if(numBins > numbins) numBins = numbins;
     }
 
-    float bins[numbins];
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> bins(numbins);
+#else
+	float bins[numbins];
+#endif
 
     for(int i = 0; i < numbins; i++) bins[i] = 0.f;
     for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
@@ -2309,7 +2353,12 @@ void PV_BinBufRd_first(PV_BinBufRd* unit, int inNumSamples)
 	if(numBins > numbins) numBins = numbins;
     }
 
-    float bins[numbins];
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> bins(numbins);
+#else
+	float bins[numbins];
+#endif
 
     for(int i = 0; i < numbins; i++) bins[i] = 0.f;
     for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
@@ -2399,7 +2448,12 @@ void PV_BinBufRd_next(PV_BinBufRd* unit, int inNumSamples)
 	if(numBins > numbins) numBins = numbins;
     }
 
-    float bins[numbins];
+	// MSVC does not support variable length arrays...
+#ifdef _WIN32
+	std::vector<float> bins(numbins);
+#else
+	float bins[numbins];
+#endif
 
     for(int i = 0; i < numbins; i++) bins[i] = 0.f;
     for(int i = 0; i < numBins; i++) bins[binStart + (binSkip * i)] = 1.f;
