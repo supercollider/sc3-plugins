@@ -50,8 +50,6 @@ struct GlitchBRF : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void GlitchRHPF_next(GlitchRHPF *unit, int inNumSamples);
 	void GlitchRHPF_next_1(GlitchRHPF *unit, int inNumSamples);
 	void GlitchRHPF_Ctor(GlitchRHPF* unit);

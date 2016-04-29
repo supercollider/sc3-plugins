@@ -232,8 +232,6 @@ extern "C"
 {
 	#include "SC_fftlib.h"
 
-	void load(InterfaceTable *inTable);
-
 	void PV_NoiseSynthP_Ctor(PV_NoiseSynthP *unit);
 	void PV_NoiseSynthP_Dtor(PV_NoiseSynthP *unit);
 	void PV_NoiseSynthP_first(PV_NoiseSynthP* unit, int inNumSamples);

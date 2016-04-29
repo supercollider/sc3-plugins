@@ -23,8 +23,6 @@ struct Clockmus : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Getenv_Ctor(Getenv* unit);
 	void Getenv_next(Getenv *unit, int inNumSamples);
 	void Getenv_Dtor(Getenv* unit);

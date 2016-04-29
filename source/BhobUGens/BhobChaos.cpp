@@ -177,8 +177,6 @@ struct FhnTrig : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Henon2DN_Ctor(Henon2DN* unit);
 	void Henon2DN_next(Henon2DN *unit, int inNumSamples);
 

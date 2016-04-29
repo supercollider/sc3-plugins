@@ -40,8 +40,6 @@ struct WrapSummer : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Summer_Ctor(Summer *unit);
 	void Summer_next_aa(Summer *unit, int inNumSamples);
 	void Summer_next_ak(Summer *unit, int inNumSamples);

@@ -372,7 +372,6 @@ void PV_Cutoff_Ctor(PV_Unit *unit)
 
 extern "C"
 {
-    void load(InterfaceTable *inTable);
 }
 
 InterfaceTable *ft;

@@ -552,8 +552,6 @@ struct BufGrainIBF : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void MonoGrain_next(MonoGrain *unit, int inNumSamples);
 	void MonoGrain_Ctor(MonoGrain* unit);
 

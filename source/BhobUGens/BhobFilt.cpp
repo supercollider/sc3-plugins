@@ -124,8 +124,6 @@ struct DoubleNestedAllpassC : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void MoogLadder_Ctor(MoogLadder* unit);
 	void MoogLadder_next_kk(MoogLadder *unit, int inNumSamples);
 	void MoogLadder_next_ka(MoogLadder *unit, int inNumSamples);

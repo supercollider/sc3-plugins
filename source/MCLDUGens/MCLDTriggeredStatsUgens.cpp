@@ -29,8 +29,6 @@ struct MedianTriggered : public StatsTriggeredUnit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void MeanTriggered_Ctor(MeanTriggered* unit);
 	void MeanTriggered_next_xa(MeanTriggered *unit, int inNumSamples);
 	void MeanTriggered_next_xk(MeanTriggered *unit, int inNumSamples);

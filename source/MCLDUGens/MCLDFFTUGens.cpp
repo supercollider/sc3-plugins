@@ -238,8 +238,6 @@ struct PV_ExtractRepeat : Unit {
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void FFTPower_Ctor(FFTPower *unit);
 	void FFTPower_next(FFTPower *unit, int inNumSamples);
 

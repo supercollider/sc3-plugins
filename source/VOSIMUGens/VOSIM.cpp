@@ -50,7 +50,6 @@ struct VOSIM : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 	void VOSIM_next_a(VOSIM *unit, int inNumSamples);
 	void VOSIM_next_aaak(VOSIM *unit, int inNumSamples);
 	void VOSIM_next_aaka(VOSIM *unit, int inNumSamples);

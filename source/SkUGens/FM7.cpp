@@ -55,7 +55,6 @@ struct FM7 : public Unit
 
 extern "C"
 {
-    void load(InterfaceTable *inTable);
     void FM7_Ctor(FM7 *unit);
     void FM7_next_kk(FM7 *unit, int inNumSamples);
     void FM7_next_ki(FM7 *unit, int inNumSamples);

@@ -134,8 +134,6 @@ struct BFFreeVerb : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void A2B_next(A2B *unit, int inNumSamples);
 	void A2B_Ctor(A2B* unit);
 
