@@ -200,10 +200,10 @@ void biquad(float f0, float fs, float Q, int type, Filter *c)
 */
 void thirian(float D, int N, Filter *c) 
 {
-  c->x =(float *)RTAlloc(gWorld,sizeof(float[N+1]));// new float[N+1];
-  c->y = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
-  c->a = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
-  c->b = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
+  c->x =(float *)RTAlloc(gWorld, sizeof(float) * (N + 1));// new float[N+1];
+  c->y = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
+  c->a = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
+  c->b = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
   memset(c->x,0,(N+1)*sizeof(float));
   memset(c->y,0,(N+1)*sizeof(float));
 
@@ -228,10 +228,10 @@ void thiriandispersion(float B, float f, int M, Filter *c)
   D = Db(B,f,M);
 
   if(D<=1.0) {
-    c->x = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
-    c->y = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
-    c->a = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
-    c->b = (float *)RTAlloc(gWorld,sizeof(float[N+1]));//new float[N+1];
+	c->x = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
+	c->y = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
+	c->a = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
+	c->b = (float *)RTAlloc(gWorld, sizeof(float) * (N + 1));//new float[N+1];
     memset(c->x,0,(N+1)*sizeof(float));
     memset(c->y,0,(N+1)*sizeof(float));
     c->a[0] = 1;
@@ -312,7 +312,7 @@ void init_delay(Delay *c, int di)
 	*/
 	c->size = NEXTPOWEROFTWO(2*di);
 	c->mask = c->size - 1;
-  c->x = (float *)RTAlloc(gWorld,sizeof(float[c->size]));//new float[c->size];
+  c->x = (float *)RTAlloc(gWorld,sizeof(float) * c->size);//new float[c->size];
   //c->y = new float[c->size];
   memset(c->x,0,c->size*sizeof(float));
  // memset(c->y,0,c->size*sizeof(float));
