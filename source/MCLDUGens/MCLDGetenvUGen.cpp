@@ -3,9 +3,13 @@ Getenv UGen (c) Dan Stowell 2007
 Grab environment variables (numeric ones please!) for use in synth graphs.
 */
 
-#include "SC_PlugIn.h"
+#ifdef _WIN32
+#include "wintime.h"
+#else
 #include <sys/time.h>
+#endif
 #include <ctime>
+#include "SC_PlugIn.h"
 
 static InterfaceTable *ft;
 
