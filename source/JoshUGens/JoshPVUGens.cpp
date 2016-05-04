@@ -968,19 +968,7 @@ void PV_MagMap_next(PV_MagMap* unit, int inNumSamples)
 
 /* a function for sorting floats */
 #ifdef _MSC_VER
-bool isfloatgreater(float a, float b);
-bool isfloatgreater(float a, float b)
-{
-	return (a < b);
-}
-
-
-bool isfloatless(float a, float b);
-bool isfloatless(float a, float b)
-{
-	return (a > b);
-}
-
+#include <functional>
 #else
 int isfloatgreater(const void *a, const void *b);
 int isfloatgreater (const void *a, const void *b)
@@ -1029,7 +1017,7 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 	float numpars = IN0(1);
 
 #ifdef _MSC_VER
-	std::sort(magarray.begin(), magarray.end(), isfloatless);
+	std::sort(magarray.begin(), magarray.end());
 #else
 	qsort(magarray, numbins, sizeof (float), isfloatless);
 #endif
@@ -1067,9 +1055,9 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 	float numpars = IN0(1);
 
 #ifdef _MSC_VER
-	std::sort(magarray.begin(), magarray.end(), isfloatgreater);
+	std::sort(magarray.begin(), magarray.end(), std::greater<float>());
 #else
-	qsort(magarray, numbins, sizeof(float), isfloatless);
+	qsort(magarray, numbins, sizeof(float), isfloatgreater);
 #endif
 
 	float maxmag = magarray[(int)numpars];
