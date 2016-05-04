@@ -3,7 +3,7 @@ Getenv UGen (c) Dan Stowell 2007
 Grab environment variables (numeric ones please!) for use in synth graphs.
 */
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #include "wintime.h"
 #else
 #include <sys/time.h>

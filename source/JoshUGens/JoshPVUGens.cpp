@@ -967,7 +967,7 @@ void PV_MagMap_next(PV_MagMap* unit, int inNumSamples)
 
 
 /* a function for sorting floats */
-#ifdef _WIN32
+#ifdef _MSC_VER
 bool isfloatgreater(float a, float b);
 bool isfloatgreater(float a, float b)
 {
@@ -1015,7 +1015,7 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> magarray(numbins);
 #else
 	float magarray[numbins];
@@ -1028,7 +1028,7 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::sort(magarray.begin(), magarray.end(), isfloatless);
 #else
 	qsort(magarray, numbins, sizeof (float), isfloatless);
@@ -1053,7 +1053,7 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 	SCPolarBuf *p = ToPolarApx(buf);
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> magarray(numbins);
 #else
 	float magarray[numbins];
@@ -1066,7 +1066,7 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::sort(magarray.begin(), magarray.end(), isfloatgreater);
 #else
 	qsort(magarray, numbins, sizeof(float), isfloatless);
@@ -2010,7 +2010,7 @@ void PV_BinPlayBuf_first(PV_BinPlayBuf* unit, int inNumSamples)
     }
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> bins(numbins);
 #else
 	float bins[numbins];
@@ -2108,7 +2108,7 @@ void PV_BinPlayBuf_next(PV_BinPlayBuf* unit, int inNumSamples)
     }
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> bins(numbins);
 #else
 	float bins[numbins];
@@ -2354,7 +2354,7 @@ void PV_BinBufRd_first(PV_BinBufRd* unit, int inNumSamples)
     }
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> bins(numbins);
 #else
 	float bins[numbins];
@@ -2449,7 +2449,7 @@ void PV_BinBufRd_next(PV_BinBufRd* unit, int inNumSamples)
     }
 
 	// MSVC does not support variable length arrays...
-#ifdef _WIN32
+#ifdef _MSC_VER
 	std::vector<float> bins(numbins);
 #else
 	float bins[numbins];
