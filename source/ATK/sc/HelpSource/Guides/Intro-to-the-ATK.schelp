@@ -136,9 +136,9 @@ Additionally, the ATK has a number of dependencies. Please install the following
 list::
 ##link::http://quarks.svn.sourceforge.net/viewvc/quarks/MathLib/##MathLib:: Quark. See: link::Guides/UsingQuarks::
 
-##link::http://www.ambisonictoolkit.net/wiki/tiki-index.php?page=Downloads#ATK_Kernels#ATK Kernels::
+##link::http://www.ambisonictoolkit.net/download/kernels/##ATK Kernels::
 
-##link::http://www.ambisonictoolkit.net/wiki/tiki-index.php?page=Downloads#ATK_Example_Soundfiles#ATK Example Soundfiles::
+##link::http://www.ambisonictoolkit.net/download/recordings/##ATK Example Soundfiles::
 ::
 
 section:: Examples
