@@ -58,7 +58,7 @@ using namespace std;
 #if defined(__GNUC__) && __GNUC__ >= 4
 # define FAUST_EXPORT __attribute__((visibility("default")))
 #else
-# define FAUST_EXPORT extern "C" SC_API_EXPORT
+# define FAUST_EXPORT SC_API_EXPORT
 #endif
 
 //----------------------------------------------------------------------------
