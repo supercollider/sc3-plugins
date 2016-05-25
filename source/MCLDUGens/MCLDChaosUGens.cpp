@@ -44,8 +44,6 @@ struct Perlin3 : Unit {
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void RosslerL_next(RosslerL *unit, int inNumSamples);
 	void RosslerL_Ctor(RosslerL *unit);
 

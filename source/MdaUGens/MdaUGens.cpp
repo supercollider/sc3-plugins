@@ -27,7 +27,6 @@ struct MdaPiano : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 	void MdaPiano_Ctor(MdaPiano* unit);
 	void MdaPiano_next(MdaPiano *unit, int inNumSamples);
 	void MdaPiano_Dtor(MdaPiano* unit);

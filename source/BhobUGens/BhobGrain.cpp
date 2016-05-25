@@ -57,8 +57,6 @@ struct TGrains3 : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void TGrains2_next(TGrains2 *unit, int inNumSamples);
 	void TGrains2_Ctor(TGrains2* unit);
 

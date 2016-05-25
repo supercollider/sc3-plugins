@@ -57,8 +57,6 @@ struct KMeansRT : public SOMUnit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void SOMTrain_Ctor(SOMTrain* unit);
 	void SOMTrain_Dtor(SOMTrain* unit);
 	void SOMTrain_next(SOMTrain *unit, int inNumSamples);

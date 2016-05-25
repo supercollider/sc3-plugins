@@ -13,7 +13,6 @@ struct SawDPW : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 	void SawDPW_next_a(SawDPW *unit, int inNumSamples);
 	void SawDPW_next_k(SawDPW *unit, int inNumSamples);
 	void SawDPW_Ctor(SawDPW* unit);

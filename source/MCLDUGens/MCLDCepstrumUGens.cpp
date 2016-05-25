@@ -40,8 +40,6 @@ struct ICepstrum : Cepstrum {
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Cepstrum_Ctor(Cepstrum* unit);
 	void Cepstrum_next(Cepstrum* unit, int inNumSamples);
 	void Cepstrum_Dtor(Cepstrum* unit);

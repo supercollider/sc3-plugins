@@ -340,7 +340,7 @@ class ConvolverT
 		//pAl2 = pAl2%AlSize;
 		//if( pAl2 < 0 ){ pAl2 += AlSize;}
 		int pAl2 = buf.pointerInRange(buf.pointer + kernel_size - 1);
-		int howmany = std::min(AlSize - pAl2,kernel_size);
+		int howmany = sc_min(AlSize - pAl2,kernel_size);
 		for(int i=0; i < howmany; i++)
 			sum += Kernel[i]*buf.Buffer[pAl2 + i];
 		int howmany2 = kernel_size - howmany;
@@ -1268,7 +1268,7 @@ class TUBE{
         if(a1 < 1e-18)
             loss = 0.0;
         else
-            loss = 1.0 - std::min(lossF/sqrt(a1),1.0);
+            loss = 1.0 - sc_min(lossF/sqrt(a1),1.0);
 
     }
     void go(){

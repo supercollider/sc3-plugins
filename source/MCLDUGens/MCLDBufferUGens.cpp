@@ -76,8 +76,6 @@ struct MIDelay : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Logger_Ctor(Logger* unit);
 	void Logger_next(Logger *unit, int inNumSamples);
 

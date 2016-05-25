@@ -51,8 +51,6 @@ struct NearestN : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void PlaneTree_Ctor(PlaneTree* unit);
 	void PlaneTree_next(PlaneTree *unit, int inNumSamples);
 	void PlaneTree_Dtor(PlaneTree* unit);

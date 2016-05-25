@@ -152,7 +152,6 @@ struct FoaPsychoShelf : public Unit
 
 extern "C"
 {
-    void load(InterfaceTable *inTable);
     
     void FoaPanB_next_aa(FoaPanB *unit, int inNumSamples);
     void FoaPanB_next_kk(FoaPanB *unit, int inNumSamples);

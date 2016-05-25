@@ -13,7 +13,6 @@
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 }
 
 
@@ -30,7 +29,6 @@ extern void loadLPCAnalyzer(InterfaceTable *inTable);
 extern void loadMedianSeparation(InterfaceTable *inTable);
 
 
-//void load(InterfaceTable *inTable)
 PluginLoad(NCAnalysis)
 {
 

@@ -572,9 +572,6 @@ struct Dfsm : public Unit
 
 extern "C"
 {
-void load(InterfaceTable *inTable);
-
-
 void Dfsm_Ctor(Dfsm *unit);
 void Dfsm_Dtor(Dfsm *unit);
 void Dfsm_next(Dfsm *unit, int inNumSamples);

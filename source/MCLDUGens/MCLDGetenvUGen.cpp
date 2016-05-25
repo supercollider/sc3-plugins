@@ -3,9 +3,13 @@ Getenv UGen (c) Dan Stowell 2007
 Grab environment variables (numeric ones please!) for use in synth graphs.
 */
 
-#include "SC_PlugIn.h"
+#ifdef _MSC_VER
+#include "wintime.h"
+#else
 #include <sys/time.h>
+#endif
 #include <ctime>
+#include "SC_PlugIn.h"
 
 static InterfaceTable *ft;
 
@@ -23,8 +27,6 @@ struct Clockmus : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Getenv_Ctor(Getenv* unit);
 	void Getenv_next(Getenv *unit, int inNumSamples);
 	void Getenv_Dtor(Getenv* unit);

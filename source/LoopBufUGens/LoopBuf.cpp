@@ -31,8 +31,6 @@ struct FLoopBuf : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 //	void LoopBuf_next_aa(LoopBuf *unit, int inNumSamples);
 //	void LoopBuf_next_ak(LoopBuf *unit, int inNumSamples);
 //	void LoopBuf_next_ka(LoopBuf *unit, int inNumSamples);

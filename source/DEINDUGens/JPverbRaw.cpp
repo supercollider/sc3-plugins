@@ -58,7 +58,7 @@ using namespace std;
 #if defined(__GNUC__) && __GNUC__ >= 4
 # define FAUST_EXPORT __attribute__((visibility("default")))
 #else
-# define FAUST_EXPORT /* NOP */
+# define FAUST_EXPORT SC_API_EXPORT
 #endif
 
 //----------------------------------------------------------------------------
@@ -438,181 +438,181 @@ class mydsp : public dsp {
 	}
 	virtual void instanceInit(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		for (int i=0; i<2; i++) iVec0[i] = 0;
+		{ for (int i=0; i<2; i++) iVec0[i] = 0; }
 		fslider0 = 1.0f;
-		for (int i=0; i<2; i++) fRec5[i] = 0;
+		{ for (int i=0; i<2; i++) fRec5[i] = 0; }
 		fslider1 = 0.707f;
-		for (int i=0; i<2; i++) fRec9[i] = 0;
-		for (int i=0; i<2; i++) fRec13[i] = 0;
-		for (int i=0; i<2; i++) fRec17[i] = 0;
+		{ for (int i=0; i<2; i++) fRec9[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec13[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec17[i] = 0; }
 		fslider2 = 5e+02f;
 		iConst0 = min(192000, max(1, fSamplingFreq));
 		fConst1 = (3.141592653589793f / float(iConst0));
 		fslider3 = 2e+03f;
-		for (int i=0; i<2; i++) fRec26[i] = 0;
-		for (int i=0; i<2; i++) fRec30[i] = 0;
-		for (int i=0; i<2; i++) fRec37[i] = 0;
-		for (int i=0; i<2; i++) fRec41[i] = 0;
-		for (int i=0; i<2; i++) fRec45[i] = 0;
-		for (int i=0; i<2; i++) fRec47[i] = 0;
-		for (int i=0; i<2; i++) fRec51[i] = 0;
-		for (int i=0; i<2; i++) fRec55[i] = 0;
-		for (int i=0; i<2; i++) fRec59[i] = 0;
-		for (int i=0; i<2; i++) fRec63[i] = 0;
-		for (int i=0; i<2; i++) fRec67[i] = 0;
+		{ for (int i=0; i<2; i++) fRec26[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec30[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec37[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec41[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec45[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec47[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec51[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec55[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec59[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec63[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec67[i] = 0; }
 		IOTA = 0;
-		for (int i=0; i<16384; i++) fVec1[i] = 0;
-		for (int i=0; i<2; i++) fRec66[i] = 0;
-		for (int i=0; i<2; i++) fRec64[i] = 0;
-		for (int i=0; i<2; i++) fRec69[i] = 0;
-		for (int i=0; i<16384; i++) fVec2[i] = 0;
-		for (int i=0; i<2; i++) fRec68[i] = 0;
-		for (int i=0; i<2; i++) fRec65[i] = 0;
-		for (int i=0; i<16384; i++) fVec3[i] = 0;
-		for (int i=0; i<2; i++) fRec62[i] = 0;
-		for (int i=0; i<2; i++) fRec60[i] = 0;
-		for (int i=0; i<2; i++) fRec71[i] = 0;
-		for (int i=0; i<16384; i++) fVec4[i] = 0;
-		for (int i=0; i<2; i++) fRec70[i] = 0;
-		for (int i=0; i<2; i++) fRec61[i] = 0;
-		for (int i=0; i<16384; i++) fVec5[i] = 0;
-		for (int i=0; i<2; i++) fRec58[i] = 0;
-		for (int i=0; i<2; i++) fRec56[i] = 0;
-		for (int i=0; i<2; i++) fRec73[i] = 0;
-		for (int i=0; i<16384; i++) fVec6[i] = 0;
-		for (int i=0; i<2; i++) fRec72[i] = 0;
-		for (int i=0; i<2; i++) fRec57[i] = 0;
-		for (int i=0; i<16384; i++) fVec7[i] = 0;
-		for (int i=0; i<2; i++) fRec54[i] = 0;
-		for (int i=0; i<2; i++) fRec52[i] = 0;
-		for (int i=0; i<2; i++) fRec75[i] = 0;
-		for (int i=0; i<16384; i++) fVec8[i] = 0;
-		for (int i=0; i<2; i++) fRec74[i] = 0;
-		for (int i=0; i<2; i++) fRec53[i] = 0;
-		for (int i=0; i<16384; i++) fVec9[i] = 0;
-		for (int i=0; i<2; i++) fRec50[i] = 0;
-		for (int i=0; i<2; i++) fRec48[i] = 0;
-		for (int i=0; i<2; i++) fRec77[i] = 0;
-		for (int i=0; i<16384; i++) fVec10[i] = 0;
-		for (int i=0; i<2; i++) fRec76[i] = 0;
-		for (int i=0; i<2; i++) fRec49[i] = 0;
-		for (int i=0; i<512; i++) fVec11[i] = 0;
+		{ for (int i=0; i<16384; i++) fVec1[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec66[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec64[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec69[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec2[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec68[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec65[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec3[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec62[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec60[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec71[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec4[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec70[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec61[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec5[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec58[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec56[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec73[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec6[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec72[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec57[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec7[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec54[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec52[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec75[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec8[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec74[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec53[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec9[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec50[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec48[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec77[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec10[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec76[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec49[i] = 0; }
+		{ for (int i=0; i<512; i++) fVec11[i] = 0; }
 		fslider4 = 2.0f;
 		fConst2 = (6.283185307179586f / float(iConst0));
-		for (int i=0; i<2; i++) fRec78[i] = 0;
-		for (int i=0; i<2; i++) fRec79[i] = 0;
+		{ for (int i=0; i<2; i++) fRec78[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec79[i] = 0; }
 		fslider5 = 0.1f;
-		for (int i=0; i<16384; i++) fVec12[i] = 0;
-		for (int i=0; i<2; i++) fRec46[i] = 0;
-		for (int i=0; i<2; i++) fRec81[i] = 0;
-		for (int i=0; i<512; i++) fVec13[i] = 0;
-		for (int i=0; i<16384; i++) fVec14[i] = 0;
-		for (int i=0; i<2; i++) fRec80[i] = 0;
-		for (int i=0; i<16384; i++) fVec15[i] = 0;
-		for (int i=0; i<2; i++) fRec44[i] = 0;
-		for (int i=0; i<2; i++) fRec42[i] = 0;
-		for (int i=0; i<2; i++) fRec83[i] = 0;
-		for (int i=0; i<16384; i++) fVec16[i] = 0;
-		for (int i=0; i<2; i++) fRec82[i] = 0;
-		for (int i=0; i<2; i++) fRec43[i] = 0;
-		for (int i=0; i<16384; i++) fVec17[i] = 0;
-		for (int i=0; i<2; i++) fRec40[i] = 0;
-		for (int i=0; i<2; i++) fRec38[i] = 0;
-		for (int i=0; i<16384; i++) fVec18[i] = 0;
-		for (int i=0; i<2; i++) fRec84[i] = 0;
-		for (int i=0; i<2; i++) fRec39[i] = 0;
-		for (int i=0; i<16384; i++) fVec19[i] = 0;
-		for (int i=0; i<2; i++) fRec36[i] = 0;
-		for (int i=0; i<2; i++) fRec34[i] = 0;
-		for (int i=0; i<2; i++) fRec86[i] = 0;
-		for (int i=0; i<16384; i++) fVec20[i] = 0;
-		for (int i=0; i<2; i++) fRec85[i] = 0;
-		for (int i=0; i<2; i++) fRec35[i] = 0;
-		for (int i=0; i<16384; i++) fVec21[i] = 0;
-		for (int i=0; i<2; i++) fRec33[i] = 0;
-		for (int i=0; i<2; i++) fRec31[i] = 0;
-		for (int i=0; i<16384; i++) fVec22[i] = 0;
-		for (int i=0; i<2; i++) fRec87[i] = 0;
-		for (int i=0; i<2; i++) fRec32[i] = 0;
-		for (int i=0; i<16384; i++) fVec23[i] = 0;
-		for (int i=0; i<2; i++) fRec29[i] = 0;
-		for (int i=0; i<2; i++) fRec27[i] = 0;
-		for (int i=0; i<2; i++) fRec89[i] = 0;
-		for (int i=0; i<16384; i++) fVec24[i] = 0;
-		for (int i=0; i<2; i++) fRec88[i] = 0;
-		for (int i=0; i<2; i++) fRec28[i] = 0;
-		for (int i=0; i<8192; i++) fVec25[i] = 0;
-		for (int i=0; i<16384; i++) fVec26[i] = 0;
-		for (int i=0; i<2; i++) fRec25[i] = 0;
-		for (int i=0; i<2; i++) fRec24[i] = 0;
-		for (int i=0; i<3; i++) fRec23[i] = 0;
-		for (int i=0; i<3; i++) fRec22[i] = 0;
-		for (int i=0; i<2; i++) fVec27[i] = 0;
-		for (int i=0; i<2; i++) fRec21[i] = 0;
-		for (int i=0; i<3; i++) fRec20[i] = 0;
-		for (int i=0; i<3; i++) fRec19[i] = 0;
+		{ for (int i=0; i<16384; i++) fVec12[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec46[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec81[i] = 0; }
+		{ for (int i=0; i<512; i++) fVec13[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec14[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec80[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec15[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec44[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec42[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec83[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec16[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec82[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec43[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec17[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec40[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec38[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec18[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec84[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec39[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec19[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec36[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec34[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec86[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec20[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec85[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec35[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec21[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec33[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec31[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec22[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec87[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec32[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec23[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec29[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec27[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec89[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec24[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec88[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec28[i] = 0; }
+		{ for (int i=0; i<8192; i++) fVec25[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec26[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec25[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec24[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec23[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec22[i] = 0; }
+		{ for (int i=0; i<2; i++) fVec27[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec21[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec20[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec19[i] = 0; }
 		fslider6 = 1.0f;
-		for (int i=0; i<2; i++) fRec92[i] = 0;
-		for (int i=0; i<3; i++) fRec91[i] = 0;
-		for (int i=0; i<3; i++) fRec90[i] = 0;
+		{ for (int i=0; i<2; i++) fRec92[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec91[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec90[i] = 0; }
 		fslider7 = 1.0f;
-		for (int i=0; i<2; i++) fRec96[i] = 0;
-		for (int i=0; i<3; i++) fRec95[i] = 0;
-		for (int i=0; i<3; i++) fRec94[i] = 0;
-		for (int i=0; i<3; i++) fRec93[i] = 0;
+		{ for (int i=0; i<2; i++) fRec96[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec95[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec94[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec93[i] = 0; }
 		fslider8 = 1.0f;
 		fslider9 = 1.0f;
-		for (int i=0; i<512; i++) fVec28[i] = 0;
+		{ for (int i=0; i<512; i++) fVec28[i] = 0; }
 		fslider10 = 0.0f;
-		for (int i=0; i<2; i++) fRec18[i] = 0;
-		for (int i=0; i<2; i++) fRec105[i] = 0;
-		for (int i=0; i<8192; i++) fVec29[i] = 0;
-		for (int i=0; i<16384; i++) fVec30[i] = 0;
-		for (int i=0; i<2; i++) fRec104[i] = 0;
-		for (int i=0; i<2; i++) fRec103[i] = 0;
-		for (int i=0; i<3; i++) fRec102[i] = 0;
-		for (int i=0; i<3; i++) fRec101[i] = 0;
-		for (int i=0; i<2; i++) fVec31[i] = 0;
-		for (int i=0; i<2; i++) fRec100[i] = 0;
-		for (int i=0; i<3; i++) fRec99[i] = 0;
-		for (int i=0; i<3; i++) fRec98[i] = 0;
-		for (int i=0; i<2; i++) fRec108[i] = 0;
-		for (int i=0; i<3; i++) fRec107[i] = 0;
-		for (int i=0; i<3; i++) fRec106[i] = 0;
-		for (int i=0; i<2; i++) fRec112[i] = 0;
-		for (int i=0; i<3; i++) fRec111[i] = 0;
-		for (int i=0; i<3; i++) fRec110[i] = 0;
-		for (int i=0; i<3; i++) fRec109[i] = 0;
-		for (int i=0; i<512; i++) fVec32[i] = 0;
-		for (int i=0; i<2; i++) fRec97[i] = 0;
-		for (int i=0; i<16384; i++) fVec33[i] = 0;
-		for (int i=0; i<2; i++) fRec16[i] = 0;
-		for (int i=0; i<2; i++) fRec14[i] = 0;
-		for (int i=0; i<2; i++) fRec114[i] = 0;
-		for (int i=0; i<16384; i++) fVec34[i] = 0;
-		for (int i=0; i<2; i++) fRec113[i] = 0;
-		for (int i=0; i<2; i++) fRec15[i] = 0;
-		for (int i=0; i<16384; i++) fVec35[i] = 0;
-		for (int i=0; i<2; i++) fRec12[i] = 0;
-		for (int i=0; i<2; i++) fRec10[i] = 0;
-		for (int i=0; i<16384; i++) fVec36[i] = 0;
-		for (int i=0; i<2; i++) fRec115[i] = 0;
-		for (int i=0; i<2; i++) fRec11[i] = 0;
-		for (int i=0; i<16384; i++) fVec37[i] = 0;
-		for (int i=0; i<2; i++) fRec8[i] = 0;
-		for (int i=0; i<2; i++) fRec6[i] = 0;
-		for (int i=0; i<2; i++) fRec117[i] = 0;
-		for (int i=0; i<16384; i++) fVec38[i] = 0;
-		for (int i=0; i<2; i++) fRec116[i] = 0;
-		for (int i=0; i<2; i++) fRec7[i] = 0;
-		for (int i=0; i<16384; i++) fVec39[i] = 0;
-		for (int i=0; i<2; i++) fRec4[i] = 0;
-		for (int i=0; i<2; i++) fRec2[i] = 0;
-		for (int i=0; i<16384; i++) fVec40[i] = 0;
-		for (int i=0; i<2; i++) fRec118[i] = 0;
-		for (int i=0; i<2; i++) fRec3[i] = 0;
-		for (int i=0; i<2; i++) fRec0[i] = 0;
-		for (int i=0; i<2; i++) fRec1[i] = 0;
+		{ for (int i=0; i<2; i++) fRec18[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec105[i] = 0; }
+		{ for (int i=0; i<8192; i++) fVec29[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec30[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec104[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec103[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec102[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec101[i] = 0; }
+		{ for (int i=0; i<2; i++) fVec31[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec100[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec99[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec98[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec108[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec107[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec106[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec112[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec111[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec110[i] = 0; }
+		{ for (int i=0; i<3; i++) fRec109[i] = 0; }
+		{ for (int i=0; i<512; i++) fVec32[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec97[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec33[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec16[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec14[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec114[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec34[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec113[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec15[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec35[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec12[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec10[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec36[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec115[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec11[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec37[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec8[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec6[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec117[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec38[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec116[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec7[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec39[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec4[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec2[i] = 0; }
+		{ for (int i=0; i<16384; i++) fVec40[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec118[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec3[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec0[i] = 0; }
+		{ for (int i=0; i<2; i++) fRec1[i] = 0; }
 	}
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
@@ -1397,9 +1397,9 @@ static std::string normalizeClassName(const std::string& name)
 extern "C"
 {
 #ifdef SC_API_EXPORT
-    int api_version(void);
+	FAUST_EXPORT int api_version(void);
 #endif
-    void load(InterfaceTable*);
+	FAUST_EXPORT void load(InterfaceTable*);
     void Faust_next(Faust*, int);
     void Faust_next_copy(Faust*, int);
     void Faust_next_clear(Faust*, int);

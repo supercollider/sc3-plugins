@@ -617,8 +617,6 @@ struct HermiteDelay : public DelayUnit
 
 extern "C"
 {
-    void load(InterfaceTable *inTable);
-
     void Maxamp_next(Maxamp *unit, int inNumSamples);
     void Maxamp_Ctor(Maxamp* unit);
 

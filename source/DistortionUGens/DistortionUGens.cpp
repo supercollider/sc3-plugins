@@ -47,9 +47,6 @@ struct Disintegrator : public Unit
 extern "C"
 
 {
-  void load(InterfaceTable *inTable);
-
-
   // from ladspa-util.h - should me make an extra header file for this?
   static inline float f_clamp(float x, float a, float b);
   static inline float cube_interp(const float fr, const float inm1,

@@ -282,7 +282,6 @@ struct StkSitar : public Unit
 
 extern "C"
 {
-        void load(InterfaceTable *inTable);
         void StkBandedWG_next(StkBandedWG *unit, int inNumSamples);
         void StkBandedWG_Ctor(StkBandedWG* unit);
         void StkBandedWG_Dtor(StkBandedWG* unit);

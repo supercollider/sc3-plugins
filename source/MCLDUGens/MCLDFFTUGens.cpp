@@ -238,8 +238,6 @@ struct PV_ExtractRepeat : Unit {
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void FFTPower_Ctor(FFTPower *unit);
 	void FFTPower_next(FFTPower *unit, int inNumSamples);
 
@@ -1670,11 +1668,11 @@ void PV_ExtractRepeat_next(PV_ExtractRepeat *unit, int inNumSamples)
 	// find which bins are (X-R)<t  where t=1. Zero them out (in S).
 	//    (OR do the reverse; user-settable flag, applied here using xors.)
 	for (int i=0; i<numbins; ++i)
-		if((logmags[i] - curframe[i] < thresh) xor which)
+		if((logmags[i] - curframe[i] < thresh) ^ which)
 			p->bin[i].mag = 0;
-	if((logmags[numbins  ] - curframe[numbins  ] < thresh) xor which)
+	if((logmags[numbins  ] - curframe[numbins  ] < thresh) ^ which)
 		p->dc  = 0;
-	if((logmags[numbins+1] - curframe[numbins+1] < thresh) xor which)
+	if((logmags[numbins+1] - curframe[numbins+1] < thresh) ^ which)
 		p->nyq = 0;
 
 	// Finally update the recursive buffer by writing X onto it crossfade-style.

@@ -97,7 +97,6 @@ struct SkipNeedle : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 	void Coyote_next(Coyote *unit, int inNumSamples);
 	void Coyote_Ctor(Coyote* unit);
 
