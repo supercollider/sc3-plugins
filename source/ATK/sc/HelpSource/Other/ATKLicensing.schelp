@@ -75,7 +75,7 @@ Implementation in the SuperCollider3 version of the ATK is by Joseph Anderson.
 subsection:: Bruce Wiggins irregular decoders
 
 Irregular array decoding coefficients footnote::See: B. Wiggins, "An Investigation into the Real-time Manipulation and Control of Three-dimensional Sound Fields," PhD Thesis, University of Derby, Derby, 2004.
-:: (5.0, 7.0) are kindly provided by link::http://www.brucewiggins.co.uk/##Bruce Wiggins::.
+:: (5.0) are kindly provided by link::http://www.brucewiggins.co.uk/##Bruce Wiggins::.
 
 
 
