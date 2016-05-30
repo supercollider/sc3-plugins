@@ -30,11 +30,7 @@ InterfaceTable *ft;
 
 struct BlitB3 : public Unit
 {
-	float phase_;
-	//float period_;
-	//double deltaphase_; //doesn't work like that, always drops phase by one each sample
-	//float multiplier_; //only used for bipolar variant
-
+	float phase;
 };
 
 
@@ -93,16 +89,10 @@ struct DPW3Tri : public Unit
 	double differentiations_[2];
 };
 
-struct BlitB3D : public Unit {
-	float phase;
-};
-
 
 extern "C" {
-
 	void BlitB3_next(BlitB3 *unit, int inNumSamples);
 	void BlitB3_Ctor(BlitB3* unit);
-	//void BlitB3_Dtor(BlitB3* unit);
 
 	void BlitB3Saw_next(BlitB3Saw *unit, int inNumSamples);
 	void BlitB3Saw_Ctor(BlitB3Saw* unit);
@@ -118,116 +108,67 @@ extern "C" {
 
 	void DPW3Tri_next(DPW3Tri *unit, int inNumSamples);
 	void DPW3Tri_Ctor(DPW3Tri* unit);
-
-	void BlitB3D_next(BlitB3D *unit, int inNumSamples);
-	void BlitB3D_Ctor(BlitB3D* unit);
 }
 
 
-void BlitB3_Ctor( BlitB3* unit ) {
-
-	//unit->period_ =  50.0f;
-	//unit->deltaphase_ = 0.0;
-	unit->phase_ = 3.0f;
-
-	//float freq = ZIN0(0);
-
-	//unit->multiplier_
-
-	//must do to initialise down the chain?
-	//BlitB3_next(unit, 1);
-
+void BlitB3_Ctor(BlitB3* unit) {
+	unit->phase = 0.0f;
 	SETCALC(BlitB3_next);
+	BlitB3_next(unit, 1);
+	// We have to set this to 0 again because the above line disrupts the phase
+	unit->phase = 0.0f;
 }
 
-
-
-//void BlitB3_Dtor(BlitB3 *unit)
-//{
-//
-//
-//}
-
-
-
-
-void BlitB3_next( BlitB3 *unit, int inNumSamples ) {
-
-	//int numSamples = unit->mWorld->mFullRate.mBufLength;
-
-	//float *input = IN(0);
-	float *output = OUT(0);
-
+void BlitB3_next(BlitB3 *unit, int inNumSamples) {
+	float *out = OUT(0);
 	float freq = ZIN0(0);
 
-	if(freq<0.000001f) freq= 0.000001f;
+	// Clip ludicrous frequencies
+	if (freq < 0.000001f) {
+		freq = 0.000001f;
+	}
+	// period in samples
+	float period = SAMPLERATE / freq;
 
-	//need period in samples
-	float period = SAMPLERATE/freq; //note SAMPLERATE only trustworthy macro if audio rate output only!
+	// The phase is in range [0,1).
+	float phase = unit->phase;
+	// Scale up to [0,period).
+	float t = phase * period;
 
-	if (period<=1.0f) period = 1.0f; //otherwise would have runaway fall off of phase value
+	// Temporary variables to save some arithmetic ops
+	float x, y;
+	for (int i = 0; i < inNumSamples; i++) {
 
-	//unit->period_ = period;
-
-	float phase= unit->phase_;
-
-	float temp;
-
-	for (int i=0; i<inNumSamples; ++i) {
-
-		phase -= 1.0f;
-
-		if (phase>=2.0f) {
-
-			output[i] = 0.0f;
-
-		} else if (phase>=1.0f) {
-
-			temp= 2.0f-phase;
-
-			output[i] = 0.16666666666667f*temp*temp*temp;
-
-		} else if (phase>=0.0f) {
-
-			temp= phase*phase;
-
-			output[i] = 0.66666666666666f - temp + (0.5f*temp*phase);
-
-		} else if (phase>= -1.0f) {
-
-			temp= phase*phase;
-
-			output[i] = 0.66666666666666f - temp - (0.5f*temp*phase);
-
-		} else if (phase>= - 2.0f) {
-
-			temp= 2.0f+phase;
-
-			output[i] = 0.16666666666667f*temp*temp*temp;
-
+		// 3rd order Lagrange interpolator
+		if (t >= 4.0f) {
+			out[i] = 0.0f;
+		} else if (t >= 3.0f) {
+			x = 4.0f - t;
+			out[i] = 0.16666666666667f*x*x*x;
+		} else if (t >= 2.0f) {
+			x = t - 2.0;
+			y = x*x;
+			out[i] = 0.66666666666666f - y + (0.5f*y*x);
+		} else if (t >= 1.0f) {
+			x = t - 2.0;
+			y = x*x;
+			out[i] = 0.66666666666666f - y - (0.5f*y*x);
 		} else {
-
-			output[i]= 0.0f;
-			phase += period; //(period-2.0);
+			out[i] = 0.16666666666667f*t*t*t;
 		}
 
+		t += 1.f;
+
+		// wrap
+		if (t >= period) {
+			t -= period;
+		}
 	}
 
-	//printf("hello phase %f period %f\n",phase, period);
-
-	unit->phase_ = phase;
-
+	// Divide by period (without dividing)
+	// t / (SAMPLERATE / freq) = t * freq * SAMPLEDUR
+	unit->phase = t * freq * SAMPLEDUR;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1083,58 +1024,6 @@ void DPW3Tri_next( DPW3Tri *unit, int inNumSamples ) {
 }
 
 
-
-void BlitB3D_Ctor(BlitB3D* unit) {
-	unit->phase = 0.0f;
-	SETCALC(BlitB3D_next);
-	BlitB3D_next(unit, 1);
-	unit->phase = 0.0f;
-}
-
-void BlitB3D_next(BlitB3D *unit, int inNumSamples) {
-	float *out = OUT(0);
-	float freq = ZIN0(0);
-
-	if (freq<0.000001f) {
-		freq= 0.000001f;
-	}
-	float period = SAMPLERATE / freq;
-
-	float phase = unit->phase;
-
-	float t = phase * period;
-
-	float x, y;
-	for (int i = 0; i < inNumSamples; i++) {
-
-		if (t >= 4.0f) {
-			out[i] = 0.0f;
-		} else if (t >= 3.0f) {
-			x = 4.0f - t;
-			out[i] = 0.16666666666667f*x*x*x;
-		} else if (t >= 2.0f) {
-			x = t - 2.0;
-			y = x*x;
-			out[i] = 0.66666666666666f - y + (0.5f*y*x);
-		} else if (t >= 1.0f) {
-			x = t - 2.0;
-			y = x*x;
-			out[i] = 0.66666666666666f - y - (0.5f*y*x);
-		} else {
-			out[i] = 0.16666666666667f*t*t*t;
-		}
-
-		t += 1.f;
-
-		if (t > period) {
-			t -= period;
-		}
-	}
-
-	unit->phase = t * freq * SAMPLEDUR;
-}
-
-
 PluginLoad(AntiAliasingOscillators) {
 
 	ft = inTable;
@@ -1151,6 +1040,6 @@ PluginLoad(AntiAliasingOscillators) {
 
 	DefineSimpleUnit(DPW3Tri);
 
-	DefineSimpleUnit(BlitB3D);
+	DefineSimpleUnit(BlitB3);
 
 }
