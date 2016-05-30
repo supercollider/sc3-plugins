@@ -1040,6 +1040,4 @@ PluginLoad(AntiAliasingOscillators) {
 
 	DefineSimpleUnit(DPW3Tri);
 
-	DefineSimpleUnit(BlitB3);
-
 }
