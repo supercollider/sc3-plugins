@@ -111,6 +111,9 @@ extern "C" {
 }
 
 
+// BlitB3 revised Nathan Ho 2016.
+// Phase tracking was modified to prevent freezing with lower frequencies.
+
 void BlitB3_Ctor(BlitB3* unit) {
 	unit->phase = 0.0f;
 	SETCALC(BlitB3_next);
