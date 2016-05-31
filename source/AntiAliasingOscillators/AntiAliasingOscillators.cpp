@@ -135,6 +135,9 @@ void BlitB3_next(BlitB3 *unit, int inNumSamples) {
 	// Scale up to [0,period).
 	float t = phase * period;
 
+	// if the period suddenly decreased sharply, t might be way out of range.
+	t = fmod(t, period);
+
 	// Temporary variables to save some arithmetic ops
 	float x, y;
 	for (int i = 0; i < inNumSamples; i++) {
