@@ -129,12 +129,12 @@ See link::Classes/FoaDecode::, link::Classes/FoaDecoderMatrix:: and link::Classe
 
 section:: Installation
 
-The ATK library for SuperCollider3 is distributed via the link::http://sc3-plugins.sourceforge.net##sc3-plugins:: project. If you're reading this document, these extensions have most likely been corectly installed.
+The ATK library for SuperCollider3 is distributed via the link::https://github.com/supercollider/sc3-plugins/##sc3-plugins:: project. If you're reading this document, these extensions have most likely been corectly installed.
 
 Additionally, the ATK has a number of dependencies. Please install the following:
 
 list::
-##link::http://quarks.svn.sourceforge.net/viewvc/quarks/MathLib/##MathLib:: Quark. See: link::Guides/UsingQuarks::
+##link::https://github.com/supercollider-quarks/MathLib/##MathLib:: Quark. See: link::Guides/UsingQuarks:: and the link::https://github.com/supercollider-quarks/quarks/##Quarks for SuperCollider:: project.
 
 ##link::http://www.ambisonictoolkit.net/download/kernels/##ATK Kernels::
 
