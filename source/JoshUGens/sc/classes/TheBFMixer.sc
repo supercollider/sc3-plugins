@@ -717,26 +717,26 @@ fileName = {arg path;
 ////////////////////////////// THE GUI /////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-mixwin = SCWindow("BFormat Mixer", Rect(200, 512, 920, 800));
+mixwin = Window("BFormat Mixer", Rect(200, 512, 920, 800));
 
-play = SCButton(mixwin, Rect(10, 630, 100, 20))
+play = Button(mixwin, Rect(10, 630, 100, 20))
 	.states_([
 		["play", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		["stop", Color.black, Color(0.9, 0.5, 0.5, 0.5)]
 		])
 	.action_({playrout.next});
 
-write = SCButton(mixwin, Rect(10, 655, 100, 20))
+write = Button(mixwin, Rect(10, 655, 100, 20))
 	.states_([
 		["write file", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		])
 	.action_({writefunc.value});
 
-SCStaticText(mixwin, Rect(120, 630, 100, 20)).string = "Set Output Format";
+StaticText(mixwin, Rect(120, 630, 100, 20)).string = "Set Output Format";
 
 //dictArray[0]['format'] = format of output
 
-dictArray[0].put('formatButton', SCButton(mixwin, Rect(120, 655, 100, 20))
+dictArray[0].put('formatButton', Button(mixwin, Rect(120, 655, 100, 20))
 	.states_([
 		["BFormat", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		["Stereo", Color.black, Color(0.9, 0.5, 0.5, 0.5)],
@@ -755,9 +755,9 @@ dictArray[0].put('format', "mixer_play_bf");
 dictArray[0].put('formatNRT', "mixer_playbuf_bf");
 dictArray[0].put('numChannels', 3);
 
-SCStaticText(mixwin, Rect(230, 630, 100, 20)).string = "Start Time In Mix";
+StaticText(mixwin, Rect(230, 630, 100, 20)).string = "Start Time In Mix";
 
-dictArray[0].put('startTimeInMix', SCNumberBox(mixwin, Rect(230, 655, 40, 20))
+dictArray[0].put('startTimeInMix', NumberBox(mixwin, Rect(230, 655, 40, 20))
 	.value_(0.0)
 	.action_({
 		(dictArray[0]['totalTime'] == 0).if(
@@ -769,7 +769,7 @@ dictArray[0].put('startTimeInMix', SCNumberBox(mixwin, Rect(230, 655, 40, 20))
 
 //dictArray[0].put('totalTime', 0.1); //default totalTime
 
-SCButton(mixwin, Rect(340, 630, 100, 20))
+Button(mixwin, Rect(340, 630, 100, 20))
 	.states_([
 		["Save Current Mix", Color.black, Color(0.5, 0.9, 0.5, 0.5)]
 		])
@@ -780,13 +780,13 @@ SCButton(mixwin, Rect(340, 630, 100, 20))
 			dictArray[0]['startTimeInMix'].value_(0);
 			}, {savefunc.value})});
 
-SCButton(mixwin, Rect(340, 655, 100, 20))
+Button(mixwin, Rect(340, 655, 100, 20))
 	.states_([
 		["Load a Mix", Color.black, Color(0.5, 0.9, 0.5, 0.5)]
 		])
 	.action_({loadfunc.value});
 
-SCButton(mixwin, Rect(560, 630, 100, 20))
+Button(mixwin, Rect(560, 630, 100, 20))
 	.states_([
 		["Close All", Color.black, Color(0.5, 0.9, 0.5, 0.5)]
 		])
@@ -794,7 +794,7 @@ SCButton(mixwin, Rect(560, 630, 100, 20))
 		SystemClock.clear;
 		mixwin.close;});
 
-dictArray[0].put('globalAmpSlider', SCSlider(mixwin, Rect(10, 680, 395, 20))
+dictArray[0].put('globalAmpSlider', Slider(mixwin, Rect(10, 680, 395, 20))
 	.value_(0.5)
 	.action_({
 		dictArray[0]['globalAmpNumber'].value_(
@@ -807,7 +807,7 @@ dictArray[0].put('globalAmpSlider', SCSlider(mixwin, Rect(10, 680, 395, 20))
 	.step_(0.01));
 
 //number box for amp
-dictArray[0].put('globalAmpNumber', SCNumberBox(mixwin, Rect(410, 680, 35, 18))
+dictArray[0].put('globalAmpNumber', NumberBox(mixwin, Rect(410, 680, 35, 18))
 	.value_(1.0.ampdb.round(0.1))
 	.action_({
 	dictArray[0]['globalAmpSlider'].value_((dictArray[0]['globalAmpNumber'].value.dbamp * 0.5));
@@ -817,11 +817,11 @@ dictArray[0].put('globalAmpNumber', SCNumberBox(mixwin, Rect(410, 680, 35, 18))
 		{nil});
 }));
 
-dictArray[0].put('env', SCTextField(mixwin, Rect(10, 710, 260, 18))
+dictArray[0].put('env', TextField(mixwin, Rect(10, 710, 260, 18))
 	.action_({buildEnvSig.value(0)}));
 
 
-dictArray[0].put('base', SCButton(mixwin, Rect(280, 710, 40, 18))
+dictArray[0].put('base', Button(mixwin, Rect(280, 710, 40, 18))
 	.states_([
 		["base", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		["exp", Color.black, Color(0.9, 0.5, 0.5, 0.5)]])
@@ -831,8 +831,8 @@ dictArray[0]['env'].string_("[[0, 1, 1, 1], 1]");
 
 //a clock (in seconds)
 
-SCStaticText(mixwin, Rect(450, 630, 120, 18)).string = "Time In Seconds";
-time = SCStaticText(mixwin,Rect(450,655,120,20));
+StaticText(mixwin, Rect(450, 630, 120, 18)).string = "Time In Seconds";
+time = StaticText(mixwin,Rect(450,655,120,20));
 time.font = Font(\Helvetica, 20);
 texttask = Task({
 	var newstart;
@@ -861,16 +861,16 @@ texttask = Task({
 //store the endTime of the track for the slider and text
 	dictArray[j].put('endTime', 0);
 
-	SCStaticText(mixwin, Rect(150, (20 * j) + (40 * i), 150, 18)).string = "File Start in Mix";
-	SCStaticText(mixwin, Rect(310, (20 * j) + (40 * i), 70, 20)).string_("Amp (in dB)");
-	SCStaticText(mixwin, Rect(270, (20 * j) +20 + (40 * i), 120, 20))
+	StaticText(mixwin, Rect(150, (20 * j) + (40 * i), 150, 18)).string = "File Start in Mix";
+	StaticText(mixwin, Rect(310, (20 * j) + (40 * i), 70, 20)).string_("Amp (in dB)");
+	StaticText(mixwin, Rect(270, (20 * j) +20 + (40 * i), 120, 20))
 		.string_("Skip Time Into File");
-	SCStaticText(mixwin, Rect(420, (20 * j) +20 + (40 * i), 120, 20))
+	StaticText(mixwin, Rect(420, (20 * j) +20 + (40 * i), 120, 20))
 		.string_("Shorten File");
-	SCStaticText(mixwin, Rect(530, (20 * j) + 20 + (40 * i), 120, 20))
+	StaticText(mixwin, Rect(530, (20 * j) + 20 + (40 * i), 120, 20))
 		.string_("Env");
 
-dictArray[j].put('loadFile', SCButton(mixwin, Rect(20, (20 * j) + (40 * i), 110, 18))
+dictArray[j].put('loadFile', Button(mixwin, Rect(20, (20 * j) + (40 * i), 110, 18))
 	.states_([
 		["load file", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		["", Color.black, Color(0.9, 0.5, 0.5, 0.5)]
@@ -879,34 +879,34 @@ dictArray[j].put('loadFile', SCButton(mixwin, Rect(20, (20 * j) + (40 * i), 110,
 		trackRout[(dictArray[j]['loadFile'].value)].value(j);
 	}));
 
-dictArray[j].put('filename', SCStaticText(mixwin,
+dictArray[j].put('filename', StaticText(mixwin,
 		Rect(23, (20 * j) + (40 * i), 110, 18))
 	.string_("").align_(\center));
 
 //show the range of the file dictArray[1]['trackRange']
 
-dictArray[j].put('trackRange', SCRangeSlider(mixwin, Rect(60, (20 * j) + (40 * i) + 40, 720, 10)).step_(0)
+dictArray[j].put('trackRange', RangeSlider(mixwin, Rect(60, (20 * j) + (40 * i) + 40, 720, 10)).step_(0)
 	.action_({trackRangeFunc.value(j);
 		globStartFunc.value(j)}));
 
-dictArray[j].put('globalStart', SCNumberBox(mixwin, Rect(250, (20 * j) + (40 * i), 50, 18))
+dictArray[j].put('globalStart', NumberBox(mixwin, Rect(250, (20 * j) + (40 * i), 50, 18))
 	.value_(0)
 	.action_({globStartFunc.value(j)}));
 
 //slider for amp adjust
-dictArray[j].put('ampSlider', SCSlider(mixwin, Rect(380, (20 * j) + (40 * i), 395, 20))
+dictArray[j].put('ampSlider', Slider(mixwin, Rect(380, (20 * j) + (40 * i), 395, 20))
 	.value_(0.5)
 	.action_({ampSliderFunc.value(j);})
 	.step_(0.01));
 
 //number box for amp
-dictArray[j].put('ampNumber', SCNumberBox(mixwin, Rect(785, (20 * j) + (40 * i), 35, 18))
+dictArray[j].put('ampNumber', NumberBox(mixwin, Rect(785, (20 * j) + (40 * i), 35, 18))
 	.value_(1.0.ampdb.round(0.1))
 	.action_({ampNumberFunc.value(j)}));
 
 // a button to mute the track
 
-dictArray[j].put('mute', SCButton(mixwin, Rect(830, (20 * j) + (40 * i), 40, 18))
+dictArray[j].put('mute', Button(mixwin, Rect(830, (20 * j) + (40 * i), 40, 18))
 	.value_(1.0)
 	.states_([
 		["play", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
@@ -916,25 +916,25 @@ dictArray[j].put('mute', SCButton(mixwin, Rect(830, (20 * j) + (40 * i), 40, 18)
 
 //text info for each track
 
-dictArray[j].put('trackText', SCStaticText(mixwin, Rect(20, (20 * j) +20 + (40 * i), 400, 18))
+dictArray[j].put('trackText', StaticText(mixwin, Rect(20, (20 * j) +20 + (40 * i), 400, 18))
 	.string_("StartTime = "++  dictArray[j]['startTime'].value.round(0.01).asString ++"         	EndTime = " 		++ dictArray[j]['endTime'].value.round(0.01).asString));
 
 // the amount of time, in the track, to skip in
 
-dictArray[j].put('skipTime', SCNumberBox(mixwin, Rect(380, (20 * j) + 20 + (40 * i), 30, 18))
+dictArray[j].put('skipTime', NumberBox(mixwin, Rect(380, (20 * j) + 20 + (40 * i), 30, 18))
 	.value_(0.0)
 	.action_({skipTimeFunc.value(j);
 		globStartFunc.value(j)}));
 
-dictArray[j].put('shortenFile', SCNumberBox(mixwin, Rect(490, (20 * j) + 20 + (40 * i), 30, 18))
+dictArray[j].put('shortenFile', NumberBox(mixwin, Rect(490, (20 * j) + 20 + (40 * i), 30, 18))
 	.value_(0.0)
 	.action_({skipTimeFunc.value(j);
 		globStartFunc.value(j)}));
 
-dictArray[j].put('env', SCTextField(mixwin, Rect(560, (20 * j) + 20 + (40 * i), 260, 18))
+dictArray[j].put('env', TextField(mixwin, Rect(560, (20 * j) + 20 + (40 * i), 260, 18))
 	.action_({buildEnvSig.value(j)}));
 
-dictArray[j].put('base', SCButton(mixwin, Rect(830, (20 * j) + 20 + (40 * i), 40, 18))
+dictArray[j].put('base', Button(mixwin, Rect(830, (20 * j) + 20 + (40 * i), 40, 18))
 	.states_([
 		["base", Color.black, Color(0.5, 0.9, 0.5, 0.5)],
 		["exp", Color.black, Color(0.9, 0.5, 0.5, 0.5)]])
@@ -944,7 +944,7 @@ dictArray[j].put('base', SCButton(mixwin, Rect(830, (20 * j) + 20 + (40 * i), 40
 
 
 //seperate the tracks
-SCStaticText(mixwin, Rect(10, (60* j), 760, 18))
+StaticText(mixwin, Rect(10, (60* j), 760, 18))
 .string_("_______________________________________________________________________________________________________________")
 	.stringColor_(Color.black);
 };
