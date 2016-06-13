@@ -1,6 +1,6 @@
 TITLE:: OverlapTexture
 summary:: Overlap events
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, Classes
 keyword:: JoshUGens
 
 DESCRIPTION::
@@ -35,11 +35,12 @@ argument::maxRepeats
 If an integer is specified here, then the function will create no more then this number of synths. Defaults to inf.
 
 argument::addaction
-0 - add the new node to the the head of the group specified by the add target ID.
-1 - add the new node to the the tail of the group specified by the add target ID.
-2 - add the new node just before the node specified by the add target ID.
-3 - add the new node just after the node specified by the add target ID.
-4 - the new node replaces the node specified by the add target ID.
+	list::
+		## 0 - add the new node to the the head of the group specified by the add target ID.
+		## 1 - add the new node to the the tail of the group specified by the add target ID.
+		## 2 - add the new node just before the node specified by the add target ID.
+		## 3 - add the new node just after the node specified by the add target ID.
+		## 4 - the new node replaces the node specified by the add target ID.::
 
 argument::target
 A target ID

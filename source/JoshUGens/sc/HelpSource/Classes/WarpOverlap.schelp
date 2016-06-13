@@ -1,6 +1,6 @@
 title:: WarpOverlap
 summary:: Create a texture of Warps
-categories:: UGens>GranularSynthesis, UGens>Buffer, UGens>Generators>Granular
+categories:: Libraries>JoshUGens, Classes
 keyword:: JoshUGens
 
 Description::
@@ -48,23 +48,25 @@ code::
 s.boot;
 
 (
-b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+s.sendMsg(\b_allocRead, 0, "sounds/a11wlk01.wav", 0, -1);
 
 SynthDef(\warpoverlap, {arg buffer = 0, stretch = 1, windowsize = 6, mul = 1, gate = 1;
-    var out, env, overlaps, harm, wwinsize, wwinoverlap, wwinran;
-    overlaps = 8;
-    harm = [3, 7, 5, -12].midiratio.asRef;
-    wwinsize = `[0.11, 0.11, 0.11, 0.2];
-    wwinsize = 0.11;
-    wwinoverlap = 8;
-    wwinran = 0.1;
-    env = EnvGen.kr(Env([0.01, 1, 0.01], [0.1, 0.1], 'exp', 1), gate, doneAction: 2);
-    out = WarpOverlap.ar(1, buffer, overlaps, 0, stretch, harm, windowsize, wwinsize, wwinoverlap, wwinran, mul);
-    Out.ar(0, out * env);
-}).add;
+	var out, env, overlaps, harm, wwinsize, wwinoverlap, wwinran;
+	overlaps = 8;
+	harm = [3, 7, 5, -12].midiratio.asRef;
+	wwinsize = `[0.11, 0.11, 0.11, 0.2];
+	wwinsize = 0.11;
+	wwinoverlap = 8;
+	wwinran = 0.1;
+	env = EnvGen.kr(Env([0.01, 1, 0.01], [0.1, 0.1], 'exp', 1), gate, doneAction: 2);
+	out = WarpOverlap.ar(1, buffer, overlaps, 0, stretch, harm, windowsize, wwinsize, wwinoverlap, wwinran, mul);
+	Out.ar(0, out * env);
+}).send(s);
+
 )
 
-a = Synth(\warpoverlap, [\buffer, 0, \stretch, 30, \mul, 0.1]);
-a.free;
+s.sendMsg(\s_new, \warpoverlap, a=s.nextNodeID, 0, 1, \buffer, 0, \stretch, 30, \mul, 0.1)
+
+s.sendMsg(\n_free, a);
 
 ::
