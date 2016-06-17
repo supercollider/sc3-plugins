@@ -1,6 +1,6 @@
 TITLE:: LPCVals
 summary:: Utilize LPC data
-categories:: Libraries>JoshUGens, Classes
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
 related:: Classes/LPCAna, Classes/LPCFile, Classes/LPCSynth
 
 DESCRIPTION::

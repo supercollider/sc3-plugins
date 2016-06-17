@@ -1,6 +1,6 @@
 TITLE:: AtsFreq
 summary:: Use Freq data from a given partial
-categories:: Libraries>JoshUGens, Classes, UGens>Analysis:Synthesis
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
 related:: Classes/AtsFile, Classes/AtsAmp, Classes/AtsParInfo
 keyword:: JoshUGens
 

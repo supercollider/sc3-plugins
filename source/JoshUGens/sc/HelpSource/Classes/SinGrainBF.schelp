@@ -1,6 +1,6 @@
 TITLE:: SinGrainBF
 summary:: Granular synthesis with sinusoidal grains with Ambisonic panning
-categories:: Libraries>JoshUGens, Classes, UGens>GranularSynthesis
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
 related:: Classes/SinGrain, Classes/SinGrainB, Classes/SinGrainI, Classes/SinGrainBBF, Classes/SinGrainIBF
 
 DESCRIPTION::

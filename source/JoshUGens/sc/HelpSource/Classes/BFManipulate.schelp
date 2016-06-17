@@ -1,6 +1,6 @@
 TITLE:: BFManipulate
 summary:: BFormat sound manipulation
-categories:: Libraries>JoshUGens, Classes, UGens>Multichannel>Ambisonics
+categories:: Libraries>JoshUGens, UGens>Multichannel>Ambisonics
 related:: Classes/BFDecode1, Classes/BFEncode1, Classes/BFEncode2, Classes/BFEncodeSter
 keyword:: JoshUGens
 

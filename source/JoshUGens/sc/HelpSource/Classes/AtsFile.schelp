@@ -1,6 +1,6 @@
 TITLE:: AtsFile
 summary:: For working with ATS file data
-categories:: Libraries>JoshUGens, Classes
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
 related:: Classes/AtsAmp, Classes/AtsFreq, Classes/AtsParInfo
 keyword:: JoshUGens
 

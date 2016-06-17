@@ -1,6 +1,6 @@
 TITLE:: BFEncode1
 summary:: Ambisonic B format encoder
-categories:: Libraries>JoshUGens, Classes, UGens>Multichannel>Ambisonics
+categories:: Libraries>JoshUGens, UGens>Multichannel>Ambisonics
 related:: Classes/BFDecode1, Classes/BFEncode2, Classes/BFEncodeSter, Classes/BFManipulate
 keyword:: JoshUGens
 

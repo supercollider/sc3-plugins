@@ -1,6 +1,6 @@
 TITLE:: BFEncodeSter
 summary:: Ambisonic B format encoder for stereo signals
-categories:: Libraries>JoshUGens, Classes, UGens>Multichannel>Ambisonics
+categories:: Libraries>JoshUGens, UGens>Multichannel>Ambisonics
 related:: Classes/BFDecode1, Classes/BFEncode1, Classes/BFEncode2, Classes/BFManipulate
 keyword:: JoshUGens
 

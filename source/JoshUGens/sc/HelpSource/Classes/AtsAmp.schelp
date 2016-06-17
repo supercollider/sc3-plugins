@@ -1,6 +1,6 @@
 TITLE:: AtsAmp
 summary:: Use Amp data from a given partial
-categories:: Libraries>JoshUGens, Classes, UGens>Analysis:Synthesis
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis 
 related:: Classes/AtsFile, Classes/AtsFreq, Classes/AtsParInfo
 keyword:: JoshUGens
 

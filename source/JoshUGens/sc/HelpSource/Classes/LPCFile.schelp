@@ -1,6 +1,6 @@
 TITLE:: LPCFile
 summary:: For working with CSounds LPC file data
-categories:: Libraries>JoshUGens, Classes
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
 related:: Classes/LPCAna, Classes/LPCSynth, Classes/LPCVals
 
 DESCRIPTION::
