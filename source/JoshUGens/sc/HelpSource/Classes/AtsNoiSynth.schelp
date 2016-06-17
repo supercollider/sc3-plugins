@@ -1,6 +1,6 @@
 TITLE:: AtsNoiSynth
 summary:: Resynthesize sine and noise data from an ATS analysis file
-categories:: Libraries>JoshUGens, Classes, UGens>Analysis:Synthesis
+categories:: Libraries>JoshUGens
 related:: Classes/AtsFile
 keyword:: JoshUGens
 

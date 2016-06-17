@@ -1,6 +1,6 @@
 TITLE:: BFMixer
 summary:: A GUI class for mixing BFormat files together
-categories:: Libraries>JoshUGens>GUI
+categories:: Libraries>JoshUGens
 related:: Classes/BFDecode1, Classes/BFEncode1, Classes/BFEncode2, Classes/BFEncodeSter, Classes/BFManipulate
 
 DESCRIPTION::

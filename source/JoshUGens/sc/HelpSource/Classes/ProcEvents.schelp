@@ -1,6 +1,6 @@
 TITLE:: ProcEvents
 summary:: A real-time control structure
-categories:: Libraries>JoshUGens, Classes
+categories:: Libraries>JoshUGens
 related:: Classes/ProcMod, Classes/ProcModR
 
 DESCRIPTION::
@@ -23,7 +23,7 @@ METHOD:: initClass
 METHOD:: new
 
 ARGUMENT:: events
-an array of events (ProcMods or a function) to play / release in the following format: [ProcMod, ProcMod.id to release]. Both the events to play and release may also be arrays, or nil. If the event is a function, realize that it is best to be a single shot type of thing, you won't be able to access it later (to stop a loop, for instance). So, make sure it is something that you set to run or execute, then can forget about completely.
+An array of events (ProcMods or a function) to play / release in the following format: [ProcMod, ProcMod.id to release]. Both the events to play and release may also be arrays, or nil. If the event is a function, realize that it is best to be a single shot type of thing, you won't be able to access it later (to stop a loop, for instance). So, make sure it is something that you set to run or execute, then can forget about completely.
 
 ARGUMENT:: amp
 An amplitude scaler for everything running in the ProcEvents instance.

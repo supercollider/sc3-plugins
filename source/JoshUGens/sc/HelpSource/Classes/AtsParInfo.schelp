@@ -1,6 +1,6 @@
 TITLE:: AtsParInfo
 summary:: One UGen to return both Amp and Freq info
-categories:: Libraries>JoshUGens, Classes, UGens>Analysis:Synthesis
+categories:: Libraries>JoshUGens
 related:: Classes/AtsFile, Classes/AtsAmp, Classes/AtsParInfo
 keyword:: JoshUGens
 

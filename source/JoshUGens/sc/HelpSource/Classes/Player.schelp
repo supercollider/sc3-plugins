@@ -1,6 +1,6 @@
 TITLE:: Player
 summary:: A soundfile player and BFormat Decoder
-categories:: Libraries>JoshUgens, Classes
+categories:: Libraries>JoshUGens
 related:: Classes/BFDecode1, Classes/BFEncode1,  Classes/BFEncodeSter, Classes/BFManipulate
 
 DESCRIPTION::

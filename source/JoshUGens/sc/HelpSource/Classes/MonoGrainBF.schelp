@@ -1,6 +1,6 @@
 TITLE:: MonoGrainBF
 summary:: Granulates real-time input with Ambisonic panning
-categories:: Libraries>JoshUGens, Classes, UGens>GranularSynthesis
+categories:: Libraries>JoshUGens
 related:: Classes/MonoGrain
 keyword:: JoshUGens
 
