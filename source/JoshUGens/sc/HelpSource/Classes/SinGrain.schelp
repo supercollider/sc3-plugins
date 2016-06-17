@@ -1,6 +1,6 @@
 TITLE:: SinGrain
 summary:: Granular synthesis with sinusoidal grains
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
 related:: Classes/SinGrainI, Classes/SinGrainB, Classes/SinGrainBF, Classes/SinGrainBBF, Classes/SinGrainIBF
 DESCRIPTION::
 

@@ -1,6 +1,6 @@
 TITLE:: PV_BufRd
 summary:: Plays FFT data from a memory buffer
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>FFT
 related:: Classes/PV_RecordBuf, Classes/PV_PlayBuf, Classes/PV_BinPlayBuf, Classes/PV_BinBufRd
 
 DESCRIPTION::

@@ -1,6 +1,6 @@
 TITLE:: BufGrainB
 summary:: Granular synthesis with sound sampled in a buffer and user supplied envelope
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
 related:: Classes/BufGrain, Classes/BufGrainI
 
 DESCRIPTION::

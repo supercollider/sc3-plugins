@@ -1,6 +1,6 @@
 TITLE:: FMHEncode1
 summary:: Second Order Ambisonic encoder
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>Multichannel>Ambisonics
 related:: Classes/FMHDecode1, Classes/FMHEncode2
 keyword:: JoshUGens
 

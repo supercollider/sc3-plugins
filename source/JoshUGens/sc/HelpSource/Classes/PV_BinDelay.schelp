@@ -1,6 +1,6 @@
 TITLE:: PV_BinDelay
 summary:: Delay and Feedback on a bin by bin basis.
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>FFT
 
 DESCRIPTION::
 warning:: This UGen needs to allocate a large amount of real-time memory at the outset (approx. SampleRate * maxDelayTime). This will cause a CPU spike at startup. Also, due to memory mangement restrictions, There is a limited number of previous frames that can be stored. Right now no more the 512 frames can be stored. With a frame size of 512 samples, this makes a hard limit to the max delay of about 5.9 seconds at a SR of 44100 (or (FFT size * 512) / SR). Chances are, however, that you will run out of RT memory (the memSize ServerOption) before hitting these limits, especially at larger FFT frame sizes.

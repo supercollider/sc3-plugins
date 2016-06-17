@@ -1,6 +1,6 @@
 TITLE:: FMGrain
 summary:: Granular synthesis with FM grains
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
 related:: Classes/FMGrainB, Classes/FMGrainI
 
 DESCRIPTION::

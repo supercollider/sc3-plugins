@@ -1,6 +1,6 @@
 TITLE:: PVSynth
 summary:: Resynthesize Csound PV data
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>FFT
 related:: Classes/PVFile, Classes/PVInfo
 
 DESCRIPTION::

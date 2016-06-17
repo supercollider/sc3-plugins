@@ -1,6 +1,6 @@
 TITLE:: LPCAna
 summary:: Create an LPC analysis file
-categories:: Libraries>JoshUGens
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
 related:: Classes/LPCFile, Classes/LPCSynth, Classes/LPCVals
 
 DESCRIPTION::
