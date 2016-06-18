@@ -1,5 +1,5 @@
 TITLE:: PVAna
-summary:: (put short description here)
+summary:: Perform FFT analysis of mono sound file
 categories:: Libraries>JoshUGens, UGens>FFT
 related:: Classes/FFT
 
