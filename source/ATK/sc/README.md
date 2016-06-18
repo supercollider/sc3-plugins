@@ -1,8 +1,8 @@
-ATK for Supercollider3 : Read Me
+ATK for SuperCollider3 : Read Me
 ========================
 
-This is the Supercollider3 version of the Ambisonic Toolkit (ATK).
-It can be used with [Supercollider3](http://supercollider.github.io/) on OSX,
+This is the SuperCollider3 version of the Ambisonic Toolkit (ATK).
+It can be used with [SuperCollider3](http://supercollider.github.io/) on OSX,
 Linux and Windows, and is distributed via the
 [sc3-plugins](https://github.com/supercollider/sc3-plugins) project.
 
@@ -25,7 +25,9 @@ We hope you enjoy the ATK!
 
 For more information please visit the [Ambisonic Toolkit
 website](http:www.ambisonictoolkit.net/) or send us an
-[e-mail](mailto:info[at]ambisonictoolkit.net).
+[e-mail](mailto:info[at]ambisonictoolkit.net). See also
+[Introducing the Ambisonic Toolkit](http://doc.sccode.org/Guides/Intro-to-the-ATK.html)
+for an overview on working with the ATK for SuperCollider3.
 
 
 
@@ -85,9 +87,8 @@ See [Using Quarks](http://doc.sccode.org/Guides/UsingQuarks.html) and also the
 * Download and install [ATK Kernels](http://www.ambisonictoolkit.net/download/kernels/).
 * Download and install [ATK Sound File Example Recordings](http://www.ambisonictoolkit.net/download/recordings/).
 
-<p><strong>NOTE:</strong> The ATK requires SuperCollider3 version 3.5 or later. Download the latest version <a href="http://supercollider.github.io/download" target="_blank">here</a>, or fork the source code at <a href="http://supercollider.github.io/" target="_blank">GitHub</a>.</p>
+__NOTE:__ The ATK requires SuperCollider3 version 3.5 or later. Download the latest version [here](http://supercollider.github.io/download), or fork the source code at [GitHub](http://supercollider.github.io/).
 
-</div>
 
 &nbsp;
 
@@ -138,11 +139,18 @@ And most of the catalogue of Nimbus Records are UHJ recordings:
 Feedback and Bug Reports
 ========================
 
-Known issues are logged at [GitHub](https://github.com/ambisonictoolkit/atk-sc3/issues).
+Known issues are logged at
+[GitHub](https://github.com/ambisonictoolkit/atk-sc3/issues).
 
-If you experience problems or have questions pertaining to the ATK for Reaper plugins, please create an issue in the [ATK-Reaper issue tracker](https://github.com/ambisonictoolkit/atk-sc3/issues).
+If you experience problems or have questions pertaining to the ATK for Reaper
+plugins, please create an issue in the
+[ATK-Reaper issue tracker](https://github.com/ambisonictoolkit/atk-sc3/issues).
 
-If you use the plugins for some project, please [let us know](mailto:info[at]ambisonictoolkit.net). We [plan on](https://github.com/ambisonictoolkit/ambisonictoolkit.github.io/issues/9) adding a gallery of example artistic and creative projects that make use of the Ambisonic Toolkit.
+If you use the plugins for some project, please
+[let us know](mailto:info[at]ambisonictoolkit.net). We
+[plan on](https://github.com/ambisonictoolkit/ambisonictoolkit.github.io/issues/9)
+adding a gallery of example artistic and creative projects that make use of the
+Ambisonic Toolkit.
 
 &nbsp;
 
@@ -150,6 +158,70 @@ If you use the plugins for some project, please [let us know](mailto:info[at]amb
 List of Changes
 ---------------
 
+Version 3.7.2
+
+*  New features:
+    *  Ambisonic exchange: 1st-order Ambisonic exchange encoders & decoders.
+    These support channel orders: ACN and SID; normalization: N3D and SN3D.
+    Added to support evolving VR standards.
+
+* Documentation Updates:
+    *  ATK has a new web page! Update links in Intro-to-the-ATK.
+    *  README updated to reflect recent changes and point to current web page
+    and installation sources.
+    *  Wiggins credit: Corrected to 5.0 coefficients (only)
+
+Version 3.7.0-beta
+
+*  Refactoring:
+    *  ATK speed-up: Optimizations for higher speed UGen matrix calculation.
+    *  Generalize FoaEncode and FoaDecode behavior: now more able to support
+    subclass extensions
+
+Version 3.7.0-alpha0
+
+*  New features:
+    *  Spreader & Diffusion kernel encoders: Frequency spreading & phase
+    diffusion. Requires download of new kernel distribution.
+    *  Cross-platform support for user and system support directories. Required
+    by kernel encoders and decoders.
+
+*  Issue fixes:
+    *  Fix clicks on .kr transforms: ATK transform UGens operating at .kr
+    clicked when angle arguments wrap.
+    *  Fix for FoaPsychoShelf signal passing
+    *  Fix for shelfK 3D, AtkMatrix initPeri: was assigning shelfK for the
+    psycho acoustic shelf filter to be the values appropriate for 2D in all
+    cases. Now corrected for 3D.
+    *  Fixes for incorrect kernel paths.
+
+*  Refactoring:
+    *  ATKMatrix: save path before freeing kernel
+    *  Binaural decoders: Update to CIPIC, Listen and Spherical interfaces to
+    support newly diffuse field equalised HRTF decoder kernels. You'll download
+    the new kernels.
+    *  Assure channel arrays are flat for signal passing.
+
+* Documentation Updates:
+    *  CIPIC decoder: now diffuse field equalised.
+    *  3rd party HRTFs: kernel licensing notice update
+    *  Pampin "On Space" credit updates
+    *  SCDoc errors & broken links, formatting & tidying
+
+Version 3.5
+
+* First Public Release as part of the sc3-plugins project!
+
+__A note on the ATK's version numbers__: As part of the
+[sc3-plugins](https://github.com/supercollider/sc3-plugins) project, the
+SuperCollider3 ATK's versioning is synced to the release numbers assigned to
+[sc3-plugins releases](https://github.com/supercollider/sc3-plugins/releases).
+As a result, at this time the versioning for
+[atk-sc3](https://github.com/ambisonictoolkit/atk-sc3) does not adhere to the
+familiar system known as [Semantic Versioning](http://semver.org/).
+
+As SuperCollider3's plugin system continues to develop, we expect to adopt
+[Semantic Versioning](http://semver.org/) when it is possible to do so.
 
 
 &nbsp;

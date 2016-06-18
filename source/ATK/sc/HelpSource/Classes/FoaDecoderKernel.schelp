@@ -61,8 +61,6 @@ code::
 // make sure you scroll up to see the resulting valid subjects!
 ::
 
-warning:: The link::http://recherche.ircam.fr/equipes/salles/listen/##Listen HRTF database:: is measured at link::Classes/SampleRate:: = 44.1kHz. Make sure your link::Classes/Server:: is set to this rate.::
-
 
 
 METHOD:: newCIPIC
@@ -87,10 +85,6 @@ code::
 
 // make sure you scroll up to see the resulting valid subjects!
 ::
-
-
-warning:: The link::http://interface.cipic.ucdavis.edu/sound/hrtf.html##CIPIC HRTF database:: is measured at link::Classes/SampleRate:: = 44.1kHz. Make sure your link::Classes/Server:: is set to this rate.::
-
 
 
 
