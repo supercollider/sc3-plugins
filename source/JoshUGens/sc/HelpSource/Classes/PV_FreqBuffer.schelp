@@ -1,0 +1,78 @@
+TITLE:: PV_FreqBuffer
+summary:: Store FFT data in another buffer for other use
+categories:: Libraries>JoshUGens, UGens>FFT
+related:: Classes/PV_MagBuffer
+
+DESCRIPTION::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+FFT buffer.
+
+ARGUMENT:: databuffer
+A buffer of FFT buffer size/2, for storing freq/mag data in.
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+// stores the Mag values from an FFT analysis into a buffer to be used outside the FFT process
+(
+SynthDef(\magbufferana, {arg fftbuf, sndbuf, magbuf, freqbuf;
+ var in, chain;
+ in = PlayBuf.ar(1, sndbuf, BufRateScale.kr(sndbuf), loop: 1);
+ chain = FFT(fftbuf, in);
+ chain = PV_MagBuffer(chain, magbuf);
+ chain = PV_FreqBuffer(chain, freqbuf);
+ IFFT(chain);
+ }).add;
+
+SynthDef(\magbuffersynth, {arg gate = 1, magbuf, freqbuf, fftframes, scale = 1;
+ var pars, src, out, trig, env;
+ env = EnvGen.kr(Env([0, 1, 0], [1, 1], \sin, 1), gate, doneAction: 2);
+  // we'll grab 50 random partials
+ pars = Array.fill(50, {IRand.new(5, fftframes)});
+  // use PinkNoise as a filter src
+ src = PinkNoise.ar(0.5);
+  // Index the freq and mag buffers to control a filter bank
+ out = (BPF.ar(src, Index.kr(freqbuf, pars), 0.001) * Index.kr(magbuf, pars)).sum * scale;
+ Out.ar(0, out * env);
+ }).add;
+)
+s.boot;
+
+// allocate the fft buf, sndbuf, and mag and freq bufs
+(
+s.sendBundle(0.1, [\b_alloc, 0, 1024], [\b_allocRead, 1, "sounds/a11wlk01.wav"], [\b_alloc, 2, 512],
+ [\b_alloc, 3, 512]);
+)
+// start the analuysis
+(
+s.sendMsg(\s_new, \magbufferana, z = s.nextNodeID, 0, 1, \fftbuf, 0, \sndbuf, 1,
+  \magbuf, 2, \freqbuf, 3);
+)
+(
+// there is a strange buildup of energy when a note starts... so, start the synthesis a bit later
+s.sendMsg(\s_new, \magbuffersynth, y = s.nextNodeID, 1, 1, \magbuf, 2, \freqbuf, 3,
+  \fftframes, 512);
+)
+( // kill the current note, start a new one (with different pars)
+s.sendMsg(\n_set, y, \gate, 0);
+s.sendMsg(\s_new, \magbuffersynth, y = s.nextNodeID, 1, 1, \magbuf, 2, \freqbuf, 3,
+  \fftframes, 512)
+)
+// free the synthesis synth
+s.sendMsg(\n_set, y, \gate, 0)
+// free the analysis
+s.sendMsg(\n_free, z);
+
+// free the buffers
+4.do{arg i; s.sendMsg(\b_free, i)};
+
+s.quit
+::

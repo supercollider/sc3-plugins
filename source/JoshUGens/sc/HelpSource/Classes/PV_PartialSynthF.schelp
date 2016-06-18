@@ -1,0 +1,83 @@
+TITLE:: PV_PartialSynthF
+summary:: Return only bins that are stable
+categories::  Libraries>JoshUGens, UGens>FFT
+related:: Classes/PV_NoiseSynthF
+
+DESCRIPTION::
+PV_NoiseSynthF and PV_PartialSynthF base these decisions on whether or not freq data across numFrames is within a given threshold
+
+code::PV_PartialSynthF(buffer, threshold, numFrames)::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+The FFT buffer.
+
+ARGUMENT:: threshold
+A phase value (in radians) with which to allow values to pass through or be zeroed out.
+
+ARGUMENT:: numFrames
+The number of FFT frames needed to make the above decision.
+
+ARGUMENT:: initflag
+If 0, all bins are zeroed out while the initial is calculated. If 1, all bins pass through.
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+{SinOsc.ar(440, 0, 0.5) + PinkNoise.ar(0.4)}.play; // a sample sig
+
+(SynthDef(\partialsynth, {arg fftbuf;
+    var in, chain, out;
+    in = SinOsc.ar(440, 0, 0.5) + PinkNoise.ar(0.4);
+    chain = FFT(fftbuf, in);
+    // resynhtesize according to MouseX. If 0, only sound with VERY stable changes of frequecy
+    // will be returned. Upper limit should be Nyqust / nBins , e.g. 22050 / 2048 -> 21.532
+    // or + and - 21.532
+    chain = PV_NoiseSynthF(chain, MouseX.kr(0, 21.532));
+    out = IFFT(chain);
+    Out.ar(0, out.dup);
+}).add;
+)
+
+// the fft buf
+s.sendMsg(\b_alloc, 0, 2048);
+
+// start the synth
+s.sendMsg(\s_new, \partialsynth, z = s.nextNodeID, 0, 1, \fftbuf, 0);
+// free it
+s.sendMsg(\n_free, z);
+s.sendMsg(\b_free, 0);
+
+(SynthDef(\noisesynth, {arg fftbuf;
+    var in, chain, out;
+    in = SinOsc.ar(440, 0, 0.5) + PinkNoise.ar(0.4);
+    chain = FFT(fftbuf, in);
+    // resynhtesize according to MouseX. If 0, only sound with VERY stable changes of frequecy
+    // will be zeroed out. Upper limit should be Nyqust / nbins , e.g. 22050 / 1024 -> 21.532
+    // or + and - 21.532
+    chain = PV_NoiseSynthF(chain, MouseX.kr(0, 21.532));
+    out = IFFT(chain);
+    Out.ar(0, out.dup);
+}).add;
+)
+
+// the fft buf
+s.sendMsg(\b_alloc, 0, 2048);
+
+// start the synth
+s.sendMsg(\s_new, \noisesynth, z = s.nextNodeID, 0, 1, \fftbuf, 0);
+// free it
+s.sendMsg(\n_free, z);
+s.sendMsg(\b_free, 0);
+
+
+s.quit
+::

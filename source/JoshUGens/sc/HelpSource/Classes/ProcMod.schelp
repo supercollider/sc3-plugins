@@ -265,7 +265,7 @@ SynthDef(\singrain, {arg freq, amp, dur, envbus;
 			Rand.new(-1.0, 1.0)
 		)
 	) // read off the overall env control of the ProcMod
-}).load(s);
+}).add;
 
 // create a new proc mod, and assign a function to it
 a = ProcMod.new(Env([0, 1, 0], [1, 1], \sin, 1), server: s);
@@ -329,7 +329,7 @@ ProcMods are meant for the most part, to be played and released. However, if the
 code::
 SynthDef(\trig, {arg id, val;
 	SendTrig.kr(Impulse.kr(10), id, val);
-	}).load(s);
+	}).add;
 
 SynthDef(\singrain, {arg freq, amp, dur, envbus;
 	OffsetOut.ar(0,
@@ -340,7 +340,7 @@ SynthDef(\singrain, {arg freq, amp, dur, envbus;
 			-1.0.rrand(1.0)
 		)
 	) // read off the overall env control of the ProcMod
-}).load(s);
+}).add;
 
 i = 0;
 s.boot;
