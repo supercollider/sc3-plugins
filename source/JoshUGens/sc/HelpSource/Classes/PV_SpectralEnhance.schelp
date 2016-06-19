@@ -1,0 +1,63 @@
+TITLE:: PV_SpectralEnhance
+summary:: A harmonic enhancer
+categories:: Libraries>JoshUGens, UGens>FFT
+related:: Classes/PV_SpectralMap
+
+DESCRIPTION::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+The FFT buffer to filter.
+
+ARGUMENT:: numPartials
+The number of partials above each bin to add magnitude to.
+
+ARGUMENT:: ratio
+The ratio between the original partial and the partials above to add harmonic content to (should be greater the 1... usually 2 or greater).
+
+ARGUMENT:: strength
+A multiplier for each successive partial.
+
+note::
+How numPartials, ratio and strength are used.
+
+If you have a bin (e.g., bin 10) with magnitude of 1, magnitude will be added to numPartial bins above that bin according to the ratio. If numPartial is 4 and the ratio is 2, magnitude will be added to bins 20, 30, 40 and 50. If strength is 0.1, bin 20 will get an additional 0.1 * the original magnitude (0.1), bin 30 will get (0.1 / 2), bin 40 will get (0.1 / 3) and bin 50 (0.1 / 4). Strength can be any positive number.
+::
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+z = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav")
+(
+x = SynthDef(\specEnhance, {arg ratio = 2;
+	var a, chain, out;
+	a = LocalBuf.new(2048);
+	// Sin tone
+//	chain = FFT(a, SinOsc.ar(440), 0.5);
+	// sf playback
+//	chain = FFT(a, PlayBuf.ar(1, z, loop: 1));
+	// something a little more complext
+	chain = FFT(a, SinOsc.ar(440 + SinOsc.ar(1760, 0.23, 2059), 0, 0.2));
+	// MouseX controls strength
+	chain = PV_SpectralEnhance(chain, 8, ratio, MouseX.kr(0, 0.99));
+	out = IFFT(chain);
+	Out.ar(0, out.dup);
+}).play(s)
+)
+
+x.set(\ratio, 2.1)
+x.set(\ratio, 3.1)
+x.set(\ratio, 0.98)
+
+x.free;
+z.free;
+::

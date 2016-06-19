@@ -1,0 +1,334 @@
+TITLE:: Tendency
+summary:: Creates dynamic random number distributions
+categories:: Libraries>JoshUGens
+
+DESCRIPTION::
+Tendency stores data for creating random values where the parameters for the random number generation occur over time.
+
+note::Some Important Issues Regarding Tendency
+
+Though the parameters 'parX' and 'parY' (see *new method below) are gnerally used to describe bounds over time, in certain distributions, these actual parameters may control other aspects of a random distribution. See the descriptions of the \cauchy, \gauss and \poisson distributions for more details.
+::
+
+CLASSMETHODS::
+METHOD:: new
+Creates a new Tendency object. Any of the values below may be a SimpleNumber, Env or Function, e.g. teletype::g = Tendency.new(1.0, 0.0)::. If a Function is used, the current time will be passed into the Function.
+
+ARGUMENT:: parX
+For the most common usage, describes the upper bounds of the distribution. Default value is 1.0.
+
+ARGUMENT:: parY
+For the most common usage, describes the upper bounds of the distribution.. Default value is 0.0.
+
+ARGUMENT:: parA
+For some distributions, the control of a specific parameter. Default value is 0.1
+
+ARGUMENT:: parB
+For some distributions, the control of a specific parameter. Default value is 0.1.
+
+
+INSTANCEMETHODS::
+
+METHOD:: at
+The basic usage of Tendency will be through the 'at' method. A random value wll be calculated according to the state of 'parX' and 'parY' at 'time' for a specific 'dist'.
+
+ARGUMENT:: time
+The time to calculate a random number for. Default value is 0.0.
+
+ARGUMENT:: dist
+The distribution to use. Default value is \uniform. The kind of distribution may change the meaning of some of the initial args (e.g., 'parX' may be treated as a 'mean').
+
+EXAMPLES::
+code::
+s.boot;
+
+(
+// basic Example.
+g = Tendency.new(
+  Env([1.0, 0.5, 1.0], [0.5, 0.5]),
+  Env([0.9, 0.0, 0.9], [0.8, 0.2], [-10, 5]));
+n = 500; // get 500 samples
+o = n.collect({arg i; i = i / n; g.at(i)});
+o.plot(discrete: true);
+)
+::
+
+Below is a table of how inputs will map to parameters. n/a means a parameter is not used in a distribution.
+
+table::
+    ## strong::dist:: || strong::parX:: || strong::parY:: || strong::parA:: || strong::parB::
+    ## \uniform	    ||	low	        ||	high	  ||	n/a		||	n/a
+    ## \lpRand	    ||	low		      ||	high		||	n/a		||	n/a
+    ## \uniform	    ||	low		      ||	high		||	n/a		||	n/a
+    ## \lpRand	    ||	low		      ||	high		||	n/a		||	n/a
+    ## \hpRand	    ||	low		      ||	high		||	n/a		||	n/a
+    ## \meanRand    ||	low		      ||	high		||	n/a		||	n/a
+    ## \betaRand    ||	low		      ||	high		||	lowProb	||	highProb
+    ## \cauchy	    ||	mean	      ||	spread	||	posOnly	||	n/a
+    ## \gauss		    ||  dev		      ||	mean		||  n/a		||  n/a
+    ## \poisson	    ||	mean	      ||	n/a			||  n/a		||	n/a
+    ## \expRand	    ||	low		      ||	high		||	n/a		||	n/a
+    ## \exponential	||  density	    ||	n/a			||  n/a		||	n/a
+    ## \gamma	      ||	mode		    ||  n/a			||  n/a		||	n/a
+    ## \laplace	    ||	dispersion	||  n/a			||  n/a		||	n/a
+    ## \alaplace	  ||	dispersion	||  n/a			||  n/a		||	n/a
+    ## \hcos	      ||	dispersion	||  n/a			||  n/a		||	n/a
+    ## \logistic	  ||	dispersion	||  n/a			||  n/a		||	n/a
+    ## \arcsin	    ||	dispersion	||  n/a			||  n/a		||	n/a
+::
+
+code::
+/*
+Statistical Dsitributions using Tendency
+*/
+
+// create a tendency object giving fixed upper and lower bounds
+a = Tendency.new(1.0, 0.0);
+
+// Linear Distributions:
+
+// uniform
+z = 500.collect({arg i; a.at(i)})
+z.plot(discrete: true)
+
+// lowpass
+z = 500.collect({arg i; a.at(i, \lpRand)})
+z.plot(discrete: true)
+
+// highpass
+z = 500.collect({arg i; a.at(i, \hpRand)})
+z.plot(discrete: true)
+
+// mean (bandpass)
+z = 500.collect({arg i; a.at(i, \meanRand)})
+z.plot(discrete: true)
+
+// Non-linear distributions
+
+// exponential
+// we need to redefine the range to avoid 0.0
+
+a = Tendency.new(0.0001, 1.0);
+z = 500.collect({arg i; a.at(i, \expRand)})
+z.plot(discrete: true)
+
+// exponential with 'parX' parameter control on density
+a = Tendency.new(0.5);
+z = 500.collect({arg i; a.at(i, \exponential)})
+z.plot(discrete: true, minval: 0, maxval: 5)
+
+a = Tendency.new(1);
+z = 500.collect({arg i; a.at(i, \exponential)})
+z.plot(discrete: true, minval: 0, maxval: 5)
+
+a = Tendency.new(2);
+z = 500.collect({arg i; a.at(i, \exponential)})
+z.plot(discrete: true, minval: 0, maxval: 5)
+
+// gamma
+// 'parX' value controls mode or peak
+a = Tendency.new(2.0);
+z = 500.collect({arg i; a.at(i, \gamma)})
+z.plot(discrete: true, minval: 0, maxval: 12)
+
+a = Tendency.new(4.0);
+z = 500.collect({arg i; a.at(i, \gamma)})
+z.plot(discrete: true, minval: 0, maxval: 12)
+
+a = Tendency.new(8.0);
+z = 500.collect({arg i; a.at(i, \gamma)})
+z.plot(discrete: true, minval: 0, maxval: 12)
+
+// laplace
+// 'parX' value controls dispersion
+a = Tendency.new(0.01);
+z = 500.collect({arg i; a.at(i, \laplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(0.1, 0);
+z = 500.collect({arg i; a.at(i, \laplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(1.0, 0);
+z = 500.collect({arg i; a.at(i, \laplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// alaplace (anti-laplace)
+// special case of laplace, creates a gap in the center
+// 'parX' value controls dispersion
+a = Tendency.new(0.01);
+z = 500.collect({arg i; a.at(i, \alaplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(0.1);
+z = 500.collect({arg i; a.at(i, \alaplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(1.0, 0);
+z = 500.collect({arg i; a.at(i, \alaplace)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// hcos
+// hyperbolic cosine distribution
+// 'parX' value controls dispersion
+a = Tendency.new(0.01);
+z = 500.collect({arg i; a.at(i, \hcos)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(0.1);
+z = 500.collect({arg i; a.at(i, \hcos)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(1.0);
+z = 500.collect({arg i; a.at(i, \hcos)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// logistic distribution
+// 'parX' value controls dispersion
+a = Tendency.new(0.01);
+z = 500.collect({arg i; a.at(i, \logistic)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(0.1);
+z = 500.collect({arg i; a.at(i, \logistic)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(1.0);
+z = 500.collect({arg i; a.at(i, \logistic)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// poisson
+// 'parX' value is the mean of the distribution
+// this distribution has a discrete histogram (not continuous)
+// it returns always integer values
+a = Tendency.new(4)
+z = 500.collect({arg i; a.at(i, \poisson)})
+z.plot(discrete: true)
+z.histo.plot(discrete: true)
+
+a = Tendency.new(6)
+z = 500.collect({arg i; a.at(i, \poisson)})
+z.plot(discrete: true)
+z.histo.plot(discrete: true)
+
+// arcsin
+// arcsin distribution
+// 'parX' value controls dispersion (spread)
+// output range is between 0 and this value
+// histogram shape is similar to beta with parA=parB=0.5
+a = Tendency.new(0.01);
+z = 500.collect({arg i; a.at(i, \arcsin)})
+z.maxItem;
+z.plot(discrete: true, minval: 0, maxval: 10)
+z.histo.plot(discrete: true)
+
+a = Tendency.new(0.1);
+z = 500.collect({arg i; a.at(i, \arcsin)})
+z.maxItem;
+z.plot(discrete: true, minval: 0, maxval: 1)
+
+a = Tendency.new(1.0);
+z = 500.collect({arg i; a.at(i, \arcsin)})
+z.maxItem;
+z.plot(discrete: true, minval: 0, maxval: 1)
+
+// Symmetrical non-linear distributions
+
+// beta
+// this distribution takes two extra parameters parA and parB
+// to describe where the likelihood that a random value will occur
+// near parX (parA) or parY (parB)
+
+// parA = parB = 0.5
+// histogram has symmetrical shape
+a = Tendency.new(1.0, 0.0, 0.5, 0.5);
+z = 500.collect({arg i; a.at(i, \betaRand)})
+z.plot(discrete: true)
+z.histo.plot(discrete: true)
+
+// parA = 0.5, parB = 0.25
+// histogram lopsided towards parX end
+a = Tendency.new(1.0, 0.0, 0.5, 0.25);
+z = 500.collect({arg i; a.at(i, \betaRand)})
+z.plot(discrete: true)
+z.histo.plot(discrete: true)
+
+
+// parA = 0.25, parB = 0.5
+// histogram lopsided towards low end
+a = Tendency.new(1.0, 0.0, 0.25, 0.5);
+z = 500.collect({arg i; a.at(i, \betaRand)})
+z.plot(discrete: true)
+z.histo.plot(discrete: true)
+
+
+// cauchy
+// this distribution has a symmetrical histogram around 0
+// for this implementation 'parX' controls its dispersion
+// if parA = 1, only positive values are returned
+
+// small dispersion around 0.0
+a = Tendency.new(0.01)
+z = 500.collect({arg i; a.at(i, \cauchy)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// larger dispersion around 0.0
+a = Tendency.new(0.1)
+z = 500.collect({arg i; a.at(i, \cauchy)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// even larger dispersion around 0.0, return only positive half
+a = Tendency.new(1.0, parA: 1)
+z = 500.collect({arg i; a.at(i, \cauchy)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// gaussian
+// this distribution has a bell-shaped symmetrical histogram
+// 'parX' is the deviation or width of the bell
+
+// small deviation
+a = Tendency.new(0.01)
+z = 500.collect({arg i; a.at(i, \gauss)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+
+// larger deviation
+a = Tendency.new(0.1)
+z = 500.collect({arg i; a.at(i, \gauss)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+// even larger deviation
+a = Tendency.new(1.0)
+z = 500.collect({arg i; a.at(i, \gauss)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+
+// Using them with envelopes and time:
+
+a = Tendency.new(Env([0.01, 1.0], [1]), 1.0);
+// Tendency at takes a time for the Envs
+z = 500.collect({arg i; a.at(i / 500, \gauss)})
+z.plot(discrete: true, minval: -3, maxval: 3)
+
+a = Tendency.new(Env([0.01, 1.0], [1]));
+z = 500.collect({arg i; a.at(i / 500, \arcsin)})
+z.plot(discrete: true, minval: 0, maxval: 1)
+
+
+// asStream (dist)
+
+SynthDef(\tendency, {arg freq;
+  Out.ar(0, SinOsc.ar(freq, 0, XLine.kr(0.1, 0.0001, 1, doneAction: 2)));
+  }).add;
+(
+Routine.run({
+  g = Tendency.new(1760.0, 440.0, Env([0.01, 2.0], [10], \sin), Env([0.01, 2.0], [10], 		\sin)).asStream(\betaRand);
+  t = Main.elapsedTime;
+  while({
+    Synth(\tendency, [\freq, g.next]);
+    0.02.wait;
+    (Main.elapsedTime - t) < 10;
+    })
+  })
+)
+::
