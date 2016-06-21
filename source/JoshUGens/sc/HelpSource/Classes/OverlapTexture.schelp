@@ -1,0 +1,121 @@
+TITLE:: OverlapTexture
+summary:: Overlap events
+categories:: Libraries>JoshUGens
+keyword:: JoshUGens
+
+DESCRIPTION::
+Where OverlapTexture in SC2 was a Spawn wrapper, in SC3 OverlapTexture is a Task wrapper. To work properly, your synthdef MUST have arguments for \susdur and \transdur which control an envelope's attack, sustain and decay portions (e.g. Env([0, 1, 1, 0], [transdur, susdur, transdur], \sin) ). Values for these arguments will be passed into the Synth from the OverlapTexture class, and do not need to be included with the arguments.
+
+classmethods::
+
+method::new
+
+argument:: synth
+A valid synthdef (or an array of synthdefs). If the synthdef is an array of synthdefs, OverlapTexture will randomly choose which synthdef to play on each new synth creation.
+
+argument:: inserver
+If not specified, will use the default server.
+
+instancemethods::
+
+method:: synthdef
+
+method:: play
+
+argument::overlaps
+The number of events that should occur at one time
+
+argument::susdur
+The sustain portion of the synths envelope
+
+argument::transdur
+The attack and decay portions of the the synths envelopes
+
+argument::maxRepeats
+If an integer is specified here, then the function will create no more then this number of synths. Defaults to inf.
+
+argument::addaction
+	list::
+		## 0 - add the new node to the the head of the group specified by the add target ID.
+		## 1 - add the new node to the the tail of the group specified by the add target ID.
+		## 2 - add the new node just before the node specified by the add target ID.
+		## 3 - add the new node just after the node specified by the add target ID.
+		## 4 - the new node replaces the node specified by the add target ID.::
+
+argument::target
+A target ID
+
+argument::args
+An array containing arguments to be passed to the synth (transdur and susdur should be excluded). arg values can also be functions that will be evaluated when the synth is called. Can also be an array of args that correspond with the array of synthdefs.
+
+method:: init
+
+argument:: synth
+
+argument:: inserver
+
+method:: stop
+
+method:: isPlaying
+
+returns:: Boolean
+
+
+Examples::
+
+code::
+s.boot;
+
+(
+SynthDef(\sinetest, {arg freq, amp = 0.2, susdur = 4, transdur = 1;
+	var env, sound;
+	env = EnvGen.kr(
+		Env([0, 1, 1, 0], [transdur, susdur, transdur], \sin),
+		doneAction: 2);
+	sound = SinOsc.ar(freq * [0.99, 1.01], 0, amp) * env;
+	Out.ar(0, sound);
+}).add;
+)
+
+a = OverlapTexture.new(\sinetest);
+
+(
+var numSynths = 60;
+a.play(overlaps: numOscs, susdur: 4, transdur: 1, args: [\freq, {110.rrand(2200)}, \amp, numSynths.reciprocal]);
+)
+
+a.stop;
+a.isPlaying;
+
+// with a array of synthdefs
+
+(
+SynthDef(\sinetest, {arg freq, amp = 0.2, susdur = 4, transdur = 1;
+	var env, sound;
+	env = EnvGen.kr(
+		Env([0, 1, 1, 0], [transdur, susdur, transdur], \sin),
+		doneAction: 2);
+	sound = SinOsc.ar(freq, 0, amp) * env;
+	Out.ar(0, Pan2.ar(sound, Rand.new(-1.0, 1.0)));
+}).add;
+
+SynthDef(\noisetest, {arg amp = 0.2, susdur = 4, transdur = 1;
+	var env, sound, freq;
+	env = EnvGen.kr(
+		Env([0, 1, 1, 0], [transdur, susdur, transdur], \sin),
+		doneAction: 2);
+	freq = 440.0.rrand(110.0).dup + [0, 5.0.rrand(50.0)];
+	sound = BPF.ar(PinkNoise.ar(amp), freq, 0.01.rrand(0.1)) * env ;
+	Out.ar(0, sound);
+}).add;
+)
+
+a = OverlapTexture.new([\sinetest, \noisetest], s);
+
+a.play(60, 1, 1, 200, args: [[\freq, {440.rrand(880)}, \amp, 60.reciprocal], [\amp, 10.reciprocal]])
+
+a.stop;
+
+a.isPlaying
+
+::

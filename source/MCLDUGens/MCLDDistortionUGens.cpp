@@ -26,8 +26,6 @@ struct Squiz : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void InsideOut_next(InsideOut *unit, int inNumSamples);
 	void InsideOut_Ctor(InsideOut* unit);
 

@@ -108,7 +108,7 @@ Please see link::#decoder_k:: for further discussion on strong::k::.
 
 
 METHOD:: new5_0
-link::http://www.brucewiggins.co.uk/?page_id=78##Bruce Wiggins':: optimised ITU 5.0 decoders. footnote::Irregular decoders in the Ambisonic Toolkit are kindly provided by Bruce Wiggins: link::http://www.brucewiggins.co.uk/::. See also: B. Wiggins, I. Paterson-Stephens, V. Lowndes, and S. Berry, "The design and optimisation of surround sound decoders using heuristic methods," in Proceedings of UKSIM 2003: Conference on Computer Simulation, Cambridge, England, 2003.:: 
+link::http://www.brucewiggins.co.uk/?page_id=78##Bruce Wiggins':: optimised ITU 5.0 decoders. footnote::Irregular decoders in the Ambisonic Toolkit are kindly provided by Bruce Wiggins: link::http://www.brucewiggins.co.uk/::. See also: B. Wiggins, I. Paterson-Stephens, V. Lowndes, and S. Berry, "The design and optimisation of surround sound decoders using heuristic methods," in Proceedings of UKSIM 2003: Conference on Computer Simulation, Cambridge, England, 2003.::
 
 argument:: irregKind
 Three kinds are available:
@@ -119,7 +119,7 @@ list::
 ## code::'four'::
 ::
 
-discussion:: 
+discussion::
 The outputs are in anti-clockwise order. The position of the first speaker is centre. link::#-dirChannels:: may be used to query resulting loudspeaker directions.
 
 strong::irregKind:: code:: = 'focused':: returns a focused, but front weighted image. code::'equal':: equalises the angles across the image. code::'four':: is similar to code::'equal'::, but doesn't use the centre speaker.
@@ -209,7 +209,7 @@ list::
 ## code::'controlled'::
 ::
 
-discussion:: 
+discussion::
 strong::directions:: specifies only half of the loudspeakers for the resulting array, the remaining loudspeakers are diametrically opposite (through the origin). link::#-dirChannels:: may be used to query resulting loudspeaker directions.
 
 code::
@@ -341,6 +341,41 @@ code::
 // ------------------------------------------------------------
 ::
 
+METHOD:: newHoa1
+A first order link::https://en.wikipedia.org/wiki/Ambisonic_data_exchange_formats##Ambisonic format exchange:: decoder. Decodes traditional B-format to a variety of formats.
+
+argument:: ordering
+Input Ambisonic channel component ordering.
+
+table::
+## strong::ordering:: || strong::kind::
+## code::'acn':: || Ambisonic Channel Number (ACN)
+## code::'sid':: || Single Index Designation (SID)
+::
+
+argument:: normalisation
+Spherical harmonic normalisation method.
+
+table::
+## strong::normalisation:: || strong::kind::
+## code::'n3d':: || Orthonormal basis for 3D decomposition (N3D)
+## code::'sn3d':: || Semi-normalised basis for 3D decomposition (SN3D)
+::
+
+
+discussion::
+Decoding means decoding from traditional B-format to another Ambisonic channel componenent orderding and normalisation. In other words, from strong::Gerzon:: (aka strong::Furse-Malham::) ordering with strong::MaxN:: normalisation to some other standard scheme.
+
+note::code::Hoa1:: in the method name link::#*newHoa1:: refers to Higher Order Ambisonic (HOA) encoding format, Ambisonic order = 1.::
+
+
+METHOD:: newAmbix1
+A first order link::https://en.wikipedia.org/wiki/Ambisonic_data_exchange_formats##Ambisonic format exchange:: decoder. Decodes traditional B-format to AmbiX. A convenience alias to  link::#*newHoa1::.
+
+
+discussion::
+Decoding means decoding from traditional B-format to another Ambisonic channel componenent orderding and normalisation. In this case, from strong::Gerzon:: (aka strong::Furse-Malham::) ordering, strong::MaxN:: normalisation to the AmbiX encoding scheme (strong::ACN:: ordering, strong::SN3D:: normalisation).
+
 
 SUBSECTION:: Decoder k
 The default strong::k:: ( code::'single':: ), for decoders accepting strong::k:: as an argument, returns an code::'energy':: optimised (aka "max rE") decoder. code::'dual':: returns a dual-band psychoacoustically optimised decoder. footnote::See: E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008.:: The code::'dual':: decoder is the optimum choice for small scale studio or domestic settings. code::'single':: is suitable for larger, mid-scale environments. code::'velocity':: returns "strict soundfield" (aka "basic") decoding, and is not preferred for first order Ambisonics in most circumstances. code::'controlled':: returns "controlled opposites" decoding (aka "in phase"), which is often preferred in large-scale, concert environments. footnote::See: D. G. Malham, "Experience with Large Area 3-D Ambisonic Sound Systems," Proceedings of the Institute of Acoustics, vol. 14, no. 5, pp. 209–215, Nov. 1992.:: (SuperCollider's inbuilt decoder, link::Classes/DecodeB2#*ar::, is a "controlled opposites" decoder. See link::Classes/FoaDecode#supercollider#this::.)
@@ -359,7 +394,7 @@ note:: For large-scale concert presentation, the authors advise auditioning valu
 
 
 INSTANCEMETHODS::
-private:: initPeri, initK2D, initStereo, initBtoA, initPanto, initK3D, initQuad, printOn, initMono, init5_0, initDiametric
+private:: initPeri, initK2D, initStereo, initBtoA, initPanto, initK3D, initQuad, printOn, initMono, init5_0, initDiametric, initHoa1, initAmbix1
 
 METHOD:: kind
 Answers the kind of decoder

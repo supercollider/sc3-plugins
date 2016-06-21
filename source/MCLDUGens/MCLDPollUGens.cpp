@@ -43,8 +43,6 @@ struct TextVU : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void TextVU_Ctor(TextVU* unit);
 	void TextVU_next_kk(TextVU *unit, int inNumSamples);
 }

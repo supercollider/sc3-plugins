@@ -22,7 +22,7 @@ BlitB3Square : UGen {
 }
 
 
-//no better than LFTri really! 
+//no better than LFTri really!
 BlitB3Tri : UGen {
 
 	*ar { arg freq= 440.0, leak= 0.99, leak2= 0.99,  mul = 1.0, add = 0.0;
@@ -44,8 +44,11 @@ DPW3Tri : UGen {
 	}
 }
 
+// dynamic UGens by Nathan Ho (c) 2016
 
+BlitB3D : UGen {
 
-
-
-
+	*ar { arg freq= 440.0, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', freq).madd(mul, add)
+	}
+}

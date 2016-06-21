@@ -1,0 +1,72 @@
+title:: WarpOverlap
+summary:: Create a texture of Warps
+categories:: Libraries>JoshUGens
+keyword:: JoshUGens
+
+Description::
+Inspired by Chad Kirby's SuperCollider2 Warp1 class, which was inspired by Richard Karpen's sndwarp for CSound. A granular time strecher and pitchshifter. See the link::Classes/Warp1:: helpfile for more information about Warp1's specifics. This texture will create a series of Warp1s that keep up with the current time.
+
+classmethods::
+
+method::ar
+
+argument::numChans
+
+argument::buffer
+The buffer number of a mono soundfile.
+
+argument::overlaps
+The number of overlapping warps to create (should be equal to or greater then 3). This must be a fixed integer. The architechture of the SynthDef cannot change after it is compiled.
+
+argument::starttime
+An initial starttime for the warp pointer (in the total buffer)
+
+argument::stretch
+A stretch factor for the individual Warps.
+
+argument::harm
+A float, or an instance of a Ref. If a Ref is used, its values are sequentially distributed among the larger overlapping windows.
+
+argument::windowsize
+The windowsize in seconds of the larger overlapping windows.
+
+argument::step
+A control on the pointer increment. 1 keeps the pointer up with the current time, 0 will halt time.
+
+argument::warpwindowsize
+A float, or an instance of a Ref. The size of the individual warp windows.
+
+argument::warpwindowoverlaps
+A float, or an instance of a Ref. The number of window overlaps for each warp.
+
+argument::warpwindowran
+A float, or an instance of a Ref. The amount of randomness in each warp's windows.
+
+Examples::
+
+code::
+s.boot;
+
+(
+s.sendMsg(\b_allocRead, 0, "sounds/a11wlk01.wav", 0, -1);
+
+SynthDef(\warpoverlap, {arg buffer = 0, stretch = 1, windowsize = 6, mul = 1, gate = 1;
+	var out, env, overlaps, harm, wwinsize, wwinoverlap, wwinran;
+	overlaps = 8;
+	harm = [3, 7, 5, -12].midiratio.asRef;
+	wwinsize = `[0.11, 0.11, 0.11, 0.2];
+	wwinsize = 0.11;
+	wwinoverlap = 8;
+	wwinran = 0.1;
+	env = EnvGen.kr(Env([0.01, 1, 0.01], [0.1, 0.1], 'exp', 1), gate, doneAction: 2);
+	out = WarpOverlap.ar(1, buffer, overlaps, 0, stretch, harm, windowsize, wwinsize, wwinoverlap, wwinran, mul);
+	Out.ar(0, out * env);
+}).send(s);
+
+)
+
+s.sendMsg(\s_new, \warpoverlap, a=s.nextNodeID, 0, 1, \buffer, 0, \stretch, 30, \mul, 0.1)
+
+s.sendMsg(\n_free, a);
+
+::

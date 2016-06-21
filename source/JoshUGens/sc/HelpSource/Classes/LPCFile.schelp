@@ -1,0 +1,231 @@
+TITLE:: LPCFile
+summary:: For working with CSounds LPC file data
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/LPCAna, Classes/LPCSynth, Classes/LPCVals
+
+DESCRIPTION::
+For working with CSounds LPC file data.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+Load an LPC file into memory at path with buffer number bufnum.
+
+ARGUMENT:: path
+Path to LPC file.
+
+ARGUMENT:: buffer
+If bufnum is left empty, one will be allocated for you.
+
+ARGUMENT:: server
+Defaults to Server.default.
+
+
+INSTANCEMETHODS::
+
+METHOD:: loadToBuffer
+Loads the information of the LPC file into a buffer for use by the LPCSynth UGens.
+
+METHOD:: buffer
+
+ARGUMENT:: buf
+
+returns:: Returns the buffer number LPC data is stored in.
+
+METHOD:: free
+Frees buffer.
+
+
+
+METHOD:: numPoles
+
+
+
+
+METHOD:: init
+
+
+ARGUMENT:: thisbuf
+
+
+ARGUMENT:: thisserver
+
+
+ARGUMENT:: thispath
+
+
+
+
+METHOD:: asControlInput
+
+
+
+
+METHOD:: magicNum
+
+
+
+
+METHOD:: signal
+
+
+
+
+METHOD:: srate
+
+
+
+
+METHOD:: nframes
+
+
+
+
+METHOD:: pchcps
+
+
+
+
+METHOD:: path
+
+
+
+
+METHOD:: data
+
+
+
+
+METHOD:: header
+
+
+
+
+METHOD:: server
+
+
+
+
+METHOD:: asUGenInput
+
+
+
+
+METHOD:: restOfHeader
+
+
+
+
+METHOD:: readData
+
+
+
+
+METHOD:: headerSize
+
+
+
+
+
+
+
+
+METHOD:: origrms
+
+
+
+
+METHOD:: readHeader
+
+
+
+
+METHOD:: len
+
+
+
+
+METHOD:: saveLPCFile
+
+
+ARGUMENT:: path
+
+
+
+
+METHOD:: nrmerr
+
+
+
+
+METHOD:: loadToSignal
+
+
+
+
+METHOD:: coefs
+
+
+
+
+METHOD:: frameRate
+
+
+
+
+METHOD:: bufnum
+
+
+
+
+METHOD:: nvals
+
+
+
+
+METHOD:: le
+
+
+
+
+METHOD:: sndDur
+
+
+
+
+METHOD:: resrms
+
+
+
+
+METHOD:: read
+
+
+
+
+METHOD:: saveToFile
+
+
+ARGUMENT:: path
+
+
+
+
+
+EXAMPLES::
+
+This uses the fate.lpc file, created with the following command:
+
+teletype::lpanal -p 50 -h 300 fate.aiff fate.lpc::
+
+list::
+  ## -p = num poles
+  ## -h = hop size in samples
+::
+
+Analysis window is 2X the hop size.
+
+code::
+a = LPCFile.new(Platform.resourceDir +/+ "sounds/fate.lpc");
+::

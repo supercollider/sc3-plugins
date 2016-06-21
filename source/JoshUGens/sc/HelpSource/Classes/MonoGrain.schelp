@@ -1,0 +1,56 @@
+TITLE:: MonoGrain
+summary:: Granulates real-time input
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
+related:: Classes/MonoGrainBF
+keyword:: JoshUGens
+
+DESCRIPTION::
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+
+ARGUMENT:: in
+A mono input.
+
+ARGUMENT:: winsize
+The window size in seconds.
+
+ARGUMENT:: grainrate
+The rate at which new grains are created (in Hz).
+
+ARGUMENT:: winrandpct
+A randomness factor for window size (as a percentage of the winsize).
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+(
+s.sendMsg(\b_allocRead, 0, Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff", 0, -1);
+
+SynthDef(\monograin, {arg buffer = 0;
+	var out, winsize, grainrate;
+	winsize = MouseX.kr(0.1, 0.01);
+	grainrate = MouseY.kr(10, 4);
+	out = MonoGrain.ar(PlayBuf.ar(1, buffer, loop: 1), winsize, grainrate, 0);
+	Out.ar(0, out);
+}).add;
+
+)
+
+
+s.sendMsg(\s_new, \monograin, 1000, 0, 0, \buffer, 0);
+
+s.sendMsg(\n_free, 1000)
+::

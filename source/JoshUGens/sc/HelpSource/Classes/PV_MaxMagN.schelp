@@ -1,0 +1,46 @@
+TITLE:: PV_MaxMagN
+summary:: Return the N strongest bins
+categories:: Libraries>JoshUGens, UGens>FFT
+
+DESCRIPTION::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+
+ARGUMENT:: numbins
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+SynthDef(\maxmag, {arg fftbuf;
+    var in, chain, out;
+    in = SinOsc.ar(440, 0, 0.5) + PinkNoise.ar * 0.5;
+    chain = FFT(fftbuf, in);
+    // let the strongest (0 - 1023) partials through
+    chain = PV_MaxMagN(chain, MouseX.kr(0,1023));
+    out = IFFT(chain);
+    Out.ar(0, out);
+}).add;
+)
+
+// the fft buf
+s.sendMsg(\b_alloc, 0, 2048);
+// start the synth
+s.sendMsg(\s_new, \maxmag, z = s.nextNodeID, 0, 1, \fftbuf, 0);
+// free it
+s.sendMsg(\n_free, z);
+s.sendMsg(\b_free, 0);
+
+s.quit
+::

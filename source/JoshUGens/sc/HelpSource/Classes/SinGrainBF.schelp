@@ -1,0 +1,68 @@
+TITLE:: SinGrainBF
+summary:: Granular synthesis with sinusoidal grains with Ambisonic panning
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
+related:: Classes/SinGrain, Classes/SinGrainB, Classes/SinGrainI, Classes/SinGrainBBF, Classes/SinGrainIBF
+
+DESCRIPTION::
+
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+ARGUMENT:: trigger
+A kr or ar trigger to start a new grain. If ar, grains after the start of the synth are sample accurate.
+
+ARGUMENT:: dur
+Size of the grain. Polled at creation time.
+
+ARGUMENT:: freq
+The freq of the grain generators internal oscillator. Polled at creation time.
+
+ARGUMENT:: azimuth
+In radians, -pi to pi.
+
+ARGUMENT:: elevation
+In radians, -0.5pi, to +0.5pi.
+
+ARGUMENT:: rho
+The speaker radius; 1 places shound at the radius, <1 within the radius, >1 is outside the radius. Beyond the radius, nothing happens.
+
+ARGUMENT:: wComp
+Chooses how the W channels is scaled. If 0, a scaler of 0.707 is used. If 1, W is varied according to the scaling of the X, Y and Z channels. 0 is the default.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+METHOD:: init
+
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+	SynthDef(\sin_grain_test, {arg gate = 1, amp = 1;
+	var w, x, y, z, trig;
+	trig = Impulse.kr(20);
+	#w, x, y, z = SinGrainBF.ar(trig, 0.05, WhiteNoise.kr.range(440, 880),
+		WhiteNoise.kr.range(-0.25pi, 0.25pi), 0, 1,
+			EnvGen.kr(
+				Env([0, 1, 0], [1, 1], \sin, 1),
+				gate,
+				levelScale: amp,
+				doneAction: 2)
+			);
+	Out.ar(0, DecodeB2.ar(4, w, x, y));
+	}).add;
+)
+
+s.sendMsg(\s_new, \sin_grain_test, a=s.nextNodeID, 0, 1, \amp, 0.2);
+s.sendMsg(\n_set, a, \gate, 0);
+::

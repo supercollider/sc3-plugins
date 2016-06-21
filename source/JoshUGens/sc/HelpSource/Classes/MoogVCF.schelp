@@ -1,0 +1,44 @@
+TITLE:: MoogVCF
+summary:: Moog  filter emulation
+categories:: Libraries>JoshUGens, UGens>Filters
+keyword:: JoshUGens, Moog, VCF
+
+DESCRIPTION::
+MoogVCF is a port of the CSound opcode moogvcf written by Josep Comajuncosas and Hans Mikelson. This UGen is a digital emulation of the Moog diode ladder filter configuration. It is based loosely on the paper emphasis::Analyzing the Moog VCF with Considerations for Digital Implemnetation:: by Stilson and Smith (link::#https://ccrma.stanford.edu#CCRMA::).
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+Audio input.
+
+ARGUMENT:: fco
+Cutoff frequency
+
+ARGUMENT:: res
+Resonance (0 to 1).
+
+ARGUMENT:: mul
+
+
+ARGUMENT:: add
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+{
+  MoogVCF.ar(
+	   Pulse.ar([40,121],[0.3,0.7]),
+     SinOsc.kr(LFNoise0.kr(0.42).range(0.001,2.2)).range(30,4200),0.8
+)}.play(s);
+)
+::

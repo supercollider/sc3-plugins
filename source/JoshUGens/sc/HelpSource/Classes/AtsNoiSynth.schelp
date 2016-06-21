@@ -1,0 +1,96 @@
+TITLE:: AtsNoiSynth
+summary:: Resynthesize sine and noise data from an ATS analysis file
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/AtsFile
+keyword:: JoshUGens
+
+DESCRIPTION::
+Resynthesizes information from an ATS file, with transformations.
+warning:: If you try to resynthesize partials or bands that don't exist, those partials will fail silently. All valid partials will still be synthesized.::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: atsbuffer
+The buffer number that contains the AtsFile information.
+
+ARGUMENT:: numPartials
+The number of partials to synthesize.
+
+ARGUMENT:: partialStart
+The partial in the analysis to start the synthesis on. Partial 0 is the first partial.
+
+ARGUMENT:: partialSkip
+An integer that indicates the increment from partialStart of which partials to synthesize.
+
+ARGUMENT:: filePointer
+A value (between 0 and 1) that indicates which part of the file to synthesize. Accepts ugens or a static value.
+
+ARGUMENT:: sinePct
+A scaler on the sinusoidal portion of the resynthesis.
+
+ARGUMENT:: noisePct
+A scaler on the noise portion of the resynthesis.
+
+ARGUMENT:: freqMul
+A multiplier on the sinusoidal frequency information.
+
+ARGUMENT:: freqAdd
+A value to add to frequency information.
+
+ARGUMENT:: numBands
+The number of critical bands (noise) to synthesize. There are 25 critical bands.
+
+ARGUMENT:: bandStart
+The critical band to start resynthesis on. Partial 0 is the first band.
+
+ARGUMENT:: bandSkip
+An integer that indicates the increment from bandStart of which bands to synthesize.
+
+ARGUMENT:: mul
+
+
+ARGUMENT:: add
+
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+note::For resynthesis purposes, an ATS file needs to be loaded into a buffer. When loading an ATS file, you need to supply a buffer number to store ATS data in.::
+code::
+s.boot;
+
+// see the entry on AtsFile to learn how to create an ats file
+a = AtsFile.new("path/to/file.ats").load;
+
+( //play just the resynth, with LFSaw pointing into the file
+{
+	AtsNoiSynth.ar(a.bufnum, a.numPartials, 1, 1,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), noisePct: 1, mul: 1)
+	}.play(s);
+);
+
+( //play noise only, don't resynthesize sine info
+{
+	AtsNoiSynth.ar(a.bufnum, 0, 0, 1, filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), 		mul: 1)
+	}.play(s);
+);
+
+( //resynthesize every other noise band
+{
+	AtsNoiSynth.ar(a.bufnum, 0, 0, 1, filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5),
+		numBands: 12, bandStart: 1, bandSkip: 2, mul: 10)
+	}.play(s);
+);
+
+( //resynthesize only the upper bands of noise
+{
+	AtsNoiSynth.ar(a.bufnum, 0, 0, 1, filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5),
+		numBands: 12, bandStart: 12, bandSkip: 1, mul: 10)
+	}.play(s);
+)
+::

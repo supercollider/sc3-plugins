@@ -1,0 +1,234 @@
+TITLE:: AtsFile
+summary:: For working with ATS file data
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/AtsAmp, Classes/AtsFreq, Classes/AtsParInfo
+keyword:: JoshUGens
+
+DESCRIPTION::
+ATS (Analysis-Transformation-Synthesis) files are analysis files created using Oscar DeLiscia, Juan Pampin and Pete Moss's atsa command-line analysis tool (available at http://www.dxarts.washington.edu/ats). The analysis of the sound first attemps to track and record frequency data into sinusoidal partials. Then, any sound that couldn't be analyzed into partial information is analyzed as noise information. The information can then be tranformed and resynthesized using this information.
+
+Once installed, type atsa at the command line to see flag options and usage.
+
+An example from within the SuperCollider_f directory:
+
+	teletype::
+    atsa sounds/a11wlk01.wav sounds/a11wlk01.ats -H5000
+  ::
+
+-H5000 limits the analysis to frequencies below 5kHz.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+Load an ATS file into memory at path with buffer number bufnum. server defaults to Server.default.
+
+ARGUMENT:: path
+Path to the ats file.
+
+ARGUMENT:: server
+Server.
+
+
+METHOD:: load
+Loads the information of the ATS file into a buffer for use by the AtsSynth UGens. If buffer is nil, one will be allocated for you. Only for real-time usage.
+
+ARGUMENT:: path
+
+ARGUMENT:: server
+
+
+INSTANCEMETHODS::
+
+METHOD:: data
+
+
+METHOD:: load
+Loads the information of the ATS file into a buffer for use by the AtsSynth UGens. If buffer is nil, one will be allocated for you. Only for real-time usage.
+
+ARGUMENT:: buffer
+Buffer to use for loading the ATS file.
+
+
+METHOD:: frameSize
+
+
+METHOD:: saveForSC
+Save the ATS file as an AIFF that can be loaded into a buffer (for NRT and fast loading file data in real-time)
+
+ARGUMENT:: path
+Path to the saved file.
+
+
+METHOD:: save
+
+ARGUMENT:: path
+
+
+METHOD:: readData
+
+
+METHOD:: freqMax
+
+
+METHOD:: removeZeroFreqs
+
+
+METHOD:: freeBuffer
+Releases the ATS buffer.
+
+METHOD:: getBandNoi
+
+
+ARGUMENT:: band
+
+
+
+
+METHOD:: asControlInput
+
+
+
+
+METHOD:: path
+
+
+
+
+METHOD:: init
+
+
+ARGUMENT:: argpath
+
+
+ARGUMENT:: argserver
+
+
+
+
+METHOD:: getParTime
+
+
+ARGUMENT:: par
+
+
+
+METHOD:: getParFreq
+
+
+ARGUMENT:: par
+
+
+returns::  An array of frequencies of partial number par (starting with 0) per frame of analysis.
+
+METHOD:: ampMax
+
+
+
+METHOD:: header
+
+
+
+METHOD:: sndDur
+
+
+
+METHOD:: getFrameAmp
+
+
+ARGUMENT:: frame
+
+
+returns:: An array of amps for a given frame (starting with 0).
+
+METHOD:: getParPhase
+
+
+ARGUMENT:: par
+
+
+
+METHOD:: getParAmp
+
+
+ARGUMENT:: par
+Partial number.
+
+
+returns:: An array of amplitudes of partial number par (starting with 0) per frame of analysis.
+
+METHOD:: getFramePhase
+
+
+ARGUMENT:: frame
+
+
+
+METHOD:: winSize
+
+
+
+METHOD:: checkMN
+
+
+
+METHOD:: getFrameNoi
+
+
+ARGUMENT:: frame
+
+
+
+METHOD:: numPartials
+
+
+
+METHOD:: buffer
+
+
+
+METHOD:: asUGenInput
+
+
+
+METHOD:: atsType
+
+
+
+METHOD:: numFrames
+
+
+
+METHOD:: bufnum
+
+
+
+METHOD:: sr
+
+
+
+METHOD:: readHeader
+
+
+
+METHOD:: loadToBuffer
+
+
+ARGUMENT:: buffer
+
+
+
+METHOD:: getFrameFreq
+
+
+ARGUMENT:: frame
+Frame number.
+
+returns:: An array of frequencies for a given frame (starting with 0).
+
+
+EXAMPLES::
+
+code::
+a = AtsFile.new("path/to/ats/file");
+::

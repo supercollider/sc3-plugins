@@ -1,0 +1,68 @@
+TITLE:: LPCSynth
+summary:: Utilize LPC data
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/LPCAna, Classes/LPCFile, Classes/LPCVals
+
+DESCRIPTION::
+LPCSynth uses data from a LPC data file to filter a signal.
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: buffer
+The buffer where data is stored from LPCFile (see link::Classes/LPCFile::).
+
+ARGUMENT:: signal
+The signal to filter.
+
+ARGUMENT:: pointer
+A pointer into the LPC data file, where 0 is the begining and 1 is the end.
+
+ARGUMENT:: mul
+
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+This uses the fate.lpc file, created with the following command:
+
+teletype::lpanal -p 50 -h 300 fate.aiff fate.lpc::
+
+list::
+  ## -p = num poles
+  ## -h = hop size in samples
+::
+
+Analysis window is 2X the hop size.
+
+code::
+s.boot;
+
+// this file came with the JoshUGens... Leonard Bernstein talking about Beethoven.
+// Place it in your SC3/sounds directory.
+a = LPCFile.new(Platform.resourceDir +/+ "sounds/fate.lpc", server: s).loadToBuffer;
+
+(
+z = {
+var cps, rmso, err, voc, noise, timepoint, dur;
+timepoint = LFSaw.ar(0.4/a.sndDur, 1, 0.5, 0.5);
+
+# cps, rmso, err = LPCVals.ar(a.buffer, timepoint);
+// a periodic Blip to filter, amplitude is 1 - error
+noise = WhiteNoise.ar(err); // a noise source
+
+voc = Blip.ar(cps, 100);
+// the rms values tend to be high... scale them back quite a bit!
+Out.ar(0, LPCSynth.ar(a.buffer, voc + noise, timepoint, rmso));
+}.play(s)
+)
+z.free;
+// clean up
+s.sendBundle(0.1, [\b_free, a.buffer]);
+::

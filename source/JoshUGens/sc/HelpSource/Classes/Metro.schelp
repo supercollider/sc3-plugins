@@ -1,0 +1,62 @@
+TITLE:: Metro
+summary:: Metronome
+categories:: Libraries>JoshUGens, Utilities
+keyword:: JoshUGens
+
+DESCRIPTION::
+Outputs a single sample impulse according to bpm and numBeats.
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+
+ARGUMENT:: bpm
+Beats per minute.
+
+ARGUMENT:: numBeats
+Number of beats before next pulse.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+note::bpm and numBeats are polled on every impulse of output. These can be scalers, audio rate, control rate or Demand UGens::
+
+METHOD:: ar
+
+ARGUMENT:: bpm
+Beats per minute.
+
+ARGUMENT:: numBeats
+Number of beats before next pulse.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+a = {Metro.ar(60, 1)}.play
+a.free;
+
+a = {Decay.kr(Metro.kr(XLine.kr(60, 120, 5), 1)) * SinOsc.ar(440, 0, 0.1)}.play;
+a.free;
+
+(
+a = {
+	Decay.kr(
+		Metro.kr(
+			LFNoise2.kr(0.2).range(30, 240),
+			Dseq([1, 0.25, 0.5, 0.25], inf))) *
+	SinOsc.ar(440, 0, 0.1)
+	}.play;
+)
+
+a.free;
+::

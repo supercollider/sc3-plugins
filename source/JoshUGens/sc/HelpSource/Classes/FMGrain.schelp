@@ -1,0 +1,63 @@
+TITLE:: FMGrain
+summary:: Granular synthesis with FM grains
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
+related:: Classes/FMGrainB, Classes/FMGrainI
+
+DESCRIPTION::
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+
+ARGUMENT:: trigger
+A kr or ar trigger to start a new grain. If ar, grains after the start of the synth are sample accurate. The following args are polled at grain creation time.
+
+ARGUMENT:: dur
+Size of the grain.
+
+ARGUMENT:: carfreq
+The carrier freq of the grain generators internal oscillator.
+
+ARGUMENT:: modfreq
+The modulating freq of the grain generators internal oscillator.
+
+ARGUMENT:: index
+The index of modulation.
+
+ARGUMENT:: mul
+
+
+ARGUMENT:: add
+
+
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+SynthDef(\fm_grain_test, {arg gate = 1, amp = 1;
+	Out.ar(0,
+		FMGrain.ar(Impulse.ar(20), 0.2, 440, 200,
+			LFNoise1.kr(1).range(1, 10),
+			EnvGen.kr(
+				Env([0, 1, 0], [1, 1], \sin, 1),
+				gate,
+				levelScale: amp,
+				doneAction: 2)
+		)
+	)
+}).add;
+)
+
+s.sendMsg(\s_new, \fm_grain_test, a=s.nextNodeID, 0, 1, \amp, 0.1);
+s.sendMsg(\n_set, a, \gate, 0);
+::

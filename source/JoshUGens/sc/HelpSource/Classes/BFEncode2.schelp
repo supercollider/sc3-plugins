@@ -1,0 +1,58 @@
+TITLE:: BFEncode2
+summary:: Ambisonic B format encoder
+categories::Libraries>JoshUGens, UGens>Multichannel>Ambisonics
+related:: Classes/BFDecode1, Classes/BFEncode1, Classes/BFEncodeSter, Classes/BFManipulate
+keyword:: JoshUGens
+
+DESCRIPTION::
+x, y positions:
+  list::
+	  ## 0 -1 behind
+	  ## 0 1 in front
+	  ## -1 0 right
+	  ## 1 0 left
+  ::
+Output channels are in order W,X,Y,Z.
+
+warning:: Because of the way the W component is scaled, it is recommended that you only decode with BFDecode1 and it's methods.::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+Input signal.
+
+ARGUMENT:: point_x
+A point in the x axis.
+
+ARGUMENT:: point_y
+A point in the y axis.
+
+ARGUMENT:: elevation
+In radians, -0.5pi to +0.5pi.
+
+ARGUMENT:: gain
+A control rate level input.
+
+ARGUMENT:: wComp
+Chooses how the W channels is scaled. If 0, a scaler of 0.707 is used. If 1, W is varied according to the scaling of the X, Y and Z channels. 1 is the default.
+
+
+
+INSTANCEMETHODS::
+
+METHOD:: init
+
+
+EXAMPLES::
+
+code::
+s.boot;
+// You'll only hear the first two channels on a stereo setup.
+({
+	#w, x, y, z = BFEncode2.ar(WhiteNoise.ar, MouseX.kr(-20, 20), MouseY.kr(20, -20), 0, 0.3);
+	//decode for 4 channels
+	BFDecode1.ar(w, x, y, z, [-0.25pi, 0.25pi, 0.75pi, 1.25pi], 0);
+}.scope(4));
+::

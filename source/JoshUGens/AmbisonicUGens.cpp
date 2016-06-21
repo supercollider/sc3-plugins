@@ -63,8 +63,6 @@ struct A2B: public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Dominate_next(Dominate *unit, int inNumSamples);
 	void Dominate_Ctor(Dominate* unit);
 

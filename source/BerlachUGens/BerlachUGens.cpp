@@ -108,8 +108,6 @@ struct DriveNoise : public Unit {};
 
 extern "C"  {
 
-void load(InterfaceTable *inTable);
-
 void PeakEQ4_Ctor(PeakEQ4 *unit);
 void PeakEQ4_next(PeakEQ4 *unit, int inNumSamples);
 

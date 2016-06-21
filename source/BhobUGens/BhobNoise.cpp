@@ -103,8 +103,6 @@ struct Gendy5 : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void TBrownRand_next_a(TBrownRand *unit, int inNumSamples);
 	void TBrownRand_next_k(TBrownRand *unit, int inNumSamples);;
 	void TBrownRand_Ctor(TBrownRand* unit);

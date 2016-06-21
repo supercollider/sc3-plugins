@@ -1,12 +1,12 @@
 class:: AmplitudeMod
-summary:: amplitude follower
+summary:: amplitude follower (deprecated)
 related:: Classes/Amplitude
 categories:: UGens>Analysis>Amplitude
 
 
 Description::
 
-Tracks the peak amplitude of a signal. As a opposed to link::Classes/Amplitude::, AmplitudeMod, allows attack and release times to be modulated once the UGen has been instantiated. There is a tiny overhead associated to this.
+This is a version of link::Classes/Amplitude:: that allows modulatable attack and release times. Amplitude now supports that, rendering this UGen redundant.
 
 
 classmethods::

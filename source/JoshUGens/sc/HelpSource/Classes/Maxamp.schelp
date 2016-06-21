@@ -1,0 +1,77 @@
+TITLE:: Maxamp
+summary:: Tracks and prints amplitudes
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+keyword:: JoshUGens
+
+DESCRIPTION::
+warning::Printing from the server is very expensive on the client side (lang). This CPU usage will not show up in your CPU usage on the server side.::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+The input you would like to track.
+
+ARGUMENT:: numSamps
+The period in which Maxamp will post amp information.
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+SynthDef(\sample, {|dur|
+	Out.ar(0, SinOsc.ar(440, 0, LFNoise1.ar(0.5)) *
+		EnvGen.kr(Env([0.01, 1, 1, 0.01], [0.01, dur - 0.02, 0.01]), doneAction: 2))
+}).add;
+
+SynthDef(\maxamptest, {|inbus|
+	Maxamp.ar(In.ar(inbus, 1), SampleRate.ir / 10)
+}).add;
+)
+
+s.sendBundle(0.1, [\s_new, \sample, -1, 0, 1, \dur, 4],
+	// run maxamp test at the tail of group 1
+	[\s_new, \maxamptest, -1, 1, 1, \inbus, 0]);
+
+// run a couple more synths
+s.sendBundle(0.1, [\s_new, \sample, -1, 0, 1, \dur, 2],
+	[\s_new, \sample, -1, 0, 1, \dur, 3],
+	[\s_new, \sample, -1, 0, 1, \dur, 4]);
+
+// kill maxamptest
+s.sendBundle(0.1, [\g_freeAll, 1]);
+::
+
+Here is a sample of what prints:
+
+teletype::
+Maxamp from 1.8 to 1.9: 0.87646, Overall Maxamp at 1.89903: 0.87646
+Maxamp from 1.9 to 2: 0.930082, Overall Maxamp at 1.999: 0.930082
+Maxamp from 2 to 2.1: 0.930123, Overall Maxamp at 2.00011: 0.930123
+Maxamp from 2.1 to 2.2: 0.88386, Overall Maxamp at 2.00011: 0.930123
+Maxamp from 2.2 to 2.3: 0.837598, Overall Maxamp at 2.00011: 0.930123
+Maxamp from 2.3 to 2.4: 0.791335, Overall Maxamp at 2.00011: 0.930123
+::
+The last line shows that the Maxamp from 2.3 - 2.4 seconds was 0.791335. The overall Maxamp occurred at 2.00011 seconds, with a value of 0.930123.
+
+
+strong::For NRT::
+This UGen can be particularly useful during NRT synthesis:
+code::
+a = [
+	[0, [\g_new, 1], [\s_new, \sample, -1, 0, 1, \dur, 4], [\s_new, \maxamptest, -1, 1, 1]],
+	[6, [\s_new, \sample, -1, 0, 1, \dur, 2]],
+	[8, [\s_new, \sample, -1, 0, 1, \dur, 3]],
+	[11, [\c_set, 0, 0]]
+	]
+
+// make sure the local server is not booted
+
+Score.recordNRT(a, "/tmp/sc.sc", "test.aiff");
+::

@@ -1,0 +1,159 @@
+TITLE:: Player
+summary:: A soundfile player and BFormat Decoder
+categories:: Libraries>JoshUGens, UGens>Multichannel>Ambisonics
+related:: Classes/BFDecode1, Classes/BFEncode1,  Classes/BFEncodeSter, Classes/BFManipulate
+
+DESCRIPTION::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+note:: All arguments are optional.::
+
+ARGUMENT:: soundfilepath
+The path (complete or relative) to a soundfile
+
+ARGUMENT:: formatOut
+A string. defaults to \straight which simply plays the soundfile directly to the output. If your file is a BFormat file (3 or 4 channel) you can choose:
+list::
+  ## \stereo
+  ## \uhj
+  ## \quad
+  ## \hex
+::
+
+ARGUMENT:: starttime
+An initial starttime for playback.
+
+ARGUMENT:: outbus
+The starting outbus for playback.
+
+ARGUMENT:: amp
+An initial amplitude value.
+
+ARGUMENT:: xywz
+Expects true or false. This will decode Ambsonic files recorded for middle side monitoring. (default is false)
+
+ARGUMENT:: env
+Any fixed duration envelope (Env, InterplEnv, InterplXYC) to be played over the soundfiles duration.
+
+
+METHOD:: initClass
+
+
+INSTANCEMETHODS::
+
+METHOD:: play
+Plays the soundfile.
+
+METHOD:: pause
+Pauses the soundfile. Playback resumes where the file was paused.
+
+METHOD:: stop
+Stops the soundfile. Playback begins from starttime.
+
+METHOD:: formatOut
+Changes the output format
+
+METHOD:: starttime
+Change the starttime.
+
+METHOD:: endtime
+Change the endtime.
+
+METHOD:: gui
+Create a GUI controller with optional scope.
+
+
+METHOD:: isScope
+
+METHOD:: mute_w
+
+METHOD:: mute_y
+
+METHOD:: pausedplay
+
+METHOD:: initendtime
+
+METHOD:: env
+
+METHOD:: bufnum
+
+METHOD:: player
+
+METHOD:: close
+
+METHOD:: amp
+
+METHOD:: group
+
+METHOD:: mute_x
+
+METHOD:: clock
+
+METHOD:: outarray
+
+METHOD:: filename
+
+METHOD:: isGui
+
+METHOD:: init
+
+METHOD:: sf
+
+METHOD:: soundfilepath
+
+METHOD:: window
+
+METHOD:: soundfile
+
+METHOD:: scopebuf
+
+METHOD:: initstarttime
+
+METHOD:: server
+
+METHOD:: curtime
+
+METHOD:: mute_z
+
+METHOD:: outbus
+
+METHOD:: scopeID
+
+METHOD:: xywz
+
+METHOD:: numchan
+
+METHOD:: reset
+
+METHOD:: nodeID
+
+METHOD:: isPlaying
+
+METHOD:: playfunc
+
+METHOD:: tempoclock
+
+EXAMPLES::
+
+code::
+// create a new player
+a = Player.new(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff")
+
+// play it
+a.play;
+
+// pause it
+a.pause;
+
+// play it again
+a.play;
+
+// stop it
+a.stop;
+
+// create a GUI
+a.gui;
+::

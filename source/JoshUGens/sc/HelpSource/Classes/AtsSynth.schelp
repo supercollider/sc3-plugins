@@ -1,0 +1,85 @@
+TITLE:: AtsSynth
+summary:: Resynthesize sine data from an ATS analysis file
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/AtsFile
+keyword:: JoshUGens
+
+DESCRIPTION::
+Resynthesizes information from an ATS file, with transformations.
+warning:: If you try to resynthesize partials or bands that don't exist, those partials will fail silently. All valid partials will still be synthesized.::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: atsbuffer
+The buffer number that contains the AtsFile information.
+
+ARGUMENT:: numPartials
+The number of partials to synthesize.
+
+ARGUMENT:: partialStart
+The partial in the analysis to start the synthesis on. Partial 0 is the first partial.
+
+ARGUMENT:: partialSkip
+An integer that indicates the increment from partialStart of which partials to synthesize.
+
+ARGUMENT:: filePointer
+A value (between 0 and 1) that indicates which part of the file to synthesize. Accepts ugens or a static value.
+
+ARGUMENT:: freqMul
+A multiplier on the sinusoidal frequency information.
+
+ARGUMENT:: freqAdd
+A value to add to frequency information.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+note::For resynthesis purposes, an ATS file needs to be loaded into a buffer. When loading an ATS file, you need to supply a buffer number to store ATS data in.::
+code::
+s.boot;
+
+// see the entry on AtsFile to learn how to create an ats file
+a = AtsFile.new("path/to/file.ats").load;
+
+( //play just the resynth, with LFSaw pointing into the file
+{
+	AtsSynth.ar(a.bufnum, a.numPartials, 0, 1,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), mul: 1)
+	}.play(s);
+);
+
+( //multiply frequencies by 1.5
+{
+	AtsSynth.ar(a.bufnum, a.numPartials, 0, 1,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), freqMul: 1.5, mul: 1)
+	}.play(s);
+);
+
+( //add 100 to all frequencies
+{
+	AtsSynth.ar(a.bufnum, a.numPartials, 0, 1,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), freqAdd: 100.0, mul: 1)
+	}.play(s);
+);
+
+( //resynthesize every third partial only (partial skip)
+{
+	AtsSynth.ar(a.bufnum, a.numPartials * 0.3, 0, 3,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), mul: 1)
+	}.play(s);
+);
+
+( //resynthesize only the top half of the partials
+{
+	AtsSynth.ar(a.bufnum, a.numPartials * 0.5, a.numPartials * 0.5, 1,
+		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), mul: 1)
+	}.play(s);
+);

@@ -1,0 +1,99 @@
+TITLE:: WarpZ
+summary:: Warp a buffer with a time pointer
+categories:: Libraries>JoshUGens
+keyword:: JoshUgens
+
+DESCRIPTION::
+Inspired by Chad Kirby's SuperCollider2 Warp1 class, which was inspired by Richard Karpen's sndwarp for CSound. A granular time strecher and pitchshifter.
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+
+ARGUMENT:: numChannels
+The number of channels in the soundfile used in bufnum.
+
+ARGUMENT:: bufnum
+The buffer number of a mono soundfile.
+
+ARGUMENT:: pointer
+The position in the buffer. The value should be between 0 and 1, with 0 being the begining of the buffer, and 1 the end.
+
+ARGUMENT:: freqScale
+The amount of frequency shift. 1.0 is normal, 0.5 is one octave down, 2.0 is one octave up. Negative values play the soundfile backwards.
+
+ARGUMENT:: windowSize
+The size of each grain window.
+
+ARGUMENT:: envbufnum
+The buffer number containing a singal to use for the grain envelope. -1 uses a built-in Hanning envelope.
+
+ARGUMENT:: overlaps
+The number of overlaping windows.
+
+ARGUMENT:: windowRandRatio
+The amount of randomness to the windowing function. Must be between 0 (no randomness) to 1.0 (probably to random actually)
+
+ARGUMENT:: interp
+The interpolation method used for pitchshifting grains. 1 = no interpolation. 2 = linear. 4 = cubic interpolation (more computationally intensive).
+
+ARGUMENT:: zeroSearch
+If > 0.0, the UGen will search through the buffer from the current 'pointer' looking for a zero crossing in the signal to start the grain with. The search is limitied to zeroSearch seconds (i.e., if zeroSearch is 0.01, the UGen will only try to find a zero crossing within 0.01 seconds of the pointer).
+
+ARGUMENT:: zeroStart
+If > 0.0, an attempt will be made to scuedule the next grain according to a zero crossing in the current grain. This value limits the search to zeroStart as a percentage of the current grain's duration (i.e., if the current grain's duration is 0.2, and zeroStart is 0.1, the algorithm will attempt to find the closest zero crossing in the current grain +/- 0.02 seconds from when the next grain was originally scheduled according to windowSize / overlaps).
+
+ARGUMENT:: mul
+Scale.
+
+ARGUMENT:: add
+Offset.
+
+
+INSTANCEMETHODS::
+
+METHOD:: argNamesInputsOffset
+
+METHOD:: init
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+var winenv;
+// a custom envelope - not a very good one, but you can hear the difference between this
+// and the default
+winenv = Env([0, 1, 0], [0.5, 0.5], [8, -8]);
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff");
+z = Buffer.sendCollection(s, winenv.discretize, 1);
+
+SynthDef(\warp, {arg buffer = 0, envbuf = -1;
+	var out, pointer, filelength, pitch, env, dir;
+	// pointer - move from beginning to end of soundfile over 15 seconds
+	pointer = Line.kr(0, 1, 15);
+	// control pitch with MouseX
+	pitch = MouseX.kr(0.5, 2);
+	env = EnvGen.kr(Env([0.001, 1, 1, 0.001], [0.1, 14, 0.9], 'exp'), doneAction: 2);
+	out = WarpZ.ar(1, buffer, pointer, pitch, 0.1, envbuf, 8, 0.1, 2, 0.01, 0.1);
+	Out.ar(0, out * env);
+}).add;
+
+)
+
+// use built-in env
+x = Synth(\warp, [\buffer, b, \envbuf, -1])
+
+// switch to the custom env
+x.set(\envbuf, z)
+x.set(\envbuf, -1);
+
+x.free;
+
+b.free;
+z.free;
+::

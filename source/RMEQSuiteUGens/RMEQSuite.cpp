@@ -39,7 +39,6 @@ static InterfaceTable *ft;
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 }
 
 /* Allpass2 */

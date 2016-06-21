@@ -82,7 +82,6 @@ struct IIRFilter : public Unit
 
 extern "C"
 {
-    void load(InterfaceTable *inTable);
     void SVF_Ctor(SVF *unit);
     void SVF_next(SVF *unit, int inNumSamples);
 

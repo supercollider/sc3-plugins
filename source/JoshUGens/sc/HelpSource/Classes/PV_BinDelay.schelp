@@ -1,0 +1,125 @@
+TITLE:: PV_BinDelay
+summary:: Delay and Feedback on a bin by bin basis.
+categories:: Libraries>JoshUGens, UGens>FFT
+
+DESCRIPTION::
+warning:: This UGen needs to allocate a large amount of real-time memory at the outset (approx. SampleRate * maxDelayTime). This will cause a CPU spike at startup. Also, due to memory mangement restrictions, There is a limited number of previous frames that can be stored. Right now no more the 512 frames can be stored. With a frame size of 512 samples, this makes a hard limit to the max delay of about 5.9 seconds at a SR of 44100 (or (FFT size * 512) / SR). Chances are, however, that you will run out of RT memory (the memSize ServerOption) before hitting these limits, especially at larger FFT frame sizes.
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+The FFT buffer.
+
+ARGUMENT:: maxdelay
+In seconds. Used at init time to create memory for the delays. Non-modulatable.
+
+ARGUMENT:: delaybuf
+A buffer of (fft buffer size / 2) containing the delay times for each bin. Delay times will be rounded to the closest bin. Smaller FFT windows will yield better time resolution.
+
+ARGUMENT:: fbbuf
+A buffer of (fft buffer size / 2) containing the fb percentages for each bin.
+
+ARGUMENT:: hop
+If you are using FFT with a hop value different then the default 0.5, you need to tell PV_BinDelay so it can calculate the correct times.
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+Routine.run({
+	// use as multislider - del time vals on top, feedback on the bottom
+	// max delay time is 1 second, delaytime and fb are initialized to 0.0
+	// and are controlled by the GUI. The multi-slider on the top controls
+	// each bins delay time, the bottom controls FB.
+
+	var size, awin, bsl, car, dar, fsl, maxdel, synth, cond;
+
+	size = 128;
+	maxdel = 0.5;
+	cond = Condition.new;
+	s.sendMsg(\b_alloc, b=s.bufferAllocator.alloc(1), size * 2);
+	s.sendMsg(\b_alloc, c=s.bufferAllocator.alloc(1), size);
+	s.sendMsg(\b_alloc, d=s.bufferAllocator.alloc(1), size);
+
+	y = Array.fill(size, {0.0});
+	s.sendBundle(0.1, [\b_setn, d, 0, size] ++ y);
+
+	z = Array.fill(size, {arg i; 0.0});
+	s.sendBundle(0.1, [\b_setn, c, 0, size] ++ z);
+	s.sync(cond);
+
+	synth = SynthDef("help-noopFFT", { arg inbus,out=0,bufnum=0,   dels=0, fb=0;
+		var in, chain;
+		in = Impulse.ar(0.33);
+		in = PlayBuf.ar(1, playbuf, loop: 1);
+		chain = FFT(bufnum, in, 0.25);
+		chain = PV_BinDelay(chain, maxdel, dels, fb, 0.25);
+		Out.ar(out,
+			in + IFFT(chain) // inverse FFT
+		);
+	}).play(s,[\out,0,\bufnum,b,\dels, c, \fb, d, \inbus, s.options.numOutputBusChannels]);
+	{
+	awin = GUI.window.new("test", Rect(200 , 450, 10 + (size * 1), 10 + (size * 2)));
+	awin.view.decorator = FlowLayout(awin.view.bounds);
+
+	bsl = GUI.multiSliderView.new(awin, Rect(0, 0, size * 1, size * 1));
+	bsl.action = {arg xb; ("Deltime index: " ++ xb.index ++" value: " ++
+			(xb.currentvalue * maxdel)).postln;
+		s.sendMsg(\b_set, c, xb.index, xb.currentvalue * maxdel);
+		};
+
+	fsl = GUI.multiSliderView.new(awin, Rect(0, 0, size * 1, size * 1));
+	fsl.action = {arg xb; ("FB index: " ++ xb.index ++" value: " ++ xb.currentvalue).postln;
+		s.sendMsg(\b_set, d, xb.index, xb.currentvalue);
+		};
+
+	car = Array.new;
+	size.do({arg i;
+		car = car.add(0);
+	});
+	bsl.value_(car);
+
+	dar = Array.new;
+	size.do({arg i;
+		dar = dar.add(0);
+	});
+	fsl.value_(car);
+
+	bsl.xOffset_(5);
+	bsl.thumbSize_(12.0);
+	fsl.xOffset_(5);
+	fsl.thumbSize_(12.0);
+
+	// value axis size of each blip in pixels
+	bsl.valueThumbSize_(15.0);
+	// index axis size of each blip in pixels
+	bsl.indexThumbSize_( bsl.bounds.width / car.size );
+	bsl.gap = 0;
+
+	// value axis size of each blip in pixels
+	fsl.valueThumbSize_(15.0);
+	// index axis size of each blip in pixels
+	fsl.indexThumbSize_( fsl.bounds.width / dar.size );
+	fsl.gap = 0;
+
+	awin.front;
+
+	awin.onClose_({
+		synth.free;
+		s.sendMsg(\b_free, b);
+		s.sendMsg(\b_free, c);
+		s.sendMsg(\b_free, d);
+		})
+	}.defer;
+	})
+)
+::

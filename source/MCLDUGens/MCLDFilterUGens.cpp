@@ -38,8 +38,6 @@ struct Goertzel : public Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void Friction_Ctor(Friction* unit);
 	void Friction_next(Friction *unit, int inNumSamples);
 

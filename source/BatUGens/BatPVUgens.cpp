@@ -71,8 +71,6 @@ struct FrameCompare : PV_Unit
 
 extern "C"
 {
-	void load(InterfaceTable *inTable);
-
 	void FrameCompare_Ctor(FrameCompare* unit);
 	void FrameCompare_Dtor(FrameCompare* unit);
 	void FrameCompare_next(FrameCompare* unit, int inNumSamples);

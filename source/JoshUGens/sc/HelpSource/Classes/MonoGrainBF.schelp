@@ -1,0 +1,77 @@
+TITLE:: MonoGrainBF
+summary:: Granulates real-time input with Ambisonic panning
+categories:: Libraries>JoshUGens, UGens>GranularSynthesis
+related:: Classes/MonoGrain
+keyword:: JoshUGens
+
+DESCRIPTION::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+
+ARGUMENT:: in
+A mono input.
+
+ARGUMENT:: winsize
+The window size in seconds.
+
+ARGUMENT:: grainrate
+The rate at which new grains are created (in Hz).
+
+ARGUMENT:: winrandpct
+A randomness factor for window size (as a percentage of the winsize).
+
+ARGUMENT:: azimuth
+In radians, -pi to pi.
+
+ARGUMENT:: azrand
+Percentage of deviation from the azimuth.
+
+ARGUMENT:: elevation
+In radians, -0.5pi to 0.5pi.
+
+ARGUMENT:: elrand
+Percentage of deviation from the eleveation.
+
+ARGUMENT:: rho
+The speaker radius. (1 places around at the radius, <1 within the radius, >1 is outside the radius.) Beyond the radius, this mostly acts as an amplitude scaler (no filtering is done).
+
+ARGUMENT:: mul
+
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+METHOD:: init
+
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+(
+s.sendMsg(\b_allocRead, 0, Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff", 0, -1);
+
+SynthDef(\monograinbf, {arg buffer = 0;
+	var w, x, y, z, out, winsize, grainrate, azimuth, azrand;
+	winsize = 0.04;
+	grainrate = 100;
+	azimuth = MouseX.kr(-pi, pi); // move around the radius
+	azrand = MouseY.kr(0, 1); // 0 = no randomness, 1 = totally random
+	#w, x, y, z = MonoGrainBF.ar(PlayBuf.ar(1, buffer, loop: 1), winsize, grainrate, 0, azimuth, 		azrand);
+	out = DecodeB2.ar(2, w, x, y, 0.5);
+	Out.ar(0, out);
+}).add;
+)
+
+s.sendMsg(\s_new, \monograinbf, 1000, 0, 0, \buffer, 0);
+
+s.sendMsg(\n_free, 1000);
+s.sendMsg(\b_free, 0);
+::

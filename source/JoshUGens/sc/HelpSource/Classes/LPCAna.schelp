@@ -1,0 +1,237 @@
+TITLE:: LPCAna
+summary:: Create an LPC analysis file
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/LPCFile, Classes/LPCSynth, Classes/LPCVals
+
+DESCRIPTION::
+Adapted and expanded from R. Moore's LPC analysis code from EMPHASIS::Computer Music::.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: path
+The path for a mono sound file to analyze.
+
+
+INSTANCEMETHODS::
+
+METHOD:: ana
+
+ARGUMENT:: nPoles
+the number of poles for the all-pole filter (default: 35, must be less the 200)
+
+ARGUMENT:: frameSize
+the number of samples to use for each from of analysis (default: 400)
+
+ARGUMENT:: hop
+a percentage of the frameSize to skip for the next window (default: 0.5)
+
+ARGUMENT:: channel
+the channel to analyze if the file at 'path' is multi-channel (default: 0)
+
+ARGUMENT:: minFreq
+a minFreq to search for in pitch tracking (defautl: 70)
+
+ARGUMENT:: maxFreq
+a maxFreq to search for in pitch tracking (default: 200)
+
+ARGUMENT:: check
+Attempts to check poles for stability.
+WARNING:: Somewhere in this code, I've made a terrible mistake. It actually CAUSES instabilities rather then getting rid of them... but I can't, for the life of me, see where the error is. Don't use it. Moore's basic algorithm is pretty good, and the filters seems fairly stable. If you have problems, try increasing the number of poles (default: 0).::
+
+ARGUMENT:: conditionSignal
+Default: 0, 1 works well, choose 2 if you want exploding filters that might (?) be interesting.
+list::
+  ## 0: does nothing,
+  ## 1: applies a simple low pass filter to each window before doing the analysis (which helps avoid instabilities)
+  ## 2: apply a DRASTIC low pass filter to the signal that I saw in some of CSounds LPC code. This REALLY smoothes out the signal, and usually causes some pretty crazy instabilities because the output of the filter is SO resonant.
+::
+
+ARGUMENT:: completion
+A function to evaluate when the analysis is finished. Handy for bulk analyzing files, and auto saving them.
+
+METHOD:: lperr
+low pass the error signal numTurns times
+ARGUMENT:: numTurns
+
+METHOD:: lprms
+low pass the overall rms signal numTurns times
+ARGUMENT:: numTurns
+
+METHOD:: lppch
+Low pass the pchcps signal numTurns times
+ARGUMENT:: numTurns
+
+METHOD:: saveToLPCFile
+save file to an LPC file usable by LPCFile, LPCSynth and LPCVals.
+ARGUMENT:: path
+
+METHOD:: saveToFiles
+Save file to an LPC file usable by LPCFile, LPCSynth and LPCVals, as well as a floating point .aif data file for use in NRT.
+
+ARGUMENT:: path
+
+METHOD:: calcLaguerre
+
+ARGUMENT:: a
+
+
+ARGUMENT:: m
+
+
+ARGUMENT:: x
+
+
+ARGUMENT:: eps
+
+
+ARGUMENT:: p
+
+
+METHOD:: checkRoots
+
+ARGUMENT:: theseCoefs
+
+
+ARGUMENT:: check
+
+
+METHOD:: findRoots
+
+ARGUMENT:: a
+
+
+
+
+METHOD:: getpch
+
+
+
+METHOD:: clock
+
+
+
+METHOD:: data
+
+
+
+METHOD:: resrms
+
+
+
+METHOD:: sr
+
+
+
+METHOD:: hop
+
+
+
+METHOD:: channel
+
+
+
+METHOD:: initLPCAna
+
+
+
+METHOD:: analyzeWindow
+
+ARGUMENT:: check
+
+
+ARGUMENT:: conditionSignal
+
+
+METHOD:: path
+
+
+
+METHOD:: frames
+
+
+
+METHOD:: nPoles
+
+
+
+METHOD:: initAna
+
+ARGUMENT:: argNPoles
+
+
+ARGUMENT:: argFrameSize
+
+
+ARGUMENT:: argHop
+
+
+ARGUMENT:: argChannel
+
+
+ARGUMENT:: argMinFreq
+
+
+ARGUMENT:: argMaxFreq
+
+
+
+
+METHOD:: pchcps
+
+
+
+METHOD:: coefs
+
+
+
+METHOD:: anaBuf
+
+
+
+METHOD:: frameSize
+
+METHOD:: hopSamps
+
+
+
+METHOD:: origrms
+
+
+
+METHOD:: inc
+
+
+
+METHOD:: tmpBuf
+
+
+
+METHOD:: err
+
+
+
+METHOD:: sf
+
+
+
+METHOD:: calcOrigRMS
+
+
+EXAMPLES::
+
+code::
+a = LPCAna.new(Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+a.ana(50, 400, 0.5, 0, 70, 300);
+
+// low pass an aspect of the analysis
+a.err.plot
+a.lperr;
+a.err.plot;
+
+a.pchcps.plot;
+a.lppch;
+a.pchcps.plot;
+::

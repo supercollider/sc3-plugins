@@ -79,7 +79,6 @@ struct Membrane : public Unit
 // declare unit generator functions
 extern "C"
 {
-  void load(InterfaceTable *inTable);
   void Membrane_next_a(Membrane *unit, int inNumSamples);
   void MembraneCircle_Ctor(Membrane* unit);
   void MembraneHexagon_Ctor(Membrane* unit);

@@ -1,0 +1,35 @@
+TITLE:: PV_Invert
+summary:: Invert FFT frames
+categories:: Libraries>JoshUGens, UGens>FFT
+
+DESCRIPTION::
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+An FFT buffer.
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+SynthDef(\invert, {arg buffer;
+    var in, chain;
+    // a sample signal (strong sin tone, little PinkNoise)
+    in = SinOsc.ar(440, 0, 0.4) + PinkNoise.ar(0.1);
+    chain = FFT(buffer, in);
+    chain = PV_Invert(chain);
+    Out.ar(0, [in, IFFT(chain) * 0.5]);
+ }).add;
+
+s.boot;
+
+s.sendMsg(\b_alloc, 0, 2048)
+
+s.sendMsg(\s_new, \invert, 1000, 0, 1, \buffer, 0);
+::

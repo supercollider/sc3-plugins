@@ -1,0 +1,82 @@
+TITLE:: AtsParInfo
+summary:: One UGen to return both Amp and Freq info
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/AtsFile, Classes/AtsAmp, Classes/AtsParInfo
+keyword:: JoshUGens
+
+DESCRIPTION::
+Returns amplitude and freq information for a given partial.
+note::For resynthesis purposes, an ATS file needs to be loaded into a buffer. When loading an ATS file, you need to supply a buffer number to store ATS data in.::
+
+CLASSMETHODS::
+
+METHOD:: kr
+
+ARGUMENT:: atsbuffer
+link::Classes/AtsFile:: buffer number.
+
+ARGUMENT:: partialNum
+The number of the partial to return frequency data for. Partial 0 is the first partial.
+
+ARGUMENT:: filePointer
+A float between 0 and 1 pointing to location in buffer.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+METHOD:: ar
+
+ARGUMENT:: atsbuffer
+AtsFile buffer number.
+
+ARGUMENT:: partialNum
+The number of the partial to return frequency data for. Partial 0 is the first partial.
+
+ARGUMENT:: filePointer
+A float between 0 and 1 pointing to location in buffer.
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+a = AtsFile.new(Platform.resourceDir +/+ "sounds/a11wlk01.ats").load;
+
+( //use freq and amp information for a filter ugen (just the first 30 partials)
+{
+	var noise, freqs, amps, partials;
+	partials = Array.series(30, 1, 1);
+	// outputs an array of 30 freq values;
+	freqs = AtsFreq.kr(a.bufnum, partials, MouseX.kr(0, 1));
+	// outputs an array of 30 amp values
+	amps = AtsAmp.kr(a.bufnum, partials, MouseX.kr(0, 1));
+	// feed these into a reson filter, mix down to one channel
+	Mix.ar(Resonz.ar(WhiteNoise.ar(20), freqs, 0.01, amps));
+	}.play(s);
+);
+
+( //use freq and amp information for a filter ugen (just the first 30 partials)
+{
+	var noise, freqs, amps, freqs1, amps1, partials, out;
+	partials = Array.series(30, 1, 1);
+	// outputs an array of 30 freq values;
+	out = AtsParInfo.kr(a.bufnum, partials, MouseX.kr(0, 1));
+	// need to flop the array output
+	#amps, freqs = out.flop;
+	// outputs an array of 30 amp values
+	// feed these into a reson filter, mix down to one channel
+	Mix.ar(Resonz.ar(WhiteNoise.ar(20), freqs, 0.01, amps ));
+	}.play(s);
+);
+::

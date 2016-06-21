@@ -17,7 +17,6 @@ struct AY : public Unit
 // declare unit generator functions
 extern "C"
 {
-	void load(InterfaceTable *inTable);
 	void AY_next(AY *unit, int inNumSamples);
 	void AY_Ctor(AY* unit);
 	void AY_Dtor(AY* unit);

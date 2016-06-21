@@ -1,0 +1,40 @@
+TITLE:: LPCVals
+summary:: Utilize LPC data
+categories:: Libraries>JoshUGens, UGens>Analysis:Synthesis
+related:: Classes/LPCAna, Classes/LPCFile, Classes/LPCSynth
+
+DESCRIPTION::
+LPCVals returns pitch, rms and error data from the LPC data file.
+
+
+CLASSMETHODS::
+
+METHOD:: kr
+
+
+ARGUMENT:: buffer
+The buffer where data is stored from LPCFile (see link::Classes/LPCFile::).
+
+ARGUMENT:: pointer
+A pointer into the LPC data file, where 0 is the begining and 1 is the end.
+
+METHOD:: ar
+
+
+ARGUMENT:: buffer
+The buffer where data is stored from LPCFile (see link::Classes/LPCFile::).
+
+ARGUMENT:: pointer
+A pointer into the LPC data file, where 0 is the begining and 1 is the end.
+
+
+INSTANCEMETHODS::
+
+METHOD:: init
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::

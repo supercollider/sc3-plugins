@@ -1,0 +1,88 @@
+TITLE:: PV_MagMap
+summary:: Remap magnitudes to a new mag curve
+categories:: Libraries>JoshUGens, UGens>FFT
+
+DESCRIPTION::
+A curve of code::Env([0, 1], [1]):: will output the input.
+A curve of code::Env([1, 0], [1]):: will output the inverse magnitudes (loud partials are quiet, quiet partials are loud... and so on. The Env times don't have to equal 1 (they are scaled internally to 1 no matter what).
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+An FFT buffer.
+
+ARGUMENT:: mapbuf
+A signal buffer.
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+s.boot;
+
+{PinkNoise.ar(0.03) + SinOsc.ar(440, 0, 0.5)}.play(s)
+
+SynthDef(\magmap, {arg fftbuf, envbuf;
+    var in, chain, out;
+    in = PinkNoise.ar(0.03) + SinOsc.ar(440, 0, 0.5);
+    chain = FFT(fftbuf, in);
+    chain = PV_MagMap(chain, envbuf);
+    out = IFFT(chain);
+    Out.ar(1, out);
+ }).add;
+
+
+
+// the fft buf
+s.sendMsg(\b_alloc, 0, 2048);
+// the curve to map the sound onto
+a = Env([0, 1, 0], [0.05, 0.95], \welch).plot;
+// send the signal to a buffer
+s.sendBundle(0.1, [\b_alloc, 1, 256, 1, [\b_setn, 1, 0, 256] ++ a.asSignal(256)])
+// start the synth
+s.sendMsg(\s_new, \magmap, z = s.nextNodeID, 0, 1, \fftbuf, 0, \envbuf, 1);
+
+// free it
+s.sendMsg(\n_free, z);
+
+a = Env([1, 0], [1]).plot;
+// send the signal to a buffer
+s.sendBundle(0.1, [\b_alloc, 1, 256, 1, [\b_setn, 1, 0, 256] ++ a.asSignal(256)])
+s.sendMsg(\s_new, \magmap, z = s.nextNodeID, 0, 1, \fftbuf, 0, \envbuf, 1);
+// free it
+s.sendMsg(\n_free, z);
+
+
+
+SynthDef(\magmap, {arg fftbuf, envbuf, sndbuf;
+    var in, chain, out;
+    in = PlayBuf.ar(1, sndbuf, BufRateScale.kr(sndbuf), loop: 1);
+    chain = FFT(fftbuf, in);
+    chain = PV_MagMap(chain, envbuf);
+    out = IFFT(chain);
+    Out.ar(1, out);
+ }).add;
+
+s.boot;
+
+// the fft buf
+s.sendMsg(\b_alloc, 0, 2048);
+// the curve to map the sound onto
+a = Env([0, 1], [1], \lin); // get original back
+//a = Env([1, 0], [1], \lin); // noise partials are loudest
+//a = Env([0.1, 1, 0.1], [0.5, 0.5], \exp); // shape the sound!
+//a = Env([0.1, 1, 0.1], [0.8, 0.2], [\exp, \sin]);
+// send the signal to a buffer
+s.sendBundle(0.1, [\b_alloc, 1, 256, 1, [\b_setn, 1, 0, 256] ++ a.asSignal(256)],
+  [\b_allocRead, 2, "/Users/joshp/SND/vln-g4.aiff"])
+// start the synth
+s.sendMsg(\s_new, \magmap, z = s.nextNodeID, 0, 1, \fftbuf, 0, \envbuf, 1, \sndbuf, 2);
+
+s.sendMsg(\n_free, z);
+s.quit
+::

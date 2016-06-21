@@ -1,0 +1,34 @@
+TITLE:: AtsBand
+summary:: (put short description here)
+categories:: Undocumented classes, Libraries>JoshUGens
+related:: Classes/AtsFile
+keyword:: JoshUGens
+
+DESCRIPTION::
+This class is missing documentation.
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: atsbuffer
+The buffer number that contains the AtsFile information.
+
+ARGUMENT:: band
+
+ARGUMENT:: filePointer
+
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
