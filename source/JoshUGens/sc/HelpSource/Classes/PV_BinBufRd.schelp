@@ -1,0 +1,144 @@
+TITLE:: PV_BinBufRd
+summary:: Plays FFT data to a memory buffer
+categories:: Libraries>JoshUGens, UGens>FFT
+related:: Classes/PV_RecordBuf, Classes/PV_BinPlayBuf, Classes/PV_BufRd, Classes/PV_PlayBuf
+
+DESCRIPTION::
+WARNING:: Resynth of a FFTs with large window sizes may cause CPU spikes.::
+
+WARNING:: Unlike link::Classes/PV_BufRd::, PV_BinBufRd needs to have an FFT Ugen preceding it in the processing chain.::
+
+note:: link::Classes/PV_RecordBuf:: stores FFT data to a buffer for use by a number of PV UGens.::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: buffer
+The FFT buffer to fill data into.
+
+ARGUMENT:: playbuf
+The buffer to read frames of FFT data from.
+
+ARGUMENT:: point
+A value between 0.0 and 1.0. 0.0 is the beginning of the file, 1.0 the end. Values greater then 1.0
+
+ARGUMENT:: binStart
+note::
+With binStart, binSkip and numBins, you have some control over which bins to synthesize:
+list::
+  ## binStart = 0
+  ## binSkip = 2
+  ## numBins = 10
+  ## bins to synthesize = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]::
+::
+
+ARGUMENT:: binSkip
+See binStart.
+
+ARGUMENT:: numBins
+See binStart.
+
+ARGUMENT:: clear
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+// anazlyze a soundfile and store its data to a buffer
+
+s.boot;
+
+(
+var sf;
+// path to a sound file here
+p = Platform.resourceDir +/+ "sounds/a11wlk01.wav";
+// the frame size for the analysis - experiment with other sizes (powers of 2)
+f = 1024;
+// the hop size
+h = 0.25;
+// get some info about the file
+sf = SoundFile.new( p );
+sf.openRead;
+sf.close;
+// allocate memory to store FFT data to... SimpleNumber.calcPVRecSize(frameSize, hop) will return
+// the appropriate number of samples needed for the buffer
+y = Buffer.alloc(s, sf.duration.calcPVRecSize(f, h));
+// allocate the soundfile you want to analyze
+z = Buffer.read(s, p);
+)
+
+// this does the analysis and saves it to buffer 1... frees itself when done
+(
+SynthDef("pvrec", { arg recBuf=1, soundBufnum=2;
+	var in, chain, bufnum;
+	bufnum = LocalBuf.new(1024);
+	Line.kr(1, 1, BufDur.kr(soundBufnum), doneAction: 2);
+	in = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 0);
+	// note the window type and overlaps... this is important for resynth parameters
+	chain = FFT(bufnum, in, 0.25, 1);
+	chain = PV_RecordBuf(chain, recBuf, 0, 1, 0, 0.25, 1);
+	// no ouput ... simply save the analysis to recBuf
+	}).add;
+)
+
+a = Synth("pvrec", [\recBuf, y, \soundBufnum, z]);
+
+// you can save your 'analysis' file to disk! I suggest using float32 for the format
+// These can be read back in using Buffer.read
+
+y.write(p++".scpv", "wav", "float32");
+
+// play your analysis back ... see the playback UGens listed above for more examples.
+(
+SynthDef("pvplay", { arg out=0, recBuf=1, playbuf, clear = 0.0;
+	var in, chain, bufnum;
+	bufnum = LocalBuf.new(1024);
+	chain = FFT(bufnum, PlayBuf.ar(1, playbuf, BufRateScale.kr(playbuf), loop: 1));
+	// MouseX points into file. start at bin 10, skip 3, resynth 50
+	chain = PV_BinBufRd(chain, recBuf, MouseX.kr(0, 1), 10, 3, 5, clear);
+	Out.ar(out, IFFT(chain, 1).dup);
+	}).add;
+);
+
+// mix the resynth and data from the recBuf
+b = Synth("pvplay", [\out, 0, \recBuf, y, \playbuf, z, \clear, 0.0]);
+
+b.free;
+
+// zero out the data in the FFT buf that ins't read in from recBuf
+b = Synth("pvplay", [\out, 0, \bufnum, x, \recBuf, y, \playbuf, z, \clear, 1.0]);
+
+// stop the synth
+b.free;
+
+// play your analysis back ... use multiple PV_BinBufRd ugens.
+(
+SynthDef("pvplay", { arg out=0, recBuf=1, playbuf, clear = 0.0;
+	var in, chain, bufnum;
+	bufnum = LocalBuf.new(1024);
+	chain = FFT(bufnum, PlayBuf.ar(1, playbuf, BufRateScale.kr(playbuf), loop: 1));
+	// MouseX points into file. start at bin 10, skip 3, resynth 50
+	chain = PV_BinBufRd(chain, recBuf, MouseX.kr(0, 1), 10, 3, 50, clear);
+	chain = PV_BinBufRd(chain, recBuf, MouseX.kr(0.1, 0.9), 10, 3, 50, 0.0);
+	Out.ar(out, IFFT(chain, 1).dup);
+	}).add;
+);
+
+// mix the resynth and data from the recBuf
+b = Synth("pvplay", [\out, 0, \recBuf, y, \playbuf, z, \clear, 0.0]);
+
+b.free;
+
+// zero out the data in the FFT buf that ins't read in from recBuf
+b = Synth("pvplay", [\out, 0, \bufnum, x, \recBuf, y, \playbuf, z, \clear, 1.0]);
+
+// stop the synth
+b.free;
+// free the buffers
+[y, z].do({arg me; me.free});
+::
