@@ -248,6 +248,27 @@ under a Creative Commons Attribution-Share Alike 3.0 Unported [(CC BY-SA 3.0)](h
 are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 2011.
 
+Contributors
+------------
+
+Version 3.7.2
+*  Luis Lloret (@llloret)
+*  Joseph Anderson (@joslloand)
+
+Version 3.7.0-beta
+*  Nathan Ho (@snappizz)
+*  Tim Blechmann (@timblechmann)
+
+Version 3.7.0-alpha0
+*  James Harkins (@jamshark70)
+*  Joseph Anderson (@joslloand)
+*  Joshua Parmenter (@joshpar)
+
+Version 3.5
+*  Jonatan Liljedahl (@lijon)
+*  Joseph Anderson (@joslloand)
+*  Joshua Parmenter (@joshpar)
+
 &nbsp;
 
 &nbsp;
