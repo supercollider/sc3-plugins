@@ -114,7 +114,7 @@ s.waitForBoot({
 		s.sync(cond);
 		SynthDef(\kernelDecode, {arg buffer;
 			var out, src;
-			src = PlayBuf.ar(4, buffer);
+			src = PlayBuf.ar(4, buffer, BufRateScale.kr(buffer));
 			out = FoaDecode.ar(src, ~decoder);
 			Out.ar(0, out);
 		}).add;
@@ -139,7 +139,7 @@ s.waitForBoot({
 		s.sync(cond);
 		SynthDef(\kernelEncodeDecode, {arg buffer;
 			var out, src, encode;
-			src = PlayBuf.ar(2, buffer);
+			src = PlayBuf.ar(2, buffer, BufRateScale.kr(buffer));
 			encode = FoaEncode.ar(src, ~encoder);
 			out = FoaDecode.ar(encode, ~decoder);
 			Out.ar(0, out);
@@ -183,7 +183,7 @@ s.waitForBoot({
 	s.sync(cond);
 	SynthDef(\kernelEncodeDecode, {arg buffer;
 		var out, src, encode;
-		src = PlayBuf.ar(2, buffer);
+		src = PlayBuf.ar(2, buffer, BufRateScale.kr(buffer));
 		encode = FoaEncode.ar(src, ~encoder);
 		out = FoaDecode.ar(encode, ~decoder);
 		Out.ar(0, out);
@@ -231,7 +231,7 @@ s.waitForBoot({
 	});
 	sd = CtkSynthDef(\kernelEncodeDecode, {arg buffer;
 		var out, src, encode;
-		src = PlayBuf.ar(2, buffer);
+		src = PlayBuf.ar(2, buffer, BufRateScale.kr(buffer));
 		encode = FoaEncode.ar(src, encoder);
 		out = FoaDecode.ar(encode, decoder);
 		Out.ar(0, out);

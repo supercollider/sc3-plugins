@@ -86,7 +86,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // transform
@@ -166,7 +166,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // delay, lp and gain
@@ -245,7 +245,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // transform

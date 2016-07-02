@@ -295,7 +295,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
 
     // ------------------------------------------------------------
@@ -371,7 +371,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // transform

@@ -379,7 +379,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -532,7 +532,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -610,7 +610,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -690,7 +690,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -770,7 +770,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -852,7 +852,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -925,7 +925,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf), doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
@@ -994,7 +994,7 @@ code::
 
     // ------------------------------------------------------------
     // test sig
-    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, doneAction:2);   // soundfile
+    sig = PlayBuf.ar(~sndbuf.numChannels, ~sndbuf, BufRateScale.kr(~sndbuf) doneAction:2);   // soundfile
 
     // ------------------------------------------------------------
     // encode
