@@ -62,17 +62,17 @@ code::
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
 // Cardioids at 131 deg
-~angle = 131/2 * pi/180
+~angle = (131/2).degrad
 ~pattern = 0.5
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
 // Super-cardioids at 115 deg
-~angle = 115/2 * pi/180
+~angle = (115/2).degrad
 ~pattern = 0.63
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
 // Hyper-cardioids at 105 deg
-~angle = 105/2 * pi/180
+~angle = (105/2).degrad
 ~pattern = 0.75
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
@@ -217,11 +217,11 @@ code::
 // [ 30, -30, -150, 150 ]
 
 // specify 1/2 the desired directions
-~directions = pi/180 * [ 30, -30 ];
+~directions = [ 30, -30 ].degrad;
 ~decoder = FoaDecoderMatrix.newDiametric(~directions);
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 code::
 // Periphonic (3D) decoder with eight channels arranged in a bi-rectangle:
@@ -229,11 +229,11 @@ code::
 //   [ -150, -0 ], [ 150, -0 ], [ -90, -35.3 ], [ 90, -35.3 ] ]
 
 // specify 1/2 the desired directions
-~directions = pi/180 * [ [ 30, 0 ], [ -30, 0 ], [ 90, 35.3 ], [ -90, 35.3] ];
+~directions = [[ 30, 0 ], [ -30, 0 ], [ 90, 35.3 ], [ -90, 35.3]].degrad;
 ~decoder = FoaDecoderMatrix.newDiametric(~directions);
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 
 Please see link::#decoder_k:: for further discussion on strong::k::.
@@ -292,7 +292,7 @@ code::
 // inspect
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -482,7 +482,7 @@ code::
 ~decoder = FoaDecoderMatrix.newQuad(pi/6)
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 
 code::
@@ -490,25 +490,25 @@ code::
 ~decoder = FoaDecoderMatrix.newPeri(6)
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 
 code::
 // Pantophonic (2D) decoder with four channels arranged in a rectangle:
-~directions = pi/180 * [ 30, -30 ]
+~directions = [ 30, -30 ].degrad
 ~decoder = FoaDecoderMatrix.newDiametric(~directions)
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 
 code::
 // Periphonic (3D) decoder with eight channels arranged in a bi-rectangle:
-~directions = pi/180 * [ [ 30, 0 ], [ -30, 0 ], [ 90, 35.3 ], [ -90, 35.3] ]
+~directions = [[ 30, 0 ], [ -30, 0 ], [ 90, 35.3 ], [ -90, 35.3]].degrad
 ~decoder = FoaDecoderMatrix.newDiametric(~directions)
 
 // inspect
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ::
 
 

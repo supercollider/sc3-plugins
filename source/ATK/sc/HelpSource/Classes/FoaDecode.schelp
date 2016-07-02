@@ -65,7 +65,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -86,7 +86,7 @@ code::
     //		  hard right 	= back
     azim = MouseX.kr(pi, -pi);
 
-	
+
     // ------------------------------------------------------------
     // test sig
     sig = PinkNoise.ar; 			// mono pink noise
@@ -147,7 +147,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -168,7 +168,7 @@ code::
     //		  hard right 	= back
     azim = MouseX.kr(pi, -pi);
 
-	
+
     // ------------------------------------------------------------
     // test sig
     sig = PinkNoise.ar; 			// mono pink noise
@@ -201,7 +201,7 @@ subsection:: Synthetic binaural decoder
 
 The Ambisonic Tookit provides a synthetic spherical head model HRTF decoder. footnote::See: R. O. Duda, "Modeling head related transfer functions," in Proceedings of the Twenty-Seventh Annual Asilomar Conference on Signals, Systems and Computers, Asilomar, CA, 1993.:: Ten subjects with varying head sizes are available. Audition to find one that works best for you.
 
-Additionally, HRTF decoders computed from measured HRIRs are also available: link::Classes/FoaDecoderKernel#*newListen:: & link::Classes/FoaDecoderKernel#*newCIPIC::. 
+Additionally, HRTF decoders computed from measured HRIRs are also available: link::Classes/FoaDecoderKernel#*newListen:: & link::Classes/FoaDecoderKernel#*newCIPIC::.
 
 
 note:: A kernel type decoder, see link::Classes/FoaDecoderKernel#*newSpherical:: for further details.::
@@ -229,7 +229,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -250,7 +250,7 @@ code::
     //		  hard right 	= back
     azim = MouseX.kr(pi, -pi);
 
-	
+
     // ------------------------------------------------------------
     // test sig
     sig = PinkNoise.ar; 			// mono pink noise
@@ -308,7 +308,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -329,7 +329,7 @@ code::
     //		  hard right 	= back
     azim = MouseX.kr(pi, -pi);
 
-	
+
     // ------------------------------------------------------------
     // test sig
     sig = PinkNoise.ar; 			// mono pink noise
@@ -385,7 +385,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -534,7 +534,7 @@ subsection:: Psychoacoustically optimised quadraphonic decoder
 
 The decoder presented here is an example of a dual-band ( code::'dual':: ) psychoacoustically optmisied, near-field compensated decoder described by Gerzon. footnote::M. A. Gerzon, "Multi-system ambisonic decoder," Wireless World, pp. 43-47, 69-73, July/Aug. 1977.:: This sort of decoder is considered the ideal for first order Ambisonics, meeting all the criteria outlined by Gerzon to qualify as Ambisonic, footnote::E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008.:: and is the choice for critical studio listening.
 
-Additionally, this decode is rendered as a 'narrow quadraphonic' layout, with loudspeaker angles at code:: [ 30.0, 150.0, -150.0, -30.0 ] ::. For studio based work, this can be convenient, as the front pair is at the correct angle for two channel stereo monitoring. The narrow layout gives increased localisation and stabilised images at front and back, at the expense of reduced stability at the sides. 
+Additionally, this decode is rendered as a 'narrow quadraphonic' layout, with loudspeaker angles at code:: [ 30.0, 150.0, -150.0, -30.0 ] ::. For studio based work, this can be convenient, as the front pair is at the correct angle for two channel stereo monitoring. The narrow layout gives increased localisation and stabilised images at front and back, at the expense of reduced stability at the sides.
 
 Near-field compensation, filtering for the near-field effects of loudspeaker placement, is made through the use of link::Classes/FoaNFC::.
 
@@ -562,7 +562,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ~distance
 
 (
@@ -616,7 +616,7 @@ code::
 
 subsection:: ITU 5.0 decoder
 
-The Ambisonic Toolkit includes link::http://www.brucewiggins.co.uk/?page_id=78##Bruce Wiggins':: optimised ITU 5.0 decoders. footnote::Irregular decoders in the Ambisonic Toolkit are kindly provided by Bruce Wiggins: link::http://www.brucewiggins.co.uk/::. See also: B. Wiggins, I. Paterson-Stephens, V. Lowndes, and S. Berry, "The design and optimisation of surround sound decoders using heuristic methods," in Proceedings of UKSIM 2003: Conference on Computer Simulation, Cambridge, England, 2003.:: 
+The Ambisonic Toolkit includes link::http://www.brucewiggins.co.uk/?page_id=78##Bruce Wiggins':: optimised ITU 5.0 decoders. footnote::Irregular decoders in the Ambisonic Toolkit are kindly provided by Bruce Wiggins: link::http://www.brucewiggins.co.uk/::. See also: B. Wiggins, I. Paterson-Stephens, V. Lowndes, and S. Berry, "The design and optimisation of surround sound decoders using heuristic methods," in Proceedings of UKSIM 2003: Conference on Computer Simulation, Cambridge, England, 2003.::
 
 note:: A matrix type decoder, see link::Classes/FoaDecoderMatrix#*new5_0:: for further details.::
 
@@ -640,7 +640,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -663,7 +663,7 @@ code::
     //		  hard right 	= back
     azim = MouseX.kr(pi, -pi);
 
-	
+
     // ------------------------------------------------------------
     // test sig
     sig = PinkNoise.ar; 			// mono pink noise
@@ -719,7 +719,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 
 (
 {
@@ -793,7 +793,7 @@ code::
 // define encoder / decoder matrices
 ~encoder = FoaEncoderMatrix.newOmni
 ~decoder = FoaDecoderMatrix.newDiametric(
-    pi/180 * [[30, 0], [-30, 0], [90, 35.3], [-90, 35.3]],
+    [[30, 0], [-30, 0], [90, 35.3], [-90, 35.3]].degrad,
     'dual'
 )
 ~distance = 1.2                 // louspeaker distance, for NFC, in meters
@@ -805,7 +805,7 @@ code::
 
 ~decoder.kind
 ~decoder.numChannels
-~decoder.dirChannels * 180/pi
+~decoder.dirChannels.raddeg
 ~distance
 
 (

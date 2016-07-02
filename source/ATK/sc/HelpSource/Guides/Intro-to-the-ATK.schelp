@@ -167,7 +167,7 @@ code::
 // choose a decoder
 
 // stereophonic / binaural
-~decoder = FoaDecoderMatrix.newStereo(131/2 * pi/180, 0.5) // Cardioids at 131 deg
+~decoder = FoaDecoderMatrix.newStereo((131/2).degrad, 0.5) // Cardioids at 131 deg
 ~decoder = FoaDecoderKernel.newUHJ                         // UHJ (kernel)
 ~decoder = FoaDecoderKernel.newSpherical                   // synthetic binaural (kernel)
 ~decoder = FoaDecoderKernel.newCIPIC                       // KEMAR binaural (kernel)
@@ -183,7 +183,7 @@ code::
 // periphonic (3D)
 ~decoder = FoaDecoderMatrix.newPeri(k: 'dual')             // psycho optimised cube
 ~decoder = FoaDecoderMatrix.newDiametric(                  // psycho optimised bi-rectangle
-    pi/180 * [[30, 0], [-30, 0], [90, 35.3], [-90, 35.3]],
+    [[30, 0], [-30, 0], [90, 35.3], [-90, 35.3]].degrad,
     'dual'
 )
 

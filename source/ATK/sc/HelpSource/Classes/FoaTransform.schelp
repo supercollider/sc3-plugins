@@ -364,7 +364,7 @@ code::
     var freqs = [50.0, 7000.0], gains = [-24, 0], rtimes = [0.1, 2.0];
     var frequencies, amplitudes, ringTimes;
     var numModes = 20;
-	
+
     var density = 20;                  // grain/klank density
 
     var rttFreq = 10 * density;
@@ -471,7 +471,7 @@ code::
 ~encoder
 ~encoder.kind
 ~encoder.numChannels
-~encoder.dirChannels * 180/pi
+~encoder.dirChannels.raddeg
 
 
 // read a whole sound into memory
@@ -563,7 +563,7 @@ code::
 
 // define encoder matricies, for each cardinal point
 (
-~encoder = [ 
+~encoder = [
     FoaEncoderMatrix.newDirection,
     FoaEncoderMatrix.newDirection(pi/2),
     FoaEncoderMatrix.newDirection(pi),
@@ -611,7 +611,7 @@ code::
     // ------------------------------------------------------------
     // encode
 	sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
-    
+
 
     // ------------------------------------------------------------
     // transform
@@ -650,7 +650,7 @@ code::
 
 // define encoder matricies, for each cardinal point
 (
-~encoder = [ 
+~encoder = [
     FoaEncoderMatrix.newDirection,
     FoaEncoderMatrix.newDirection(pi/2),
     FoaEncoderMatrix.newDirection(pi),
@@ -697,7 +697,7 @@ code::
     // ------------------------------------------------------------
     // encode
 	sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
-    
+
 
     // ------------------------------------------------------------
     // transform
@@ -739,7 +739,7 @@ code::
 
 // define encoder matricies
 (
-~encoder = [ 
+~encoder = [
     FoaEncoderMatrix.newDirection(pi/6),
     FoaEncoderMatrix.newDirection(pi/12),
     FoaEncoderMatrix.newDirection(pi.neg/12),
@@ -785,7 +785,7 @@ code::
     // ------------------------------------------------------------
     // encode
     sig = Mix.fill(sig.numChannels, { arg i;  FoaEncode.ar(sig.at(i), ~encoder.at(i)) });
-    
+
 
     // ------------------------------------------------------------
     // transform

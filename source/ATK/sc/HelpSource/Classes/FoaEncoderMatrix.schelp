@@ -132,12 +132,12 @@ code::
 // [[0, 0], [45, 0], [90, 0], [135, 0], [-180, 0], [-135, 0], [-90, 0], [-45, 0],
 //  [45, 35.3], [135, 35.3], [-135, 35.3], [-45, 35.3], [0, 90]]
 
-~directions = pi/180 * [[0, 0], [45, 0], [90, 0], [135, 0], [-180, 0], [-135, 0], [-90, 0],
-    [-45, 0], [45, 35.3], [135, 35.3], [-135, 35.3], [-45, 35.3], [0, 90]];
+~directions = [[0, 0], [45, 0], [90, 0], [135, 0], [-180, 0], [-135, 0], [-90, 0],
+    [-45, 0], [45, 35.3], [135, 35.3], [-135, 35.3], [-45, 35.3], [0, 90]].degrad;
 ~encoder = FoaEncoderMatrix.newDirections(~directions);
 
 // inspect
-~encoder.dirChannels * 180/pi;
+~encoder.dirChannels.raddeg;
 ::
 
 code::
@@ -145,24 +145,24 @@ code::
 // See: http://www.michaelgerzonphotos.org.uk/microphones-calrecs.html
 // [60, -180, -60]
 
-~directions = pi/180 * [60, -180, -60];
+~directions = [60, -180, -60].degrad;
 ~pattern = 0.5;
 ~encoder = FoaEncoderMatrix.newDirections(~directions, ~pattern);
 
 // inspect
-~encoder.dirChannels * 180/pi;
+~encoder.dirChannels.raddeg;
 ::
 
 code::
 // Periphonic (2D) encoder, 1 omni and 2 cardioid microphones
 // [0, 45, -45]
 
-~directions = pi/180 * [0, 45, -45];
+~directions = [0, 45, -45].degrad;
 ~pattern = [0, 0.5, 0.5];
 ~encoder = FoaEncoderMatrix.newDirections(~directions, ~pattern);
 
 // inspect
-~encoder.dirChannels * 180/pi;
+~encoder.dirChannels.raddeg;
 ::
 
 
@@ -392,7 +392,7 @@ code::
 ~encoder = FoaEncoderMatrix.newQuad
 
 // inspect
-~encoder.dirChannels * 180/pi
+~encoder.dirChannels.raddeg
 ::
 
 code::
@@ -400,7 +400,7 @@ code::
 ~encoder = FoaEncoderMatrix.newPeri(6)
 
 // inspect
-~encoder.dirChannels * 180/pi
+~encoder.dirChannels.raddeg
 ::
 
 

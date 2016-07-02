@@ -157,7 +157,7 @@ code::
 ~encoder = FoaEncoderKernel.newSuper
 
 // inspect
-~encoder.dirChannels * 180/pi
+~encoder.dirChannels.raddeg
 
 // don't forget to free!!
 ~encoder.free
@@ -168,7 +168,7 @@ code::
 ~encoder = FoaEncoderKernel.newUHJ
 
 // inspect
-~encoder.dirChannels * 180/pi
+~encoder.dirChannels.raddeg
 
 // don't forget to free!!
 ~encoder.free
