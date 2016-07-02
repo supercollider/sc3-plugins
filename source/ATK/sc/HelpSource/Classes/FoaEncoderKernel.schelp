@@ -12,7 +12,7 @@ note:: The ATK kernels are required for kernel encoding. Please see the instruct
 CLASSMETHODS::
 
 METHOD:: newSuper
-Ambisonic Super Stereo encoder. footnote::See: link::http://en.wikipedia.org/wiki/Ambisonics#Super_stereo::::
+Ambisonic Super Stereo encoder. footnote::See: link::https://en.wikipedia.org/wiki/Ambisonic_UHJ_format#Super_stereo::::
 
 argument:: kernelSize
 256, 512, 1024, 2048, 4096, 8192
