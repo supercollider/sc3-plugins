@@ -6,7 +6,7 @@ related:: Classes/FoaEncoderMatrix, Classes/FoaEncode
 DESCRIPTION::
 Generates encoding kernels required by the Ambisonic Toolkit's first order encoder, link::Classes/FoaEncode::.
 
-note:: The ATK kernels are required for kernel encoding. Please see the instructions link::http://www.ambisonictoolkit.net/wiki/tiki-index.php?page=Downloads#ATK_Kernels#here:: for installation. ::
+note:: The ATK kernels are required for kernel encoding. Please see the instructions link::http://www.ambisonictoolkit.net/download/kernels/#ATK_Kernels#here:: for installation. ::
 
 
 CLASSMETHODS::
@@ -20,7 +20,7 @@ argument:: kernelSize
 argument:: server
 link::Classes/Server:: on which to load kernel.
 
-discussion:: The Super Stereo encoding technique is the classic method for encoding stereophonic signals into B-format. 
+discussion:: The Super Stereo encoding technique is the classic method for encoding stereophonic signals into B-format.
 
 
 METHOD:: newUHJ
