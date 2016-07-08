@@ -1746,20 +1746,20 @@ FoaDecoderKernel {
 	// 	^super.newCopyArgs('cipic', subjectID).initKernel(256, server);
 	// }
 
-	*newSpherical { arg subjectID = 0004, server = Server.default;
-		^super.newCopyArgs('spherical', subjectID).initKernel(nil, server);
+	*newSpherical { arg subjectID = 0004, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('spherical', subjectID).initKernel(nil, server, sampleRate, score);
 	}
 
-	*newListen { arg subjectID = 1002, server = Server.default;
-		^super.newCopyArgs('listen', subjectID).initKernel(nil, server);
+	*newListen { arg subjectID = 1002, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('listen', subjectID).initKernel(nil, server, sampleRate, score);
 	}
 
-	*newCIPIC { arg subjectID = 0021, server = Server.default;
-		^super.newCopyArgs('cipic', subjectID).initKernel(nil, server);
+	*newCIPIC { arg subjectID = 0021, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('cipic', subjectID).initKernel(nil, server, sampleRate, score);
 	}
 
-	*newUHJ { arg kernelSize = 512, server = Server.default;
-		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server);
+	*newUHJ { arg kernelSize = 512, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server, sampleRate, score);
 	}
 
 	initPath {
@@ -1781,12 +1781,19 @@ FoaDecoderKernel {
 		^kernelLibPath +/+ decodersPath +/+ PathName.new(kind.asString)
 	}
 
-	initKernel { arg kernelSize, server;
+	initKernel { arg kernelSize, server, sampleRate, score;
 
 		var databasePath, subjectPath;
 		var chans;
-		var sampleRate;
 		var errorMsg;
+
+		if((server.serverRunning.not) && (sampleRate.isNil) && (score.isNil), {
+			Error(
+				"Please boot server: %, or provide a CtkScore or Score.".format(
+					server.name.asString
+				)
+			).throw
+		});
 
 		kernelBundle = [0.0];
 		kernelInfo = [];
@@ -1796,11 +1803,15 @@ FoaDecoderKernel {
 
 		// init dirChannels (output channel (speaker) directions) and kernel sr
 		if ( kind == 'uhj', {
-		    dirChannels = [ pi/6, pi.neg/6 ];
+			dirChannels = [ pi/6, pi.neg/6 ];
 			sampleRate = "None";
 		}, {
 			dirChannels = [ 5/9 * pi, 5/9 * pi.neg ];
-			sampleRate = server.sampleRate.asString;
+			if(sampleRate.isNil, {
+				sampleRate = server.sampleRate.asString;
+			}, {
+				sampleRate = sampleRate.asString;
+			});
 		});
 
 		// init kernelSize if need be (usually for HRIRs)
@@ -1828,89 +1839,131 @@ FoaDecoderKernel {
 
 
 		// attempt to load kernel
-		if ( server.serverRunning.not, {		// is server running?
+		if ( subjectPath.isFolder.not, {	// does kernel path exist?
 
-			// throw server error!
-			Error(
-				"Please boot server: %. Decoder kernel failed to load.".format(
-					server.name.asString
-				)
-			).throw
-		}, {
-			if ( subjectPath.isFolder.not, {	// does kernel path exist?
+			case
+			// --> missing kernel database
+			{ databasePath.isFolder.not }
+			{
+				errorMsg = "ATK kernel database missing!" +
+				"Please install % database.".format(kind)
+			}
 
-				case
-				// --> missing kernel database
-					{ databasePath.isFolder.not }
-					{
-						errorMsg = "ATK kernel database missing!" +
-							"Please install % database.".format(kind)
-					}
+			// --> unsupported SR
+			{ PathName.new(subjectPath.parentLevelPath(2)).isFolder.not }
+			{
+				"Supported samplerates:".warn;
+				PathName.new(subjectPath.parentLevelPath(3)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
 
-				// --> unsupported SR
-					{ PathName.new(subjectPath.parentLevelPath(2)).isFolder.not }
-					{
-						"Supported samplerates:".warn;
-						PathName.new(subjectPath.parentLevelPath(3)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
-
-						errorMsg = "Samplerate = % is not available for".format(sampleRate)
-							+
+				errorMsg = "Samplerate = % is not available for".format(sampleRate)
+				+
 							"% kernel decoder.".format(kind)
-					}
+			}
 
-				// --> unsupported kernelSize
-					{ PathName.new(subjectPath.parentLevelPath(1)).isFolder.not }
-					{
-						"Supported kernel sizes:".warn;
-						PathName.new(subjectPath.parentLevelPath(2)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
+			// --> unsupported kernelSize
+			{ PathName.new(subjectPath.parentLevelPath(1)).isFolder.not }
+			{
+				"Supported kernel sizes:".warn;
+				PathName.new(subjectPath.parentLevelPath(2)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
 
-						errorMsg = "Kernel size = % is not available for".format(kernelSize)
-						+
+				errorMsg = "Kernel size = % is not available for".format(kernelSize)
+				+
 						"% kernel decoder.".format(kind)
-					}
+			}
 
-				// --> unsupported subject
-					{ subjectPath.isFolder.not }
-					{
-						"Supported subjects:".warn;
-						PathName.new(subjectPath.parentLevelPath(1)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
+			// --> unsupported subject
+			{ subjectPath.isFolder.not }
+			{
+				"Supported subjects:".warn;
+				PathName.new(subjectPath.parentLevelPath(1)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
 
-						errorMsg = "Subject % is not available for".format(subjectID)
-						+
+				errorMsg = "Subject % is not available for".format(subjectID)
+				+
 						"% kernel decoder.".format(kind)
-					};
+			};
 
-				// throw error!
-				"\n".post;
-				Error(errorMsg).throw
-			}, {
-				// Else... everything is fine! Load kernel.
-				kernel = subjectPath.files.collect({ arg kernelPath;
-					chans.collect({ arg chan;
-						Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
-							action: { arg buf;
-								(
-									kernelBundle = kernelBundle.add(
-										buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
-									kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
-									"Kernel %, channel % loaded.".format(
-										kernelPath.fileName, chan
-									)
-								).postln
-							}
+			// throw error!
+			"\n".post;
+			Error(errorMsg).throw
+		}, {
+			score.isNil.if({
+				if ( server.serverRunning.not, {		// is server running?
+
+					// throw server error!
+					Error(
+						"Please boot server: %. Encoder kernel failed to load.".format(
+							server.name.asString
 						)
+					).throw
+				}, {
+					// Else... everything is fine! Load kernel.
+					kernel = subjectPath.files.collect({ arg kernelPath;
+						chans.collect({ arg chan;
+							Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
+								action: { arg buf;
+									(
+										kernelBundle = kernelBundle.add(
+											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+										kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+										"Kernel %, channel % loaded.".format(
+											kernelPath.fileName, chan
+										)
+									).postln
+								}
+							)
+						})
 					})
 				})
+			});
+
+			score.isKindOf(CtkScore).if({
+				kernel = subjectPath.files.collect({ arg kernelPath;
+					chans.collect({ arg chan;
+						var buf = CtkBuffer(kernelPath.fullPath, channels: [chan]);
+						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+						score.add(buf);
+						buf;
+					})
+				})
+			});
+
+			score.isKindOf(Score).if({
+				kernel = subjectPath.files.collect({ arg kernelPath;
+					chans.collect({ arg chan;
+						var buf, numFrames, numChannels;
+						SoundFile.use(kernelPath.fullPath, {arg soundFile;
+							numFrames = soundFile.numFrames;
+							numChannels = soundFile.numChannels
+						});
+						buf = Buffer(server, numFrames, numChannels);
+						kernelBundle = kernelBundle.add(
+							buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+						buf;
+					})
+				});
+				score.add(kernelBundle)
+			});
+
+			(score.isKindOf(CtkScore).not && score.isKindOf(Score).not && score.notNil).if( {
+				Error(
+					"Score is not a Score or a CtkScore. Score is a %.".format(
+						score.class.asString
+					)
+				).throw
+
 			})
+
+
 		})
 	}
 
@@ -1965,20 +2018,20 @@ FoaEncoderKernel {
 	var <dirChannels;
 
 
-	*newUHJ { arg kernelSize = nil, server = Server.default;
-		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server);
+	*newUHJ { arg kernelSize = nil, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server, sampleRate, score);
 	}
 
-	*newSuper { arg kernelSize = nil, server = Server.default;
-		^super.newCopyArgs('super', 0).initKernel(kernelSize, server);
+	*newSuper { arg kernelSize = nil, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('super', 0).initKernel(kernelSize, server, sampleRate, score);
 	}
 
-	*newSpread { arg subjectID = 0006, kernelSize = 2048, server = Server.default;
-		^super.newCopyArgs('spread', subjectID).initKernel(kernelSize, server);
+	*newSpread { arg subjectID = 0006, kernelSize = 2048, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('spread', subjectID).initKernel(kernelSize, server, sampleRate, score);
 	}
 
-	*newDiffuse { arg subjectID = 0003, kernelSize = 2048, server = Server.default;
-		^super.newCopyArgs('diffuse', subjectID).initKernel(kernelSize, server);
+	*newDiffuse { arg subjectID = 0003, kernelSize = 2048, server = Server.default, sampleRate, score;
+		^super.newCopyArgs('diffuse', subjectID).initKernel(kernelSize, server, sampleRate, score);
 	}
 
 	// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
@@ -2015,12 +2068,20 @@ FoaEncoderKernel {
 		^kernelLibPath +/+ encodersPath +/+ PathName.new(kind.asString)
 	}
 
-	initKernel { arg kernelSize, server;
+	initKernel { arg kernelSize, server, sampleRate, score;
 
 		var databasePath, subjectPath;
 		var chans;
-		var sampleRate;
 		var errorMsg;
+
+		if((server.serverRunning.not) && (sampleRate.isNil) && (score.isNil), {
+			Error(
+				"Please boot server: %, or provide a CtkScore or Score.".format(
+					server.name.asString
+				)
+			).throw
+		});
+
 
 		kernelBundle = [0.0];
 		kernelInfo = [];
@@ -2034,12 +2095,20 @@ FoaEncoderKernel {
 			},
 			'uhj', {
 				dirChannels = [ inf, inf ];
-				sampleRate = server.sampleRate.asString;
+				if(sampleRate.isNil, {
+					sampleRate = server.sampleRate.asString;
+				}, {
+					sampleRate = sampleRate.asString;
+				});
 				chans = 3;					// [w, x, y]
 			},
 			'spread', {
 				dirChannels = [ inf ];
-				sampleRate = server.sampleRate.asString;
+				if(sampleRate.isNil, {
+					sampleRate = server.sampleRate.asString;
+				}, {
+					sampleRate = sampleRate.asString;
+				});
 				chans = 4;					// [w, x, y, z]
 			},
 			'diffuse', {
@@ -2048,27 +2117,27 @@ FoaEncoderKernel {
 				chans = 4;					// [w, x, y, z]
 			}
 
-	// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
-	// (http://isophonics.net/content/room-impulse-response-data-set)
-	//
-	// NOTE: Convolution2 doesn't support large, arbitrary sized kernels.
+			// Encoding via Isophonics Room Impulse Response Data Set, not yet implemented.
+			// (http://isophonics.net/content/room-impulse-response-data-set)
+			//
+			// NOTE: Convolution2 doesn't support large, arbitrary sized kernels.
 
-//			},
-//			'greathall', {
-//				dirChannels = [ inf ];
-//				sampleRate = server.sampleRate.asString;
-//				chans = 4;					// [w, x, y, z]
-//			},
-//			'octagon', {
-//				dirChannels = [ inf ];
-//				sampleRate = server.sampleRate.asString;
-//				chans = 4;					// [w, x, y, z]
-//			},
-//			'classroom', {
-//				dirChannels = [ inf ];
-//				sampleRate = server.sampleRate.asString;
-//				chans = 4;					// [w, x, y, z]
-//			}
+			//			},
+			//			'greathall', {
+			//				dirChannels = [ inf ];
+			//				sampleRate = server.sampleRate.asString;
+			//				chans = 4;					// [w, x, y, z]
+			//			},
+			//			'octagon', {
+			//				dirChannels = [ inf ];
+			//				sampleRate = server.sampleRate.asString;
+			//				chans = 4;					// [w, x, y, z]
+			//			},
+			//			'classroom', {
+			//				dirChannels = [ inf ];
+			//				sampleRate = server.sampleRate.asString;
+			//				chans = 4;					// [w, x, y, z]
+			//			}
 		);
 
 		// init kernelSize if need be
@@ -2095,89 +2164,131 @@ FoaEncoderKernel {
 		);
 
 		// attempt to load kernel
-		if ( server.serverRunning.not, {		// is server running?
 
-			// throw server error!
-			Error(
-				"Please boot server: %. Encoder kernel failed to load.".format(
-					server.name.asString
-				)
-			).throw
+		if ( subjectPath.isFolder.not, {	// does kernel path exist?
+
+			case
+			// --> missing kernel database
+			{ databasePath.isFolder.not }
+			{
+				errorMsg = "ATK kernel database missing!" +
+				"Please install % database.".format(kind)
+			}
+
+			// --> unsupported SR
+			{ PathName.new(subjectPath.parentLevelPath(2)).isFolder.not }
+			{
+				"Supported samplerates:".warn;
+				PathName.new(subjectPath.parentLevelPath(3)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
+
+				errorMsg = "Samplerate = % is not available for".format(sampleRate)
+				+
+				"% kernel encoder.".format(kind)
+			}
+
+			// --> unsupported kernelSize
+			{ PathName.new(subjectPath.parentLevelPath(1)).isFolder.not }
+			{
+				"Supported kernel sizes:".warn;
+				PathName.new(subjectPath.parentLevelPath(2)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
+
+				errorMsg = "Kernel size = % is not available for".format(kernelSize)
+				+
+				"% kernel encoder.".format(kind)
+			}
+
+			// --> unsupported subject
+			{ subjectPath.isFolder.not }
+			{
+				"Supported subjects:".warn;
+				PathName.new(subjectPath.parentLevelPath(1)).folders.do({
+					arg folder;
+					("\t" + folder.folderName).postln;
+				});
+
+				errorMsg = "Subject % is not available for".format(subjectID)
+				+
+				"% kernel encoder.".format(kind)
+			};
+
+			// throw error!
+			"\n".post;
+			Error(errorMsg).throw
 		}, {
-			if ( subjectPath.isFolder.not, {	// does kernel path exist?
+			score.isNil.if( {
+				if ( server.serverRunning.not, {		// is server running?
 
-				case
-				// --> missing kernel database
-					{ databasePath.isFolder.not }
-					{
-						errorMsg = "ATK kernel database missing!" +
-							"Please install % database.".format(kind)
-					}
-
-				// --> unsupported SR
-					{ PathName.new(subjectPath.parentLevelPath(2)).isFolder.not }
-					{
-						"Supported samplerates:".warn;
-						PathName.new(subjectPath.parentLevelPath(3)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
-
-						errorMsg = "Samplerate = % is not available for".format(sampleRate)
-							+
-							"% kernel encoder.".format(kind)
-					}
-
-				// --> unsupported kernelSize
-					{ PathName.new(subjectPath.parentLevelPath(1)).isFolder.not }
-					{
-						"Supported kernel sizes:".warn;
-						PathName.new(subjectPath.parentLevelPath(2)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
-
-						errorMsg = "Kernel size = % is not available for".format(kernelSize)
-						+
-						"% kernel encoder.".format(kind)
-					}
-
-				// --> unsupported subject
-					{ subjectPath.isFolder.not }
-					{
-						"Supported subjects:".warn;
-						PathName.new(subjectPath.parentLevelPath(1)).folders.do({
-							arg folder;
-							("\t" + folder.folderName).postln;
-					});
-
-						errorMsg = "Subject % is not available for".format(subjectID)
-						+
-						"% kernel encoder.".format(kind)
-					};
-
-				// throw error!
-				"\n".post;
-				Error(errorMsg).throw
-			}, {
-				// Else... everything is fine! Load kernel.
-				kernel = subjectPath.files.collect({ arg kernelPath;
-					chans.collect({ arg chan;
-						Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
-							action: { arg buf;
-								(
-									kernelBundle = kernelBundle.add(
-										buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
-									kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
-									"Kernel %, channel % loaded.".format(
-										kernelPath.fileName, chan
-									)
-								).postln
-							}
+					// throw server error!
+					Error(
+						"Please boot server: %. Encoder kernel failed to load.".format(
+							server.name.asString
 						)
+					).throw
+				}, {
+					// Else... everything is fine! Load kernel.
+					kernel = subjectPath.files.collect({ arg kernelPath;
+						chans.collect({ arg chan;
+							Buffer.readChannel(server, kernelPath.fullPath, channels: [chan],
+								action: { arg buf;
+									(
+										kernelBundle = kernelBundle.add(
+											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+										kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+										"Kernel %, channel % loaded.".format(
+											kernelPath.fileName, chan
+										)
+									).postln
+								}
+							)
+						})
 					})
 				})
-			})
+			});
+			score.isKindOf(CtkScore).if({
+				kernel = subjectPath.files.collect({ arg kernelPath;
+					chans.collect({ arg chan;
+						var buf = CtkBuffer(kernelPath.fullPath, channels: [chan]);
+						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+						score.add(buf);
+						buf;
+					})
+				})
+			});
+
+			score.isKindOf(Score).if({
+				kernel = subjectPath.files.collect({ arg kernelPath;
+					chans.collect({ arg chan;
+						var buf, numFrames, numChannels;
+						SoundFile.use(kernelPath.fullPath, {arg soundFile;
+							numFrames = soundFile.numFrames;
+							numChannels = soundFile.numChannels
+						});
+						buf = Buffer(server, numFrames, numChannels);
+						kernelBundle = kernelBundle.add(
+											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
+						buf;
+					})
+				});
+				score.add(kernelBundle)
+			});
+
+			(score.isKindOf(CtkScore).not && score.isKindOf(Score).not && score.notNil).if({
+				Error(
+					"Score is not a Score or a CtkScore. Score is a %.".format(
+						score.class.asString
+					)
+				).throw
+
+			});
+
+
 		})
 	}
 
