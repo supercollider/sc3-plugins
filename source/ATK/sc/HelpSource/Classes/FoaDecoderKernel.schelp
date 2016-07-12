@@ -284,12 +284,26 @@ Answers the strong::kernelSize::.
 
 discussion::
 
+Use of link::Classes/FoaDecoderKernel:: introduces a delay to the decoded
+B-format signal.
+
+The total delay, in samples, can be calculated as
+code::(kernelSize-1)/2 + kernelSize - blockSize::, where
+link::Classes/ServerOptions#-blockSize#blockSize:: is the number of
+samples in one control period of the link::Classes/Server:: in use.
+
 code::
 // decoder - make sure you boot the server first!!
 ~decoder = FoaDecoderKernel.newUHJ
 
 // inspect
 ~decoder.kernelSize
+
+// calculate delay in samples
+(~decoder.kernelSize-1)/2 + ~decoder.kernelSize - s.options.blockSize
+
+// calculate delay in seconds
+((~decoder.kernelSize-1)/2 + ~decoder.kernelSize - s.options.blockSize) / s.sampleRate
 
 // don't forget to free!!
 ~decoder.free
@@ -301,6 +315,12 @@ code::
 
 // inspect
 ~decoder.kernelSize
+
+// calculate delay in samples
+(~decoder.kernelSize-1)/2 + ~decoder.kernelSize - s.options.blockSize
+
+// calculate delay in seconds
+((~decoder.kernelSize-1)/2 + ~decoder.kernelSize - s.options.blockSize) / s.sampleRate
 
 // don't forget to free!!
 ~decoder.free
