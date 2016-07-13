@@ -39,7 +39,7 @@ As the Ambisonic technique is a hierarchal system, numerous options for playback
 
 subsection:: Choose a decoder
 
-Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#choose_a_decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
+Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#Choose a decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
 
 note:: If you choose a kernel decoder, link::Classes/FoaDecoderKernel::, be sure to free the kernel after use. ::
 
@@ -48,7 +48,7 @@ subsection:: Rotate
 
 Rotation is one of the most used soundfield transforms. In this case we'll it to centre the subject of a field recording.
 
-If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type transformer, see link::Classes/FoaXformerMatrix#*newRotate:: for further details.::
 
@@ -119,7 +119,7 @@ subsection:: MirrorO
 
 In mirroring through the origin and delaying the soundfield, we can generate a new set of echos in this fireworks field recording.
 
-If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type transformer, see link::Classes/FoaXformerMatrix#*newMirrorO:: for further details.::
 
@@ -207,7 +207,7 @@ subsection:: DominateX
 
 Dominance adjusts the gain of a soundfield in a particular direction. Here we'll increase the amount of reverberation in this natural soundfield recording. As the image is warped at the same time, we'll also hear the frontal stage widen.
 
-If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choose a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type transformer, see link::Classes/FoaXformerMatrix#*newDominateX:: for further details.::
 

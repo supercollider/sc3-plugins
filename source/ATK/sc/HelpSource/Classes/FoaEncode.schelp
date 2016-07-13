@@ -42,7 +42,7 @@ As the Ambisonic technique is a hierarchal system, numerous options for playback
 
 subsection:: Choose a decoder
 
-Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#choose_a_decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
+Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#Choose a decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
 
 note:: If you choose a kernel decoder, link::Classes/FoaDecoderKernel::, be sure to free the kernel after use. ::
 
@@ -54,7 +54,7 @@ Encoded as an omnidirectional soundfield, link::Classes/PinkNoise:: is used as t
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains omnidirectional. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newOmni:: for further details.::
 
@@ -124,7 +124,7 @@ Encoded as a frequency spread soundfield, link::Classes/PinkNoise:: is used as t
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains spread. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A kernel type encoder, see link::Classes/FoaEncoderKernel#*newSpread:: for further details.::
 
@@ -198,7 +198,7 @@ Encoded as a frequency diffused soundfield, link::Classes/PinkNoise:: is used as
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains spread. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A kernel type encoder, see link::Classes/FoaEncoderKernel#*newDiffuse:: for further details.::
 
@@ -272,7 +272,7 @@ Here we encode four channels of decorrelated link::Classes/PinkNoise:: as a deco
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains omnidirectional. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newAtoB:: for further details.::
 
@@ -340,7 +340,7 @@ This example is somewhat unconvential as regards the literature. Four microphone
 
 As the performer rotates and moves about, the image shifts through the sound-scene. In a compositional context, link::Classes/FoaPush:: could be used to control the soundfield.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newAtoB:: for further details.::
 
@@ -414,7 +414,7 @@ In this example we first encode a single channel of link::Classes/PinkNoise:: in
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the left to right position of the stereo panned source and link::Classes/MouseY:: the link::Classes/FoaZoom:: front to back position (distortion angle). Moving the mouse in a circular motion results in a circular motion of the sound. footnote:: We don't advise using this approach for encoding monophonic sources. The technique illustrated link::#omnidirectional_encoder#here:: is the idiomatic method. If one desires a similar use of the mouse, link::Classes/MouseX:: and link::Classes/MouseY:: can be mapped appropriately to link::Classes/FoaPush::'s strong::angle::, strong::theta::, and strong::phi:: parameters. ::
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newStereo:: for further details.::
@@ -490,7 +490,7 @@ For this example we'll look at encoding stereo soundfiles.
 
 The stereo encoder places the left channel at +pi/4 and the right at -pi/4. Compare to the link::Classes/FoaEncoderKernel#*newSuper#Super Stereo:: encoder link::#super_stereo_encoder_(soundfile)#below::.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newStereo:: for further details.::
@@ -567,7 +567,7 @@ subsection:: Super Stereo encoder (soundfile)
 
 Super Stereo footnote:: See: http://en.wikipedia.org/wiki/Ambisonics#Super_stereo :: is the classic Ambisonic method to encode stereophonic files, and is considered to be optimal for frontal stereo encoding.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A kernel type encoder, see link::Classes/FoaEncoderKernel#*newSuper:: for further details.::
 
@@ -647,7 +647,7 @@ subsection:: Ambisonic UHJ stereo encoder (soundfile)
 
 link::http://en.wikipedia.org/wiki/Ambisonic_UHJ_format##Ambisonic UHJ:: is the stereo format for Ambisonics.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A kernel type encoder, see link::Classes/FoaEncoderKernel#*newUHJ:: for further details.::
 
@@ -729,7 +729,7 @@ The link::http://www.zoom.co.jp/english/products/h2/##ZoomH2:: is a convenient, 
 
 As a relatively inexpensive piece of equipment, the imaging of the link::http://www.zoom.co.jp/english/products/h2/##ZoomH2:: isn't always as consistent as we'd prefer. To remedy, the Y gain is tweaked to widen the image, and link::Classes/FoaXformerMatrix#*newDominateX#dominance:: is applied to stabilise the front.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newZoomH2:: and link::Classes/FoaXformerMatrix#*newDominateX:: for further details.::
 
@@ -815,7 +815,7 @@ If one wishes to respect the labelled orientation of the device as does link::ht
 
 As a relatively inexpensive piece of equipment, the imaging of the link::http://www.zoom.co.jp/english/products/h2/##ZoomH2:: isn't always as consistent as we'd prefer. To remedy, the Y gain is tweaked to widen the image.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newZoomH2:: for further details.::
 
@@ -885,7 +885,7 @@ subsection:: Pantophonic encoder (soundfile)
 
 The pantophonic encoder may be used to transcode from one format to another. This example transcodes an octophonic recording to the decoder you've chosen.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newPanto:: for further details.::
 
@@ -956,7 +956,7 @@ subsection:: Directions encoder (soundfile)
 
 The directions encoder may be used to transcode from one format to another. This example transcodes a periphonic 12-channel recording to the decoder you've chosen.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A matrix type encoder, see link::Classes/FoaEncoderMatrix#*newPanto:: for further details.::
 

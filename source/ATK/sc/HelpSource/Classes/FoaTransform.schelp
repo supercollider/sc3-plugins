@@ -86,7 +86,7 @@ As the Ambisonic technique is a hierarchal system, numerous options for playback
 
 subsection:: Choose a decoder
 
-Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#choose_a_decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
+Choose a decoder suitable for your system, as illustrated link::Guides/Intro-to-the-ATK#Choose a decoder#here::. You'll end up definining code:: ~decoder :: and code:: ~renderDecode :: .
 
 note:: If you choose a kernel decoder, link::Classes/FoaDecoderKernel::, be sure to free the kernel after use. ::
 
@@ -97,7 +97,7 @@ Rotation is one of the most used soundfield transforms. In this case we'll it to
 
 The soundfield is controlled by link::Classes/MouseX::, which specifies the rotation angle (pi to -pi; left to right of display).
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A UGen type transformer, see link::Classes/FoaRotate:: for further details.::
 
@@ -175,7 +175,7 @@ Dominance specified in gain is a classic Ambisonic production technique. Here we
 
 The soundfield is controlled by link::Classes/MouseY::, which specifies the dominance gain (4.5 dB to -4.5 dB; top to bottom of display).
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A UGen type transformer, see link::Classes/FoaDominateX:: for further details.::
 
@@ -254,7 +254,7 @@ Here we encode four channels of decorrelated and comb filtered link::Classes/Pin
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaFocus:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: A UGen type transformer, see link::Classes/FoaFocus:: for further details.::
 
@@ -334,7 +334,7 @@ Here we encode four channels of link::Classes/Klank:: resonated link::Classes/Du
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformers, see link::Classes/FoaPush:: and link::Classes/FoaRTT:: for further details.::
 
@@ -444,7 +444,7 @@ Here we encode the mono component of a stereo soundfile via the link::Classes/Fo
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains decorrelated. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformers, see link::Classes/FoaPush::, link::Classes/FoaRTT:: and link::Classes/FoaEncoderKernel#*newSpread:: for further details.::
 
@@ -550,7 +550,7 @@ With this example we encode four channels of comb filtered link::Classes/Dust:: 
 
 The soundfield is controlled by link::Classes/MouseY::, with strong::angle:: varying between -pi/2 and pi/2. With the mouse in the centre of the display, the soundfield remains unchanged. Placed at the top or bottom of the display, the soundfield is distorted.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformers, see link::Classes/FoaFocusX::, link::Classes/FoaZoomX:: & link::Classes/FoaPushX:: for further details.::
 
@@ -637,7 +637,7 @@ With with the link::#x-axis:_focusx,_zoomx_&_pushx#above example:: we encode fou
 The soundfield is controlled by link::Classes/MouseX::, with strong::angle:: varying between -pi/2 and pi/2. With the mouse in the centre of the display, the soundfield remains unchanged. Placed at the left or right of the display, the soundfield is distorted.
 
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformers, see link::Classes/FoaZoomY:: and link::Classes/FoaAsymmetry:: for further details.::
 
@@ -726,7 +726,7 @@ The soundfield is controlled by link::Classes/MouseY::, with strong::distance:: 
 
 warning:: As link::Classes/FoaProximity:: includes a 1st-order integration, signals must be highpass filtered before application. link::Classes/HPF:: is usually a suitable choice to control low frequency boost.::
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformer, see link::Classes/FoaProximity:: for further details.::
 
@@ -812,7 +812,7 @@ link::Classes/FoaNFC:: facilitates the reduction or removal of the link::http://
 The soundfield is controlled by link::Classes/MouseY::, with strong::distance:: varying between 0.5 and 0.05 meter. With the mouse at the top of the display, the soundfield receives the strongest effect (removal), contributing to as sense of distance.
 
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: UGen type transformer, see link::Classes/FoaNFC:: for further details.::
 

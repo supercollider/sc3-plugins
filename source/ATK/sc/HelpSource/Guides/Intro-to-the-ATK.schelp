@@ -267,7 +267,7 @@ subsection:: Produced via the Ambisonic Toolkit
 
 The following three sound examples are excerpts from recordings produced via the ATK.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 
 code::
@@ -327,7 +327,7 @@ This example illustrates the application of various spatial filtering transforms
 
 The soundfield is controlled by link::Classes/MouseY::, which specifies the transform strong::angle:: argument (90 deg to 0 deg; top to bottom of display). With the mouse at the bottom of the display, the recorded soundfield is unchanged. At the top, the transform is at its most extreme.
 
-If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#choose_a_decoder#now::.
+If you haven't already choosen a code:: ~decoder:: and defined code:: ~renderDecode ::, do so link::#Choose a decoder#now::.
 
 note:: See link::Classes/FoaTransform:: for further details.::
 
