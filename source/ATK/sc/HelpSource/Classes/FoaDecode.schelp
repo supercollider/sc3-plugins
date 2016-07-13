@@ -38,6 +38,21 @@ Encoded as an omnidirectional soundfield, link::Classes/PinkNoise:: is used as t
 
 The soundfield is controlled by link::Classes/MouseX:: and link::Classes/MouseY::, where link::Classes/MouseX:: specifies the incident azimuth angle (pi to -pi; left to right of display) and link::Classes/MouseY:: the link::Classes/FoaPush:: angle (0 to pi/2; bottom to top of display). With the mouse at the bottom of the display, the soundfield remains omnidirectional. Placed at the top of the display, the soundfield becomes directional, and varying left/right position will vary the incident azimuth of the resulting planewave.
 
+Before exploring the examples below, it is suggested you confirm your
+link::Classes/Server:: has enough output channels to support your chosen
+decoder. You can query the server:
+
+code::
+myServer.options.numOutputBusChannels
+::
+
+An example link::Classes/Function::, code:: ~checkMyServerOutputs::, can
+be found link::Guides/Intro-to-the-ATK#Choose a decoder#here::.
+code:: ~checkMyServerOutputs:: throws a warning if
+code::myServer.options.numOutputBusChannels < myDecoder.numOutputs::. If you
+need to update your link::Classes/Server::'s number of output bus channels,
+review the example found link::Classes/ServerOptions#examples#here::.
+
 
 subsection:: Virtual microphone stereo decoder
 

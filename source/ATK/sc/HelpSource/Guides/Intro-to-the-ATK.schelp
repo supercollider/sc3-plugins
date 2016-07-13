@@ -155,11 +155,29 @@ note:: If you choose a kernel decoder, link::Classes/FoaDecoderKernel::, be sure
 
 code::
 // ------------------------------------------------------------
-// switch to internal server, and boot
+// boot server
 (
-        s = Server.internal;
-        Server.default = s;
+        s = Server.default;
         s.boot;
+)
+
+
+// ------------------------------------------------------------
+// define convenience function to verify number of server outputs
+(
+~checkMyServerOutputs = { arg server, decoder;
+	server.serverRunning.if({
+		(decoder.numOutputs > server.options.numOutputBusChannels).if({
+			"Number of Server output bus channels is less than number required by Decoder!".warn;
+			"Server Outputs: %\n".postf(server.options.numOutputBusChannels);
+			"Decoder Outputs: %\n\n".postf(decoder.numOutputs);
+			"Update number of Server outputs as illustrated here: ".post;
+			"http://doc.sccode.org/Classes/ServerOptions.html#examples".postln;
+		}, {
+			"Server has an adequate number of output bus channels for use with this Decoder!".postln;
+		})
+	})
+}
 )
 
 
@@ -190,6 +208,7 @@ code::
 
 // inspect
 ~decoder.kind
+~checkMyServerOutputs.value(s, ~decoder)
 
 
 // ------------------------------------------------------------
