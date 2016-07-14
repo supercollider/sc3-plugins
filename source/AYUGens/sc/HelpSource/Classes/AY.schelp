@@ -16,8 +16,14 @@ CLASSMETHODS::
 
 METHOD::ar
 
-ARGUMENT::tonea, toneb, tonec
-integer "tone" value for each of the 3 voices, from strong::0 to 4095:: (i.e. 12-bit range). Higher value = lower pitch. For convenience, the link::#*freqtotone:: method converts a frequency value to something appropriate for these inputs.
+ARGUMENT::tonea
+integer "tone" value for the first of the three voices, from strong::0 to 4095:: (i.e. 12-bit range). Higher value = lower pitch. For convenience, the link::#*freqtotone:: method converts a frequency value to something appropriate for the tone input.
+
+ARGUMENT::toneb
+integer "tone" value for the second of the three voices. See description of strong::tonea::.
+
+ARGUMENT::tonec
+integer "tone" value for the third of the three voices. See description of strong::tonea::.
 
 ARGUMENT::noise
 the period of the pseudo-random noise generator, strong::0 to 31::
@@ -25,8 +31,14 @@ the period of the pseudo-random noise generator, strong::0 to 31::
 ARGUMENT::control
 controls how the noise is mixed into the tone(s), strong::0 to 32:: (0 is mute). This is a binary mask value which masks the noise/tone mixture in each channel, so it's not linear.
 
-ARGUMENT::vola, volb, volc
-volume of the three channels, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+ARGUMENT::vola
+volume of the first of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+
+ARGUMENT::volb
+volume of the second of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+
+ARGUMENT::volc
+volume of the third of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
 
 ARGUMENT::envfreq
 envelope frequency, strong::0 to 4095::
