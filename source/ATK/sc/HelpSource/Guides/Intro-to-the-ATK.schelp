@@ -64,9 +64,9 @@ See link::Classes/FoaTransform::, link::Classes/FoaXform:: and link::Classes/Foa
 
 subsection:: Reading imaging illustrations
 
-As artists working with sound, we should expect most users to be very capable expert listeners, and able to audition the results of spatial filtering of an input soundfield. However, it is often convenient to view a visual representation of the effect of a transform. The ATK illustrates a number of its included transforms in the form shown below.
+As artists working with sound, we should expect most users to be very capable expert listeners, and able to audition the results of spatial filtering of an input soundfield. However, it is often very convenient to view a visual representation of the effect of a soundfield transform. The ATK illustrates a number of its included transforms in the form shown below.
 
-On the left hand side of the figures a plot of the unchanged soundfield is illustrated. The X-Y axis is shown, viewed from above with the top of the plot corresponding to the front of the soundfield. Eight planewaves are encoded arriving from cardinal directions:
+The emphasis::X-Y:: axis is shown, as viewed from above with the top of the plot corresponding to the front of the soundfield, emphasis::+X::. On the left hand side of the figures, an unchanged soundfield composed of eight planewave is shown. These are indicated as coloured circles, and arrive from cardinal directions:
 
 list::
 ## Front
@@ -79,31 +79,71 @@ list::
 ## Front-Right
 ::
 
+Three useful features are displayed in these plots, providing inportant insight as to how an input soundfield will be modified by a transform:
 
-emphasis::Front::, emphasis::Left::, emphasis::Back-Left:: and emphasis::Back:: are noted with an associated gain, in dB. Individual planewaves are coloured with respect to the gain scale at the far left of the figures.
+list::
+## emphasis::incidence:: footnote::emphasis::Incidence:: is measured in terms of the emphasis::(Active) Intensity:: vector.:: : illustrated as emphasis::polar angle::
+## emphasis::quality:: footnote::emphasis::Quality:: is measured as the magnitude of the emphasis::Energy Normalised (Active) Intensity:: vector, aka emphasis::rE::.:: : illustrated as emphasis::radius::
+## emphasis::gain:: footnote::emphasis::Gain:: reported is the emphasis::Potential-Kinetic Energy Mean::, aka emphasis::Soundfield Energy::.:: : illustrated via emphasis::colour::
+::
 
-With changing strong::angle::, we see the encoded planewaves both move towards the front of the image (to a single planewave at the extreme) and change gain in link::#zoom#ZoomX::. When strong::angle:: is 90 degrees, the planewave at emphasis::Front:: has been increased to 6dB, while emphasis::Back:: has disappeared. footnote::Decreased to -inf dB::
+
+Individual planewaves are coloured with respect to the gain scale at the far left of the figures. Additionally, emphasis::Front::, emphasis::Left::, emphasis::Back-Left:: and emphasis::Back:: are annotated with a numerical figure for emphasis::gain::, in dB.
+
+
+subsection:: Soundfield quality
+
+The meaning of transformation to soundfield emphasis::incidence:: and emphasis::gain:: should be clear. Understading the meaning of soundfield emphasis::quality:: takes a little more effort. This feature describes how emphasis::apparently localised:: an element in some direction will appear.
+
+A planewave has a emphasis::quality:: measure of code::1.0::, and is heard as localised. At the opposite end of the scale, with a emphasis::quality:: measure of code::0.0::, is an omnidirectional soundfield. This is heard to be emphasis::without direction:: or emphasis::"in the head"::. As you'd expect, intermediate measures are heard as scaled between these two extremes.
+
+
+subsection:: Reading ZoomX
 
 anchor::zoom::
 image::../Classes/zoom_fig.png#ZoomX imaging::
 
-link::#push#PushX:: also distorts the incident angles of the encoded planewaves. However, here we see two differences with link::#zoom#ZoomX::. Firstly, the gains of the individual elements don't vary as considerably, and the encoded planewaves are illustrated as moving off the perimeter of the plot.
+With changing link::Classes/FoaZoomX##ZoomX::'s strong::angle::, we see the eight cardinal planewaves both move towards the front of the image and change gain. When strong::angle:: is 90 degrees, the gain of the planewave at emphasis::Front:: has been increased by 6dB, while emphasis::Back:: has disappeared. footnote::Decreased to -inf dB:: We also see the soundfield appears to have collapsed to a single planewave, incident at 0 degrees. footnote::Or, we might describe this as applying directionally dependent gains across the whole soundfield, mixing, and then re-incoding to a single planewave.::
 
-Moving from the edge of the diagram towards the centre emphasis::does not imply:: the sound moves from the edge of the loudspeakers towards the centre, as one might expect. Instead, what we are seeing is the loss of directivity. Moving towards the centre means a planewave moves toward becoming omnidirectional, or without direction. (This becomes clearer when we look at link::#direct#DirectO::.)
-
-With link::#push#PushX::, when strong::angle:: is 90 degrees, all encoded planewaves have been pushed to the front of the image, and gain is retained at 0 dB for all elements.
+subsection:: Reading PushX
 
 anchor::push::
 image::../Classes/push_fig.png#PushX imaging::
 
-link::#direct#DirectO:: adjusts the directivity of the soundfield across the origin. Here we see all elements collapsing towards the centre of the plot. At this point the soundfield is omnidirectional, or directionless.
+link::Classes/FoaPushX##PushX:: also distorts the incident angles of the cardinal planewaves. However, here we see two differences with link::#zoom#ZoomX::. The gains of the individual elements don't vary as considerably. More intriguingly, a number of the encoded planewaves are illustrated as moving off the perimeter of the plot, indicating a change in soundfield link::#Soundfield quality#quality::.
+
+Moving from the edge of the plot towards the centre emphasis::does not imply:: the sound moves from the edge of the loudspeakers towards the centre, as one might expect. Instead, what we are seeing is the loss of directivity. Moving towards the centre means a planewave moves toward becoming omnidirectional, or without direction. (This becomes clearer when we look at link::#Reading DirectO#DirectO::.) A reducing radius indicates a reducing soundfield emphasis::quality::.
+
+When link::Classes/FoaPushX##PushX::'s strong::angle:: is 90 degrees, all encoded planewaves have been emphasis::pushed:: to the front of the image. Unlike link::#Reading ZoomX#ZoomX::, gain is retained at 0 dB for all elements. footnote::Equivalent to mixing all elements (scaled by 0dB), and then re-incoding to a single planewave.::
+
+subsection:: Reading DirectO
 
 anchor::direct::
 image::../Classes/direct_fig.png#DirectO imaging::
 
-See link::Classes/FoaZoomX::, link::Classes/FoaPushX:: and link::Classes/FoaDirectO:: for more details about these illustrated transforms.
+link::#direct#DirectO:: adjusts the directivity of the soundfield across the origin. Here we see the cardinal planewaves collapsing towards the centre of the plot. At this point the soundfield is omnidirectional, or directionless. See further discussion of soundfield link::#Soundfield quality#quality:: above.
+
+See link::Classes/FoaZoomX::, link::Classes/FoaPushX:: and link::Classes/FoaDirectO:: for more details regarding use of these associated UGens.
 
 
+subsection:: Illustrated transforms
+
+Additionally, the following UGens include figures illustration imaging transformation:
+
+list::
+## link::Classes/FoaAsymmetry::
+## link::Classes/FoaBalance::
+## link::Classes/FoaDirectO::
+## link::Classes/FoaDirectX::
+## link::Classes/FoaDirectY::
+## link::Classes/FoaDominateX::
+## link::Classes/FoaFocusX::
+## link::Classes/FoaPressX::
+## link::Classes/FoaPushX::
+## link::Classes/FoaZoomX::
+::
+
+Explore these to get a sense of the wide variety of image transformation tools available in the ATK.
 
 section:: Monitoring
 
