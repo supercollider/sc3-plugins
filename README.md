@@ -14,7 +14,11 @@ For community discussion and support see the [SuperCollider mailing lists](http:
 
 Compiled releases are available from the [github release page](https://github.com/supercollider/sc3-plugins/releases). For older versions (2013). see the [sourceforge project page](http://sourceforge.net/projects/sc3-plugins/files/).
 
-To compile from source (see below), either download a tarball or clone the repository from the [sc-plugins github page](https://github.com/supercollider/sc3-plugins).
+To compile from source (see below), either download a tarball or clone this repository:
+
+```shell
+$ git clone --recursive https://github.com/supercollider/sc3-plugins.git
+```
 
 ## Binary install
 
