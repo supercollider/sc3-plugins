@@ -1,7 +1,7 @@
 TITLE:: PV_RecordBuf
 summary:: Records FFT data to a memory buffer
 categories:: Libraries>JoshUGens, UGens>FFT
-related:: Classes/PV_RecordBuf, Classes/PV_BinPlayBuf, Classes/PV_BufRd, Classes/PV_BinBufRd,
+related:: Classes/PV_RecordBuf, Classes/PV_BinPlayBuf, Classes/PV_BufRd, Classes/PV_BinBufRd
 
 
 DESCRIPTION::
