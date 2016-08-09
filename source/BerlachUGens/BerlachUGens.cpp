@@ -181,7 +181,6 @@ void SoftClipAmp4_Dtor(SoftClipAmp4 *unit);
 void SoftClipAmp4_next(SoftClipAmp4 *unit, int inNumSamples);
 
 void DriveNoise_Ctor(DriveNoise *unit);
-void DriveNoise_Dtor(DriveNoise *unit);
 void DriveNoise_next(DriveNoise *unit, int inNumSamples);
 
 }
@@ -1132,6 +1131,12 @@ OSWrap4_Ctor (OSWrap4 *unit)
 }
 
 void
+OSWrap4_Dtor (OSWrap4 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 OSWrap4_next (OSWrap4 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1316,18 +1321,18 @@ PluginLoad(Berlach)
   DefineSimpleUnit(LPFVS6);
   DefineSimpleUnit(LPF1);
   DefineSimpleUnit(BLBufRd);
-  DefineSimpleUnit(OSWrap4);
-  DefineSimpleUnit(OSWrap8);
-  DefineSimpleUnit(OSTrunc4);
-  DefineSimpleUnit(OSTrunc8);
-  DefineSimpleUnit(OSFold4);
-  DefineSimpleUnit(OSFold8);
-  DefineSimpleUnit(Clipper8);
-  DefineSimpleUnit(Clipper4);
-  DefineSimpleUnit(SoftClipper8);
-  DefineSimpleUnit(SoftClipper4);
-  DefineSimpleUnit(SoftClipAmp8);
-  DefineSimpleUnit(SoftClipAmp4);
+  DefineDtorUnit(OSWrap4);
+  DefineDtorUnit(OSWrap8);
+  DefineDtorUnit(OSTrunc4);
+  DefineDtorUnit(OSTrunc8);
+  DefineDtorUnit(OSFold4);
+  DefineDtorUnit(OSFold8);
+  DefineDtorUnit(Clipper8);
+  DefineDtorUnit(Clipper4);
+  DefineDtorUnit(SoftClipper8);
+  DefineDtorUnit(SoftClipper4);
+  DefineDtorUnit(SoftClipAmp8);
+  DefineDtorUnit(SoftClipAmp4);
   DefineSimpleUnit(DriveNoise);
 
 
