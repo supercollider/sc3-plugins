@@ -1,7 +1,7 @@
 TITLE:: PV_PlayBuf
 summary:: Plays FFT data to a memory buffer
 categories:: Libraries>JoshUGens, UGens>FFT
-related:: Classes/PV_RecordBuf, Classes/PV_BinPlayBuf, Classes/PV_BufRd, Classes/PV_BinBufRd,
+related:: Classes/PV_RecordBuf, Classes/PV_BinPlayBuf, Classes/PV_BufRd, Classes/PV_BinBufRd
 
 DESCRIPTION::
 PV_PlayBuf will play back FFT data stored to a buffer with link::Classes/PV_RecordBuf::.
