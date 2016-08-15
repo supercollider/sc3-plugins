@@ -22,7 +22,7 @@
 #include "SC_PlugIn.h"
 extern  InterfaceTable *ft;
 #include <float.h>
-#include <math.h>   
+#include <math.h>
 #ifndef M_PI
 #define M_PI           3.14159265358979323846
 #endif
@@ -53,7 +53,7 @@ void volcar(const char *_Message, const char *_File, unsigned _Line);
 #define b2(x)   (   (x) | (   (x) >> 1) )
 #define b4(x)   ( b2(x) | ( b2(x) >> 2) )
 #define b8(x)   ( b4(x) | ( b4(x) >> 4) )
-#define b16(x)  ( b8(x) | ( b8(x) >> 8) )  
+#define b16(x)  ( b8(x) | ( b8(x) >> 8) )
 #define b32(x)  (b16(x) | (b16(x) >>16) )
 #define next_power_of_2(x)      (b32(x-1) + 1)
 
@@ -122,7 +122,7 @@ class CircularBufferTBase
 	{
 		return Buffer[pointerInRange(pointer + pos)];
 	}
-	
+
 	virtual float delay(int pos)=0;
 };
 template<int size>
@@ -134,7 +134,7 @@ class CircularBufferT : public CircularBufferTBase<size>
 		if( p < 0 ){ p += size;}
 		return p;
 	}
-	
+
 	float delay(int pos)
 	{
 		assertv(size >= pos);
@@ -156,7 +156,7 @@ class CircularBuffer2POWSizedT : public CircularBufferTBase<size>
 	//static_assert(ispowerof2(size),"Size mus be power of two!!!");
 	CircularBuffer2POWSizedT(){mask = size - 1;//Print("CircularBuffer2POWSizedT\n");
 		//assertv(ispowerof2(size));
-		
+
 	}
 	int pointerInRange(int p){
 		return p & mask;
@@ -348,7 +348,7 @@ class ConvolverT
 			sum += Kernel[howmany + i]*buf.Buffer[i];
 		return sum;
 	}
-	
+
 };
 
 /////////////
@@ -457,7 +457,7 @@ class LTITv
 			sum -= KernelA[i]*cbufout.Buffer[pAl2 + i];
 		for(int i=0; i < pAl2; i++)
 			sum -= KernelA[howmany + i]*cbufout.Buffer[i];
-			
+
 		//sum = zapgremlins(sum);
 		cbufout.push(sum);
 		return sum;
@@ -513,7 +513,7 @@ class LTITv<1,1>
 	{
 		//float sum=0.;
 		float sum = KernelB*cbuf;
-		sum -= KernelA*cbufout;	
+		sum -= KernelA*cbufout;
 		//sum = zapgremlins(sum);
 		cbufout = sum;
 		return sum;
@@ -615,7 +615,7 @@ struct LTIv
 	float *KernelA;
 	int kernel_sizeB;
 	int kernel_sizeA;
-	
+
 	CircularBuffer cbuf;
 	CircularBuffer cbufout;
 
@@ -644,7 +644,7 @@ struct LTIv
 		LTIv * obj = (LTIv*)pObject;
 		RTFree(obj->unit->mWorld, pObject);
 	}
-	
+
 	void push(float a){
 		cbuf.push(a);
 	}
@@ -692,7 +692,7 @@ struct LTIv
 			sum -= KernelA[i]*cbufout.Buffer[pAl2 + i];
 		for(int i=0; i < pAl2; i++)
 			sum -= KernelA[howmany + i]*cbufout.Buffer[i];
-			
+
 		//sum = zapgremlins(sum);
 		cbufout.push(sum);
 		return sum;
@@ -738,9 +738,9 @@ struct Thirian:public LTIv
 					ak /= ((double)D-(double)(N-k-n));
 				}
 				*/
-				for(int n=0;n<k;n++) 
+				for(int n=0;n<k;n++)
 					ak *= ((double)D-(double)(N-n));
-				for(int i=0;i<k;i++) 
+				for(int i=0;i<k;i++)
 					ak /= ((double)D-(double)(-k+i));
 				this->KernelA[k-1] = (float)ak;
 				this->KernelB[N-k] = (float)ak;
@@ -768,10 +768,10 @@ struct Biquad : public LTITv<3,2>
 		float a2 = a*a;
 		float aoQ = a/Q;
 		float d = (4*a2+2*aoQ+1);
-		
+
 		KernelA[0] = -(8*a2-2) / d;
 		KernelA[1] = (4*a2 - 2*aoQ + 1) / d;
-		
+
 		switch(type) {
 		case pass:
 			KernelB[0] = 2*aoQ/d;
@@ -783,7 +783,7 @@ struct Biquad : public LTITv<3,2>
 			KernelB[1] = 2/d;
 			KernelB[2] = 1/d;
 			break;
-		case high: 
+		case high:
 			KernelB[0] = 4*a2/d;
 			KernelB[1] = -8*a2/d;
 			KernelB[2] = 4*a2/d;
@@ -818,9 +818,9 @@ struct ThirianT : public LTITv<N+1,N>
 					ak /= ((double)D-(double)(N-k-n));
 				}
 				*/
-				for(int n=0;n<k;n++) 
+				for(int n=0;n<k;n++)
 					ak *= ((double)D-(double)(N-n));
-				for(int i=0;i<k;i++) 
+				for(int i=0;i<k;i++)
 					ak /= ((double)D-(double)(-k+i));
 				this->KernelA[k-1] = (float)ak;
 				this->KernelB[N-k] = (float)ak;
@@ -840,7 +840,7 @@ struct FilterC1C3 : public LTITv<1,1>
 			return;
 		//if(approximatelyEqual(this->freq,freq) && approximatelyEqual(this->c1,c1) && approximatelyEqual(this->c3,c3))
 			//return;
-			float g = 1.0 - c1/freq; 
+			float g = 1.0 - c1/freq;
 			float b = 4.0*c3+freq;
 			float a1 = (-b+sqrt(b*b-16.0*c3*c3))/(4.0*c3);
 			KernelB = g*(1+a1);
@@ -903,8 +903,8 @@ struct FDN_HH_Base{
         for(int i=0;i<size;i++)
             lengths[i] = sc_min(len[i],sizedel);
     }
-    
-    float go(float in) 
+
+    float go(float in)
     {
         float i[size];
         float sumo = 0;
@@ -914,8 +914,8 @@ struct FDN_HH_Base{
         sumo -= in;
         for(int j=0;j<size;j++)
             i[j] = o[o_perm[j]] - sumo;
-        
-        float out = 0.0;  
+
+        float out = 0.0;
         for(int j=0;j<size;j++) {
             delay[j].push(i[j]);
             o[j] = decay[j].filter(delay[j].delay(lengths[j]));
@@ -924,7 +924,7 @@ struct FDN_HH_Base{
         out *= fac;
         return mix*out + (1.0-mix)*in;
     }
-    void go(float *in,float *outA, int N) 
+    void go(float *in,float *outA, int N)
     {
         float i[size];
         for(int k=0; k<N; k++){
@@ -935,8 +935,8 @@ struct FDN_HH_Base{
             sumo -= in[k];
             for(int j=0;j<size;j++)
                 i[j] = o[o_perm[j]] - sumo;
-            
-            float out = 0.0;  
+
+            float out = 0.0;
             for(int j=0;j<size;j++) {
                 delay[j].push(i[j]);
                 o[j] = decay[j].filter(delay[j].delay(lengths[j]));
@@ -946,7 +946,7 @@ struct FDN_HH_Base{
             outA[k] = mix*out + (1.0-mix)*in[k];
         }
     }
-    void go_st(float *in,float *outA[2], int N) 
+    void go_st(float *in,float *outA[2], int N)
     {
         float i[size];
         for(int k=0; k<N; k++){
@@ -957,7 +957,7 @@ struct FDN_HH_Base{
             sumo -= in[k];
             for(int j=0;j<size;j++)
                 i[j] = o[o_perm[j]] - sumo;
-            
+
             float out[2];out[0]=0;out[1]=0;
             for(int j=0;j<size;j++) {
                 delay[j].push(i[j]);
@@ -1001,7 +1001,7 @@ struct ThirianDispersion{
 			return;
 		}
 
-		if(this->freq==freq && this->B==B) 
+		if(this->freq==freq && this->B==B)
 			return;
 		float D = ValimakiDispersion(B,freq,M);
 		//if(D <=1)
