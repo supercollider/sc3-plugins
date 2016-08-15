@@ -1268,7 +1268,7 @@ class TUBE{
         if(a1 < 1e-18)
             loss = 0.0;
         else
-            loss = 1.0 - sc_min(lossF/sqrt(a1),1.0);
+            loss = 1.0f - sc_min(lossF/sqrt(a1),1.0);
 
     }
     void go(){
