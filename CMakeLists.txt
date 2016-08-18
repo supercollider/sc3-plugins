@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
+set(SUPERNOVA_CMAKE_MINVERSION 3.1)
 project (sc3-plugins)
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
@@ -34,7 +35,12 @@ include("${SC_PATH}/SCVersion.txt")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
 message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
 
-option(SUPERNOVA "Build plugins for supernova")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT CMAKE_VERSION VERSION_LESS SUPERNOVA_CMAKE_MINVERSION)
+	option(SUPERNOVA "Build plugins for supernova" ON)
+else()
+	option(SUPERNOVA "Build plugins for supernova" OFF)
+endif()
+
 option(AY "Build with AY ugens" ON)
 option(QUARKS "Install plugins as quarks")
 option(OSX_PACKAGE "Package dmg for Apple")
