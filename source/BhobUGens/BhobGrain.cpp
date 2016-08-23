@@ -283,21 +283,29 @@ void TGrains2_next(TGrains2 *unit, int inNumSamples)
 			grain->interp = (int)IN_AT(unit, 9, i);
 
 			float panangle;
-			if (numOutputs > 2) {
-				pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
-				float cpan = numOutputs * pan + 0.5;
-				float ipan = floor(cpan);
-				float panfrac = cpan - ipan;
-				panangle = panfrac * pi2;
-				grain->chan = (int)ipan;
-				if (grain->chan >= (int)numOutputs) grain->chan -= numOutputs;
+			float pan1, pan2;
+			if (numOutputs > 1) {
+				if (numOutputs > 2) {
+					pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
+					float cpan = numOutputs * pan + 0.5f;
+					float ipan = floor(cpan);
+					float panfrac = cpan - ipan;
+					panangle = panfrac * pi2_f;
+					grain->chan = (int)ipan;
+					if (grain->chan >= (int)numOutputs)
+						grain->chan -= numOutputs;
+				} else {
+					grain->chan = 0;
+					pan = sc_clip(pan * 0.5f + 0.5f, 0.f, 1.f);
+					panangle = pan * pi2_f;
+				}
+				pan1 = grain->pan1 = cos(panangle);
+				pan2 = grain->pan2 = sin(panangle);
 			} else {
 				grain->chan = 0;
-				pan = sc_wrap(pan * 0.5f + 0.5f, 0.f, 1.f);
-				panangle = pan * pi2;
+				pan1 = grain->pan1 = 1.;
+				pan2 = grain->pan2 = 0.;
 			}
-			float pan1 = grain->pan1 = amp * sin(panangle);
-			float pan2 = grain->pan2 = amp * cos(panangle);
 			int attCount = sc_max((int)(SAMPLERATE * att), 2);
 			int decCount = sc_max((int)(SAMPLERATE * dec), 2);
 			grain->attIncr = 1.0/attCount;
@@ -489,21 +497,29 @@ void TGrains3_next(TGrains3 *unit, int inNumSamples)
 			grain->interp = (int)IN_AT(unit, 10, i);
 
 			float panangle;
-			if (numOutputs > 2) {
-				pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
-				float cpan = numOutputs * pan + 0.5;
-				float ipan = floor(cpan);
-				float panfrac = cpan - ipan;
-				panangle = panfrac * pi2;
-				grain->chan = (int)ipan;
-				if (grain->chan >= (int)numOutputs) grain->chan -= numOutputs;
+			float pan1, pan2;
+			if (numOutputs > 1) {
+				if (numOutputs > 2) {
+					pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
+					float cpan = numOutputs * pan + 0.5f;
+					float ipan = floor(cpan);
+					float panfrac = cpan - ipan;
+					panangle = panfrac * pi2_f;
+					grain->chan = (int)ipan;
+					if (grain->chan >= (int)numOutputs)
+						grain->chan -= numOutputs;
+				} else {
+					grain->chan = 0;
+					pan = sc_clip(pan * 0.5f + 0.5f, 0.f, 1.f);
+					panangle = pan * pi2_f;
+				}
+				pan1 = grain->pan1 = cos(panangle);
+				pan2 = grain->pan2 = sin(panangle);
 			} else {
 				grain->chan = 0;
-				pan = sc_wrap(pan * 0.5f + 0.5f, 0.f, 1.f);
-				panangle = pan * pi2;
+				pan1 = grain->pan1 = 1.;
+				pan2 = grain->pan2 = 0.;
 			}
-			float pan1 = grain->pan1 = amp * sin(panangle);
-			float pan2 = grain->pan2 = amp * cos(panangle);
 			int attCount = sc_max((int)(SAMPLERATE * att), 2);
 			int decCount = sc_max((int)(SAMPLERATE * dec), 2);
 			grain->attIncr = (float)windowSize/attCount;
