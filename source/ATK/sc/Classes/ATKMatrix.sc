@@ -1912,7 +1912,8 @@ FoaDecoderKernel {
 								action: { arg buf;
 									(
 										kernelBundle = kernelBundle.add(
-											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+							["/b_allocReadChannel", buf.bufnum, kernelPath.fullPath, 0, kernelSize, chan]
+						);
 										kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 										"Kernel %, channel % loaded.".format(
 											kernelPath.fileName, chan
@@ -1939,14 +1940,11 @@ FoaDecoderKernel {
 			score.isKindOf(Score).if({
 				kernel = subjectPath.files.collect({ arg kernelPath;
 					chans.collect({ arg chan;
-						var buf, numFrames, numChannels;
-						SoundFile.use(kernelPath.fullPath, {arg soundFile;
-							numFrames = soundFile.numFrames;
-							numChannels = soundFile.numChannels
-						});
-						buf = Buffer(server, numFrames, numChannels);
+						var buf;
+						buf = Buffer(server, kernelSize);
 						kernelBundle = kernelBundle.add(
-							buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+							["/b_allocReadChannel", buf.bufnum, kernelPath.fullPath, 0, kernelSize, chan]
+						);
 						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 						buf;
 					})
@@ -2238,7 +2236,8 @@ FoaEncoderKernel {
 								action: { arg buf;
 									(
 										kernelBundle = kernelBundle.add(
-											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+							["/b_allocReadChannel", buf.bufnum, kernelPath.fullPath, 0, kernelSize, chan]
+						);
 										kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 										"Kernel %, channel % loaded.".format(
 											kernelPath.fileName, chan
@@ -2264,14 +2263,11 @@ FoaEncoderKernel {
 			score.isKindOf(Score).if({
 				kernel = subjectPath.files.collect({ arg kernelPath;
 					chans.collect({ arg chan;
-						var buf, numFrames, numChannels;
-						SoundFile.use(kernelPath.fullPath, {arg soundFile;
-							numFrames = soundFile.numFrames;
-							numChannels = soundFile.numChannels
-						});
-						buf = Buffer(server, numFrames, numChannels);
+						var buf;
+						buf = Buffer(server, kernelSize);
 						kernelBundle = kernelBundle.add(
-											buf.allocReadChannelMsg(kernelPath.fullPath, 0, -1, [chan]));
+							["/b_allocReadChannel", buf.bufnum, kernelPath.fullPath, 0, kernelSize, chan]
+						);
 						kernelInfo = kernelInfo.add([kernelPath.fullPath, buf.bufnum, [chan]]);
 						buf;
 					})
