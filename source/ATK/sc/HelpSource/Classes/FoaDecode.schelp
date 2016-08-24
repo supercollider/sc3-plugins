@@ -451,7 +451,7 @@ subsection:: SuperCollider's inbuilt decoder
 
 By default, SuperCollider includes a pantophonic (2D) decoder, link::Classes/DecodeB2::. This inbuilt decoder provides functionality similar to the Ambisonic Toolkit's link::Classes/FoaDecoderMatrix#*newPanto::, with the exceptions of a variable strong::k:: argument and the documentation features of link::Classes/FoaDecoderMatrix::, e.g. link::Classes/FoaDecoderMatrix#-dirChannels::.
 
-The inbuilt decoder is a code::'controlled':: strong::k:: decoder. (See link::Classes/FoaDecoderMatrix#decoder_k#this discussion:: on strong::k::.) The below code includes a function, code::funK::, to add variable strong::k:: functionality to link::Classes/DecodeB2::. So, this example is realised as a code::'single':: band type ( code::'energy':: ) decoder, matching the link::Classes/FoaDecoderMatrix#*newQuad:: example link::#quadraphonic_decoder#above::.
+The inbuilt decoder is a code::'controlled':: strong::k:: decoder. (See link::Classes/FoaDecoderMatrix#decoder k#this discussion:: on strong::k::.) The below code includes a function, code::funK::, to add variable strong::k:: functionality to link::Classes/DecodeB2::. So, this example is realised as a code::'single':: band type ( code::'energy':: ) decoder, matching the link::Classes/FoaDecoderMatrix#*newQuad:: example link::#quadraphonic_decoder#above::.
 
 note:: See link::Classes/DecodeB2#*ar:: for further details.::
 

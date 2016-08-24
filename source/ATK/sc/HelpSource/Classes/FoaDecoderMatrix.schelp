@@ -382,18 +382,27 @@ Decoding means decoding from traditional B-format to another Ambisonic channel c
 
 
 SUBSECTION:: Decoder k
-The default strong::k:: ( code::'single':: ), for decoders accepting strong::k:: as an argument, returns an code::'energy':: optimised (aka "max rE") decoder. code::'dual':: returns a dual-band psychoacoustically optimised decoder. footnote::See: E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008.:: The code::'dual':: decoder is the optimum choice for small scale studio or domestic settings. code::'single':: is suitable for larger, mid-scale environments. code::'velocity':: returns "strict soundfield" (aka "basic") decoding, and is not preferred for first order Ambisonics in most circumstances. code::'controlled':: returns "controlled opposites" decoding (aka "in phase"), which is often preferred in large-scale, concert environments. footnote::See: D. G. Malham, "Experience with Large Area 3-D Ambisonic Sound Systems," Proceedings of the Institute of Acoustics, vol. 14, no. 5, pp. 209–215, Nov. 1992.:: (SuperCollider's inbuilt decoder, link::Classes/DecodeB2#*ar::, is a "controlled opposites" decoder. See link::Classes/FoaDecode#supercollider#this::.)
+The default strong::k:: ( code::'single':: ), for decoders accepting strong::k:: as an argument, returns an code::'energy':: optimised (aka "maximum energy" or "max rE") decoder. code::'dual':: returns a dual-band psychoacoustically optimised decoder. footnote::See: E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008.:: The code::'dual':: decoder is the optimum choice for small scale studio or domestic settings. code::'single':: is suitable for larger, mid-scale environments. code::'velocity':: returns "strict soundfield" (aka "planewave" or "basic") decoding. footnote::While "strict soundfield" decoding is usually not preferred for first order Ambisonics audition, it is usually a good choice for use in signal processing networks.:: code::'controlled':: returns "controlled opposites" decoding (aka "minimum energy" or "in phase"), which is often preferred in large-scale, concert environments. footnote::See: D. G. Malham, "Experience with Large Area 3-D Ambisonic Sound Systems," Proceedings of the Institute of Acoustics, vol. 14, no. 5, pp. 209–215, Nov. 1992.:: (SuperCollider's inbuilt decoder, link::Classes/DecodeB2#*ar::, is a "controlled opposites" decoder. See link::Classes/FoaDecode#supercollider#this discussion::.)
+
+Given a uniform periphonic (3D) distribution of loudspeakers, e.g. a link::https://en.wikipedia.org/wiki/Platonic_solid##Platonic solid::, some useful strong::virtual microphone:: equivalences:
+
+table::
+## strong::keyword:: || strong::decoding:: || strong::virtual microphone:: || strong::pattern::
+## code::'velocity':: || strict soundfield || Hyper-cardioid || 0.75
+## code::'energy':: || energy optimised || Super-cardioid || (3-sqrt(3))/2
+## code::'controlled':: || controlled opposites || Cardioid || 0.5
+::
 
 The strong::k:: keywords translate to numerical values as follows:
 
 table::
-## strong::keyword:: || strong::k::
-## code::'velocity':: || 1
-## code::'energy':: || 1/sqrt(2)
-## code::'controlled':: || 1/2
+## strong::keyword:: || strong::k:: for pantophonic (2D) || strong::k:: for periphonic (3D)
+## code::'velocity':: || 1 || 1
+## code::'energy':: || 1/sqrt(2) || 1/sqrt(3)
+## code::'controlled':: || 1/2 || 1/3
 ::
 
-note:: For large-scale concert presentation, the authors advise auditioning values of strong::k:: between 1/2 and 1/sqrt(2).::
+note:: For large-scale concert presentation, the authors advise auditioning values of strong::k:: between those noted for code::'energy':: and code::'controlled'::.::
 
 
 
