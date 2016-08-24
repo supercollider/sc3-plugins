@@ -251,12 +251,14 @@ table::
 argument:: weight
 The W weight factor.
 
+For convenience, equivalent virtual microphone strong::pattern:: and decoding strong::k:: are also listed.
+
 table::
-## strong::weight:: || strong::kind:: || strong::W scale::
-## code::'dec':: || Decorrelated (on the sphere) || 1/sqrt(3)
-## code::'can':: || Canonical (B-format) || 1/sqrt(2)
-## code::'uns':: || Unscaled || 1
-## code::'car':: || Cardioid || sqrt(3)
+## strong::weight:: || strong::kind:: || strong::W scale:: || strong::virtual microphone:: || strong::pattern:: || strong::decoding:: || strong::k::
+## code::'dec':: || Decorrelated (on the sphere) || 1/sqrt(3) || Hyper-cardioid || 0.75 || strict soundfield || code::'velocity'::
+## code::'can':: || Canonical (B-format) || 1/sqrt(2) || ||sqrt(6)/(1+sqrt(6)) || || sqrt(2/3)
+## code::'uns':: || Unscaled || 1 || Super-cardioid || (3-sqrt(3))/2 || energy optimised || code::'energy'::
+## code::'car':: || Cardioid || sqrt(3) || Cardioid || 0.5 || controlled opposites || code::'controlled'::
 ::
 
 

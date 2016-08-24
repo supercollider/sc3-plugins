@@ -103,7 +103,7 @@ discussion:: The outputs are in anti-clockwise order. The position of the first 
 
 Varying strong::angle:: allows a number of flexible quadraphonic decoders to be generated. E.g, strong::angle:: = pi/6 returns a decoder with loudspeakers at [ 30, 150, -150, 30 ] degrees.
 
-Please see link::#decoder_k:: for further discussion on strong::k::.
+Please see link::#decoder k:: for further discussion on strong::k::.
 
 
 
@@ -151,7 +151,7 @@ discussion:: The outputs are in anti-clockwise order. The position of the first 
 
 Used in conjunction with link::Classes/FoaDecode#*ar:: the resulting decoder is equivalent to link::Classes/DecodeB2#*ar:: (SuperCollider's inbuilt decoder), albeit with the addition of variable strong::k:: and dual-band optimised psychoacoustic decoding. link::Classes/DecodeB2#*ar:: is a "controlled opposites" decoder ( strong::k:: = code::'controlled':: ) with a gain of 6dB greater than link::#*newPanto::.
 
-Please see link::#decoder_k:: for further discussion on strong::k::.
+Please see link::#decoder k:: for further discussion on strong::k::.
 
 
 METHOD:: newPeri
@@ -179,7 +179,7 @@ list::
 
 discussion::  The outputs are in anti-clockwise order, beginning with the top ring. The position of the first speaker is either centre or left of centre. link::#-dirChannels:: may be used to query resulting loudspeaker directions.
 
-Please see link::#decoder_k:: for further discussion on strong::k::.
+Please see link::#decoder k:: for further discussion on strong::k::.
 
 
 METHOD:: newDiametric
@@ -236,7 +236,7 @@ code::
 ~decoder.dirChannels.raddeg
 ::
 
-Please see link::#decoder_k:: for further discussion on strong::k::.
+Please see link::#decoder k:: for further discussion on strong::k::.
 
 
 METHOD:: newBtoA
@@ -260,17 +260,21 @@ table::
 argument:: weight
 The W weight factor.
 
+For convenience, equivalent virtual microphone strong::pattern:: and decoding strong::k:: are also listed.
+
 table::
-## strong::weight:: || strong::kind:: || strong::W scale::
-## code::'dec':: || Decorrelated (on the sphere) || 1/sqrt(3)
-## code::'can':: || Canonical (B-format) || 1/sqrt(2)
-## code::'uns':: || Unscaled || 1
-## code::'car':: || Cardioid || sqrt(3)
+## strong::weight:: || strong::kind:: || strong::W scale:: || strong::virtual microphone:: || strong::pattern:: || strong::decoding:: || strong::k::
+## code::'dec':: || Decorrelated (on the sphere) || 1/sqrt(3) || Hyper-cardioid || 0.75 || strict soundfield || code::'velocity'::
+## code::'can':: || Canonical (B-format) || 1/sqrt(2) || ||sqrt(6)/(1+sqrt(6)) || || sqrt(2/3)
+## code::'uns':: || Unscaled || 1 || Super-cardioid || (3-sqrt(3))/2 || energy optimised || code::'energy'::
+## code::'car':: || Cardioid || sqrt(3) || Cardioid || 0.5 || controlled opposites || code::'controlled'::
 ::
 
 discussion::
 anchor::btoadiscuss::
 The B-format to A-format decoder is primarily intended to be used in conjuction with the A-format to B-format encoder, link::Classes/FoaEncoderMatrix#*newAtoB::. Though the use of BtoA/AtoB decoder/encoder pairs, signal processing networks can be constructed which preserve the spatial encoding found in the original input B-format signal.
+
+In order to reconstruct the original B-format signal, matching strong::orientation:: and strong::weight:: for both decoding and encoding should be chosen. For most applications the default strong::weight:: (code::'dec'::) is a good choice. This strong::weight:: decodes to four planewaves. Setting strong::weight:: to code::'uns':: returns an energy optimised decoding. For link::Browse#UGens>Dynamics#Dynamic Range Control:: processing, code::'uns':: is often a good choice.
 
 code::
 // ------------------------------------------------------------
