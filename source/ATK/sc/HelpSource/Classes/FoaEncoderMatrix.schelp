@@ -119,9 +119,13 @@ definitionList::
     ## strong::pattern:: || strong::microphone::
     ## 0.0 || Omni
     ## 0.5 || Cardioid
+    ## (3-sqrt(3))/2 || Super-cardioid
+    ## 0.75 || Hyper-cardioid
     ## 1.0 || Bi-directional
     ::
     If strong::pattern:: is an link::Classes/Array::, individual microphone patterns are specified.
+
+    For equivalences to decoder strong::k::, please see link::Classes/FoaDecoderMatrix#decoder k::.
 ::
 
 
@@ -181,9 +185,10 @@ table::
 ## strong::pattern:: || strong::virtual microphone::
 ## 0.0 || Omni
 ## 0.5 || Cardioid
+## (3-sqrt(3))/2 || Super-cardioid
+## 0.75 || Hyper-cardioid
 ## 1.0 || Bi-directional
 ::
-
 
 argument:: k
 Post-encoding Y scalar.

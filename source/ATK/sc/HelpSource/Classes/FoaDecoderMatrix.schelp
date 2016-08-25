@@ -27,11 +27,14 @@ table::
 ## strong::pattern:: || strong::virtual microphone::
 ## 0.0 || Omni
 ## 0.5 || Cardioid
+## (3-sqrt(3))/2 || Super-cardioid
+## 0.75 || Hyper-cardioid
 ## 1.0 || Bi-directional
 ::
 
-discussion:: The virtual microphone decoder returns a single monophonic channel, and can be used to "listen in" to the soundfield at the specified azimuth and elevation.
+For equivalences to decoder strong::k::, please see link::#decoder k::.
 
+discussion:: The virtual microphone decoder returns a single monophonic channel, and can be used to "listen in" to the soundfield at the specified azimuth and elevation.
 
 
 METHOD:: newStereo
@@ -47,19 +50,18 @@ table::
 ## strong::pattern:: || strong::virtual microphone::
 ## 0.0 || Omni
 ## 0.5 || Cardioid
+## (3-sqrt(3))/2 || Super-cardioid
+## 0.75 || Hyper-cardioid
 ## 1.0 || Bi-directional
 ::
+
+For equivalences to decoder strong::k::, please see link::#decoder k::.
 
 discussion:: Standard coincident stereo microphone configurations footnote::Sengpiel Audio provides a useful tool to visualise resulting imaging: link::http://www.sengpielaudio.com/Visualization-Blumlein-E.htm:::::
 
 code::
 // Default: Cardioids at 180 deg
 ~decoder = FoaDecoderMatrix.newStereo
-
-// Blumlein
-~angle = pi/2
-~pattern = 1.0
-~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
 // Cardioids at 131 deg
 ~angle = (131/2).degrad
@@ -68,7 +70,7 @@ code::
 
 // Super-cardioids at 115 deg
 ~angle = (115/2).degrad
-~pattern = 0.63
+~pattern = (3-sqrt(3))/2
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
 // Hyper-cardioids at 105 deg
@@ -76,10 +78,14 @@ code::
 ~pattern = 0.75
 ~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
 
+// Blumlein
+~angle = (90/2).degrad
+~pattern = 1.0
+~decoder = FoaDecoderMatrix.newStereo(~angle, ~pattern)
+
 ::
 
 While the virtual microphone stereophonic decoder is very easy and convenient, for production work the authors advise using the UHJ ( link::Classes/FoaDecoderKernel#*newUHJ:: ) decoder. footnote::See link::http://en.wikipedia.org/wiki/Ambisonic_UHJ_format:: for further information.::
-
 
 
 METHOD:: newQuad
@@ -265,7 +271,7 @@ For convenience, equivalent virtual microphone strong::pattern:: and decoding st
 table::
 ## strong::weight:: || strong::kind:: || strong::W scale:: || strong::virtual microphone:: || strong::pattern:: || strong::decoding:: || strong::k::
 ## code::'dec':: || Decorrelated (on the sphere) || 1/sqrt(3) || Hyper-cardioid || 0.75 || strict soundfield || code::'velocity'::
-## code::'can':: || Canonical (B-format) || 1/sqrt(2) || ||sqrt(6)/(1+sqrt(6)) || || sqrt(2/3)
+## code::'can':: || Canonical (B-format) || 1/sqrt(2) || || sqrt(6)/(1+sqrt(6)) || || sqrt(2/3)
 ## code::'uns':: || Unscaled || 1 || Super-cardioid || (3-sqrt(3))/2 || energy optimised || code::'energy'::
 ## code::'car':: || Cardioid || sqrt(3) || Cardioid || 0.5 || controlled opposites || code::'controlled'::
 ::
