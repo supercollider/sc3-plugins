@@ -281,6 +281,7 @@ list::
 ## for 3D: code:: [ inf, inf, inf , inf ] ::
 ::
 
+PRIVATE:: buffers, kernelBundle, kernelInfo
 
 EXAMPLES::
 
