@@ -83,7 +83,7 @@ most simply by running `Quarks.gui` in the SuperCollider IDE. Further install
 options and information on Quarks can be found in SuperCollider's Help system.
 See [Using Quarks](http://doc.sccode.org/Guides/UsingQuarks.html) and also the
 [supercollider-quarks](https://github.com/supercollider-quarks/quarks) GitHub page.
-
+* Install the [FileLog Quark](https://github.com/supercollider-quarks/FileLog)
 * Download and install [ATK Kernels](http://www.ambisonictoolkit.net/download/kernels/).
 * Download and install [ATK Sound File Example Recordings](http://www.ambisonictoolkit.net/download/recordings/).
 
@@ -157,6 +157,35 @@ Ambisonic Toolkit.
 
 List of Changes
 ---------------
+
+Unreleased
+
+*  New features:
+    *  Matrix reading & writing: encoder, xformer, & decoder.
+    *  Improved NRT encoder / decoder support.
+    *  Supported SRs: 44100, 48000, 88200, 96000, 176400, 192000. Download new
+    kernels: https://github.com/ambisonictoolkit/atk-kernels/releases
+
+*  Documentation Updates:
+    *  README updated to reflect recent changes and installation instructions.
+    *  Document decoder k and microphone pattern equivalences, both in terms of
+    keywords and numerical values.
+    *  Update Intro-to-the-ATK & imaging figures. Transform plots now
+    illustrate rE rather than rV, which is more closely tied to perception.
+    *  Update Help with Server -numOutputBusChannels advice.
+    *  Update various broken links in Help.
+    *  Include details on delay introduced by use of kernel encoders & decoders.
+    *  More verbose Help for SynthDefs and NRT.
+    *  Update Help Files for Multiple SRs.
+    *  Help now uses -degrad & -raddeg for unit conversion.
+    *  README: add contributors. List under release in alphabetical order by
+    first name.
+
+*  Issue fixes:
+    *  Score NRT kernel bug fixes
+    *  Support for SR = 176400
+    *  AtkMatrix.initPeri, (re-)fix for shelfK 3D.
+
 
 Version 3.7.2
 
@@ -251,9 +280,14 @@ are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 Contributors
 ------------
 
-Version 3.7.2
-*  Luis Lloret (@llloret)
+Unreleased
+*  Daniel Peterson (@dmartinp)
 *  Joseph Anderson (@joslloand)
+*  Michael McCrea (@mtmccrea)
+
+Version 3.7.2
+*  Joseph Anderson (@joslloand)
+*  Luis Lloret (@llloret)
 
 Version 3.7.0-beta
 *  Nathan Ho (@snappizz)
