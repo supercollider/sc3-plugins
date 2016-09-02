@@ -99,6 +99,23 @@ INSTANCEMETHODS::
 private:: initPath, initKernel, printOn
 
 
+METHOD:: set
+
+Describes both the emphasis::signal set:: and the emphasis::tool set::, encompassing the Ambisonic order, as well as channel ordering and normalisation.
+
+Answers code::'FOA'::, aka traditional B-format:
+
+table::
+## strong::Ambisonic Order:: || strong::Channel Ordering:: || strong::Channel Normalisation::
+## 1st || Gerzon (aka Furse-Malham) || MaxN
+::
+
+METHOD:: type
+returns:: code::'encoder'::
+
+METHOD:: op
+Answers code::'kernel'::, i.e. the type of operation used to compute the resulting signals.
+
 METHOD:: kind
 Answers the kind of encoder
 
@@ -281,7 +298,9 @@ list::
 ## for 3D: code:: [ inf, inf, inf , inf ] ::
 ::
 
+
 PRIVATE:: buffers, kernelBundle, kernelInfo
+
 
 EXAMPLES::
 

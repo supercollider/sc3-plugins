@@ -387,6 +387,24 @@ discussion::
 Decoding means decoding from traditional B-format to another Ambisonic channel componenent orderding and normalisation. In this case, from strong::Gerzon:: (aka strong::Furse-Malham::) ordering, strong::MaxN:: normalisation to the AmbiX encoding scheme (strong::ACN:: ordering, strong::SN3D:: normalisation).
 
 
+METHOD:: newFromFile
+Create an FoaEncoderMatrix by loading a matrix from a file.
+
+argument:: filePathOrName
+Can be a path relative to your code::/extensions/matrices/decoders:: folder:
+code::
+Atk.getMatrixExtensionPath('decoders').fullPath
+::
+Otherwise a full path to your matrix file.
+
+discussion::
+See the link::Guides/Guide-to-ATK-Matrix-Files:: for more information.
+
+
+COPYMETHOD:: AtkMatrix, *newFromMatrix
+
+
+
 SUBSECTION:: Decoder k
 The default strong::k:: ( code::'single':: ), for decoders accepting strong::k:: as an argument, returns an code::'energy':: optimised (aka "maximum energy" or "max rE") decoder. code::'dual':: returns a dual-band psychoacoustically optimised decoder. footnote::See: E. Benjamin, R. Lee, and A. Heller, "Is My Decoder Ambisonic?," in Proceedings of the 125th Audio Engineering Society Convention, San Francisco, 2008.:: The code::'dual':: decoder is the optimum choice for small scale studio or domestic settings. code::'single':: is suitable for larger, mid-scale environments. code::'velocity':: returns "strict soundfield" (aka "planewave" or "basic") decoding. footnote::While "strict soundfield" decoding is usually not preferred for first order Ambisonics audition, it is usually a good choice for use in signal processing networks.:: code::'controlled':: returns "controlled opposites" decoding (aka "minimum energy" or "in phase"), which is often preferred in large-scale, concert environments. footnote::See: D. G. Malham, "Experience with Large Area 3-D Ambisonic Sound Systems," Proceedings of the Institute of Acoustics, vol. 14, no. 5, pp. 209–215, Nov. 1992.:: (SuperCollider's inbuilt decoder, link::Classes/DecodeB2#*ar::, is a "controlled opposites" decoder. See link::Classes/FoaDecode#supercollider#this discussion::.)
 
@@ -412,8 +430,25 @@ note:: For large-scale concert presentation, the authors advise auditioning valu
 
 
 
+
 INSTANCEMETHODS::
 private:: initPeri, initK2D, initStereo, initBtoA, initPanto, initK3D, initQuad, printOn, initMono, init5_0, initDiametric, initHoa1, initAmbix1
+
+METHOD:: set
+
+Describes both the emphasis::signal set:: and the emphasis::tool set::, encompassing the Ambisonic order, as well as channel ordering and normalisation.
+
+Answers code::'FOA'::, aka traditional B-format:
+
+table::
+## strong::Ambisonic Order:: || strong::Channel Ordering:: || strong::Channel Normalisation::
+## 1st || Gerzon (aka Furse-Malham) || MaxN
+::
+
+METHOD:: type
+returns:: code::'decoder'::
+
+COPYMETHOD:: AtkMatrix, -op
 
 METHOD:: kind
 Answers the kind of decoder
@@ -569,9 +604,21 @@ returns::
 
 list::
 ## for 2D: code:: [ inf, inf, inf ] ::
-## for 3D: code:: [ inf, inf, inf , inf ] ::
+## for 3D: code:: [ inf, inf, inf, inf ] ::
 ::
 
+
+COPYMETHOD:: AtkMatrix, -info
+
+COPYMETHOD:: AtkMatrix, -fileParse
+
+COPYMETHOD:: AtkMatrix, -filePath
+
+COPYMETHOD:: AtkMatrix, -fileName
+
+COPYMETHOD:: AtkMatrix, -writeToFile
+
+private:: initDecoderVarsForFiles
 
 EXAMPLES::
 

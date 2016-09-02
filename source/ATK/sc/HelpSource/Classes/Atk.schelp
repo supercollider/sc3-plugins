@@ -49,3 +49,5 @@ runs a unix cmd to create the user support dir for ATK
 
 METHOD:: openSystemSupportDir
 runs a unixCmd to open the systemAppSupport dir. Uses 'open' (OS X only)
+
+PRIVATE:: checkSet, sets, getAtkLibSubPath, getExtensionPath, getKernelExtensionPath, getBuiltInPath, getMatrixBuiltInPath, systemExtensionsDir, systemMatrixDir, userMatrixDir, resolveMtxPath, folderExists

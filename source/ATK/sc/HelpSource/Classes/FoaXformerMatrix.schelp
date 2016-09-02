@@ -506,7 +506,21 @@ Imaging is illustrated link::Classes/FoaBalance#figure#here::.
 note:: Corresponding UGen: link::Classes/FoaBalance:: ::
 
 
+METHOD:: newFromFile
+Create an FoaEncoderMatrix by loading a matrix from a file.
 
+argument:: filePathOrName
+Can be a path relative to your code::/extensions/matrices/xformers:: folder:
+code::
+Atk.getMatrixExtensionPath('xformers').fullPath
+::
+Otherwise a full path to your matrix file.
+
+discussion::
+See the link::Guides/Guide-to-ATK-Matrix-Files:: for more information.
+
+
+COPYMETHOD:: AtkMatrix, *newFromMatrix
 
 
 
@@ -514,6 +528,22 @@ INSTANCEMETHODS::
 
 private:: initMirrorChan, initMirrorX, initMirrorY, initMirrorZ, initMirrorO, initRotate, initTilt, initTumble, initDirectO, initDirectX, initDirectY, initDirectZ, initDominateX, initDominateY, initDominateZ, initZoomX, initZoomY, initZoomZ, initFocusX, initFocusY, initFocusZ, initPushX, initPushY, initPushZ, initPressX, initPressY, initPressZ, initAsymmetry, initRTT, initMirror, initDirect, initDominate, initZoom, initFocus, initPush, initPress, printOn
 
+
+METHOD:: set
+
+Describes both the emphasis::signal set:: and the emphasis::tool set::, encompassing the Ambisonic order, as well as channel ordering and normalisation.
+
+Answers code::'FOA'::, aka traditional B-format:
+
+table::
+## strong::Ambisonic Order:: || strong::Channel Ordering:: || strong::Channel Normalisation::
+## 1st || Gerzon (aka Furse-Malham) || MaxN
+::
+
+METHOD:: type
+returns:: code::'xformer'::
+
+COPYMETHOD:: AtkMatrix, -op
 
 METHOD:: kind
 Answers the kind of encoder
@@ -565,7 +595,15 @@ METHOD:: dirInputs
 A convenience method providing polymorphism with link::Classes/FoaEncoderMatrix#-dirInputs:: and link::Classes/FoaDecoderMatrix#-dirInputs::.
 
 
+COPYMETHOD:: AtkMatrix, -info
 
+COPYMETHOD:: AtkMatrix, -fileParse
+
+COPYMETHOD:: AtkMatrix, -filePath
+
+COPYMETHOD:: AtkMatrix, -fileName
+
+COPYMETHOD:: AtkMatrix, -writeToFile
 
 EXAMPLES::
 

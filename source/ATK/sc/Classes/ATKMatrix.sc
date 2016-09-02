@@ -160,55 +160,421 @@ FoaSpeakerMatrix {
 	}
 }
 
-
-FoaDecoderMatrix {
-	var <kind;
+AtkMatrix {
+	var <kind;			// copyArgs
 	var <matrix;
+	var <filePath;		// matrices from files only
+	var <fileParse;		// data parsed from YAML file
+	var <op = 'matrix';
+	var <set = 'FOA';   // ... for now
+
+	// most typically called by subclass
+	*new { |mtxKind|
+		^super.newCopyArgs(mtxKind)
+	}
+
+	// used when writing a Matrix to file:
+	// need to convert to AtkMatrix first
+	*newFromMatrix { |aMatrix|
+		^super.newCopyArgs('fromMatrix').initFromMatrix(aMatrix)
+	}
+
+	initFromMatrix { |aMatrix|
+		matrix = aMatrix;
+	}
+
+	initFromFile { arg filePathOrName, mtxType, searchExtensions=false;
+		var resolvedPathName = Atk.resolveMtxPath(filePathOrName, mtxType, searchExtensions);
+
+		// instance var
+		filePath = resolvedPathName.fullPath;
+
+		case
+		{ resolvedPathName.extension == "txt"} {
+			if (resolvedPathName.fileName.contains(".mosl")) {
+				// .mosl.txt file: expected to be matrix only,
+				// single values on each line, by rows
+				matrix = Matrix.with( this.prParseMOSL(resolvedPathName) );
+			} {
+				// .txt file: expected to be matrix only, cols separated by spaces,
+				// rows by newlines
+				matrix = Matrix.with( FileReader.read(filePath).asFloat );
+			};
+			kind = resolvedPathName.fileName.asSymbol; // kind defaults to filename
+		}
+		{ resolvedPathName.extension == "yml"} {
+			var dict = filePath.parseYAMLFile;
+			fileParse = IdentityDictionary(know: true);
+
+			// replace String keys with Symbol keys, make "knowable"
+			dict.keysValuesDo{
+				|k,v|
+				fileParse.put( k.asSymbol,
+					if (v=="nil", {nil},{v}) // so .info parsing doesn't see nil as array
+				)
+			};
+
+			if (fileParse[\type].isNil) {
+				"Matrix 'type' is undefined in the .yml file: cannot confirm the type matches the loaded object (encoder/decoder/xformer)".warn
+			} {
+				if (fileParse[\type].asSymbol != mtxType.asSymbol) {
+					Error(
+						format(
+							"Matrix 'type' defined in the .yml file (%) doesn't match the type of matrix you're trying to load (%)",
+							fileParse[\type], mtxType
+						).throw
+					)
+				}
+			};
+
+			matrix = Matrix.with(fileParse.matrix.asFloat);
+			kind = fileParse.kind ?? resolvedPathName.fileNameWithoutExtension.asSymbol;
+		}
+		{ Error("Unsupported file extension.").throw };
+	}
+
+
+	// post readable matrix information
+	info {
+		var attributes;
+		// gather attributes in order of posting
+		attributes = [ \kind, \dirInputs, \dirOutputs, \dim, \matrix ];
+		if (this.isKindOf(FoaDecoderMatrix)) { attributes = attributes ++ [\shelfK, \shelfFreq] };
+		filePath !? { attributes = attributes ++ [\fileName, \filePath] };
+
+		// other non-standard metadata provided in yml file
+		fileParse !? {
+			fileParse.keys.do{|key|
+				attributes.includes(key.asSymbol).not.if{
+					attributes = attributes ++ key.asSymbol;
+				}
+			}
+		};
+
+		if (attributes.includes(\type)) {
+			// bump 'type' to the top of the post
+			attributes.remove(\type); attributes.addFirst(\type);
+		};
+
+		postf(":: % Info ::\n", this.class);
+
+		attributes.do{ |attribute|
+			var value;
+			value = this.tryPerform(attribute);
+			if (value.isNil and: fileParse.notNil) {
+				value = fileParse[attribute] // this can still return nil
+			};
+
+			if (value.isKindOf(Array)) {
+				value = value.asArray; // cast the Matrix to array for posting
+				if (value.rank > 1) {
+					postf("\n% : [\n", attribute);
+					value.do{ |elem| postf("\t%\n", elem) };
+					"  ]".postln;
+				} {
+					postf("\n% : \n\t%\n", attribute, value);
+				}
+			} {
+				postf("\n% : %\n", attribute, value);
+			};
+		};
+	}
+
+	// For subclasses of AtkMatrix
+	writeToFile { arg fileNameOrPath, note, attributeDictionary, overwrite=false;
+		this.prWriteToFile(fileNameOrPath, this.set, this.type, note, attributeDictionary, overwrite);
+	}
+
+	// argSet: FOA, HOA1, HOA2, etc
+	// argType: \encoder, \decoder, \xformer
+	prWriteToFile { arg fileNameOrPath, argSet, argType, note, attributeDictionary, overwrite=false;
+		var pn, writer, ext;
+
+		pn = PathName(fileNameOrPath);
+
+		if (PathName(pn.parentPath).isFolder.not) { // check for an enclosing folder
+			// ... no enclosing folder found so assumed
+			// to be relative to extensions/matrices/'type' directory
+
+			Atk.checkSet(argSet);
+
+			// This is only needed for relative file paths in user-matrices directory
+			['encoder', 'decoder', 'xformer'].includes(argType).not.if{
+				Error("'type' argument must be 'encoder', 'decoder', or 'xformer'").throw; ^this
+			};
+
+			case
+			{ pn.colonIndices.size == 0} {
+				// only filename provided, write to dir matching 'type'
+				pn = Atk.getMatrixExtensionPath(argSet, argType) +/+ pn;
+
+			} { pn.colonIndices.size > 0} {
+				// relative path given, look for it
+				var mtxPath, relPath;
+				mtxPath = Atk.getMatrixExtensionPath(argSet, argType);
+				relPath = (mtxPath +/+ PathName(pn.parentPath));
+				if (relPath.isFolder) {
+					// valid relative path confirmed
+					pn = mtxPath +/+ pn;
+				} {
+					Error(
+						format(
+							"Specified relative folder path was not found in %\n",
+							relPath.fullPath
+						)
+					).throw;
+					^this
+				}
+			};
+		}; // otherwise, provided path is absolute
+
+		ext = pn.extension;
+		if (ext == "") {pn = pn +/+ PathName(".yml")};
+
+		overwrite.not.if{
+			pn.isFile.if{
+				Error(format(
+					"File already exists:\n\t%\nChoose another name or location, or set overwrite:true",
+					pn.fullPath
+			)).throw; ^this}
+		};
+
+		case
+		{ext == "txt"} {
+			if (pn.fileName.contains(".mosl")) {
+				this.prWriteMatrixToMOSL(pn)
+			} {
+				this.prWriteMatrixToTXT(pn)
+			}
+		}
+		{ext == "yml"} {this.prWriteMatrixToYML(pn, argSet, argType, note, attributeDictionary)}
+		{	// catch all
+			Error( format( "%%",
+				"Invalid file extension: provide '.txt' for writing matrix only, ",
+				"or '.yml' or no extension to write matrix with metadata (as YAML)")
+			).throw;
+		};
+	}
+
+
+	prWriteMatrixToTXT { arg pn; // a PathName
+		var writer;
+		writer = FileWriter( pn.fullPath );
+		// write the matrix into it by row, and close
+		matrix.rows.do{ |i| writer.writeLine( matrix.getRow(i) ) };
+		writer.close
+	}
+
+	prWriteMatrixToMOSL { arg pn; // a PathName
+		var writer;
+		writer = FileWriter( pn.fullPath );
+
+		// write num rows and cols to first 2 lines
+		writer.writeLine(["// Dimensions: rows, columns"]);
+		writer.writeLine(matrix.rows.asArray);
+		writer.writeLine(matrix.cols.asArray);
+		// write the matrix into it by row, and close
+		matrix.rows.do{ |i|
+			var row;
+			writer.writeLine([""]); // blank line
+			writer.writeLine([format("// Row %", i)]);
+
+			row = matrix.getRow(i);
+			row.do{ |j| writer.writeLine( j.asArray ) };
+		};
+		writer.close;
+	}
+
+	prWriteMatrixToYML { arg pn, set, type, note, attributeDictionary;
+		var writer, defAttributes;
+
+		writer = FileWriter( pn.fullPath );
+
+		// writer.writeLine(["matrix :"] ++ m.asArray.asString.split($ )); // all one line
+
+		// overkill on formatting, but more readable...
+		writer.writeLine(["matrix : ["]);
+		matrix.rows.do{ |i|
+			var line, row;
+			row = matrix.getRow(i);
+			line = row.asString.split($ );
+			if ((i+1) != matrix.rows) {line[line.size-1] = line.last ++ ","};
+			writer.writeLine(line);
+		};
+		writer.writeLine(["]"]);
+
+		type !? {
+			writer.writeLine([]);
+			writer.writeLine( ["type", ":", type] )
+		};
+
+		// write default attributes
+		defAttributes = [\kind, \dirOutputs, \dirInputs];
+		if (type=='decoder') {
+			defAttributes = defAttributes ++ [\shelfK,\shelfFreq]
+		};
+
+		if (attributeDictionary.notNil) {
+			// make sure attribute dict doesn't explicitly set the attribute first
+			defAttributes.do{ |attribute|
+				attributeDictionary[attribute] ?? {
+					writer.writeLine([]); //newline for readability
+					writer.writeLine( [attribute, ":", this.tryPerform(attribute)] )
+				}
+			};
+		} {
+			defAttributes.do{ |attribute|
+				writer.writeLine([]); //newline for readability
+				writer.writeLine( [attribute, ":", this.tryPerform(attribute)] )
+			};
+		};
+
+		note !? {
+			writer.writeLine([]);
+			writer.writeLine( ["note", ":", note] )
+		};
+
+		attributeDictionary !? {
+			attributeDictionary.keysValuesDo{ |k,v|
+				writer.writeLine([]);
+				writer.writeLine( [k.asString, ":", v] )
+			}
+		};
+
+		writer.close;
+	}
+
+	prParseMOSL { |pn|
+		var file, numRows, numCols, mtx, row;
+		file = FileReader.read(pn.fullPath);
+		numRows = nil;
+		numCols = nil;
+		mtx = [];
+		row = [];
+		file.do{ |line|
+			var val = line[0];
+			switch( val,
+				"//",	{}, // ignore comments
+				"",		{},	// ignore blank line
+				{	// found valid line
+					case
+					{numRows.isNil} { numRows = val.asInt }
+					{numCols.isNil} { numCols = val.asInt }
+					{
+						row = row.add(val.asFloat);
+						if (row.size==numCols) {
+							mtx = mtx.add(row);
+							row = [];
+						}
+					}
+				}
+			)
+		};
+		// test matrix dimensions
+		(mtx.size==numRows).not.if{
+			Error(
+				format(
+					"Mismatch in matrix dimensions: rows specified [%], rows parsed from file [%]",
+					numRows, mtx.size
+				)
+			).throw
+		};
+		mtx.do{ |row, i|
+			if (row.size!=numCols) {
+				Error(
+					format(
+						"Mismatch in matrix dimensions: rows % has % columns, but file species %",
+						i, row.size, numCols
+					)
+				).throw
+			}
+		};
+
+		^mtx
+	}
+
+	fileName { ^try {PathName(filePath).fileName} }
+
+	loadFromLib { |...args|
+		var pathStr;
+		pathStr = this.kind.asString ++ "/";
+
+		args.do{ |argParam, i|
+			pathStr = if (i>0) {
+				format("%-%", pathStr, argParam.asString)
+			} {
+				format("%%", pathStr, argParam.asString)
+			};
+		};
+
+		this.initFromFile(
+			// format("%/%-%.yml", this.kind, *args),
+			pathStr++".yml",
+			this.type
+		);
+
+		switch( this.type,
+			'\encoder', {this.initEncoderVarsForFiles}, // properly set dirInputs
+			'\decoder', {this.initDecoderVarsForFiles}, // properly set dirOutputs
+			'\xformer', {}
+		)
+	}
+
+}
+
+FoaDecoderMatrix : AtkMatrix {
 	var <dirOutputs;
 	var <>shelfFreq, <shelfK;
 
-
 	*newDiametric { arg directions = [ pi/4, 3*pi/4 ], k = 'single';
-		^super.newCopyArgs('diametric').initDiametric(directions, k);
+		^super.new('diametric').initDiametric(directions, k);
 	}
 
 	*newPanto { arg numChans = 4, orientation = 'flat', k = 'single';
-		^super.newCopyArgs('panto').initPanto(numChans, orientation, k);
+		^super.new('panto').initPanto(numChans, orientation, k);
 	}
 
 	*newPeri { arg numChanPairs = 4, elevation = 0.61547970867039,
 				orientation = 'flat', k = 'single';
-		^super.newCopyArgs('peri').initPeri(numChanPairs, elevation,
+		^super.new('peri').initPeri(numChanPairs, elevation,
 			orientation, k);
 	}
 
 	*newQuad { arg angle = pi/4, k = 'single';
-		^super.newCopyArgs('quad').initQuad(angle, k);
+		^super.new('quad').initQuad(angle, k);
 	}
 
 	*newStereo { arg angle = pi/2, pattern = 0.5;
-		^super.newCopyArgs('stereo').initStereo(angle, pattern);
+		^super.new('stereo').initStereo(angle, pattern);
 	}
 
 	*newMono { arg theta = 0, phi = 0, pattern = 0;
-		^super.newCopyArgs('mono').initMono(theta, phi, pattern);
+		^super.new('mono').initMono(theta, phi, pattern);
 	}
 
 	*new5_0 { arg irregKind = 'focused';
-		^super.newCopyArgs('5.0').init5_0(irregKind);
+		^super.new('5.0').init5_0(irregKind);
+		// ^super.new('5_0').loadFromLib(irregKind);
 	}
 
 	*newBtoA { arg orientation = 'flu', weight = 'dec';
-		^super.newCopyArgs('BtoA').initBtoA(orientation, weight);
+		^super.new('BtoA').initBtoA(orientation, weight);
+		// ^super.new('BtoA').loadFromLib(orientation, weight);
 	}
 
 	*newHoa1 { arg ordering = 'acn', normalisation = 'n3d';
-		^super.newCopyArgs('Hoa1').initHoa1(ordering, normalisation);
+		^super.new('hoa1').initHoa1(ordering, normalisation);
+		// ^super.new('hoa1').loadFromLib(ordering, normalisation);
 	}
 
 	*newAmbix1 {
 		var ordering = 'acn', normalisation = 'sn3d';
-		^super.newCopyArgs('Hoa1').initHoa1(ordering, normalisation);
+		^super.new('hoa1').initHoa1(ordering, normalisation);
+		// ^super.new('hoa1').loadFromLib(ordering, normalisation);
+	}
+
+	*newFromFile { arg filePathOrName;
+		^super.new.initFromFile(filePathOrName, 'decoder', true).initDecoderVarsForFiles;
 	}
 
 	initK2D { arg k;
@@ -256,7 +622,7 @@ FoaDecoderMatrix {
 		var positions, positions2;
 		var speakerMatrix, n;
 
-		switch (directions.rank,					// 2D or 3D?
+		switch (directions.rank,			// 2D or 3D?
 			1, {									// 2D
 
 				// find positions
@@ -649,7 +1015,22 @@ FoaDecoderMatrix {
 		matrix = Matrix.with(matrix);
 
 		// set output channel (speaker) directions for instance
+		// still in b-format in this case, so 'inf' directions
 		dirOutputs = matrix.rows.collect({ inf });
+	}
+
+	initDecoderVarsForFiles {
+		if (fileParse.notNil) {
+			dirOutputs = if (fileParse.dirOutputs.notNil) {
+				fileParse.dirOutputs.asFloat
+			} { // output directions are unspecified in the provided matrix
+				matrix.rows.collect({ 'unspecified' })
+			};
+			shelfK = fileParse.shelfK !? {fileParse.shelfK.asFloat};
+			shelfFreq = fileParse.shelfFreq !? {fileParse.shelfFreq.asFloat};
+		} { // txt file provided, no fileParse
+			dirOutputs = matrix.rows.collect({ 'unspecified' });
+		};
 	}
 
 	dirInputs { ^this.numInputs.collect({ inf }) }
@@ -664,79 +1045,86 @@ FoaDecoderMatrix {
 
 	dim { ^this.numInputs - 1}
 
+	type { ^'decoder' }
+
 	printOn { arg stream;
 		stream << this.class.name << "(" <<* [this.kind, this.dim, this.numChannels] <<")";
 	}
-
 }
 
 
 //-----------------------------------------------------------------------
 // martrix encoders
 
-FoaEncoderMatrix {
-	var <kind;
-	var <matrix;
+FoaEncoderMatrix : AtkMatrix {
 	var <dirInputs;
 
 	*newAtoB { arg orientation = 'flu', weight = 'dec';
-		^super.newCopyArgs('AtoB').initAtoB(orientation, weight);
+		^super.new('AtoB').initAtoB(orientation, weight);
+		// ^super.new('AtoB').loadFromLib(orientation, weight)
 	}
 
 	*newHoa1 { arg ordering = 'acn', normalisation = 'n3d';
-		^super.newCopyArgs('Hoa1').initHoa1(ordering, normalisation);
+		^super.new('hoa1').initHoa1(ordering, normalisation);
+		// ^super.new('hoa1').loadFromLib(ordering, normalisation);
 	}
 
 	*newAmbix1 {
 		var ordering = 'acn', normalisation = 'sn3d';
-		^super.newCopyArgs('Hoa1').initHoa1(ordering, normalisation);
+		^super.new('hoa1').initHoa1(ordering, normalisation);
+		// ^super.new('hoa1').loadFromLib(ordering, normalisation);
 	}
 
 	*newZoomH2n{
 		var ordering = 'acn', normalisation = 'sn3d';
-		^super.newCopyArgs('Hoa1').initHoa1(ordering, normalisation);
+		^super.new('hoa1').initHoa1(ordering, normalisation);
+		// ^super.new('hoa1').loadFromLib(ordering, normalisation);
 	}
 
 	*newOmni {
-		^super.newCopyArgs('omni').initOmni;
+		^super.new('omni').initOmni;
 	}
 
 	*newDirection { arg theta = 0, phi = 0;
-		^super.newCopyArgs('dir').initDirection(theta, phi);
+		^super.new('dir').initDirection(theta, phi);
 	}
 
 	*newStereo { arg angle = 0;
-		^super.newCopyArgs('stereo').initStereo(angle);
+		^super.new('stereo').initStereo(angle);
 	}
 
 	*newQuad {
-		^super.newCopyArgs('quad').initQuad;
+		^super.new('quad').initQuad;
 	}
 
 	*new5_0 {
-		^super.newCopyArgs('5.0').init5_0;
+		^super.new('5.0').init5_0;
 	}
 
 	*new7_0 {
-		^super.newCopyArgs('7.0').init7_0;
+		^super.new('7.0').init7_0;
 	}
 
 	*newDirections { arg directions, pattern = nil;
-		^super.newCopyArgs('dirs').initDirections(directions, pattern);
+		^super.new('dirs').initDirections(directions, pattern);
 	}
 
 	*newPanto { arg numChans = 4, orientation = 'flat';
-		^super.newCopyArgs('panto').initPanto(numChans, orientation);
+		^super.new('panto').initPanto(numChans, orientation);
 	}
 
 	*newPeri { arg numChanPairs = 4, elevation = 0.61547970867039,
 				orientation = 'flat';
-		^super.newCopyArgs('peri').initPeri(numChanPairs, elevation,
+		^super.new('peri').initPeri(numChanPairs, elevation,
 			orientation);
 	}
 
 	*newZoomH2 { arg angles = [pi/3, 3/4*pi], pattern = 0.5857, k = 1;
-		^super.newCopyArgs('zoomH2').initZoomH2(angles, pattern, k);
+		^super.new('zoomH2').initZoomH2(angles, pattern, k);
+	}
+
+	*newFromFile { arg filePathOrName;
+		^super.new.initFromFile(filePathOrName, 'encoder', true).initEncoderVarsForFiles
 	}
 
 	init2D {
@@ -1026,6 +1414,19 @@ FoaEncoderMatrix {
 		matrix = matrix.putRow(2, matrix.getRow(2) * k); // scale Y
 	}
 
+	initEncoderVarsForFiles {
+		dirInputs = if (fileParse.notNil) {
+			if (fileParse.dirInputs.notNil) {
+				fileParse.dirInputs.asFloat
+			} { // so input directions are unspecified in the provided matrix
+				matrix.cols.collect({'unspecified'})
+			};
+		} { // txt file provided, no fileParse
+			matrix.cols.collect({'unspecified'});
+		};
+	}
+
+
 	dirOutputs { ^this.numOutputs.collect({ inf }) }
 
 	dirChannels { ^this.dirInputs }
@@ -1038,163 +1439,166 @@ FoaEncoderMatrix {
 
 	dim { ^this.numOutputs - 1}
 
+	type { ^'encoder' }
+
 	printOn { arg stream;
 		stream << this.class.name << "(" <<* [kind, this.dim, this.numInputs] <<")";
 	}
 }
 
 
-
 //-----------------------------------------------------------------------
 // martrix transforms
 
 
-FoaXformerMatrix {
-	var <kind;
-	var <matrix;
+FoaXformerMatrix : AtkMatrix {
 
 	*newMirrorX {
-		^super.newCopyArgs('mirrorX').initMirrorX;
+		^super.new('mirrorX').initMirrorX;
 	}
 
 	*newMirrorY {
-		^super.newCopyArgs('mirrorY').initMirrorY;
+		^super.new('mirrorY').initMirrorY;
 	}
 
 	*newMirrorZ {
-		^super.newCopyArgs('mirrorZ').initMirrorZ;
+		^super.new('mirrorZ').initMirrorZ;
 	}
 
 	*newMirrorO {
-		^super.newCopyArgs('mirrorO').initMirrorO;
+		^super.new('mirrorO').initMirrorO;
 	}
 
 	*newRotate { arg angle = 0;
-		^super.newCopyArgs('rotate').initRotate(angle);
+		^super.new('rotate').initRotate(angle);
 	}
 
 	*newTilt { arg angle = 0;
-		^super.newCopyArgs('tilt').initTilt(angle);
+		^super.new('tilt').initTilt(angle);
 	}
 
 	*newTumble { arg angle = 0;
-		^super.newCopyArgs('tumble').initTumble(angle);
+		^super.new('tumble').initTumble(angle);
 	}
 
 	*newDirectO { arg angle = 0;
-		^super.newCopyArgs('directO').initDirectO(angle);
+		^super.new('directO').initDirectO(angle);
 	}
 
 	*newDirectX { arg angle = 0;
-		^super.newCopyArgs('directX').initDirectX(angle);
+		^super.new('directX').initDirectX(angle);
 	}
 
 	*newDirectY { arg angle = 0;
-		^super.newCopyArgs('directY').initDirectY(angle);
+		^super.new('directY').initDirectY(angle);
 	}
 
 	*newDirectZ { arg angle = 0;
-		^super.newCopyArgs('directZ').initDirectZ(angle);
+		^super.new('directZ').initDirectZ(angle);
 	}
 
 	*newDominateX { arg gain = 0;
-		^super.newCopyArgs('dominateX').initDominateX(gain);
+		^super.new('dominateX').initDominateX(gain);
 	}
 
 	*newDominateY { arg gain = 0;
-		^super.newCopyArgs('dominateY').initDominateY(gain);
+		^super.new('dominateY').initDominateY(gain);
 	}
 
 	*newDominateZ { arg gain = 0;
-		^super.newCopyArgs('dominateZ').initDominateZ(gain);
+		^super.new('dominateZ').initDominateZ(gain);
 	}
 
 	*newZoomX { arg angle = 0;
-		^super.newCopyArgs('zoomX').initZoomX(angle);
+		^super.new('zoomX').initZoomX(angle);
 	}
 
 	*newZoomY { arg angle = 0;
-		^super.newCopyArgs('zoomY').initZoomY(angle);
+		^super.new('zoomY').initZoomY(angle);
 	}
 
 	*newZoomZ { arg angle = 0;
-		^super.newCopyArgs('zoomZ').initZoomZ(angle);
+		^super.new('zoomZ').initZoomZ(angle);
 	}
 
 	*newFocusX { arg angle = 0;
-		^super.newCopyArgs('focusX').initFocusX(angle);
+		^super.new('focusX').initFocusX(angle);
 	}
 
 	*newFocusY { arg angle = 0;
-		^super.newCopyArgs('focusY').initFocusY(angle);
+		^super.new('focusY').initFocusY(angle);
 	}
 
 	*newFocusZ { arg angle = 0;
-		^super.newCopyArgs('focusZ').initFocusZ(angle);
+		^super.new('focusZ').initFocusZ(angle);
 	}
 
 	*newPushX { arg angle = 0;
-		^super.newCopyArgs('pushX').initPushX(angle);
+		^super.new('pushX').initPushX(angle);
 	}
 
 	*newPushY { arg angle = 0;
-		^super.newCopyArgs('pushY').initPushY(angle);
+		^super.new('pushY').initPushY(angle);
 	}
 
 	*newPushZ { arg angle = 0;
-		^super.newCopyArgs('pushZ').initPushZ(angle);
+		^super.new('pushZ').initPushZ(angle);
 	}
 
 	*newPressX { arg angle = 0;
-		^super.newCopyArgs('pressX').initPressX(angle);
+		^super.new('pressX').initPressX(angle);
 	}
 
 	*newPressY { arg angle = 0;
-		^super.newCopyArgs('pressY').initPressY(angle);
+		^super.new('pressY').initPressY(angle);
 	}
 
 	*newPressZ { arg angle = 0;
-		^super.newCopyArgs('pressZ').initPressZ(angle);
+		^super.new('pressZ').initPressZ(angle);
 	}
 
 	*newAsymmetry { arg angle = 0;
-		^super.newCopyArgs('asymmetry').initAsymmetry(angle);
+		^super.new('asymmetry').initAsymmetry(angle);
 	}
 
 	*newBalance { arg angle = 0;
-		^super.newCopyArgs('zoomY').initZoomY(angle);
+		^super.new('zoomY').initZoomY(angle);
 	}
 
 	*newRTT { arg rotAngle = 0, tilAngle = 0, tumAngle = 0;
-		^super.newCopyArgs('rtt').initRTT(rotAngle, tilAngle, tumAngle);
+		^super.new('rtt').initRTT(rotAngle, tilAngle, tumAngle);
 	}
 
 	*newMirror { arg theta = 0, phi = 0;
-		^super.newCopyArgs('mirror').initMirror(theta, phi);
+		^super.new('mirror').initMirror(theta, phi);
 	}
 
 	*newDirect { arg angle = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('direct').initDirect(angle, theta, phi);
+		^super.new('direct').initDirect(angle, theta, phi);
 	}
 
 	*newDominate { arg gain = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('dominate').initDominate(gain, theta, phi);
+		^super.new('dominate').initDominate(gain, theta, phi);
 	}
 
 	*newZoom { arg angle = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('zoom').initZoom(angle, theta, phi);
+		^super.new('zoom').initZoom(angle, theta, phi);
 	}
 
 	*newFocus { arg angle = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('focus').initFocus(angle, theta, phi);
+		^super.new('focus').initFocus(angle, theta, phi);
 	}
 
 	*newPush { arg angle = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('push').initPush(angle, theta, phi);
+		^super.new('push').initPush(angle, theta, phi);
 	}
 
 	*newPress { arg angle = 0, theta = 0, phi = 0;
-		^super.newCopyArgs('press').initPress(angle, theta, phi);
+		^super.new('press').initPress(angle, theta, phi);
+	}
+
+	*newFromFile { arg filePathOrName;
+		^super.new.initFromFile(filePathOrName, 'xformer', true);
 	}
 
 	initMirrorChan { arg chan;
@@ -1718,6 +2122,8 @@ FoaXformerMatrix {
 
 	numChannels { ^4 }			// all transforms are 3D
 
+	type { ^'xformer' }
+
 	printOn { arg stream;
 		stream << this.class.name << "(" <<* [kind, this.dim, this.numChannels] <<")";
 	}
@@ -1732,6 +2138,8 @@ FoaDecoderKernel {
 	var <kind, <subjectID;
 	var <kernel, kernelBundle, kernelInfo;
 	var <dirChannels;
+	var <op = 'kernel';
+	var <set = 'FOA';
 
 
 	// *newSpherical { arg subjectID = 0004, kernelSize = 512, server = Server.default;
@@ -2000,6 +2408,8 @@ FoaDecoderKernel {
 
 	dirInputs { ^this.numInputs.collect({ inf }) }
 
+	type { ^'decoder' }
+
 	printOn { arg stream;
 		stream << this.class.name << "(" <<*
 			[kind, this.dim, this.numChannels, subjectID, this.kernelSize] <<")";
@@ -2014,7 +2424,8 @@ FoaEncoderKernel {
 	var <kind, <subjectID;
 	var <kernel, kernelBundle, kernelInfo;
 	var <dirChannels;
-
+	var <op = 'kernel';
+	var <set = 'FOA';
 
 	*newUHJ { arg kernelSize = nil, server = Server.default, sampleRate, score;
 		^super.newCopyArgs('uhj', 0).initKernel(kernelSize, server, sampleRate, score);
@@ -2322,6 +2733,8 @@ FoaEncoderKernel {
 	numInputs { ^kernel.shape.at(0) }
 
 	dirOutputs { ^this.numOutputs.collect({ inf }) }
+
+	type { ^'encoder' }
 
 	printOn { arg stream;
 		stream << this.class.name << "(" <<*

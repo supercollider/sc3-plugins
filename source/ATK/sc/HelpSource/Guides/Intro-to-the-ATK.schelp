@@ -174,12 +174,16 @@ The ATK library for SuperCollider3 is distributed via the link::https://github.c
 Additionally, the ATK has a number of dependencies. Please install the following:
 
 list::
-##link::https://github.com/supercollider-quarks/MathLib/##MathLib:: Quark. See: link::Guides/UsingQuarks:: and the link::https://github.com/supercollider-quarks/quarks/##Quarks for SuperCollider:: project.
+##link::https://github.com/supercollider-quarks/MathLib/##MathLib:: Quark.
+
+##link::https://github.com/supercollider-quarks/FileLog##FileLog:: Quark.
 
 ##link::http://www.ambisonictoolkit.net/download/kernels/##ATK Kernels::
 
 ##link::http://www.ambisonictoolkit.net/download/recordings/##ATK Example Soundfiles::
 ::
+
+For link::Classes/Quark:: installation, see: link::Guides/UsingQuarks:: and the link::https://github.com/supercollider-quarks/quarks/##Quarks for SuperCollider:: project.
 
 section:: Examples
 
