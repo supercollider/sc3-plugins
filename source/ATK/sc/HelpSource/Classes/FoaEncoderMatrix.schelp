@@ -39,8 +39,7 @@ argument:: angle
 Soundfield distortion angle, in radians: pi/2 to -pi/2
 
 discussion:: The stereophonic signal is encoded as two planewaves. When strong::angle:: = 0, the left and right channels of the input signal arrive at code:: [90, -90] :: degrees. strong::angle:: = pi/4 distorts the arrivals to code:: [45, -45] :: degrees. strong::angle:: = pi/2, places both the left and right inputs at front centre, code:: [0, 0] :: degrees. This behaviour matches that of the Ambisonic Toolkit's first order image warping UGens: link::Classes/FoaFocus::, link::Classes/FoaZoom::, link::Classes/FoaPush::, and link::Classes/FoaPress::.
-
-
+note::The authors also suggest reviewing the Super Stereo footnote::See link::https://en.wikipedia.org/wiki/Ambisonic_UHJ_format#Super_stereo:: for further information.:: encoding technique, the classic method for encoding stereophonic signals into B-format: link::Classes/FoaEncoderKernel#*newSuper:: ::
 
 METHOD:: newQuad
 Quadraphonic encoder.

@@ -85,7 +85,7 @@ code::
 
 ::
 
-While the virtual microphone stereophonic decoder is very easy and convenient, for production work the authors advise using the UHJ ( link::Classes/FoaDecoderKernel#*newUHJ:: ) decoder. footnote::See link::http://en.wikipedia.org/wiki/Ambisonic_UHJ_format:: for further information.::
+note::While the virtual microphone stereophonic decoder is very easy and convenient, for production work the authors advise using the UHJ ( link::Classes/FoaDecoderKernel#*newUHJ:: ) decoder. footnote::See link::http://en.wikipedia.org/wiki/Ambisonic_UHJ_format:: for further information.::::
 
 
 METHOD:: newQuad
