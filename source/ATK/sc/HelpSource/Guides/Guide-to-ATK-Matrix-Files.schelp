@@ -69,19 +69,19 @@ tree::
   ::
 ::
 Each of the folders (code::FOA>encoders::, code::HOA5>decoders::, etc.) are
-empty and ready to store matrices (and kernels) for use with the ATK-sc (this package)
-and link::http://www.ambisonictoolkit.net/download/reaper/##ATK-Reaper::
-(more on that later). When you write a matrix using the ATK, it
+empty and ready to store matrices (and kernels) for use with the ATK-SC3 (this package)
+and link::http://www.ambisonictoolkit.net/download/reaper/##ATK-Reaper:: (more
+on that later). When you write a matrix using the ATK, it
 will store it in this directory structure by default, and will look here by
 default when asked to read in a matrix from file.
 
 You can view this structure and any files you've stored there using the following method:
 code::
-Atk.postMyMatrixDir();                    // All sets, all matrices types
-Atk.postMyMatrixDir('FOA');               // FOA matrices hierarchy
-Atk.postMyMatrixDir('FOA', 'encoders');	// FOA encoders only
-Atk.postMyMatrixDir('FOA', 'decoders');	// FOA decoders only
-Atk.postMyMatrixDir('FOA', 'xformers');	// FOA xformers only
+Atk.postMyMatrices();                    // All sets, all matrices types
+Atk.postMyMatrices('FOA');               // FOA matrices hierarchy
+Atk.postMyMatrices('FOA', 'encoders');	// FOA encoders only
+Atk.postMyMatrices('FOA', 'decoders');	// FOA decoders only
+Atk.postMyMatrices('FOA', 'xformers');	// FOA xformers only
 ::
 
 Each of these matrix subdirectories can have further subdirectories at your
@@ -114,10 +114,29 @@ code::
 ::
 
 This link::Classes/FoaEncoderMatrix:: is now ready to be used for encoding
-planewaves arriving from those nine uniformly distributed incidences. After all
-that hard work (thanks ATK!), we want to store the result to a file for
+planewaves arriving from those nine uniformly distributed incidences. Within
+the ATK's classification hierarchy, code::~encoder:: looks like this:
+
+table::
+    ## strong::set:: || strong::type:: || strong::op:: || strong::kind::
+    ## code::'FOA':: || code::'encoder':: || code::'matrix':: || code::'dirs'::
+::
+
+For fun, let's inspect:
+
+code::
+(
+var methodsToInspect = ['class', 'set', 'type', 'op', 'kind' ];
+
+methodsToInspect.do({arg item; (item.asString ++ " : " ++ ~encoder.perform(item)).postln;})
+)
+::
+
+
+After all that hard work (thanks ATK!), we want to store the result to a file for
 use in the future, and to use in
 link::http://www.ambisonictoolkit.net/download/reaper/##ATK-Reaper:: plugins!
+footnote::ATK-Reaper will support matrix loading in an upcoming release.::
 
 There are three available file formats, each with a special purpose:
 
@@ -141,21 +160,23 @@ code::
 ::
 
 Because we only specified a file name, not a full path,
-it will store the matrix in the default location.
-We're writing an link::Classes/FoaEncoderMatrix::, ATK can infer that
-it's an strong::encoder:: in the strong::FOA:: set.
+the ATK will store the matrix in the default location.
+As we're writing an link::Classes/FoaEncoderMatrix::, ATK can infer that
+it's an strong::encoder:: in the strong::FOA:: set. (We also know, we're dealing
+with a strong::matrix:: operation.)
 Therefore, the ATK knows to put it in: code::../extensions/matrices/FOA/encoders::.
 
 Had we specified a full path instead, it would have saved to that location.
 
 code::
 // Here are our encoders (defaults to showing the FOA set)
-Atk.postMyMatrixDir('FOA', 'encoders');
+Atk.postMyMatrices('FOA', 'encoders');
 ::
+
 
 SUBSECTION::Writing Metadata
 
-Because this matrix is somewhat unique, it would be helpful to provide a bit more information
+Because this matrix encoder is somewhat unique, it would be helpful to provide a bit more information
 about it for future reference. This is where the code::.yml:: file format comes in.
 
 Note that the link::Classes/AtkMatrix#-writeToFile:: method has some optional
@@ -188,7 +209,7 @@ We'll see the effect this has below.
 
 Now write this matrix and metadata to file...
 Be sure to specify the code::.yml:: extension in order to write the metadata.
-Set strong::overwrite = true:: to force overwrite the file we wrote before with
+Set strong::overwrite:: code::= true:: to force overwrite the file we wrote before with
 the same name and extension.
 
 code::
@@ -203,7 +224,7 @@ code::
 
 SUBSECTION:: Writing Raw Matrices
 In the above examples, we've been reading/writing matrices encapsulated in
-the AtkMatrix subclasses. When writing from these objects, some the information
+the link::Classes/AtkMatrix:: subclasses. When writing from these objects, some the information
 can be inferred from them, such as the strong::set:: (Ambisonic order,
 channel ordering, channel normalisation, e.g. code::'FOA'::, code::'HOA3'::,
 etc.) and strong::type:: of matrix (e.g. code::'encoder', 'decoder', 'xformer'::).
@@ -260,7 +281,7 @@ allows storing matrices outside the ATK paradigm, e.g. VBAP matrices, etc.
 
 There it is:
 code::
-Atk.postMyMatrixDir('FOA', 'encoders');
+Atk.postMyMatrices('FOA', 'encoders');
 ::
 
 SUBSECTION:: Subfolders: Organizing your matrices
@@ -274,13 +295,13 @@ and code::/xformers:: folders.
 
 code::
 // Store your encoder matrix with the other encoders, which live here:
-Atk.getMatrixExtensionPath('FOA', 'encoders');
+Atk.getMatrixExtensionSubPath('FOA', 'encoders');
 
 // You can make subfolder for a group of matrices, say, for a particular project:
 (
 ~projSubFolderName = "myProject";
 
-File.mkdir( Atk.getMatrixExtensionPath('FOA', 'encoders').fullPath +/+ ~projSubFolderName )
+File.mkdir( Atk.getMatrixExtensionSubPath('FOA', 'encoders').fullPath +/+ ~projSubFolderName )
 )
 
 // For convenience, we'll write the 9-point ~encoder matrix,
@@ -314,7 +335,7 @@ arguments are inferred.
 
 code::
 // There it is, in the 'myProject' subdirectory.
-Atk.postMyMatrixDir('FOA', 'encoders')
+Atk.postMyMatrices('FOA', 'encoders')
 ::
 
 Later you'll use link::Classes/FoaEncoderMatrix:: to read the file back in.
@@ -455,7 +476,7 @@ signal by using our newly authored decoding Matrix, code::~decoderMatrix::.
 code::
 (
 ~decoderDef = SynthDef(\pinv_decoder, { arg outbus=0, amp=1;
-    var foa, decoder;
+    var foa, out;
 
     // Test signal: panning noise
     foa = FoaPanB.ar( PinkNoise.ar, LFSaw.kr( 12.reciprocal, 1 ), 0 );

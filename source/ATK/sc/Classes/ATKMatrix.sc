@@ -306,12 +306,12 @@ AtkMatrix {
 			case
 			{ pn.colonIndices.size == 0} {
 				// only filename provided, write to dir matching 'type'
-				pn = Atk.getMatrixExtensionPath(argSet, argType) +/+ pn;
+				pn = Atk.getMatrixExtensionSubPath(argSet, argType) +/+ pn;
 
 			} { pn.colonIndices.size > 0} {
 				// relative path given, look for it
 				var mtxPath, relPath;
-				mtxPath = Atk.getMatrixExtensionPath(argSet, argType);
+				mtxPath = Atk.getMatrixExtensionSubPath(argSet, argType);
 				relPath = (mtxPath +/+ PathName(pn.parentPath));
 				if (relPath.isFolder) {
 					// valid relative path confirmed
