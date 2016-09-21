@@ -4037,6 +4037,8 @@ void EnvFollow_Ctor( EnvFollow* unit ) {
 	unit->eprev_ = 0.0f;
 
 	SETCALC(EnvFollow_next);
+
+	OUT0(0) = 0.0f;
 }
 
 
