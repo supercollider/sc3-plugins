@@ -28,14 +28,6 @@ RosslerResL : MCLDChaosGen {
 	}
 }
 
-// THIS ONE DOESN'T SEEM TO WORK YET! The default args lead to NaN
-ChuaL : MCLDChaosGen {
-	//const <equation="x' = -y-z\ny' = x + ay\nz' = b + z(x - c)";
-	*ar { arg freq=22050, a=0.3286, b=0.9336, c= -0.8126, d=0.399, rr=0.6.reciprocal, h=0.05, xi=0.1, yi=0, zi=0, mul=1.0, add=0.0;
-		^this.multiNew('audio', freq, a, b, c, d, rr, h, xi, yi, zi).madd(mul, add)
-	}
-}
-
 // This is the attractor described as "the L system" on http://sprott.physics.wisc.edu/chaos/finco/abs.html
 FincoSprottL : MultiOutUGen {
 	const <equation="x' = y+z\ny' = a|x| - y\nz' = 1 - x";
