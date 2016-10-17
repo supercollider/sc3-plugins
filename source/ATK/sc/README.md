@@ -158,7 +158,7 @@ Ambisonic Toolkit.
 List of Changes
 ---------------
 
-Unreleased
+Version 3.8.0
 
 *  New features:
     *  Matrix reading & writing: encoder, xformer, & decoder.
@@ -280,7 +280,7 @@ are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 Contributors
 ------------
 
-Unreleased
+Version 3.8.0
 *  Daniel Peterson (@dmartinp)
 *  Joseph Anderson (@joslloand)
 *  Michael McCrea (@mtmccrea)
