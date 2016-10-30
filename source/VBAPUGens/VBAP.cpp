@@ -19,6 +19,8 @@
  beastmulch-info@contacts.bham.ac.uk
 
  The BEASTmulch project was supported by a grant from the Arts and Humanities Research Council of the UK: http://www.ahrc.ac.uk
+
+ Smoother modulation implemented by Nathan Ho, 2016.
 */
 
 
@@ -95,6 +97,10 @@ static InterfaceTable *ft;
 
 struct VBAP : Unit
 {
+	float last_azimuth;
+	float last_elevation;
+	float last_spread;
+
 	float x_azi;				/* panning direction azimuth */
 	float x_ele;				/* panning direction elevation */
 	float x_set_inv_matx[MAX_LS_SETS][9];  /* inverse matrice for each loudspeaker set */
@@ -505,12 +511,8 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-static inline void VBAP_calc_gain_factors(VBAP * unit)
+static inline void VBAP_calc_gain_factors(VBAP * unit, float azimuth, float elevation, float spread)
 {
-	// adapted from vbap_bang
-	float azimuth = ZIN0(2);
-	float elevation = ZIN0(3);
-	float spread = ZIN0(4);
 
 	float *final_gs = unit->final_gs;
 
@@ -544,41 +546,66 @@ static inline void VBAP_calc_gain_factors(VBAP * unit)
 
 static void VBAP_next(VBAP *unit, int inNumSamples)
 {
-	VBAP_calc_gain_factors(unit);
 
 	float *zin0 = ZIN(0);
 	float *final_gs = unit->final_gs;
 
-	// now scale the outputs
-	for (int i=0; i<(unit->mNumOutputs); ++i) {
-		float *out = ZOUT(i);
-		float chanamp = unit->m_chanamp[i];
-		float nextchanamp = final_gs[i];
-		if (nextchanamp == chanamp) {
-			if (nextchanamp == 0.f) {
-				ZClear(inNumSamples, out);
-			} else {
-				float *in = zin0;
-				LOOP1(inNumSamples,
-					 ZXP(out) = ZXP(in) * nextchanamp;
-					 )
-			}
-		} else {
-			float chanampslope = CALCSLOPE(nextchanamp, chanamp);
-			float *in = zin0;
-			LOOP1(inNumSamples,
-				 ZXP(out) = ZXP(in) * chanamp;
-				 chanamp += chanampslope;
-				 )
-			unit->m_chanamp[i] = nextchanamp;
-		}
+	float next_azimuth = ZIN0(2);
+	float next_elevation = ZIN0(3);
+	float next_spread = ZIN0(4);
+
+	float azimuth_delta = next_azimuth - unit->last_azimuth;
+	while (azimuth_delta > 180) {
+		azimuth_delta -= 360;
 	}
+	while (azimuth_delta < -180) {
+		azimuth_delta += 360;
+	}
+	float azimuth_inc = azimuth_delta / inNumSamples;
+	float elevation_inc = (next_elevation - unit->last_elevation) / inNumSamples;
+	float spread_inc = (next_spread - unit->last_spread) / inNumSamples;
+
+	float azimuth = next_azimuth;
+	float elevation = next_elevation;
+	float spread = next_spread;
+
+	for (int i = 0; i < inNumSamples; i++) {
+		VBAP_calc_gain_factors(unit, azimuth, elevation, spread);
+
+		for (int n = 0; n < unit->mNumOutputs; n++) {
+			float *out = ZOUT(n);
+			float chanamp = unit->m_chanamp[n];
+			float nextchanamp = final_gs[n];
+			if (nextchanamp == chanamp) {
+				if (nextchanamp == 0.f) {
+					out[i] = 0.f;
+				} else {
+					float *in = zin0;
+					out[i] = in[i] * nextchanamp;
+				}
+			} else {
+				float chanampslope = CALCSLOPE(nextchanamp, chanamp);
+				float *in = zin0;
+				out[i] = in[i] * chanamp;
+				chanamp += chanampslope;
+				unit->m_chanamp[n] = nextchanamp;
+			}
+		}
+
+		azimuth += azimuth_inc;
+		elevation += elevation_inc;
+		spread += spread_inc;
+	}
+
+	unit->last_azimuth = next_azimuth;
+	unit->last_elevation = next_elevation;
+	unit->last_spread = next_spread;
 }
 
 #ifdef NOVA_SIMD
 static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 {
-	VBAP_calc_gain_factors(unit);
+	VBAP_calc_gain_factors(unit, ZIN0(2), ZIN0(3), ZIN0(4));
 
 	float *in = IN(0);
 	float *final_gs = unit->final_gs;
@@ -605,6 +632,10 @@ static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 static void VBAP_Ctor(VBAP* unit)
 {
 	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
+
+	unit->last_azimuth = ZIN0(2);
+	unit->last_elevation = ZIN0(3);
+	unit->last_spread = ZIN0(4);
 
 	// initialise interpolation levels and outputs
 	for (int i=0; i<numOutputs; ++i) {
@@ -678,11 +709,11 @@ static void VBAP_Ctor(VBAP* unit)
 	}
 	//printf("vbap: Loudspeaker setup configured!\n");
 
-#ifdef NOVA_SIMD
+/*#ifdef NOVA_SIMD
 	if (!(BUFLENGTH & 15))
 		SETCALC(VBAP_next_simd);
 	else
-#endif
+#endif*/
 		SETCALC(VBAP_next);
 
     if (unit->x_lsset_available == 1) {
