@@ -68,7 +68,6 @@ void LADSPA_Ctor(LADSPA *unit) {
         return;
     } else {
         unit->desc = *found;
-        Print("LADSPA: Found plugin %lu (%s)\n",unit->desc->UniqueID,unit->desc->Name);
     }
 
     unit->handle = unit->desc->instantiate(unit->desc,SAMPLERATE);
@@ -76,19 +75,11 @@ void LADSPA_Ctor(LADSPA *unit) {
     int in_index = 2, out_index = 0;
     for(unsigned long i = 0; i < unit->desc->PortCount; i++) {
         if(LADSPA_IS_PORT_INPUT(unit->desc->PortDescriptors[i])) {
-            Print("IN %d: %s ",in_index,unit->desc->PortNames[i]);
             unit->desc->connect_port(unit->handle,i,IN(in_index++));
         } else if(LADSPA_IS_PORT_OUTPUT(unit->desc->PortDescriptors[i])) {
-            Print("OUT %d: %s ",out_index,unit->desc->PortNames[i]);
             if(out_index<unit->requested_channels && LADSPA_IS_PORT_AUDIO(unit->desc->PortDescriptors[i]))
                 unit->desc->connect_port(unit->handle,i,OUT(out_index++));
-            else
-                Print("SKIPPED ");
         }
-        if(LADSPA_IS_PORT_CONTROL(unit->desc->PortDescriptors[i]))
-            Print("[control]\n");
-        else if(LADSPA_IS_PORT_AUDIO(unit->desc->PortDescriptors[i]))
-            Print("[audio]\n");
     }
 
     unit->plugin_channels = out_index;
