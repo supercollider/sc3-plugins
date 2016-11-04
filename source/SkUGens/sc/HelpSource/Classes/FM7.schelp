@@ -63,11 +63,11 @@ code::
 
 method::arAlgo
 
-Provided a number for a wiring (called 'algorithm' in the FM-world), returns an instance that has this setup. Three of them are currently implemented.
+Provided a number for a wiring (called 'algorithm' in the FM-world), returns an instance that has this setup. All 32 algorithms from the DX7 are implemented.
 
 argument::algo
 
-The id of the algorithms [0..2]
+The id of the algorithms [0..31]
 
 argument::ctlMatrix
 
