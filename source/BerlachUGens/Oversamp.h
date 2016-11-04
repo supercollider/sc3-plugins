@@ -4,21 +4,26 @@
 /* Macros and structs for oversampled SuperCollider Ugens */
 /* For an example of how to use this macros see the file Oversamp8.cpp */
 
-struct Oversamp3 : public Unit
-{
-	float m_domem[238];
-	float m_upmem[8];
-};
-
-
-#define OVERSAMPLE3_INIT\
-  memset(unit->m_domem, 0, sizeof(float)*238);\
+#define OVERSAMPLE_INIT(n,off)\
+  int domemsize = (n) * BUFLENGTH + (off);\
+  unit->m_domem = (float*)RTAlloc(unit->mWorld, sizeof(float)*domemsize);\
+  memset(unit->m_domem, 0, sizeof(float)*domemsize);\
   memset(unit->m_upmem, 0, sizeof(float)*8)
+
+#define OVERSAMPLE_DTOR\
+  RTFree(unit->mWorld, unit->m_domem)
 
 #define UPMEM(i) (upmem[i])
 #define DOMEMPUT(i) (domemoff[oversampidx+(i)])
 #define DOMEMGET(i) (domemoff[(oversampidx-(i))])
 
+struct Oversamp3 : public Unit
+{
+	float* m_domem;
+	float m_upmem[8];
+};
+
+#define OVERSAMPLE3_INIT OVERSAMPLE_INIT(3, 46)
 
 
 
@@ -75,12 +80,10 @@ struct Oversamp3 : public Unit
 struct Oversamp4 : public Unit
 {
 	float m_upmem[8];
-	float m_domem[302];
+	float* m_domem;
 };
 
-#define OVERSAMPLE4_INIT\
-  memset(unit->m_domem, 0, sizeof(float)*302);\
-  memset(unit->m_upmem, 0, sizeof(float)*8)
+#define OVERSAMPLE4_INIT OVERSAMPLE_INIT(4, 46)
 
 
 
@@ -160,12 +163,10 @@ struct Oversamp4 : public Unit
 struct Oversamp8 : public Unit
 {
 	float m_upmem[8];
-	float m_domem[584];
+	float* m_domem;
 };
 
-#define OVERSAMPLE8_INIT\
-  memset(unit->m_domem, 0, sizeof(float)*584);\
-  memset(unit->m_upmem, 0, sizeof(float)*8)
+#define OVERSAMPLE8_INIT OVERSAMPLE_INIT(8, 72)
 
 
 

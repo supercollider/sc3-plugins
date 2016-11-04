@@ -133,39 +133,51 @@ void BLBufRd_next(BLBufRd *unit, int inNumSamples);
 
 
 void OSWrap8_Ctor(OSWrap8 *unit);
+void OSWrap8_Dtor(OSWrap8 *unit);
 void OSWrap8_next(OSWrap8 *unit, int inNumSamples);
 
 void OSWrap4_Ctor(OSWrap4 *unit);
+void OSWrap4_Dtor(OSWrap4 *unit);
 void OSWrap4_next(OSWrap4 *unit, int inNumSamples);
 
 void OSFold4_Ctor(OSFold4 *unit);
+void OSFold4_Dtor(OSFold4 *unit);
 void OSFold4_next(OSFold4 *unit, int inNumSamples);
 
 void OSFold8_Ctor(OSFold8 *unit);
+void OSFold8_Dtor(OSFold8 *unit);
 void OSFold8_next(OSFold8 *unit, int inNumSamples);
 
 void OSTrunc4_Ctor(OSTrunc4 *unit);
+void OSTrunc4_Dtor(OSTrunc4 *unit);
 void OSTrunc4_next(OSTrunc4 *unit, int inNumSamples);
 
 void OSTrunc8_Ctor(OSTrunc8 *unit);
+void OSTrunc8_Dtor(OSTrunc8 *unit);
 void OSTrunc8_next(OSTrunc8 *unit, int inNumSamples);
 
 void Clipper8_Ctor(Clipper8 *unit);
+void Clipper8_Dtor(Clipper8 *unit);
 void Clipper8_next(Clipper8 *unit, int inNumSamples);
 
 void Clipper4_Ctor(Clipper4 *unit);
+void Clipper4_Dtor(Clipper4 *unit);
 void Clipper4_next(Clipper4 *unit, int inNumSamples);
 
 void SoftClipper8_Ctor(SoftClipper8 *unit);
+void SoftClipper8_Dtor(SoftClipper8 *unit);
 void SoftClipper8_next(SoftClipper8 *unit, int inNumSamples);
 
 void SoftClipper4_Ctor(SoftClipper4 *unit);
+void SoftClipper4_Dtor(SoftClipper4 *unit);
 void SoftClipper4_next(SoftClipper4 *unit, int inNumSamples);
 
 void SoftClipAmp8_Ctor(SoftClipAmp8 *unit);
+void SoftClipAmp8_Dtor(SoftClipAmp8 *unit);
 void SoftClipAmp8_next(SoftClipAmp8 *unit, int inNumSamples);
 
 void SoftClipAmp4_Ctor(SoftClipAmp4 *unit);
+void SoftClipAmp4_Dtor(SoftClipAmp4 *unit);
 void SoftClipAmp4_next(SoftClipAmp4 *unit, int inNumSamples);
 
 void DriveNoise_Ctor(DriveNoise *unit);
@@ -892,6 +904,12 @@ Clipper8_Ctor (Clipper8 *unit)
 }
 
 void
+Clipper8_Dtor (Clipper8 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 Clipper8_next (Clipper8 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -916,6 +934,12 @@ Clipper4_Ctor (Clipper4 *unit)
 {
   OVERSAMPLE4_INIT;
   SETCALC(Clipper4_next);
+}
+
+void
+Clipper4_Dtor (Clipper4 *unit)
+{
+  OVERSAMPLE_DTOR;
 }
 
 void
@@ -951,6 +975,12 @@ SoftClipper8_Ctor (SoftClipper8 *unit)
 }
 
 void
+SoftClipper8_Dtor (SoftClipper8 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 SoftClipper8_next (SoftClipper8 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -974,6 +1004,12 @@ SoftClipper4_Ctor (SoftClipper4 *unit)
 {
   OVERSAMPLE4_INIT;
   SETCALC(SoftClipper4_next);
+}
+
+void
+SoftClipper4_Dtor (SoftClipper4 *unit)
+{
+  OVERSAMPLE_DTOR;
 }
 
 void
@@ -1033,6 +1069,12 @@ SoftClipAmp8_Ctor (SoftClipAmp8 *unit)
 }
 
 void
+SoftClipAmp8_Dtor (SoftClipAmp8 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 SoftClipAmp8_next (SoftClipAmp8 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1059,6 +1101,12 @@ SoftClipAmp4_Ctor (SoftClipAmp4 *unit)
 }
 
 void
+SoftClipAmp4_Dtor (SoftClipAmp4 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 SoftClipAmp4_next (SoftClipAmp4 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1080,6 +1128,12 @@ OSWrap4_Ctor (OSWrap4 *unit)
 {
   OVERSAMPLE4_INIT;
   SETCALC(OSWrap4_next);
+}
+
+void
+OSWrap4_Dtor (OSWrap4 *unit)
+{
+  OVERSAMPLE_DTOR;
 }
 
 void
@@ -1108,6 +1162,12 @@ OSWrap8_Ctor (OSWrap8 *unit)
 }
 
 void
+OSWrap8_Dtor (OSWrap8 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 OSWrap8_next (OSWrap8 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1133,6 +1193,12 @@ OSFold4_Ctor (OSFold4 *unit)
 }
 
 void
+OSFold4_Dtor (OSFold4 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 OSFold4_next (OSFold4 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1155,6 +1221,12 @@ OSFold8_Ctor (OSFold8 *unit)
 {
   OVERSAMPLE8_INIT;
   SETCALC(OSFold8_next);
+}
+
+void
+OSFold8_Dtor (OSFold8 *unit)
+{
+  OVERSAMPLE_DTOR;
 }
 
 void
@@ -1184,6 +1256,12 @@ OSTrunc4_Ctor (OSTrunc4 *unit)
 }
 
 void
+OSTrunc4_Dtor (OSTrunc4 *unit)
+{
+  OVERSAMPLE_DTOR;
+}
+
+void
 OSTrunc4_next (OSTrunc4 *unit, int inNumSamples)
 {
   float *out = ZOUT(0);
@@ -1205,6 +1283,12 @@ OSTrunc8_Ctor (OSTrunc8 *unit)
 {
   OVERSAMPLE8_INIT;
   SETCALC(OSTrunc8_next);
+}
+
+void
+OSTrunc8_Dtor (OSTrunc8 *unit)
+{
+  OVERSAMPLE_DTOR;
 }
 
 void
@@ -1237,18 +1321,18 @@ PluginLoad(Berlach)
   DefineSimpleUnit(LPFVS6);
   DefineSimpleUnit(LPF1);
   DefineSimpleUnit(BLBufRd);
-  DefineSimpleUnit(OSWrap4);
-  DefineSimpleUnit(OSWrap8);
-  DefineSimpleUnit(OSTrunc4);
-  DefineSimpleUnit(OSTrunc8);
-  DefineSimpleUnit(OSFold4);
-  DefineSimpleUnit(OSFold8);
-  DefineSimpleUnit(Clipper8);
-  DefineSimpleUnit(Clipper4);
-  DefineSimpleUnit(SoftClipper8);
-  DefineSimpleUnit(SoftClipper4);
-  DefineSimpleUnit(SoftClipAmp8);
-  DefineSimpleUnit(SoftClipAmp4);
+  DefineDtorUnit(OSWrap4);
+  DefineDtorUnit(OSWrap8);
+  DefineDtorUnit(OSTrunc4);
+  DefineDtorUnit(OSTrunc8);
+  DefineDtorUnit(OSFold4);
+  DefineDtorUnit(OSFold8);
+  DefineDtorUnit(Clipper8);
+  DefineDtorUnit(Clipper4);
+  DefineDtorUnit(SoftClipper8);
+  DefineDtorUnit(SoftClipper4);
+  DefineDtorUnit(SoftClipAmp8);
+  DefineDtorUnit(SoftClipAmp4);
   DefineSimpleUnit(DriveNoise);
 
 
