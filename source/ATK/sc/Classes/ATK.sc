@@ -114,6 +114,11 @@ Atk {
 
 		// supported sets
 		sets = [ 'FOA', 'HOA1', 'HOA2', 'HOA3', 'HOA4', 'HOA5'];
+
+		if (\Matrix.asClass.isNil) {
+			"Please run Quarks.install(\"MathLib\") and recompile the class library."
+			" It is a dependency for the Ambisonic Toolkit (ATK).".warn;
+		};
 	}
 
 	*userSupportDir_ {arg userSupportDirIn;
