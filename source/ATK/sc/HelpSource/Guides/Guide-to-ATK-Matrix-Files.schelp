@@ -222,68 +222,6 @@ code::
 )
 ::
 
-SUBSECTION:: Writing Raw Matrices
-In the above examples, we've been reading/writing matrices encapsulated in
-the link::Classes/AtkMatrix:: subclasses. When writing from these objects, some the information
-can be inferred from them, such as the strong::set:: (Ambisonic order,
-channel ordering, channel normalisation, e.g. code::'FOA'::, code::'HOA3'::,
-etc.) and strong::type:: of matrix (e.g. code::'encoder', 'decoder', 'xformer'::).
-In the case of a raw matrix, this information can't be inferred and should be
-explicitly set when writing to file.
-
-code::
-( // Here's a raw A-to-B encoder matrix:
-~matrix = Matrix.with([
-	[ 0.61237243569579, 0.61237243569579, 0.61237243569579, 0.61237243569579 ],
-	[ 0.5, 0.5, -0.5, -0.5 ],
-	[ 0.5, -0.5, 0.5, -0.5 ],
-	[ 0.5, -0.5, -0.5, 0.5 ]
-])
-)
-::
-
-Metadata is useful to record more information about the matrix:
-
-code::
-(
-~note = "A 4-channel A-to-B encoder matrix, in Front-Left-Up orientation.";
-
-// A Dictionary of more metadata to add.
-~properties =  (
-	author: "Me, the Reader",
-	dateCreated: Date.getDate.stamp,
-	ordering: 'FuMa',
-	normalisation: 'MaxN',
-	dirInputs: [ [ 0.78539816339745, 0.61547970867039 ], [ -0.78539816339745, -0.61547970867039 ], [ 2.3561944901923, -0.61547970867039 ], [ -2.3561944901923, 0.61547970867039 ] ]
-);
-)
-::
-
-Now be sure to list the proper info for the arguments when writing it to file.  This is how the ATK will know where to store the file by default (unless a full path is provided to the file name argument).
-
-code::
-(
-~matrix.writeToFile( "myA2B_flu_Matrix.yml", // be sure to use .yml for metadata
-  'FOA',      // set
-  'encoder',  // type
-  ~note,
-  ~properties
-)
-)
-::
-
-NOTE:: If providing a file path relative to your code::/ATK/extension/matrices/...::
-directory, strong::set:: and strong::type:: are necessary arguments to locate the
-proper directory to store your file. If providing an absolute file path,
-strong::set:: and strong::type:: are recommended but not strictly enforced. This
-allows storing matrices outside the ATK paradigm, e.g. VBAP matrices, etc.
-::
-
-There it is:
-code::
-Atk.postMyMatrices('FOA', 'encoders');
-::
-
 SUBSECTION:: Subfolders: Organizing your matrices
 
 If you'll be generating many matrices, it's advisable to organize your matrices into
