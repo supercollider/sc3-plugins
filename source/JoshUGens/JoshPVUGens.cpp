@@ -1230,7 +1230,7 @@ void BinData_next(BinData *unit, int inNumSamples)
 	    World *world = unit->mWorld;
 	    if (ibufnum >= world->mNumSndBufs) ibufnum = 0;
 	    SndBuf *buf = world->mSndBufs + ibufnum;
-	    float fnumbins = (float)(buf->samples - 2 >> 1);
+	    float fnumbins = (float)((buf->samples - 2) >> 1);
 	    int bin = unit->m_bin;
 	    SCPolarBuf *p = ToPolarApx(buf);
 	    float sr = (float)unit->mWorld->mSampleRate; /* we need the audio rate... calc it here */
@@ -1758,7 +1758,7 @@ float wrapphase(float phase){
 		unit->m_buf = world->mSndBufs + bufnum; \
 	} \
 	SndBuf *buf = unit->m_buf; \
-	int numbins = buf->samples - 2 >> 1;
+	int numbins = (buf->samples - 2) >> 1;
 
 
 #define PV_DATA_INIT_READ \
