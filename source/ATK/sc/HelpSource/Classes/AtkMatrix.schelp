@@ -1,7 +1,7 @@
 TITLE:: AtkMatrix
 summary:: A superclass to the Atk's various matrix classes.
 categories:: Libraries>Ambisonic Toolkit>Internals
-related:: Classes/FoaEncoderMatrix, Classes/FoaDecoderMatrix, Classes/FoaXformerMatrix, Classes/Matrix
+related:: Classes/FoaEncoderMatrix, Classes/FoaDecoderMatrix, Classes/FoaXformerMatrix, Classes/Matrix, Guides/Guide-to-ATK-Matrix-Files
 
 DESCRIPTION::
 An AtkMatrix is not typically instantiated directly, but rather through one of its subclasses:
@@ -23,6 +23,18 @@ A link::Classes/Matrix:: in the form of
 code::
 Matrix.with([[row1],[row2],...[rowN]])
 ::
+
+ARGUMENT:: set
+code::'FOA', 'HOA1', 'HOA2', ... etc::.
+Set describes both the signal set and the tool set, encompassing the Ambisonic order, as well as channel ordering and normalisation.
+
+ARGUMENT:: type
+code::'decoder', 'encoder', or 'xformer'::.
+
+NOTE::
+strong::set:: and strong::type:: will be required if the code::AtkMatrix:: will subsequently be written to a file.
+::
+
 
 INSTANCEMETHODS::
 

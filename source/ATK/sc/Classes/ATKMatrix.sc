@@ -161,25 +161,49 @@ FoaSpeakerMatrix {
 }
 
 AtkMatrix {
-	var <kind;			// copyArgs
+	// copyArgs
+	var <kind, <set = 'FOA', <type; // NOTE: 'set' default will change with addition of HOA
+
 	var <matrix;
 	var <filePath;		// matrices from files only
 	var <fileParse;		// data parsed from YAML file
 	var <op = 'matrix';
-	var <set = 'FOA';   // ... for now
 
 	// most typically called by subclass
-	*new { |mtxKind|
-		^super.newCopyArgs(mtxKind)
+	// *new { |mtxKind, set, mtxType|
+	*new { |kind, set, type|
+		^super.newCopyArgs(kind).init(set, type)
+	}
+
+	init { |argSet, argType|
+		if (argSet.notNil) {
+			set = argSet
+		} { // detect from class
+			if (this.class.asString.keep(3) == "Foa") {
+				set = 'FOA';
+			}
+		};
+		if (argType.notNil) {
+			type = argType
+		} { // detect from class
+			type = switch( this.class,
+				FoaEncoderMatrix, {'encoder'},
+				FoaEncoderKernel, {'encoder'},
+				FoaDecoderMatrix, {'decoder'},
+				FoaDecoderKernel, {'decoder'},
+				FoaXformerMatrix, {'xformer'}
+			);
+		};
 	}
 
 	// used when writing a Matrix to file:
 	// need to convert to AtkMatrix first
-	*newFromMatrix { |aMatrix|
-		^super.newCopyArgs('fromMatrix').initFromMatrix(aMatrix)
+	*newFromMatrix { |aMatrix, set, type|
+		^super.newCopyArgs('fromMatrix').initFromMatrix(aMatrix, set, type)
 	}
 
-	initFromMatrix { |aMatrix|
+	initFromMatrix { |aMatrix, argSet, argType|
+		this.init(argSet, argType);
 		matrix = aMatrix;
 	}
 

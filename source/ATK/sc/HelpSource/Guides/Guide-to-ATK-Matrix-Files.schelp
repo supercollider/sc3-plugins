@@ -228,8 +228,8 @@ the link::Classes/AtkMatrix:: subclasses. When writing from these objects, some 
 can be inferred from them, such as the strong::set:: (Ambisonic order,
 channel ordering, channel normalisation, e.g. code::'FOA'::, code::'HOA3'::,
 etc.) and strong::type:: of matrix (e.g. code::'encoder', 'decoder', 'xformer'::).
-In the case of a raw matrix, this information can't be inferred and should be
-explicitly set when writing to file.
+In the case of a raw matrix, you must cast it to an code::AtkMatrix::, specifying the
+strong::set:: and strong::type:: explicitly, before writing it to a file.
 
 code::
 ( // Here's a raw A-to-B encoder matrix:
@@ -259,21 +259,22 @@ code::
 )
 ::
 
-Now be sure to list the proper info for the arguments when writing it to file.  This is how the ATK will know where to store the file by default (unless a full path is provided to the file name argument).
+Be sure to specify the strong::set:: and strong::type:: when creating an
+code::AtkMatrix:: from your code::Matrix::. This is how the ATK will know where
+to store the file by default (unless a full path is provided to the file name
+argument).
 
 code::
 (
-~matrix.writeToFile( "myA2B_flu_Matrix.yml", // be sure to use .yml for metadata
-  'FOA',      // set
-  'encoder',  // type
-  ~note,
-  ~properties
-)
+~atkMatrix = ~matrix.asAtkMatrix('FOA', 'encoder'); // set, type
+// be sure to use .yml extension for metadata
+~atkMatrix.writeToFile("myA2B_flu_Matrix.yml", ~note, ~properties);
 )
 ::
 
 NOTE:: If providing a file path relative to your code::/ATK/extension/matrices/...::
-directory, strong::set:: and strong::type:: are necessary arguments to locate the
+directory, strong::set:: and strong::type:: arguments are necessary when creating the
+code::AtkMatrix:: from your code::Matrix:: in order to locate the
 proper directory to store your file. If providing an absolute file path,
 strong::set:: and strong::type:: are recommended but not strictly enforced. This
 allows storing matrices outside the ATK paradigm, e.g. VBAP matrices, etc.
