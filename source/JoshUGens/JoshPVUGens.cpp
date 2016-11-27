@@ -154,6 +154,7 @@ struct PV_Freeze : PV_Unit
 	float *m_mags, m_dc, m_nyq;
 	float *m_prevPhases, *m_difPhases;
 	SndBuf *m_buf;
+	int m_stage;
 };
 
 // write values to a buffer
@@ -1542,44 +1543,95 @@ void PV_BinDelay_next(PV_BinDelay* unit, int inNumSamples)
 
 //////////////////////
 
+/*
+NOTE: You might be tempted to consolidate some of these branches.
+
+Don't.
+
+This UGen is not fully initialized until after 3 passes through the _next function.
+It must initialize in this sequence, or havoc ensues.
+*/
+
 void PV_Freeze_next(PV_Freeze *unit, int inNumSamples)
 {
 	PV_GET_BUF
 
-	if (!unit->m_mags) {
+	float *mags = unit->m_mags;
+	float *prevPhases = unit->m_prevPhases;
+	SCPolarBuf *p = ToPolarApx(buf);
+	float *difPhases = unit->m_difPhases;
+	float freeze = ZIN0(1);
+
+	switch(unit->m_stage) {
+	case 0:
+		// no FFT frames are ready yet. Only allocate storage
 		unit->m_mags = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
 		unit->m_difPhases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
 		unit->m_prevPhases = (float*)RTAlloc(unit->mWorld, numbins * sizeof(float));
 		unit->m_numbins = numbins;
-	} else if (numbins != unit->m_numbins) return;
-
-	SCPolarBuf *p = ToPolarApx(buf);
-
-	float freeze = ZIN0(1);
-	float *mags = unit->m_mags;
-	float *difPhases = unit->m_difPhases;
-	float *prevPhases = unit->m_prevPhases;
-	if (freeze > 0.f) {
-		for (int i=0; i<numbins; ++i) {
-			p->bin[i].mag = mags[i];
-			prevPhases[i] += difPhases[i];
-			while (prevPhases[i] > pi) /* wrap the phase */
-			    prevPhases[i] -= twopi;
-			while (prevPhases[i] < -pi)
-			    prevPhases[i] += twopi;
-			p->bin[i].phase = prevPhases[i];
-		}
-		p->dc = unit->m_dc;
-		p->nyq = unit->m_nyq;
-	} else {
+		unit->m_stage = 1;
+		break;
+	case 1:
+		// exactly one FFT frame is ready. Save its mags and phases. output = input
 		for (int i=0; i<numbins; ++i) {
 			mags[i] = p->bin[i].mag;
-			// store the difference in phase between the current and last frame
-			difPhases[i] = p->bin[i].phase - prevPhases[i];
 			prevPhases[i] = p->bin[i].phase;
 		}
 		unit->m_dc = p->dc;
 		unit->m_nyq = p->nyq;
+		unit->m_stage = 2;
+		break;
+	case 2:
+		// second FFT frame: now it's meaningful to populate difPhases
+		// difPhases = difference in phase between the current and last frame
+		// if freezing: keep old mags and new phases
+		// below, we will do outphase = prevphase + difphase
+		// but now, difphase will be inphase - prevphase so outphase = inphase
+		if(freeze > 0.f) {
+			for (int i=0; i<numbins; ++i) {
+				p->bin[i].mag = mags[i];
+				difPhases[i] = p->bin[i].phase - prevPhases[i];
+				prevPhases[i] = p->bin[i].phase;
+			}	      
+			p->dc = unit->m_dc;
+			p->nyq = unit->m_nyq;
+		} else {
+			for (int i=0; i<numbins; ++i) {
+				mags[i] = p->bin[i].mag;
+				difPhases[i] = p->bin[i].phase - prevPhases[i];
+				prevPhases[i] = p->bin[i].phase;
+			}
+			unit->m_dc = p->dc;
+			unit->m_nyq = p->nyq;
+		};
+		unit->m_stage = 3;
+		break;
+	case 3:
+		// normal case
+		// freeze previous magnitudes
+		if (freeze > 0.f) {
+			for (int i=0; i<numbins; ++i) {
+				p->bin[i].mag = mags[i];
+				prevPhases[i] += difPhases[i];
+				if (prevPhases[i] > pi) /* wrap the phase */
+				    prevPhases[i] -= twopi;
+				if (prevPhases[i] < -pi)
+				    prevPhases[i] += twopi;
+				p->bin[i].phase = prevPhases[i];
+			}
+			p->dc = unit->m_dc;
+			p->nyq = unit->m_nyq;
+		} else {
+			for (int i=0; i<numbins; ++i) {
+				mags[i] = p->bin[i].mag;
+				// store the difference in phase between the current and last frame
+				difPhases[i] = p->bin[i].phase - prevPhases[i];
+				prevPhases[i] = p->bin[i].phase;
+			}
+			unit->m_dc = p->dc;
+			unit->m_nyq = p->nyq;
+		}
+		break;
 	}
 }
 
@@ -1588,7 +1640,7 @@ void PV_Freeze_Ctor(PV_Freeze* unit)
 {
 	SETCALC(PV_Freeze_next);
 	ZOUT0(0) = ZIN0(0);
-	unit->m_mags = 0;
+	unit->m_stage = 0;
 }
 
 void PV_Freeze_Dtor(PV_Freeze* unit)
