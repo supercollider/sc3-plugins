@@ -158,6 +158,12 @@ Ambisonic Toolkit.
 List of Changes
 ---------------
 
+Unreleased
+
+*  Issue fixes:
+    *  Class library: fix inline warnings
+
+
 Version 3.8.0
 
 *  New features:
@@ -279,6 +285,9 @@ are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 
 Contributors
 ------------
+
+Unreleased
+*  Julian Rohrhuber (@telephon)
 
 Version 3.8.0
 *  Daniel Peterson (@dmartinp)
