@@ -339,6 +339,10 @@ Atk {
 	*resolveMtxPath { arg filePathOrName, mtxType, searchExtensions=false;
 		var usrPN, srcPath, relPath, mtxDirPath;
 		var hasExtension, hasRelPath;
+		var name, matches;
+		var relWithoutLast;
+		var foundCnt;
+		var str;
 
 		usrPN = PathName( filePathOrName ); // as PathName
 
@@ -368,12 +372,12 @@ Atk {
 							});
 
 						}, { // user gives a path, but no file extension
-							var relWithoutLast;
+
 							relWithoutLast = PathName( relPath.fullPath.dirname );
 
-							if ( relWithoutLast.isFolder, // test enclosing folder
+							if (relWithoutLast.isFolder, // test enclosing folder
 								{
-									var name, foundCnt=0;
+									foundCnt = 0;
 									name = usrPN.fileNameWithoutExtension;
 									// NOTE: filesDo searches recursively in the parent folder,
 									// so keep track of matches in case there are multiple
@@ -402,13 +406,13 @@ Atk {
 						}
 						);
 					}, {	// single filename, no other path
-						var name, matches = [];
+						matches = [];
 
 						// name = usrPN.fileNameWithoutExtension;
 						name = usrPN.fileName;
 
 						// recursively search whole directory
-						mtxDirPath.filesDo{ |file|
+						mtxDirPath.filesDo { |file|
 							var test;
 							test = if (hasExtension) {file.fileName} {file.fileNameWithoutExtension};
 							if (test == name, { matches  = matches.add(file) });
@@ -418,7 +422,6 @@ Atk {
 						{ matches.size == 1 } { srcPath = matches[0] }
 						{ matches.size == 0 } { Error( format("No file found for %", name) ).throw }
 						{ matches.size   > 1 } {
-							var str;
 							str = format("Multiple matches found for filename:\t%\n", usrPN.fileName);
 							matches.do{|file| str = str ++ "\t" ++ file.asRelativePath( mtxDirPath ) ++ "\n" };
 							str = str ++ format(

@@ -209,7 +209,7 @@ AtkMatrix {
 
 	initFromFile { arg filePathOrName, mtxType, searchExtensions=false;
 		var resolvedPathName = Atk.resolveMtxPath(filePathOrName, mtxType, searchExtensions);
-
+		var dict;
 		// instance var
 		filePath = resolvedPathName.fullPath;
 
@@ -227,7 +227,7 @@ AtkMatrix {
 			kind = resolvedPathName.fileName.asSymbol; // kind defaults to filename
 		}
 		{ resolvedPathName.extension == "yml"} {
-			var dict = filePath.parseYAMLFile;
+			dict = filePath.parseYAMLFile;
 			fileParse = IdentityDictionary(know: true);
 
 			// replace String keys with Symbol keys, make "knowable"
@@ -313,6 +313,7 @@ AtkMatrix {
 	// argType: \encoder, \decoder, \xformer
 	prWriteToFile { arg fileNameOrPath, argSet, argType, note, attributeDictionary, overwrite=false;
 		var pn, writer, ext;
+		var mtxPath, relPath;
 
 		pn = PathName(fileNameOrPath);
 
@@ -334,7 +335,6 @@ AtkMatrix {
 
 			} { pn.colonIndices.size > 0} {
 				// relative path given, look for it
-				var mtxPath, relPath;
 				mtxPath = Atk.getMatrixExtensionSubPath(argSet, argType);
 				relPath = (mtxPath +/+ PathName(pn.parentPath));
 				if (relPath.isFolder) {
