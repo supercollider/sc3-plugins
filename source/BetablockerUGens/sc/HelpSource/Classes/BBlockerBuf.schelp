@@ -1,0 +1,49 @@
+TITLE:: BBlockerBuf
+summary:: MultiOut BetaBlocker VChip
+categories:: UGens
+related:: Classes/BBlockerBuf, Classes/BBlockerProgram
+
+DESCRIPTION::
+BetaBlocker vortual chip implementation. The heap is realised as a Buffer and can possibly be shared with other instances.
+It triggers the computation of the underlying BetaBlocker engine at a given rate and returns an array consisting of the program counter and all 8 stack elements re-scaled to values between -1 and 1.
+
+code::
+(
+// bubbles
+{
+	var pC;    // program counter
+	var stack;
+
+	// create program
+	var program = BBlockerProgram([\ORG, \INC, \INC, \INC, \DUP, \INC, \JMP, 1]).asLocalBuf;
+
+	# pC ... stack = BBlockerBuf.ar(
+		freq: MouseX.kr(1000, 20000, -2),
+		bufnum: program,
+		startpoint: 0
+	);
+
+	Splay.ar(SinOsc.ar(stack.linexp(-1, 1, 100, 1000))) + (MouseY.kr(0, 1) * pC!2);
+
+}.scope
+)
+::
+
+
+
+
+CLASSMETHODS::
+
+METHOD:: ar
+argument:: freq
+evaluation frequency
+
+argument:: bufnum
+Pointer to the buffer where the heap is stored. Can be modulated at control-rate.
+
+argument:: startpoint
+Initial position of the program counter.
+
+
+
+

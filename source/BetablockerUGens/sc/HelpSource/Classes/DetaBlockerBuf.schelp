@@ -5,7 +5,7 @@ related:: Classes/BBlockerBuf, Classes/BBlockerProgram
 
 DESCRIPTION::
 Demand Rate BetaBlocker UGen with a heap possibly shared with other instances.
-
+For every trigger, it computes one step of the underlying BetaBlocker engine and then returns the stack's top element.
 
 CLASSMETHODS::
 
@@ -53,11 +53,11 @@ q = ();
 		\VOX: 24,
 		\STOP: 25
 	);
-	
+
 	q.translate = {|q, val|
-		q.instructions[val] ?? {val}	
+		q.instructions[val] ?? {val}
 	};
-	
+
 	q.makeCollection = {|q, program|
 		program.collect{|instr| q.translate(instr)} ++ (0!(256 - program.size))
 	};

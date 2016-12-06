@@ -4,9 +4,9 @@ categories:: Convenience
 related:: Classes/BBlockerBuf, Classes/BBlockerProgram
 
 DESCRIPTION::
-Convenience class to create and store assembly programs for the BetaBlocker VChip. 
+Convenience class to create and store assembly programs for the BetaBlocker VChip.
 
-See http://tai-studio.org/index.php/chipinterpretations/ for details.
+See http://tai-studio.org/portfolio/chip-interpretations.html for details.
 
 image::betablocker-01-small.png::
 
@@ -29,7 +29,7 @@ Mixed array of instructions (Symbols) and Integers (will be interpreted either a
 
 
 METHOD:: instructions
-all instructions 
+all instructions
 
 
 METHOD:: descs
@@ -133,6 +133,9 @@ if code::true::, encapsulate output by a link::Classes/LeakDC::.
 ARGUMENT:: vol
 attenuation
 
+ARGUMENT:: force
+force re-filling of collection with program (plus possible randomness)
+
 returns:: link::Classes/Synth:: evaluating and playing the program.
 
 
@@ -154,13 +157,16 @@ if code::true::, encapsulate output by a link::Classes/LeakDC::.
 ARGUMENT:: vol
 attenuation
 
+ARGUMENT:: force
+force re-filling of collection with program (plus possible randomness)
+
 
 METHOD:: fillUpRandom
-if code::true::, fill remaining space in collection/link::Classes/Buffer:: with random numbers between code::0:: and code::255::. 
+if code::true::, fill remaining space in collection/link::Classes/Buffer:: with random numbers between code::0:: and code::255::.
 
 METHOD:: scope
 
-run program and scope it. 
+run program and scope it.
 
 ARGUMENT:: rate
 rate of operation
@@ -174,6 +180,9 @@ if code::true::, encapsulate output by a link::Classes/LeakDC::.
 
 ARGUMENT:: vol
 attenuation
+
+ARGUMENT:: force
+force re-filling of collection with program (plus possible randomness)
 
 
 
@@ -199,6 +208,8 @@ if code::true::, encapsulate output by a link::Classes/LeakDC::.
 ARGUMENT:: duration
 time to run in seconds.
 
+ARGUMENT:: force
+force re-filling of collection with program (plus possible randomness)
 
 
 
