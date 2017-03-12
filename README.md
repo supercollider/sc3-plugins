@@ -4,6 +4,8 @@
 This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
 An installation extends the functionality of SuperCollider by additional UGens that run on `scsynth`, the SuperCollider audio synthesis server.
 
+Please note that the UGens in this repository are, on average, less stable and well-maintained than the core collection. Use at your own risk!
+
 **Note:** Extensions for the SuperCollider programming language are something structurally different. They are collected within the [Quarks](http://quarks.sourceforge.net/) packaging system.
 
 To learn how to write your own plugins, see [example-plugins](https://github.com/supercollider/example-plugins) and the "[Writing UGens](http://doc.sccode.org/Guides/WritingUGens.html)" helpfile.
