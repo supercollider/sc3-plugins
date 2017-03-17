@@ -1,0 +1,58 @@
+TITLE:: PermModT
+summary:: Sample permutation UGen with tail.
+categories:: Undocumented classes, UGens>Undocumented, UGens>Unclassified
+related:: Classes/PermMod, Classes/PermModArray
+
+DESCRIPTION::
+This UGen takes an audio-rate input and commutes chunks of samples, swapping the odd chunks and the even ones inside a buffer.
+The size of the buffer depends on the "outfreq" parameter, the size of the chunks on the "infreq" one.
+
+The difference with the link::Classes/PermMod:: UGen is that it generates a "tail" as the remainder of the ratio of "outfreq" and "infreq", since
+in most cases the permutation won't be able to do an integer number of odd-even cycles inside the buffer, leaving some samples.
+
+When the buffer is reaching the end, it behaves in two ways: if the buffer contains an integer number of odd-even couples, 
+it copies the remaining samples to fill the buffer (the tail) directly from the input; if there is a last spare odd chunk, 
+it commutes it with the tail.
+
+To avoid bad behaviour, "infreq" and "outfreq" parameters must always be strictly > 0 and <= double the input samplerate.
+High frequencies lead to distortion and resonance, low frequencies lead to auto-arpeggio-like and repetition-like effects.
+Also, "outfreq" should be equal or less than infreq.
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+An audio-rate input.
+
+ARGUMENT:: outfreq
+The frequency at which the buffer cycles (and the tail occurs).
+
+ARGUMENT:: infreq
+The frequency at which chunks are permuted inside the buffer.
+
+ARGUMENT::mul
+Output will be multiplied by this value.
+
+ARGUMENT::add
+This value will be added to the output.
+
+returns:: A commuted audio-rate output.
+
+
+EXAMPLES::
+
+code::
+// Permute a simple sinusoid:
+{PermModT.ar(SinOsc.ar(220),280,1600)}.play 
+
+// Modulate both outfreq and infreq parameters with the mouse:
+{PermModT.ar(SinOsc.ar(220), MouseX.kr(500, 1200), MouseY.kr(1200,4000))}.play //Remember to avoid the outfreq>infreq case!
+
+// Distort any input with an Electronic Telephone Ring effect:
+{PermModT.ar(SoundIn.ar(0),500,Pulse.kr(10,0.5,1000,2000))}.play // Remember to use strictly positive unipolar signals as control, in this case the Pulse "add" parameter is 1000.
+
+// Quantized frequency-sweep-like effect on existing file:
+b = Buffer.read(s, 'C:/Folder/File.wav')
+{PermModT.ar(PlayBuf.ar(2, b),SinOsc.kr(0.1,0,2000,4000),4200)}.play
+::

@@ -1,0 +1,48 @@
+TITLE:: PermMod
+summary:: Sample permutation UGen.
+categories:: Undocumented classes, UGens>Undocumented, UGens>Unclassified
+related:: Classes/PermModT, Classes/PermModArray
+
+DESCRIPTION::
+This UGen takes an audio-rate input and commutes chunks of samples, swapping the odd chunks and the even ones.
+To avoid bad behaviour, "freq" parameter must always be strictly > 0 and <= double the input samplerate.
+High frequencies lead to distortion and resonance, low frequencies lead to auto-arpeggio-like and repetition-like effects.
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+An audio-rate input.
+
+ARGUMENT:: freq
+The frequency at which you wish the permutation to occur.
+For example, a 100Hz value applied on a 44100Hz input generates chunks of 441 samples.
+Since chunks must contain an integer number of samples, some frequencies yield the same result, because the chunk length is rounded.
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+returns:: A commuted audio-rate output.
+
+
+EXAMPLES::
+
+code::
+// Permute a simple sinusoid ten times its frequency:
+{PermMod.ar(SinOsc.ar(220),2200)}.play
+
+// Modulate both the sinusoid's and the permutation frequency with the mouse:
+{PermMod.ar(SinOsc.ar(MouseY.kr(0,440)), MouseX.kr(500, 8800))}.play
+
+// Distort any input with an Electronic Telephone Ring effect:
+{PermMod.ar(SoundIn.ar(0),Pulse.kr(10,0.5,1000,2000))}.play // Remember to use strictly positive unipolar signals as control, in this case the "add" parameter is 1000.
+
+// Quantized frequency-sweep-like effect on existing file:
+b = Buffer.read(s, 'C:/Folder/File.wav')
+{PermMod.ar(PlayBuf.ar(2, b),SinOsc.kr(0.1,0,2000,4000))}.play
+
+::
