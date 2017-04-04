@@ -6,7 +6,7 @@ categories:: UGens>PhysicalModels
 Description::
 
 Digital wave guide physical model of a plucked instrument.
-It implements inharmonicity due to string stiffness acording to J. Rauhala and V. V‰lim‰ki, Tunable dispersion filter design for piano synthesis, IEEE
+It implements inharmonicity due to string stiffness acording to J. Rauhala and V. V√§lim√§ki, Tunable dispersion filter design for piano synthesis, IEEE
 Signal Processing Letters, vol. 13, no. 5, pp. 253256,
 2006.
 
