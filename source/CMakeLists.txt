@@ -114,6 +114,7 @@ set(PLUGIN_DIRS
 set(PLUGIN_DIRS_EXTRA
     AuditoryModeling
     BetablockerUGens
+    ChaosUGens
     DEINDUGens
     LadspaUGen
     MembraneUGens
@@ -196,15 +197,20 @@ BUILD_PLUGIN(AuditoryModeling "${AuditoryModelingSources}" "" "AuditoryModeling"
 BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
              "" "BetablockerUGens")
 
+# ChaosUGens
+BUILD_PLUGIN(NoiseRing
+"ChaosUGens/NoiseRing.cpp"
+             "" "ChaosUGens")
+BUILD_PLUGIN(PredPrey
+"ChaosUGens/PredPrey.cpp"
+             "" "ChaosUGens")
+
 # DEINDUGens
 BUILD_PLUGIN(RMS
 "DEINDUGens/RMS.cpp"
              "" "DEINDUGens")
 BUILD_PLUGIN(DiodeRingMod
 "DEINDUGens/DiodeRingMod.cpp"
-             "" "DEINDUGens")
-BUILD_PLUGIN(NoiseRing
-"DEINDUGens/NoiseRing.cpp"
              "" "DEINDUGens")
 BUILD_PLUGIN(complexRes
 "DEINDUGens/complexRes.cpp"

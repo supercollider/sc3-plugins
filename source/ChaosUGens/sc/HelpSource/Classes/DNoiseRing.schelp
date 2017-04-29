@@ -1,6 +1,6 @@
 TITLE:: DNoiseRing
 summary:: Demand rate implementation of a Wiard noise ring
-categories:: UGens>Demand
+categories:: UGens>Demand, UGens>Generators>Chaotic
 RELATED:: Overviews/DEIND, Classes/Duty, Classes/Demand
 
 

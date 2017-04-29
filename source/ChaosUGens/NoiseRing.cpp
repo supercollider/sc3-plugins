@@ -97,7 +97,7 @@ void DNoiseRing_next(DNoiseRing *unit, int inNumSamples)
 
 
 //////////////////////////////
-PluginLoad(NoiseRing)
+PluginLoad(Chaos)
 {
 	// InterfaceTable *inTable implicitly given as argument to load function
 	ft = inTable;
