@@ -1,0 +1,166 @@
+class:: LoopPhasor
+summary:: a phasor that can loop
+categories:: UGens>Triggers, UGens>Buffer
+related:: Classes/LoopPhasor2
+
+DESCRIPTION::
+Similar to link::Classes/Phasor:: but can also loop between two points. Useful for driving a link::Classes/BufRd::.
+
+If end point is less than start point, then the LoopPhasor will automatically change direction.
+See link::Classes/LoopPhasor2:: for a slightly different version that can have negative rate and thereby go backwards.
+
+NOTE::
+This was UGen was previously called RedPhasor
+::
+
+CLASSMETHODS::
+
+METHOD:: ar, kr
+
+argument::trig
+When triggered, ramp resets and goes to start.
+
+argument::rate
+Amount of change per sample. Must be positive.
+
+argument::start
+Ramp resets to this value when triggered.
+
+argument::end
+Final value of ramp.
+
+argument::loop
+Type of looping:
+table::
+## 0 || Off. No looping. Just ramp through once and stay at the end.
+## 1 || Forward. Normal looping between points.
+## 2 || Pingpong. Back and forth looping between points.
+::
+
+argument::loopstart
+Start point of the loop.
+
+argument::loopend
+Marks the end of the loop.
+
+EXAMPLES::
+
+code::
+s.boot;
+
+//no looping and it will play through once. MouseX acts as trigger
+{SinOsc.ar(LoopPhasor.kr(MouseX.kr>0.5, 0.3, 400, 800, 0, 500, 600), 0, 0.2)}.play;
+
+//MouseY controls looping on/off, MouseX trigger
+{SinOsc.ar(LoopPhasor.kr(MouseX.kr>0.5, 0.3, 400, 800, MouseY.kr>0.5, 500, 600), 0, 0.2)}.play;
+
+//notice that if you trigger with looping on LoopPhasor still jumps to the start value.
+//this is the most unique feature of LoopPhasor and what makes it different from Phasor,
+//Sweep, LFSaw etc.
+
+//MouseX controls loop rate, MouseY scales the start loop-point
+{SinOsc.ar(LoopPhasor.kr(0, MouseX.kr(0, 5), 400, 800, 1, MouseY.kr(200, 500), 500), 0, 0.2)}.play;
+
+//below different directions for start/end vs loop-points. Automatic loop on/off
+{SinOsc.ar(LoopPhasor.kr(0, 0.6, 400, 800, LFPulse.kr(0.2), 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor.kr(0, 0.6, 400, 800, LFPulse.kr(0.2), 600, 500), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor.kr(0, 0.6, 800, 400, LFPulse.kr(0.2), 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor.kr(0, 0.6, 800, 400, LFPulse.kr(0.2), 500, 600), 0, 0.2)}.play;
+//notice how loopstart sometimes is greater than loopend
+
+//watch out for loop-points out of range
+{SinOsc.ar(LoopPhasor.kr(Impulse.kr(0.5), 2, 800, 400, LFPulse.kr(0.4), 150, 1600), 0, 0.2)}.play;
+
+//the different types of looping. MouseX acts as trigger
+a= {|loop= 0| SinOsc.ar(LoopPhasor.kr(MouseX.kr>0.5, 0.3, 400, 800, loop, 500, 600), 0, 0.2)}.play;
+a.set(\loop, 0);	//off
+a.set(\loop, 1);	//forward
+a.set(\loop, 2);	//pingpong
+a.free;
+
+//--soundfile examples:
+b= Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+
+(
+{	//mouse x/y controls loop-points
+	var rate= BufRateScale.ir(b.bufnum);
+	var end= BufFrames.ir(b.bufnum)-1;
+	var min= MouseX.kr*end;
+	var max= MouseY.kr*end;
+	var looptype= 2;	//pingpong
+	var i= LoopPhasor.ar(0, rate, min, max, 2, min, max);
+	BufRd.ar(1, b.bufnum, i, 0, 2);
+}.play;
+)
+
+(
+{	//click and drag
+	//mouse button starts looping between 45 and 55%. Release it and the phasor continues to end
+	var rate= BufRateScale.ir(b.bufnum);
+	var end= BufFrames.ir(b.bufnum)-1;
+	var trig= MouseButton.kr(lag:0);
+	var i= LoopPhasor.ar(trig, rate*MouseX.kr(0.1, 10), 0, end, trig, end*0.45, end*0.55);
+	BufRd.ar(1, b.bufnum, i, 0, 2);
+}.play;
+)
+
+(
+{	//audio rate control for trigger (unused here) and rate
+	var rate= SinOsc.ar(MouseX.kr(-50, 50), 0, MouseY.kr(0, 0.5), 1);
+	var end= BufFrames.ir(b.bufnum)-1;
+	var i= LoopPhasor.ar(DC.ar(0), rate, 0, end, 2, 0, end);
+	BufRd.ar(1, b.bufnum, i, 0, 2);
+}.play;
+)
+
+b.free;
+
+
+//--
+b= Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+
+(
+SynthDef(\looper, {|out= 0, bufnum, rate= 1, loop= 1, loopStart= 0, loopEnd= 1, gate= 1|
+	var env= EnvGen.kr(Env.asr(0.01, 1, 0.01), gate, doneAction: 2);
+	var end= BufFrames.kr(b.bufnum)-1;
+	var pha= LoopPhasor.ar(0, rate*BufRateScale.kr(bufnum), 0, end, loop, loopStart*end, loopEnd*end);
+	var snd= BufRd.ar(1, bufnum, pha, 0, 2);
+	Out.ar(out, snd*env);
+}).add;
+)
+
+a= Pmono(\looper, \dur, Pseq([Pn(0.25, 2), 0.5], inf), \rate, Pseq([0.5, 1, 2], inf)).play;
+a.stop;
+
+a= Pmono(\looper, \dur, Pseq([Pn(0.125, 2), 0.25], inf), \rate, Pseq([0.75, 1, 1.25, 1], inf), \loop, Pseq([1, 1, 1, 2, 0], inf), \loopStart, Pseq([0, 0.25, 0.5, 0.75], inf), \loopEnd, Pseq([0.99, 0.66, 0.33], inf)).play;
+a.stop;
+
+a= Pmono(\looper, \dur, 0.125, \rate, Pseq([2, 3, 4]*0.25, inf), \loop, Pseq([Pn(2, 64), Pn(0, 32)], inf), \loopStart, Pseq([0, 0.25, 0.5, 0.75], inf), \loopEnd, Pseq([0.99, 0.66, 0.33], inf)).play;
+a.stop;
+
+b.free;
+
+
+//--
+b= Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
+
+(
+SynthDef(\looper2, {|out= 0, bufnum, rate= 1, lag= 0.01, gate= 1, amp= 0.5, pan= 0|
+	var env= EnvGen.ar(Env.asr(0.01, 1, 0.1), gate, doneAction:2);
+	var end= BufFrames.kr(b.bufnum)-1;
+	var startLoop= K2A.ar(MouseX.kr(0, end, 0, 0));	//no lag and convert to .ar
+	var endLoop= K2A.ar(MouseY.kr(0, end, 0, 0));		//no lag and convert to .ar
+	var r= Lag.kr(rate, lag);
+	var trig= Ramp.ar(HPZ2.ar(startLoop), 0.1);
+	var pha= LoopPhasor.ar(trig, r*BufRateScale.kr(bufnum), startLoop, end, 1, startLoop, endLoop);
+	var snd= BufRd.ar(1, bufnum, pha, 0, 2);
+	Out.ar(out, Pan2.ar(snd*env, pan, amp));
+}).add;
+)
+
+a= Synth(\looper2, [\bufnum, b.bufnum]);
+a.set(\rate, 1.25);
+
+a.free;
+b.free;
+::

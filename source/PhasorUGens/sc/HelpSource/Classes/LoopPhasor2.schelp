@@ -1,10 +1,10 @@
-class:: Fasor2
+class:: LoopPhasor2
 summary:: a phasor that can loop - version2
 categories:: UGens>Triggers, UGens>Buffer
-related:: Classes/Fasor
+related:: Classes/LoopPhasor
 
 DESCRIPTION::
-Similar to link::Classes/Fasor:: but if end point is less than start point, then the Fasor2 will not change direction.
+Similar to link::Classes/LoopPhasor:: but if end point is less than start point, then the LoopPhasor2 will not change direction.
 But then use negative rate to go backwards.
 
 NOTE::
@@ -46,19 +46,20 @@ EXAMPLES::
 code::
 s.boot;
 
-{SinOsc.ar(Fasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 0, 500, 600), 0, 0.2)}.play
-{SinOsc.ar(Fasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 0, 500, 600), 0, 0.2)}.play
+//no looping and it will play through once. MouseX acts as trigger
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 0, 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 0, 500, 600), 0, 0.2)}.play;
 
 //with loop= 1
-{SinOsc.ar(Fasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 1, 500, 600), 0, 0.2)}.play
-{SinOsc.ar(Fasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 1, 500, 600), 0, 0.2)}.play
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 1, 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 1, 500, 600), 0, 0.2)}.play;
 ::
 
 code::
-//compares Fasor and Fasor2 with a gui
+//compares LoopPhasor and LoopPhasor2 with a gui
 (
 var syn, osc, min= 400, max= 800, lmin= 0.3, lmax= 0.7;
-var win= Window("fasor", Rect(400, 400, 400, 400)).front;
+var win= Window("loopPhasor", Rect(400, 400, 400, 400)).front;
 var startSld= Slider(win, Rect(10, 30, 20, 200)).value_(0)
 	.action= {|v|
 		if(startSld.value<endSld.value, {
@@ -111,14 +112,14 @@ Button(win, Rect(200, 120, 180, 20))
 	.action_{|v| syn.set(\loop, v.value)};
 Slider(win, Rect(200, 180, 180, 20)).value_(0.75)
 	.action_{|v| syn.set(\rate, v.value.linlin(0, 1, -1, 1))};
-StaticText(win, Rect(60, 380, 100, 20)).string_("Fasor");
-StaticText(win, Rect(260, 380, 100, 20)).string_("Fasor2");
+StaticText(win, Rect(60, 380, 100, 20)).string_("LoopPhasor");
+StaticText(win, Rect(260, 380, 100, 20)).string_("LoopPhasor2");
 StaticText(win, Rect(5, 10, 100, 20)).string_("start/end");
 StaticText(win, Rect(80, 10, 120, 20)).string_("loopStart/loopEnd");
 StaticText(win, Rect(280, 200, 100, 20)).string_("rate -1 to 1");
-syn= SynthDef(\fasor, {|t_trig= 1, rate= 0.5, start= 400, end= 800, loop= 0, loopStart= 500, loopEnd= 600|
-	var f1= Fasor.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
-	var f2= Fasor2.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
+syn= SynthDef(\loopPhasor, {|t_trig= 1, rate= 0.5, start= 400, end= 800, loop= 0, loopStart= 500, loopEnd= 600|
+	var f1= LoopPhasor.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
+	var f2= LoopPhasor2.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
 	var report= Impulse.kr(40);
 	SendTrig.kr(report, #[0, 1], [f1, f2]);
 	Out.ar(0, SinOsc.ar([f1, f2], 0, 0.3));

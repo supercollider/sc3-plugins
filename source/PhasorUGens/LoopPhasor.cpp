@@ -19,13 +19,13 @@
 #include "SC_PlugIn.h"
 static InterfaceTable *ft;
 
-struct Fasor : public Unit {
+struct LoopPhasor : public Unit {
     double mLevel;
     float m_previn;
     int ppdir;											//direction for pingpong
 };
 
-struct Fasor2 : public Unit {
+struct LoopPhasor2 : public Unit {
     double mLevel;
     float m_previn;
     int ppdir;											//direction for pingpong
@@ -33,42 +33,42 @@ struct Fasor2 : public Unit {
 
 extern "C" {
     void load(InterfaceTable *inTable);
-    void Fasor_Ctor(Fasor *unit);
-    void Fasor_next_kk(Fasor *unit, int inNumSamples);
-    void Fasor_next_ak(Fasor *unit, int inNumSamples);
-    void Fasor_next_aa(Fasor *unit, int inNumSamples);
-    void Fasor2_Ctor(Fasor2 *unit);
-    void Fasor2_next_kk(Fasor2 *unit, int inNumSamples);
-    void Fasor2_next_ak(Fasor2 *unit, int inNumSamples);
-    void Fasor2_next_aa(Fasor2 *unit, int inNumSamples);
+    void LoopPhasor_Ctor(LoopPhasor *unit);
+    void LoopPhasor_next_kk(LoopPhasor *unit, int inNumSamples);
+    void LoopPhasor_next_ak(LoopPhasor *unit, int inNumSamples);
+    void LoopPhasor_next_aa(LoopPhasor *unit, int inNumSamples);
+    void LoopPhasor2_Ctor(LoopPhasor2 *unit);
+    void LoopPhasor2_next_kk(LoopPhasor2 *unit, int inNumSamples);
+    void LoopPhasor2_next_ak(LoopPhasor2 *unit, int inNumSamples);
+    void LoopPhasor2_next_aa(LoopPhasor2 *unit, int inNumSamples);
 }
 
 PluginLoad(InterfaceTable *inTable) {
     ft= inTable;
-    DefineSimpleUnit(Fasor);
-    DefineSimpleUnit(Fasor2);
+    DefineSimpleUnit(LoopPhasor);
+    DefineSimpleUnit(LoopPhasor2);
 }
 
-void Fasor_Ctor(Fasor *unit) {
+void LoopPhasor_Ctor(LoopPhasor *unit) {
     if(unit->mCalcRate==calc_FullRate) {
         if(INRATE(0)==calc_FullRate) {
             if(INRATE(1)==calc_FullRate) {
-                SETCALC(Fasor_next_aa);
+                SETCALC(LoopPhasor_next_aa);
             } else {
-                SETCALC(Fasor_next_ak);
+                SETCALC(LoopPhasor_next_ak);
             }
         } else {
-            SETCALC(Fasor_next_kk);
+            SETCALC(LoopPhasor_next_kk);
         }
     } else {
-        SETCALC(Fasor_next_ak);
+        SETCALC(LoopPhasor_next_ak);
     }
     unit->m_previn= ZIN0(0);
     unit->ppdir= 1;
     ZOUT0(0)= unit->mLevel= ZIN0(2);
 }
 
-void Fasor_next_kk(Fasor *unit, int inNumSamples) {
+void LoopPhasor_next_kk(LoopPhasor *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float in= ZIN0(0);
     float rate= sc_max(0, ZIN0(1));
@@ -244,7 +244,7 @@ void Fasor_next_kk(Fasor *unit, int inNumSamples) {
     unit->mLevel= level;
 }
 
-void Fasor_next_ak(Fasor *unit, int inNumSamples) {
+void LoopPhasor_next_ak(LoopPhasor *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float *in= ZIN(0);
     float rate= sc_max(0, ZIN0(1));
@@ -479,7 +479,7 @@ void Fasor_next_ak(Fasor *unit, int inNumSamples) {
     unit->mLevel= level;
 }
 
-void Fasor_next_aa(Fasor *unit, int inNumSamples) {
+void LoopPhasor_next_aa(LoopPhasor *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float *in= ZIN(0);
     float *rate= ZIN(1);
@@ -724,26 +724,26 @@ void Fasor_next_aa(Fasor *unit, int inNumSamples) {
     unit->mLevel= level;
 }
 
-void Fasor2_Ctor(Fasor2 *unit) {
+void LoopPhasor2_Ctor(LoopPhasor2 *unit) {
     if(unit->mCalcRate==calc_FullRate) {
         if(INRATE(0)==calc_FullRate) {
             if(INRATE(1)==calc_FullRate) {
-                SETCALC(Fasor2_next_aa);
+                SETCALC(LoopPhasor2_next_aa);
             } else {
-                SETCALC(Fasor2_next_ak);
+                SETCALC(LoopPhasor2_next_ak);
             }
         } else {
-            SETCALC(Fasor2_next_kk);
+            SETCALC(LoopPhasor2_next_kk);
         }
     } else {
-        SETCALC(Fasor2_next_ak);
+        SETCALC(LoopPhasor2_next_ak);
     }
     unit->m_previn= ZIN0(0);
     unit->ppdir= 1;
     ZOUT0(0)= unit->mLevel= ZIN0(2);
 }
 
-void Fasor2_next_kk(Fasor2 *unit, int inNumSamples) {
+void LoopPhasor2_next_kk(LoopPhasor2 *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float in= ZIN0(0);
     float rate= ZIN0(1);
@@ -822,7 +822,7 @@ void Fasor2_next_kk(Fasor2 *unit, int inNumSamples) {
     unit->mLevel= level;
 }
 
-void Fasor2_next_ak(Fasor2 *unit, int inNumSamples) {
+void LoopPhasor2_next_ak(LoopPhasor2 *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float *in= ZIN(0);
     float rate= ZIN0(1);
@@ -916,7 +916,7 @@ void Fasor2_next_ak(Fasor2 *unit, int inNumSamples) {
     unit->mLevel= level;
 }
 
-void Fasor2_next_aa(Fasor2 *unit, int inNumSamples) {
+void LoopPhasor2_next_aa(LoopPhasor2 *unit, int inNumSamples) {
     float *out= ZOUT(0);
     float *in= ZIN(0);
     float *rate= ZIN(1);
