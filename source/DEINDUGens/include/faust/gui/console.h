@@ -46,9 +46,7 @@
 #include <vector>
 #include <iostream>
 
-#include "faust/gui/GUI.h"
-
-//using namespace std;
+#include "faust/gui/UI.h"
 
 /******************************************************************************
 *******************************************************************************
@@ -85,8 +83,8 @@ class CMDUI : public UI
 
 	std::string simplify(const std::string& src)
 	{
-		int		i=0;
-		int		level=0;
+		int	i = 0;
+		int	level = 0;
 		std::string	dst;
 
 		while (src[i] ) {
@@ -118,8 +116,7 @@ class CMDUI : public UI
 							if (isalnum(src[i])) {
 								dst+= tolower(src[i]);
 							}
-
-					}
+                    }
 					break;
 
 				default :
@@ -196,14 +193,15 @@ public:
 	virtual void closeBox() 							{ fPrefix.pop(); }
 
 	virtual void show() {}
-	virtual void run()
-	{
-		char c;
-		printf("Type 'q' to quit\n");
-		while ((c = getchar()) != 'q') {
-			sleep(1);
-		}
-	}
+    virtual bool run()
+    {
+        char c;
+        printf("Type 'q' to quit\n");
+        while ((c = getchar()) != 'q') {
+            sleep(1);
+        }
+        return true;
+    }
 
 	void printhelp_command()
 	{
@@ -253,11 +251,11 @@ public:
 		}
 	}
 
-	int 	files()         { return fFiles.size(); }
-	char* 	file (int n)	{ return fFiles[n]; }
+	unsigned long	files()		{ return fFiles.size(); }
+	char*		file (int n)	{ return fFiles[n]; }
 
-	char* input_file ()     { std::cout << "input file " << fFiles[0]; return fFiles[0]; }
-	char* output_file() 	{ std::cout << "output file " << fFiles[1]; return fFiles[1]; }
+	char* input_file ()     { std::cout << "input file " << fFiles[0] << "\n"; return fFiles[0]; }
+	char* output_file() 	{ std::cout << "output file " << fFiles[1] << "\n"; return fFiles[1]; }
 
 	void process_init()
 	{

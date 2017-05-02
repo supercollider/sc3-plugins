@@ -10,12 +10,12 @@
 
 /************************************************************************
     FAUST Architecture File
-	Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
+    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
     ---------------------------------------------------------------------
     This Architecture section is free software; you can redistribute it
     and/or modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3 of
-	the License, or (at your option) any later version.
+    as published by the Free Software Foundation; either version 3 of
+    the License, or (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,12 +23,12 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-	along with this program; If not, see <http://www.gnu.org/licenses/>.
+    along with this program; If not, see <http://www.gnu.org/licenses/>.
 
-	EXCEPTION : As a special exception, you may create a larger work
-	that contains this FAUST architecture section and distribute
-	that work under terms of your choice, so long as this FAUST
-	architecture section is not modified.
+    EXCEPTION : As a special exception, you may create a larger work
+    that contains this FAUST architecture section and distribute
+    that work under terms of your choice, so long as this FAUST
+    architecture section is not modified.
 
 
  ************************************************************************
@@ -45,7 +45,7 @@
 
 #include <alsa/asoundlib.h>
 #include "faust/audio/audio.h"
-#include "faust/audio/dsp.h"
+#include "faust/dsp/dsp.h"
 
 /**
 DEFAULT ALSA PARAMETERS CONTROLLED BY ENVIRONMENT VARIABLES
@@ -56,10 +56,7 @@ Some default parameters of Faust's ALSA applications are controlled by the follo
     FAUST2ALSA_FREQUENCY= 44100
     FAUST2ALSA_BUFFER   = 512
     FAUST2ALSA_PERIODS  = 2
-
 */
-
-//using namespace std;
 
 // handle 32/64 bits int size issues
 
@@ -86,7 +83,6 @@ Some default parameters of Faust's ALSA applications are controlled by the follo
 #define check_error_msg(err,msg) if (err) { fprintf(stderr, "%s:%d, %s : %s(%d)\n", __FILE__, __LINE__, msg, snd_strerror(err), err); exit(1); }
 #define display_error_msg(err,msg) if (err) { fprintf(stderr, "%s:%d, %s : %s(%d)\n", __FILE__, __LINE__, msg, snd_strerror(err), err); }
 
-
 /**
  * Used to set the priority and scheduling of the audi#include <sys/types.h>
        #include <pwd.h>
@@ -101,10 +97,12 @@ static bool setRealtimePriority ()
 
     uid = getuid ();
     pw = getpwnam ("root");
-    setuid (pw->pw_uid);
-    param.sched_priority = 50; /* 0 to 99  */
-    err = sched_setscheduler(0, SCHED_RR, &param);
-    setuid (uid);
+    err = setuid (pw->pw_uid);
+	if (err==0) {
+    	param.sched_priority = 50; /* 0 to 99  */
+    	err = sched_setscheduler(0, SCHED_RR, &param);
+    	err = setuid (uid);
+	}
     return (err != -1);
 }
 
@@ -121,11 +119,9 @@ enum { kRead = 1, kWrite = 2, kReadWrite = 3 };
 /**
  * A convenient class to pass parameters to AudioInterface
  */
-class AudioParam
+struct AudioParam
 {
-  public:
-
-	const char*		fCardName;
+ 	const char*		fCardName;
 	unsigned int	fFrequency;
 	unsigned int	fBuffering;
 	unsigned int	fPeriods;
@@ -133,8 +129,7 @@ class AudioParam
 	unsigned int	fSoftInputs;
 	unsigned int	fSoftOutputs;
 
-  public :
-	AudioParam() :
+ 	AudioParam() :
 		fCardName("hw:0"),
 		fFrequency(44100),
 		fBuffering(512),
@@ -154,11 +149,11 @@ class AudioParam
 /**
  * An ALSA audio interface
  */
-class AudioInterface : public AudioParam
+struct AudioInterface : public AudioParam
 {
- public :
-	snd_pcm_t*				fOutputDevice ;
-	snd_pcm_t*				fInputDevice ;
+
+    snd_pcm_t*				fOutputDevice;
+	snd_pcm_t*				fInputDevice;
 	snd_pcm_hw_params_t* 	fInputParams;
 	snd_pcm_hw_params_t* 	fOutputParams;
 
@@ -185,8 +180,6 @@ class AudioInterface : public AudioParam
 	float*		fInputSoftChannels[256];
 	float*		fOutputSoftChannels[256];
 
- public :
-
 	const char*	cardName()				{ return fCardName;  	}
  	int			frequency()				{ return fFrequency; 	}
 	int			buffering()				{ return fBuffering;  	}
@@ -196,7 +189,6 @@ class AudioInterface : public AudioParam
 	float**		outputSoftChannels()	{ return fOutputSoftChannels;	}
 
 	bool		duplexMode()			{ return fDuplexMode; }
-
 
 	AudioInterface(const AudioParam& ap = AudioParam()) : AudioParam(ap)
 	{
@@ -212,7 +204,7 @@ class AudioInterface : public AudioParam
 	 */
 	void open()
 	{
-		int 	err;
+		int err;
 
 		// try to open output device, quit if fail to open output device
 		err = snd_pcm_open( &fOutputDevice, fCardName, SND_PCM_STREAM_PLAYBACK, 0 ); check_error(err)
@@ -223,7 +215,7 @@ class AudioInterface : public AudioParam
 
 		fCardOutputs = fSoftOutputs;
 		snd_pcm_hw_params_set_channels_near(fOutputDevice, fOutputParams, &fCardOutputs);
-		err = snd_pcm_hw_params (fOutputDevice, fOutputParams );	check_error (err);
+		err = snd_pcm_hw_params (fOutputDevice, fOutputParams );	check_error(err);
 
 		// allocate alsa output buffers
 		if (fSampleAccess == SND_PCM_ACCESS_RW_INTERLEAVED) {
@@ -232,8 +224,7 @@ class AudioInterface : public AudioParam
 			for (unsigned int i = 0; i < fCardOutputs; i++) {
 				fOutputCardChannels[i] = calloc(noninterleavedBufferSize(fOutputParams), 1);
 			}
-
-		}
+        }
 
 		// check for duplex mode (if we need and have an input device)
 		if (fSoftInputs == 0) {
@@ -251,7 +242,6 @@ class AudioInterface : public AudioParam
 			}
 		}
 
-
 		if (fDuplexMode) {
 
 			// we have and need an input device
@@ -260,7 +250,7 @@ class AudioInterface : public AudioParam
 			setAudioParams(fInputDevice, fInputParams);
 			fCardInputs 	= fSoftInputs;
 			snd_pcm_hw_params_set_channels_near(fInputDevice, fInputParams, &fCardInputs);
-			err = snd_pcm_hw_params (fInputDevice,  fInputParams );	 	check_error (err);
+			err = snd_pcm_hw_params (fInputDevice,  fInputParams );	 	check_error(err);
 
 			// allocation of alsa buffers
 			if (fSampleAccess == SND_PCM_ACCESS_RW_INTERLEAVED) {
@@ -270,8 +260,7 @@ class AudioInterface : public AudioParam
 					fInputCardChannels[i] = calloc(noninterleavedBufferSize(fInputParams), 1);
 				}
 			}
-
-		}
+        }
 
 		printf("inputs : %u, outputs : %u\n", fCardInputs, fCardOutputs);
 
@@ -311,7 +300,6 @@ class AudioInterface : public AudioParam
 			check_error_msg(err, "unable to set access mode neither to non-interleaved or to interleaved");
 		}
 		snd_pcm_hw_params_get_access(params, &fSampleAccess);
-
 
 		// search for 32-bits or 16-bits format
 		err = snd_pcm_hw_params_set_format (stream, params, SND_PCM_FORMAT_S32);
@@ -360,15 +348,15 @@ class AudioInterface : public AudioParam
         if (fSampleAccess == SND_PCM_ACCESS_RW_INTERLEAVED) {
 
 			int count = snd_pcm_readi(fInputDevice, fInputCardBuffer, fBuffering);
-			if (count<0) {
+			if (count < 0) {
 				 //display_error_msg(count, "reading samples");
-				 int err = snd_pcm_prepare(fInputDevice);
+				 snd_pcm_prepare(fInputDevice);
 				 //check_error_msg(err, "preparing input stream");
 			}
 
 			if (fSampleFormat == SND_PCM_FORMAT_S16) {
 
-				short* 	buffer16b = (short*) fInputCardBuffer;
+				short* buffer16b = (short*)fInputCardBuffer;
 				for (unsigned int s = 0; s < fBuffering; s++) {
 					for (unsigned int c = 0; c < fCardInputs; c++) {
 						fInputSoftChannels[c][s] = float(buffer16b[c + s*fCardInputs])*(1.0/float(SHRT_MAX));
@@ -377,7 +365,7 @@ class AudioInterface : public AudioParam
 
 			} else if (fSampleFormat == SND_PCM_FORMAT_S32) {
 
-				int32* 	buffer32b = (int32*) fInputCardBuffer;
+				int32* buffer32b = (int32*)fInputCardBuffer;
 				for (unsigned int s = 0; s < fBuffering; s++) {
 					for (unsigned int c = 0; c < fCardInputs; c++) {
 						fInputSoftChannels[c][s] = float(buffer32b[c + s*fCardInputs])*(1.0/float(INT_MAX));
@@ -392,16 +380,16 @@ class AudioInterface : public AudioParam
 		} else if (fSampleAccess == SND_PCM_ACCESS_RW_NONINTERLEAVED) {
 
 			int count = snd_pcm_readn(fInputDevice, fInputCardChannels, fBuffering);
-			if (count<0) {
+			if (count < 0) {
 				 //display_error_msg(count, "reading samples");
-				 int err = snd_pcm_prepare(fInputDevice);
+				 snd_pcm_prepare(fInputDevice);
 				 //check_error_msg(err, "preparing input stream");
 			}
 
 			if (fSampleFormat == SND_PCM_FORMAT_S16) {
 
 				for (unsigned int c = 0; c < fCardInputs; c++) {
-					short* 	chan16b = (short*) fInputCardChannels[c];
+					short* chan16b = (short*)fInputCardChannels[c];
 					for (unsigned int s = 0; s < fBuffering; s++) {
 						fInputSoftChannels[c][s] = float(chan16b[s])*(1.0/float(SHRT_MAX));
 					}
@@ -410,19 +398,18 @@ class AudioInterface : public AudioParam
 			} else if (fSampleFormat == SND_PCM_FORMAT_S32) {
 
 				for (unsigned int c = 0; c < fCardInputs; c++) {
-					int32* 	chan32b = (int32*) fInputCardChannels[c];
+					int32* chan32b = (int32*)fInputCardChannels[c];
 					for (unsigned int s = 0; s < fBuffering; s++) {
 						fInputSoftChannels[c][s] = float(chan32b[s])*(1.0/float(INT_MAX));
 					}
 				}
 			} else {
-
 				printf("unrecognized input sample format : %u\n", fSampleFormat);
 				exit(1);
 			}
 
 		} else {
-			check_error_msg(-10000, "unknow access mode");
+			check_error_msg(-10000, "unknown access mode");
 		}
     }
 
@@ -438,7 +425,7 @@ class AudioInterface : public AudioParam
 
 			if (fSampleFormat == SND_PCM_FORMAT_S16) {
 
-				short* buffer16b = (short*) fOutputCardBuffer;
+				short* buffer16b = (short*)fOutputCardBuffer;
 				for (unsigned int f = 0; f < fBuffering; f++) {
 					for (unsigned int c = 0; c < fCardOutputs; c++) {
 						float x = fOutputSoftChannels[c][f];
@@ -448,7 +435,7 @@ class AudioInterface : public AudioParam
 
 			} else if (fSampleFormat == SND_PCM_FORMAT_S32)  {
 
-				int32* buffer32b = (int32*) fOutputCardBuffer;
+				int32* buffer32b = (int32*)fOutputCardBuffer;
 				for (unsigned int f = 0; f < fBuffering; f++) {
 					for (unsigned int c = 0; c < fCardOutputs; c++) {
 						float x = fOutputSoftChannels[c][f];
@@ -464,7 +451,7 @@ class AudioInterface : public AudioParam
 			int count = snd_pcm_writei(fOutputDevice, fOutputCardBuffer, fBuffering);
 			if (count<0) {
 				//display_error_msg(count, "w3");
-				int err = snd_pcm_prepare(fOutputDevice);
+				snd_pcm_prepare(fOutputDevice);
 				//check_error_msg(err, "preparing output stream");
 				goto recovery;
 			}
@@ -501,13 +488,13 @@ class AudioInterface : public AudioParam
 			int count = snd_pcm_writen(fOutputDevice, fOutputCardChannels, fBuffering);
 			if (count<0) {
 				//display_error_msg(count, "w3");
-				int err = snd_pcm_prepare(fOutputDevice);
+				snd_pcm_prepare(fOutputDevice);
 				//check_error_msg(err, "preparing output stream");
 				goto recovery;
 			}
 
 		} else {
-			check_error_msg(-10000, "unknow access mode");
+			check_error_msg(-10000, "unknown access mode");
 		}
 	}
 
@@ -647,7 +634,7 @@ static const char* getDefaultEnv(const char* name, const char* defval)
 
 *******************************************************************************
 *******************************************************************************/
-void* __run(void* ptr);
+static void* __run(void* ptr);
 
 class alsaaudio : public audio
 {
@@ -658,62 +645,74 @@ class alsaaudio : public audio
 
  public:
 
-	 alsaaudio(int argc, char *argv[], dsp* DSP) : fAudio(0), fDSP(DSP), fRunning(false) {
-			fAudio = new AudioInterface (
-				AudioParam().cardName( sopt(argc, argv, "--device", "-d",  	getDefaultEnv("FAUST2ALSA_DEVICE", "hw:0")  ) )
-				.frequency( lopt(argc, argv, "--frequency", "-f", 			getDefaultEnv("FAUST2ALSA_FREQUENCY",44100) ) )
-				.buffering( lopt(argc, argv, "--buffer", "-b",    			getDefaultEnv("FAUST2ALSA_BUFFER",512)     ) )
-				.periods( lopt(argc, argv, "--periods", "-p",     			getDefaultEnv("FAUST2ALSA_PERIODS",2)       ) )
-				.inputs(DSP->getNumInputs())
-				.outputs(DSP->getNumOutputs()));
-		}
+    alsaaudio(int argc, char *argv[], dsp* DSP) : fDSP(DSP), fRunning(false)
+    {
+        fAudio = new AudioInterface(AudioParam().cardName(sopt(argc, argv, "--device", "-d", getDefaultEnv("FAUST2ALSA_DEVICE", "hw:0")))
+            .frequency(lopt(argc, argv, "--frequency", "-f", getDefaultEnv("FAUST2ALSA_FREQUENCY", 44100)))
+            .buffering(lopt(argc, argv, "--buffer", "-b", getDefaultEnv("FAUST2ALSA_BUFFER", 512)))
+            .periods(lopt(argc, argv, "--periods", "-p", getDefaultEnv("FAUST2ALSA_PERIODS", 2)))
+            .inputs(DSP->getNumInputs())
+            .outputs(DSP->getNumOutputs()));
+    }
+    
+    alsaaudio(int srate, int bsize) : fDSP(0), fRunning(false)
+    {
+        fAudio = new AudioInterface(AudioParam().cardName("hw:0")
+                                    .frequency(srate)
+                                    .buffering(bsize)
+                                    .periods(2));
+    }
 
 	virtual ~alsaaudio() { stop(); delete fAudio; }
 
-	virtual bool init(const char */*name*/, dsp* DSP) {
-		AVOIDDENORMALS;
+	virtual bool init(const char */*name*/, dsp* DSP)
+    {
+        fAudio->inputs(DSP->getNumInputs());
+        fAudio->outputs(DSP->getNumOutputs());
 		fAudio->open();
 	    DSP->init(fAudio->frequency());
  		return true;
 	}
 
-	virtual bool start() {
+	virtual bool start()
+    {
 		fRunning = true;
-		if (pthread_create( &fAudioThread, 0, __run, this))
+		if (pthread_create(&fAudioThread, 0, __run, this)) {
 			fRunning = false;
+        }
 		return fRunning;
 	}
 
 	virtual void stop() {
 		if (fRunning) {
 			fRunning = false;
-			pthread_join (fAudioThread, 0);
+			pthread_join(fAudioThread, 0);
 		}
 	}
+    
+    virtual int get_buffer_size() { return fAudio->buffering(); }
+    virtual int get_sample_rate() { return fAudio->frequency(); }
 
 	virtual void run() {
 		bool rt = setRealtimePriority();
 		printf(rt ? "RT : ":"NRT: "); fAudio->shortinfo();
+        AVOIDDENORMALS;
 		if (fAudio->duplexMode()) {
-
+            fAudio->write();
 			fAudio->write();
-			fAudio->write();
-			while(fRunning) {
+			while (fRunning) {
 				fAudio->read();
 				fDSP->compute(fAudio->buffering(), fAudio->inputSoftChannels(), fAudio->outputSoftChannels());
 				fAudio->write();
 			}
-
-		} else {
-
-			fAudio->write();
-			while(fRunning) {
+        } else {
+            fAudio->write();
+			while (fRunning) {
 				fDSP->compute(fAudio->buffering(), fAudio->inputSoftChannels(), fAudio->outputSoftChannels());
 				fAudio->write();
 			}
 		}
 	}
-
 };
 
 void* __run (void* ptr)
