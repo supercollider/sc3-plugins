@@ -16,10 +16,16 @@ cp GreyholeRaw.cpp ..
 ```
 
 ```
-# for development purposes, you might 
+# for development purposes, you might
 # want to symbolically link
 # cp JPverb.sc ../sc/
 # cp Greyhole.sc ../sc/
+```
+
+Currently, a list of prime numbers is provided by an external header, which we have to provide in the local includes folder
+
+```
+cp jprev.h ../include/
 ```
 
 To ensure usage of the right faust headers (for others), we add them to the sc3-plugins repository: copy faust includes (here from their standard install directory) to local include folder (which is included from the `sc3-plugins` `cmake` toolchain)
