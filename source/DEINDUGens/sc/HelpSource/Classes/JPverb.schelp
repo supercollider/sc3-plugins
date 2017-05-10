@@ -83,10 +83,10 @@ Spec.add(\highband, [1000, 10000, \exp]);
 Ndef(\src).clear
 (
 Ndef(\src, {
-    //SoundIn.ar([0, 1])
-    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
+    //SoundIn.ar([0, 1])
+    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
 });
-	
+
 Ndef(\reverb, {
 	var src = Ndef(\src).ar * \amp.kr(1);
 	src = JPverb.ar(
@@ -129,7 +129,7 @@ Ndef(\reverb).edit;
 ::
 
 
-For the Verber piece ( see http://tai-studio.org/index.php/jpverb-greyhole/ ), the following source was used:
+For the Verber piece ( see http://tai-studio.org/portfolio/verber.html ), the following source was used:
 
 code::
 Ndef(\src).fadeTime = 4;

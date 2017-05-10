@@ -109,7 +109,7 @@ Ndef(\hole).edit;
 Ndef(\src).edit;
 ::
 
-For the Greyball piece ( see http://tai-studio.org/index.php/jpverb-greyhole/ ), the following source was used:
+For the Greyball piece ( see http://tai-studio.org/portfolio/greyball.html ), the following source was used:
 
 code::
 Ndef(\src).fadeTime = 4;
