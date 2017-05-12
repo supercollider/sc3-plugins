@@ -66,7 +66,7 @@ EXAMPLES::
 
 Minimal example (headphones recommended):
 
-```
+code::
 s.options.memSize_(65536 * 4);
 s.reboot;
 
@@ -89,7 +89,7 @@ s.reboot;
 
 	Mix([src, rev]) * 0.1;
 }.play
-```
+::
 
 code::Ndef::-based example:
 
