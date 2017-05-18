@@ -21,46 +21,78 @@ private:: categories
 
 METHOD:: ar
 
+note::This UGen always generates a stereo signal.::
+
 argument::in
-input to the reverb. Either an array of two audio signals, or one audiosignal.
+input to the reverb. Either an array of two audio signals (stereo), or a mono audiosignal.
 
 argument::t60
-approximate reverberation time in seconds (T60 - the time for the reverb to decay 60db). Does not effect early reflections. (0.1..60)
+approximate reverberation time in seconds code::(0.1..60 sec):: (code::T60:: - the time for the reverb to decay by 60db when code::damp == 0:: ). Does not effect early reflections.
 
 argument::damp
-controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping (0..1)
+controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping. Values should be between code::(0..1).
 
 argument::size
-scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound metallic. (0.5..5)
+scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound metallic. Values should be between code::(0.5..5)::.
 
 argument::earlyDiff
-controls shape of early reflections. Values of 0.707 or more produce smooth exponential decay. Lower values produce a slower build-up of echoes. (0..1)
+controls shape of early reflections. Values of 0.707 or more produce smooth exponential decay. Lower values produce a slower build-up of echoes. Values should be between code::(0..1)::.
 
 argument::modDepth
-depth of delay-line modulation. Use in combination with modFreq to set amount of chorusing within the structure. (0..1)
+depth code::(0..1):: of delay-line modulation. Use in combination with modFreq to set amount of chorusing within the structure.
 
 argument::modFreq
-frequency of delay-line modulation. Use in combination with modDepth to set amount of chorusing within the structure. (0..10)
+frequency code::(0..10 Hz):: of delay-line modulation. Use in combination with modDepth to set amount of chorusing within the structure.
 
 argument::low
-multiplier for the reverberation time within the low band. (0..1)
+multiplier code::(0..1):: for the reverberation time within the low band.
 
 argument::mid
-multiplier for the reverberation time within the mid band. (0..1)
+multiplier code::(0..1):: for the reverberation time within the mid band.
 
 argument::high
-multiplier for the reverberation time within the high band. (0..1)
+multiplier code::(0..1):: for the reverberation time within the high band.
 
 argument::lowcut
-frequency at which the crossover between the low and mid bands of the reverb occurs. (100..6000)
+frequency code::(100..6000 Hz):: at which the crossover between the low and mid bands of the reverb occurs.
 
 argument::highcut
-frequency at which the crossover between the mid and high bands of the reverb occurs. (1000..10000)
+frequency code::(1000..10000 Hz):: at which the crossover between the mid and high bands of the reverb occurs.
 
 returns::
 a UGen.
 
 EXAMPLES::
+
+Minimal example (headphones recommended):
+
+code::
+s.options.memSize_(65536 * 4);
+s.reboot;
+
+{
+	var src = SoundIn.ar(0)!2; // stereo input
+	var rev = JPverb.ar(
+		src,
+		\t60.kr(1,           0.05),
+		\damp.kr(0,          0.05),
+		\size.kr(1,          0.05),
+		\earlydiff.kr(0.707, 0.05),
+		\mdepth.kr(5,        0.05),
+		\mfreq.kr(2,         0.05),
+		\lowx.kr(1,          0.05),
+		\midx.kr(1,          0.05),
+		\highx.kr(1,         0.05),
+		\lowband.kr(500,     0.05),
+		\highband.kr(2000,   0.05)
+	);
+
+	Mix([src, rev]) * 0.1;
+}.play
+::
+
+code::Ndef::-based example:
+
 code::
 (
 s.options.memSize_(65536 * 2);
@@ -83,10 +115,10 @@ Spec.add(\highband, [1000, 10000, \exp]);
 Ndef(\src).clear
 (
 Ndef(\src, {
-    //SoundIn.ar([0, 1])
-    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
+    //SoundIn.ar([0, 1])
+    Splay.ar(Impulse.ar([1, 3, 5, 7, 9]).scramble);
 });
-	
+
 Ndef(\reverb, {
 	var src = Ndef(\src).ar * \amp.kr(1);
 	src = JPverb.ar(
@@ -129,7 +161,7 @@ Ndef(\reverb).edit;
 ::
 
 
-For the Verber piece ( see http://tai-studio.org/index.php/jpverb-greyhole/ ), the following source was used:
+For the Verber piece ( see http://tai-studio.org/portfolio/verber.html ), the following source was used, code::Ndef(\hole) remains unchanged::.
 
 code::
 Ndef(\src).fadeTime = 4;
@@ -151,4 +183,8 @@ Ndef(\src, {
 	}.sum;
 	HighShelf.ar(src, \shelfFreq.kr(1000), \shelfslope.kr(1));
 })
+::
+
+note::
+Since code::Impulse:: and code::LFPulse:: are chosen to be used at evaluation time, the given argument names might not match to the chosen UGen's interface. Since a superfluous argument does not affect a UGen's operation, the warnings can be ignored.
 ::

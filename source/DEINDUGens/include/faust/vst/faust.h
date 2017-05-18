@@ -6,10 +6,8 @@
 #include <vector>
 
 #include "audioeffectx.h"
-#include "dsp.h"
+//#include "../audio/dsp.h"
 
-// Increasing MAX_POLYPHONY can increase processing time a lot
-// which can as well distort the sound making it sound like noise
 const int MAX_POLYPHONY = 10;
 
 const int INITIAL_TEMP_OUTPUT_SIZE = 1024;
@@ -51,7 +49,7 @@ public:
   virtual bool getVendorString (char *text);
   virtual bool getProductString (char *text);
   virtual VstInt32 getVendorVersion ();
-  virtual VstInt32 canDo (char *text);
+  virtual VstInt32 canDo (const char *text);
 
   virtual VstInt32 getNumMidiInputChannels ();
   virtual VstInt32 getNumMidiOutputChannels ();
@@ -66,7 +64,7 @@ private:
 
   void initProcess ();
   void noteOn (VstInt32 note, VstInt32 velocity, VstInt32 delta);
-  void noteOff (VstInt32 note);
+  void noteOff (VstInt32 note, VstInt32 delta);
 	void allNotesOff( void );
   void fillProgram (VstInt32 channel, VstInt32 prg, MidiProgramName* mpn);
 
@@ -85,13 +83,25 @@ private:
   VstInt32 currentVelocity;
   VstInt32 currentDelta;
 
+  std::list<VstInt32> m_currentNotes;
+  std::list<VstInt32> m_currentVelocities;
+  std::list<VstInt32> m_currentDeltas;
+
   char programName[kVstMaxProgNameLen + 1];
 
   // Polyphony
 	std::vector<Voice*> m_voices;
 
 	// Occupied voices - map note to voice index
-	std::map<VstInt32, int> m_playingVoices;
+	struct voice_node {
+		VstInt32 note;
+		int voice;
+	};
+
+	std::list<voice_node*> m_playingVoices;
+
+	// key off but still sounding
+	std :: vector< int > m_releasedVoices;
 
 	// Free voices - currently rot playing
 	std :: list< int > m_freeVoices;
