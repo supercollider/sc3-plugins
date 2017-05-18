@@ -1,0 +1,136 @@
+class:: LoopPhasor2
+summary:: a phasor that can loop - version2
+categories:: UGens>Triggers, UGens>Buffer
+related:: Classes/LoopPhasor
+
+DESCRIPTION::
+Similar to link::Classes/LoopPhasor:: but if end point is less than start point, then the LoopPhasor2 will not change direction.
+But then use negative rate to go backwards.
+
+NOTE::
+This was UGen was previously called RedPhasor2
+::
+
+CLASSMETHODS::
+
+METHOD:: ar, kr
+
+argument::trig
+When triggered, ramp resets and goes to start.
+
+argument::rate
+Amount of change per sample.
+
+argument::start
+Ramp resets to this value when triggered.
+
+argument::end
+Final value of ramp.
+
+argument::loop
+Type of looping:
+table::
+## 0 || Off. No looping. Just ramp through once and stay at the end.
+## 1 || Forward. Normal looping between points.
+## 2 || Pingpong. Back and forth looping between points.
+::
+
+argument::loopstart
+Start point of the loop.
+
+argument::loopend
+Marks the end of the loop.
+
+EXAMPLES::
+
+code::
+s.boot;
+
+//no looping and it will play through once. MouseX acts as trigger
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 0, 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 0, 500, 600), 0, 0.2)}.play;
+
+//with loop= 1
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, 0.3, 400, 800, 1, 500, 600), 0, 0.2)}.play;
+{SinOsc.ar(LoopPhasor2.kr(MouseX.kr>0.5, -0.3, 800, 400, 1, 500, 600), 0, 0.2)}.play;
+::
+
+code::
+//compares LoopPhasor and LoopPhasor2 with a gui
+(
+var syn, osc, min= 400, max= 800, lmin= 0.3, lmax= 0.7;
+var win= Window("loopPhasor", Rect(400, 400, 400, 400)).front;
+var startSld= Slider(win, Rect(10, 30, 20, 200)).value_(0)
+	.action= {|v|
+		if(startSld.value<endSld.value, {
+			loopStartSld.valueAction= loopStartSld.value.clip(startSld.value, endSld.value);
+			loopEndSld.valueAction= loopEndSld.value.clip(startSld.value, endSld.value);
+		}, {
+			loopStartSld.valueAction= loopStartSld.value.clip(endSld.value, startSld.value);
+			loopEndSld.valueAction= loopEndSld.value.clip(endSld.value, startSld.value);
+		});
+		syn.set(\start, v.value.linexp(0, 1, min, max));
+	};
+var endSld= Slider(win, Rect(30, 30, 20, 200)).value_(1)
+	.action= {|v|
+		if(endSld.value>startSld.value, {
+			loopStartSld.valueAction= loopStartSld.value.clip(startSld.value, endSld.value);
+			loopEndSld.valueAction= loopEndSld.value.clip(startSld.value, endSld.value);
+		}, {
+			loopStartSld.valueAction= loopStartSld.value.clip(endSld.value, startSld.value);
+			loopEndSld.valueAction= loopEndSld.value.clip(endSld.value, startSld.value);
+		});
+		syn.set(\end, v.value.linexp(0, 1, min, max));
+	};
+var loopStartSld= Slider(win, Rect(110, 30, 20, 200)).value_(lmin)
+	.action= {|v|
+		if(startSld.value<endSld.value, {
+			v.value= v.value.clip(startSld.value, endSld.value);
+		}, {
+			v.value= v.value.clip(endSld.value, startSld.value);
+		});
+		syn.set(\loopStart, v.value.linexp(0, 1, min, max));
+	};
+var loopEndSld= Slider(win, Rect(130, 30, 20, 200)).value_(lmax)
+	.action= {|v|
+		if(endSld.value>startSld.value, {
+			v.value= v.value.clip(startSld.value, endSld.value);
+		}, {
+			v.value= v.value.clip(endSld.value, startSld.value);
+		});
+		syn.set(\loopEnd, v.value.linexp(0, 1, min, max));
+	};
+var mult1= MultiSliderView(win, Rect(10, 260, 180, 120)).value_(0.dup(180))
+	.indexThumbSize_(1).gap_(0).valueThumbSize_(2);
+var mult2= MultiSliderView(win, Rect(210, 260, 180, 120)).value_(0.dup(180))
+	.indexThumbSize_(1).gap_(0).valueThumbSize_(2);
+Button(win, Rect(200, 60, 180, 20))
+	.states_([["trig"]])
+	.action_{syn.set(\t_trig, 1)};
+Button(win, Rect(200, 120, 180, 20))
+	.states_([["loop= 0 (off)"], ["loop= 1 (on)"], ["loop= 2 (palindrome)"]])
+	.action_{|v| syn.set(\loop, v.value)};
+Slider(win, Rect(200, 180, 180, 20)).value_(0.75)
+	.action_{|v| syn.set(\rate, v.value.linlin(0, 1, -1, 1))};
+StaticText(win, Rect(60, 380, 100, 20)).string_("LoopPhasor");
+StaticText(win, Rect(260, 380, 100, 20)).string_("LoopPhasor2");
+StaticText(win, Rect(5, 10, 100, 20)).string_("start/end");
+StaticText(win, Rect(80, 10, 120, 20)).string_("loopStart/loopEnd");
+StaticText(win, Rect(280, 200, 100, 20)).string_("rate -1 to 1");
+syn= SynthDef(\loopPhasor, {|t_trig= 1, rate= 0.5, start= 400, end= 800, loop= 0, loopStart= 500, loopEnd= 600|
+	var f1= LoopPhasor.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
+	var f2= LoopPhasor2.kr(t_trig, rate, start, end, loop, loopStart, loopEnd);
+	var report= Impulse.kr(40);
+	SendTrig.kr(report, #[0, 1], [f1, f2]);
+	Out.ar(0, SinOsc.ar([f1, f2], 0, 0.3));
+}).play(s, [\start, min, \end, max, \loopStart, lmin.linexp(0, 1, min, max), \loopEnd, lmax.linexp(0, 1, min, max)]);
+osc= OSCFunc({|msg|
+	switch(msg[2],
+		0, {{mult1.value= mult1.value.rotate(-1).put(179, msg[3].explin(min, max, 0, 1))}.defer},
+		1, {{mult2.value= mult2.value.rotate(-1).put(179, msg[3].explin(min, max, 0, 1))}.defer}
+	);
+}, '/tr', s.addr);
+win.onClose= {osc.free; syn.free};
+CmdPeriod.doOnce({win.close});
+)
+::
