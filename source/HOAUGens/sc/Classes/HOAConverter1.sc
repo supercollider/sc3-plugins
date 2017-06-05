@@ -1,4 +1,4 @@
-HOAConverter1 : MultiOutUGen
+FaustHOAConverter1 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, input(1.0), output(1.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, input, output)
@@ -25,6 +25,6 @@ HOAConverter1 : MultiOutUGen
       ^this.initOutputs(4, rate)
   }
 
-  name { ^"HOAConverter1" }
+  name { ^"FaustHOAConverter1" }
 }
 

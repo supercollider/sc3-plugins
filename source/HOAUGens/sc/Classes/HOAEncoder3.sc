@@ -1,4 +1,4 @@
-HOAEncoder3 : MultiOutUGen
+FaustHOAEncoder3 : MultiOutUGen
 {
   *ar { | in1, gain_0(0.0), radius_0(2.0), azimuth_0(0.0), elevation_0(0.0), yes(0.0), speaker_radius_0(1.07) |
       ^this.multiNew('audio', in1, gain_0, radius_0, azimuth_0, elevation_0, yes, speaker_radius_0)
@@ -25,6 +25,6 @@ HOAEncoder3 : MultiOutUGen
       ^this.initOutputs(16, rate)
   }
 
-  name { ^"HOAEncoder3" }
+  name { ^"FaustHOAEncoder3" }
 }
 

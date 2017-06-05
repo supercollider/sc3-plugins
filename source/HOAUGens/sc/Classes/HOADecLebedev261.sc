@@ -1,4 +1,4 @@
-HOADecLebedev261 : MultiOutUGen
+FaustHOADecLebedev261 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, inputs_gain(0.0), outputs_gain(0.0), yes(0.0), speakers_radius(1.07) |
       ^this.multiNew('audio', in1, in2, in3, in4, inputs_gain, outputs_gain, yes, speakers_radius)
@@ -25,6 +25,6 @@ HOADecLebedev261 : MultiOutUGen
       ^this.initOutputs(26, rate)
   }
 
-  name { ^"HOADecLebedev261" }
+  name { ^"FaustHOADecLebedev261" }
 }
 

@@ -78,6 +78,8 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 endmacro()
 
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=512")
+
 #-----------------------
 # plugins without extras
 #-----------------------
@@ -94,6 +96,7 @@ set(PLUGIN_DIRS
     DistortionUGens
     DWGUGens
     GlitchUGens
+    HOAUGens
     JoshUGens
     LoopBufUGens
     MCLDUGens

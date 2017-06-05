@@ -1,4 +1,4 @@
-HOAMirror1 : MultiOutUGen
+FaustHOAMirror1 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, front_back(0.0), left_right(0.0), up_down(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, front_back, left_right, up_down)
@@ -25,6 +25,6 @@ HOAMirror1 : MultiOutUGen
       ^this.initOutputs(4, rate)
   }
 
-  name { ^"HOAMirror1" }
+  name { ^"FaustHOAMirror1" }
 }
 

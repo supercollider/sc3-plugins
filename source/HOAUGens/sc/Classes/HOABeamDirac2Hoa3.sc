@@ -1,4 +1,4 @@
-HOABeamDirac2Hoa3 : MultiOutUGen
+FaustHOABeamDirac2HOA3 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, on(0.0), crossfade(1.0), gain(0.0), azimuth(0.0), elevation(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, on, crossfade, gain, azimuth, elevation)
@@ -25,6 +25,6 @@ HOABeamDirac2Hoa3 : MultiOutUGen
       ^this.initOutputs(16, rate)
   }
 
-  name { ^"HOABeamDirac2Hoa3" }
+  name { ^"FaustHOABeamDirac2HOA3" }
 }
 
