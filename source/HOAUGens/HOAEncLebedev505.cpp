@@ -1,18 +1,14 @@
-//----------------------------------------------------------
-// name: "HOAEncLebedev505"
-// version: "1.0"
-// author: "Pierre Lecomte"
-// license: "GPL"
-// copyright: "(c) Pierre Lecomte 2014"
-//
-// Code generated with Faust 0.9.100 (http://faust.grame.fr)
-//----------------------------------------------------------
+/* ------------------------------------------------------------
+author: "Pierre Lecomte"
+copyright: "(c) Pierre Lecomte 2014"
+license: "GPL"
+name: "HOAEncLebedev505"
+version: "1.0"
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
+------------------------------------------------------------ */
 
-/* link with  */
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
-#if !defined(SC_FAUST_PREFIX)
-# define SC_FAUST_PREFIX "Faust"
-#endif
+#ifndef  __mydsp_H__
+#define  __mydsp_H__
 
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
@@ -33,6 +29,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 // 02111-1307 USA
 //-------------------------------------------------------------------
+
+// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+#if !defined(SC_FAUST_PREFIX)
+#define SC_FAUST_PREFIX "Faust"
+#endif
 
 #include <map>
 #include <string>
@@ -65,12 +66,27 @@
 #ifndef __dsp__
 #define __dsp__
 
+#include <string>
+
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -90,30 +106,30 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods:
-         * - static class 'classInit': static table initialisation
-         * - 'instanceInit': constants and instance table initialisation
+        /** Global init, calls the following methods :
+         * - static class 'classInit' : static table initialisation
+         * - 'instanceInit' : constants and instance table initialisation
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void init(int samplingRate) = 0;
-    
+
         /** Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
-    
+
         /** Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
@@ -125,8 +141,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
-    
-        /**  
+ 
+        /**
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -192,7 +208,30 @@ class decorator_dsp : public dsp {
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-       
+    
+};
+
+/**
+ * DSP factory class.
+ */
+
+class dsp_factory {
+    
+    protected:
+    
+        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
+        virtual ~dsp_factory() {}
+    
+    public:
+    
+        virtual std::string getName() = 0;
+        virtual std::string getSHAKey() = 0;
+        virtual std::string getDSPCode() = 0;
+        virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
+    
 };
 
 /**
@@ -563,62 +602,453 @@ private:
 #endif  
 
 
+double pow(double dummy0, double dummy1);
+
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
 #endif
 
 class mydsp : public dsp {
-  private:
-	FAUSTFLOAT 	fslider0;
-	double 	fRec0[2];
+	
+ private:
+	
+	FAUSTFLOAT fHslider0;
+	double fRec0[2];
 	int fSamplingFreq;
-
-  public:
-	virtual void metadata(Meta* m) { 
-		m->declare("name", "HOAEncLebedev505");
-		m->declare("version", "1.0");
+	
+ public:
+	
+	void metadata(Meta* m) { 
 		m->declare("author", "Pierre Lecomte");
-		m->declare("license", "GPL");
+		m->declare("basics.lib/name", "Faust Basic Element Library");
+		m->declare("basics.lib/version", "0.0");
 		m->declare("copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/lebedev.lib/name", "Lebdev grids and weights");
-		m->declare("lib/lebedev.lib/version", "1.0");
-		m->declare("lib/lebedev.lib/author", "Pierre Lecomte");
-		m->declare("lib/lebedev.lib/license", "GPL");
-		m->declare("lib/lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
-		m->declare("lib/ymn.lib/version", "1.0");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/license", "GPL");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/gui.lib/author", "Pierre Lecomte");
+		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/gui.lib/license", "GPL");
 		m->declare("lib/gui.lib/name", "GUI Library");
 		m->declare("lib/gui.lib/version", "1.0");
-		m->declare("lib/gui.lib/author", "Pierre Lecomte");
-		m->declare("lib/gui.lib/license", "GPL");
-		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
+		m->declare("lib/lebedev.lib/author", "Pierre Lecomte");
+		m->declare("lib/lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("lib/lebedev.lib/license", "GPL");
+		m->declare("lib/lebedev.lib/name", "Lebdev grids and weights");
+		m->declare("lib/lebedev.lib/version", "1.0");
+		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
+		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/ymn.lib/license", "GPL");
+		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
+		m->declare("lib/ymn.lib/version", "1.0");
+		m->declare("license", "GPL");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
-		m->declare("basics.lib/name", "Faust Basic Element Library");
-		m->declare("basics.lib/version", "0.0");
+		m->declare("maths.lib/name", "Faust Math Library");
+		m->declare("maths.lib/version", "2.0");
+		m->declare("name", "HOAEncLebedev505");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
+		m->declare("version", "1.0");
 	}
 
-	virtual int getNumInputs() { return 50; }
-	virtual int getNumOutputs() { return 36; }
-	static void classInit(int samplingFreq) {
+	virtual int getNumInputs() {
+		return 50;
+		
 	}
+	virtual int getNumOutputs() {
+		return 36;
+		
+	}
+	virtual int getInputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			case 9: {
+				rate = 1;
+				break;
+			}
+			case 10: {
+				rate = 1;
+				break;
+			}
+			case 11: {
+				rate = 1;
+				break;
+			}
+			case 12: {
+				rate = 1;
+				break;
+			}
+			case 13: {
+				rate = 1;
+				break;
+			}
+			case 14: {
+				rate = 1;
+				break;
+			}
+			case 15: {
+				rate = 1;
+				break;
+			}
+			case 16: {
+				rate = 1;
+				break;
+			}
+			case 17: {
+				rate = 1;
+				break;
+			}
+			case 18: {
+				rate = 1;
+				break;
+			}
+			case 19: {
+				rate = 1;
+				break;
+			}
+			case 20: {
+				rate = 1;
+				break;
+			}
+			case 21: {
+				rate = 1;
+				break;
+			}
+			case 22: {
+				rate = 1;
+				break;
+			}
+			case 23: {
+				rate = 1;
+				break;
+			}
+			case 24: {
+				rate = 1;
+				break;
+			}
+			case 25: {
+				rate = 1;
+				break;
+			}
+			case 26: {
+				rate = 1;
+				break;
+			}
+			case 27: {
+				rate = 1;
+				break;
+			}
+			case 28: {
+				rate = 1;
+				break;
+			}
+			case 29: {
+				rate = 1;
+				break;
+			}
+			case 30: {
+				rate = 1;
+				break;
+			}
+			case 31: {
+				rate = 1;
+				break;
+			}
+			case 32: {
+				rate = 1;
+				break;
+			}
+			case 33: {
+				rate = 1;
+				break;
+			}
+			case 34: {
+				rate = 1;
+				break;
+			}
+			case 35: {
+				rate = 1;
+				break;
+			}
+			case 36: {
+				rate = 1;
+				break;
+			}
+			case 37: {
+				rate = 1;
+				break;
+			}
+			case 38: {
+				rate = 1;
+				break;
+			}
+			case 39: {
+				rate = 1;
+				break;
+			}
+			case 40: {
+				rate = 1;
+				break;
+			}
+			case 41: {
+				rate = 1;
+				break;
+			}
+			case 42: {
+				rate = 1;
+				break;
+			}
+			case 43: {
+				rate = 1;
+				break;
+			}
+			case 44: {
+				rate = 1;
+				break;
+			}
+			case 45: {
+				rate = 1;
+				break;
+			}
+			case 46: {
+				rate = 1;
+				break;
+			}
+			case 47: {
+				rate = 1;
+				break;
+			}
+			case 48: {
+				rate = 1;
+				break;
+			}
+			case 49: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	virtual int getOutputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			case 9: {
+				rate = 1;
+				break;
+			}
+			case 10: {
+				rate = 1;
+				break;
+			}
+			case 11: {
+				rate = 1;
+				break;
+			}
+			case 12: {
+				rate = 1;
+				break;
+			}
+			case 13: {
+				rate = 1;
+				break;
+			}
+			case 14: {
+				rate = 1;
+				break;
+			}
+			case 15: {
+				rate = 1;
+				break;
+			}
+			case 16: {
+				rate = 1;
+				break;
+			}
+			case 17: {
+				rate = 1;
+				break;
+			}
+			case 18: {
+				rate = 1;
+				break;
+			}
+			case 19: {
+				rate = 1;
+				break;
+			}
+			case 20: {
+				rate = 1;
+				break;
+			}
+			case 21: {
+				rate = 1;
+				break;
+			}
+			case 22: {
+				rate = 1;
+				break;
+			}
+			case 23: {
+				rate = 1;
+				break;
+			}
+			case 24: {
+				rate = 1;
+				break;
+			}
+			case 25: {
+				rate = 1;
+				break;
+			}
+			case 26: {
+				rate = 1;
+				break;
+			}
+			case 27: {
+				rate = 1;
+				break;
+			}
+			case 28: {
+				rate = 1;
+				break;
+			}
+			case 29: {
+				rate = 1;
+				break;
+			}
+			case 30: {
+				rate = 1;
+				break;
+			}
+			case 31: {
+				rate = 1;
+				break;
+			}
+			case 32: {
+				rate = 1;
+				break;
+			}
+			case 33: {
+				rate = 1;
+				break;
+			}
+			case 34: {
+				rate = 1;
+				break;
+			}
+			case 35: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	
+	static void classInit(int samplingFreq) {
+		
+	}
+	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
+		
 	}
+	
 	virtual void instanceResetUserInterface() {
-		fslider0 = 0.0;
+		fHslider0 = FAUSTFLOAT(0.0);
+		
 	}
+	
 	virtual void instanceClear() {
-		for (int i=0; i<2; i++) fRec0[i] = 0;
+		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
+			fRec0[l0] = 0.0;
+			
+		}
+		
 	}
+	
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
 		instanceInit(samplingFreq);
@@ -628,314 +1058,316 @@ class mydsp : public dsp {
 		instanceResetUserInterface();
 		instanceClear();
 	}
+	
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
+	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
 	}
+	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->declare(0, "1", "");
 		ui_interface->openHorizontalBox("Outputs");
-		ui_interface->declare(&fslider0, "1", "");
-		ui_interface->declare(&fslider0, "style", "knob");
-		ui_interface->declare(&fslider0, "unit", "dB");
-		ui_interface->addHorizontalSlider("Gain", &fslider0, 0.0, -1e+01, 5e+01, 0.1);
+		ui_interface->declare(&fHslider0, "1", "");
+		ui_interface->declare(&fHslider0, "style", "knob");
+		ui_interface->declare(&fHslider0, "unit", "dB");
+		ui_interface->addHorizontalSlider("Gain", &fHslider0, 0.0, -10.0, 50.0, 0.10000000000000001);
 		ui_interface->closeBox();
+		
 	}
-	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
-		double 	fSlow0 = (0.0010000000000000009 * pow(10,(0.05 * double(fslider0))));
-		FAUSTFLOAT* input0 = input[0];
-		FAUSTFLOAT* input1 = input[1];
-		FAUSTFLOAT* input2 = input[2];
-		FAUSTFLOAT* input3 = input[3];
-		FAUSTFLOAT* input4 = input[4];
-		FAUSTFLOAT* input5 = input[5];
-		FAUSTFLOAT* input6 = input[6];
-		FAUSTFLOAT* input7 = input[7];
-		FAUSTFLOAT* input8 = input[8];
-		FAUSTFLOAT* input9 = input[9];
-		FAUSTFLOAT* input10 = input[10];
-		FAUSTFLOAT* input11 = input[11];
-		FAUSTFLOAT* input12 = input[12];
-		FAUSTFLOAT* input13 = input[13];
-		FAUSTFLOAT* input14 = input[14];
-		FAUSTFLOAT* input15 = input[15];
-		FAUSTFLOAT* input16 = input[16];
-		FAUSTFLOAT* input17 = input[17];
-		FAUSTFLOAT* input18 = input[18];
-		FAUSTFLOAT* input19 = input[19];
-		FAUSTFLOAT* input20 = input[20];
-		FAUSTFLOAT* input21 = input[21];
-		FAUSTFLOAT* input22 = input[22];
-		FAUSTFLOAT* input23 = input[23];
-		FAUSTFLOAT* input24 = input[24];
-		FAUSTFLOAT* input25 = input[25];
-		FAUSTFLOAT* input26 = input[26];
-		FAUSTFLOAT* input27 = input[27];
-		FAUSTFLOAT* input28 = input[28];
-		FAUSTFLOAT* input29 = input[29];
-		FAUSTFLOAT* input30 = input[30];
-		FAUSTFLOAT* input31 = input[31];
-		FAUSTFLOAT* input32 = input[32];
-		FAUSTFLOAT* input33 = input[33];
-		FAUSTFLOAT* input34 = input[34];
-		FAUSTFLOAT* input35 = input[35];
-		FAUSTFLOAT* input36 = input[36];
-		FAUSTFLOAT* input37 = input[37];
-		FAUSTFLOAT* input38 = input[38];
-		FAUSTFLOAT* input39 = input[39];
-		FAUSTFLOAT* input40 = input[40];
-		FAUSTFLOAT* input41 = input[41];
-		FAUSTFLOAT* input42 = input[42];
-		FAUSTFLOAT* input43 = input[43];
-		FAUSTFLOAT* input44 = input[44];
-		FAUSTFLOAT* input45 = input[45];
-		FAUSTFLOAT* input46 = input[46];
-		FAUSTFLOAT* input47 = input[47];
-		FAUSTFLOAT* input48 = input[48];
-		FAUSTFLOAT* input49 = input[49];
-		FAUSTFLOAT* output0 = output[0];
-		FAUSTFLOAT* output1 = output[1];
-		FAUSTFLOAT* output2 = output[2];
-		FAUSTFLOAT* output3 = output[3];
-		FAUSTFLOAT* output4 = output[4];
-		FAUSTFLOAT* output5 = output[5];
-		FAUSTFLOAT* output6 = output[6];
-		FAUSTFLOAT* output7 = output[7];
-		FAUSTFLOAT* output8 = output[8];
-		FAUSTFLOAT* output9 = output[9];
-		FAUSTFLOAT* output10 = output[10];
-		FAUSTFLOAT* output11 = output[11];
-		FAUSTFLOAT* output12 = output[12];
-		FAUSTFLOAT* output13 = output[13];
-		FAUSTFLOAT* output14 = output[14];
-		FAUSTFLOAT* output15 = output[15];
-		FAUSTFLOAT* output16 = output[16];
-		FAUSTFLOAT* output17 = output[17];
-		FAUSTFLOAT* output18 = output[18];
-		FAUSTFLOAT* output19 = output[19];
-		FAUSTFLOAT* output20 = output[20];
-		FAUSTFLOAT* output21 = output[21];
-		FAUSTFLOAT* output22 = output[22];
-		FAUSTFLOAT* output23 = output[23];
-		FAUSTFLOAT* output24 = output[24];
-		FAUSTFLOAT* output25 = output[25];
-		FAUSTFLOAT* output26 = output[26];
-		FAUSTFLOAT* output27 = output[27];
-		FAUSTFLOAT* output28 = output[28];
-		FAUSTFLOAT* output29 = output[29];
-		FAUSTFLOAT* output30 = output[30];
-		FAUSTFLOAT* output31 = output[31];
-		FAUSTFLOAT* output32 = output[32];
-		FAUSTFLOAT* output33 = output[33];
-		FAUSTFLOAT* output34 = output[34];
-		FAUSTFLOAT* output35 = output[35];
-		for (int i=0; i<count; i++) {
+	
+	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
+		FAUSTFLOAT* input0 = inputs[0];
+		FAUSTFLOAT* input1 = inputs[1];
+		FAUSTFLOAT* input2 = inputs[2];
+		FAUSTFLOAT* input3 = inputs[3];
+		FAUSTFLOAT* input4 = inputs[4];
+		FAUSTFLOAT* input5 = inputs[5];
+		FAUSTFLOAT* input6 = inputs[6];
+		FAUSTFLOAT* input7 = inputs[7];
+		FAUSTFLOAT* input8 = inputs[8];
+		FAUSTFLOAT* input9 = inputs[9];
+		FAUSTFLOAT* input10 = inputs[10];
+		FAUSTFLOAT* input11 = inputs[11];
+		FAUSTFLOAT* input12 = inputs[12];
+		FAUSTFLOAT* input13 = inputs[13];
+		FAUSTFLOAT* input14 = inputs[14];
+		FAUSTFLOAT* input15 = inputs[15];
+		FAUSTFLOAT* input16 = inputs[16];
+		FAUSTFLOAT* input17 = inputs[17];
+		FAUSTFLOAT* input18 = inputs[18];
+		FAUSTFLOAT* input19 = inputs[19];
+		FAUSTFLOAT* input20 = inputs[20];
+		FAUSTFLOAT* input21 = inputs[21];
+		FAUSTFLOAT* input22 = inputs[22];
+		FAUSTFLOAT* input23 = inputs[23];
+		FAUSTFLOAT* input24 = inputs[24];
+		FAUSTFLOAT* input25 = inputs[25];
+		FAUSTFLOAT* input26 = inputs[26];
+		FAUSTFLOAT* input27 = inputs[27];
+		FAUSTFLOAT* input28 = inputs[28];
+		FAUSTFLOAT* input29 = inputs[29];
+		FAUSTFLOAT* input30 = inputs[30];
+		FAUSTFLOAT* input31 = inputs[31];
+		FAUSTFLOAT* input32 = inputs[32];
+		FAUSTFLOAT* input33 = inputs[33];
+		FAUSTFLOAT* input34 = inputs[34];
+		FAUSTFLOAT* input35 = inputs[35];
+		FAUSTFLOAT* input36 = inputs[36];
+		FAUSTFLOAT* input37 = inputs[37];
+		FAUSTFLOAT* input38 = inputs[38];
+		FAUSTFLOAT* input39 = inputs[39];
+		FAUSTFLOAT* input40 = inputs[40];
+		FAUSTFLOAT* input41 = inputs[41];
+		FAUSTFLOAT* input42 = inputs[42];
+		FAUSTFLOAT* input43 = inputs[43];
+		FAUSTFLOAT* input44 = inputs[44];
+		FAUSTFLOAT* input45 = inputs[45];
+		FAUSTFLOAT* input46 = inputs[46];
+		FAUSTFLOAT* input47 = inputs[47];
+		FAUSTFLOAT* input48 = inputs[48];
+		FAUSTFLOAT* input49 = inputs[49];
+		FAUSTFLOAT* output0 = outputs[0];
+		FAUSTFLOAT* output1 = outputs[1];
+		FAUSTFLOAT* output2 = outputs[2];
+		FAUSTFLOAT* output3 = outputs[3];
+		FAUSTFLOAT* output4 = outputs[4];
+		FAUSTFLOAT* output5 = outputs[5];
+		FAUSTFLOAT* output6 = outputs[6];
+		FAUSTFLOAT* output7 = outputs[7];
+		FAUSTFLOAT* output8 = outputs[8];
+		FAUSTFLOAT* output9 = outputs[9];
+		FAUSTFLOAT* output10 = outputs[10];
+		FAUSTFLOAT* output11 = outputs[11];
+		FAUSTFLOAT* output12 = outputs[12];
+		FAUSTFLOAT* output13 = outputs[13];
+		FAUSTFLOAT* output14 = outputs[14];
+		FAUSTFLOAT* output15 = outputs[15];
+		FAUSTFLOAT* output16 = outputs[16];
+		FAUSTFLOAT* output17 = outputs[17];
+		FAUSTFLOAT* output18 = outputs[18];
+		FAUSTFLOAT* output19 = outputs[19];
+		FAUSTFLOAT* output20 = outputs[20];
+		FAUSTFLOAT* output21 = outputs[21];
+		FAUSTFLOAT* output22 = outputs[22];
+		FAUSTFLOAT* output23 = outputs[23];
+		FAUSTFLOAT* output24 = outputs[24];
+		FAUSTFLOAT* output25 = outputs[25];
+		FAUSTFLOAT* output26 = outputs[26];
+		FAUSTFLOAT* output27 = outputs[27];
+		FAUSTFLOAT* output28 = outputs[28];
+		FAUSTFLOAT* output29 = outputs[29];
+		FAUSTFLOAT* output30 = outputs[30];
+		FAUSTFLOAT* output31 = outputs[31];
+		FAUSTFLOAT* output32 = outputs[32];
+		FAUSTFLOAT* output33 = outputs[33];
+		FAUSTFLOAT* output34 = outputs[34];
+		FAUSTFLOAT* output35 = outputs[35];
+		double fSlow0 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider0))));
+		for (int i = 0; (i < count); i = (i + 1)) {
 			fRec0[0] = (fSlow0 + (0.999 * fRec0[1]));
-			double fTemp0 = (double)input5[i];
-			double fTemp1 = (double)input4[i];
-			double fTemp2 = (double)input3[i];
-			double fTemp3 = (double)input2[i];
-			double fTemp4 = (double)input0[i];
-			double fTemp5 = (double)input1[i];
-			double fTemp6 = (double)input17[i];
-			double fTemp7 = (double)input16[i];
-			double fTemp8 = (double)input15[i];
-			double fTemp9 = (double)input14[i];
-			double fTemp10 = (double)input13[i];
-			double fTemp11 = (double)input12[i];
-			double fTemp12 = (double)input11[i];
-			double fTemp13 = (double)input10[i];
-			double fTemp14 = (double)input9[i];
-			double fTemp15 = (double)input8[i];
-			double fTemp16 = (double)input6[i];
-			double fTemp17 = (double)input7[i];
-			double fTemp18 = (fTemp14 + (fTemp15 + (fTemp16 + fTemp17)));
-			double fTemp19 = (double)input25[i];
-			double fTemp20 = (double)input24[i];
-			double fTemp21 = (double)input23[i];
-			double fTemp22 = (double)input22[i];
-			double fTemp23 = (double)input21[i];
-			double fTemp24 = (double)input20[i];
-			double fTemp25 = (double)input18[i];
-			double fTemp26 = (double)input19[i];
-			double fTemp27 = (fTemp25 + fTemp26);
-			double fTemp28 = (fTemp23 + (fTemp24 + fTemp27));
-			double fTemp29 = (fTemp19 + (fTemp20 + (fTemp21 + (fTemp22 + fTemp28))));
-			double fTemp30 = (double)input49[i];
-			double fTemp31 = (double)input48[i];
-			double fTemp32 = (double)input47[i];
-			double fTemp33 = (double)input46[i];
-			double fTemp34 = (double)input45[i];
-			double fTemp35 = (double)input44[i];
-			double fTemp36 = (double)input43[i];
-			double fTemp37 = (double)input42[i];
-			double fTemp38 = (double)input41[i];
-			double fTemp39 = (double)input40[i];
-			double fTemp40 = (double)input39[i];
-			double fTemp41 = (double)input38[i];
-			double fTemp42 = (double)input37[i];
-			double fTemp43 = (double)input36[i];
-			double fTemp44 = (double)input35[i];
-			double fTemp45 = (double)input34[i];
-			double fTemp46 = (double)input33[i];
-			double fTemp47 = (double)input32[i];
-			double fTemp48 = (double)input31[i];
-			double fTemp49 = (double)input30[i];
-			double fTemp50 = (double)input29[i];
-			double fTemp51 = (double)input28[i];
-			double fTemp52 = (double)input26[i];
-			double fTemp53 = (double)input27[i];
-			double fTemp54 = (fTemp52 + fTemp53);
-			double fTemp55 = (fTemp50 + (fTemp51 + fTemp54));
-			output0[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.012698412698412698 * (fTemp0 + (fTemp1 + (fTemp2 + (fTemp3 + (fTemp4 + fTemp5)))))) + (0.022574955908289243 * (fTemp6 + (fTemp7 + (fTemp8 + (fTemp9 + (fTemp10 + (fTemp11 + (fTemp12 + (fTemp13 + fTemp18)))))))))) + (0.02109375 * fTemp29)) + (0.02017333553791887 * (fTemp30 + (fTemp31 + (fTemp32 + (fTemp33 + (fTemp34 + (fTemp35 + (fTemp36 + (fTemp37 + (fTemp38 + (fTemp39 + (fTemp40 + (fTemp41 + (fTemp42 + (fTemp43 + (fTemp44 + (fTemp45 + (fTemp46 + (fTemp47 + (fTemp48 + (fTemp49 + fTemp55)))))))))))))))))))))));
-			double fTemp56 = (fTemp3 - fTemp1);
-			double fTemp57 = (fTemp13 - fTemp11);
-			double fTemp58 = (fTemp15 + fTemp7);
-			double fTemp59 = (fTemp26 + fTemp21);
-			double fTemp60 = (fTemp49 + fTemp41);
-			double fTemp61 = (fTemp46 + fTemp38);
-			double fTemp62 = (fTemp50 + fTemp30);
-			double fTemp63 = (fTemp51 - fTemp54);
-			double fTemp64 = (fTemp42 + fTemp34);
-			double fTemp65 = (fTemp17 - fTemp14);
-			double fTemp66 = (fTemp25 - fTemp24);
-			double fTemp67 = (fTemp20 - (fTemp22 + fTemp66));
-			double fTemp68 = (fTemp23 + fTemp19);
-			double fTemp69 = (fTemp45 + fTemp37);
-			double fTemp70 = (fTemp48 + fTemp47);
-			output1[i] = (FAUSTFLOAT)(fRec0[0] * ((((((((2.693524415809287e-18 * fTemp2) + (0.0219942959691286 * fTemp56)) + (0.0276485614705685 * fTemp57)) + (3.3859722305960555e-18 * fTemp58)) + (0.021093749999999998 * fTemp59)) + (0.010535180889746094 * fTemp60)) + (0.010535180889746096 * fTemp61)) - ((0.010535180889746067 * fTemp62) + ((0.010535180889746065 * (fTemp31 - (fTemp32 + (fTemp33 - fTemp63)))) + ((0.010535180889746113 * fTemp64) + (((((0.027648561470568506 * (fTemp6 - (fTemp8 - (fTemp10 - (fTemp12 + fTemp65))))) + (0.021093749999999994 * fTemp67)) + (0.02109375 * fTemp68)) + (0.01053518088974609 * fTemp69)) + (0.03160554266923824 * (fTemp35 + (fTemp36 - (fTemp39 + (fTemp40 - (fTemp43 + (fTemp44 - fTemp70)))))))))))));
-			double fTemp71 = (fTemp4 - fTemp0);
-			double fTemp72 = (fTemp6 + (fTemp7 + (fTemp8 + (fTemp9 - fTemp18))));
-			double fTemp73 = (fTemp19 + (fTemp20 + (fTemp21 + (fTemp22 - fTemp28))));
-			double fTemp74 = (fTemp42 + (fTemp43 + (fTemp44 + (fTemp45 + (fTemp46 + (fTemp47 + (fTemp49 + fTemp48)))))));
-			double fTemp75 = (fTemp34 + (fTemp35 + (fTemp36 + (fTemp37 + (fTemp38 + (fTemp39 + (fTemp40 + (fTemp41 - fTemp74))))))));
-			double fTemp76 = (fTemp30 + (fTemp31 + (fTemp32 + (fTemp33 - fTemp55))));
-			output2[i] = (FAUSTFLOAT)(fRec0[0] * ((0.0219942959691286 * fTemp71) - ((((0.0276485614705685 * fTemp72) + (0.02109375 * fTemp73)) + (0.010535180889746075 * fTemp75)) + (0.03160554266923825 * fTemp76))));
-			double fTemp77 = (fTemp43 + fTemp35);
-			double fTemp78 = (fTemp48 + fTemp40);
-			double fTemp79 = (fTemp26 - fTemp23);
-			double fTemp80 = (fTemp19 - (fTemp21 + fTemp79));
-			double fTemp81 = (fTemp25 + fTemp22);
-			double fTemp82 = (fTemp17 + fTemp8);
-			double fTemp83 = (fTemp5 - fTemp2);
-			double fTemp84 = (fTemp52 - fTemp53);
-			double fTemp85 = (fTemp50 + fTemp84);
-			double fTemp86 = (fTemp30 - (fTemp32 - (fTemp33 + fTemp85)));
-			double fTemp87 = (fTemp44 + fTemp36);
-			double fTemp88 = (fTemp49 - fTemp46);
-			double fTemp89 = (fTemp37 + (fTemp38 - (fTemp41 - (fTemp45 - fTemp88))));
-			double fTemp90 = (fTemp12 - fTemp10);
-			double fTemp91 = (fTemp16 - fTemp15);
-			double fTemp92 = (fTemp14 + fTemp6);
-			double fTemp93 = (fTemp24 + fTemp20);
-			double fTemp94 = (fTemp47 + fTemp39);
-			double fTemp95 = (fTemp51 + fTemp31);
-			output3[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.010535180889746074 * fTemp77) + ((0.01053518088974608 * fTemp78) + ((0.021093749999999994 * fTemp80) + ((0.021093749999999998 * fTemp81) + ((1.6929861152980278e-18 * fTemp82) + ((1.3467622079046435e-18 * (fTemp0 + (fTemp4 + fTemp3))) + ((0.0219942959691286 * fTemp83) + (0.03160554266923823 * fTemp64)))))))) + (0.010535180889746065 * fTemp86)) - (((0.010535180889746086 * fTemp87) + ((0.03160554266923824 * fTemp89) + ((((((4.040286623713931e-18 * fTemp1) + (0.0276485614705685 * fTemp90)) + (0.027648561470568506 * (fTemp7 - (fTemp9 - (fTemp11 - (fTemp13 + fTemp91)))))) + (5.078958345894083e-18 * fTemp92)) + (0.02109375 * fTemp93)) + (0.010535180889746079 * fTemp94)))) + (0.010535180889746067 * fTemp95))));
-			double fTemp96 = (fTemp38 - (fTemp41 + fTemp88));
-			double fTemp97 = (fTemp25 - fTemp26);
-			double fTemp98 = (fTemp23 - (fTemp24 + fTemp97));
-			double fTemp99 = (fTemp19 - (fTemp20 - (fTemp21 - (fTemp22 - fTemp98))));
-			double fTemp100 = (fTemp10 - (fTemp11 + (fTemp13 - fTemp12)));
-			double fTemp101 = (fTemp50 - (fTemp51 + fTemp84));
-			double fTemp102 = (fTemp30 - (fTemp31 - (fTemp32 - (fTemp33 - fTemp101))));
-			output4[i] = (FAUSTFLOAT)(fRec0[0] * (((0.021308452520676563 * fTemp87) + (((8.030538257073304e-18 * fTemp92) + ((2.6768460856911014e-18 * fTemp82) + (((9.034355539207464e-18 * fTemp1) + (3.0114518464024883e-18 * fTemp3)) + (0.02130845252067657 * fTemp69)))) + (0.021308452520676556 * fTemp78))) - (((0.021308452520676584 * fTemp96) + ((0.027231914153020897 * fTemp99) + ((0.043716214137085485 * fTemp100) + ((0.021308452520676542 * fTemp77) + ((0.021308452520676553 * fTemp94) + (((6.0229036928049765e-18 * fTemp2) + (5.353692171382203e-18 * fTemp58)) + (0.021308452520676615 * fTemp64))))))) + (0.007102817506892165 * fTemp102))));
-			double fTemp103 = (fTemp47 - fTemp43);
-			double fTemp104 = (fTemp35 - (fTemp39 - fTemp103));
-			double fTemp105 = (fTemp15 - fTemp7);
-			double fTemp106 = (fTemp6 - (fTemp8 - fTemp65));
-			double fTemp107 = (fTemp20 - (fTemp22 - fTemp66));
-			double fTemp108 = (fTemp19 - (fTemp21 - fTemp79));
-			double fTemp109 = (fTemp49 - fTemp41);
-			double fTemp110 = (fTemp46 - fTemp38);
-			double fTemp111 = (fTemp48 - fTemp44);
-			double fTemp112 = (fTemp36 - (fTemp40 - fTemp111));
-			double fTemp113 = (fTemp45 - fTemp37);
-			double fTemp114 = (fTemp42 - fTemp34);
-			double fTemp115 = (fTemp50 - fTemp30);
-			output5[i] = (FAUSTFLOAT)(fRec0[0] * (((0.021308452520676528 * (fTemp31 - (fTemp32 + (fTemp33 + fTemp63)))) + ((0.021308452520676553 * fTemp104) + (((((((5.353692171382201e-18 * fTemp105) + (0.043716214137085485 * fTemp106)) + (0.027231914153020904 * fTemp107)) + (0.02723191415302091 * fTemp108)) + (0.007102817506892191 * fTemp109)) + (0.007102817506892193 * fTemp110)) + (0.021308452520676546 * fTemp112)))) - (((0.007102817506892187 * fTemp113) + (0.007102817506892205 * fTemp114)) + (0.02130845252067653 * fTemp115))));
-			double fTemp116 = (fTemp6 + (fTemp7 + (fTemp8 + (fTemp9 + fTemp18))));
-			double fTemp117 = (fTemp4 + fTemp0);
-			double fTemp118 = (fTemp30 + (fTemp31 + (fTemp32 + (fTemp33 + fTemp55))));
-			double fTemp119 = (fTemp1 + (fTemp2 + (fTemp5 + fTemp3)));
-			double fTemp120 = (fTemp10 + (fTemp11 + (fTemp13 + fTemp12)));
-			double fTemp121 = (fTemp34 + (fTemp35 + (fTemp36 + (fTemp37 + (fTemp38 + (fTemp39 + (fTemp40 + (fTemp41 + fTemp74))))))));
-			output6[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.012619783999998805 * fTemp116) + ((0.02839451399999733 * fTemp117) + (5.236595479505967e-18 * fTemp29))) + (0.03280650879687195 * fTemp118)) - (((0.014197256999998666 * fTemp119) + (0.02523956799999763 * fTemp120)) + (0.01640325439843596 * fTemp121))));
-			double fTemp122 = (fTemp38 - (fTemp41 - fTemp88));
-			double fTemp123 = (fTemp48 - fTemp40);
-			double fTemp124 = (fTemp7 - (fTemp9 - fTemp91));
-			double fTemp125 = (fTemp17 - fTemp8);
-			double fTemp126 = (fTemp43 - fTemp35);
-			double fTemp127 = (fTemp44 - fTemp36);
-			double fTemp128 = (fTemp47 - fTemp39);
-			double fTemp129 = (fTemp14 - fTemp6);
-			double fTemp130 = (fTemp51 - fTemp31);
-			double fTemp131 = (fTemp30 - (fTemp32 - (fTemp33 - fTemp85)));
-			output7[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.021308452520676542 * fTemp122) + ((0.007102817506892183 * fTemp123) + ((0.043716214137085485 * fTemp124) + ((2.6768460856911007e-18 * fTemp125) + (((3.0114518464024883e-18 * fTemp71) + (0.02723191415302091 * fTemp107)) + (0.02130845252067654 * fTemp114)))))) + (0.0071028175068921775 * fTemp126)) - ((((0.007102817506892185 * fTemp127) + ((0.007102817506892181 * fTemp128) + ((8.0305382570733e-18 * fTemp129) + ((0.027231914153020904 * fTemp108) + (0.021308452520676546 * fTemp113))))) + (0.02130845252067653 * fTemp130)) + (0.021308452520676528 * fTemp131))));
-			double fTemp132 = (fTemp53 + fTemp32);
-			double fTemp133 = (fTemp52 + fTemp33);
-			double fTemp134 = (fTemp14 - (fTemp15 + (fTemp16 - fTemp17)));
-			double fTemp135 = (fTemp6 - (fTemp7 - (fTemp8 - (fTemp9 - fTemp134))));
-			double fTemp136 = (fTemp1 - (fTemp2 + (fTemp5 - fTemp3)));
-			output8[i] = (FAUSTFLOAT)(fRec0[0] * (((9.219912161207984e-35 * fTemp117) + (((8.337369125538138e-18 * fTemp93) + ((1.6674738251076273e-18 * fTemp81) + ((0.028411270027568696 * fTemp64) + ((0.02841127002756873 * fTemp69) + ((0.028411270027568717 * fTemp61) + ((0.028411270027568724 * fTemp60) + ((2.6768460856911007e-18 * fTemp13) + (1.3384230428455503e-17 * fTemp11)))))))) + (2.1746106811858183e-18 * fTemp95))) - ((1.3047664087114909e-18 * fTemp132) + ((1.1422201709353029e-18 * fTemp133) + ((0.02185810706854275 * fTemp135) + ((0.024590370452110585 * fTemp136) + ((0.028411270027568748 * fTemp77) + ((0.028411270027568734 * fTemp87) + ((0.028411270027568745 * fTemp94) + ((0.02841127002756874 * fTemp78) + (((1.167231677575339e-17 * fTemp68) + (((8.0305382570733e-18 * fTemp12) + (1.8737922599837705e-17 * fTemp10)) + (5.002421475322882e-18 * fTemp59))) + (3.044454953660145e-18 * fTemp62))))))))))));
-			double fTemp137 = (fTemp6 - (fTemp8 + fTemp65));
-			double fTemp138 = (6.133424905712859e-18 * fTemp58);
-			double fTemp139 = (fTemp32 + (fTemp33 + fTemp54));
-			double fTemp140 = (fTemp49 - fTemp45);
-			double fTemp141 = (fTemp37 - (fTemp41 + fTemp140));
-			output9[i] = (FAUSTFLOAT)(((((0.01669440503167441 * fTemp137) + (((0.020818537549440772 * fTemp87) + ((0.016982082124440745 * fTemp81) + (((fTemp138 + ((0.033388810063348796 * fTemp12) + ((9.75821927113805e-18 * fTemp2) + (0.0333888100633488 * fTemp13)))) + (0.01698208212444074 * fTemp59)) + (0.03007122090474784 * fTemp61)))) + (0.020818537549440803 * fTemp77))) + (0.002313170838826743 * fTemp139)) - (((((((0.0023131708388267444 * fTemp62) + ((((0.026560635762986527 * fTemp56) + ((0.03338881006334885 * fTemp11) + (0.03338881006334882 * fTemp10))) + (0.01698208212444075 * fTemp68)) + (0.030071220904747842 * fTemp64))) + (0.016982082124440766 * fTemp93)) + (0.020818537549440783 * fTemp78)) + (0.02081853754944079 * fTemp94)) + (0.002313170838826747 * fTemp95)) + (0.03007122090474782 * fTemp141))) * fRec0[0]);
-			double fTemp142 = ((((fTemp33 + fTemp101) - fTemp32) + fTemp31) - fTemp30);
-			double fTemp143 = ((((fTemp22 + fTemp98) - fTemp21) + fTemp20) - fTemp19);
-			output10[i] = (FAUSTFLOAT)((((((0.016998264729033867 * fTemp123) + (((0.01699826472903388 * fTemp113) + (5.007920464891509e-18 * fTemp125)) + (1.5023761394674526e-17 * fTemp129))) + (0.016998264729033888 * fTemp122)) + (0.016998264729033874 * fTemp127)) - ((0.016998264729033857 * fTemp126) + ((0.016998264729033864 * fTemp128) + ((0.016998264729033916 * fTemp114) + (((0.016998264729033836 * fTemp142) + (0.041597435974919175 * fTemp143)) + (1.0015840929783018e-17 * fTemp105)))))) * fRec0[0]);
-			double fTemp144 = ((fTemp40 + fTemp111) - fTemp36);
-			double fTemp145 = ((fTemp39 + fTemp103) - fTemp35);
-			output11[i] = (FAUSTFLOAT)((((0.030460165261409405 * fTemp139) + ((((4.750930503007937e-18 * fTemp58) + (0.013154264250377147 * fTemp59)) + (0.005375323281425202 * fTemp69)) + (0.005375323281425214 * fTemp64))) - ((0.03879429159750975 * fTemp137) + (((0.02586286106500651 * fTemp90) + (((0.005375323281425206 * fTemp61) + ((0.005375323281425205 * fTemp60) + ((0.013154264250377148 * fTemp68) + ((0.013154264250377145 * fTemp67) + ((0.025862861065006505 * fTemp57) + ((0.020573779994945588 * fTemp56) + ((2.5195613817171963e-18 * fTemp2) + ((0.01612596984427559 * fTemp144) + (0.016125969844275594 * fTemp145))))))))) + (0.030460165261409412 * fTemp62))) + (0.030460165261409402 * fTemp95)))) * fRec0[0]);
-			output12[i] = (FAUSTFLOAT)((((((0.03359684204526464 * fTemp71) + (0.010558468816293319 * fTemp72)) + (0.021480823570105497 * fTemp73)) + (0.020481687709769415 * fTemp75)) - (0.0263335984839893 * fTemp76)) * fRec0[0]);
-			double fTemp146 = ((fTemp9 + fTemp91) - fTemp7);
-			output13[i] = (FAUSTFLOAT)((((5.0391227634343926e-18 * fTemp117) + ((((((0.013154264250377145 * fTemp80) + (((((3.779342072575794e-18 * fTemp1) + (0.03879429159750975 * fTemp146)) + (0.025862861065006505 * fTemp90)) + (2.3754652515039685e-18 * fTemp82)) + (0.013154264250377147 * fTemp81))) + (0.005375323281425197 * fTemp94)) + (0.01612596984427559 * fTemp89)) + (0.0053753232814252 * fTemp87)) + (0.030460165261409402 * fTemp86))) - ((((0.005375323281425198 * fTemp78) + ((0.013154264250377148 * fTemp93) + ((7.126395754511905e-18 * fTemp92) + ((0.020573779994945588 * fTemp83) + (((1.2597806908585981e-18 * fTemp3) + (0.02586286106500651 * fTemp57)) + (0.016125969844275587 * fTemp64)))))) + (0.005375323281425194 * fTemp77)) + (0.030460165261409412 * fTemp95))) * fRec0[0]);
-			double fTemp147 = (fTemp25 - fTemp22);
-			double fTemp148 = (fTemp24 - fTemp20);
-			double fTemp149 = ((((fTemp9 + fTemp134) - fTemp8) + fTemp7) - fTemp6);
-			double fTemp150 = (fTemp26 - fTemp21);
-			double fTemp151 = (fTemp23 - fTemp19);
-			double fTemp152 = (fTemp52 - fTemp33);
-			double fTemp153 = (fTemp53 - fTemp32);
-			output14[i] = (FAUSTFLOAT)(((((0.02266435297204512 * fTemp114) + ((0.02266435297204515 * fTemp113) + ((0.022664352972045138 * fTemp110) + ((0.022664352972045144 * fTemp109) + ((2.4393594688416384e-34 * fTemp71) + (((2.5471083409710867e-18 * fTemp147) + (1.273554170485543e-17 * fTemp148)) + (0.022664352972045162 * ((fTemp40 - fTemp70) + fTemp39)))))))) + (5.204217622867659e-18 * fTemp130)) - ((0.022664352972045165 * fTemp126) + ((0.022664352972045155 * fTemp127) + ((((((0.04089277388695433 * fTemp149) + (7.641325022913258e-18 * fTemp150)) + (1.7829758386797603e-17 * fTemp151)) + (2.7335294515958808e-18 * fTemp152)) + (3.1225305737205953e-18 * fTemp153)) + (7.285904672014723e-18 * fTemp115))))) * fRec0[0]);
-			double fTemp154 = (3.0667124528564294e-18 * fTemp82);
-			double fTemp155 = (fTemp13 + fTemp10);
-			double fTemp156 = (fTemp25 + fTemp23);
-			double fTemp157 = ((fTemp156 + fTemp22) + fTemp19);
-			output15[i] = (FAUSTFLOAT)(((((6.097910338853647e-51 * fTemp117) + ((((0.03007122090474779 * fTemp94) + ((0.01698208212444072 * fTemp93) + ((9.20013735856929e-18 * fTemp92) + ((0.026560635762986527 * fTemp83) + ((0.02081853754944071 * fTemp64) + ((((0.03338881006334876 * fTemp11) + ((0.03338881006334882 * fTemp12) + ((1.4637328906707076e-17 * fTemp1) + (0.01669440503167441 * fTemp146)))) + (0.01698208212444075 * fTemp59)) + (0.02081853754944074 * fTemp60))))))) + (0.0300712209047478 * fTemp87)) + (0.002313170838826741 * fTemp95))) + (0.0023131708388267444 * fTemp132)) - ((0.002313170838826745 * fTemp133) + ((0.03007122090474778 * fTemp77) + ((0.030071220904747797 * fTemp78) + (fTemp154 + (((0.020818537549440744 * fTemp69) + (((4.879109635569025e-18 * fTemp3) + ((0.0333888100633488 * fTemp155) + (0.01698208212444074 * fTemp157))) + (0.020818537549440724 * fTemp61))) + (0.0023131708388267436 * fTemp62))))))) * fRec0[0]);
-			double fTemp158 = (fTemp48 - fTemp47);
-			output16[i] = (FAUSTFLOAT)(fRec0[0] * ((((9.059380048721333e-19 * fTemp95) + ((0.03550821695213559 * fTemp77) + ((1.2735541704855428e-17 * fTemp93) + ((2.5471083409710855e-18 * fTemp81) + (((1.7829758386797597e-17 * fTemp68) + ((7.641325022913257e-18 * fTemp59) + ((4.293397433999001e-17 * fTemp10) + ((3.0667124528564293e-17 * fTemp11) + ((1.8400274717138574e-17 * fTemp12) + ((6.133424905712858e-18 * fTemp13) + (0.03550821695213561 * (((fTemp45 - fTemp44) + fTemp37) - fTemp36)))))))) + (1.2683132068209864e-18 * fTemp62)))))) + (5.435628029232799e-19 * fTemp132)) - (((0.035508216952135616 * fTemp96) + ((9.200137358569287e-18 * fTemp92) + (fTemp154 + ((0.03550821695213564 * fTemp64) + (((2.0700309056780893e-17 * fTemp1) + ((1.3800206037853928e-17 * fTemp2) + ((6.900103018926964e-18 * fTemp3) + (0.035508216952135595 * ((fTemp158 + fTemp40) - fTemp39))))) + fTemp138))))) + (4.758463994196736e-19 * fTemp133))));
-			output17[i] = (FAUSTFLOAT)(fRec0[0] * (((0.027200442744256398 * (fTemp37 - (fTemp41 - fTemp140))) + ((((0.027200442744256408 * fTemp110) + ((1.3010959028184069e-17 * fTemp105) + ((((0.02941382905783859 * fTemp147) + (0.02941382905783858 * fTemp150)) + (0.006277025248674522 * fTemp152)) + (0.006277025248674523 * fTemp153)))) + (0.01883107574602363 * fTemp127)) + (0.018831075746023662 * fTemp126))) - ((0.0062770252486745335 * fTemp130) + ((0.01883107574602365 * fTemp128) + ((0.01883107574602364 * fTemp123) + ((((0.035414181017315374 * fTemp106) + ((0.02941382905783863 * fTemp148) + (0.029413829057838594 * fTemp151))) + (0.027200442744256415 * fTemp114)) + (0.006277025248674527 * fTemp115)))))));
-			output18[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.037859351999996446 * fTemp100) + (((0.006710422253905626 * fTemp94) + ((1.738662534172072e-17 * fTemp92) + ((5.795541780573573e-18 * fTemp82) + ((5.215987602516216e-18 * fTemp2) + (0.006710422253905646 * fTemp64))))) + (0.006710422253905624 * fTemp77))) + (0.006710422253905637 * fTemp96)) - (((0.031444705933590805 * fTemp99) + (((0.006710422253905627 * fTemp78) + ((((2.607993801258108e-18 * fTemp3) + (7.823981403774323e-18 * fTemp1)) + (1.1591083561147146e-17 * fTemp58)) + (0.0067104222539056315 * fTemp69))) + (0.00671042225390563 * fTemp87))) + (0.02907849643359095 * fTemp102))));
-			double fTemp159 = (fTemp50 - fTemp54);
-			output19[i] = (FAUSTFLOAT)(fRec0[0] * ((((((0.013385302265262959 * fTemp106) + ((1.6392267574774099e-18 * fTemp105) + (0.011117382399029452 * fTemp151))) + (0.010280801007450529 * fTemp113)) + (0.010280801007450555 * fTemp114)) + (0.03558738810271335 * (fTemp30 - (fTemp32 + (fTemp33 + fTemp159))))) - ((0.01111738239902945 * (fTemp20 - (fTemp21 + (fTemp22 + (fTemp24 - fTemp27))))) + (((0.03084240302235157 * fTemp104) + ((0.030842403022351562 * fTemp112) + ((0.010280801007450534 * fTemp109) + (0.010280801007450538 * fTemp110)))) + (0.03558738810271334 * fTemp130)))));
-			output20[i] = (FAUSTFLOAT)(fRec0[0] * ((((((0.014285714285714285 * fTemp119) + (0.0380952380952381 * fTemp117)) + (0.025396825396825397 * fTemp120)) + (0.004251405423280436 * fTemp121)) + (0.014254712301587407 * fTemp118)) - ((0.027513227513227514 * fTemp116) + (0.024609375000000013 * fTemp29))));
-			output21[i] = (FAUSTFLOAT)(fRec0[0] * (((0.01111738239902945 * (fTemp19 - (fTemp21 - (fTemp22 - (fTemp23 + fTemp97))))) + ((0.010280801007450525 * fTemp127) + ((0.010280801007450517 * fTemp128) + ((0.013385302265262959 * fTemp124) + ((8.196133787387049e-19 * fTemp125) + (((7.376520408648356e-18 * fTemp71) + (0.011117382399029452 * fTemp148)) + (0.030842403022351562 * fTemp113))))))) - ((((0.010280801007450515 * fTemp126) + ((0.03084240302235156 * fTemp122) + ((0.010280801007450522 * fTemp123) + ((2.4588401362161147e-18 * fTemp129) + (0.030842403022351552 * fTemp114))))) + (0.03558738810271335 * fTemp130)) + (0.03558738810271334 * fTemp131))));
-			double fTemp160 = (fTemp49 + fTemp46);
-			output22[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.021295885499998 * fTemp136) + ((4.79080689136032e-34 * fTemp117) + (((0.008947229671874174 * fTemp77) + (((((6.954650136688288e-18 * fTemp12) + (1.6227516985606004e-17 * fTemp10)) + (1.925432923585088e-18 * fTemp81)) + (9.62716461792544e-18 * fTemp93)) + (0.008947229671874172 * fTemp94))) + (8.902721895353721e-18 * fTemp95)))) + (0.00894722967187417 * (fTemp36 + (fTemp40 + (fTemp48 + fTemp44))))) - ((0.008947229671874163 * (fTemp38 + (fTemp41 + fTemp160))) + ((5.341633137212233e-18 * fTemp132) + ((4.676178873339891e-18 * fTemp133) + ((0.04732418999999555 * fTemp135) + ((1.246381065349521e-17 * fTemp62) + ((0.008947229671874156 * fTemp64) + (((1.3478030465095617e-17 * fTemp68) + (((2.3182167122294292e-18 * fTemp13) + (1.1591083561147147e-17 * fTemp11)) + (5.776298770755264e-18 * fTemp59))) + (0.008947229671874167 * fTemp69))))))))));
-			output23[i] = (FAUSTFLOAT)(fRec0[0] * (((0.029413829057838584 * (fTemp19 - (fTemp156 - fTemp22))) + (((0.027200442744256377 * fTemp127) + ((0.027200442744256363 * fTemp128) + ((1.9516438542276106e-17 * fTemp129) + ((0.035414181017315374 * fTemp124) + ((0.018831075746023575 * fTemp114) + ((0.018831075746023607 * fTemp109) + ((1.829373101656094e-50 * fTemp71) + (((0.02941382905783855 * fTemp148) + (0.029413829057838594 * fTemp150)) + (0.006277025248674527 * fTemp153))))))))) + (0.006277025248674517 * fTemp130))) - ((0.027200442744256356 * fTemp126) + ((0.027200442744256374 * fTemp123) + ((6.5054795140920346e-18 * fTemp125) + ((0.006277025248674525 * fTemp115) + ((0.01883107574602361 * fTemp113) + ((0.018831075746023586 * fTemp110) + (0.0062770252486745275 * fTemp152)))))))));
-			output24[i] = (FAUSTFLOAT)(fRec0[0] * (((0.012520803773755805 * fTemp116) + ((3.9603917912335094e-67 * fTemp117) + ((0.028171808490950554 * fTemp119) + (((0.0103565632777062 * fTemp87) + ((0.010356563277706236 * fTemp94) + ((0.010356563277706217 * fTemp78) + (((0.010356563277706178 * fTemp69) + ((0.010356563277706152 * fTemp60) + (0.010356563277706144 * fTemp61))) + (0.010356563277706062 * fTemp64))))) + (0.010356563277706251 * fTemp77))))) - (((0.05008321509502321 * fTemp120) + (0.02079871798745958 * fTemp29)) + (0.001479509039672308 * fTemp118))));
-			output25[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.0014035855152518362 * fTemp77) + ((0.001403585515251904 * fTemp87) + ((0.012594249175901172 * fTemp93) + (((((0.029546842014263944 * fTemp56) + ((0.037142706401659856 * fTemp10) + ((1.8092222748840437e-17 * fTemp2) + (0.037142706401659786 * fTemp11)))) + (5.6858370633078216e-18 * fTemp58)) + (0.012594249175901195 * fTemp68)) + (0.0004678618384172915 * fTemp62))))) + (0.00046786183841729064 * fTemp95)) - ((0.03696108523496622 * (fTemp37 - (fTemp38 + (fTemp41 - (fTemp45 - fTemp160))))) + ((0.009285676600414948 * fTemp137) + (((0.00046786183841729075 * fTemp133) + ((0.0014035855152518585 * fTemp94) + ((0.0014035855152518813 * fTemp78) + ((0.012594249175901169 * fTemp81) + ((((0.03714270640165983 * fTemp12) + (0.03714270640165978 * fTemp13)) + (0.012594249175901188 * fTemp59)) + (0.03696108523496621 * fTemp64)))))) + (0.00046786183841729124 * fTemp132))))));
-			output26[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.03550821695213557 * fTemp126) + ((0.035508216952135574 * fTemp128) + ((3.80493962046296e-18 * fTemp115) + (((((4.877341144075983e-18 * fTemp147) + (1.4632023432227946e-17 * fTemp150)) + (2.4386705720379917e-17 * fTemp148)) + (3.4141388008531875e-17 * fTemp151)) + (1.63068840876984e-18 * fTemp153))))) + (2.7178140146164e-18 * fTemp130)) - ((0.035508216952135595 * (fTemp37 - (fTemp38 - (fTemp41 - (fTemp45 + fTemp88))))) + ((0.03550821695213559 * fTemp127) + ((0.03550821695213558 * fTemp123) + ((2.1576234629586837e-17 * fTemp129) + ((7.19207820986228e-18 * fTemp125) + ((0.03550821695213562 * fTemp114) + ((1.438415641972456e-17 * fTemp105) + (1.427539198259021e-18 * fTemp152))))))))));
-			output27[i] = (FAUSTFLOAT)(fRec0[0] * (((0.00453340712404275 * fTemp141) + ((0.04844794288974959 * fTemp137) + ((0.012205326872422689 * fTemp132) + (((0.0031385126243372867 * fTemp94) + ((0.003138512624337286 * fTemp78) + ((0.028161597282885743 * fTemp81) + (((((0.02202291575478033 * fTemp56) + ((0.027684538794142663 * fTemp11) + (0.02768453879414263 * fTemp10))) + (1.779948545556168e-17 * fTemp58)) + (0.028161597282885732 * fTemp59)) + (0.004533407124042753 * fTemp64))))) + (0.012205326872422687 * fTemp133))))) - ((0.01220532687242271 * fTemp95) + ((0.0031385126243372885 * fTemp77) + (((0.02816159728288578 * fTemp93) + ((0.012205326872422696 * fTemp62) + ((((0.027684538794142618 * fTemp12) + ((8.091087986095064e-18 * fTemp2) + (0.027684538794142628 * fTemp13))) + (0.028161597282885746 * fTemp68)) + (0.0045334071240427515 * fTemp61)))) + (0.003138512624337284 * fTemp87))))));
-			output28[i] = (FAUSTFLOAT)(fRec0[0] * ((((0.020500678615759115 * fTemp128) + ((1.2457044871490476e-17 * fTemp129) + ((4.152348290496825e-18 * fTemp125) + (0.020500678615759178 * fTemp114)))) + (0.020500678615759105 * fTemp126)) - ((0.02050067861575913 * fTemp127) + ((0.020500678615759146 * fTemp122) + ((0.02050067861575912 * fTemp123) + ((0.020500678615759133 * fTemp113) + ((8.30469658099365e-18 * fTemp105) + ((1.531697961461448e-17 * fTemp143) + (0.04100135723151817 * fTemp142)))))))));
-			output29[i] = (FAUSTFLOAT)(fRec0[0] * (((0.01922317685141265 * fTemp137) + ((0.0256309024685502 * fTemp90) + ((0.0009685660236671116 * fTemp64) + (((0.02607257280619569 * fTemp68) + ((((2.496963962185008e-18 * fTemp2) + (0.020389258061373223 * fTemp56)) + (0.025630902468550196 * fTemp57)) + (0.02607257280619568 * fTemp67))) + (0.0009685660236671092 * fTemp69))))) - ((((0.00096856602366711 * fTemp61) + ((0.0009685660236671096 * fTemp60) + ((0.026072572806195685 * fTemp59) + ((2.3541602000525996e-18 * fTemp58) + ((0.0029056980710013254 * fTemp144) + (0.002905698071001326 * fTemp145)))))) + (0.0351912321932386 * fTemp95)) + (0.03519123219323861 * (fTemp30 - (fTemp32 + (fTemp33 - fTemp159)))))));
-			output30[i] = (FAUSTFLOAT)(((((0.0067319093514117785 * fTemp73) + ((0.042115870353719366 * fTemp71) + (0.02812594988253908 * fTemp72))) + (0.0007502480158729096 * fTemp76)) - (0.023090966710758377 * fTemp75)) * fRec0[0]);
-			output31[i] = (FAUSTFLOAT)((((9.987855848740033e-18 * fTemp117) + ((0.0029056980710013246 * fTemp96) + (((0.0009685660236671088 * fTemp87) + (((0.02607257280619569 * fTemp93) + ((3.5312403000788995e-18 * fTemp92) + ((0.020389258061373223 * fTemp83) + (((1.248481981092504e-18 * fTemp3) + (0.0256309024685502 * fTemp57)) + (0.0029056980710013254 * fTemp69))))) + (0.0009685660236671081 * fTemp94))) + (0.0351912321932386 * fTemp86)))) - (((0.0009685660236671078 * fTemp77) + ((0.0009685660236671086 * fTemp78) + ((0.02607257280619568 * fTemp80) + ((0.026072572806195685 * fTemp81) + ((1.1770801000262998e-18 * fTemp82) + ((0.025630902468550196 * fTemp90) + (((3.745445943277512e-18 * fTemp1) + (0.01922317685141265 * fTemp146)) + (0.002905698071001324 * fTemp64)))))))) + (0.03519123219323861 * fTemp95))) * fRec0[0]);
-			output32[i] = (FAUSTFLOAT)((((((0.02733423815434549 * fTemp127) + ((0.0273342381543455 * fTemp128) + (((8.09044008694836e-34 * fTemp71) + ((9.37894502882144e-34 * fTemp147) + (4.6894725144107197e-33 * fTemp148))) + (0.027334238154345495 * fTemp123)))) + (0.027334238154345505 * fTemp126)) + (1.2553045223568977e-17 * fTemp130)) - (((0.02733423815434545 * fTemp114) + ((0.02733423815434548 * fTemp113) + (((0.027334238154345478 * fTemp109) + (((((0.03390649690496764 * fTemp149) + (2.813683508646432e-33 * fTemp150)) + (6.565261520175007e-33 * fTemp151)) + (6.593521123148732e-18 * fTemp152)) + (7.531827134141385e-18 * fTemp153))) + (0.027334238154345474 * fTemp110)))) + (1.7574263312996565e-17 * fTemp115))) * fRec0[0]);
-			output33[i] = (FAUSTFLOAT)(fRec0[0] * ((((4.0448961198413007e-50 * fTemp117) + (((0.004533407124042744 * fTemp77) + ((0.004533407124042746 * fTemp78) + ((0.028161597282885704 * fTemp93) + ((2.6699228183342524e-17 * fTemp92) + ((0.00313851262433728 * fTemp69) + ((((4.045543993047532e-18 * fTemp3) + ((0.02768453879414262 * fTemp155) + (0.04844794288974959 * fTemp146))) + (0.028161597282885746 * fTemp59)) + (0.0031385126243372767 * fTemp61))))))) + (0.012205326872422675 * fTemp95))) + (0.012205326872422696 * (fTemp32 - (fTemp33 + fTemp84)))) - ((0.004533407124042747 * fTemp87) + ((0.0045334071240427445 * fTemp94) + ((8.89974272778084e-18 * fTemp82) + ((0.02202291575478033 * fTemp83) + (((0.0031385126243372746 * fTemp64) + (((0.027684538794142587 * fTemp11) + ((0.02768453879414263 * fTemp12) + ((1.2136631979142595e-17 * fTemp1) + (0.02816159728288574 * fTemp157)))) + (0.0031385126243372798 * fTemp60))) + (0.01220532687242269 * fTemp62))))))));
-			output34[i] = (FAUSTFLOAT)(fRec0[0] * (((0.010356563277706244 * fTemp126) + ((0.010356563277706192 * fTemp127) + ((0.01035656327770623 * fTemp128) + ((0.010356563277706213 * fTemp123) + ((0.010356563277706059 * fTemp114) + ((0.010356563277706175 * fTemp113) + ((0.010356563277706139 * fTemp110) + ((0.010356563277706147 * fTemp109) + (((1.3135133594325083e-66 * fTemp71) + (0.039826512815546306 * fTemp73)) + (0.004438527119016925 * fTemp76)))))))))) - (0.02936388767304044 * fTemp72)));
-			output35[i] = (FAUSTFLOAT)(fRec0[0] * (((((2.5434040020076175e-83 * fTemp117) + (((0.012594249175901169 * fTemp93) + ((2.8429185316539108e-18 * fTemp82) + ((0.029546842014263944 * fTemp83) + ((0.0014035855152519131 * fTemp69) + ((((0.03714270640165978 * fTemp11) + ((0.03714270640165973 * fTemp12) + ((9.046111374420218e-18 * fTemp3) + (0.009285676600414948 * fTemp146)))) + (0.012594249175901155 * fTemp59)) + (0.0014035855152519582 * fTemp61)))))) + (0.00046786183841729053 * fTemp95))) + (0.00046786183841728994 * fTemp132)) + (0.03696108523496622 * (fTemp35 - (fTemp36 + (fTemp39 - (fTemp40 + (fTemp43 + (fTemp158 - fTemp44)))))))) - ((0.0004678618384172905 * fTemp133) + ((0.012594249175901174 * fTemp81) + ((2.5023430732567692e-17 * fTemp92) + (((0.0014035855152521124 * fTemp64) + ((((0.03714270640165971 * fTemp10) + ((7.962406901797708e-17 * fTemp1) + (0.037142706401659786 * fTemp13))) + (0.012594249175901146 * fTemp68)) + (0.0014035855152519602 * fTemp60))) + (0.00046786183841728967 * fTemp62)))))));
-			// post processing
+			double fTemp0 = double(input0[i]);
+			double fTemp1 = double(input1[i]);
+			double fTemp2 = double(input2[i]);
+			double fTemp3 = double(input3[i]);
+			double fTemp4 = double(input4[i]);
+			double fTemp5 = double(input5[i]);
+			double fTemp6 = double(input6[i]);
+			double fTemp7 = double(input7[i]);
+			double fTemp8 = double(input8[i]);
+			double fTemp9 = double(input9[i]);
+			double fTemp10 = (((fTemp6 + fTemp7) + fTemp8) + fTemp9);
+			double fTemp11 = double(input10[i]);
+			double fTemp12 = double(input11[i]);
+			double fTemp13 = double(input12[i]);
+			double fTemp14 = double(input13[i]);
+			double fTemp15 = double(input14[i]);
+			double fTemp16 = double(input15[i]);
+			double fTemp17 = double(input16[i]);
+			double fTemp18 = double(input17[i]);
+			double fTemp19 = double(input18[i]);
+			double fTemp20 = double(input19[i]);
+			double fTemp21 = (fTemp19 + fTemp20);
+			double fTemp22 = double(input20[i]);
+			double fTemp23 = double(input21[i]);
+			double fTemp24 = ((fTemp21 + fTemp22) + fTemp23);
+			double fTemp25 = double(input22[i]);
+			double fTemp26 = double(input23[i]);
+			double fTemp27 = double(input24[i]);
+			double fTemp28 = double(input25[i]);
+			double fTemp29 = ((((fTemp24 + fTemp25) + fTemp26) + fTemp27) + fTemp28);
+			double fTemp30 = double(input26[i]);
+			double fTemp31 = double(input27[i]);
+			double fTemp32 = (fTemp30 + fTemp31);
+			double fTemp33 = double(input28[i]);
+			double fTemp34 = double(input29[i]);
+			double fTemp35 = ((fTemp32 + fTemp33) + fTemp34);
+			double fTemp36 = double(input30[i]);
+			double fTemp37 = double(input31[i]);
+			double fTemp38 = double(input32[i]);
+			double fTemp39 = double(input33[i]);
+			double fTemp40 = double(input34[i]);
+			double fTemp41 = double(input35[i]);
+			double fTemp42 = double(input36[i]);
+			double fTemp43 = double(input37[i]);
+			double fTemp44 = double(input38[i]);
+			double fTemp45 = double(input39[i]);
+			double fTemp46 = double(input40[i]);
+			double fTemp47 = double(input41[i]);
+			double fTemp48 = double(input42[i]);
+			double fTemp49 = double(input43[i]);
+			double fTemp50 = double(input44[i]);
+			double fTemp51 = double(input45[i]);
+			double fTemp52 = double(input46[i]);
+			double fTemp53 = double(input47[i]);
+			double fTemp54 = double(input48[i]);
+			double fTemp55 = double(input49[i]);
+			output0[i] = FAUSTFLOAT((fRec0[0] * ((((0.012698412698412698 * (((((fTemp0 + fTemp1) + fTemp2) + fTemp3) + fTemp4) + fTemp5)) + (0.022574955908289243 * ((((((((fTemp10 + fTemp11) + fTemp12) + fTemp13) + fTemp14) + fTemp15) + fTemp16) + fTemp17) + fTemp18))) + (0.021093750000000001 * fTemp29)) + (0.02017333553791887 * ((((((((((((((((((((fTemp35 + fTemp36) + fTemp37) + fTemp38) + fTemp39) + fTemp40) + fTemp41) + fTemp42) + fTemp43) + fTemp44) + fTemp45) + fTemp46) + fTemp47) + fTemp48) + fTemp49) + fTemp50) + fTemp51) + fTemp52) + fTemp53) + fTemp54) + fTemp55)))));
+			double fTemp56 = (fTemp37 + fTemp38);
+			double fTemp57 = (fTemp39 + fTemp47);
+			double fTemp58 = (fTemp19 - fTemp22);
+			double fTemp59 = ((fTemp58 + fTemp25) - fTemp27);
+			double fTemp60 = (fTemp7 - fTemp9);
+			double fTemp61 = (fTemp2 - fTemp4);
+			double fTemp62 = (fTemp11 - fTemp13);
+			double fTemp63 = (fTemp8 + fTemp17);
+			double fTemp64 = (fTemp20 + fTemp26);
+			double fTemp65 = (fTemp36 + fTemp44);
+			double fTemp66 = (fTemp32 - fTemp33);
+			double fTemp67 = (fTemp23 + fTemp28);
+			double fTemp68 = (fTemp40 + fTemp48);
+			double fTemp69 = (fTemp43 + fTemp51);
+			double fTemp70 = (fTemp34 + fTemp55);
+			output1[i] = FAUSTFLOAT((fRec0[0] * (((2.6935244158092871e-18 * fTemp3) + (((0.031605542669238242 * ((((((fTemp56 - fTemp41) - fTemp42) + fTemp45) + fTemp46) - fTemp49) - fTemp50)) + ((0.010535180889746096 * fTemp57) + (((0.021093749999999994 * fTemp59) + (((0.027648561470568506 * ((((fTemp60 + fTemp12) - fTemp14) + fTemp16) - fTemp18)) + (((0.021994295969128601 * fTemp61) + (0.027648561470568499 * fTemp62)) + (3.3859722305960555e-18 * fTemp63))) + (0.021093749999999998 * fTemp64))) + (0.010535180889746094 * fTemp65)))) + (0.010535180889746065 * (((fTemp66 + fTemp52) + fTemp53) - fTemp54)))) - ((((0.021093750000000001 * fTemp67) + (0.010535180889746089 * fTemp68)) + (0.010535180889746113 * fTemp69)) + (0.010535180889746067 * fTemp70)))));
+			double fTemp71 = (fTemp0 - fTemp5);
+			double fTemp72 = ((((fTemp10 - fTemp15) - fTemp16) - fTemp17) - fTemp18);
+			double fTemp73 = ((((fTemp24 - fTemp25) - fTemp26) - fTemp27) - fTemp28);
+			double fTemp74 = (((((((fTemp36 + fTemp37) + fTemp38) + fTemp39) + fTemp40) + fTemp41) + fTemp42) + fTemp43);
+			double fTemp75 = ((((((((fTemp74 - fTemp44) - fTemp45) - fTemp46) - fTemp47) - fTemp48) - fTemp49) - fTemp50) - fTemp51);
+			double fTemp76 = ((((fTemp35 - fTemp52) - fTemp53) - fTemp54) - fTemp55);
+			output2[i] = FAUSTFLOAT((fRec0[0] * (((((0.021994295969128601 * fTemp71) + (0.027648561470568499 * fTemp72)) + (0.021093750000000001 * fTemp73)) + (0.010535180889746075 * fTemp75)) + (0.031605542669238249 * fTemp76))));
+			double fTemp77 = (fTemp30 - fTemp31);
+			double fTemp78 = ((fTemp77 + fTemp52) - fTemp53);
+			double fTemp79 = (fTemp42 + fTemp50);
+			double fTemp80 = (fTemp36 - fTemp39);
+			double fTemp81 = ((((fTemp80 - fTemp40) + fTemp44) - fTemp47) - fTemp48);
+			double fTemp82 = (fTemp37 + fTemp45);
+			double fTemp83 = (fTemp19 + fTemp25);
+			double fTemp84 = (fTemp6 - fTemp8);
+			double fTemp85 = (fTemp7 + fTemp16);
+			double fTemp86 = (fTemp1 - fTemp3);
+			double fTemp87 = (fTemp9 + fTemp18);
+			double fTemp88 = (fTemp22 + fTemp27);
+			double fTemp89 = (fTemp38 + fTemp46);
+			double fTemp90 = (fTemp41 + fTemp49);
+			double fTemp91 = (fTemp33 + fTemp54);
+			output3[i] = FAUSTFLOAT((fRec0[0] * (((0.027648561470568496 * fTemp14) + ((0.010535180889746065 * fTemp78) + ((0.010535180889746074 * fTemp79) + ((0.031605542669238242 * fTemp81) + ((0.010535180889746081 * fTemp82) + ((0.021093749999999998 * fTemp83) + ((0.027648561470568506 * ((((fTemp84 + fTemp11) - fTemp13) + fTemp15) - fTemp17)) + ((1.6929861152980278e-18 * fTemp85) + ((1.3467622079046435e-18 * ((fTemp0 + fTemp2) + fTemp5)) + ((0.021994295969128601 * fTemp86) + (((0.021093749999999991 * fTemp67) + (0.031605542669238228 * fTemp69)) + (0.010535180889746063 * fTemp70)))))))))))) - ((0.027648561470568499 * fTemp12) + ((4.0402866237139308e-18 * fTemp4) + ((((((5.0789583458940831e-18 * fTemp87) + (0.021093749999999994 * fTemp64)) + (0.021093750000000001 * fTemp88)) + (0.010535180889746079 * fTemp89)) + (0.010535180889746086 * fTemp90)) + (0.010535180889746067 * fTemp91)))))));
+			double fTemp92 = (fTemp19 - fTemp20);
+			double fTemp93 = ((fTemp92 + fTemp22) - fTemp23);
+			double fTemp94 = ((((fTemp93 + fTemp25) - fTemp26) + fTemp27) - fTemp28);
+			double fTemp95 = (((fTemp11 - fTemp12) + fTemp13) - fTemp14);
+			double fTemp96 = ((fTemp77 + fTemp33) - fTemp34);
+			double fTemp97 = ((((fTemp96 + fTemp52) - fTemp53) + fTemp54) - fTemp55);
+			output4[i] = FAUSTFLOAT((fRec0[0] * (((9.0343555392074636e-18 * fTemp4) + ((3.0114518464024883e-18 * fTemp2) + (((0.027231914153020897 * fTemp94) + ((0.043716214137085485 * fTemp95) + (((0.021308452520676556 * fTemp82) + ((8.0305382570733035e-18 * fTemp87) + ((2.6768460856911014e-18 * fTemp85) + ((0.021308452520676577 * fTemp65) + (0.02130845252067657 * fTemp68))))) + (0.021308452520676563 * fTemp90)))) + (0.0071028175068921654 * fTemp97)))) - ((6.0229036928049765e-18 * fTemp3) + ((0.021308452520676542 * fTemp79) + ((0.021308452520676546 * fTemp89) + (((5.3536921713822029e-18 * fTemp63) + (0.021308452520676584 * fTemp57)) + (0.021308452520676618 * fTemp69))))))));
+			double fTemp98 = (fTemp38 - fTemp42);
+			double fTemp99 = ((fTemp98 - fTemp46) + fTemp50);
+			double fTemp100 = (fTemp37 - fTemp41);
+			double fTemp101 = ((fTemp100 - fTemp45) + fTemp49);
+			double fTemp102 = (fTemp39 - fTemp47);
+			double fTemp103 = (fTemp20 - fTemp23);
+			double fTemp104 = (fTemp8 - fTemp17);
+			double fTemp105 = ((fTemp60 - fTemp16) + fTemp18);
+			double fTemp106 = ((fTemp58 - fTemp25) + fTemp27);
+			double fTemp107 = (fTemp36 - fTemp44);
+			double fTemp108 = (fTemp40 - fTemp48);
+			double fTemp109 = (fTemp43 - fTemp51);
+			double fTemp110 = (fTemp34 - fTemp55);
+			output5[i] = FAUSTFLOAT((fRec0[0] * ((((0.021308452520676553 * fTemp99) + ((0.021308452520676546 * fTemp101) + ((0.0071028175068921931 * fTemp102) + (((0.027231914153020911 * ((fTemp103 - fTemp26) + fTemp28)) + (((5.3536921713822013e-18 * fTemp104) + (0.043716214137085485 * fTemp105)) + (0.027231914153020904 * fTemp106))) + (0.0071028175068921914 * fTemp107))))) + (0.021308452520676528 * (((fTemp66 - fTemp52) - fTemp53) + fTemp54))) - (((0.0071028175068921871 * fTemp108) + (0.0071028175068922053 * fTemp109)) + (0.021308452520676532 * fTemp110)))));
+			double fTemp111 = ((((fTemp10 + fTemp15) + fTemp16) + fTemp17) + fTemp18);
+			double fTemp112 = (fTemp0 + fTemp5);
+			double fTemp113 = ((((fTemp35 + fTemp52) + fTemp53) + fTemp54) + fTemp55);
+			double fTemp114 = (((fTemp1 + fTemp2) + fTemp3) + fTemp4);
+			double fTemp115 = (((fTemp11 + fTemp12) + fTemp13) + fTemp14);
+			double fTemp116 = ((((((((fTemp74 + fTemp44) + fTemp45) + fTemp46) + fTemp47) + fTemp48) + fTemp49) + fTemp50) + fTemp51);
+			output6[i] = FAUSTFLOAT((fRec0[0] * ((((0.012619783999998805 * fTemp111) + ((0.028394513999997331 * fTemp112) + (5.236595479505967e-18 * fTemp29))) + (0.032806508796871948 * fTemp113)) - (((0.014197256999998666 * fTemp114) + (0.025239567999997631 * fTemp115)) + (0.01640325439843596 * fTemp116)))));
+			double fTemp117 = ((fTemp77 - fTemp52) + fTemp53);
+			double fTemp118 = (fTemp42 - fTemp50);
+			double fTemp119 = ((fTemp80 - fTemp44) + fTemp47);
+			double fTemp120 = (fTemp37 - fTemp45);
+			double fTemp121 = (fTemp23 - fTemp28);
+			double fTemp122 = ((fTemp84 - fTemp15) + fTemp17);
+			double fTemp123 = (fTemp7 - fTemp16);
+			double fTemp124 = (fTemp38 - fTemp46);
+			double fTemp125 = (fTemp20 - fTemp26);
+			double fTemp126 = (fTemp9 - fTemp18);
+			double fTemp127 = (fTemp41 - fTemp49);
+			double fTemp128 = (fTemp33 - fTemp54);
+			output7[i] = FAUSTFLOAT((fRec0[0] * (((0.021308452520676528 * fTemp117) + ((0.0071028175068921775 * fTemp118) + ((0.021308452520676542 * fTemp119) + ((0.0071028175068921827 * fTemp120) + ((0.027231914153020901 * fTemp121) + ((0.043716214137085485 * fTemp122) + ((2.6768460856911007e-18 * fTemp123) + ((((3.0114518464024883e-18 * fTemp71) + (0.027231914153020911 * fTemp106)) + (0.021308452520676539 * fTemp109)) + (0.021308452520676525 * fTemp110))))))))) - ((((0.007102817506892181 * fTemp124) + ((0.027231914153020904 * fTemp125) + ((8.0305382570733005e-18 * fTemp126) + (0.021308452520676546 * fTemp108)))) + (0.0071028175068921853 * fTemp127)) + (0.021308452520676532 * fTemp128)))));
+			double fTemp129 = (((fTemp6 - fTemp7) + fTemp8) - fTemp9);
+			double fTemp130 = ((((fTemp129 + fTemp15) - fTemp16) + fTemp17) - fTemp18);
+			double fTemp131 = (((fTemp1 - fTemp2) + fTemp3) - fTemp4);
+			double fTemp132 = (fTemp31 + fTemp53);
+			double fTemp133 = (fTemp30 + fTemp52);
+			output8[i] = FAUSTFLOAT((fRec0[0] * (((1.3384230428455503e-17 * fTemp13) + ((2.6768460856911007e-18 * fTemp11) + ((0.021858107068542749 * fTemp130) + ((0.024590370452110585 * fTemp131) + ((9.2199121612079837e-35 * fTemp112) + (((8.3373691255381378e-18 * fTemp88) + ((1.6674738251076273e-18 * fTemp83) + ((((0.028411270027568724 * fTemp65) + (0.028411270027568717 * fTemp57)) + (0.028411270027568731 * fTemp68)) + (0.028411270027568696 * fTemp69)))) + (2.1746106811858183e-18 * fTemp91))))))) - ((1.8737922599837705e-17 * fTemp14) + ((8.0305382570733005e-18 * fTemp12) + ((1.3047664087114909e-18 * fTemp132) + ((1.1422201709353029e-18 * fTemp133) + ((0.028411270027568748 * fTemp79) + ((0.028411270027568734 * fTemp90) + ((0.028411270027568745 * fTemp89) + ((0.028411270027568741 * fTemp82) + (((5.0024214753228816e-18 * fTemp64) + (1.167231677575339e-17 * fTemp67)) + (3.0444549536601452e-18 * fTemp70)))))))))))));
+			double fTemp134 = (0.033388810063348803 * fTemp11);
+			double fTemp135 = (6.1334249057128588e-18 * fTemp63);
+			double fTemp136 = ((fTemp32 + fTemp52) + fTemp53);
+			double fTemp137 = ((fTemp60 + fTemp16) - fTemp18);
+			output9[i] = FAUSTFLOAT((fRec0[0] * (((0.033388810063348796 * fTemp12) + (fTemp134 + ((9.7582192711380499e-18 * fTemp3) + (((0.020818537549440803 * fTemp79) + ((0.020818537549440772 * fTemp90) + ((0.016982082124440745 * fTemp83) + ((0.030071220904747838 * fTemp57) + ((fTemp135 + (0.016982082124440741 * fTemp64)) + (0.030071220904747824 * fTemp65)))))) + (0.0023131708388267431 * fTemp136))))) - ((0.033388810063348817 * fTemp14) + ((0.033388810063348852 * fTemp13) + ((0.016694405031674409 * fTemp137) + ((0.002313170838826747 * fTemp91) + ((0.02081853754944079 * fTemp89) + ((0.020818537549440783 * fTemp82) + ((0.016982082124440766 * fTemp88) + (((((0.026560635762986527 * fTemp61) + (0.016982082124440748 * fTemp67)) + (0.030071220904747821 * fTemp68)) + (0.030071220904747842 * fTemp69)) + (0.0023131708388267444 * fTemp70))))))))))));
+			double fTemp138 = ((((fTemp93 - fTemp25) + fTemp26) - fTemp27) + fTemp28);
+			double fTemp139 = ((((fTemp96 - fTemp52) + fTemp53) - fTemp54) + fTemp55);
+			output10[i] = FAUSTFLOAT((fRec0[0] * ((((0.041597435974919175 * fTemp138) + ((0.016998264729033874 * fTemp127) + ((0.016998264729033888 * fTemp119) + ((0.016998264729033867 * fTemp120) + ((1.5023761394674526e-17 * fTemp126) + ((5.0079204648915091e-18 * fTemp123) + (0.016998264729033881 * fTemp108))))))) + (0.016998264729033836 * fTemp139)) - ((0.016998264729033857 * fTemp118) + ((0.016998264729033864 * fTemp124) + ((1.0015840929783018e-17 * fTemp104) + (0.016998264729033919 * fTemp109)))))));
+			double fTemp140 = ((fTemp98 + fTemp46) - fTemp50);
+			double fTemp141 = ((fTemp100 + fTemp45) - fTemp49);
+			double fTemp142 = (fTemp12 - fTemp14);
+			output11[i] = FAUSTFLOAT((fRec0[0] * ((((0.038794291597509752 * fTemp137) + ((0.0053753232814252143 * fTemp69) + (((0.013154264250377145 * fTemp59) + ((4.7509305030079371e-18 * fTemp63) + (0.013154264250377147 * fTemp64))) + (0.0053753232814252021 * fTemp68)))) + (0.030460165261409405 * fTemp136)) - ((2.5195613817171963e-18 * fTemp3) + ((0.016125969844275594 * fTemp140) + ((0.016125969844275591 * fTemp141) + ((0.025862861065006511 * fTemp142) + ((0.030460165261409402 * fTemp91) + ((((((0.020573779994945588 * fTemp61) + (0.025862861065006505 * fTemp62)) + (0.013154264250377148 * fTemp67)) + (0.0053753232814252047 * fTemp65)) + (0.0053753232814252056 * fTemp57)) + (0.030460165261409412 * fTemp70))))))))));
+			output12[i] = FAUSTFLOAT((fRec0[0] * (((0.033596842045264641 * fTemp71) + (0.0263335984839893 * fTemp76)) - (((0.010558468816293319 * fTemp72) + (0.021480823570105497 * fTemp73)) + (0.020481687709769415 * fTemp75)))));
+			double fTemp143 = ((fTemp84 + fTemp15) - fTemp17);
+			output13[i] = FAUSTFLOAT((fRec0[0] * (((0.025862861065006505 * fTemp12) + ((3.7793420725757941e-18 * fTemp4) + ((0.038794291597509752 * fTemp143) + ((5.0391227634343926e-18 * fTemp112) + ((0.030460165261409402 * fTemp78) + ((0.0053753232814252004 * fTemp90) + ((0.0053753232814251969 * fTemp89) + ((0.013154264250377147 * fTemp83) + ((2.3754652515039685e-18 * fTemp85) + (0.030460165261409398 * fTemp70)))))))))) - ((0.025862861065006501 * fTemp14) + ((1.2597806908585981e-18 * fTemp2) + ((0.013154264250377145 * ((fTemp103 + fTemp26) - fTemp28)) + (((0.0053753232814251943 * fTemp79) + ((0.016125969844275591 * fTemp81) + ((0.0053753232814251978 * fTemp82) + ((0.013154264250377148 * fTemp88) + ((7.1263957545119048e-18 * fTemp87) + ((0.020573779994945588 * fTemp86) + ((0.025862861065006511 * fTemp62) + (0.016125969844275587 * fTemp69)))))))) + (0.030460165261409412 * fTemp91))))))));
+			double fTemp144 = (fTemp40 - fTemp41);
+			double fTemp145 = (fTemp22 - fTemp27);
+			double fTemp146 = (fTemp19 - fTemp25);
+			double fTemp147 = ((((fTemp129 - fTemp15) + fTemp16) - fTemp17) + fTemp18);
+			double fTemp148 = (fTemp30 - fTemp52);
+			double fTemp149 = (fTemp31 - fTemp53);
+			output14[i] = FAUSTFLOAT((fRec0[0] * (((0.022664352972045151 * ((fTemp144 - fTemp48) + fTemp49)) + ((1.2735541704855431e-17 * fTemp145) + ((2.5471083409710867e-18 * fTemp146) + ((0.04089277388695433 * fTemp147) + (((((2.4393594688416384e-34 * fTemp71) + (0.022664352972045144 * fTemp107)) + (0.022664352972045138 * fTemp102)) + (0.02266435297204512 * fTemp109)) + (5.2042176228676594e-18 * fTemp128)))))) - ((2.7335294515958808e-18 * fTemp148) + ((3.1225305737205953e-18 * fTemp149) + ((0.022664352972045162 * ((fTemp56 - fTemp45) - fTemp46)) + ((0.022664352972045165 * fTemp118) + ((1.7829758386797603e-17 * fTemp121) + ((7.6413250229132581e-18 * fTemp125) + (7.2859046720147234e-18 * fTemp110))))))))));
+			double fTemp150 = (3.0667124528564294e-18 * fTemp85);
+			output15[i] = FAUSTFLOAT((fRec0[0] * (((0.033388810063348762 * fTemp13) + ((0.033388810063348817 * fTemp12) + ((1.4637328906707076e-17 * fTemp4) + ((0.016694405031674409 * fTemp143) + ((0.0023131708388267444 * fTemp132) + ((6.0979103388536467e-51 * fTemp112) + (((0.0300712209047478 * fTemp90) + ((0.03007122090474779 * fTemp89) + ((0.016982082124440721 * fTemp88) + ((9.2001373585692901e-18 * fTemp87) + ((0.026560635762986527 * fTemp86) + (((0.016982082124440748 * fTemp64) + (0.020818537549440738 * fTemp65)) + (0.02081853754944071 * fTemp69))))))) + (0.0023131708388267409 * fTemp91)))))))) - ((0.033388810063348796 * fTemp14) + (fTemp134 + ((4.879109635569025e-18 * fTemp2) + ((0.016982082124440741 * (((fTemp19 + fTemp23) + fTemp25) + fTemp28)) + ((0.0023131708388267449 * fTemp133) + ((0.030071220904747779 * fTemp79) + ((0.030071220904747797 * fTemp82) + (fTemp150 + (((0.020818537549440724 * fTemp57) + (0.020818537549440744 * fTemp68)) + (0.0023131708388267431 * fTemp70)))))))))))));
+			double fTemp151 = ((fTemp80 + fTemp44) - fTemp47);
+			double fTemp152 = (fTemp37 - fTemp38);
+			output16[i] = FAUSTFLOAT((fRec0[0] * (((4.2933974339990009e-17 * fTemp14) + ((3.0667124528564293e-17 * fTemp13) + ((1.8400274717138574e-17 * fTemp12) + ((6.133424905712858e-18 * fTemp11) + ((0.035508216952135609 * ((fTemp144 + fTemp48) - fTemp49)) + ((0.035508216952135616 * fTemp151) + ((5.4356280292327993e-19 * fTemp132) + ((9.0593800487213328e-19 * fTemp91) + ((0.035508216952135588 * fTemp79) + ((1.2735541704855428e-17 * fTemp88) + ((2.5471083409710855e-18 * fTemp83) + (((7.6413250229132566e-18 * fTemp64) + (1.7829758386797597e-17 * fTemp67)) + (1.2683132068209864e-18 * fTemp70))))))))))))) - ((2.0700309056780893e-17 * fTemp4) + ((1.3800206037853928e-17 * fTemp3) + ((6.9001030189269641e-18 * fTemp2) + ((0.035508216952135595 * ((fTemp152 + fTemp45) - fTemp46)) + (((9.200137358569287e-18 * fTemp87) + (fTemp150 + (fTemp135 + (0.035508216952135643 * fTemp69)))) + (4.7584639941967359e-19 * fTemp133)))))))));
+			double fTemp153 = (fTemp36 - fTemp40);
+			output17[i] = FAUSTFLOAT((fRec0[0] * (((0.027200442744256398 * ((fTemp153 - fTemp44) + fTemp48)) + ((0.0062770252486745223 * fTemp148) + (((0.029413829057838591 * fTemp146) + ((((0.02941382905783858 * fTemp125) + ((1.3010959028184069e-17 * fTemp104) + (0.027200442744256408 * fTemp102))) + (0.018831075746023631 * fTemp127)) + (0.018831075746023662 * fTemp118))) + (0.0062770252486745231 * fTemp149)))) - ((0.029413829057838629 * fTemp145) + ((0.0062770252486745335 * fTemp128) + ((0.018831075746023648 * fTemp124) + ((0.018831075746023641 * fTemp120) + ((0.029413829057838594 * fTemp121) + (((0.035414181017315374 * fTemp105) + (0.027200442744256415 * fTemp109)) + (0.0062770252486745266 * fTemp110))))))))));
+			output18[i] = FAUSTFLOAT((fRec0[0] * (((5.2159876025162161e-18 * fTemp3) + (((0.031444705933590805 * fTemp94) + ((0.0067104222539056237 * fTemp79) + ((0.0067104222539056254 * fTemp89) + ((1.7386625341720719e-17 * fTemp87) + ((5.7955417805735729e-18 * fTemp85) + ((0.0067104222539056367 * fTemp57) + (0.0067104222539056471 * fTemp69))))))) + (0.02907849643359095 * fTemp97))) - ((7.823981403774323e-18 * fTemp4) + ((2.607993801258108e-18 * fTemp2) + ((0.037859351999996446 * fTemp95) + (((0.0067104222539056272 * fTemp82) + (((1.1591083561147146e-17 * fTemp63) + (0.006710422253905635 * fTemp65)) + (0.0067104222539056315 * fTemp68))) + (0.0067104222539056298 * fTemp90))))))));
+			double fTemp154 = (fTemp32 - fTemp34);
+			output19[i] = FAUSTFLOAT((fRec0[0] * ((((0.011117382399029452 * fTemp121) + ((((1.6392267574774099e-18 * fTemp104) + (0.013385302265262959 * fTemp105)) + (0.010280801007450529 * fTemp108)) + (0.010280801007450555 * fTemp109))) + (0.035587388102713349 * (((fTemp154 - fTemp52) - fTemp53) + fTemp55))) - ((0.01111738239902945 * ((((fTemp21 - fTemp22) - fTemp25) - fTemp26) + fTemp27)) + ((((0.030842403022351562 * fTemp101) + ((0.010280801007450534 * fTemp107) + (0.010280801007450538 * fTemp102))) + (0.030842403022351569 * fTemp99)) + (0.035587388102713342 * fTemp128))))));
+			output20[i] = FAUSTFLOAT((fRec0[0] * ((((((0.014285714285714285 * fTemp114) + (0.038095238095238099 * fTemp112)) + (0.025396825396825397 * fTemp115)) + (0.0042514054232804356 * fTemp116)) + (0.014254712301587407 * fTemp113)) - ((0.027513227513227514 * fTemp111) + (0.024609375000000013 * fTemp29)))));
+			output21[i] = FAUSTFLOAT((fRec0[0] * (((0.011117382399029452 * fTemp145) + ((0.035587388102713342 * fTemp117) + ((0.010280801007450525 * fTemp127) + ((0.010280801007450517 * fTemp124) + ((0.013385302265262959 * fTemp122) + ((8.1961337873870493e-19 * fTemp123) + (((7.3765204086483564e-18 * fTemp71) + (0.030842403022351562 * fTemp108)) + (0.035587388102713335 * fTemp110)))))))) - ((0.01111738239902945 * ((fTemp92 - fTemp25) + fTemp26)) + (((0.010280801007450515 * fTemp118) + ((0.030842403022351559 * fTemp119) + ((0.010280801007450522 * fTemp120) + ((0.011117382399029449 * fTemp121) + ((2.4588401362161147e-18 * fTemp126) + (0.030842403022351552 * fTemp109)))))) + (0.035587388102713349 * fTemp128))))));
+			double fTemp155 = (fTemp36 + fTemp39);
+			output22[i] = FAUSTFLOAT((fRec0[0] * (((1.6227516985606004e-17 * fTemp14) + ((6.9546501366882881e-18 * fTemp12) + ((0.047324189999995547 * fTemp130) + ((4.7908068913603203e-34 * fTemp112) + (((((((1.9254329235850881e-18 * fTemp83) + (9.6271646179254396e-18 * fTemp88)) + (0.0089472296718741701 * fTemp82)) + (0.0089472296718741719 * fTemp89)) + (0.0089472296718741684 * fTemp90)) + (0.0089472296718741736 * fTemp79)) + (8.902721895353721e-18 * fTemp91)))))) - ((1.1591083561147147e-17 * fTemp13) + ((2.3182167122294292e-18 * fTemp11) + ((0.0089472296718741632 * ((fTemp155 + fTemp44) + fTemp47)) + ((5.3416331372122328e-18 * fTemp132) + ((4.6761788733398907e-18 * fTemp133) + ((0.021295885499997998 * fTemp131) + (((((5.7762987707552641e-18 * fTemp64) + (1.3478030465095617e-17 * fTemp67)) + (0.0089472296718741667 * fTemp68)) + (0.0089472296718741563 * fTemp69)) + (1.246381065349521e-17 * fTemp70)))))))))));
+			output23[i] = FAUSTFLOAT((fRec0[0] * (((0.0062770252486745266 * fTemp149) + ((0.029413829057838549 * fTemp145) + (((0.027200442744256377 * fTemp127) + ((0.027200442744256363 * fTemp124) + ((0.029413829057838594 * fTemp125) + ((1.9516438542276106e-17 * fTemp126) + ((0.035414181017315374 * fTemp122) + (((1.8293731016560941e-50 * fTemp71) + (0.018831075746023603 * fTemp107)) + (0.018831075746023575 * fTemp109))))))) + (0.0062770252486745171 * fTemp128)))) - ((0.0062770252486745275 * fTemp148) + ((0.029413829057838584 * fTemp146) + ((0.027200442744256356 * fTemp118) + ((0.027200442744256374 * fTemp120) + ((0.02941382905783858 * fTemp121) + ((6.5054795140920346e-18 * fTemp123) + (((0.018831075746023586 * fTemp102) + (0.01883107574602361 * fTemp108)) + (0.0062770252486745231 * fTemp110)))))))))));
+			output24[i] = FAUSTFLOAT((fRec0[0] * (((0.012520803773755805 * fTemp111) + ((3.9603917912335094e-67 * fTemp112) + ((0.028171808490950554 * fTemp114) + ((0.010356563277706251 * fTemp79) + ((0.010356563277706199 * fTemp90) + ((0.010356563277706232 * fTemp89) + ((0.010356563277706217 * fTemp82) + ((((0.010356563277706152 * fTemp65) + (0.010356563277706145 * fTemp57)) + (0.010356563277706178 * fTemp68)) + (0.010356563277706064 * fTemp69))))))))) - (((0.050083215095023212 * fTemp115) + (0.020798717987459581 * fTemp29)) + (0.0014795090396723079 * fTemp113)))));
+			output25[i] = FAUSTFLOAT((fRec0[0] * (((0.037142706401659856 * fTemp14) + ((0.037142706401659786 * fTemp13) + ((1.8092222748840437e-17 * fTemp3) + ((0.036961085234966218 * ((((fTemp155 - fTemp40) + fTemp44) + fTemp47) - fTemp48)) + ((0.0092856766004149483 * fTemp137) + ((0.00046786183841729064 * fTemp91) + ((0.0014035855152518362 * fTemp79) + ((0.001403585515251904 * fTemp90) + ((0.012594249175901172 * fTemp88) + ((((0.029546842014263944 * fTemp61) + (5.6858370633078216e-18 * fTemp63)) + (0.012594249175901195 * fTemp67)) + (0.00046786183841729151 * fTemp70))))))))))) - ((0.037142706401659828 * fTemp12) + ((0.037142706401659779 * fTemp11) + ((((0.0014035855152518585 * fTemp89) + ((0.0014035855152518815 * fTemp82) + ((0.012594249175901169 * fTemp83) + ((0.012594249175901188 * fTemp64) + (0.036961085234966211 * fTemp69))))) + (0.00046786183841729075 * fTemp133)) + (0.00046786183841729124 * fTemp132)))))));
+			output26[i] = FAUSTFLOAT((fRec0[0] * (((0.035508216952135595 * ((((fTemp80 + fTemp40) - fTemp44) + fTemp47) - fTemp48)) + ((1.63068840876984e-18 * fTemp149) + ((2.4386705720379917e-17 * fTemp145) + ((4.8773411440759829e-18 * fTemp146) + ((2.7178140146164e-18 * fTemp128) + ((0.035508216952135567 * fTemp118) + ((0.035508216952135574 * fTemp124) + ((3.4141388008531875e-17 * fTemp121) + ((1.4632023432227946e-17 * fTemp125) + (3.8049396204629603e-18 * fTemp110)))))))))) - (((0.035508216952135588 * fTemp127) + ((0.035508216952135581 * fTemp120) + ((2.1576234629586837e-17 * fTemp126) + ((7.1920782098622802e-18 * fTemp123) + ((1.438415641972456e-17 * fTemp104) + (0.035508216952135623 * fTemp109)))))) + (1.427539198259021e-18 * fTemp148)))));
+			output27[i] = FAUSTFLOAT((fRec0[0] * (((0.027684538794142632 * fTemp14) + ((0.027684538794142663 * fTemp13) + ((((0.0031385126243372867 * fTemp89) + ((0.0031385126243372858 * fTemp82) + ((0.028161597282885743 * fTemp83) + ((((0.022022915754780329 * fTemp61) + (1.779948545556168e-17 * fTemp63)) + (0.028161597282885732 * fTemp64)) + (0.0045334071240427532 * fTemp69))))) + (0.012205326872422687 * fTemp133)) + (0.012205326872422689 * fTemp132)))) - ((0.027684538794142618 * fTemp12) + ((0.027684538794142628 * fTemp11) + ((8.0910879860950644e-18 * fTemp3) + ((0.0045334071240427497 * ((fTemp153 + fTemp44) - fTemp48)) + ((0.048447942889749587 * fTemp137) + ((0.012205326872422709 * fTemp91) + ((0.0031385126243372885 * fTemp79) + ((0.0031385126243372841 * fTemp90) + ((0.028161597282885781 * fTemp88) + (((0.028161597282885746 * fTemp67) + (0.0045334071240427515 * fTemp57)) + (0.012205326872422696 * fTemp70))))))))))))));
+			output28[i] = FAUSTFLOAT((fRec0[0] * ((((1.5316979614614479e-17 * fTemp138) + ((0.020500678615759105 * fTemp118) + ((0.020500678615759112 * fTemp124) + ((1.2457044871490476e-17 * fTemp126) + ((4.1523482904968253e-18 * fTemp123) + ((0.020500678615759146 * fTemp102) + (0.020500678615759181 * fTemp109))))))) + (0.041001357231518168 * fTemp139)) - (((0.020500678615759119 * fTemp120) + (((8.3046965809936507e-18 * fTemp104) + (0.020500678615759143 * fTemp107)) + (0.020500678615759133 * fTemp108))) + (0.020500678615759129 * fTemp127)))));
+			output29[i] = FAUSTFLOAT((fRec0[0] * (((2.4969639621850082e-18 * fTemp3) + (((0.025630902468550199 * fTemp142) + (((((0.020389258061373223 * fTemp61) + (0.025630902468550196 * fTemp62)) + (0.026072572806195689 * fTemp67)) + (0.0009685660236671092 * fTemp68)) + (0.00096856602366711159 * fTemp69))) + (0.035191232193238609 * (((fTemp154 + fTemp52) + fTemp53) - fTemp55)))) - ((0.0029056980710013259 * fTemp140) + ((0.0029056980710013254 * fTemp141) + ((0.01922317685141265 * fTemp137) + ((((((2.3541602000525996e-18 * fTemp63) + (0.026072572806195685 * fTemp64)) + (0.026072572806195678 * fTemp59)) + (0.00096856602366710964 * fTemp65)) + (0.00096856602366710996 * fTemp57)) + (0.035191232193238602 * fTemp91))))))));
+			output30[i] = FAUSTFLOAT((fRec0[0] * (((0.042115870353719366 * fTemp71) + (0.023090966710758377 * fTemp75)) - (((0.028125949882539081 * fTemp72) + (0.0067319093514117785 * fTemp73)) + (0.00075024801587290956 * fTemp76)))));
+			output31[i] = FAUSTFLOAT((fRec0[0] * (((0.025630902468550189 * fTemp14) + ((1.2484819810925041e-18 * fTemp2) + ((9.9878558487400326e-18 * fTemp112) + ((0.035191232193238602 * fTemp78) + ((0.00096856602366710877 * fTemp90) + ((0.00096856602366710812 * fTemp89) + ((0.026072572806195689 * fTemp88) + ((3.5312403000788995e-18 * fTemp87) + ((0.020389258061373223 * fTemp86) + ((((0.025630902468550199 * fTemp62) + (0.026072572806195678 * fTemp64)) + (0.0029056980710013254 * fTemp68)) + (0.035191232193238595 * fTemp70))))))))))) - ((0.025630902468550196 * fTemp12) + ((3.745445943277512e-18 * fTemp4) + ((0.0029056980710013246 * fTemp151) + ((0.01922317685141265 * fTemp143) + (((0.00096856602366710779 * fTemp79) + ((0.00096856602366710855 * fTemp82) + ((0.026072572806195685 * fTemp83) + ((1.1770801000262998e-18 * fTemp85) + ((0.026072572806195675 * fTemp67) + (0.0029056980710013241 * fTemp69)))))) + (0.035191232193238609 * fTemp91)))))))));
+			output32[i] = FAUSTFLOAT((fRec0[0] * (((4.6894725144107197e-33 * fTemp145) + ((9.3789450288214403e-34 * fTemp146) + ((0.033906496904967637 * fTemp147) + ((((((8.0904400869483595e-34 * fTemp71) + (0.027334238154345495 * fTemp120)) + (0.027334238154345498 * fTemp124)) + (0.027334238154345485 * fTemp127)) + (0.027334238154345505 * fTemp118)) + (1.2553045223568977e-17 * fTemp128))))) - ((6.5935211231487317e-18 * fTemp148) + ((7.5318271341413852e-18 * fTemp149) + ((6.5652615201750074e-33 * fTemp121) + ((2.8136835086464319e-33 * fTemp125) + (((((0.027334238154345478 * fTemp107) + (0.027334238154345474 * fTemp102)) + (0.027334238154345481 * fTemp108)) + (0.02733423815434545 * fTemp109)) + (1.7574263312996565e-17 * fTemp110)))))))));
+			output33[i] = FAUSTFLOAT((fRec0[0] * (((0.027684538794142618 * fTemp14) + ((0.027684538794142621 * fTemp11) + ((4.0455439930475322e-18 * fTemp2) + ((0.048447942889749587 * fTemp143) + ((4.0448961198413007e-50 * fTemp112) + ((((0.0045334071240427463 * fTemp82) + ((0.028161597282885704 * fTemp88) + ((2.6699228183342524e-17 * fTemp87) + (((0.028161597282885746 * fTemp64) + (0.0031385126243372767 * fTemp57)) + (0.0031385126243372802 * fTemp68))))) + (0.0045334071240427437 * fTemp79)) + (0.012205326872422675 * fTemp91))))))) - ((0.027684538794142587 * fTemp13) + ((0.027684538794142632 * fTemp12) + ((1.2136631979142595e-17 * fTemp4) + ((0.012205326872422696 * fTemp78) + ((0.0045334071240427471 * fTemp90) + ((0.0045334071240427445 * fTemp89) + ((0.028161597282885739 * fTemp83) + ((8.8997427277808398e-18 * fTemp85) + ((0.022022915754780329 * fTemp86) + ((((0.028161597282885732 * fTemp67) + (0.0031385126243372789 * fTemp65)) + (0.0031385126243372746 * fTemp69)) + (0.012205326872422689 * fTemp70))))))))))))));
+			output34[i] = FAUSTFLOAT((fRec0[0] * (((0.010356563277706246 * fTemp118) + ((0.010356563277706192 * fTemp127) + ((0.010356563277706229 * fTemp124) + ((0.010356563277706213 * fTemp120) + ((((((1.3135133594325083e-66 * fTemp71) + (0.029363887673040441 * fTemp72)) + (0.010356563277706147 * fTemp107)) + (0.01035656327770614 * fTemp102)) + (0.010356563277706175 * fTemp108)) + (0.01035656327770606 * fTemp109)))))) - ((0.039826512815546306 * fTemp73) + (0.0044385271190169251 * fTemp76)))));
+			output35[i] = FAUSTFLOAT((fRec0[0] * (((0.037142706401659779 * fTemp13) + ((0.037142706401659731 * fTemp12) + ((9.0461113744202184e-18 * fTemp2) + ((0.036961085234966218 * ((((((fTemp152 - fTemp41) + fTemp42) + fTemp45) - fTemp46) - fTemp49) + fTemp50)) + ((0.0092856766004149483 * fTemp143) + ((0.00046786183841728994 * fTemp132) + ((2.5434040020076175e-83 * fTemp112) + (((0.012594249175901169 * fTemp88) + ((2.8429185316539108e-18 * fTemp85) + ((0.029546842014263944 * fTemp86) + (((0.012594249175901155 * fTemp64) + (0.0014035855152519582 * fTemp57)) + (0.0014035855152519131 * fTemp68))))) + (0.00046786183841729053 * fTemp91))))))))) - ((0.03714270640165971 * fTemp14) + ((0.037142706401659786 * fTemp11) + ((7.962406901797708e-17 * fTemp4) + ((0.00046786183841729048 * fTemp133) + ((0.012594249175901174 * fTemp83) + ((2.5023430732567692e-17 * fTemp87) + ((((0.012594249175901146 * fTemp67) + (0.0014035855152519602 * fTemp65)) + (0.0014035855152521122 * fTemp69)) + (0.00046786183841728967 * fTemp70)))))))))));
 			fRec0[1] = fRec0[0];
+			
 		}
+		
 	}
-};
 
+	
+};
 
 
 //----------------------------------------------------------------------------
@@ -1267,3 +1699,5 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
 }
 
 // EOF
+
+#endif

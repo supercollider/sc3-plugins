@@ -1,18 +1,14 @@
-//----------------------------------------------------------
-// name: "HOAMirror2"
-// version: "1.0"
-// author: "Pierre Lecomte"
-// license: "GPL"
-// copyright: "(c) Pierre Lecomte 2015"
-//
-// Code generated with Faust 0.9.100 (http://faust.grame.fr)
-//----------------------------------------------------------
+/* ------------------------------------------------------------
+author: "Pierre Lecomte"
+copyright: "(c) Pierre Lecomte 2015"
+license: "GPL"
+name: "HOAMirror2"
+version: "1.0"
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
+------------------------------------------------------------ */
 
-/* link with  */
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
-#if !defined(SC_FAUST_PREFIX)
-# define SC_FAUST_PREFIX "Faust"
-#endif
+#ifndef  __mydsp_H__
+#define  __mydsp_H__
 
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
@@ -33,6 +29,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 // 02111-1307 USA
 //-------------------------------------------------------------------
+
+// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+#if !defined(SC_FAUST_PREFIX)
+#define SC_FAUST_PREFIX "Faust"
+#endif
 
 #include <map>
 #include <string>
@@ -65,12 +66,27 @@
 #ifndef __dsp__
 #define __dsp__
 
+#include <string>
+
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -90,30 +106,30 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods:
-         * - static class 'classInit': static table initialisation
-         * - 'instanceInit': constants and instance table initialisation
+        /** Global init, calls the following methods :
+         * - static class 'classInit' : static table initialisation
+         * - 'instanceInit' : constants and instance table initialisation
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void init(int samplingRate) = 0;
-    
+
         /** Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
-    
+
         /** Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
@@ -125,8 +141,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
-    
-        /**  
+ 
+        /**
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -192,7 +208,30 @@ class decorator_dsp : public dsp {
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-       
+    
+};
+
+/**
+ * DSP factory class.
+ */
+
+class dsp_factory {
+    
+    protected:
+    
+        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
+        virtual ~dsp_factory() {}
+    
+    public:
+    
+        virtual std::string getName() = 0;
+        virtual std::string getSHAKey() = 0;
+        virtual std::string getDSPCode() = 0;
+        virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
+    
 };
 
 /**
@@ -563,42 +602,157 @@ private:
 #endif  
 
 
+
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
 #endif
 
 class mydsp : public dsp {
-  private:
-	FAUSTFLOAT 	fcheckbox0;
-	FAUSTFLOAT 	fcheckbox1;
-	FAUSTFLOAT 	fcheckbox2;
+	
+ private:
+	
+	FAUSTFLOAT fCheckbox0;
+	FAUSTFLOAT fCheckbox1;
+	FAUSTFLOAT fCheckbox2;
 	int fSamplingFreq;
-
-  public:
-	virtual void metadata(Meta* m) { 
-		m->declare("name", "HOAMirror2");
-		m->declare("version", "1.0");
+	
+ public:
+	
+	void metadata(Meta* m) { 
 		m->declare("author", "Pierre Lecomte");
-		m->declare("license", "GPL");
-		m->declare("copyright", "(c) Pierre Lecomte 2015");
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
+		m->declare("copyright", "(c) Pierre Lecomte 2015");
+		m->declare("license", "GPL");
+		m->declare("name", "HOAMirror2");
+		m->declare("version", "1.0");
 	}
 
-	virtual int getNumInputs() { return 9; }
-	virtual int getNumOutputs() { return 9; }
-	static void classInit(int samplingFreq) {
+	virtual int getNumInputs() {
+		return 9;
+		
 	}
+	virtual int getNumOutputs() {
+		return 9;
+		
+	}
+	virtual int getInputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	virtual int getOutputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	
+	static void classInit(int samplingFreq) {
+		
+	}
+	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
+		
 	}
+	
 	virtual void instanceResetUserInterface() {
-		fcheckbox0 = 0.0;
-		fcheckbox1 = 0.0;
-		fcheckbox2 = 0.0;
+		fCheckbox0 = FAUSTFLOAT(0.0);
+		fCheckbox1 = FAUSTFLOAT(0.0);
+		fCheckbox2 = FAUSTFLOAT(0.0);
+		
 	}
+	
 	virtual void instanceClear() {
+		
 	}
+	
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
 		instanceInit(samplingFreq);
@@ -608,88 +762,96 @@ class mydsp : public dsp {
 		instanceResetUserInterface();
 		instanceClear();
 	}
+	
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
+	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
 	}
+	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("HOA scene mirroring");
-		ui_interface->addCheckButton("front-back", &fcheckbox0);
-		ui_interface->addCheckButton("left-right", &fcheckbox1);
-		ui_interface->addCheckButton("up-down", &fcheckbox2);
+		ui_interface->addCheckButton("front-back", &fCheckbox0);
+		ui_interface->addCheckButton("left-right", &fCheckbox1);
+		ui_interface->addCheckButton("up-down", &fCheckbox2);
 		ui_interface->closeBox();
+		
 	}
-	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
-		int 	iSlow0 = (double(fcheckbox0) == 1);
-		int 	iSlow1 = int((iSlow0 & 0));
-		int 	iSlow2 = (double(fcheckbox1) == 1);
-		int 	iSlow3 = int((iSlow2 & 0));
-		int 	iSlow4 = (double(fcheckbox2) == 1);
-		int 	iSlow5 = int((iSlow4 & 0));
-		int 	iSlow6 = int((iSlow2 & 1));
-		int 	iSlow7 = int((iSlow4 & 1));
-		int 	iSlow8 = int((iSlow0 & 1));
-		FAUSTFLOAT* input0 = input[0];
-		FAUSTFLOAT* input1 = input[1];
-		FAUSTFLOAT* input2 = input[2];
-		FAUSTFLOAT* input3 = input[3];
-		FAUSTFLOAT* input4 = input[4];
-		FAUSTFLOAT* input5 = input[5];
-		FAUSTFLOAT* input6 = input[6];
-		FAUSTFLOAT* input7 = input[7];
-		FAUSTFLOAT* input8 = input[8];
-		FAUSTFLOAT* output0 = output[0];
-		FAUSTFLOAT* output1 = output[1];
-		FAUSTFLOAT* output2 = output[2];
-		FAUSTFLOAT* output3 = output[3];
-		FAUSTFLOAT* output4 = output[4];
-		FAUSTFLOAT* output5 = output[5];
-		FAUSTFLOAT* output6 = output[6];
-		FAUSTFLOAT* output7 = output[7];
-		FAUSTFLOAT* output8 = output[8];
-		for (int i=0; i<count; i++) {
-			double fTemp0 = (double)input0[i];
-			double fTemp1 = ((iSlow5)?(0 - fTemp0):fTemp0);
-			double fTemp2 = ((iSlow3)?(0 - fTemp1):fTemp1);
-			output0[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp2):fTemp2);
-			double fTemp3 = (double)input1[i];
-			double fTemp4 = ((iSlow5)?(0 - fTemp3):fTemp3);
-			double fTemp5 = ((iSlow6)?(0 - fTemp4):fTemp4);
-			output1[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp5):fTemp5);
-			double fTemp6 = (double)input2[i];
-			double fTemp7 = ((iSlow7)?(0 - fTemp6):fTemp6);
-			double fTemp8 = ((iSlow3)?(0 - fTemp7):fTemp7);
-			output2[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp8):fTemp8);
-			double fTemp9 = (double)input3[i];
-			double fTemp10 = ((iSlow5)?(0 - fTemp9):fTemp9);
-			double fTemp11 = ((iSlow3)?(0 - fTemp10):fTemp10);
-			output3[i] = (FAUSTFLOAT)((iSlow8)?(0 - fTemp11):fTemp11);
-			double fTemp12 = (double)input4[i];
-			double fTemp13 = ((iSlow5)?(0 - fTemp12):fTemp12);
-			double fTemp14 = ((iSlow6)?(0 - fTemp13):fTemp13);
-			output4[i] = (FAUSTFLOAT)((iSlow8)?(0 - fTemp14):fTemp14);
-			double fTemp15 = (double)input5[i];
-			double fTemp16 = ((iSlow7)?(0 - fTemp15):fTemp15);
-			double fTemp17 = ((iSlow6)?(0 - fTemp16):fTemp16);
-			output5[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp17):fTemp17);
-			double fTemp18 = (double)input6[i];
-			double fTemp19 = ((iSlow5)?(0 - fTemp18):fTemp18);
-			double fTemp20 = ((iSlow3)?(0 - fTemp19):fTemp19);
-			output6[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp20):fTemp20);
-			double fTemp21 = (double)input7[i];
-			double fTemp22 = ((iSlow7)?(0 - fTemp21):fTemp21);
-			double fTemp23 = ((iSlow3)?(0 - fTemp22):fTemp22);
-			output7[i] = (FAUSTFLOAT)((iSlow8)?(0 - fTemp23):fTemp23);
-			double fTemp24 = (double)input8[i];
-			double fTemp25 = ((iSlow5)?(0 - fTemp24):fTemp24);
-			double fTemp26 = ((iSlow3)?(0 - fTemp25):fTemp25);
-			output8[i] = (FAUSTFLOAT)((iSlow1)?(0 - fTemp26):fTemp26);
+	
+	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
+		FAUSTFLOAT* input0 = inputs[0];
+		FAUSTFLOAT* input1 = inputs[1];
+		FAUSTFLOAT* input2 = inputs[2];
+		FAUSTFLOAT* input3 = inputs[3];
+		FAUSTFLOAT* input4 = inputs[4];
+		FAUSTFLOAT* input5 = inputs[5];
+		FAUSTFLOAT* input6 = inputs[6];
+		FAUSTFLOAT* input7 = inputs[7];
+		FAUSTFLOAT* input8 = inputs[8];
+		FAUSTFLOAT* output0 = outputs[0];
+		FAUSTFLOAT* output1 = outputs[1];
+		FAUSTFLOAT* output2 = outputs[2];
+		FAUSTFLOAT* output3 = outputs[3];
+		FAUSTFLOAT* output4 = outputs[4];
+		FAUSTFLOAT* output5 = outputs[5];
+		FAUSTFLOAT* output6 = outputs[6];
+		FAUSTFLOAT* output7 = outputs[7];
+		FAUSTFLOAT* output8 = outputs[8];
+		int iSlow0 = (double(fCheckbox0) == 1.0);
+		int iSlow1 = (iSlow0 & 0);
+		int iSlow2 = (double(fCheckbox1) == 1.0);
+		int iSlow3 = (iSlow2 & 0);
+		int iSlow4 = (double(fCheckbox2) == 1.0);
+		int iSlow5 = (iSlow4 & 0);
+		int iSlow6 = (iSlow2 & 1);
+		int iSlow7 = (iSlow4 & 1);
+		int iSlow8 = (iSlow0 & 1);
+		for (int i = 0; (i < count); i = (i + 1)) {
+			double fTemp0 = double(input0[i]);
+			double fTemp1 = (iSlow5?(0.0 - fTemp0):fTemp0);
+			double fTemp2 = (iSlow3?(0.0 - fTemp1):fTemp1);
+			output0[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp2):fTemp2));
+			double fTemp3 = double(input1[i]);
+			double fTemp4 = (iSlow5?(0.0 - fTemp3):fTemp3);
+			double fTemp5 = (iSlow6?(0.0 - fTemp4):fTemp4);
+			output1[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp5):fTemp5));
+			double fTemp6 = double(input2[i]);
+			double fTemp7 = (iSlow7?(0.0 - fTemp6):fTemp6);
+			double fTemp8 = (iSlow3?(0.0 - fTemp7):fTemp7);
+			output2[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp8):fTemp8));
+			double fTemp9 = double(input3[i]);
+			double fTemp10 = (iSlow5?(0.0 - fTemp9):fTemp9);
+			double fTemp11 = (iSlow3?(0.0 - fTemp10):fTemp10);
+			output3[i] = FAUSTFLOAT((iSlow8?(0.0 - fTemp11):fTemp11));
+			double fTemp12 = double(input4[i]);
+			double fTemp13 = (iSlow5?(0.0 - fTemp12):fTemp12);
+			double fTemp14 = (iSlow6?(0.0 - fTemp13):fTemp13);
+			output4[i] = FAUSTFLOAT((iSlow8?(0.0 - fTemp14):fTemp14));
+			double fTemp15 = double(input5[i]);
+			double fTemp16 = (iSlow7?(0.0 - fTemp15):fTemp15);
+			double fTemp17 = (iSlow6?(0.0 - fTemp16):fTemp16);
+			output5[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp17):fTemp17));
+			double fTemp18 = double(input6[i]);
+			double fTemp19 = (iSlow5?(0.0 - fTemp18):fTemp18);
+			double fTemp20 = (iSlow3?(0.0 - fTemp19):fTemp19);
+			output6[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp20):fTemp20));
+			double fTemp21 = double(input7[i]);
+			double fTemp22 = (iSlow7?(0.0 - fTemp21):fTemp21);
+			double fTemp23 = (iSlow3?(0.0 - fTemp22):fTemp22);
+			output7[i] = FAUSTFLOAT((iSlow8?(0.0 - fTemp23):fTemp23));
+			double fTemp24 = double(input8[i]);
+			double fTemp25 = (iSlow5?(0.0 - fTemp24):fTemp24);
+			double fTemp26 = (iSlow3?(0.0 - fTemp25):fTemp25);
+			output8[i] = FAUSTFLOAT((iSlow1?(0.0 - fTemp26):fTemp26));
+			
 		}
+		
 	}
-};
 
+	
+};
 
 
 //----------------------------------------------------------------------------
@@ -1021,3 +1183,5 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
 }
 
 // EOF
+
+#endif

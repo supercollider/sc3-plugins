@@ -1,31 +1,14 @@
-//----------------------------------------------------------
-// name: "HOABeamDirac2HOA4"
-// version: "1.0"
-// author: "Pierre Lecomte"
-// license: "GPL"
-// copyright: "(c) Pierre Lecomte 2016"
-//
-// Code generated with Faust 0.9.100 (http://faust.grame.fr)
-//----------------------------------------------------------
+/* ------------------------------------------------------------
+author: "Pierre Lecomte"
+copyright: "(c) Pierre Lecomte 2016"
+license: "GPL"
+name: "HOABeamDirac2HOA4"
+version: "1.0"
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
+------------------------------------------------------------ */
 
-/* link with  */
-#include <math.h>
-#ifndef FAUSTPOWER
-#define FAUSTPOWER
-#include <cmath>
-template <int N> inline int faustpower(int x)              { return faustpower<N/2>(x) * faustpower<N-N/2>(x); } 
-template <> 	 inline int faustpower<0>(int x)            { return 1; }
-template <> 	 inline int faustpower<1>(int x)            { return x; }
-template <> 	 inline int faustpower<2>(int x)            { return x*x; }
-template <int N> inline double faustpower(double x)          { return faustpower<N/2>(x) * faustpower<N-N/2>(x); } 
-template <> 	 inline double faustpower<0>(double x)        { return 1; }
-template <> 	 inline double faustpower<1>(double x)        { return x; }
-template <> 	 inline double faustpower<2>(double x)        { return x*x; }
-#endif
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
-#if !defined(SC_FAUST_PREFIX)
-# define SC_FAUST_PREFIX "Faust"
-#endif
+#ifndef  __mydsp_H__
+#define  __mydsp_H__
 
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
@@ -46,6 +29,11 @@ template <> 	 inline double faustpower<2>(double x)        { return x*x; }
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 // 02111-1307 USA
 //-------------------------------------------------------------------
+
+// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+#if !defined(SC_FAUST_PREFIX)
+#define SC_FAUST_PREFIX "Faust"
+#endif
 
 #include <map>
 #include <string>
@@ -78,12 +66,27 @@ template <> 	 inline double faustpower<2>(double x)        { return x*x; }
 #ifndef __dsp__
 #define __dsp__
 
+#include <string>
+
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -103,30 +106,30 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods:
-         * - static class 'classInit': static table initialisation
-         * - 'instanceInit': constants and instance table initialisation
+        /** Global init, calls the following methods :
+         * - static class 'classInit' : static table initialisation
+         * - 'instanceInit' : constants and instance table initialisation
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void init(int samplingRate) = 0;
-    
+
         /** Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
-    
+
         /** Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
@@ -138,8 +141,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
-    
-        /**  
+ 
+        /**
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -205,7 +208,30 @@ class decorator_dsp : public dsp {
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-       
+    
+};
+
+/**
+ * DSP factory class.
+ */
+
+class dsp_factory {
+    
+    protected:
+    
+        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
+        virtual ~dsp_factory() {}
+    
+    public:
+    
+        virtual std::string getName() = 0;
+        virtual std::string getSHAKey() = 0;
+        virtual std::string getDSPCode() = 0;
+        virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
+    
 };
 
 /**
@@ -575,88 +601,362 @@ private:
 #define FAUSTFLOAT float
 #endif  
 
+#include <math.h>
+
+double cos(double dummy0);
+double sin(double dummy0);
+double pow(double dummy0, double dummy1);
+double mydsp_faustpower2_f(double value) {
+	return (value * value);
+	
+}
+double mydsp_faustpower3_f(double value) {
+	return ((value * value) * value);
+	
+}
+double mydsp_faustpower4_f(double value) {
+	return (((value * value) * value) * value);
+	
+}
 
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
 #endif
 
 class mydsp : public dsp {
-  private:
-	FAUSTFLOAT 	fcheckbox0;
-	double 	fConst0;
-	double 	fConst1;
-	FAUSTFLOAT 	fentry0;
-	double 	fRec0[2];
-	double 	fRec1[2];
-	FAUSTFLOAT 	fslider0;
-	FAUSTFLOAT 	fslider1;
-	FAUSTFLOAT 	fslider2;
-	double 	fRec2[2];
-	double 	fRec3[2];
-	double 	fRec4[2];
+	
+ private:
+	
+	FAUSTFLOAT fCheckbox0;
 	int fSamplingFreq;
-
-  public:
-	virtual void metadata(Meta* m) { 
-		m->declare("name", "HOABeamDirac2HOA4");
-		m->declare("version", "1.0");
+	double fConst0;
+	double fConst1;
+	FAUSTFLOAT fEntry0;
+	double fRec0[2];
+	double fRec1[2];
+	FAUSTFLOAT fVslider0;
+	FAUSTFLOAT fVslider1;
+	FAUSTFLOAT fVslider2;
+	double fRec2[2];
+	double fRec3[2];
+	double fRec4[2];
+	
+ public:
+	
+	void metadata(Meta* m) { 
 		m->declare("author", "Pierre Lecomte");
-		m->declare("license", "GPL");
-		m->declare("copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/lebedev.lib/name", "Lebdev grids and weights");
-		m->declare("lib/lebedev.lib/version", "1.0");
-		m->declare("lib/lebedev.lib/author", "Pierre Lecomte");
-		m->declare("lib/lebedev.lib/license", "GPL");
-		m->declare("lib/lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
-		m->declare("lib/ymn.lib/version", "1.0");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/license", "GPL");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/nfc.lib/name", "NF And NFC Filters Library");
-		m->declare("lib/nfc.lib/version", "1.0");
-		m->declare("lib/nfc.lib/author", "Pierre Lecomte");
-		m->declare("lib/nfc.lib/license", "GPL");
-		m->declare("lib/nfc.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/gui.lib/name", "GUI Library");
-		m->declare("lib/gui.lib/version", "1.0");
-		m->declare("lib/gui.lib/author", "Pierre Lecomte");
-		m->declare("lib/gui.lib/license", "GPL");
-		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
-		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
+		m->declare("copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/gui.lib/author", "Pierre Lecomte");
+		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/gui.lib/license", "GPL");
+		m->declare("lib/gui.lib/name", "GUI Library");
+		m->declare("lib/gui.lib/version", "1.0");
+		m->declare("lib/lebedev.lib/author", "Pierre Lecomte");
+		m->declare("lib/lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("lib/lebedev.lib/license", "GPL");
+		m->declare("lib/lebedev.lib/name", "Lebdev grids and weights");
+		m->declare("lib/lebedev.lib/version", "1.0");
+		m->declare("lib/nfc.lib/author", "Pierre Lecomte");
+		m->declare("lib/nfc.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("lib/nfc.lib/license", "GPL");
+		m->declare("lib/nfc.lib/name", "NF And NFC Filters Library");
+		m->declare("lib/nfc.lib/version", "1.0");
+		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
+		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("lib/ymn.lib/license", "GPL");
+		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
+		m->declare("lib/ymn.lib/version", "1.0");
+		m->declare("license", "GPL");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
+		m->declare("maths.lib/name", "Faust Math Library");
+		m->declare("maths.lib/version", "2.0");
+		m->declare("name", "HOABeamDirac2HOA4");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
+		m->declare("version", "1.0");
 	}
 
-	virtual int getNumInputs() { return 25; }
-	virtual int getNumOutputs() { return 25; }
-	static void classInit(int samplingFreq) {
+	virtual int getNumInputs() {
+		return 25;
+		
 	}
+	virtual int getNumOutputs() {
+		return 25;
+		
+	}
+	virtual int getInputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			case 9: {
+				rate = 1;
+				break;
+			}
+			case 10: {
+				rate = 1;
+				break;
+			}
+			case 11: {
+				rate = 1;
+				break;
+			}
+			case 12: {
+				rate = 1;
+				break;
+			}
+			case 13: {
+				rate = 1;
+				break;
+			}
+			case 14: {
+				rate = 1;
+				break;
+			}
+			case 15: {
+				rate = 1;
+				break;
+			}
+			case 16: {
+				rate = 1;
+				break;
+			}
+			case 17: {
+				rate = 1;
+				break;
+			}
+			case 18: {
+				rate = 1;
+				break;
+			}
+			case 19: {
+				rate = 1;
+				break;
+			}
+			case 20: {
+				rate = 1;
+				break;
+			}
+			case 21: {
+				rate = 1;
+				break;
+			}
+			case 22: {
+				rate = 1;
+				break;
+			}
+			case 23: {
+				rate = 1;
+				break;
+			}
+			case 24: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	virtual int getOutputRate(int channel) {
+		int rate;
+		switch (channel) {
+			case 0: {
+				rate = 1;
+				break;
+			}
+			case 1: {
+				rate = 1;
+				break;
+			}
+			case 2: {
+				rate = 1;
+				break;
+			}
+			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
+				rate = 1;
+				break;
+			}
+			case 9: {
+				rate = 1;
+				break;
+			}
+			case 10: {
+				rate = 1;
+				break;
+			}
+			case 11: {
+				rate = 1;
+				break;
+			}
+			case 12: {
+				rate = 1;
+				break;
+			}
+			case 13: {
+				rate = 1;
+				break;
+			}
+			case 14: {
+				rate = 1;
+				break;
+			}
+			case 15: {
+				rate = 1;
+				break;
+			}
+			case 16: {
+				rate = 1;
+				break;
+			}
+			case 17: {
+				rate = 1;
+				break;
+			}
+			case 18: {
+				rate = 1;
+				break;
+			}
+			case 19: {
+				rate = 1;
+				break;
+			}
+			case 20: {
+				rate = 1;
+				break;
+			}
+			case 21: {
+				rate = 1;
+				break;
+			}
+			case 22: {
+				rate = 1;
+				break;
+			}
+			case 23: {
+				rate = 1;
+				break;
+			}
+			case 24: {
+				rate = 1;
+				break;
+			}
+			default: {
+				rate = -1;
+				break;
+			}
+			
+		}
+		return rate;
+		
+	}
+	
+	static void classInit(int samplingFreq) {
+		
+	}
+	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		fConst0 = min(1.92e+05, max(1e+03, (double)fSamplingFreq));
+		fConst0 = min(192000.0, max(1000.0, double(fSamplingFreq)));
 		fConst1 = (1.0 / fConst0);
+		
 	}
+	
 	virtual void instanceResetUserInterface() {
-		fcheckbox0 = 0.0;
-		fentry0 = 1.0;
-		fslider0 = 0.0;
-		fslider1 = 0.0;
-		fslider2 = 0.0;
+		fCheckbox0 = FAUSTFLOAT(0.0);
+		fEntry0 = FAUSTFLOAT(1.0);
+		fVslider0 = FAUSTFLOAT(0.0);
+		fVslider1 = FAUSTFLOAT(0.0);
+		fVslider2 = FAUSTFLOAT(0.0);
+		
 	}
+	
 	virtual void instanceClear() {
-		for (int i=0; i<2; i++) fRec0[i] = 0;
-		for (int i=0; i<2; i++) fRec1[i] = 0;
-		for (int i=0; i<2; i++) fRec2[i] = 0;
-		for (int i=0; i<2; i++) fRec3[i] = 0;
-		for (int i=0; i<2; i++) fRec4[i] = 0;
+		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
+			fRec0[l0] = 0.0;
+			
+		}
+		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
+			fRec1[l1] = 0.0;
+			
+		}
+		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
+			fRec2[l2] = 0.0;
+			
+		}
+		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
+			fRec3[l3] = 0.0;
+			
+		}
+		for (int l4 = 0; (l4 < 2); l4 = (l4 + 1)) {
+			fRec4[l4] = 0.0;
+			
+		}
+		
 	}
+	
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
 		instanceInit(samplingFreq);
@@ -666,259 +966,245 @@ class mydsp : public dsp {
 		instanceResetUserInterface();
 		instanceClear();
 	}
+	
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
+	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
 	}
+	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openHorizontalBox("Parameters");
 		ui_interface->declare(0, "2", "");
 		ui_interface->openVerticalBox("On/Off");
-		ui_interface->addCheckButton("On", &fcheckbox0);
+		ui_interface->addCheckButton("On", &fCheckbox0);
 		ui_interface->closeBox();
-		ui_interface->declare(&fentry0, "3", "");
-		ui_interface->declare(&fentry0, "unit", "s");
-		ui_interface->addNumEntry("Crossfade", &fentry0, 1.0, 0.1, 1e+01, 0.1);
-		ui_interface->declare(&fslider2, "4", "");
-		ui_interface->declare(&fslider2, "unit", "dB");
-		ui_interface->addVerticalSlider("Gain", &fslider2, 0.0, -2e+01, 2e+01, 0.1);
-		ui_interface->declare(&fslider1, "5", "");
-		ui_interface->addVerticalSlider("Azimuth", &fslider1, 0.0, -3.141592653589793, 3.141592653589793, 0.1);
-		ui_interface->declare(&fslider0, "6", "");
-		ui_interface->addVerticalSlider("Elevation", &fslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.1);
+		ui_interface->declare(&fEntry0, "3", "");
+		ui_interface->declare(&fEntry0, "unit", "s");
+		ui_interface->addNumEntry("Crossfade", &fEntry0, 1.0, 0.10000000000000001, 10.0, 0.10000000000000001);
+		ui_interface->declare(&fVslider2, "4", "");
+		ui_interface->declare(&fVslider2, "unit", "dB");
+		ui_interface->addVerticalSlider("Gain", &fVslider2, 0.0, -20.0, 20.0, 0.10000000000000001);
+		ui_interface->declare(&fVslider1, "5", "");
+		ui_interface->addVerticalSlider("Azimuth", &fVslider1, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
+		ui_interface->declare(&fVslider0, "6", "");
+		ui_interface->addVerticalSlider("Elevation", &fVslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
 		ui_interface->closeBox();
+		
 	}
-	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
-		double 	fSlow0 = double(fcheckbox0);
-		int 	iSlow1 = int(fSlow0);
-		double 	fSlow2 = double(fentry0);
-		double 	fSlow3 = (fConst1 / fSlow2);
-		int 	iSlow4 = int(((1 - fSlow0) > 0));
-		double 	fSlow5 = (fConst0 * fSlow2);
-		int 	iSlow6 = int((fSlow0 > 0));
-		double 	fSlow7 = double(fslider0);
-		double 	fSlow8 = cos(fSlow7);
-		double 	fSlow9 = double(fslider1);
-		double 	fSlow10 = (3 * fSlow9);
-		double 	fSlow11 = sin(fSlow10);
-		double 	fSlow12 = (2.091650066335189 * (fSlow8 * fSlow11));
-		double 	fSlow13 = (0.0010000000000000009 * pow(10,(0.05 * double(fslider2))));
-		double 	fSlow14 = sin(fSlow7);
-		double 	fSlow15 = (2 * fSlow9);
-		double 	fSlow16 = sin(fSlow15);
-		double 	fSlow17 = (5.123475382979799 * (fSlow14 * fSlow16));
-		double 	fSlow18 = sin(fSlow9);
-		double 	fSlow19 = faustpower<2>(fSlow14);
-		double 	fSlow20 = (5 * fSlow19);
-		double 	fSlow21 = (fSlow20 + -1);
-		double 	fSlow22 = (1.620185174601965 * (fSlow18 * fSlow21));
-		double 	fSlow23 = cos(fSlow9);
-		double 	fSlow24 = (1.620185174601965 * (fSlow23 * fSlow21));
-		double 	fSlow25 = faustpower<2>(fSlow8);
-		double 	fSlow26 = cos(fSlow10);
-		double 	fSlow27 = (2.091650066335189 * (fSlow25 * fSlow26));
-		double 	fSlow28 = faustpower<3>(fSlow8);
-		double 	fSlow29 = (4 * fSlow9);
-		double 	fSlow30 = sin(fSlow29);
-		double 	fSlow31 = (2.218529918662356 * (fSlow28 * fSlow30));
-		double 	fSlow32 = (7 * fSlow19);
-		double 	fSlow33 = (fSlow32 + -1);
-		double 	fSlow34 = (1.6770509831248424 * ((fSlow8 * fSlow16) * fSlow33));
-		double 	fSlow35 = cos(fSlow15);
-		double 	fSlow36 = (1.6770509831248424 * ((fSlow8 * fSlow35) * fSlow33));
-		double 	fSlow37 = cos(fSlow29);
-		double 	fSlow38 = (2.218529918662356 * (fSlow28 * fSlow37));
-		double 	fSlow39 = (fSlow20 + -3);
-		double 	fSlow40 = (1.3228756555322954 * fSlow39);
-		double 	fSlow41 = (fSlow25 * fSlow35);
-		double 	fSlow42 = (5.123475382979799 * fSlow41);
-		double 	fSlow43 = (fSlow28 * fSlow11);
-		double 	fSlow44 = (6.274950199005566 * fSlow43);
-		double 	fSlow45 = (fSlow28 * fSlow26);
-		double 	fSlow46 = (6.274950199005566 * fSlow45);
-		double 	fSlow47 = sin((2 * fSlow7));
-		double 	fSlow48 = (fSlow32 + -3);
-		double 	fSlow49 = (1.1858541225631423 * (fSlow47 * fSlow48));
-		double 	fSlow50 = (fSlow8 * fSlow18);
-		double 	fSlow51 = (fSlow8 * fSlow23);
-		double 	fSlow52 = ((3 * fSlow19) + -1);
-		double 	fSlow53 = (1.118033988749895 * fSlow52);
-		double 	fSlow54 = (fSlow25 * fSlow16);
-		double 	fSlow55 = (fSlow47 * fSlow18);
-		double 	fSlow56 = (fSlow47 * fSlow23);
-		double 	fSlow57 = ((fSlow19 * ((35 * fSlow19) + -30)) + 3);
-		double 	fSlow58 = (0.375 * fSlow57);
-		double 	fSlow59 = (0.13783222385544802 * fSlow50);
-		double 	fSlow60 = (0.13783222385544802 * fSlow14);
-		double 	fSlow61 = (0.13783222385544802 * fSlow51);
-		double 	fSlow62 = (0.15410111101537496 * fSlow54);
-		double 	fSlow63 = (0.15410111101537496 * fSlow55);
-		double 	fSlow64 = (0.08897031792714714 * fSlow52);
-		double 	fSlow65 = (0.15410111101537496 * fSlow56);
-		double 	fSlow66 = (0.15410111101537496 * fSlow41);
-		double 	fSlow67 = (0.16644822363786807 * fSlow43);
-		double 	fSlow68 = (fSlow25 * fSlow14);
-		double 	fSlow69 = (0.4077132165054383 * (fSlow68 * fSlow16));
-		double 	fSlow70 = (0.12893023963105413 * (fSlow50 * fSlow21));
-		double 	fSlow71 = (0.10527109983694811 * (fSlow14 * fSlow39));
-		double 	fSlow72 = (0.12893023963105413 * (fSlow51 * fSlow21));
-		double 	fSlow73 = (0.4077132165054383 * (fSlow68 * fSlow35));
-		double 	fSlow74 = (0.16644822363786807 * fSlow45);
-		double 	fSlow75 = faustpower<4>(fSlow8);
-		double 	fSlow76 = (0.17654500147618726 * (fSlow75 * fSlow30));
-		double 	fSlow77 = (fSlow28 * fSlow14);
-		double 	fSlow78 = (0.4993446709136041 * (fSlow77 * fSlow11));
-		double 	fSlow79 = (0.1334554768907207 * (fSlow54 * fSlow33));
-		double 	fSlow80 = (0.0943672726959132 * (fSlow55 * fSlow48));
-		double 	fSlow81 = (0.029841551829730376 * fSlow57);
-		double 	fSlow82 = (0.0943672726959132 * (fSlow56 * fSlow48));
-		double 	fSlow83 = (0.1334554768907207 * (fSlow41 * fSlow33));
-		double 	fSlow84 = (0.4993446709136041 * (fSlow77 * fSlow26));
-		double 	fSlow85 = (0.17654500147618726 * (fSlow75 * fSlow37));
-		FAUSTFLOAT* input0 = input[0];
-		FAUSTFLOAT* input1 = input[1];
-		FAUSTFLOAT* input2 = input[2];
-		FAUSTFLOAT* input3 = input[3];
-		FAUSTFLOAT* input4 = input[4];
-		FAUSTFLOAT* input5 = input[5];
-		FAUSTFLOAT* input6 = input[6];
-		FAUSTFLOAT* input7 = input[7];
-		FAUSTFLOAT* input8 = input[8];
-		FAUSTFLOAT* input9 = input[9];
-		FAUSTFLOAT* input10 = input[10];
-		FAUSTFLOAT* input11 = input[11];
-		FAUSTFLOAT* input12 = input[12];
-		FAUSTFLOAT* input13 = input[13];
-		FAUSTFLOAT* input14 = input[14];
-		FAUSTFLOAT* input15 = input[15];
-		FAUSTFLOAT* input16 = input[16];
-		FAUSTFLOAT* input17 = input[17];
-		FAUSTFLOAT* input18 = input[18];
-		FAUSTFLOAT* input19 = input[19];
-		FAUSTFLOAT* input20 = input[20];
-		FAUSTFLOAT* input21 = input[21];
-		FAUSTFLOAT* input22 = input[22];
-		FAUSTFLOAT* input23 = input[23];
-		FAUSTFLOAT* input24 = input[24];
-		FAUSTFLOAT* output0 = output[0];
-		FAUSTFLOAT* output1 = output[1];
-		FAUSTFLOAT* output2 = output[2];
-		FAUSTFLOAT* output3 = output[3];
-		FAUSTFLOAT* output4 = output[4];
-		FAUSTFLOAT* output5 = output[5];
-		FAUSTFLOAT* output6 = output[6];
-		FAUSTFLOAT* output7 = output[7];
-		FAUSTFLOAT* output8 = output[8];
-		FAUSTFLOAT* output9 = output[9];
-		FAUSTFLOAT* output10 = output[10];
-		FAUSTFLOAT* output11 = output[11];
-		FAUSTFLOAT* output12 = output[12];
-		FAUSTFLOAT* output13 = output[13];
-		FAUSTFLOAT* output14 = output[14];
-		FAUSTFLOAT* output15 = output[15];
-		FAUSTFLOAT* output16 = output[16];
-		FAUSTFLOAT* output17 = output[17];
-		FAUSTFLOAT* output18 = output[18];
-		FAUSTFLOAT* output19 = output[19];
-		FAUSTFLOAT* output20 = output[20];
-		FAUSTFLOAT* output21 = output[21];
-		FAUSTFLOAT* output22 = output[22];
-		FAUSTFLOAT* output23 = output[23];
-		FAUSTFLOAT* output24 = output[24];
-		for (int i=0; i<count; i++) {
-			double fTemp0 = (double)input0[i];
-			fRec0[0] = ((iSlow4)?fSlow5:max((double)0, (fRec0[1] + -1)));
-			fRec1[0] = ((iSlow6)?0:min(fSlow5, (fRec1[1] + 1)));
-			double fTemp1 = (double)input9[i];
+	
+	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
+		FAUSTFLOAT* input0 = inputs[0];
+		FAUSTFLOAT* input1 = inputs[1];
+		FAUSTFLOAT* input2 = inputs[2];
+		FAUSTFLOAT* input3 = inputs[3];
+		FAUSTFLOAT* input4 = inputs[4];
+		FAUSTFLOAT* input5 = inputs[5];
+		FAUSTFLOAT* input6 = inputs[6];
+		FAUSTFLOAT* input7 = inputs[7];
+		FAUSTFLOAT* input8 = inputs[8];
+		FAUSTFLOAT* input9 = inputs[9];
+		FAUSTFLOAT* input10 = inputs[10];
+		FAUSTFLOAT* input11 = inputs[11];
+		FAUSTFLOAT* input12 = inputs[12];
+		FAUSTFLOAT* input13 = inputs[13];
+		FAUSTFLOAT* input14 = inputs[14];
+		FAUSTFLOAT* input15 = inputs[15];
+		FAUSTFLOAT* input16 = inputs[16];
+		FAUSTFLOAT* input17 = inputs[17];
+		FAUSTFLOAT* input18 = inputs[18];
+		FAUSTFLOAT* input19 = inputs[19];
+		FAUSTFLOAT* input20 = inputs[20];
+		FAUSTFLOAT* input21 = inputs[21];
+		FAUSTFLOAT* input22 = inputs[22];
+		FAUSTFLOAT* input23 = inputs[23];
+		FAUSTFLOAT* input24 = inputs[24];
+		FAUSTFLOAT* output0 = outputs[0];
+		FAUSTFLOAT* output1 = outputs[1];
+		FAUSTFLOAT* output2 = outputs[2];
+		FAUSTFLOAT* output3 = outputs[3];
+		FAUSTFLOAT* output4 = outputs[4];
+		FAUSTFLOAT* output5 = outputs[5];
+		FAUSTFLOAT* output6 = outputs[6];
+		FAUSTFLOAT* output7 = outputs[7];
+		FAUSTFLOAT* output8 = outputs[8];
+		FAUSTFLOAT* output9 = outputs[9];
+		FAUSTFLOAT* output10 = outputs[10];
+		FAUSTFLOAT* output11 = outputs[11];
+		FAUSTFLOAT* output12 = outputs[12];
+		FAUSTFLOAT* output13 = outputs[13];
+		FAUSTFLOAT* output14 = outputs[14];
+		FAUSTFLOAT* output15 = outputs[15];
+		FAUSTFLOAT* output16 = outputs[16];
+		FAUSTFLOAT* output17 = outputs[17];
+		FAUSTFLOAT* output18 = outputs[18];
+		FAUSTFLOAT* output19 = outputs[19];
+		FAUSTFLOAT* output20 = outputs[20];
+		FAUSTFLOAT* output21 = outputs[21];
+		FAUSTFLOAT* output22 = outputs[22];
+		FAUSTFLOAT* output23 = outputs[23];
+		FAUSTFLOAT* output24 = outputs[24];
+		double fSlow0 = double(fCheckbox0);
+		int iSlow1 = int(fSlow0);
+		double fSlow2 = double(fEntry0);
+		double fSlow3 = (fConst1 / fSlow2);
+		int iSlow4 = (fSlow0 > 0.0);
+		double fSlow5 = (fConst0 * fSlow2);
+		int iSlow6 = ((1.0 - fSlow0) > 0.0);
+		double fSlow7 = double(fVslider0);
+		double fSlow8 = cos(fSlow7);
+		double fSlow9 = double(fVslider1);
+		double fSlow10 = (3.0 * fSlow9);
+		double fSlow11 = sin(fSlow10);
+		double fSlow12 = (2.0916500663351889 * (fSlow11 * fSlow8));
+		double fSlow13 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider2))));
+		double fSlow14 = (2.0 * fSlow9);
+		double fSlow15 = sin(fSlow14);
+		double fSlow16 = sin(fSlow7);
+		double fSlow17 = (5.123475382979799 * (fSlow15 * fSlow16));
+		double fSlow18 = sin(fSlow9);
+		double fSlow19 = mydsp_faustpower2_f(fSlow16);
+		double fSlow20 = (5.0 * fSlow19);
+		double fSlow21 = (fSlow20 + -1.0);
+		double fSlow22 = (fSlow18 * fSlow21);
+		double fSlow23 = (1.6201851746019651 * fSlow22);
+		double fSlow24 = cos(fSlow9);
+		double fSlow25 = (fSlow24 * fSlow21);
+		double fSlow26 = (1.6201851746019651 * fSlow25);
+		double fSlow27 = cos(fSlow10);
+		double fSlow28 = mydsp_faustpower2_f(fSlow8);
+		double fSlow29 = (2.0916500663351889 * (fSlow27 * fSlow28));
+		double fSlow30 = (4.0 * fSlow9);
+		double fSlow31 = sin(fSlow30);
+		double fSlow32 = mydsp_faustpower3_f(fSlow8);
+		double fSlow33 = (2.2185299186623562 * (fSlow31 * fSlow32));
+		double fSlow34 = (7.0 * fSlow19);
+		double fSlow35 = (fSlow34 + -1.0);
+		double fSlow36 = (fSlow15 * fSlow35);
+		double fSlow37 = (1.6770509831248424 * (fSlow36 * fSlow8));
+		double fSlow38 = cos(fSlow14);
+		double fSlow39 = (fSlow38 * fSlow35);
+		double fSlow40 = (1.6770509831248424 * (fSlow39 * fSlow8));
+		double fSlow41 = cos(fSlow30);
+		double fSlow42 = (2.2185299186623562 * (fSlow41 * fSlow32));
+		double fSlow43 = (fSlow20 + -3.0);
+		double fSlow44 = (1.3228756555322954 * fSlow43);
+		double fSlow45 = (fSlow38 * fSlow28);
+		double fSlow46 = (5.123475382979799 * fSlow45);
+		double fSlow47 = (fSlow11 * fSlow32);
+		double fSlow48 = (6.2749501990055663 * fSlow47);
+		double fSlow49 = (fSlow27 * fSlow32);
+		double fSlow50 = (6.2749501990055663 * fSlow49);
+		double fSlow51 = (fSlow34 + -3.0);
+		double fSlow52 = sin((2.0 * fSlow7));
+		double fSlow53 = (1.1858541225631423 * (fSlow51 * fSlow52));
+		double fSlow54 = (fSlow18 * fSlow8);
+		double fSlow55 = (fSlow24 * fSlow8);
+		double fSlow56 = ((3.0 * fSlow19) + -1.0);
+		double fSlow57 = (1.1180339887498949 * fSlow56);
+		double fSlow58 = (fSlow15 * fSlow28);
+		double fSlow59 = (fSlow18 * fSlow52);
+		double fSlow60 = (fSlow24 * fSlow52);
+		double fSlow61 = ((((35.0 * fSlow19) + -30.0) * fSlow19) + 3.0);
+		double fSlow62 = (0.375 * fSlow61);
+		double fSlow63 = (0.13783222385544802 * fSlow54);
+		double fSlow64 = (0.13783222385544802 * fSlow16);
+		double fSlow65 = (0.13783222385544802 * fSlow55);
+		double fSlow66 = (0.15410111101537496 * fSlow58);
+		double fSlow67 = (0.15410111101537496 * fSlow59);
+		double fSlow68 = (0.088970317927147144 * fSlow56);
+		double fSlow69 = (0.15410111101537496 * fSlow60);
+		double fSlow70 = (0.15410111101537496 * fSlow45);
+		double fSlow71 = (0.16644822363786807 * fSlow47);
+		double fSlow72 = (0.40771321650543829 * (fSlow58 * fSlow16));
+		double fSlow73 = (0.12893023963105413 * (fSlow22 * fSlow8));
+		double fSlow74 = (0.10527109983694811 * (fSlow43 * fSlow16));
+		double fSlow75 = (0.12893023963105413 * (fSlow25 * fSlow8));
+		double fSlow76 = (0.40771321650543829 * (fSlow45 * fSlow16));
+		double fSlow77 = (0.16644822363786807 * fSlow49);
+		double fSlow78 = mydsp_faustpower4_f(fSlow8);
+		double fSlow79 = (0.17654500147618726 * (fSlow31 * fSlow78));
+		double fSlow80 = (0.49934467091360413 * (fSlow47 * fSlow16));
+		double fSlow81 = (0.13345547689072071 * (fSlow36 * fSlow28));
+		double fSlow82 = (0.094367272695913204 * ((fSlow18 * fSlow51) * fSlow52));
+		double fSlow83 = (0.029841551829730376 * fSlow61);
+		double fSlow84 = (0.094367272695913204 * ((fSlow24 * fSlow51) * fSlow52));
+		double fSlow85 = (0.13345547689072071 * (fSlow39 * fSlow28));
+		double fSlow86 = (0.49934467091360413 * (fSlow49 * fSlow16));
+		double fSlow87 = (0.17654500147618726 * (fSlow41 * fSlow78));
+		for (int i = 0; (i < count); i = (i + 1)) {
+			fRec0[0] = (iSlow4?0.0:min(fSlow5, (fRec0[1] + 1.0)));
+			double fTemp0 = double(input0[i]);
+			fRec1[0] = (iSlow6?fSlow5:max(0.0, (fRec1[1] + -1.0)));
 			fRec2[0] = (fSlow13 + (0.999 * fRec2[1]));
-			double fTemp2 = (fTemp1 * fRec2[0]);
-			fRec3[0] = ((iSlow4)?0:min(fSlow5, (fRec3[1] + 1)));
-			fRec4[0] = ((iSlow6)?fSlow5:max((double)0, (fRec4[1] + -1)));
-			double fTemp3 = (double)input10[i];
-			double fTemp4 = (fTemp3 * fRec2[0]);
-			double fTemp5 = (double)input11[i];
-			double fTemp6 = (fTemp5 * fRec2[0]);
-			double fTemp7 = (double)input13[i];
-			double fTemp8 = (fTemp7 * fRec2[0]);
-			double fTemp9 = (double)input15[i];
-			double fTemp10 = (fTemp9 * fRec2[0]);
-			double fTemp11 = (double)input16[i];
-			double fTemp12 = (fTemp11 * fRec2[0]);
-			double fTemp13 = (double)input18[i];
-			double fTemp14 = (fTemp13 * fRec2[0]);
-			double fTemp15 = (double)input22[i];
-			double fTemp16 = (fTemp15 * fRec2[0]);
-			double fTemp17 = (double)input24[i];
-			double fTemp18 = (fTemp17 * fRec2[0]);
-			double fTemp19 = (double)input12[i];
-			double fTemp20 = (fTemp19 * fRec2[0]);
-			double fTemp21 = (double)input14[i];
-			double fTemp22 = (fTemp21 * fRec2[0]);
-			double fTemp23 = (double)input17[i];
-			double fTemp24 = (fTemp23 * fRec2[0]);
-			double fTemp25 = (double)input23[i];
-			double fTemp26 = (fTemp25 * fRec2[0]);
-			double fTemp27 = (double)input19[i];
-			double fTemp28 = (fTemp27 * fRec2[0]);
-			double fTemp29 = (double)input21[i];
-			double fTemp30 = (fTemp29 * fRec2[0]);
-			double fTemp31 = (fTemp0 * fRec2[0]);
-			double fTemp32 = (double)input1[i];
-			double fTemp33 = (fTemp32 * fRec2[0]);
-			double fTemp34 = (double)input2[i];
-			double fTemp35 = (fTemp34 * fRec2[0]);
-			double fTemp36 = (double)input3[i];
-			double fTemp37 = (fTemp36 * fRec2[0]);
-			double fTemp38 = (double)input6[i];
-			double fTemp39 = (fTemp38 * fRec2[0]);
-			double fTemp40 = (double)input4[i];
-			double fTemp41 = (fTemp40 * fRec2[0]);
-			double fTemp42 = (double)input5[i];
-			double fTemp43 = (fTemp42 * fRec2[0]);
-			double fTemp44 = (double)input7[i];
-			double fTemp45 = (fTemp44 * fRec2[0]);
-			double fTemp46 = (double)input8[i];
-			double fTemp47 = (fTemp46 * fRec2[0]);
-			double fTemp48 = (double)input20[i];
-			double fTemp49 = (fTemp48 * fRec2[0]);
-			double fTemp50 = ((fSlow8 * ((((((((fSlow8 * ((fSlow12 * ((iSlow1)?(fSlow3 * (fTemp2 * fRec3[0])):(fSlow3 * (fTemp2 * fRec4[0])))) + (fSlow17 * ((iSlow1)?(fSlow3 * (fTemp4 * fRec3[0])):(fSlow3 * (fTemp4 * fRec4[0])))))) + (fSlow22 * ((iSlow1)?(fSlow3 * (fTemp6 * fRec3[0])):(fSlow3 * (fTemp6 * fRec4[0]))))) + (fSlow24 * ((iSlow1)?(fSlow3 * (fTemp8 * fRec3[0])):(fSlow3 * (fTemp8 * fRec4[0]))))) + (fSlow27 * ((iSlow1)?(fSlow3 * (fTemp10 * fRec3[0])):(fSlow3 * (fTemp10 * fRec4[0]))))) + (fSlow31 * ((iSlow1)?(fSlow3 * (fTemp12 * fRec3[0])):(fSlow3 * (fTemp12 * fRec4[0]))))) + (fSlow34 * ((iSlow1)?(fSlow3 * (fTemp14 * fRec3[0])):(fSlow3 * (fTemp14 * fRec4[0]))))) + (fSlow36 * ((iSlow1)?(fSlow3 * (fTemp16 * fRec3[0])):(fSlow3 * (fTemp16 * fRec4[0]))))) + (fSlow38 * ((iSlow1)?(fSlow3 * (fTemp18 * fRec3[0])):(fSlow3 * (fTemp18 * fRec4[0])))))) + ((fSlow14 * ((((fSlow40 * ((iSlow1)?(fSlow3 * (fTemp20 * fRec3[0])):(fSlow3 * (fTemp20 * fRec4[0])))) + (fSlow42 * ((iSlow1)?(fSlow3 * (fTemp22 * fRec3[0])):(fSlow3 * (fTemp22 * fRec4[0]))))) + (fSlow44 * ((iSlow1)?(fSlow3 * (fTemp24 * fRec3[0])):(fSlow3 * (fTemp24 * fRec4[0]))))) + (fSlow46 * ((iSlow1)?(fSlow3 * (fTemp26 * fRec3[0])):(fSlow3 * (fTemp26 * fRec4[0])))))) + ((fSlow49 * ((fSlow18 * ((iSlow1)?(fSlow3 * (fTemp28 * fRec3[0])):(fSlow3 * (fTemp28 * fRec4[0])))) + (fSlow23 * ((iSlow1)?(fSlow3 * (fTemp30 * fRec3[0])):(fSlow3 * (fTemp30 * fRec4[0])))))) + ((((((iSlow1)?(fSlow3 * (fTemp31 * fRec3[0])):(fSlow3 * (fTemp31 * fRec4[0]))) + (1.7320508075688772 * (((fSlow50 * ((iSlow1)?(fSlow3 * (fTemp33 * fRec3[0])):(fSlow3 * (fTemp33 * fRec4[0])))) + (fSlow14 * ((iSlow1)?(fSlow3 * (fTemp35 * fRec3[0])):(fSlow3 * (fTemp35 * fRec4[0]))))) + (fSlow51 * ((iSlow1)?(fSlow3 * (fTemp37 * fRec3[0])):(fSlow3 * (fTemp37 * fRec4[0]))))))) + (fSlow53 * ((iSlow1)?(fSlow3 * (fTemp39 * fRec3[0])):(fSlow3 * (fTemp39 * fRec4[0]))))) + (1.9364916731037085 * ((((fSlow54 * ((iSlow1)?(fSlow3 * (fTemp41 * fRec3[0])):(fSlow3 * (fTemp41 * fRec4[0])))) + (fSlow55 * ((iSlow1)?(fSlow3 * (fTemp43 * fRec3[0])):(fSlow3 * (fTemp43 * fRec4[0]))))) + (fSlow56 * ((iSlow1)?(fSlow3 * (fTemp45 * fRec3[0])):(fSlow3 * (fTemp45 * fRec4[0]))))) + (fSlow41 * ((iSlow1)?(fSlow3 * (fTemp47 * fRec3[0])):(fSlow3 * (fTemp47 * fRec4[0]))))))) + (fSlow58 * ((iSlow1)?(fSlow3 * (fTemp49 * fRec3[0])):(fSlow3 * (fTemp49 * fRec4[0]))))))));
-			output0[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp0 * fRec0[0])):(fSlow3 * (fTemp0 * fRec1[0]))) + (0.07957747154594767 * fTemp50));
-			output1[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp32 * fRec0[0])):(fSlow3 * (fTemp32 * fRec1[0]))) + (fSlow59 * fTemp50));
-			output2[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp34 * fRec0[0])):(fSlow3 * (fTemp34 * fRec1[0]))) + (fSlow60 * fTemp50));
-			output3[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp36 * fRec0[0])):(fSlow3 * (fTemp36 * fRec1[0]))) + (fSlow61 * fTemp50));
-			output4[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp40 * fRec0[0])):(fSlow3 * (fTemp40 * fRec1[0]))) + (fSlow62 * fTemp50));
-			output5[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp42 * fRec0[0])):(fSlow3 * (fTemp42 * fRec1[0]))) + (fSlow63 * fTemp50));
-			output6[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp38 * fRec0[0])):(fSlow3 * (fTemp38 * fRec1[0]))) + (fSlow64 * fTemp50));
-			output7[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp44 * fRec0[0])):(fSlow3 * (fTemp44 * fRec1[0]))) + (fSlow65 * fTemp50));
-			output8[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp46 * fRec0[0])):(fSlow3 * (fTemp46 * fRec1[0]))) + (fSlow66 * fTemp50));
-			output9[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp1 * fRec0[0])):(fSlow3 * (fTemp1 * fRec1[0]))) + (fSlow67 * fTemp50));
-			output10[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp3 * fRec0[0])):(fSlow3 * (fTemp3 * fRec1[0]))) + (fSlow69 * fTemp50));
-			output11[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp5 * fRec0[0])):(fSlow3 * (fTemp5 * fRec1[0]))) + (fSlow70 * fTemp50));
-			output12[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp19 * fRec0[0])):(fSlow3 * (fTemp19 * fRec1[0]))) + (fSlow71 * fTemp50));
-			output13[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp7 * fRec0[0])):(fSlow3 * (fTemp7 * fRec1[0]))) + (fSlow72 * fTemp50));
-			output14[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp21 * fRec0[0])):(fSlow3 * (fTemp21 * fRec1[0]))) + (fSlow73 * fTemp50));
-			output15[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp9 * fRec0[0])):(fSlow3 * (fTemp9 * fRec1[0]))) + (fSlow74 * fTemp50));
-			output16[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp11 * fRec0[0])):(fSlow3 * (fTemp11 * fRec1[0]))) + (fSlow76 * fTemp50));
-			output17[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp23 * fRec0[0])):(fSlow3 * (fTemp23 * fRec1[0]))) + (fSlow78 * fTemp50));
-			output18[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp13 * fRec0[0])):(fSlow3 * (fTemp13 * fRec1[0]))) + (fSlow79 * fTemp50));
-			output19[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp27 * fRec0[0])):(fSlow3 * (fTemp27 * fRec1[0]))) + (fSlow80 * fTemp50));
-			output20[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp48 * fRec0[0])):(fSlow3 * (fTemp48 * fRec1[0]))) + (fSlow81 * fTemp50));
-			output21[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp29 * fRec0[0])):(fSlow3 * (fTemp29 * fRec1[0]))) + (fSlow82 * fTemp50));
-			output22[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp15 * fRec0[0])):(fSlow3 * (fTemp15 * fRec1[0]))) + (fSlow83 * fTemp50));
-			output23[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp25 * fRec0[0])):(fSlow3 * (fTemp25 * fRec1[0]))) + (fSlow84 * fTemp50));
-			output24[i] = (FAUSTFLOAT)(((iSlow1)?(fSlow3 * (fTemp17 * fRec0[0])):(fSlow3 * (fTemp17 * fRec1[0]))) + (fSlow85 * fTemp50));
-			// post processing
-			fRec4[1] = fRec4[0];
-			fRec3[1] = fRec3[0];
-			fRec2[1] = fRec2[0];
-			fRec1[1] = fRec1[0];
+			fRec3[0] = (iSlow4?fSlow5:max(0.0, (fRec3[1] + -1.0)));
+			double fTemp1 = (fRec2[0] * fRec3[0]);
+			double fTemp2 = double(input9[i]);
+			fRec4[0] = (iSlow6?0.0:min(fSlow5, (fRec4[1] + 1.0)));
+			double fTemp3 = (fRec2[0] * fRec4[0]);
+			double fTemp4 = double(input10[i]);
+			double fTemp5 = double(input11[i]);
+			double fTemp6 = double(input13[i]);
+			double fTemp7 = double(input15[i]);
+			double fTemp8 = double(input16[i]);
+			double fTemp9 = double(input18[i]);
+			double fTemp10 = double(input22[i]);
+			double fTemp11 = double(input24[i]);
+			double fTemp12 = double(input12[i]);
+			double fTemp13 = double(input14[i]);
+			double fTemp14 = double(input17[i]);
+			double fTemp15 = double(input23[i]);
+			double fTemp16 = double(input19[i]);
+			double fTemp17 = double(input21[i]);
+			double fTemp18 = double(input1[i]);
+			double fTemp19 = double(input2[i]);
+			double fTemp20 = double(input3[i]);
+			double fTemp21 = double(input6[i]);
+			double fTemp22 = double(input4[i]);
+			double fTemp23 = double(input5[i]);
+			double fTemp24 = double(input7[i]);
+			double fTemp25 = double(input8[i]);
+			double fTemp26 = double(input20[i]);
+			double fTemp27 = ((fSlow8 * ((((((((fSlow8 * ((fSlow12 * (iSlow1?(fSlow3 * (fTemp3 * fTemp2)):(fSlow3 * (fTemp1 * fTemp2)))) + (fSlow17 * (iSlow1?(fSlow3 * (fTemp3 * fTemp4)):(fSlow3 * (fTemp1 * fTemp4)))))) + (fSlow23 * (iSlow1?(fSlow3 * (fTemp3 * fTemp5)):(fSlow3 * (fTemp1 * fTemp5))))) + (fSlow26 * (iSlow1?(fSlow3 * (fTemp3 * fTemp6)):(fSlow3 * (fTemp1 * fTemp6))))) + (fSlow29 * (iSlow1?(fSlow3 * (fTemp3 * fTemp7)):(fSlow3 * (fTemp1 * fTemp7))))) + (fSlow33 * (iSlow1?(fSlow3 * (fTemp3 * fTemp8)):(fSlow3 * (fTemp1 * fTemp8))))) + (fSlow37 * (iSlow1?(fSlow3 * (fTemp3 * fTemp9)):(fSlow3 * (fTemp1 * fTemp9))))) + (fSlow40 * (iSlow1?(fSlow3 * (fTemp3 * fTemp10)):(fSlow3 * (fTemp1 * fTemp10))))) + (fSlow42 * (iSlow1?(fSlow3 * (fTemp3 * fTemp11)):(fSlow3 * (fTemp1 * fTemp11)))))) + ((fSlow16 * ((((fSlow44 * (iSlow1?(fSlow3 * (fTemp3 * fTemp12)):(fSlow3 * (fTemp1 * fTemp12)))) + (fSlow46 * (iSlow1?(fSlow3 * (fTemp3 * fTemp13)):(fSlow3 * (fTemp1 * fTemp13))))) + (fSlow48 * (iSlow1?(fSlow3 * (fTemp3 * fTemp14)):(fSlow3 * (fTemp1 * fTemp14))))) + (fSlow50 * (iSlow1?(fSlow3 * (fTemp3 * fTemp15)):(fSlow3 * (fTemp1 * fTemp15)))))) + ((fSlow53 * ((fSlow18 * (iSlow1?(fSlow3 * (fTemp3 * fTemp16)):(fSlow3 * (fTemp1 * fTemp16)))) + (fSlow24 * (iSlow1?(fSlow3 * (fTemp3 * fTemp17)):(fSlow3 * (fTemp1 * fTemp17)))))) + (((((iSlow1?(fSlow3 * (fTemp3 * fTemp0)):(fSlow3 * (fTemp1 * fTemp0))) + (1.7320508075688772 * (((fSlow54 * (iSlow1?(fSlow3 * (fTemp3 * fTemp18)):(fSlow3 * (fTemp1 * fTemp18)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp19)):(fSlow3 * (fTemp1 * fTemp19))))) + (fSlow55 * (iSlow1?(fSlow3 * (fTemp3 * fTemp20)):(fSlow3 * (fTemp1 * fTemp20))))))) + (fSlow57 * (iSlow1?(fSlow3 * (fTemp3 * fTemp21)):(fSlow3 * (fTemp1 * fTemp21))))) + (1.9364916731037085 * ((((fSlow58 * (iSlow1?(fSlow3 * (fTemp3 * fTemp22)):(fSlow3 * (fTemp1 * fTemp22)))) + (fSlow59 * (iSlow1?(fSlow3 * (fTemp3 * fTemp23)):(fSlow3 * (fTemp1 * fTemp23))))) + (fSlow60 * (iSlow1?(fSlow3 * (fTemp3 * fTemp24)):(fSlow3 * (fTemp1 * fTemp24))))) + (fSlow45 * (iSlow1?(fSlow3 * (fTemp3 * fTemp25)):(fSlow3 * (fTemp1 * fTemp25))))))) + (fSlow62 * (iSlow1?(fSlow3 * (fTemp3 * fTemp26)):(fSlow3 * (fTemp1 * fTemp26))))))));
+			output0[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp0)):(fSlow3 * (fRec0[0] * fTemp0))) + (0.079577471545947673 * fTemp27)));
+			output1[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp18)):(fSlow3 * (fRec0[0] * fTemp18))) + (fSlow63 * fTemp27)));
+			output2[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp19)):(fSlow3 * (fRec0[0] * fTemp19))) + (fSlow64 * fTemp27)));
+			output3[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp20)):(fSlow3 * (fRec0[0] * fTemp20))) + (fSlow65 * fTemp27)));
+			output4[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp22)):(fSlow3 * (fRec0[0] * fTemp22))) + (fSlow66 * fTemp27)));
+			output5[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp23)):(fSlow3 * (fRec0[0] * fTemp23))) + (fSlow67 * fTemp27)));
+			output6[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp21)):(fSlow3 * (fRec0[0] * fTemp21))) + (fSlow68 * fTemp27)));
+			output7[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp24)):(fSlow3 * (fRec0[0] * fTemp24))) + (fSlow69 * fTemp27)));
+			output8[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp25)):(fSlow3 * (fRec0[0] * fTemp25))) + (fSlow70 * fTemp27)));
+			output9[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp2)):(fSlow3 * (fRec0[0] * fTemp2))) + (fSlow71 * fTemp27)));
+			output10[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp4)):(fSlow3 * (fRec0[0] * fTemp4))) + (fSlow72 * fTemp27)));
+			output11[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp5)):(fSlow3 * (fRec0[0] * fTemp5))) + (fSlow73 * fTemp27)));
+			output12[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp12)):(fSlow3 * (fRec0[0] * fTemp12))) + (fSlow74 * fTemp27)));
+			output13[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp6)):(fSlow3 * (fRec0[0] * fTemp6))) + (fSlow75 * fTemp27)));
+			output14[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp13)):(fSlow3 * (fRec0[0] * fTemp13))) + (fSlow76 * fTemp27)));
+			output15[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp7)):(fSlow3 * (fRec0[0] * fTemp7))) + (fSlow77 * fTemp27)));
+			output16[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp8)):(fSlow3 * (fRec0[0] * fTemp8))) + (fSlow79 * fTemp27)));
+			output17[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp14)):(fSlow3 * (fRec0[0] * fTemp14))) + (fSlow80 * fTemp27)));
+			output18[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp9)):(fSlow3 * (fRec0[0] * fTemp9))) + (fSlow81 * fTemp27)));
+			output19[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp16)):(fSlow3 * (fRec0[0] * fTemp16))) + (fSlow82 * fTemp27)));
+			output20[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp26)):(fSlow3 * (fRec0[0] * fTemp26))) + (fSlow83 * fTemp27)));
+			output21[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp17)):(fSlow3 * (fRec0[0] * fTemp17))) + (fSlow84 * fTemp27)));
+			output22[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp10)):(fSlow3 * (fRec0[0] * fTemp10))) + (fSlow85 * fTemp27)));
+			output23[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp15)):(fSlow3 * (fRec0[0] * fTemp15))) + (fSlow86 * fTemp27)));
+			output24[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp11)):(fSlow3 * (fRec0[0] * fTemp11))) + (fSlow87 * fTemp27)));
 			fRec0[1] = fRec0[0];
+			fRec1[1] = fRec1[0];
+			fRec2[1] = fRec2[0];
+			fRec3[1] = fRec3[0];
+			fRec4[1] = fRec4[0];
+			
 		}
+		
 	}
-};
 
+	
+};
 
 
 //----------------------------------------------------------------------------
@@ -1250,3 +1536,5 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
 }
 
 // EOF
+
+#endif
