@@ -222,12 +222,22 @@ BUILD_PLUGIN(JPverb
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+if (SUPERNOVA)
+             set_property(TARGET JPverb_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+             set_property(TARGET JPverb_supernova APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
+             set_property(TARGET JPverb_supernova APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+endif()
 BUILD_PLUGIN(Greyhole
 "DEINDUGens/GreyholeRaw.cpp" 
              "" "DEINDUGens")
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+if (SUPERNOVA)
+             set_property(TARGET Greyhole_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
+             set_property(TARGET Greyhole_supernova APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
+             set_property(TARGET Greyhole_supernova APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+endif()
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
