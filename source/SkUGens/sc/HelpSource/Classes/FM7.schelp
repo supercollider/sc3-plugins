@@ -69,6 +69,9 @@ argument::algo
 
 The id of the algorithms [0..31]
 
+algo must be a fixed value i.e it's imposible to use function or SynthDef arguments as algo value.
+This behavior is determined by the fact that algorithm number must be chosen when building the SynthDef.
+
 argument::ctlMatrix
 
 See above.
