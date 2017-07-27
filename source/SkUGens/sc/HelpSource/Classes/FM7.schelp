@@ -69,8 +69,7 @@ argument::algo
 
 The id of the algorithms [0..31]
 
-algo must be a fixed value i.e it's imposible to use function or SynthDef arguments as algo value.
-This behavior is determined by the fact that algorithm number must be chosen when building the SynthDef.
+the algo argument chooses the algorithm when the ugen is instantiated. It cannot be modulated.
 
 argument::ctlMatrix
 
