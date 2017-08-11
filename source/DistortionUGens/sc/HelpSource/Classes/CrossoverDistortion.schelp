@@ -1,5 +1,5 @@
 class:: CrossoverDistortion
-summary:: port of some ladspa plugins
+summary:: class B/AB power amp distortion simulation
 related:: Classes/SmoothDecimator, Classes/Decimator, Classes/SineShaper, Classes/Disintegrator
 categories:: UGens>Filters
 
@@ -7,6 +7,9 @@ categories:: UGens>Filters
 Description::
 This is a simulation of the distortion that happens in class B and AB power amps when the signal crosses 0.For class B simulations the smooth value should be set to about 0.3 +/- 0.2 and for AB it should be set to near 1.0.
 
+note::
+Port of a similarly-named ladspa plugin link::http://plugin.org.uk/ladspa-swh/docs/ladspa-swh.html#tth_sEc2.22::. Plugin ID 1404.
+::
 
 classmethods::
 
