@@ -4,8 +4,8 @@ categories:: UGens>Filters>Nonlinear
 related:: Classes/Squiz
 
 DESCRIPTION::
-Divide an audio stream by zero crossings of the signal into tiny segments and discard a fraction of them (i.e. replace them with silence of the same length).
-The technique was described Trevor Wishart in a lecture.
+Divide an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discard a fraction of them (i.e. replace them with silence of the same length).
+The technique was described by Trevor Wishart in a lecture.
 
 Parameters: the filter drops strong::drop:: out of strong::outof:: chunks. strong::mode:: can be code::1:: to drop chunks in a simple deterministic fashion (e.g. always dropping the first code::30:: out of a set of code::40:: segments), or code::2:: to drop chunks randomly but in an appropriate proportion.
 
@@ -14,7 +14,7 @@ CLASSMETHODS::
 METHOD:: ar, kr
 argument:: in
 argument:: drop
-number of waves to drop within a code::outof:: waves
+number of waves to drop within each region of code::outof:: waves
 argument:: outof
 number of waves within which code::drop:: numbers are silenced
 argument:: mode
