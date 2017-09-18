@@ -120,10 +120,6 @@ void SwitchDelay_next( SwitchDelay *unit, int inNumSamples ) {
         offset_timer = ENVLEN;
     }
 
-    // limit the delay multiplier to reasonable numbers
-    if(delayfactor < 0.) delayfactor = 0.;
-    if(delayfactor > 0.9) delayfactor = 0.9;
-
     for(i=0; i < inNumSamples; ++i) {
         recval = in[i];
         readval = buffer[readpos] + offset_current;

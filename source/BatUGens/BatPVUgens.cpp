@@ -58,7 +58,7 @@
 		buf2 = world->mSndBufs + ibufnum2; \
 	} \
 	if (buf1->samples != buf2->samples) return; \
-	int numbins = buf1->samples - 2 >> 1;
+	int numbins = (buf1->samples - 2) >> 1;
 
 InterfaceTable *ft;
 

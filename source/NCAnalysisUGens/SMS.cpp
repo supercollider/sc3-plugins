@@ -89,7 +89,7 @@ SCPolarBuf* ToPolarApx2(float* buf, int windowsize=1024)
 	//assumes it already is complex format
 	//if (buf->coord == coord_Complex) {
 		SCComplexBuf* p = (SCComplexBuf*)buf;
-		int numbins = windowsize - 2 >> 1;
+		int numbins = (windowsize - 2) >> 1;
 		for (int i=0; i<numbins; ++i) {
 			p->bin[i].ToPolarApxInPlace();
 		}
@@ -102,7 +102,7 @@ SCComplexBuf* ToComplexApx2(float *buf, int windowsize=1024)
 {
 	//if (buf->coord == coord_Polar) {
 		SCPolarBuf* p = (SCPolarBuf*)buf; //->data;
-		int numbins = windowsize - 2 >> 1;
+		int numbins = (windowsize - 2) >> 1;
 		for (int i=0; i<numbins; ++i) {
 			p->bin[i].ToComplexApxInPlace();
 		}

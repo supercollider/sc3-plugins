@@ -281,52 +281,52 @@ struct NTube : public Unit
 };
 
 
-struct EnvFollow : public Unit  
+struct EnvFollow : public Unit
 {
 	float eprev_;
-	
+
 };
 
-struct Sieve1 : public Unit  
+struct Sieve1 : public Unit
 {
-	
+
 	float * buffer_;
-	int maxdatasize_; 
+	int maxdatasize_;
 	int currentsize_;
-	int bufferpos_; 
-	//int interpsize_; 
-	
-	float phase_; 
-	//int interp_; 
+	int bufferpos_;
+	//int interpsize_;
+
+	float phase_;
+	//int interp_;
 	int alternate_;
-	int swap_; 
-	
-	
+	int swap_;
+
+
 };
 
 
 
 //see http://www.scholarpedia.org/article/Oregonator
 
-//see also A Brief History of Oscillators and Hair Styles of European Men AASU Math/CS Colloquium, April 2002. 
+//see also A Brief History of Oscillators and Hair Styles of European Men AASU Math/CS Colloquium, April 2002.
 struct Oregonator: public Unit {
-    
-    float x, y, z; 
-    
+
+    float x, y, z;
+
 };
 
 
 struct Brusselator: public Unit {
-    
-    float x, y; 
-    
+
+    float x, y;
+
 };
 
 
 struct SpruceBudworm: public Unit {
-    
-    float x, y; 
-    
+
+    float x, y;
+
 };
 
 
@@ -432,16 +432,16 @@ extern "C" {
     void EnvFollow_next(EnvFollow *unit, int inNumSamples);
 	void EnvFollow_Ctor(EnvFollow* unit);
 	//void BlitB3_Dtor(BlitB3* unit);
-	
+
 	void Sieve1_next(Sieve1 *unit, int inNumSamples);
 	void Sieve1_Ctor(Sieve1* unit);
-    
+
     void Oregonator_next(Oregonator *unit, int inNumSamples);
 	void Oregonator_Ctor(Oregonator* unit);
-    
+
     void Brusselator_next(Brusselator *unit, int inNumSamples);
 	void Brusselator_Ctor(Brusselator* unit);
-    
+
     void SpruceBudworm_next(SpruceBudworm *unit, int inNumSamples);
 	void SpruceBudworm_Ctor(SpruceBudworm* unit);
 }
@@ -3109,64 +3109,64 @@ void Instruction_next_a(Instruction *unit, int inNumSamples) {
 
 
 void WaveTerrain_Ctor(WaveTerrain* unit) {
-    
+
     SETCALC(WaveTerrain_next_a);
-    
+
 }
 
 void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
-    
-    int j;     
-    
+
+    int j;
+
     float *out = ZOUT(0);
-    
+
     uint32 bufnum = (uint32)ZIN0(0);
-    
+
 	SndBuf * buf= SLUGensGetBuffer(unit,bufnum);
-    
-    int works = 1; 
-    
+
+    int works = 1;
+
 	if (buf) {
-        
+
 		int totalsize = buf->samples;
-        
+
 		int xsize = (int)(ZIN0(3)+0.0001); //safety on round down
 		int ysize = (int)(ZIN0(4)+0.0001);
-        
+
 		if((xsize * ysize)> totalsize) {
-            
-            //could set xsize and ysize to (int)sqrt(totalsize) but may not be desired result? 
+
+            //could set xsize and ysize to (int)sqrt(totalsize) but may not be desired result?
             //could set ysize to total/xsize too... unless xsize itself >totalsize
-            
+
 			//printf("WaveTerrain: size mismatch between xsize*ysize and actual buffer size. UGen will output silence \n");
-			works = 0; 		
-            
+			works = 0;
+
         } else {
-            
+
             float * terrain = buf->data;
-            
+
             float *xin = IN(1);
             float *yin = IN(2);
-            
-            
+
+
             float x, y, xindex, yindex;
             int xfloor, yfloor, xnext, ynext;
             float xprop,yprop;
-            
+
             float vll,vlr,vul,vur;
-            
+
             for (int j=0; j<inNumSamples;++j) {
-                
+
                 x= xin[j]; //0.0 to 1.0
                 y= yin[j];
-                
+
                 //safety
                 x= sc_wrap(x, 0.0f, 1.f);
                 y= sc_wrap(y, 0.0f, 1.f);
-                
+
                 xindex= x*xsize;
                 yindex= y*ysize;
-                
+
                 //	if (xindex<0.0f)
                 //			xindex=0.0f;
                 //		else if (xindex>=xsize)
@@ -3176,53 +3176,53 @@ void WaveTerrain_next_a(WaveTerrain *unit, int inNumSamples) {
                 //			yindex=0.0f;
                 //		else if (yindex>=ysize)
                 //			yindex= ysize-0.00001;
-                
+
                 //these are guaranteed in range from wrap above give or take floating point error on round down?
                 //added modulo because very occasional error with index up to xsize or ysize
                 xfloor= ((int)xindex)%xsize;
                 yfloor= ((int)yindex)%ysize;
-                
+
                 //these aren't; needs further wrap
                 xnext= (xfloor+1)%xsize;
                 ynext= (yfloor+1)%ysize;
-                
+
                 xprop= xindex-xfloor;
                 yprop= yindex-yfloor;
-                
+
                 //printf("x %f, y %f, xfloor %d, yfloor %d, xnext, %d, ynext %d, xprop %f, yprop %f \n", x, y, xfloor, yfloor, xnext, ynext, xprop, yprop);
-                
+
                 //now have to look up in table and interpolate; linear within the 4 vertices of a square cell for now, cubic over 16 vertices maybe later
-                
+
                 //format for terrain should be rows of xsize, indexed from lower left
                 vll= terrain[(xsize*yfloor)+ xfloor];
                 vlr= terrain[(xsize*yfloor)+ xnext];
                 vul= terrain[(xsize*ynext)+ xfloor];
                 vur= terrain[(xsize*ynext)+ xnext];
-                
+
                 ZXP(out) = (1.0-xprop)*(vll+(yprop*(vul-vll))) + (xprop*(vlr+(yprop*(vur-vlr))));
-                
+
                 //printf("%f \n",);
             }
-            
-            
+
+
         }
-        
+
     } else {
-        
-        works = 0; 
+
+        works = 0;
     }
-    
-    
+
+
     //output silence for this block
     if(works==0) {
-        
-        for (int j=0; j<inNumSamples;++j) 
+
+        for (int j=0; j<inNumSamples;++j)
             ZXP(out) = 0.0f;
-            
+
             }
-    
-    
-    
+
+
+
 }
 
 
@@ -4033,279 +4033,281 @@ void NTube_next(NTube *unit, int inNumSamples) {
 
 
 void EnvFollow_Ctor( EnvFollow* unit ) {
-	
-	unit->eprev_ = 0.0f; 
-	
+
+	unit->eprev_ = 0.0f;
+
 	SETCALC(EnvFollow_next);
+
+	OUT0(0) = 0.0f;
 }
 
 
 
 void EnvFollow_next( EnvFollow *unit, int inNumSamples ) {
-	
+
 	//int numSamples = unit->mWorld->mFullRate.mBufLength;
-	
-	float *input = IN(0); 
+
+	float *input = IN(0);
 	float *output = OUT(0);
-	
+
 	float c = ZIN0(1);
-	float oneminusc= 1.0f-c; 
-	
+	float oneminusc= 1.0f-c;
+
 	float e = unit->eprev_;
-	
+
 	for (int i=0; i<inNumSamples; ++i) {
-		
-		float  x = input[i]; 
-		
+
+		float  x = input[i];
+
 		//full wave rectify
-		x = x<0.0f?-x:x; 
-		
-		if (x>e) 
-			e = x; 
+		x = x<0.0f?-x:x;
+
+		if (x>e)
+			e = x;
 		else
 			e = c*e + oneminusc*x;
-		
-		output[i]= e; 
-		
+
+		output[i]= e;
+
 	}
-	
-	//printf("hello phase %f period %f\n",phase, period); 
-	
-	unit->eprev_ = e; 
-	
+
+	//printf("hello phase %f period %f\n",phase, period);
+
+	unit->eprev_ = e;
+
 }
 
 
 
 
 void Sieve1_Ctor( Sieve1* unit ) {
-	
-	SndBuf * buf = SLUGensGetBuffer(unit, ZIN0(0)); 
-	
-	if (buf) { 
-		
+
+	SndBuf * buf = SLUGensGetBuffer(unit, ZIN0(0));
+
+	if (buf) {
+
 		unit->maxdatasize_ = buf->samples -1; //take 1 off to allow that working size always first entry
-		
+
 		if(unit->maxdatasize_>=1) {
-			
-			unit->buffer_ = buf->data; 
-			
+
+			unit->buffer_ = buf->data;
+
 			unit->bufferpos_=0;
-			unit->currentsize_ = 1; 
-			
-			//unit->interpsize_; 
-			//unit->interp_=0; 
-			
+			unit->currentsize_ = 1;
+
+			//unit->interpsize_;
+			//unit->interp_=0;
+
 			unit->alternate_= ZIN0(2);
-			
-			unit->swap_ = 1; 
-			
-			unit->phase_ = 0.0f;	
-			
-			SETCALC(Sieve1_next);	
-			
+
+			unit->swap_ = 1;
+
+			unit->phase_ = 0.0f;
+
+			SETCALC(Sieve1_next);
+
 		}
 	}
-	
+
 }
 
 
 
 void Sieve1_next( Sieve1 *unit, int inNumSamples ) {
-	
+
 	float *output = OUT(0);
-	
+
 	//int gap = ZIN0(1);
 	float gap = ZIN0(1);
-	
+
 	//safety
-	if(gap<1.0f) gap = 1.0f; 
-	
-	//int interp = unit->interp_; 
-	
+	if(gap<1.0f) gap = 1.0f;
+
+	//int interp = unit->interp_;
+
 	float * buffer = unit->buffer_;
-	
+
 	RGen& rgen = *unit->mParent->mRGen;
-	
-	
-	float phase = unit-> phase_; 
-	
+
+
+	float phase = unit-> phase_;
+
 	for (int i=0; i<inNumSamples; ++i) {
-		
+
 		//if(interp == 0) {
-		
+
 		if(phase >= gap) {
-			
-			//interp = gap; 
-			
+
+			//interp = gap;
+
 			phase = fmod(phase, gap); //can't reduce by gap since gap can change per cycle, and phase could be much larger than 2*gap
-			
-			++unit->bufferpos_; 
-			
+
+			++unit->bufferpos_;
+
 			if(unit->bufferpos_==unit->currentsize_) {
-				
-				unit->currentsize_ = (int)buffer[0]; 
-				
-				if (unit->currentsize_ > unit->maxdatasize_) 
-					unit->currentsize_ = unit->maxdatasize_; 
-				
-				
-				unit->bufferpos_ = 0; 
+
+				unit->currentsize_ = (int)buffer[0];
+
+				if (unit->currentsize_ > unit->maxdatasize_)
+					unit->currentsize_ = unit->maxdatasize_;
+
+
+				unit->bufferpos_ = 0;
 			}
-			
-			float chance = buffer[unit->bufferpos_+1]; 
-			
-			float sign = 1.0; 
-			
+
+			float chance = buffer[unit->bufferpos_+1];
+
+			float sign = 1.0;
+
 			if(unit->alternate_==1) {
-				
-				sign = unit->swap_==1?1.0f:-1.0f; 	
-				
-				unit->swap_ = 1 - unit->swap_; 
+
+				sign = unit->swap_==1?1.0f:-1.0f;
+
+				unit->swap_ = 1 - unit->swap_;
 			}
-			
+
 			if(rgen.frand()<chance)
 				output[i]= sign;  //could alternate left and right
-			else   
-				output[i]= 0.0f; 
-			
-			
-		} else 
-			
-			output[i]= 0.0f; 
-		
+			else
+				output[i]= 0.0f;
+
+
+		} else
+
+			output[i]= 0.0f;
+
 		//--interp;
-		
-		phase += 1.0f; 
-		
+
+		phase += 1.0f;
+
 	}
-	
-	//printf("hello phase %f period %f\n",phase, period); 
-	
-	//unit->interp_ = interp; 
-	unit-> phase_ = phase; 
-	
+
+	//printf("hello phase %f period %f\n",phase, period);
+
+	//unit->interp_ = interp;
+	unit-> phase_ = phase;
+
 }
 
 
 
 void Oregonator_Ctor( Oregonator* unit ) {
-	
-	unit->x = 0.5f; 
-    unit->y = 0.5f; 
-    unit->z = 0.5f; 
-	
+
+	unit->x = 0.5f;
+    unit->y = 0.5f;
+    unit->z = 0.5f;
+
 	SETCALC(Oregonator_next);
 }
 
 
 
 void Oregonator_next( Oregonator *unit, int inNumSamples ) {
-	
+
 	//int numSamples = unit->mWorld->mFullRate.mBufLength;
-    
+
 	float *output1 = OUT(0);
 	float *output2 = OUT(1);
     float *output3 = OUT(2);
-    
+
 	float delta = ZIN0(1);
     float epsilon = ZIN0(2);
     float mu = ZIN0(3);
     float q = ZIN0(4);
     float trig = ZIN0(0);
-    
-    float x= unit->x; 
-    float y= unit->y; 
-    float z= unit->z; 
-    
-    float dx, dy, dz; 
-    
+
+    float x= unit->x;
+    float y= unit->y;
+    float z= unit->z;
+
+    float dx, dy, dz;
+
     //reset triggered
     if(trig>0.0f) {
-        
+
         x = ZIN0(5);
         y = ZIN0(6);
         z = ZIN0(7);
-        
+
     }
-    
+
 	for (int i=0; i<inNumSamples; ++i) {
-		
-        dx = epsilon*((q*y) -(x*y) + (x*(1-x))); 
-		dy = mu* (-(q*y) -(x*y) + z); 
-        dz = x-y; 
-        
-        x += delta*dx; 
-        y += delta*dy; 
-        z += delta*dz; 
-        
-		output1[i]= x; 
-        output2[i]= y; 
-        output3[i]= z; 
-		
+
+        dx = epsilon*((q*y) -(x*y) + (x*(1-x)));
+		dy = mu* (-(q*y) -(x*y) + z);
+        dz = x-y;
+
+        x += delta*dx;
+        y += delta*dy;
+        z += delta*dz;
+
+		output1[i]= x;
+        output2[i]= y;
+        output3[i]= z;
+
 	}
-	
-	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
-	
-	unit->x = x; 
+
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z);
+
+	unit->x = x;
 	unit->y = y;
 	unit->z = z;
 }
 
 
 void Brusselator_Ctor( Brusselator* unit ) {
-	
-	unit->x = 0.5f; 
-    unit->y = 0.5f; 
-	
+
+	unit->x = 0.5f;
+    unit->y = 0.5f;
+
 	SETCALC(Brusselator_next);
 }
 
 
 
 void Brusselator_next( Brusselator *unit, int inNumSamples ) {
-	
+
 	float *output1 = OUT(0);
 	float *output2 = OUT(1);
-    
+
 	float delta = ZIN0(1);
     float mu = ZIN0(2);
     float gamma = ZIN0(3);
     float trig = ZIN0(0);
-    
-    float x= unit->x; 
-    float y= unit->y;  
-    
-    float dx, dy; 
-    
+
+    float x= unit->x;
+    float y= unit->y;
+
+    float dx, dy;
+
     //reset triggered
     if(trig>0.0f) {
-        
+
         x = ZIN0(4);
         y = ZIN0(5);
-        
+
     }
-    
-    float muplusone = 1.0f+mu; 
-    
+
+    float muplusone = 1.0f+mu;
+
 	for (int i=0; i<inNumSamples; ++i) {
-		
-        float temp = x*x*y; 
-        
+
+        float temp = x*x*y;
+
         dx = temp - (muplusone*x) + gamma;
-        dy =  (mu*x)  - temp; 
-        
-        x += delta*dx; 
-        y += delta*dy; 
-        
-		output1[i]= x; 
-        output2[i]= y; 
-		
+        dy =  (mu*x)  - temp;
+
+        x += delta*dx;
+        y += delta*dy;
+
+		output1[i]= x;
+        output2[i]= y;
+
 	}
-	
-	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
-	
-	unit->x = x; 
+
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z);
+
+	unit->x = x;
 	unit->y = y;
 }
 
@@ -4314,65 +4316,65 @@ void Brusselator_next( Brusselator *unit, int inNumSamples ) {
 
 
 void SpruceBudworm_Ctor( SpruceBudworm* unit ) {
-	
-	unit->x = 0.9f; 
-    unit->y = 0.1f; 
-	
+
+	unit->x = 0.9f;
+    unit->y = 0.1f;
+
 	SETCALC(SpruceBudworm_next);
 }
 
 
 
 void SpruceBudworm_next( SpruceBudworm *unit, int inNumSamples ) {
-	
+
 	float *output1 = OUT(0);
 	float *output2 = OUT(1);
-    
-    
+
+
     float trig = ZIN0(0);
-    
+
     float delta = ZIN0(1);
-    
+
 	float k1 = ZIN0(2);
     float k2 = ZIN0(3);
     float alpha = ZIN0(4);
     float beta = ZIN0(5);
     float mu = ZIN0(6);
     float rho = ZIN0(7);
-    
-    float x= unit->x; 
-    float y= unit->y;  
-    
-    float dx, dy; 
-    
+
+    float x= unit->x;
+    float y= unit->y;
+
+    float dx, dy;
+
     //reset triggered
     if(trig>0.0f) {
-        
+
         x = ZIN0(8);
         y = ZIN0(9);
-        
+
     }
-    
+
 	for (int i=0; i<inNumSamples; ++i) {
-		
-        float temp = y*y; 
+
+        float temp = y*y;
         float temp2 = beta*x;
-        
+
         dx = (k1* x* (1.0-x)) - (mu*y);
-        dy = (k2*y*(1.0- (y/(alpha*x))))  - (rho*(temp/(temp2*temp2 +  temp))); 
-        
-        
-        x += delta*dx; 
-        y += delta*dy; 
-        
-		output1[i]= x; 
-        output2[i]= y; 
-		
+        dy = (k2*y*(1.0- (y/(alpha*x))))  - (rho*(temp/(temp2*temp2 +  temp)));
+
+
+        x += delta*dx;
+        y += delta*dy;
+
+		output1[i]= x;
+        output2[i]= y;
+
 	}
-	
-	//printf("Oregonator: x %f y %f z %f\n",x,y,z); 
-	
-	unit->x = x; 
+
+	//printf("Oregonator: x %f y %f z %f\n",x,y,z);
+
+	unit->x = x;
 	unit->y = y;
 }
 
@@ -4437,7 +4439,7 @@ PluginLoad(SLUGens)
     DefineSimpleUnit(Oregonator);
     DefineSimpleUnit(Brusselator);
     DefineSimpleUnit(SpruceBudworm);
-    
+
 #ifdef SLUGENSRESEARCH
 	initSLUGensResearch(inTable);
 #endif

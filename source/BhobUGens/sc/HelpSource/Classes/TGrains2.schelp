@@ -32,7 +32,12 @@ argument::dur
 duration of the grain in seconds.
 
 argument::pan
-a value from -1 to 1. Determines where to pan the output in the same manner as link::Classes/PanAz::.
+determines where to pan the output.
+list::
+## If numChannels = 1, the pan argument is ignored.
+## If numChannels = 2, panning is similar to Pan2.
+## If numChannels > 2, panning is the same as PanAz.
+::
 
 argument::amp
 amplitude of the grain.

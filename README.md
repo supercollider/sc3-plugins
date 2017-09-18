@@ -4,6 +4,8 @@
 This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
 An installation extends the functionality of SuperCollider by additional UGens that run on `scsynth`, the SuperCollider audio synthesis server.
 
+Please note that the UGens in this repository are, on average, less stable and well-maintained than the core collection. Use at your own risk!
+
 **Note:** Extensions for the SuperCollider programming language are something structurally different. They are collected within the [Quarks](http://quarks.sourceforge.net/) packaging system.
 
 To learn how to write your own plugins, see [example-plugins](https://github.com/supercollider/example-plugins) and the "[Writing UGens](http://doc.sccode.org/Guides/WritingUGens.html)" helpfile.
@@ -14,18 +16,22 @@ For community discussion and support see the [SuperCollider mailing lists](http:
 
 Compiled releases are available from the [github release page](https://github.com/supercollider/sc3-plugins/releases). For older versions (2013). see the [sourceforge project page](http://sourceforge.net/projects/sc3-plugins/files/).
 
-To compile from source (see below), either download a tarball or clone the repository from the [sc-plugins github page](https://github.com/supercollider/sc3-plugins).
+To compile from source (see below), either download a tarball or clone this repository:
+
+```shell
+$ git clone --recursive https://github.com/supercollider/sc3-plugins.git
+```
 
 ## Binary install
 
 Copy the contents of the tarball/`dmg` to your SuperCollider extensions folder.
-You can find out which one that is by evaluating 
+You can find out which one that is by evaluating
 
 ```
 Platform.userExtensionDir
 ```
 
-from within SuperCollider. Alternatively, you may install the extensions system-wide by copying to 
+from within SuperCollider. Alternatively, you may install the extensions system-wide by copying to
 
 ```
 Platform.systemExtensionDir
@@ -57,10 +63,10 @@ WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to
 
 ### Cmake Options
 
-+ Set install target 
++ Set install target
     * (default on linux `/usr/local`)
     * `sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
-+ Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX` 
++ Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX`
     * (OSX ONLY, default=ON)
     * `sc3-plugins/build/$ cmake -DIN_PLACE_BUILD=ON`
 + Build the plugins as quarks
@@ -113,10 +119,10 @@ sc3-plugins/build/$ cmake -DSC_PATH=/PATH/TO/SC -DOSX_PACKAGE=1 ..
 sc3-plugins/build/$ make && make install
 ```
 
-The DiskImage will be generated in `./sc3-plugins/build/build_osx` containing 
+The DiskImage will be generated in `./sc3-plugins/build/build_osx` containing
 
-+ a `License.txt`, 
-+ this `README.txt`, and 
++ a `License.txt`,
++ this `README.txt`, and
 + the `SC3plugins` folder.
 + Note: the quarks ```DIRECTORY```-folder is also included by default.
 

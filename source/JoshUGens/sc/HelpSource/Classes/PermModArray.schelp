@@ -1,0 +1,58 @@
+TITLE:: PermModArray
+summary:: Sample permutation UGen with programmable pattern.
+categories:: Undocumented classes, UGens>Undocumented, UGens>Unclassified
+related:: Classes/PermMod, Classes/PermModT
+
+DESCRIPTION::
+This UGen takes an audio-rate input and commutes chunks of samples.
+It allows the user to program the pattern following which the chunks will be played.
+To avoid bad behaviour, "freq" parameter must always be strictly > 0 and <= double the input samplerate.
+High frequencies lead to distortion and resonance, low frequencies lead to auto-arpeggio-like and repetition-like effects.
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: in
+An audio-rate input.
+
+ARGUMENT:: freq
+The frequency at which you wish the permutation to occur.
+For example, a 100Hz value applied on a 44100Hz input generates chunks of 441 samples.
+Since chunks must contain an integer number of samples, some frequencies yield the same result, because the chunk length is rounded.
+
+ARGUMENT:: pattern
+An array of integers representing the pattern you wish the chunks to be follow. For example, patterns like [0,1], [0,1,2] won't result in any
+permutation, while a [1,0] will yield the same result as an link::Classes/PermMod:: UGen with the same "freq" parameter.
+In order to function, the pattern must consist only of scrambles of sequencial positive numbers. Thus, patterns like [0,-2,1] , [1,4,5,5] or [0,1,1,2] 
+won't be accepted. 
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+returns:: A commuted audio-rate output.
+
+
+EXAMPLES::
+
+code::
+// Permute a simple sinusoid:
+{PermModArray.ar(SinOsc.ar(220),2200,[1,3,2,0])}.play
+// A [1,0] pattern yields the same result as PermMod.ar(SinOsc.ar(220),2200)
+{PermModArray.ar(SinOsc.ar(220),2200,[1,0])}.play
+
+// Scramble the syllables in a speech:
+{PermModArray.ar(SoundIn.ar(0), 5, [4,3,2,1,0])}.play
+
+// Distort any input with an Electronic Telephone Ring effect:
+{PermModArray.ar(SoundIn.ar(0),Pulse.kr(10,0.5,1000,2000),[0,2,1,3])}.play // Remember to use strictly positive unipolar signals as control, in this case the "add" parameter is 1000.
+
+// Quantized frequency-sweep-like effect on existing file:
+b = Buffer.read(s, 'C:/Folder/File.wav')
+{PermModArray.ar(PlayBuf.ar(2, b),SinOsc.kr(0.1,0,2000,4000)),[0,1,3,2]}.play
+//or
+{PermModArray.ar(PlayBuf.ar(2, b),Saw.kr(0.2,2000,4000)),[1,0,2,3]}.play
+::

@@ -1,10 +1,11 @@
-ATK for SuperCollider3 : Read Me
+ATK UGens for SuperCollider3 : Read Me
 ========================
 
-This is the SuperCollider3 version of the Ambisonic Toolkit (ATK).
-It can be used with [SuperCollider3](http://supercollider.github.io/) on OSX,
-Linux and Windows, and is distributed via the
-[sc3-plugins](https://github.com/supercollider/sc3-plugins) project.
+This is the unit generator plugin (UGen) component of the SuperCollider3 version
+of the Ambisonic Toolkit (ATK), which is distributed via the
+[sc3-plugins](https://github.com/supercollider/sc3-plugins) project. It can be
+used with [SuperCollider3](http://supercollider.github.io/) on OSX, Linux and
+Windows.
 
 The Ambisonic Toolkit (ATK) is intended to bring together a number of
 tools and methods for working with Ambisonic surround sound. The intention
@@ -23,8 +24,8 @@ technique.
 
 We hope you enjoy the ATK!
 
-For more information please visit the [Ambisonic Toolkit
-website](http:www.ambisonictoolkit.net/) or send us an
+For more information please visit the
+[Ambisonic Toolkit website](http:www.ambisonictoolkit.net) or send us an
 [e-mail](mailto:info[at]ambisonictoolkit.net). See also
 [Introducing the Ambisonic Toolkit](http://doc.sccode.org/Guides/Intro-to-the-ATK.html)
 for an overview on working with the ATK for SuperCollider3.
@@ -50,22 +51,41 @@ or later. Download the latest version
 
 &nbsp;
 
+atk-sc3 Quark
+-----------
+
+The ATK for [SuperCollider3](http://supercollider.github.io)'s classes,
+extension methods and documentation are distributed via the
+[atk-sc3 Quark](https://github.com/ambisonictoolkit/atk-sc3). Start by reviewing
+the Quark installation instructions
+[found here](https://github.com/supercollider-quarks/quarks#installing). See
+also [Using Quarks](http://doc.sccode.org/Guides/UsingQuarks.html).
+
+With [git](https://git-scm.com/) installed, you can easily install the
+[atk-sc3 Quark](https://github.com/ambisonictoolkit/atk-sc3) directly by
+running the following line of code in SuperCollider:
+
+    Quarks.install("https://github.com/ambisonictoolkit/atk-sc3.git");
+
+
 sc3-plugins
 -----------
 
-Compiled releases are available from the
+The ATK's compiled UGen component releases are available from the
 [sc3-plugins](https://github.com/supercollider/sc3-plugins/releases)
 releases page.
 
-Place the downloaded `SC3plugins` folder in your `Extensions` folder. On Mac OS X, this resolves to:
+Place the downloaded `SC3plugins` folder in your `Extensions` folder. On Mac
+OS X, this resolves to:
 
     ~/Library/Application Support/SuperCollider/Extensions
 
 You may need to create the `Extensions` folder if it does not already exist.  
 
-On other platforms, you can find where this is by running the following line of code in SuperCollider:
+On other platforms, you can find where this is by running the following line of
+code in SuperCollider:
 
-		(  
+    (  
     // post the directory in which to move the SC3Plugins folder  
     Platform.userExtensionDir.postln;  
     )  
@@ -75,26 +95,21 @@ On other platforms, you can find where this is by running the following line of 
     Platform.userExtensionDir.openOS;  
     )  
 
-Additionally, the SuperCollider3 version of the ATK has a number of
-dependencies. Please install the following:
 
-* Install the [MathLib Quark](https://github.com/supercollider-quarks/MathLib)
-most simply by running `Quarks.gui` in the SuperCollider IDE. Further install
-options and information on Quarks can be found in SuperCollider's Help system.
-See [Using Quarks](http://doc.sccode.org/Guides/UsingQuarks.html) and also the
-[supercollider-quarks](https://github.com/supercollider-quarks/quarks) GitHub page.
+Kernels & Recordings
+--------------------
+
+Additionally, the SuperCollider3 version of the ATK has further dependencies:
 
 * Download and install [ATK Kernels](http://www.ambisonictoolkit.net/download/kernels/).
 * Download and install [ATK Sound File Example Recordings](http://www.ambisonictoolkit.net/download/recordings/).
-
-__NOTE:__ The ATK requires SuperCollider3 version 3.5 or later. Download the latest version [here](http://supercollider.github.io/download), or fork the source code at [GitHub](http://supercollider.github.io/).
 
 
 &nbsp;
 
 ### Source code
 
-You can build ATK for SuperCollider from the [sc3-plugins](https://github.com/supercollider/sc3-plugins) source-code.
+You can build the ATK for SuperCollider UGen components from the [sc3-plugins](https://github.com/supercollider/sc3-plugins) source-code.
 
 
 &nbsp;
@@ -158,6 +173,46 @@ Ambisonic Toolkit.
 List of Changes
 ---------------
 
+Unreleased 3.9.0
+
+*  Refactoring:
+    *  Quark-ify: classes, extension methods & documentation moved to
+    [atk-sc3 Quark](https://github.com/ambisonictoolkit/atk-sc3). UGens remain
+    in [sc3-plugins](https://github.com/supercollider/sc3-plugins).
+
+*  Issue fixes:
+    *  Class library: fix inline warnings
+
+
+Version 3.8.0
+
+*  New features:
+    *  Matrix reading & writing: encoder, xformer, & decoder.
+    *  Improved NRT encoder / decoder support.
+    *  Supported SRs: 44100, 48000, 88200, 96000, 176400, 192000. Download new
+    kernels: https://github.com/ambisonictoolkit/atk-kernels/releases
+
+*  Documentation Updates:
+    *  README updated to reflect recent changes and installation instructions.
+    *  Document decoder k and microphone pattern equivalences, both in terms of
+    keywords and numerical values.
+    *  Update Intro-to-the-ATK & imaging figures. Transform plots now
+    illustrate rE rather than rV, which is more closely tied to perception.
+    *  Update Help with Server -numOutputBusChannels advice.
+    *  Update various broken links in Help.
+    *  Include details on delay introduced by use of kernel encoders & decoders.
+    *  More verbose Help for SynthDefs and NRT.
+    *  Update Help Files for Multiple SRs.
+    *  Help now uses -degrad & -raddeg for unit conversion.
+    *  README: add contributors. List under release in alphabetical order by
+    first name.
+
+*  Issue fixes:
+    *  Score NRT kernel bug fixes
+    *  Support for SR = 176400
+    *  AtkMatrix.initPeri, (re-)fix for shelfK 3D.
+
+
 Version 3.7.2
 
 *  New features:
@@ -214,14 +269,16 @@ Version 3.5
 
 __A note on the ATK's version numbers__: As part of the
 [sc3-plugins](https://github.com/supercollider/sc3-plugins) project, the
-SuperCollider3 ATK's versioning is synced to the release numbers assigned to
-[sc3-plugins releases](https://github.com/supercollider/sc3-plugins/releases).
-As a result, at this time the versioning for
-[atk-sc3](https://github.com/ambisonictoolkit/atk-sc3) does not adhere to the
+SuperCollider3 ATK's versioning for UGen components is synced to the release
+numbers assigned to
+[sc3-plugins releases](https://github.com/supercollider/sc3-plugins/releases). A
+separate versioning trajectory for
+[atk-sc3](https://github.com/ambisonictoolkit/atk-sc3) adheres to the
 familiar system known as [Semantic Versioning](http://semver.org/).
 
 As SuperCollider3's plugin system continues to develop, we expect to adopt
-[Semantic Versioning](http://semver.org/) when it is possible to do so.
+[Semantic Versioning](http://semver.org/) for all components when it is possible
+to do so.
 
 
 &nbsp;
@@ -233,7 +290,8 @@ Credits
 
 &nbsp;
 
-Copyright the ATK Community, Joseph Anderson, and Joshua Parmenter, 2011, 2016.
+Copyright the ATK Community, Joseph Anderson, and Joshua Parmenter, 2011,
+2016-17.
 
 * J Anderson : [[e-mail]](mailto:j.anderson[at]ambisonictoolkit.net)
 * J Parmenter : [[e-mail]](mailto:j.parmenter[at]ambisonictoolkit.net)
@@ -247,6 +305,37 @@ The filter kernels distributed with the Ambisonic Toolkit are licensed
 under a Creative Commons Attribution-Share Alike 3.0 Unported [(CC BY-SA 3.0)](http://creativecommons.org/licenses/by-sa/3.0/) License and
 are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 2011.
+
+Contributors
+------------
+
+Unreleased 3.9.0
+*  Joseph Anderson (@joslloand)
+*  Julian Rohrhuber (@telephon)
+*  Michael McCrea (@mtmccrea)
+
+Version 3.8.0
+*  Daniel Peterson (@dmartinp)
+*  Joseph Anderson (@joslloand)
+*  Michael McCrea (@mtmccrea)
+
+Version 3.7.2
+*  Joseph Anderson (@joslloand)
+*  Luis Lloret (@llloret)
+
+Version 3.7.0-beta
+*  Nathan Ho (@snappizz)
+*  Tim Blechmann (@timblechmann)
+
+Version 3.7.0-alpha0
+*  James Harkins (@jamshark70)
+*  Joseph Anderson (@joslloand)
+*  Joshua Parmenter (@joshpar)
+
+Version 3.5
+*  Jonatan Liljedahl (@lijon)
+*  Joseph Anderson (@joslloand)
+*  Joshua Parmenter (@joshpar)
 
 &nbsp;
 

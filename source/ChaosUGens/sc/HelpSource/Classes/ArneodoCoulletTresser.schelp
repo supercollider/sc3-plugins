@@ -1,0 +1,86 @@
+TITLE:: ArneodoCoulletTresser
+summary:: 2-species Predator-Prey model
+categories:: UGens>Generators>Chaotic
+related:: Classes/LotkaVolterra
+
+DESCRIPTION::
+UGen implementing 4th order Runge-Kutta approximation of a 3-species Predator-Prey model as specified by Arneodo Coullet and Tresser:
+
+code::
+x' = x * (1.1 - x / 2 - y / 2 - z / 10)
+y' = y * (-0.5 + x / 2 + y / 10 - z / 10)
+z' = z * (alpha + 0.2 - alpha * x - y / 10 - z / 10)
+::
+
+with 
+
+code::
+alpha = Range(0, 2)
+::
+
+Implemented by Till Bovermann inspired by Gary William Flake's Book "The Computational Beauty of Nature". Implementation following on Lance Putnam's chaos UGens and MCLDs ChaosUGens.
+
+link::http://tai-studio.org::
+
+CLASSMETHODS::
+
+METHOD:: categories
+
+METHOD:: ar
+argument:: freq
+update frequency, best set to Nyquist frequency. To modulate tonal qualities, use code::h::.
+argument:: alpha
+meta parameter (shoud be between 0 and 2)
+argument:: h
+step size for the approximation
+argument:: xi
+initial value for x, resets the UGen when changed
+argument:: yi
+initial value for y, resets the UGen when changed
+argument:: zi
+initial value for z, resets the UGen when changed
+argument:: mul
+multiply code::withthis::
+argument:: add
+add code::that::
+
+METHOD:: equation
+returns
+
+code::
+x' = x * (a - b * y)
+y' = y * (c * x - d)
+::
+
+private:: init
+
+
+EXAMPLES::
+
+code::
+{Splay.ar(ArneodoCoulletTresser.ar(SampleRate.ir*0.5, alpha: MouseX.kr(1.2, 1.7, 4), h: MouseY.kr(0.2, 0.4, 2)) * [1, 1, 0.1])}.play
+::
+
+code::
+(
+Ndef(\pp).addSpec(\freq, [0.1, 24000, \exp]);
+Ndef(\pp).addSpec(\h, [0.01, 1, \exp]);
+Ndef(\pp).addSpec(\which, [0, 2, \lin]);
+Ndef(\pp).addSpec(\alpha, [1, 1.7, \lin]);
+
+Ndef(\pp, {
+	var which = \which.kr(0, 0.1);
+	var x, y, z;
+	# x, y, z = ArneodoCoulletTresser.ar(SampleRate.ir*0.5, alpha: \alpha.kr(1.5), h: \h.kr(0.01));
+	# x, y, z = [x, y, z] - 0.5 * 0.1;
+	[[x, y, z], [y, z, x]].collect{|chan|
+		SelectX.ar(which, chan);
+	}
+
+});
+)
+
+Ndef(\pp).scope;
+
+Ndef(\pp).gui;
+::

@@ -1,0 +1,81 @@
+TITLE:: RMS
+summary:: root mean square
+categories:: UGens>Analysis>Amplitude
+related:: Classes/Amplitude
+
+DESCRIPTION::
+2016, Till Bovermann
+link::http://tai-studio.org::
+
+
+calculates root mean square of 1st order low-pass filtered input for each sample.
+
+code::
+rms = sqrt(lpf1(x^2))
+::
+
+
+CLASSMETHODS::
+
+METHOD:: kr, ar
+argument:: in
+the input signal
+argument:: lpFreq
+lowpass frequency
+
+EXAMPLES::
+
+Simple example
+
+code::
+// analyse a signal
+{
+	var sig, rms;
+	sig = SinOsc.ar(300, 0, MouseX.kr(0, 1)) * LFPulse.ar(1, 0.5);
+	rms = RMS.ar(sig, 10).poll;
+	[sig, rms]
+}.scope;
+::
+
+
+More complex usage example adapted from a Pd patch by Dario Sanfilippo
+
+code::
+// Feedback delay modulation
+
+(
+Ndef(\fb).addSpec(\modScale,  [-20, 20, \lin, 1]);
+Ndef(\fb).addSpec(\gain,      [0, 2, \lin, 0]);
+Ndef(\fb).addSpec(\amp,       [0, 2, \lin, 0]);
+Ndef(\fb).addSpec(\limit,     [0, 1, \lin, 0]);
+Ndef(\fb).addSpec(\lookahead, [0, 1, \lin, 0]);
+Ndef(\fb).addSpec(\lpf, [0.01, 4, \exp, 0]);
+
+Ndef(\fb, {
+	// var in = SoundIn.ar([0, 1]) * \gain.kr(0);
+	var in = SoundIn.ar(0) * \gain.kr(0);
+
+	var rms = RMS.ar(in, \lpf.kr(0.01));
+	// var rms = Amplitude.ar(in, 2, 2);
+	// var rms = EnvFollow.ar(in, 0.2);
+	var snd = DelayC.ar(in, 1, 0.5 + LeakDC.ar(rms, 0.9998) * \modScale.kr(0));
+
+	//////////////////
+	// AGC2.1 ( a limiter)
+	var rms500 = RMS.ar(snd, 500);
+	var rms1   = RMS.ar(snd, 1) * 2;
+	var analytics = max(rms500 - rms1, 0) + rms1;
+
+	snd = (DelayC.ar(snd, 0.02, \lookahead.kr(0) * 0.02) / max(analytics / \limit.kr(0), 1)).clip2(1, 1);
+
+
+	// the standard SC limiter
+	// snd = Limiter.ar(snd, \limit.kr(0), \lookahead.kr(0)).sum * \amp.kr(0)
+
+	snd * \amp.kr(0.1)
+
+})
+)
+
+ProxyMeter.addMixer(NdefMixer(s));
+::

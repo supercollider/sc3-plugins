@@ -6,7 +6,7 @@ RELATED:: Overviews/DEIND, Classes/JPverb, Classes/GreyholeRaw
 DESCRIPTION::
 image::Greyhole-logo-small.png::
 
-A complex echo-like effect, inspired by the classic Eventide effect of a similar name. The effect consists of a diffuser (like a mini-reverb) connected in a feedback system with a long modulated delay-line. Excels at producing spacey washes of sound.
+A complex echo-like effect, inspired by the classic Eventide effect of a similar name. The effect consists of a diffuser (like a mini-reverb, structurally similar to the one used in link::Classes/JPverb::) connected in a feedback system with a long, modulated delay-line. Excels at producing spacey washes of sound.
 
 Developed as part of the LINK::Overviews/DEIND:: project.
 
@@ -22,34 +22,63 @@ private:: categories
 
 METHOD:: ar
 
+note::This UGen always generates a stereo signal.::
+
 argument::in
-either an array of two audio signals, or one audiosignal.
+either an array of two audio signals (stereo), or a mono audiosignal.
 
 argument::delayTime
-approximate delay time in seconds. (0.1..60)
+approximate reverberation time in seconds code::(0.1..60 sec)::.
 
 argument::damp
-damping of high-frequencies as the delay decays. 0 is no damping, 1 is very strong damping (0..1)
+controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping. Values should be between code::(0..1).
 
 argument::size
-scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound metallic. (0.5..5)
+scales size of delay-lines within the diffusion unit, producing the impression of a larger or smaller space. Values below 1 can sound metallic. Values should be between code::(0.5..5)::.
 
 argument::diff
-controls pattern of echoes produced by the diffuser. At very low values, the diffuser acts like a delay-line whose length is controlled by the 'size' parameter. Medium values produce a slow build-up of echoes, giving the sound a reversed-like quality. Values of 0.707 or greater than  produce smooth exponentially decaying echoes. (0..1)
+controls pattern of echoes produced by the diffuser. At very low values, the diffuser acts like a delay-line whose length is controlled by the 'size' parameter. Medium values produce a slow build-up of echoes, giving the sound a reversed-like quality. Values of 0.707 or greater than  produce smooth exponentially decaying echoes. Values should be in the range code::(0..1)::.
 
 argument::feedback
-amount of feedback through the system. Sets the number of repeating echoes. A setting of 1.0 produces infinite sustain. (0..1)
+amount of feedback through the system. Sets the number of repeating echoes. A setting of 1.0 produces infinite sustain. Values should be in the range  code::(0..1)::.
 
 argument::modDepth
-depth of delay-line modulation. Use in combination with mFreq to produce chorus and pitch-variations in the echoes. (0..1)
+depth code::(0..1):: of delay-line modulation. Use in combination with modFreq to produce chorus and pitch-variations in the echoes.
 
 argument::modFreq
-frequency of delay-line modulation. Use in combination with mFreq to produce chorus and pitch-variations in the echoes. (0..10)
+frequency code::(0..10 Hz):: of delay-line modulation. Use in combination with modDepth to produce chorus and pitch-variations in the echoes.
 
 returns::
 a UGen
 
 EXAMPLES::
+
+
+Minimal example (headphones recommended):
+
+code::
+s.options.memSize_(65536 * 4);
+s.reboot;
+
+{
+	var src = SoundIn.ar(0)!2; // stereo input
+	var rev = Greyhole.ar(
+		src,
+		\dtime.kr(0.1),
+		\damp.kr(0.1),
+		\size.kr(1),
+		\diff.kr(0.707),
+		\fb.kr(0.1),
+		\modDepth.kr(0.01),
+		\modFreq.kr(2)
+	);
+
+	Mix([src, rev]) * 0.1;
+}.play
+::
+
+code::Ndef::-based example:
+
 
 code::
 (
@@ -109,7 +138,7 @@ Ndef(\hole).edit;
 Ndef(\src).edit;
 ::
 
-For the Greyball piece ( see http://tai-studio.org/index.php/jpverb-greyhole/ ), the following source was used:
+For the Greyball piece ( see http://tai-studio.org/portfolio/greyball.html ), the following source was used, code::Ndef(\hole) remains unchanged::.
 
 code::
 Ndef(\src).fadeTime = 4;
@@ -131,4 +160,8 @@ Ndef(\src, {
 	}.sum;
 	HighShelf.ar(src, \shelfFreq.kr(1000), \shelfslope.kr(1));
 })
+::
+
+	note::
+Since code::Impulse:: and code::LFPulse:: are chosen to be used at evaluation time, the given argument names might not match to the chosen UGen's interface. Since a superfluous argument does not affect a UGen's operation, the warnings can be ignored.
 ::

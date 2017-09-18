@@ -2,45 +2,45 @@ BBlockerProgram {
 	classvar <instructions, descs;
 	var <program, <>fillUpRandom = false;
 	var collection;
-	
+
 	*new {|program|
-		^super.new.init(program)	
+		^super.new.init(program)
 	}
 
 
 	init {|argProgram|
 		this.class.initStates;
-		
+
 		program = argProgram.asArray;
 	}
-	
+
 	// search in descs
 	*find{|identifier|
 		this.initStates;
-		
+
 		identifier = identifier.asString.toLower;
-		^descs.select{|value, key|  
+		^descs.select{|value, key|
 			key.asString.toLower.contains(identifier) ||{value.toLower.contains(identifier)}}.indices
 	}
-	
+
 	*descOf{|key|
 		^this.descs[key]
 	}
-	
+
 	*printDescs {
 		this.descs.keysValuesDo{|key, val|
 			"%: %\n".postf((key.asString ++ "    ")[0..3], val)
-		}	
+		}
 	}
-	
+
 	*descs {
 		this.initStates;
-		^descs;	
+		^descs;
 	}
-	
+
 	collection {|force = false|
 		var result;
-		
+
 		force.if{
 			collection = nil;
 		};
@@ -49,19 +49,19 @@ BBlockerProgram {
 			result = program.collect{|instr| this.pr_translate(instr)};
 			collection = (result ++ fillUpRandom.if({{256.rand}!(256 - program.size)}, {0!(256 - program.size)}));
 		}
-		
+
 		^collection;
 	}
-	
+
 	makeBuffer {|server, action|
 		server = server ?? {Server.default};
-		^Buffer.loadCollection(server, this.collection, 1, action) 
+		^Buffer.loadCollection(server, this.collection, 1, action)
 	}
-	
+
 	asLocalBuf {
-		^this.collection.as(LocalBuf)
+		^LocalBuf.newFrom(this.collection)
 	}
-	
+
 	fillBuffer {|buffer|
 		buffer.loadCollection(this.collection);
 	}
@@ -72,13 +72,13 @@ BBlockerProgram {
 	}
 
 	pr_translate {|val|
-		^(this.class.instructions[val] ?? {val%256})	
+		^(this.class.instructions[val] ?? {val%256})
 	}
-	
+
 	pr_rTranslate {|val|
 		^(this.class.instructions.findKeyForValue(val) ? val)
 	}
-	
+
 	*initStates {
 		instructions = instructions ?? {
 			(
@@ -108,9 +108,9 @@ BBlockerProgram {
 				\NOTE: 23,
 				\VOX : 24,
 				\STOP: 25
-			)			
+			)
 		};
-				
+
 		descs.isNil.if({
 			descs = Order();
 			descs.put('NOP' , "do nothing");
@@ -142,54 +142,56 @@ BBlockerProgram {
 		});
 
 	}
-	
-	ar {|rate, using, leak = false, vol = 1| // using is either Server instance or Buffer instance
+
+	ar {|rate = 20000, using, leak = false, vol = 1, force = false| // using is either Server instance or Buffer instance
 		var buffer, server;
 
-		rate = rate ? 20000;
-		
 		using.isKindOf(Buffer).if({
 			buffer = using;
 			server = buffer.server;
-			
+
+			// force re-building
+			force.if{
+				this.collection(true);
+			};
 			this.fillBuffer(buffer);
 		}, {
 			server = using ? Server.default;
-			buffer = this.collection;
+			buffer = this.collection(force);
 		});
-		
+
 		^{
 			var bufnum = buffer.isKindOf(Buffer).if({
 				buffer.bufnum;
 			}, {
 				buffer.as(LocalBuf)
 			});
-			
+
 			var src = Demand.ar(
-				Impulse.ar(rate), 
-				0, 
+				Impulse.ar(rate),
+				0,
 				DetaBlockerBuf(bufnum, 0)
 			);
 
 			leak.if{
 				src = LeakDC.ar(src);
 			};
-			
+
 			src * vol;
-			
+
 		}
 	}
-	
-	play {|rate, using, leak = false, vol = 0.1| // using is either Server or Buffer
-		^this.ar(rate, using, leak, vol).play
+
+	play {|rate = 20000, using, leak = false, vol = 0.1, force = true| // using is either Server or Buffer
+		^this.ar(rate, using, leak, vol, force).play
 	}
-	
-	plot {|rate, using, leak = false, duration = 1| // using is either Server or Buffer
-		^this.ar(rate, using, leak).plot(duration)
+
+	plot {|rate = 20000, using, leak = false, duration = 1, force = true| // using is either Server or Buffer
+		^this.ar(rate, using, leak, force: force).plot(duration)
 	}
-	
-	scope {|rate, using, leak = false, vol = 0.1| // using is either Server or Buffer
-		^this.ar(rate, using, leak, vol).scope
+
+	scope {|rate = 20000, using, leak = false, vol = 0.1, force = true| // using is either Server or Buffer
+		^this.ar(rate, using, leak, vol, force).scope
 	}
 }
 

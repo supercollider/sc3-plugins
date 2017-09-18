@@ -114,6 +114,7 @@ set(PLUGIN_DIRS
 set(PLUGIN_DIRS_EXTRA
     AuditoryModeling
     BetablockerUGens
+    ChaosUGens
     DEINDUGens
     LadspaUGen
     MembraneUGens
@@ -196,26 +197,34 @@ BUILD_PLUGIN(AuditoryModeling "${AuditoryModelingSources}" "" "AuditoryModeling"
 BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
              "" "BetablockerUGens")
 
+# ChaosUGens
+BUILD_PLUGIN(NoiseRing
+"ChaosUGens/NoiseRing.cpp"
+             "" "ChaosUGens")
+BUILD_PLUGIN(PredPrey
+"ChaosUGens/PredPrey.cpp"
+             "" "ChaosUGens")
+
 # DEINDUGens
+BUILD_PLUGIN(RMS
+"DEINDUGens/RMS.cpp"
+             "" "DEINDUGens")
 BUILD_PLUGIN(DiodeRingMod
 "DEINDUGens/DiodeRingMod.cpp"
-             "" "DiodeRingMod")
-BUILD_PLUGIN(NoiseRing
-"DEINDUGens/NoiseRing.cpp"
-             "" "NoiseRing")
+             "" "DEINDUGens")
 BUILD_PLUGIN(complexRes
 "DEINDUGens/complexRes.cpp"
-             "" "complexRes")
+             "" "DEINDUGens")
 include_directories(DEINDUGens/include)
 BUILD_PLUGIN(JPverb
 "DEINDUGens/JPverbRaw.cpp" 
-             "" "JPverb")
+             "" "DEINDUGens")
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
              set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
 BUILD_PLUGIN(Greyhole
 "DEINDUGens/GreyholeRaw.cpp" 
-             "" "Greyhole")
+             "" "DEINDUGens")
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
              set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 

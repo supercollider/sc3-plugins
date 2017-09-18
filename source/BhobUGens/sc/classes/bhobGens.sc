@@ -135,10 +135,6 @@ Gendy5 : Gendy4 { }
 TGrains2 : MultiOutUGen {
 	*ar { arg numChannels, trigger=0, bufnum=0, rate=1, centerPos=0,
 			dur=0.1, pan=0, amp=0.1, att=0.5, dec=0.5, interp=4;
-		if (numChannels < 2) {
-			 "TGrains needs at least two channels.".error;
-			 ^nil
-		}
 		^this.multiNew('audio', numChannels, trigger, bufnum, rate, centerPos,
 				dur, pan, amp, att, dec, interp)
 	}
@@ -152,10 +148,6 @@ TGrains2 : MultiOutUGen {
 TGrains3 : MultiOutUGen {
 	*ar { arg numChannels, trigger=0, bufnum=0, rate=1, centerPos=0,
 			dur=0.1, pan=0, amp=0.1, att=0.5, dec=0.5, window=1, interp=4;
-		if (numChannels < 2) {
-			 "TGrains needs at least two channels.".error;
-			 ^nil
-		}
 		^this.multiNew('audio', numChannels, trigger, bufnum, rate, centerPos,
 				dur, pan, amp, att, dec, window, interp)
 	}
