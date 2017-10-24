@@ -6,85 +6,94 @@ An installation extends the functionality of SuperCollider by additional UGens t
 
 Please note that the UGens in this repository are, on average, less stable and well-maintained than the core collection. Use at your own risk!
 
-**Note:** Extensions for the SuperCollider programming language are something structurally different. They are collected within the [Quarks](http://quarks.sourceforge.net/) packaging system.
+**Note:** Extensions for the SuperCollider programming language are different. They are collected within the [Quarks](https://github.com/supercollider-quarks/) packaging system.
 
 To learn how to write your own plugins, see [example-plugins](https://github.com/supercollider/example-plugins) and the "[Writing UGens](http://doc.sccode.org/Guides/WritingUGens.html)" helpfile.
 
 For community discussion and support see the [SuperCollider mailing lists](http://www.birmingham.ac.uk/facilities/BEAST/research/supercollider/mailinglist.aspx) and the [github issue tracker](https://github.com/supercollider/sc3-plugins/issues).
 
-## Download
+## Release Downloads
 
-Compiled releases are available from the [github release page](https://github.com/supercollider/sc3-plugins/releases). For older versions (2013). see the [sourceforge project page](http://sourceforge.net/projects/sc3-plugins/files/).
-
-To compile from source (see below), either download a tarball or clone this repository:
-
-```shell
-$ git clone --recursive https://github.com/supercollider/sc3-plugins.git
-```
+Compiled releases are available from the [GitHub release page](https://github.com/supercollider/sc3-plugins/releases). For older versions (2013), see the [Sourceforge project page](http://sourceforge.net/projects/sc3-plugins/files/).
 
 ## Binary install
 
-Copy the contents of the tarball/`dmg` to your SuperCollider extensions folder.
-You can find out which one that is by evaluating
+Copy the contents of the tarball/`dmg` to your SuperCollider extensions folder. Find it with evaluating
 
-```
+```supercollider
 Platform.userExtensionDir
 ```
 
-from within SuperCollider. Alternatively, you may install the extensions system-wide by copying to
+in SuperCollider. Alternatively, you may install the extensions system-wide by copying to
 
-```
+```supercollider
 Platform.systemExtensionDir
 ```
 
 
 ## Compile from source
 
-As SuperCollider, the sc3-plugins collectiton uses the `cmake` build system for configuration and compilation. Follow the steps below to compile and install the collection.
-
-Make a directory for the `cmake` build files:
+Download both the SuperCollider source and the source for this repository:
 
 ```shell
-sc3-plugins/$ mkdir build && cd build
-sc3-plugins/build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
+git clone --recursive https://github.com/supercollider/sc3-plugins.git
+git clone --recursive https://github.com/supercollider/supercollider.git
 ```
 
-If no `SC_PATH` is provided the build system assumes the SuperCollider include files in `/usr/include/SuperCollider/`.
+Be sure to use `--recursive`, or to initialize the submodules after cloning, otherwise you will not have files
+that are necessary to build the project.
+
+Like SuperCollider, sc3-plugins uses `cmake`. Execute the following commands in the directory where you cloned sc3-plugins;
+replace `/path/to/sc/` with the path to the SuperCollider source directory. That will probably be
+`../../supercollider` if you cloned both repositories in the same working directory.
 
 ```shell
-sc3-plugins/build/$ make
-sc3-plugins/build/$ make install
+mkdir build && cd build
+cmake -DSC_PATH=/path/to/sc/ ..
+make
+make install
 ```
 
-On OSX, the plugins will end up in `sc3-plugins/build/SC3plugins`.
-Copy the `SC3plugins` folder to you Extensions folder (you find out which one that is by evaluating `Platform.userExtensionDir` from within SuperCollider).
+If no `SC_PATH` is provided the build system assumes the SuperCollider include files are in `/usr/include/SuperCollider/`.
 
-WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
+On macOS, the plugins will end up in `sc3-plugins/build/SC3plugins`.
+Copy the `SC3plugins` folder to your Extensions folder (evaluate `Platform.userExtensionDir` in SuperCollider to find it).
+
+NOTE: on macOS, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
 
 ### Cmake Options
 
 + Set install target
     * (default on linux `/usr/local`)
-    * `sc3-plugins/build/$ cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
+    * `cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
 + Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX`
     * (OSX ONLY, default=ON)
-    * `sc3-plugins/build/$ cmake -DIN_PLACE_BUILD=ON`
+    * `cmake -DIN_PLACE_BUILD=ON`
 + Build the plugins as quarks
     * (default 'OFF')
-    * `sc3-plugins/build/$ cmake -DQUARKS=ON ..`
+    * `cmake -DQUARKS=ON ..`
 + Build supernova-plugins
     * (default 'OFF')
-    * `sc3-plugins/build/$ cmake -DSUPERNOVA=ON ..`
+    * `cmake -DSUPERNOVA=ON ..`
 + Print all cmake options
     * `sc3-plugins/build/$ cmake -L ..`
 
-### Starting over
+### Troubleshooting
+
+#### Build errors
+
+If you get an error while building that files are missing, it probably means that you didn't clone all the SuperCollider
+submodules. Fix this by running `git submodule update --init` in the SuperCollider source directory. If you still have the
+issue afterwards, try clearing your build directory and starting your build from scratch.
+
+#### Starting over
 
 If something went wrong and you want to start from scratch, delete everything in the build directory that you made:
 
 ```shell
-sc3-plugins/build/$ make uninstall # only if you did `make install` before
-sc3-plugins/build/$ rm -r *
+make uninstall # only if you ran `make install` before
+cd ..
+rm -r build
 ```
 
 ## Adding plugins to the repository
@@ -92,7 +101,7 @@ sc3-plugins/build/$ rm -r *
 A SuperCollider plugin is a collection of UGens (and their supporting files) with a shared prefix in their name.
 If you add a new plugin, please keep to the following pattern:
 
-1. Add a folder in the `source` directory named ```<prefix>UGens```
+1. Add a folder in the `source` directory named `<prefix>UGens`
 where `prefix` means whichever standard pattern in the file name you have for your UGens. All source files go into this directory and its subdirectories.
 2. SuperCollider-specific files (`.sc|.schelp|...`) should be located in a subdirectory named `sc`.
 3. If your plugin makes use of external libraries that should be part of the sc-plugins sources (e.g. via ```git-submodule```), add them to `sc3-plugins/external_libraries/`.
@@ -114,9 +123,9 @@ It then creates a help file for your plugin that lists all classes and help file
 To create an OSX DiskImage, follow these steps on an OSX machine:
 
 ```shell
-sc3-plugins/$ mkdir build && cd build
-sc3-plugins/build/$ cmake -DSC_PATH=/PATH/TO/SC -DOSX_PACKAGE=1 ..
-sc3-plugins/build/$ make && make install
+mkdir build && cd build
+cmake -DSC_PATH=/path/to/sc/ -DOSX_PACKAGE=1 ..
+make && make install
 ```
 
 The DiskImage will be generated in `./sc3-plugins/build/build_osx` containing
@@ -129,9 +138,9 @@ The DiskImage will be generated in `./sc3-plugins/build/build_osx` containing
 ## How to create a tarball/zip-file
 
 ```shell
-sc3-plugins/$ mkdir build && cd build
-sc3-plugins/build/$ cmake -DSC_PATH=/PATH/TO/SC ..
-sc3-plugins/build/$ cpack -G [TGZ|ZIP] # choose your package format
+mkdir build && cd build
+cmake -DSC_PATH=/path/to/sc/ ..
+cpack -G TGZ # `-G ZIP` also works
 ```
 
 The package will end up in `sc3-plugins/build`.
