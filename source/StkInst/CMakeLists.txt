@@ -51,6 +51,9 @@ endif()
 
 if(SUPERNOVA)
     add_library(${PROJECT}_supernova MODULE ${PROJECT}.cpp ${STKSources})
+    if(SYSTEM_STK)
+        target_link_libraries(${PROJECT}_supernova ${STK_LIBRARY})
+    endif()
     set_property(TARGET ${PROJECT}_supernova APPEND PROPERTY COMPILE_DEFINITIONS  "SUPERNOVA")
     include_directories(${SC_PATH}/external_libraries
                     ${SC_PATH}/external_libraries/boost-lockfree
