@@ -135,10 +135,22 @@ if (OSX_PACKAGE)
   add_subdirectory(osx_package)
 endif()
 
-if(WIN32)
-    configure_file( README_WINDOWS.txt.in README_WINDOWS.txt)
-    install( FILES "${CMAKE_CURRENT_BINARY_DIR}/README_WINDOWS.txt" DESTINATION . RENAME README.txt )
+# Configure readme file
+if (WIN32 OR APPLE)
+    if (WIN32)
+        set(README_FILENAME README_WINDOWS.txt)
+    elseif(APPLE)
+        set(README_FILENAME README_MACOS.txt)
+    else()
+        unset(README_FILENAME)
+    endif()
 endif()
+
+if (DEFINED README_FILENAME)
+    configure_file( "${README_FILENAME}.in" "${README_FILENAME}" )
+    install( FILES "${CMAKE_CURRENT_BINARY_DIR}/${README_FILENAME}" DESTINATION . RENAME README.txt )
+endif()
+
 
 #############################################
 # CPack support
