@@ -50,8 +50,9 @@ replace `/path/to/sc/` with the path to the SuperCollider source directory. That
 ```shell
 mkdir build && cd build
 cmake -DSC_PATH=/path/to/sc/ ..
-make
-make install
+cmake --build . --config Release
+# to install the plugins
+cmake --build . --config Release --target install
 ```
 
 If no `SC_PATH` is provided the build system assumes the SuperCollider include files are in `/usr/include/SuperCollider/`.

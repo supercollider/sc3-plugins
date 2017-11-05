@@ -9,11 +9,14 @@ To install the plugins, place the SC3plugins folder into one of the
 SuperCollider extension folders listed below, depending on your
 operating system and installation type:
 
-- Default installation in userExtensionsDir:
-  C:\Users\<USERNAME>\AppData\Local\SuperCollider\Extensions
+Default installation in userExtensionsDir:
+    C:\Users\<USERNAME>\AppData\Local\SuperCollider\Extensions
 
-- System-wide installation:
-  C:\ProgramData\SuperCollider\Extensions
+System-wide installation:
+    C:\ProgramData\SuperCollider\Extensions
+
+You can verify these locations by executing the corresponding command
+from within SuperCollider.
 
 *Note* for 32-bit version with supernova plugins: the bundle is split into two
 folders, `plugins` (containing the binary plugins) and `SC3plugins` (
