@@ -26,9 +26,6 @@ The functional effect is like half wave rectification and low pass filtering, wi
 
 Model output is scaled by 100 from the JASA paper settings to obtain a sensible output range for audio signals in SuperCollider.
 
-
-For an alternative, less formal model, see link::Classes/HairCell::.
-
 classmethods::
 
 method::ar

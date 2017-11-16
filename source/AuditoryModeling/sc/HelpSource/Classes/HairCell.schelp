@@ -15,8 +15,6 @@ If the accumulated chemical reaches code::1.0::, the cell fires, going to output
 There is a limited store of chemicals, which is constantly being replenished at rate code::restorerate::.
 The flow variables are frequencies.
 
-For a more scientifically motivated model, see link::Classes/Meddis::.
-
 
 classmethods::
 
