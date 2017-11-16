@@ -1,34 +1,28 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef FAUST_MIDIUI_H
 #define FAUST_MIDIUI_H
-
-#ifndef FAUSTFLOAT
-#define FAUSTFLOAT float
-#endif
 
 #include <vector>
 #include <string>
@@ -93,65 +87,55 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string>
 /*******************************************************************************
  * MidiUI : Faust User Interface
  * This class decodes MIDI meta data and maps incoming MIDI messages to them.
- * Currently ctrl, keyon/keyoff, keypress, pgm, chanpress, pitchwheel/pitchbend 
+ * Currently ctrl, keyon/keyoff, keypress, pgm, chanpress, pitchwheel/pitchbend
  * start/stop/clock meta data is handled.
  ******************************************************************************/
- 
-class uiMidiItem : public uiItem {
- 
-    protected:
-    
-         midi* fMidiOut;
-         bool fInputCtrl;
 
-    public:
+class uiMidi {
     
-        uiMidiItem(midi* midi_out, GUI* ui, FAUSTFLOAT* zone, bool input)
-            :uiItem(ui, zone), fMidiOut(midi_out), fInputCtrl(input) {}
-        virtual ~uiMidiItem() {}
- 
+    protected:
+        
+        midi* fMidiOut;
+        bool fInputCtrl;
+        
+    public:
+        
+        uiMidi(midi* midi_out, bool input):fMidiOut(midi_out), fInputCtrl(input)
+        {}
+    
+        virtual ~uiMidi()
+        {}
+    
 };
- 
-class uiMidiTimedItem : public uiMidiItem
-{
-    protected:
+
+class uiMidiItem : public uiMidi, public uiItem {
     
-        bool fDelete;
-   
     public:
-       
-        uiMidiTimedItem(midi* midi_out, GUI* ui, FAUSTFLOAT* zone, bool input = true)
-            :uiMidiItem(midi_out, ui, zone, input)
-        {
-            if (GUI::gTimedZoneMap.find(fZone) == GUI::gTimedZoneMap.end()) {
-                GUI::gTimedZoneMap[fZone] = ringbuffer_create(8192);
-                fDelete = true;
-            } else {
-                fDelete = false;
-            }
-        }
         
-        virtual ~uiMidiTimedItem() 
-        {
-            ztimedmap::iterator it;
-            if (fDelete && ((it = GUI::gTimedZoneMap.find(fZone)) != GUI::gTimedZoneMap.end())) {
-                ringbuffer_free((*it).second);
-                GUI::gTimedZoneMap.erase(it);
-            }
-        }
-
-        void modifyZone(double date, FAUSTFLOAT v) 	
-        { 
-            size_t res;
-            DatedControl dated_val(date, v);
-            if ((res = ringbuffer_write(GUI::gTimedZoneMap[fZone], (const char*)&dated_val, sizeof(DatedControl))) != sizeof(DatedControl)) {
-                std::cerr << "ringbuffer_write error DatedControl" << std::endl;
-            }
-        }
-        
-        // TODO
+        uiMidiItem(midi* midi_out, GUI* ui, FAUSTFLOAT* zone, bool input = true)
+            :uiMidi(midi_out, input), uiItem(ui, zone)
+        {}
+    
+        virtual ~uiMidiItem()
+        {}
+    
         virtual void reflectZone() {}
+    
+};
 
+class uiMidiTimedItem : public uiMidi, public uiTimedItem {
+    
+    public:
+        
+        uiMidiTimedItem(midi* midi_out, GUI* ui, FAUSTFLOAT* zone, bool input = true)
+            :uiMidi(midi_out, input), uiTimedItem(ui, zone)
+        {}
+        
+        virtual ~uiMidiTimedItem()
+        {}
+    
+        virtual void reflectZone() {}
+    
 };
 
 // MIDI sync
@@ -213,21 +197,22 @@ class uiMidiClock : public uiMidiTimedItem
         {}
         virtual ~uiMidiClock()
         {}
-        
-        void modifyZone(double date, FAUSTFLOAT v) 	
-        { 
-            if (fInputCtrl) {
-                fState = !fState;
-                uiMidiTimedItem::modifyZone(date, FAUSTFLOAT(fState));
-            }
-        }
-        
+    
         virtual void reflectZone()
         {
             FAUSTFLOAT v = *fZone;
             fCache = v;
             fMidiOut->clock(0);
         }
+    
+        void modifyZone(double date, FAUSTFLOAT v)
+        {
+            if (fInputCtrl) {
+                fState = !fState;
+                uiMidiTimedItem::modifyZone(date, FAUSTFLOAT(fState));
+            }
+        }
+
 };
 
 class uiMidiProgChange : public uiMidiItem
@@ -469,7 +454,8 @@ class MidiUI : public GUI, public midi
         std::vector<std::pair <std::string, std::string> > fMetaAux;
         
         midi_handler* fMidiHandler;
-        
+        bool fDelete;
+    
         void addGenericZone(FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max, bool input = true)
         {
             if (fMetaAux.size() > 0) {
@@ -507,15 +493,17 @@ class MidiUI : public GUI, public midi
 
     public:
 
-        MidiUI(midi_handler* midi_handler)
+        MidiUI(midi_handler* midi_handler, bool delete_handler = false)
         {
             fMidiHandler = midi_handler;
             fMidiHandler->addMidiIn(this);
+            fDelete = delete_handler;
         }
  
         virtual ~MidiUI() 
         { 
             fMidiHandler->removeMidiIn(this);
+            if (fDelete) delete fMidiHandler;
         }
         
         bool run() { return fMidiHandler->start_midi(); }

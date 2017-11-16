@@ -20,32 +20,49 @@
  that work under terms of your choice, so long as this FAUST
  architecture section is not modified.
  ************************************************************************/
+ 
+#ifndef __SoundUI_H__
+#define __SoundUI_H__
 
-#ifndef __audio__
-#define __audio__
+#include <map>
+#include <string>
 
-class dsp;
+#include "faust/gui/DecoratorUI.h"
+#include "faust/audio/soundfile.h"
 
-typedef void (* shutdown_callback)(const char* message, void* arg);
+class SoundUI : public GenericUI
+{
+		
+    private:
+     
+        std::map<std::string, Soundfile*> fSFMap;
+    
+     public:
+            
+        SoundUI(){}
+    
+        virtual ~SoundUI()
+        {   
+            // delete all soundfiles
+            std::map<std::string, Soundfile*>::iterator it;
+            for (it = fSFMap.begin(); it != fSFMap.end(); it++) {
+                delete (*it).second;
+            }
+        }
 
-class audio {
-    
- public:
-			 audio() {}
-	virtual ~audio() {}
-	
-	virtual bool init(const char* name, dsp*)               = 0;
-	virtual bool start()                                    = 0;
-	virtual void stop()                                     = 0;
-    virtual void shutdown(shutdown_callback cb, void* arg)  {}
-    
-    virtual int getBufferSize() = 0;
-    virtual int getSampleRate() = 0;
-    
-    virtual int getNumInputs() = 0;
-    virtual int getNumOutputs() = 0;
-    
-    virtual float getCPULoad() { return 0.f; }
+        // -- soundfiles
+        virtual void addSoundfile(const char* label, Soundfile** sf_zone)
+        {
+            // check if 'label' is already loaded
+            if (fSFMap.find(label) == fSFMap.end()) {
+                fSFMap[label] = new Soundfile(label, 64);
+            }
+            *sf_zone = fSFMap[label];
+        }
+  
 };
-					
+
+// To be used in no SoundUI is used
+static Soundfile* defaultsound = new Soundfile("", MAX_CHAN);
+
 #endif

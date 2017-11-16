@@ -1,9 +1,14 @@
 ## How to update the faust-generated cpp files
 *for GreyHole and JPverb*
 
+### Changelog
++ Thu Nov 16 2017: based on faust commit 4d20e3acb7c96d7bd229652fb7290430814375da.
+
+### Generate and compile *official* sc3-plugins sources
+
 Install a recent version of [faust](https://github.com/grame-cncm/faust).
 
-`cd` to the `faust_src` directory and create `cpp` files for the from the `dsp`-files
+`cd` to the `faust_src` directory and create `cpp` files from the `dsp`-files
 
 Generate the code by 
 

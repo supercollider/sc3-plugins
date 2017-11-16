@@ -1,37 +1,24 @@
 /************************************************************************
-
-	IMPORTANT NOTE : this file contains two clearly delimited sections :
-	the ARCHITECTURE section (in two parts) and the USER section. Each section
-	is governed by its own copyright and license. Please check individually
-	each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __alsa_dsp__
@@ -210,12 +197,12 @@ struct AudioInterface : public AudioParam
 		err = snd_pcm_open( &fOutputDevice, fCardName, SND_PCM_STREAM_PLAYBACK, 0 ); check_error(err)
 
 		// setup output device parameters
-		err = snd_pcm_hw_params_malloc	( &fOutputParams ); 		check_error(err)
+		err = snd_pcm_hw_params_malloc(&fOutputParams); check_error(err)
 		setAudioParams(fOutputDevice, fOutputParams);
 
 		fCardOutputs = fSoftOutputs;
 		snd_pcm_hw_params_set_channels_near(fOutputDevice, fOutputParams, &fCardOutputs);
-		err = snd_pcm_hw_params (fOutputDevice, fOutputParams );	check_error(err);
+		err = snd_pcm_hw_params(fOutputDevice, fOutputParams ); check_error(err);
 
 		// allocate alsa output buffers
 		if (fSampleAccess == SND_PCM_ACCESS_RW_INTERLEAVED) {
@@ -248,7 +235,7 @@ struct AudioInterface : public AudioParam
 			// set the number of physical inputs close to what we need
 			err = snd_pcm_hw_params_malloc	( &fInputParams ); 	check_error(err);
 			setAudioParams(fInputDevice, fInputParams);
-			fCardInputs 	= fSoftInputs;
+			fCardInputs = fSoftInputs;
 			snd_pcm_hw_params_set_channels_near(fInputDevice, fInputParams, &fCardInputs);
 			err = snd_pcm_hw_params (fInputDevice,  fInputParams );	 	check_error(err);
 
@@ -289,12 +276,12 @@ struct AudioInterface : public AudioParam
 		int	err;
 
 		// set params record with initial values
-		err = snd_pcm_hw_params_any	( stream, params );
+		err = snd_pcm_hw_params_any(stream, params);
 		check_error_msg(err, "unable to init parameters")
 
 		// set alsa access mode (and fSampleAccess field) either to non interleaved or interleaved
 
-		err = snd_pcm_hw_params_set_access (stream, params, SND_PCM_ACCESS_RW_NONINTERLEAVED );
+		err = snd_pcm_hw_params_set_access(stream, params, SND_PCM_ACCESS_RW_NONINTERLEAVED );
 		if (err) {
 			err = snd_pcm_hw_params_set_access (stream, params, SND_PCM_ACCESS_RW_INTERLEAVED );
 			check_error_msg(err, "unable to set access mode neither to non-interleaved or to interleaved");
@@ -312,10 +299,10 @@ struct AudioInterface : public AudioParam
 		snd_pcm_hw_params_set_rate_near (stream, params, &fFrequency, 0);
 
 		// set period and period size (buffering)
-		err = snd_pcm_hw_params_set_period_size	(stream, params, fBuffering, 0);
+		err = snd_pcm_hw_params_set_period_size(stream, params, fBuffering, 0);
 		check_error_msg(err, "period size not available");
 
-		err = snd_pcm_hw_params_set_periods (stream, params, fPeriods, 0);
+		err = snd_pcm_hw_params_set_periods(stream, params, fPeriods, 0);
 		check_error_msg(err, "number of periods not available");
 	}
 
@@ -571,6 +558,9 @@ struct AudioInterface : public AudioParam
 #endif
 		printf("--------------\n");
 	}
+    
+    int getNumInputs() { return fCardInputs; }
+    int getNumOutputs() { return fCardOutputs; }
 
 };
 
@@ -674,26 +664,28 @@ class alsaaudio : public audio
  		return true;
 	}
 
-	virtual bool start()
+    virtual bool start()
     {
-		fRunning = true;
-		if (pthread_create(&fAudioThread, 0, __run, this)) {
-			fRunning = false;
+        fRunning = true;
+        if (pthread_create(&fAudioThread, 0, __run, this)) {
+            fRunning = false;
         }
-		return fRunning;
-	}
+        return fRunning;
+    }
 
-	virtual void stop() {
-		if (fRunning) {
-			fRunning = false;
-			pthread_join(fAudioThread, 0);
-		}
-	}
+    virtual void stop()
+    {
+        if (fRunning) {
+            fRunning = false;
+            pthread_join(fAudioThread, 0);
+        }
+    }
     
-    virtual int get_buffer_size() { return fAudio->buffering(); }
-    virtual int get_sample_rate() { return fAudio->frequency(); }
+    virtual int getBufferSize() { return fAudio->buffering(); }
+    virtual int getSampleRate() { return fAudio->frequency(); }
 
-	virtual void run() {
+	virtual void run()
+    {
 		bool rt = setRealtimePriority();
 		printf(rt ? "RT : ":"NRT: "); fAudio->shortinfo();
         AVOIDDENORMALS;
@@ -713,6 +705,10 @@ class alsaaudio : public audio
 			}
 		}
 	}
+    
+    virtual int getNumInputs() { return fAudio->getNumInputs(); }
+    virtual int getNumOutputs() { return fAudio->getNumOutputs(); }
+
 };
 
 void* __run (void* ptr)

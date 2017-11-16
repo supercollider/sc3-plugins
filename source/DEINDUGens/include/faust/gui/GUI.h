@@ -1,37 +1,36 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
  
-#ifndef FAUST_GUI_H
-#define FAUST_GUI_H
-
-#include "faust/gui/UI.h"
-#include "faust/gui/ring-buffer.h"
+#ifndef __GUI_H__
+#define __GUI_H__
 
 #include <list>
 #include <map>
 #include <vector>
+#include <iostream>
+
+#include "faust/gui/UI.h"
+#include "faust/gui/ring-buffer.h"
 
 /*******************************************************************************
  * GUI : Abstract Graphic User Interface
@@ -44,6 +43,7 @@ typedef void (*uiCallback)(FAUSTFLOAT val, void* data);
 
 class clist : public std::list<uiItem*>
 {
+    
     public:
     
         virtual ~clist();
@@ -59,23 +59,23 @@ class GUI : public UI
 		
     private:
      
-        static std::list<GUI*>  fGuiList;
-        zmap                    fZoneMap;
-        bool                    fStopped;
+        static std::list<GUI*> fGuiList;
+        zmap fZoneMap;
+        bool fStopped;
         
      public:
             
-        GUI() : fStopped(false) 
+        GUI():fStopped(false)
         {	
             fGuiList.push_back(this);
         }
         
         virtual ~GUI() 
         {   
-            // delete all 
-            zmap::iterator g;
-            for (g = fZoneMap.begin(); g != fZoneMap.end(); g++) {
-                delete (*g).second;
+            // delete all items
+            zmap::iterator it;
+            for (it = fZoneMap.begin(); it != fZoneMap.end(); it++) {
+                delete (*it).second;
             }
             // suppress 'this' in static fGuiList
             fGuiList.remove(this);
@@ -144,9 +144,9 @@ class uiItem
 {
     protected:
           
-        GUI*            fGUI;
-        FAUSTFLOAT*     fZone;
-        FAUSTFLOAT      fCache;
+        GUI* fGUI;
+        FAUSTFLOAT* fZone;
+        FAUSTFLOAT fCache;
 
         uiItem(GUI* ui, FAUSTFLOAT* zone):fGUI(ui), fZone(zone), fCache(FAUSTFLOAT(-123456.654321))
         { 
@@ -167,8 +167,8 @@ class uiItem
             }
         }
                 
-        FAUSTFLOAT		cache()	{ return fCache; }
-        virtual void 	reflectZone() = 0;	
+        FAUSTFLOAT cache() { return fCache; }
+        virtual void reflectZone() = 0;
 };
 
 /**
@@ -194,10 +194,10 @@ class uiOwnedItem : public uiItem {
  * Callback Item
  */
 
-struct uiCallbackItem : public uiItem
-{
-	uiCallback	fCallback;
-	void*		fData;
+struct uiCallbackItem : public uiItem {
+    
+	uiCallback fCallback;
+	void* fData;
 	
 	uiCallbackItem(GUI* ui, FAUSTFLOAT* zone, uiCallback foo, void* data) 
 			: uiItem(ui, zone), fCallback(foo), fData(data) {}
@@ -211,10 +211,63 @@ struct uiCallbackItem : public uiItem
 };
 
 /**
- * Allows to group a set of zones.
+ * Base class for timed items
  */
- 
-class uiGroupItem : public uiItem 
+
+// For precise timestamped control
+struct DatedControl {
+    
+    double fDate;
+    FAUSTFLOAT fValue;
+    
+    DatedControl(double d = 0., FAUSTFLOAT v = FAUSTFLOAT(0)):fDate(d), fValue(v) {}
+    
+};
+
+class uiTimedItem : public uiItem
+{
+    
+    protected:
+        
+        bool fDelete;
+        
+    public:
+        
+        uiTimedItem(GUI* ui, FAUSTFLOAT* zone):uiItem(ui, zone)
+        {
+            if (GUI::gTimedZoneMap.find(fZone) == GUI::gTimedZoneMap.end()) {
+                GUI::gTimedZoneMap[fZone] = ringbuffer_create(8192);
+                fDelete = true;
+            } else {
+                fDelete = false;
+            }
+        }
+        
+        virtual ~uiTimedItem()
+        {
+            ztimedmap::iterator it;
+            if (fDelete && ((it = GUI::gTimedZoneMap.find(fZone)) != GUI::gTimedZoneMap.end())) {
+                ringbuffer_free((*it).second);
+                GUI::gTimedZoneMap.erase(it);
+            }
+        }
+        
+        virtual void modifyZone(double date, FAUSTFLOAT v)
+        {
+            size_t res;
+            DatedControl dated_val(date, v);
+            if ((res = ringbuffer_write(GUI::gTimedZoneMap[fZone], (const char*)&dated_val, sizeof(DatedControl))) != sizeof(DatedControl)) {
+                std::cerr << "ringbuffer_write error DatedControl" << std::endl;
+            }
+        }
+    
+};
+
+/**
+ * Allows to group a set of zones
+ */
+
+class uiGroupItem : public uiItem
 {
     protected:
     
@@ -291,14 +344,4 @@ inline clist::~clist()
     }
 }
 
-// For precise timestamped control
-struct DatedControl {
-
-    double fDate;
-    FAUSTFLOAT fValue;
-    
-    DatedControl(double d = 0., FAUSTFLOAT v = FAUSTFLOAT(0)):fDate(d), fValue(v) {}
-
-};
-  
 #endif

@@ -1,36 +1,24 @@
 /************************************************************************
-	IMPORTANT NOTE : this file contains two clearly delimited sections :
-	the ARCHITECTURE section (in two parts) and the USER section. Each section
-	is governed by its own copyright and license. Please check individually
-	each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __coreaudio_dsp__
@@ -1447,7 +1435,7 @@ class TCoreAudioRenderer
             }
         }
     
-        void set_dsp(dsp* DSP)
+        void setDsp(dsp* DSP)
         {
             fDSP = DSP;
         }
@@ -1483,7 +1471,7 @@ class coreaudio : public audio {
                 printf("Cannot open CoreAudio device\n");
                 return false;
             }
-            fAudioDevice.set_dsp(DSP);
+            fAudioDevice.setDsp(DSP);
             // If -1 was given, fSampleRate will be changed by OpenDefault
             DSP->init(fSampleRate);
             return true;
@@ -1503,11 +1491,11 @@ class coreaudio : public audio {
             fAudioDevice.Stop();
         }
         
-        virtual int get_buffer_size() { return fAudioDevice.GetBufferSize(); }
-        virtual int get_sample_rate() { return fAudioDevice.GetSampleRate(); }
+        virtual int getBufferSize() { return fAudioDevice.GetBufferSize(); }
+        virtual int getSampleRate() { return fAudioDevice.GetSampleRate(); }
         
-        virtual int get_num_inputs() { return fAudioDevice.GetNumInputs(); }
-        virtual int get_num_outputs() { return fAudioDevice.GetNumOutputs(); }
+        virtual int getNumInputs() { return fAudioDevice.GetNumInputs(); }
+        virtual int getNumOutputs() { return fAudioDevice.GetNumOutputs(); }
 
 };
 
