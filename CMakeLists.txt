@@ -3,15 +3,20 @@ set(SUPERNOVA_CMAKE_MINVERSION 3.1)
 project (sc3-plugins)
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
-  message(FATAL_ERROR "nova-simd submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
-endif()
+  message(FATAL_ERROR "The nova-simd submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of sc3-plugins repository")
+ endif()
 
 if (NOT SYSTEM_STK)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk/include/Stk.h)
-    message(FATAL_ERROR "stk submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
+    message(FATAL_ERROR "The stk submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of the sc3-plugins repository")
   endif()
 endif()
 
+if (SUPERNOVA)
+  if (NOT EXISTS ${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt)
+    message(FATAL_ERROR "The nova-tt submodule in the SuperCollider repository is missing (required for SuperNova plugins). This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of the SuperCollider repository")
+  endif()
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
                       ${CMAKE_MODULE_PATH})
