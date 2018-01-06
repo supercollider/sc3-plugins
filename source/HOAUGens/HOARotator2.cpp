@@ -1,15 +1,27 @@
-/* ------------------------------------------------------------
-author: "Pierre Lecomte"
-copyright: "(c) Pierre Lecomte 2016"
-license: "GPL"
-name: "HOARotator2"
-version: "1.0"
-Code generated with Faust 2.2.0 (http://faust.grame.fr)
------------------------------------------------------------- */
+//----------------------------------------------------------
+// name: "HOARotator2"
+// version: "1.0"
+// author: "Pierre Lecomte"
+// license: "GPL"
+// copyright: "(c) Pierre Lecomte 2016"
+//
+// Code generated with Faust 0.12.0 (http://faust.grame.fr)
+//----------------------------------------------------------
 
-#ifndef  __mydsp_H__
-#define  __mydsp_H__
-
+/* link with  */
+#include <math.h>
+#ifndef FAUSTPOWER
+#define FAUSTPOWER
+#include <cmath>
+template <int N> inline int faustpower(int x)              { return faustpower<N/2>(x) * faustpower<N-N/2>(x); } 
+template <> 	 inline int faustpower<0>(int x)            { return 1; }
+template <> 	 inline int faustpower<1>(int x)            { return x; }
+template <> 	 inline int faustpower<2>(int x)            { return x*x; }
+template <int N> inline double faustpower(double x)          { return faustpower<N/2>(x) * faustpower<N-N/2>(x); } 
+template <> 	 inline double faustpower<0>(double x)        { return 1; }
+template <> 	 inline double faustpower<1>(double x)        { return x; }
+template <> 	 inline double faustpower<2>(double x)        { return x*x; }
+#endif
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
 // Copyright (C) 2005-2012 Stefan Kersten.
@@ -66,8 +78,6 @@ Code generated with Faust 2.2.0 (http://faust.grame.fr)
 #ifndef __dsp__
 #define __dsp__
 
-#include <string>
-
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif
@@ -116,21 +126,24 @@ class dsp {
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods :
-         * - static class 'classInit' : static table initialisation
-         * - 'instanceInit' : constants and instance table initialisation
+        /** 
+         * Global init, calls the following methods:
+         * - static class 'classInit': static tables initialization
+         * - 'instanceInit': constants and instance state initialization
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void init(int samplingRate) = 0;
-
-        /** Init instance state
+    
+        /** 
+         * Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
-
-        /** Init instance constant state
+    
+        /** 
+         * Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
@@ -141,8 +154,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
- 
-        /**
+    
+        /**  
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -150,16 +163,16 @@ class dsp {
         virtual dsp* clone() = 0;
     
         /**
-         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value metadata).
+         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.
          *
          * @param m - the Meta* meta user
          */
         virtual void metadata(Meta* m) = 0;
     
         /**
-         * DSP instance computation, to be called with sucessive in/out audio buffers.
+         * DSP instance computation, to be called with successive in/out audio buffers.
          *
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -170,7 +183,7 @@ class dsp {
          * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -204,34 +217,11 @@ class decorator_dsp : public dsp {
         virtual void instanceResetUserInterface() { fDSP->instanceResetUserInterface(); }
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
-        virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        virtual void metadata(Meta* m) { fDSP->metadata(m); }
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-    
-};
-
-/**
- * DSP factory class.
- */
-
-class dsp_factory {
-    
-    protected:
-    
-        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
-        virtual ~dsp_factory() {}
-    
-    public:
-    
-        virtual std::string getName() = 0;
-        virtual std::string getSHAKey() = 0;
-        virtual std::string getDSPCode() = 0;
-        virtual dsp* createDSPInstance() = 0;
-    
-        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
-        virtual dsp_memory_manager* getMemoryManager() = 0;
-    
+       
 };
 
 /**
@@ -274,8 +264,8 @@ class dsp_factory {
  architecture section is not modified.
  ************************************************************************/
 
-#ifndef FAUST_UI_H
-#define FAUST_UI_H
+#ifndef __UI_H__
+#define __UI_H__
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
@@ -287,6 +277,8 @@ class dsp_factory {
  * This abstract class contains only the method that the Faust compiler can
  * generate to describe a DSP user interface.
  ******************************************************************************/
+
+struct Soundfile;
 
 class UI
 {
@@ -316,6 +308,10 @@ class UI
 
         virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
         virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
+    
+        // -- soundfiles
+    
+        virtual void addSoundfile(const char* label, Soundfile** sf_zone) {}
 
         // -- metadata declarations
 
@@ -602,171 +598,66 @@ private:
 #endif  
 
 
-double cos(double dummy0);
-double sin(double dummy0);
-double mydsp_faustpower2_f(double value) {
-	return (value * value);
-	
-}
-
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
 #endif
 
 class mydsp : public dsp {
-	
- private:
-	
-	FAUSTFLOAT fHslider0;
-	FAUSTFLOAT fHslider1;
-	FAUSTFLOAT fHslider2;
+  private:
+	FAUSTFLOAT 	fslider0;
+	FAUSTFLOAT 	fslider1;
+	FAUSTFLOAT 	fslider2;
+	double 	fTempPerm0;
+	double 	fTempPerm1;
+	double 	fTempPerm2;
+	double 	fTempPerm3;
+	double 	fTempPerm4;
+	double 	fTempPerm5;
+	double 	fTempPerm6;
+	double 	fTempPerm7;
 	int fSamplingFreq;
-	
- public:
-	
-	void metadata(Meta* m) { 
+
+  public:
+	virtual void metadata(Meta* m) { 
+		m->declare("name", "HOARotator2");
+		m->declare("version", "1.0");
 		m->declare("author", "Pierre Lecomte");
-		m->declare("copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/ymn.lib/license", "GPL");
-		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
-		m->declare("lib/ymn.lib/version", "1.0");
 		m->declare("license", "GPL");
+		m->declare("copyright", "(c) Pierre Lecomte 2016");
+		m->declare("ymn.lib/name", "Spherical Harmonics library");
+		m->declare("ymn.lib/version", "2.0");
+		m->declare("ymn.lib/author", "Pierre Lecomte");
+		m->declare("ymn.lib/license", "GPL");
+		m->declare("ymn.lib/copyright", "(c) Pierre Lecomte 2017");
+		m->declare("maths.lib/name", "Faust Math Library");
+		m->declare("maths.lib/version", "2.1");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
-		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
-		m->declare("name", "HOARotator2");
-		m->declare("version", "1.0");
 	}
 
-	virtual int getNumInputs() {
-		return 9;
-		
-	}
-	virtual int getNumOutputs() {
-		return 9;
-		
-	}
-	virtual int getInputRate(int channel) {
-		int rate;
-		switch (channel) {
-			case 0: {
-				rate = 1;
-				break;
-			}
-			case 1: {
-				rate = 1;
-				break;
-			}
-			case 2: {
-				rate = 1;
-				break;
-			}
-			case 3: {
-				rate = 1;
-				break;
-			}
-			case 4: {
-				rate = 1;
-				break;
-			}
-			case 5: {
-				rate = 1;
-				break;
-			}
-			case 6: {
-				rate = 1;
-				break;
-			}
-			case 7: {
-				rate = 1;
-				break;
-			}
-			case 8: {
-				rate = 1;
-				break;
-			}
-			default: {
-				rate = -1;
-				break;
-			}
-			
-		}
-		return rate;
-		
-	}
-	virtual int getOutputRate(int channel) {
-		int rate;
-		switch (channel) {
-			case 0: {
-				rate = 1;
-				break;
-			}
-			case 1: {
-				rate = 1;
-				break;
-			}
-			case 2: {
-				rate = 1;
-				break;
-			}
-			case 3: {
-				rate = 1;
-				break;
-			}
-			case 4: {
-				rate = 1;
-				break;
-			}
-			case 5: {
-				rate = 1;
-				break;
-			}
-			case 6: {
-				rate = 1;
-				break;
-			}
-			case 7: {
-				rate = 1;
-				break;
-			}
-			case 8: {
-				rate = 1;
-				break;
-			}
-			default: {
-				rate = -1;
-				break;
-			}
-			
-		}
-		return rate;
-		
-	}
-	
+	virtual int getNumInputs() { return 9; }
+	virtual int getNumOutputs() { return 9; }
 	static void classInit(int samplingFreq) {
-		
 	}
-	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		
+		fTempPerm0 = 0;
+		fTempPerm1 = 0;
+		fTempPerm2 = 0;
+		fTempPerm3 = 0;
+		fTempPerm4 = 0;
+		fTempPerm5 = 0;
+		fTempPerm6 = 0;
+		fTempPerm7 = 0;
 	}
-	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0);
-		fHslider1 = FAUSTFLOAT(0.0);
-		fHslider2 = FAUSTFLOAT(0.0);
-		
+		fslider0 = 0.0;
+		fslider1 = 0.0;
+		fslider2 = 0.0;
 	}
-	
 	virtual void instanceClear() {
-		
 	}
-	
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
 		instanceInit(samplingFreq);
@@ -776,134 +667,132 @@ class mydsp : public dsp {
 		instanceResetUserInterface();
 		instanceClear();
 	}
-	
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
-	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
 	}
-	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("HOARotator2");
-		ui_interface->declare(&fHslider2, "osc", "/picth 0 360");
-		ui_interface->addHorizontalSlider("Pitch", &fHslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
-		ui_interface->declare(&fHslider1, "osc", "/roll 0 360");
-		ui_interface->addHorizontalSlider("Roll", &fHslider1, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
-		ui_interface->declare(&fHslider0, "osc", "/yaw 0 360");
-		ui_interface->addHorizontalSlider("Yaw", &fHslider0, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
+		ui_interface->declare(&fslider2, "osc", "/picth 0 360");
+		ui_interface->addHorizontalSlider("Pitch", &fslider2, 0.0, -3.141592653589793, 3.141592653589793, 0.01);
+		ui_interface->declare(&fslider0, "osc", "/roll 0 360");
+		ui_interface->addHorizontalSlider("Roll", &fslider0, 0.0, -3.141592653589793, 3.141592653589793, 0.01);
+		ui_interface->declare(&fslider1, "osc", "/yaw 0 360");
+		ui_interface->addHorizontalSlider("Yaw", &fslider1, 0.0, -3.141592653589793, 3.141592653589793, 0.01);
 		ui_interface->closeBox();
-		
 	}
-	
-	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
-		FAUSTFLOAT* input0 = inputs[0];
-		FAUSTFLOAT* input1 = inputs[1];
-		FAUSTFLOAT* input2 = inputs[2];
-		FAUSTFLOAT* input3 = inputs[3];
-		FAUSTFLOAT* input4 = inputs[4];
-		FAUSTFLOAT* input5 = inputs[5];
-		FAUSTFLOAT* input6 = inputs[6];
-		FAUSTFLOAT* input7 = inputs[7];
-		FAUSTFLOAT* input8 = inputs[8];
-		FAUSTFLOAT* output0 = outputs[0];
-		FAUSTFLOAT* output1 = outputs[1];
-		FAUSTFLOAT* output2 = outputs[2];
-		FAUSTFLOAT* output3 = outputs[3];
-		FAUSTFLOAT* output4 = outputs[4];
-		FAUSTFLOAT* output5 = outputs[5];
-		FAUSTFLOAT* output6 = outputs[6];
-		FAUSTFLOAT* output7 = outputs[7];
-		FAUSTFLOAT* output8 = outputs[8];
-		double fSlow0 = double(fHslider0);
-		double fSlow1 = cos(fSlow0);
-		double fSlow2 = double(fHslider1);
-		double fSlow3 = cos(fSlow2);
-		double fSlow4 = (fSlow1 * fSlow3);
-		double fSlow5 = sin(fSlow0);
-		double fSlow6 = sin(fSlow2);
-		double fSlow7 = (fSlow5 * fSlow6);
-		double fSlow8 = double(fHslider2);
-		double fSlow9 = sin(fSlow8);
-		double fSlow10 = (fSlow4 - (fSlow7 * fSlow9));
-		double fSlow11 = cos(fSlow8);
-		double fSlow12 = (0.0 - fSlow11);
-		double fSlow13 = (fSlow6 * fSlow12);
-		double fSlow14 = (fSlow6 * fSlow9);
-		double fSlow15 = (fSlow5 * fSlow3);
-		double fSlow16 = ((fSlow14 * fSlow1) + fSlow15);
-		double fSlow17 = (fSlow6 * fSlow1);
-		double fSlow18 = (fSlow5 * fSlow9);
-		double fSlow19 = (fSlow17 + (fSlow18 * fSlow3));
-		double fSlow20 = (fSlow3 * fSlow11);
-		double fSlow21 = (fSlow9 * fSlow1);
-		double fSlow22 = ((fSlow21 * (0.0 - fSlow3)) + fSlow7);
-		double fSlow23 = (fSlow5 * fSlow12);
-		double fSlow24 = (fSlow1 * fSlow11);
-		double fSlow25 = ((fSlow24 * fSlow10) + (fSlow23 * fSlow16));
-		double fSlow26 = mydsp_faustpower2_f(fSlow12);
-		double fSlow27 = ((fSlow9 * fSlow10) + (fSlow7 * fSlow26));
-		double fSlow28 = (1.7320508075688772 * (fSlow14 * fSlow12));
-		double fSlow29 = ((fSlow9 * fSlow16) + ((fSlow17 * fSlow11) * fSlow12));
-		double fSlow30 = ((fSlow24 * fSlow16) - (fSlow23 * fSlow10));
-		double fSlow31 = ((fSlow22 * fSlow10) + (fSlow19 * fSlow16));
-		double fSlow32 = ((fSlow20 * fSlow10) + (1.0000000000000002 * ((fSlow6 * fSlow19) * fSlow12)));
-		double fSlow33 = (1.7320508075688772 * (((fSlow6 * fSlow3) * fSlow11) * fSlow12));
-		double fSlow34 = ((fSlow20 * fSlow16) + (1.0000000000000002 * ((fSlow6 * fSlow22) * fSlow12)));
-		double fSlow35 = ((fSlow22 * fSlow16) - (fSlow19 * fSlow10));
-		double fSlow36 = (((fSlow5 * fSlow1) * fSlow11) * fSlow12);
-		double fSlow37 = (fSlow16 * fSlow10);
-		double fSlow38 = ((1.1547005383792515 * (fSlow22 * fSlow19)) - (0.57735026918962573 * (fSlow36 + fSlow37)));
-		double fSlow39 = (fSlow6 * fSlow10);
-		double fSlow40 = ((1.1547005383792515 * (fSlow20 * fSlow19)) - (0.57735026918962573 * (fSlow12 * (fSlow18 + fSlow39))));
-		double fSlow41 = mydsp_faustpower2_f(fSlow11);
-		double fSlow42 = mydsp_faustpower2_f(fSlow9);
-		double fSlow43 = (mydsp_faustpower2_f(fSlow6) * fSlow26);
-		double fSlow44 = ((mydsp_faustpower2_f(fSlow3) * fSlow41) - (0.5 * (fSlow42 + fSlow43)));
-		double fSlow45 = (fSlow21 * fSlow11);
-		double fSlow46 = (fSlow13 * fSlow16);
-		double fSlow47 = ((1.1547005383792515 * (fSlow20 * fSlow22)) - (0.57735026918962573 * (fSlow45 + fSlow46)));
-		double fSlow48 = (mydsp_faustpower2_f(fSlow1) * fSlow41);
-		double fSlow49 = mydsp_faustpower2_f(fSlow16);
-		double fSlow50 = (mydsp_faustpower2_f(fSlow5) * fSlow26);
-		double fSlow51 = mydsp_faustpower2_f(fSlow10);
-		double fSlow52 = ((0.57735026918962573 * (mydsp_faustpower2_f(fSlow22) - mydsp_faustpower2_f(fSlow19))) - (0.28867513459481287 * ((fSlow48 + fSlow49) - (fSlow50 + fSlow51))));
-		double fSlow53 = (((fSlow5 * fSlow22) * fSlow12) + (fSlow24 * fSlow19));
-		double fSlow54 = (((fSlow15 * fSlow11) * fSlow12) + (1.0000000000000002 * (fSlow9 * fSlow19)));
-		double fSlow55 = (1.7320508075688772 * ((fSlow9 * fSlow3) * fSlow11));
-		double fSlow56 = ((fSlow4 * fSlow41) + (1.0000000000000002 * (fSlow9 * fSlow22)));
-		double fSlow57 = ((fSlow24 * fSlow22) - ((fSlow5 * fSlow19) * fSlow12));
-		double fSlow58 = (fSlow36 - fSlow37);
-		double fSlow59 = (fSlow12 * (fSlow18 - fSlow39));
-		double fSlow60 = (0.8660254037844386 * (fSlow42 - fSlow43));
-		double fSlow61 = (fSlow45 - fSlow46);
-		double fSlow62 = (0.5 * ((fSlow48 + fSlow51) - (fSlow50 + fSlow49)));
-		for (int i = 0; (i < count); i = (i + 1)) {
-			output0[i] = FAUSTFLOAT(double(input0[i]));
-			double fTemp0 = double(input1[i]);
-			double fTemp1 = double(input2[i]);
-			double fTemp2 = double(input3[i]);
-			output1[i] = FAUSTFLOAT((((fSlow10 * fTemp0) + (fSlow13 * fTemp1)) + (fSlow16 * fTemp2)));
-			output2[i] = FAUSTFLOAT((((fSlow19 * fTemp0) + (fSlow20 * fTemp1)) + (fSlow22 * fTemp2)));
-			output3[i] = FAUSTFLOAT((((fSlow23 * fTemp0) + (fSlow9 * fTemp1)) + (fSlow24 * fTemp2)));
-			double fTemp3 = double(input4[i]);
-			double fTemp4 = double(input5[i]);
-			double fTemp5 = double(input6[i]);
-			double fTemp6 = double(input7[i]);
-			double fTemp7 = double(input8[i]);
-			output4[i] = FAUSTFLOAT((((((fSlow25 * fTemp3) + (fSlow27 * fTemp4)) + (fSlow28 * fTemp5)) + (fSlow29 * fTemp6)) + (fSlow30 * fTemp7)));
-			output5[i] = FAUSTFLOAT((((((fSlow31 * fTemp3) + (fSlow32 * fTemp4)) + (fSlow33 * fTemp5)) + (fSlow34 * fTemp6)) + (fSlow35 * fTemp7)));
-			output6[i] = FAUSTFLOAT((((((fSlow38 * fTemp3) + (fSlow40 * fTemp4)) + (fSlow44 * fTemp5)) + (fSlow47 * fTemp6)) + (fSlow52 * fTemp7)));
-			output7[i] = FAUSTFLOAT((((((fSlow53 * fTemp3) + (fSlow54 * fTemp4)) + (fSlow55 * fTemp5)) + (fSlow56 * fTemp6)) + (fSlow57 * fTemp7)));
-			output8[i] = FAUSTFLOAT((((((fSlow58 * fTemp3) + (fSlow59 * fTemp4)) + (fSlow60 * fTemp5)) + (fSlow61 * fTemp6)) + (fSlow62 * fTemp7)));
-			
+	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
+		//zone1
+		//zone2
+		double 	fSlow0 = double(fslider0);
+		double 	fSlow1 = cos(fSlow0);
+		double 	fSlow2 = double(fslider1);
+		double 	fSlow3 = cos(fSlow2);
+		double 	fSlow4 = (fSlow1 * fSlow3);
+		double 	fSlow5 = double(fslider2);
+		double 	fSlow6 = sin(fSlow5);
+		double 	fSlow7 = sin(fSlow0);
+		double 	fSlow8 = (fSlow6 * fSlow7);
+		double 	fSlow9 = sin(fSlow2);
+		double 	fSlow10 = (fSlow4 - (fSlow8 * fSlow9));
+		double 	fSlow11 = cos(fSlow5);
+		double 	fSlow12 = (0 - fSlow11);
+		double 	fSlow13 = (fSlow7 * fSlow12);
+		double 	fSlow14 = (fSlow3 * fSlow6);
+		double 	fSlow15 = (fSlow1 * fSlow9);
+		double 	fSlow16 = ((fSlow14 * fSlow7) + fSlow15);
+		double 	fSlow17 = (fSlow3 * fSlow7);
+		double 	fSlow18 = (fSlow1 * fSlow6);
+		double 	fSlow19 = (fSlow17 + (fSlow18 * fSlow9));
+		double 	fSlow20 = (fSlow1 * fSlow11);
+		double 	fSlow21 = (fSlow7 * fSlow9);
+		double 	fSlow22 = (fSlow21 + (fSlow14 * (0 - fSlow1)));
+		double 	fSlow23 = (fSlow9 * fSlow12);
+		double 	fSlow24 = (fSlow3 * fSlow11);
+		double 	fSlow25 = ((fSlow24 * fSlow10) + ((fSlow9 * fSlow16) * fSlow12));
+		double 	fSlow26 = faustpower<2>(fSlow12);
+		double 	fSlow27 = ((fSlow6 * fSlow10) + (fSlow21 * fSlow26));
+		double 	fSlow28 = (1.7320508075688772 * (fSlow8 * fSlow12));
+		double 	fSlow29 = ((fSlow6 * fSlow16) + ((fSlow17 * fSlow11) * fSlow12));
+		double 	fSlow30 = ((fSlow24 * fSlow16) - ((fSlow9 * fSlow10) * fSlow12));
+		double 	fSlow31 = ((fSlow19 * fSlow16) + (fSlow10 * fSlow22));
+		double 	fSlow32 = ((fSlow20 * fSlow10) + (1.0000000000000002 * ((fSlow7 * fSlow19) * fSlow12)));
+		double 	fSlow33 = (1.7320508075688772 * (((fSlow1 * fSlow7) * fSlow11) * fSlow12));
+		double 	fSlow34 = ((fSlow20 * fSlow16) + (1.0000000000000002 * ((fSlow7 * fSlow22) * fSlow12)));
+		double 	fSlow35 = ((fSlow16 * fSlow22) - (fSlow19 * fSlow10));
+		double 	fSlow36 = (fSlow16 * fSlow10);
+		double 	fSlow37 = (((fSlow3 * fSlow9) * fSlow11) * fSlow12);
+		double 	fSlow38 = ((1.1547005383792515 * (fSlow19 * fSlow22)) - (0.5773502691896257 * (fSlow36 + fSlow37)));
+		double 	fSlow39 = (fSlow6 * fSlow9);
+		double 	fSlow40 = (fSlow7 * fSlow10);
+		double 	fSlow41 = ((1.1547005383792515 * ((fSlow1 * fSlow19) * fSlow11)) - (0.5773502691896257 * ((fSlow39 + fSlow40) * fSlow12)));
+		double 	fSlow42 = faustpower<2>(fSlow11);
+		double 	fSlow43 = faustpower<2>(fSlow6);
+		double 	fSlow44 = (faustpower<2>(fSlow7) * fSlow26);
+		double 	fSlow45 = ((faustpower<2>(fSlow1) * fSlow42) - (0.5 * (fSlow43 + fSlow44)));
+		double 	fSlow46 = (fSlow14 * fSlow11);
+		double 	fSlow47 = ((fSlow7 * fSlow16) * fSlow12);
+		double 	fSlow48 = ((1.1547005383792515 * (fSlow20 * fSlow22)) - (0.5773502691896257 * (fSlow46 + fSlow47)));
+		double 	fSlow49 = (faustpower<2>(fSlow3) * fSlow42);
+		double 	fSlow50 = faustpower<2>(fSlow16);
+		double 	fSlow51 = (faustpower<2>(fSlow9) * fSlow26);
+		double 	fSlow52 = faustpower<2>(fSlow10);
+		double 	fSlow53 = ((0.5773502691896257 * (faustpower<2>(fSlow22) - faustpower<2>(fSlow19))) - (0.28867513459481287 * ((fSlow49 + fSlow50) - (fSlow51 + fSlow52))));
+		double 	fSlow54 = (((fSlow9 * fSlow22) * fSlow12) + ((fSlow3 * fSlow19) * fSlow11));
+		double 	fSlow55 = (((fSlow15 * fSlow11) * fSlow12) + (1.0000000000000002 * (fSlow6 * fSlow19)));
+		double 	fSlow56 = (1.7320508075688772 * (fSlow18 * fSlow11));
+		double 	fSlow57 = ((fSlow4 * fSlow42) + (1.0000000000000002 * (fSlow6 * fSlow22)));
+		double 	fSlow58 = ((fSlow24 * fSlow22) - ((fSlow9 * fSlow19) * fSlow12));
+		double 	fSlow59 = (fSlow46 - fSlow47);
+		double 	fSlow60 = (fSlow12 * (fSlow39 - fSlow40));
+		double 	fSlow61 = (0.8660254037844386 * (fSlow43 - fSlow44));
+		double 	fSlow62 = (0 - (2 * (fSlow36 - fSlow37)));
+		double 	fSlow63 = ((fSlow49 + fSlow52) - (fSlow51 + fSlow50));
+		//zone2b
+		//zone3
+		FAUSTFLOAT* input0 = input[0];
+		FAUSTFLOAT* input1 = input[1];
+		FAUSTFLOAT* input2 = input[2];
+		FAUSTFLOAT* input3 = input[3];
+		FAUSTFLOAT* input4 = input[4];
+		FAUSTFLOAT* input5 = input[5];
+		FAUSTFLOAT* input6 = input[6];
+		FAUSTFLOAT* input7 = input[7];
+		FAUSTFLOAT* input8 = input[8];
+		FAUSTFLOAT* output0 = output[0];
+		FAUSTFLOAT* output1 = output[1];
+		FAUSTFLOAT* output2 = output[2];
+		FAUSTFLOAT* output3 = output[3];
+		FAUSTFLOAT* output4 = output[4];
+		FAUSTFLOAT* output5 = output[5];
+		FAUSTFLOAT* output6 = output[6];
+		FAUSTFLOAT* output7 = output[7];
+		FAUSTFLOAT* output8 = output[8];
+		//LoopGraphScalar
+		for (int i=0; i<count; i++) {
+			output0[i] = (FAUSTFLOAT)(double)input0[i];
+			fTempPerm0 = (double)input1[i];
+			fTempPerm1 = (double)input2[i];
+			fTempPerm2 = (double)input3[i];
+			output1[i] = (FAUSTFLOAT)(((fSlow10 * fTempPerm0) + (fSlow13 * fTempPerm1)) + (fSlow16 * fTempPerm2));
+			output2[i] = (FAUSTFLOAT)(((fSlow19 * fTempPerm0) + (fSlow20 * fTempPerm1)) + (fSlow22 * fTempPerm2));
+			output3[i] = (FAUSTFLOAT)(((fSlow23 * fTempPerm0) + (fSlow6 * fTempPerm1)) + (fSlow24 * fTempPerm2));
+			fTempPerm3 = (double)input4[i];
+			fTempPerm4 = (double)input5[i];
+			fTempPerm5 = (double)input6[i];
+			fTempPerm6 = (double)input7[i];
+			fTempPerm7 = (double)input8[i];
+			output4[i] = (FAUSTFLOAT)(((((fSlow25 * fTempPerm3) + (fSlow27 * fTempPerm4)) + (fSlow28 * fTempPerm5)) + (fSlow29 * fTempPerm6)) + (fSlow30 * fTempPerm7));
+			output5[i] = (FAUSTFLOAT)(((((fSlow31 * fTempPerm3) + (fSlow32 * fTempPerm4)) + (fSlow33 * fTempPerm5)) + (fSlow34 * fTempPerm6)) + (fSlow35 * fTempPerm7));
+			output6[i] = (FAUSTFLOAT)(((((fSlow38 * fTempPerm3) + (fSlow41 * fTempPerm4)) + (fSlow45 * fTempPerm5)) + (fSlow48 * fTempPerm6)) + (fSlow53 * fTempPerm7));
+			output7[i] = (FAUSTFLOAT)(((((fSlow54 * fTempPerm3) + (fSlow55 * fTempPerm4)) + (fSlow56 * fTempPerm5)) + (fSlow57 * fTempPerm6)) + (fSlow58 * fTempPerm7));
+			output8[i] = (FAUSTFLOAT)(((fSlow59 * fTempPerm6) + ((fSlow60 * fTempPerm4) + (fSlow61 * fTempPerm5))) + (0.5 * ((fSlow62 * fTempPerm3) + (fSlow63 * fTempPerm7))));
 		}
-		
 	}
-
-	
 };
+
 
 
 //----------------------------------------------------------------------------
@@ -1234,6 +1123,10 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
 #endif // NDEBUG
 }
 
-// EOF
-
+#ifdef SUPERNOVA 
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_supernova; }
+#else
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_scsynth; }
 #endif
+
+// EOF

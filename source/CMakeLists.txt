@@ -78,7 +78,14 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 endmacro()
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=512")
+# This is to be able to switch off the debug messages coming from the Faust generated CPP sources
+# by setting to release mode -DCMAKE_BUILD_TYPE=Release
+if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    add_definitions(-DNDEBUG)
+endif()
+
+# This is necessary since Faust generated CPP sources can have deep bracket nesting
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=2048")
 
 #-----------------------
 # plugins without extras
@@ -220,17 +227,17 @@ BUILD_PLUGIN(complexRes
              "" "DEINDUGens")
 include_directories(DEINDUGens/include)
 BUILD_PLUGIN(JPverb
-"DEINDUGens/JPverbRaw.cpp" 
+"DEINDUGens/JPverbRaw.cpp"
              "" "DEINDUGens")
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB)
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
 BUILD_PLUGIN(Greyhole
-"DEINDUGens/GreyholeRaw.cpp" 
+"DEINDUGens/GreyholeRaw.cpp"
              "" "DEINDUGens")
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE)
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
@@ -246,7 +253,7 @@ endif()
 # OteyPianoUGens
 BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
              "" "OteyPianoUGens")
-             
+
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 

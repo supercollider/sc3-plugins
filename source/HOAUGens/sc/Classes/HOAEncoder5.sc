@@ -1,11 +1,11 @@
 FaustHOAEncoder5 : MultiOutUGen
 {
-  *ar { | in1, gain(0.0), yes(0.0), source_azimuth(0.0), source_elevation(0.0), source_radius(2.0), speakers_radius(1.07) |
-      ^this.multiNew('audio', in1, gain, yes, source_azimuth, source_elevation, source_radius, speakers_radius)
+  *ar { | in1, gain_0(0.0), radius_0(2.0), azimuth_0(0.0), elevation_0(0.0), yes(0.0), speaker_radius_0(1.07) |
+      ^this.multiNew('audio', in1, gain_0, radius_0, azimuth_0, elevation_0, yes, speaker_radius_0)
   }
 
-  *kr { | in1, gain(0.0), yes(0.0), source_azimuth(0.0), source_elevation(0.0), source_radius(2.0), speakers_radius(1.07) |
-      ^this.multiNew('control', in1, gain, yes, source_azimuth, source_elevation, source_radius, speakers_radius)
+  *kr { | in1, gain_0(0.0), radius_0(2.0), azimuth_0(0.0), elevation_0(0.0), yes(0.0), speaker_radius_0(1.07) |
+      ^this.multiNew('control', in1, gain_0, radius_0, azimuth_0, elevation_0, yes, speaker_radius_0)
   } 
 
   checkInputs {

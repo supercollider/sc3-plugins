@@ -4,7 +4,8 @@ copyright: "(c) Pierre Lecomte 2014"
 license: "GPL"
 name: "HOAEncoder1"
 version: "1.0"
-Code generated with Faust 2.2.0 (http://faust.grame.fr)
+Code generated with Faust 2.5.12 (https://faust.grame.fr)
+Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -116,21 +117,24 @@ class dsp {
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods :
-         * - static class 'classInit' : static table initialisation
-         * - 'instanceInit' : constants and instance table initialisation
+        /**
+         * Global init, calls the following methods:
+         * - static class 'classInit': static tables initialization
+         * - 'instanceInit': constants and instance state initialization
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void init(int samplingRate) = 0;
 
-        /** Init instance state
+        /**
+         * Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
 
-        /** Init instance constant state
+        /**
+         * Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
@@ -150,16 +154,16 @@ class dsp {
         virtual dsp* clone() = 0;
     
         /**
-         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value metadata).
+         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.
          *
          * @param m - the Meta* meta user
          */
         virtual void metadata(Meta* m) = 0;
     
         /**
-         * DSP instance computation, to be called with sucessive in/out audio buffers.
+         * DSP instance computation, to be called with successive in/out audio buffers.
          *
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -170,7 +174,7 @@ class dsp {
          * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -204,7 +208,7 @@ class decorator_dsp : public dsp {
         virtual void instanceResetUserInterface() { fDSP->instanceResetUserInterface(); }
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
-        virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        virtual void metadata(Meta* m) { fDSP->metadata(m); }
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
@@ -227,6 +231,7 @@ class dsp_factory {
         virtual std::string getName() = 0;
         virtual std::string getSHAKey() = 0;
         virtual std::string getDSPCode() = 0;
+    
         virtual dsp* createDSPInstance() = 0;
     
         virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
@@ -274,8 +279,8 @@ class dsp_factory {
  architecture section is not modified.
  ************************************************************************/
 
-#ifndef FAUST_UI_H
-#define FAUST_UI_H
+#ifndef __UI_H__
+#define __UI_H__
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
@@ -287,6 +292,8 @@ class dsp_factory {
  * This abstract class contains only the method that the Faust compiler can
  * generate to describe a DSP user interface.
  ******************************************************************************/
+
+struct Soundfile;
 
 class UI
 {
@@ -316,6 +323,10 @@ class UI
 
         virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
         virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
+    
+        // -- soundfiles
+    
+        virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) = 0;
 
         // -- metadata declarations
 
@@ -472,7 +483,7 @@ public:
     ControlCounter()
         : mNumControlInputs(0),
           mNumControlOutputs(0)
-    { }
+    {}
 
     size_t getNumControls() const { return getNumControlInputs(); }
     size_t getNumControlInputs() const { return mNumControlInputs; }
@@ -501,6 +512,8 @@ public:
     { addControlOutput(); }
     virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
     { addControlOutput(); }
+    
+    virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
 protected:
     void addControlInput() { mNumControlInputs++; }
@@ -568,8 +581,9 @@ public:
     { addBoundedControl(zone, min, max, step); }
 
     // Passive widgets
-    virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) { }
-    virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) { }
+    virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+    virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+    virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
 private:
     void addControl(Control::UpdateFunction updateFunction, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT /* step */)
@@ -599,18 +613,23 @@ private:
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
-#endif  
+#endif 
 
+/* link with : "" */
+#include <cmath>
 #include <math.h>
 
-double pow(double dummy0, double dummy1);
-double fabs(double dummy0);
-double log10(double dummy0);
-double sin(double dummy0);
-double cos(double dummy0);
+double mydsp_faustpower2_f(double value) {
+	return (value * value);
+	
+}
 
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
+#endif
+#ifdef __APPLE__ 
+#define exp10f __exp10f
+#define exp10 __exp10
 #endif
 
 class mydsp : public dsp {
@@ -622,15 +641,16 @@ class mydsp : public dsp {
 	double fConst1;
 	FAUSTFLOAT fCheckbox0;
 	FAUSTFLOAT fEntry0;
-	FAUSTFLOAT fVslider0;
-	FAUSTFLOAT fVslider1;
+	FAUSTFLOAT fHslider0;
+	FAUSTFLOAT fHslider1;
 	double fRec1[2];
 	double fRec0[2];
 	FAUSTFLOAT fVbargraph0;
-	FAUSTFLOAT fVslider2;
-	FAUSTFLOAT fVslider3;
 	double fConst2;
+	FAUSTFLOAT fHslider2;
+	FAUSTFLOAT fHslider3;
 	double fConst3;
+	double fConst4;
 	double fRec5[2];
 	double fRec4[2];
 	double fRec3[2];
@@ -648,31 +668,31 @@ class mydsp : public dsp {
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
 		m->declare("copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/gui.lib/author", "Pierre Lecomte");
-		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/gui.lib/license", "GPL");
-		m->declare("lib/gui.lib/name", "GUI Library");
-		m->declare("lib/gui.lib/version", "1.0");
-		m->declare("lib/nfc.lib/author", "Pierre Lecomte");
-		m->declare("lib/nfc.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/nfc.lib/license", "GPL");
-		m->declare("lib/nfc.lib/name", "NF And NFC Filters Library");
-		m->declare("lib/nfc.lib/version", "1.0");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/ymn.lib/license", "GPL");
-		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
-		m->declare("lib/ymn.lib/version", "1.0");
+		m->declare("gui.lib/author", "Pierre Lecomte");
+		m->declare("gui.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("gui.lib/license", "GPL");
+		m->declare("gui.lib/name", "GUI Library");
+		m->declare("gui.lib/version", "1.0");
 		m->declare("license", "GPL");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
+		m->declare("maths.lib/version", "2.1");
 		m->declare("name", "HOAEncoder1");
+		m->declare("nfc.lib/author", "Pierre Lecomte");
+		m->declare("nfc.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("nfc.lib/license", "GPL");
+		m->declare("nfc.lib/name", "NF And NFC Filters Library");
+		m->declare("nfc.lib/version", "1.0");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
 		m->declare("version", "1.0");
+		m->declare("ymn.lib/author", "Pierre Lecomte");
+		m->declare("ymn.lib/copyright", "(c) Pierre Lecomte 2017");
+		m->declare("ymn.lib/license", "GPL");
+		m->declare("ymn.lib/name", "Spherical Harmonics library");
+		m->declare("ymn.lib/version", "2.0");
 	}
 
 	virtual int getNumInputs() {
@@ -734,20 +754,21 @@ class mydsp : public dsp {
 	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		fConst0 = min(192000.0, max(1000.0, double(fSamplingFreq)));
+		fConst0 = min(192000.0, max(1.0, double(fSamplingFreq)));
 		fConst1 = (80.0 / fConst0);
-		fConst2 = (340.0 / fConst0);
-		fConst3 = (170.0 / fConst0);
+		fConst2 = (1.5957691216057308 * (sqrt((3.0 * (double(tgamma(1.0)) / double(tgamma(3.0))))) * double(tgamma(1.5))));
+		fConst3 = (340.0 / fConst0);
+		fConst4 = (170.0 / fConst0);
 		
 	}
 	
 	virtual void instanceResetUserInterface() {
 		fCheckbox0 = FAUSTFLOAT(0.0);
 		fEntry0 = FAUSTFLOAT(1.0700000000000001);
-		fVslider0 = FAUSTFLOAT(2.0);
-		fVslider1 = FAUSTFLOAT(0.0);
-		fVslider2 = FAUSTFLOAT(0.0);
-		fVslider3 = FAUSTFLOAT(0.0);
+		fHslider0 = FAUSTFLOAT(2.0);
+		fHslider1 = FAUSTFLOAT(0.0);
+		fHslider2 = FAUSTFLOAT(0.0);
+		fHslider3 = FAUSTFLOAT(0.0);
 		
 	}
 	
@@ -800,51 +821,59 @@ class mydsp : public dsp {
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
-	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
+		
 	}
 	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openHorizontalBox("HOAEncoder1");
-		ui_interface->declare(0, "0", "");
-		ui_interface->openHorizontalBox("Parameters");
-		ui_interface->declare(&fVslider1, "1", "");
-		ui_interface->declare(&fVslider1, "unit", "dB");
-		ui_interface->addVerticalSlider("Gain", &fVslider1, 0.0, -20.0, 20.0, 0.10000000000000001);
-		ui_interface->declare(0, "2", "");
-		ui_interface->openVerticalBox("Spherical Wave Encoding");
+		ui_interface->openVerticalBox("Parameters");
+		ui_interface->openHorizontalBox("Source  0");
+		ui_interface->declare(&fHslider1, "0+1", "");
+		ui_interface->declare(&fHslider1, "osc", "/gain_0 -20 20");
+		ui_interface->declare(&fHslider1, "style", "knob");
+		ui_interface->addHorizontalSlider("Gain  0", &fHslider1, 0.0, -20.0, 20.0, 0.10000000000000001);
+		ui_interface->declare(&fHslider0, "0+2", "");
+		ui_interface->declare(&fHslider0, "osc", "/radius_0 0.5 50");
+		ui_interface->declare(&fHslider0, "style", "knob");
+		ui_interface->addHorizontalSlider("Radius  0", &fHslider0, 2.0, 0.5, 50.0, 0.01);
+		ui_interface->declare(&fHslider2, "0+3", "");
+		ui_interface->declare(&fHslider2, "osc", "/azimuth_0 0 360");
+		ui_interface->declare(&fHslider2, "style", "knob");
+		ui_interface->addHorizontalSlider("Azimuth  0", &fHslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
+		ui_interface->declare(&fHslider3, "0+4", "");
+		ui_interface->declare(&fHslider3, "osc", "/elevation_0 -90 90");
+		ui_interface->declare(&fHslider3, "style", "knob");
+		ui_interface->addHorizontalSlider("Elevation  0", &fHslider3, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
+		ui_interface->declare(0, "0+5", "");
+		ui_interface->openHorizontalBox("Spherical Wave");
 		ui_interface->addCheckButton("Yes", &fCheckbox0);
 		ui_interface->closeBox();
-		ui_interface->declare(&fVslider2, "3", "");
-		ui_interface->addVerticalSlider("Source Azimuth", &fVslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
-		ui_interface->declare(&fVslider3, "4", "");
-		ui_interface->addVerticalSlider("Source Elevation", &fVslider3, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
-		ui_interface->declare(&fVslider0, "5", "");
-		ui_interface->addVerticalSlider("Source Radius", &fVslider0, 2.0, 0.5, 10.0, 0.01);
-		ui_interface->declare(&fEntry0, "6", "");
-		ui_interface->addNumEntry("Speakers Radius", &fEntry0, 1.0700000000000001, 0.5, 10.0, 0.01);
+		ui_interface->declare(&fEntry0, "~", "");
+		ui_interface->addNumEntry("Speaker Radius  0", &fEntry0, 1.0700000000000001, 0.5, 10.0, 0.01);
 		ui_interface->closeBox();
-		ui_interface->declare(0, "7", "");
-		ui_interface->openVerticalBox("Outputs");
+		ui_interface->closeBox();
+		ui_interface->declare(0, "~", "");
+		ui_interface->openHorizontalBox("Outputs");
 		ui_interface->openHorizontalBox("0");
 		ui_interface->openVerticalBox("0");
 		ui_interface->declare(&fVbargraph0, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x27e0c80", &fVbargraph0, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x7ff8dc1b5250", &fVbargraph0, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->openHorizontalBox("1");
 		ui_interface->openVerticalBox("1");
 		ui_interface->declare(&fVbargraph1, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x27f2590", &fVbargraph1, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x7ff8dc1c6e30", &fVbargraph1, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("2");
 		ui_interface->declare(&fVbargraph2, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x27f8350", &fVbargraph2, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x7ff8dc1cbb50", &fVbargraph2, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("3");
 		ui_interface->declare(&fVbargraph3, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x27fe2e0", &fVbargraph3, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x7ff8dc1d0c60", &fVbargraph3, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->closeBox();
@@ -859,42 +888,43 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
 		double fSlow0 = double(fCheckbox0);
-		double fSlow1 = double(fEntry0);
-		double fSlow2 = double(fVslider0);
-		double fSlow3 = (1.0 - fSlow0);
-		double fSlow4 = (((fSlow0 * fSlow1) / fSlow2) + fSlow3);
-		double fSlow5 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider1))));
-		double fSlow6 = double(fVslider2);
-		double fSlow7 = double(fVslider3);
-		double fSlow8 = cos(fSlow7);
-		double fSlow9 = (1.7320508075688772 * (sin(fSlow6) * fSlow8));
-		double fSlow10 = ((fConst3 / fSlow2) + 1.0);
-		double fSlow11 = (fConst2 / (fSlow10 * fSlow2));
-		double fSlow12 = (1.0 / ((fConst3 / fSlow1) + 1.0));
-		double fSlow13 = (((fSlow10 * fSlow0) * fSlow1) / fSlow2);
-		double fSlow14 = (fConst2 / fSlow1);
-		double fSlow15 = (1.7320508075688772 * sin(fSlow7));
-		double fSlow16 = (1.7320508075688772 * (cos(fSlow6) * fSlow8));
+		double fSlow1 = (1.0 - fSlow0);
+		double fSlow2 = double(fEntry0);
+		double fSlow3 = (fSlow0 * fSlow2);
+		double fSlow4 = double(fHslider0);
+		double fSlow5 = (fSlow1 + (fSlow3 / fSlow4));
+		double fSlow6 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider1))));
+		double fSlow7 = double(fHslider2);
+		double fSlow8 = sin(double(fHslider3));
+		double fSlow9 = pow((1.0 - mydsp_faustpower2_f(fSlow8)), 0.5);
+		double fSlow10 = (fConst2 * (sin(fSlow7) * fSlow9));
+		double fSlow11 = ((fConst4 / fSlow4) + 1.0);
+		double fSlow12 = (fConst3 / (fSlow4 * fSlow11));
+		double fSlow13 = (1.0 / ((fConst4 / fSlow2) + 1.0));
+		double fSlow14 = ((fSlow3 * fSlow11) / fSlow4);
+		double fSlow15 = (fConst3 / fSlow2);
+		double fSlow16 = (1.7320508075688772 * fSlow8);
+		double fSlow17 = (fConst2 * (cos(fSlow7) * fSlow9));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			fRec1[0] = (fSlow5 + (0.999 * fRec1[1]));
-			double fTemp0 = (fRec1[0] * double(input0[i]));
-			double fTemp1 = (fSlow4 * fTemp0);
+			fRec1[0] = (fSlow6 + (0.999 * fRec1[1]));
+			double fTemp0 = (double(input0[i]) * fRec1[0]);
+			double fTemp1 = (fSlow5 * fTemp0);
 			fRec0[0] = max((fRec0[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp1))))));
 			fVbargraph0 = FAUSTFLOAT(fRec0[0]);
 			output0[i] = FAUSTFLOAT(fTemp1);
 			fRec5[0] = (fRec5[1] + fRec4[1]);
-			fRec4[0] = (fSlow12 * ((fSlow13 * fTemp0) - (fSlow14 * fRec5[0])));
+			fRec4[0] = (fSlow13 * ((fSlow14 * fTemp0) - (fSlow15 * fRec5[0])));
 			fRec3[0] = (fRec4[0] + fRec3[1]);
-			double fTemp2 = ((fSlow11 * (fRec3[0] - fRec4[0])) + (fRec4[0] + (fSlow3 * fTemp0)));
-			double fTemp3 = (fSlow9 * fTemp2);
+			double fTemp2 = ((fSlow12 * (fRec3[0] - fRec4[0])) + (fRec4[0] + (fSlow1 * fTemp0)));
+			double fTemp3 = (fSlow10 * fTemp2);
 			fRec2[0] = max((fRec2[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp3))))));
 			fVbargraph1 = FAUSTFLOAT(fRec2[0]);
 			output1[i] = FAUSTFLOAT(fTemp3);
-			double fTemp4 = (fSlow15 * fTemp2);
+			double fTemp4 = (fSlow16 * fTemp2);
 			fRec6[0] = max((fRec6[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp4))))));
 			fVbargraph2 = FAUSTFLOAT(fRec6[0]);
 			output2[i] = FAUSTFLOAT(fTemp4);
-			double fTemp5 = (fSlow16 * fTemp2);
+			double fTemp5 = (fSlow17 * fTemp2);
 			fRec7[0] = max((fRec7[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp5))))));
 			fVbargraph3 = FAUSTFLOAT(fRec7[0]);
 			output3[i] = FAUSTFLOAT(fTemp5);
@@ -913,7 +943,6 @@ class mydsp : public dsp {
 
 	
 };
-
 
 //----------------------------------------------------------------------------
 // SuperCollider/Faust interface
@@ -1242,6 +1271,12 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
     Print("Faust: %s numControls=%d\n", name.c_str(), g_numControls);
 #endif // NDEBUG
 }
+
+#ifdef SUPERNOVA 
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_supernova; }
+#else
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_scsynth; }
+#endif
 
 // EOF
 
