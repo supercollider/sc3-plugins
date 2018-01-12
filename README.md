@@ -61,7 +61,7 @@ Copy the `SC3plugins` folder to you Extensions folder (you find out which one th
 
 WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
 
-WARNING: supernova on OSX, supernova searches for plugins specifically in Extension/plugins and not like scsynth in Extension/anyOddFolder. If supernova on OSX cannot find your plugins make sure they are in the correct place. (patch for supernova server submitted for 3.9).
+**Note:** supernova on OSX, supernova searches for plugins specifically in Extension/plugins and not like scsynth in Extension/anyOddFolder. If supernova on OSX cannot find your plugins make sure they are in the correct place. (patch for supernova server submitted for 3.9).
 
 ### Cmake Options
 
