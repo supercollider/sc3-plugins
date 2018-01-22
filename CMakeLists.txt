@@ -4,7 +4,7 @@ project (sc3-plugins)
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
   message(FATAL_ERROR "The nova-simd submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of sc3-plugins repository")
- endif()
+endif()
 
 if (NOT SYSTEM_STK)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk/include/Stk.h)
