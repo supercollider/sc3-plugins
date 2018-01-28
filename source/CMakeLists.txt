@@ -87,7 +87,7 @@ endif()
 # This is necessary since Faust generated CPP sources can have deep bracket nesting.
 # Without setting -fbracket-depth to an appropriate level, cmake on OSX resulted in error.
 # Seems not to be needed under Linux, however -fbracket-depth throws an error in the MSYS build.
-if(NOT WIN32)
+if(APPLE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=2048")
 endif()
 
