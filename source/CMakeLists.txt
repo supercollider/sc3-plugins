@@ -79,14 +79,16 @@ endmacro()
 
 
 # This is to be able to switch off the debug messages coming from the Faust generated CPP sources
-# by setting to release mode -DCMAKE_BUILD_TYPE=Release .
+# when configuring the release mode.
+# Without this line we need to set -DCMAKE_BUILD_TYPE=Release
+# cmake -DSC_PATH=/your/path/to/SuperCollider/ -DCMAKE_BUILD_TYPE=Release ..
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DNDEBUG)
 endif()
 
+
 # This is necessary since Faust generated CPP sources can have deep bracket nesting.
-# Without setting -fbracket-depth to an appropriate level, cmake on OSX resulted in error.
-# Seems not to be needed under Linux, however -fbracket-depth throws an error in the MSYS build.
+# Without setting -fbracket-depth to an appropriate level, clang will exit with error.
 if(CMAKE_COMPILER_IS_CLANG)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=2048")
 endif()

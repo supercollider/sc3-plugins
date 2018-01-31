@@ -49,7 +49,6 @@ sc3-plugins/$ mkdir build && cd build
 sc3-plugins/build/$ cmake -DSC_PATH=/path/to/sc3source/ ..
 ```
 If no `SC_PATH` is provided the build system assumes the SuperCollider include files in `/usr/include/SuperCollider/`.
-Faust generated CPP sources for Ugens contain debug messages at server start and Synth launches. Set `-DCMAKE_BUILD_TYPE=Release` (see below) to suppress them.  
 
 ```shell
 sc3-plugins/build/$ make
@@ -61,7 +60,7 @@ Copy the `SC3plugins` folder to you Extensions folder (you find out which one th
 
 WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
 
-**Note:** supernova on OSX, supernova searches for plugins specifically in Extension/plugins and not like scsynth in Extension/anyOddFolder. If supernova on OSX cannot find your plugins make sure they are in the correct place. (patch for supernova server submitted for 3.9).
+**Note:** for SuperCollider <=3.9.0 supernova on MACOS and Windows searches for plugins in Extension/plugins and not like scsynth in the Extension folder. If supernova cannot find the SC3plugins make sure they are in the correct place (i.e. Extension/plugins). 
 
 ### Cmake Options
 
@@ -79,8 +78,6 @@ WARNING: on OSX, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to
     * `sc3-plugins/build/$ cmake -DSUPERNOVA=ON ..`
 + Print all cmake options
     * `sc3-plugins/build/$ cmake -L ..`
-+ Suppress debug output on server (typically from Faust generated CPP code)
-    * `-DCMAKE_BUILD_TYPE=Release ..`
 
 ### Starting over
 
