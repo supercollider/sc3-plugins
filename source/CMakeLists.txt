@@ -78,7 +78,6 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 endmacro()
 
 
-
 # This is necessary since Faust generated CPP sources can have deep bracket nesting.
 # Without setting -fbracket-depth to an appropriate level, clang will exit with error.
 if(CMAKE_COMPILER_IS_CLANG)
