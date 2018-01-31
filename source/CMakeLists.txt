@@ -78,14 +78,6 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 endmacro()
 
 
-# This is to be able to switch off the debug messages coming from the Faust generated CPP sources
-# when configuring the release mode.
-# Without this line we need to set -DCMAKE_BUILD_TYPE=Release
-# cmake -DSC_PATH=/your/path/to/SuperCollider/ -DCMAKE_BUILD_TYPE=Release ..
-if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    add_definitions(-DNDEBUG)
-endif()
-
 
 # This is necessary since Faust generated CPP sources can have deep bracket nesting.
 # Without setting -fbracket-depth to an appropriate level, clang will exit with error.
