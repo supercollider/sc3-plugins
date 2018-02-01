@@ -335,7 +335,7 @@ endif()
 
 # NovaDiskIO
 if (NOVA_DISK_IO)
-  add_subdirectory(NovaDiskIO)
+    add_subdirectory(NovaDiskIO)
 endif()
 
 #--------
