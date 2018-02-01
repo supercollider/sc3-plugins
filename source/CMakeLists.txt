@@ -133,7 +133,7 @@ endif()
 
 #HOAUGens
 if (CMAKE_COMPILER_IS_CLANG)
-    set_target_properties(HOAUGens PROPERTIES COMPILE_FLAGS "-fbracket-depth=2048")
+    set_property(TARGET HOAUGens APPEND PROPERTY COMPILE_FLAGS "-fbracket-depth=2048")
 endif()
 
 set(plugins "")
