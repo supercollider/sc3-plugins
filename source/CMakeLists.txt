@@ -77,13 +77,6 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 
 endmacro()
 
-
-# This is necessary since Faust generated CPP sources can have deep bracket nesting.
-# Without setting -fbracket-depth to an appropriate level, clang will exit with error.
-if(CMAKE_COMPILER_IS_CLANG)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fbracket-depth=2048")
-endif()
-
 #-----------------------
 # plugins without extras
 #-----------------------
@@ -136,6 +129,11 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} M
   set(BHOBFILT_CPP "${CMAKE_CURRENT_SOURCE_DIR}/BhobUGens/BhobFilt.cpp")
   message(STATUS "Skipping vectorization on BhobFilt.cpp because of Clang bug. (${BHOBFILT_CPP})")
   SET_SOURCE_FILES_PROPERTIES(${BHOBFILT_CPP} PROPERTIES COMPILE_FLAGS "-fno-slp-vectorize")
+endif()
+
+#HOAUGens
+if (CMAKE_COMPILER_IS_CLANG)
+    set_target_properties(HOAUGens PROPERTIES COMPILE_FLAGS "-fbracket-depth=2048")
 endif()
 
 set(plugins "")
