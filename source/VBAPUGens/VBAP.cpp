@@ -528,7 +528,7 @@ static inline void VBAP_calc_gain_factors(VBAP * unit, float azimuth, float elev
 		unit->x_spread = spread;
 
 		if(unit->x_lsset_available ==1){
-			vbap(g,ls, unit);
+			vbap(g, ls, unit);
 			for(i=0;i<unit->x_ls_amount;i++)
 				final_gs[i]=0.0;
 			for(i=0;i<unit->x_dimension;i++){
@@ -537,9 +537,6 @@ static inline void VBAP_calc_gain_factors(VBAP * unit, float azimuth, float elev
 			if(unit->x_spread != 0){
 				spread_it(unit,final_gs);
 			}
-//			for(i=0; i < unit->mNumOutputs; i++){
-//				printf("chan %i: %f\n", i, final_gs[i] );
-//			}
 		}
 	}
 }
@@ -707,31 +704,23 @@ static void VBAP_Ctor(VBAP* unit)
 
 		setpointer++;
 	}
-	//printf("vbap: Loudspeaker setup configured!\n");
 
-/*#ifdef NOVA_SIMD
-	if (!(BUFLENGTH & 15))
-		SETCALC(VBAP_next_simd);
-	else
-#endif*/
+	if (unit->x_lsset_available == 1) {
+		unit->x_spread_base[0] = 0.0;
+		unit->x_spread_base[1] = 1.0;
+		unit->x_spread_base[2] = 0.0;
+		VBAP_next(unit, 1); // calculate initial gain factors && compute initial sample
+
 		SETCALC(VBAP_next);
-
-    if (unit->x_lsset_available == 1) {
-        unit->x_spread_base[0] = 0.0;
-        unit->x_spread_base[1] = 1.0;
-        unit->x_spread_base[2] = 0.0;
-        VBAP_next(unit, 1); // calculate initial gain factors && compute initial sample
-    } else {
-        ZOUT0(0) = 0;
-		// if the ls data was bad, just set every gain to 0 and bail
-		for(i=0;i<unit->x_ls_amount;i++)
-			unit->final_gs[i]=0.f;
+	} else {
+		// If the loudspeaker data was bad, just produce zeros.
+		ClearUnitOutputs(unit, 1);
+		SETCALC(ClearUnitOutputs);
     }
 }
 
 
-static void VBAP_Dtor(VBAP* unit)
-{
+static void VBAP_Dtor(VBAP* unit) {
 	RTFree(unit->mWorld, unit->final_gs);
 }
 
