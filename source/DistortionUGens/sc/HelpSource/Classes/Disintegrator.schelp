@@ -7,6 +7,9 @@ categories:: UGens>Filters
 Description::
 Amplifies random half-cycles of it's input by multiplier. Set multiplier to 0 and vary probability for a weird fade effect, or set multiplier to -1 and probability to 0.5 to turn pitched sounds into noise.
 
+note::
+Port of a similarly-named ladspa plugin, description at link::http://www.ladspa.org/cmt/plugins.html::. Plugin ID 1846.
+::
 
 classmethods::
 

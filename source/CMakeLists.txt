@@ -151,7 +151,7 @@ endif()
 GET_GCC_VERSION(gcc_version)
 
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|.*BSD|DragonFly")
     set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
     if (QUARKS)
         set(INSTALL_DESTINATION_LADSPALIST
@@ -240,9 +240,9 @@ BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membran
 
 # LadspaUGen
 if(NOT WIN32)
-    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "dl" "LadspaUGen")
+    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "${CMAKE_DL_LIBS}" "LadspaUGen")
     add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
-    target_link_libraries(ladspalist dl)
+    target_link_libraries(ladspalist "${CMAKE_DL_LIBS}")
 endif()
 
 # OteyPianoUGens
@@ -338,9 +338,11 @@ else()
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
+# NovaDiskIO
 if (NOVA_DISK_IO)
-  add_subdirectory(NovaDiskIO)
+    add_subdirectory(NovaDiskIO)
 endif()
+
 #--------
 # INSTALL
 #--------

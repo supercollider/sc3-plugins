@@ -1,5 +1,5 @@
 class:: SmoothDecimator
-summary:: port of some ladspa plugins
+summary:: Smooth samplerate and bitrate reduction
 related:: Classes/CrossoverDistortion, Classes/Decimator, Classes/SineShaper, Classes/Disintegrator
 categories:: UGens>Filters
 

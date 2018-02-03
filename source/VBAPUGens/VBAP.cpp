@@ -595,7 +595,10 @@ static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 				nova::times_vec_simd(out, in, nextchanamp, inNumSamples);
 		} else {
 			float chanampslope = CALCSLOPE(nextchanamp, chanamp);
-			nova::times_vec_simd(out, in, nextchanamp, inNumSamples);
+			for (int j = 0; j < inNumSamples; j++) {
+				out[j] = in[j] * chanamp;
+				chanamp += chanampslope;
+			}
 			unit->m_chanamp[i] = nextchanamp;
 		}
 	}
