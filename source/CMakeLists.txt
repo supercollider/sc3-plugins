@@ -165,6 +165,13 @@ else()
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
 
+#HOAUGens
+if (CMAKE_COMPILER_IS_CLANG)
+    file(GLOB HOAUGensSources HOAUGens/*cpp)
+    foreach(HOAUGensSourceFile ${HOAUGensSources})
+	set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=2048")
+    endforeach(HOAUGensSourceFile)
+endif()
 
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
@@ -336,11 +343,6 @@ endif()
 # NovaDiskIO
 if (NOVA_DISK_IO)
     add_subdirectory(NovaDiskIO)
-endif()
-
-#HOAUGens
-if (CMAKE_COMPILER_IS_CLANG)
-    set_property(TARGET HOAUGens APPEND PROPERTY COMPILE_FLAGS "-fbracket-depth=2048")
 endif()
 
 #--------
