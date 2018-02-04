@@ -131,11 +131,6 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} M
   SET_SOURCE_FILES_PROPERTIES(${BHOBFILT_CPP} PROPERTIES COMPILE_FLAGS "-fno-slp-vectorize")
 endif()
 
-#HOAUGens
-if (CMAKE_COMPILER_IS_CLANG)
-    set_property(TARGET HOAUGens APPEND PROPERTY COMPILE_FLAGS "-fbracket-depth=2048")
-endif()
-
 set(plugins "")
 set(supernova_plugins "")
 
@@ -341,6 +336,11 @@ endif()
 # NovaDiskIO
 if (NOVA_DISK_IO)
     add_subdirectory(NovaDiskIO)
+endif()
+
+#HOAUGens
+if (CMAKE_COMPILER_IS_CLANG)
+    set_property(TARGET HOAUGens APPEND PROPERTY COMPILE_FLAGS "-fbracket-depth=2048")
 endif()
 
 #--------
