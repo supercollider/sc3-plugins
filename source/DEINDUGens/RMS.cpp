@@ -1,6 +1,6 @@
 //-----------------------------------------------------
 // name: "RMS"
-// version: "1.0"
+// version: "1.1"
 // author: "Till Bovermann"
 // license: "GPL2+"
 // copyright: "(c) Till Bovermann 2016, based on LPF1 as found in BerlachUGens"
@@ -41,14 +41,18 @@ void
 RMS_Ctor (RMS *unit)
 {
   unit->m_y1 = 0.f;
+  unit->last_lpf = 0;
+  unit->last_freq = ZIN0(1);
+  unit->p = (1.f-2.f*tanf((unit->last_freq/SAMPLERATE)));
   if (INRATE(1) == calc_FullRate) {
 	  SETCALC(RMS_next_a);
   } else {
-	  unit->last_freq = ZIN0(1);
-	  unit->last_lpf = 0;
+    unit->last_freq = ZIN0(1);
 	  unit->p = (1.f-2.f*tanf((unit->last_freq/SAMPLERATE)));
 	  SETCALC(RMS_next);
   }
+
+  RMS_next(unit, 1);
 }
 
 void

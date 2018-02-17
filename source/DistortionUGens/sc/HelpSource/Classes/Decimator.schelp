@@ -1,5 +1,5 @@
 class:: Decimator
-summary:: port of some ladspa plugins
+summary:: Samplerate and bitrate reduction
 related:: Classes/CrossoverDistortion, Classes/SmoothDecimator, Classes/SineShaper, Classes/Disintegrator
 categories:: UGens>Filters
 
@@ -7,6 +7,9 @@ categories:: UGens>Filters
 Description::
 Decimates (reduces the effective sample rate), and reduces the bit depth of the input signal, allows non integer values for smooth transitions between clean and lofi signals.
 
+note::
+Port of a similarly-named ladspa plugin link::http://plugin.org.uk/ladspa-swh/docs/ladspa-swh.html#tth_sEc2.26::. Plugin ID 1202.
+::
 
 classmethods::
 

@@ -169,7 +169,11 @@ endif()
 if (CMAKE_COMPILER_IS_CLANG)
     file(GLOB HOAUGensSources HOAUGens/*cpp)
     foreach(HOAUGensSourceFile ${HOAUGensSources})
+<<<<<<< HEAD
 	set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
+=======
+	set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=2048")
+>>>>>>> 53408c5cbb3a5ddb3d38f069794be2dca0de3261
     endforeach(HOAUGensSourceFile)
 endif()
 

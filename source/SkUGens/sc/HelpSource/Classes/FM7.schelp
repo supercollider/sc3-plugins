@@ -69,6 +69,8 @@ argument::algo
 
 The id of the algorithms [0..31]
 
+the algo argument chooses the algorithm when the ugen is instantiated. It cannot be modulated.
+
 argument::ctlMatrix
 
 See above.
