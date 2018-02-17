@@ -1,4 +1,4 @@
-FaustHOARotator3 : MultiOutUGen
+HOARotator3 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, pitch(0.0), roll(0.0), yaw(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, pitch, roll, yaw)
@@ -25,6 +25,9 @@ FaustHOARotator3 : MultiOutUGen
       ^this.initOutputs(16, rate)
   }
 
-  name { ^"FaustHOARotator3" }
+  name { ^"HOARotator3" }
+
+
+  info { ^"Generated with Faust" }
 }
 

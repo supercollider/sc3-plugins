@@ -1,4 +1,4 @@
-FaustHOAPanLebedev501 : MultiOutUGen
+HOAPanLebedev501 : MultiOutUGen
 {
   *ar { | in1, gain_0(0.0), radius_0(2.0), azimuth_0(0.0), elevation_0(0.0), yes(0.0), checkbox_0(0.0), checkbox_1(0.0), speaker_radius(1.07) |
       ^this.multiNew('audio', in1, gain_0, radius_0, azimuth_0, elevation_0, yes, checkbox_0, checkbox_1, speaker_radius)
@@ -25,6 +25,9 @@ FaustHOAPanLebedev501 : MultiOutUGen
       ^this.initOutputs(50, rate)
   }
 
-  name { ^"FaustHOAPanLebedev501" }
+  name { ^"HOAPanLebedev501" }
+
+
+  info { ^"Generated with Faust" }
 }
 

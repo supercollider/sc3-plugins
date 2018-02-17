@@ -1,4 +1,4 @@
-FaustHOABeamHCardio2HOA3 : MultiOutUGen
+HOABeamHCardio2HOA3 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, azimuth(0.0), elevation(0.0), order(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, azimuth, elevation, order)
@@ -25,6 +25,9 @@ FaustHOABeamHCardio2HOA3 : MultiOutUGen
       ^this.initOutputs(36, rate)
   }
 
-  name { ^"FaustHOABeamHCardio2HOA3" }
+  name { ^"HOABeamHCardio2HOA3" }
+
+
+  info { ^"Generated with Faust" }
 }
 

@@ -1,4 +1,4 @@
-FaustHOAMirror2 : MultiOutUGen
+HOAMirror2 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, front_back(0.0), left_right(0.0), up_down(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, front_back, left_right, up_down)
@@ -25,6 +25,9 @@ FaustHOAMirror2 : MultiOutUGen
       ^this.initOutputs(9, rate)
   }
 
-  name { ^"FaustHOAMirror2" }
+  name { ^"HOAMirror2" }
+
+
+  info { ^"Generated with Faust" }
 }
 

@@ -4,7 +4,8 @@ copyright: "(c) Pierre Lecomte 2014"
 license: "GPL"
 name: "HOAPanLebedev262"
 version: "1.0"
-Code generated with Faust 2.2.0 (http://faust.grame.fr)
+Code generated with Faust 2.5.21 (https://faust.grame.fr)
+Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -30,9 +31,9 @@ Code generated with Faust 2.2.0 (http://faust.grame.fr)
 // 02111-1307 USA
 //-------------------------------------------------------------------
 
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+// The prefix is set to "Faust" in the faust2supercollider script, otherwise set empty
 #if !defined(SC_FAUST_PREFIX)
-#define SC_FAUST_PREFIX "Faust"
+#define SC_FAUST_PREFIX ""
 #endif
 
 #include <map>
@@ -116,21 +117,24 @@ class dsp {
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods :
-         * - static class 'classInit' : static table initialisation
-         * - 'instanceInit' : constants and instance table initialisation
+        /**
+         * Global init, calls the following methods:
+         * - static class 'classInit': static tables initialization
+         * - 'instanceInit': constants and instance state initialization
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void init(int samplingRate) = 0;
 
-        /** Init instance state
+        /**
+         * Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
 
-        /** Init instance constant state
+        /**
+         * Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
@@ -150,16 +154,16 @@ class dsp {
         virtual dsp* clone() = 0;
     
         /**
-         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value metadata).
+         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.
          *
          * @param m - the Meta* meta user
          */
         virtual void metadata(Meta* m) = 0;
     
         /**
-         * DSP instance computation, to be called with sucessive in/out audio buffers.
+         * DSP instance computation, to be called with successive in/out audio buffers.
          *
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -170,7 +174,7 @@ class dsp {
          * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -204,7 +208,7 @@ class decorator_dsp : public dsp {
         virtual void instanceResetUserInterface() { fDSP->instanceResetUserInterface(); }
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
-        virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        virtual void metadata(Meta* m) { fDSP->metadata(m); }
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
@@ -227,6 +231,7 @@ class dsp_factory {
         virtual std::string getName() = 0;
         virtual std::string getSHAKey() = 0;
         virtual std::string getDSPCode() = 0;
+    
         virtual dsp* createDSPInstance() = 0;
     
         virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
@@ -274,8 +279,8 @@ class dsp_factory {
  architecture section is not modified.
  ************************************************************************/
 
-#ifndef FAUST_UI_H
-#define FAUST_UI_H
+#ifndef __UI_H__
+#define __UI_H__
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
@@ -287,6 +292,8 @@ class dsp_factory {
  * This abstract class contains only the method that the Faust compiler can
  * generate to describe a DSP user interface.
  ******************************************************************************/
+
+struct Soundfile;
 
 class UI
 {
@@ -316,6 +323,10 @@ class UI
 
         virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
         virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) = 0;
+    
+        // -- soundfiles
+    
+        virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) = 0;
 
         // -- metadata declarations
 
@@ -472,7 +483,7 @@ public:
     ControlCounter()
         : mNumControlInputs(0),
           mNumControlOutputs(0)
-    { }
+    {}
 
     size_t getNumControls() const { return getNumControlInputs(); }
     size_t getNumControlInputs() const { return mNumControlInputs; }
@@ -501,6 +512,8 @@ public:
     { addControlOutput(); }
     virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
     { addControlOutput(); }
+    
+    virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
 protected:
     void addControlInput() { mNumControlInputs++; }
@@ -568,8 +581,9 @@ public:
     { addBoundedControl(zone, min, max, step); }
 
     // Passive widgets
-    virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) { }
-    virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) { }
+    virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+    virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+    virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
 private:
     void addControl(Control::UpdateFunction updateFunction, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT /* step */)
@@ -599,22 +613,22 @@ private:
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
-#endif  
+#endif 
 
+#include <cmath>
 #include <math.h>
 
-double pow(double dummy0, double dummy1);
-double cos(double dummy0);
-double sin(double dummy0);
 double mydsp_faustpower2_f(double value) {
 	return (value * value);
 	
 }
-double fabs(double dummy0);
-double log10(double dummy0);
 
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
+#endif
+#ifdef __APPLE__ 
+#define exp10f __exp10f
+#define exp10 __exp10
 #endif
 
 class mydsp : public dsp {
@@ -630,9 +644,8 @@ class mydsp : public dsp {
 	FAUSTFLOAT fCheckbox1;
 	FAUSTFLOAT fHslider1;
 	double fRec1[2];
-	FAUSTFLOAT fHslider2;
-	FAUSTFLOAT fHslider3;
 	FAUSTFLOAT fCheckbox2;
+	FAUSTFLOAT fHslider2;
 	double fConst2;
 	double fConst3;
 	double fRec4[2];
@@ -654,6 +667,7 @@ class mydsp : public dsp {
 	double fRec12[2];
 	double fRec0[2];
 	FAUSTFLOAT fVbargraph0;
+	FAUSTFLOAT fHslider3;
 	double fRec15[2];
 	FAUSTFLOAT fVbargraph1;
 	double fRec16[2];
@@ -712,36 +726,36 @@ class mydsp : public dsp {
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
 		m->declare("copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/gui.lib/author", "Pierre Lecomte");
-		m->declare("lib/gui.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/gui.lib/license", "GPL");
-		m->declare("lib/gui.lib/name", "GUI Library");
-		m->declare("lib/gui.lib/version", "1.0");
-		m->declare("lib/lebedev.lib/author", "Pierre Lecomte");
-		m->declare("lib/lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/lebedev.lib/license", "GPL");
-		m->declare("lib/lebedev.lib/name", "Lebdev grids and weights");
-		m->declare("lib/lebedev.lib/version", "1.0");
-		m->declare("lib/nfc.lib/author", "Pierre Lecomte");
-		m->declare("lib/nfc.lib/copyright", "(c) Pierre Lecomte 2014");
-		m->declare("lib/nfc.lib/license", "GPL");
-		m->declare("lib/nfc.lib/name", "NF And NFC Filters Library");
-		m->declare("lib/nfc.lib/version", "1.0");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/ymn.lib/license", "GPL");
-		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
-		m->declare("lib/ymn.lib/version", "1.0");
+		m->declare("gui.lib/author", "Pierre Lecomte");
+		m->declare("gui.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("gui.lib/license", "GPL");
+		m->declare("gui.lib/name", "GUI Library");
+		m->declare("gui.lib/version", "1.0");
+		m->declare("lebedev.lib/author", "Pierre Lecomte");
+		m->declare("lebedev.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("lebedev.lib/license", "GPL");
+		m->declare("lebedev.lib/name", "Lebdev grids and weights");
+		m->declare("lebedev.lib/version", "1.0");
 		m->declare("license", "GPL");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
+		m->declare("maths.lib/version", "2.1");
 		m->declare("name", "HOAPanLebedev262");
+		m->declare("nfc.lib/author", "Pierre Lecomte");
+		m->declare("nfc.lib/copyright", "(c) Pierre Lecomte 2014");
+		m->declare("nfc.lib/license", "GPL");
+		m->declare("nfc.lib/name", "NF And NFC Filters Library");
+		m->declare("nfc.lib/version", "1.0");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
 		m->declare("version", "1.0");
+		m->declare("ymn.lib/author", "Pierre Lecomte");
+		m->declare("ymn.lib/copyright", "(c) Pierre Lecomte 2017");
+		m->declare("ymn.lib/license", "GPL");
+		m->declare("ymn.lib/name", "Spherical Harmonics library");
+		m->declare("ymn.lib/version", "2.0");
 	}
 
 	virtual int getNumInputs() {
@@ -891,7 +905,7 @@ class mydsp : public dsp {
 	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		fConst0 = min(192000.0, max(1000.0, double(fSamplingFreq)));
+		fConst0 = min(192000.0, max(1.0, double(fSamplingFreq)));
 		fConst1 = (80.0 / fConst0);
 		fConst2 = (340.0 / fConst0);
 		fConst3 = (170.0 / fConst0);
@@ -906,10 +920,10 @@ class mydsp : public dsp {
 		fEntry0 = FAUSTFLOAT(1.0700000000000001);
 		fCheckbox1 = FAUSTFLOAT(0.0);
 		fHslider1 = FAUSTFLOAT(0.0);
-		fHslider2 = FAUSTFLOAT(0.0);
-		fHslider3 = FAUSTFLOAT(0.0);
 		fCheckbox2 = FAUSTFLOAT(0.0);
+		fHslider2 = FAUSTFLOAT(0.0);
 		fCheckbox3 = FAUSTFLOAT(0.0);
+		fHslider3 = FAUSTFLOAT(0.0);
 		
 	}
 	
@@ -1094,9 +1108,9 @@ class mydsp : public dsp {
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
-	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
+		
 	}
 	
 	virtual void buildUserInterface(UI* ui_interface) {
@@ -1110,14 +1124,14 @@ class mydsp : public dsp {
 		ui_interface->declare(&fHslider0, "osc", "/radius_0 0.5 50");
 		ui_interface->declare(&fHslider0, "style", "knob");
 		ui_interface->addHorizontalSlider("Radius  0", &fHslider0, 2.0, 0.5, 50.0, 0.01);
-		ui_interface->declare(&fHslider2, "0+3", "");
-		ui_interface->declare(&fHslider2, "osc", "/azimuth_0 0 360");
-		ui_interface->declare(&fHslider2, "style", "knob");
-		ui_interface->addHorizontalSlider("Azimuth  0", &fHslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
-		ui_interface->declare(&fHslider3, "0+4", "");
-		ui_interface->declare(&fHslider3, "osc", "/elevation_0 -90 90");
+		ui_interface->declare(&fHslider3, "0+3", "");
+		ui_interface->declare(&fHslider3, "osc", "/azimuth_0 0 360");
 		ui_interface->declare(&fHslider3, "style", "knob");
-		ui_interface->addHorizontalSlider("Elevation  0", &fHslider3, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
+		ui_interface->addHorizontalSlider("Azimuth  0", &fHslider3, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
+		ui_interface->declare(&fHslider2, "0+4", "");
+		ui_interface->declare(&fHslider2, "osc", "/elevation_0 -90 90");
+		ui_interface->declare(&fHslider2, "style", "knob");
+		ui_interface->addHorizontalSlider("Elevation  0", &fHslider2, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
 		ui_interface->declare(0, "0+5", "");
 		ui_interface->openHorizontalBox("Spherical Wave");
 		ui_interface->addCheckButton("Yes", &fCheckbox0);
@@ -1134,134 +1148,134 @@ class mydsp : public dsp {
 		ui_interface->declare(0, "~", "");
 		ui_interface->openHorizontalBox("Outputs");
 		ui_interface->openVerticalBox("1");
-		ui_interface->declare(&fVbargraph0, "osc", "/output1");
+		ui_interface->declare(&fVbargraph0, "osc", "/output1 -70 6");
 		ui_interface->declare(&fVbargraph0, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x335c110", &fVbargraph0, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3684d60", &fVbargraph0, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("2");
-		ui_interface->declare(&fVbargraph1, "osc", "/output2");
+		ui_interface->declare(&fVbargraph1, "osc", "/output2 -70 6");
 		ui_interface->declare(&fVbargraph1, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3362f90", &fVbargraph1, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x368e4b0", &fVbargraph1, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("3");
-		ui_interface->declare(&fVbargraph2, "osc", "/output3");
+		ui_interface->declare(&fVbargraph2, "osc", "/output3 -70 6");
 		ui_interface->declare(&fVbargraph2, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x336ac10", &fVbargraph2, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3695f20", &fVbargraph2, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("4");
-		ui_interface->declare(&fVbargraph3, "osc", "/output4");
+		ui_interface->declare(&fVbargraph3, "osc", "/output4 -70 6");
 		ui_interface->declare(&fVbargraph3, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3372970", &fVbargraph3, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x369da70", &fVbargraph3, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("5");
-		ui_interface->declare(&fVbargraph4, "osc", "/output5");
+		ui_interface->declare(&fVbargraph4, "osc", "/output5 -70 6");
 		ui_interface->declare(&fVbargraph4, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x337a7b0", &fVbargraph4, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36a56a0", &fVbargraph4, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("6");
-		ui_interface->declare(&fVbargraph5, "osc", "/output6");
+		ui_interface->declare(&fVbargraph5, "osc", "/output6 -70 6");
 		ui_interface->declare(&fVbargraph5, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3381ae0", &fVbargraph5, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36ad170", &fVbargraph5, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("7");
-		ui_interface->declare(&fVbargraph6, "osc", "/output7");
+		ui_interface->declare(&fVbargraph6, "osc", "/output7 -70 6");
 		ui_interface->declare(&fVbargraph6, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3389c40", &fVbargraph6, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36b52d0", &fVbargraph6, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("8");
-		ui_interface->declare(&fVbargraph7, "osc", "/output8");
+		ui_interface->declare(&fVbargraph7, "osc", "/output8 -70 6");
 		ui_interface->declare(&fVbargraph7, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3391520", &fVbargraph7, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36bcd90", &fVbargraph7, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("9");
-		ui_interface->declare(&fVbargraph8, "osc", "/output9");
+		ui_interface->declare(&fVbargraph8, "osc", "/output9 -70 6");
 		ui_interface->declare(&fVbargraph8, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3398ee0", &fVbargraph8, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36c4930", &fVbargraph8, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("10");
-		ui_interface->declare(&fVbargraph9, "osc", "/output10");
+		ui_interface->declare(&fVbargraph9, "osc", "/output10 -70 6");
 		ui_interface->declare(&fVbargraph9, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33a0980", &fVbargraph9, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36cc5b0", &fVbargraph9, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("11");
-		ui_interface->declare(&fVbargraph10, "osc", "/output11");
+		ui_interface->declare(&fVbargraph10, "osc", "/output11 -70 6");
 		ui_interface->declare(&fVbargraph10, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33a8d00", &fVbargraph10, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36d4720", &fVbargraph10, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("12");
-		ui_interface->declare(&fVbargraph11, "osc", "/output12");
+		ui_interface->declare(&fVbargraph11, "osc", "/output12 -70 6");
 		ui_interface->declare(&fVbargraph11, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33b1160", &fVbargraph11, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36dc970", &fVbargraph11, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("13");
-		ui_interface->declare(&fVbargraph12, "osc", "/output13");
+		ui_interface->declare(&fVbargraph12, "osc", "/output13 -70 6");
 		ui_interface->declare(&fVbargraph12, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33b96a0", &fVbargraph12, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36e4ca0", &fVbargraph12, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("14");
-		ui_interface->declare(&fVbargraph13, "osc", "/output14");
+		ui_interface->declare(&fVbargraph13, "osc", "/output14 -70 6");
 		ui_interface->declare(&fVbargraph13, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33c1cc0", &fVbargraph13, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36ed0b0", &fVbargraph13, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("15");
-		ui_interface->declare(&fVbargraph14, "osc", "/output15");
+		ui_interface->declare(&fVbargraph14, "osc", "/output15 -70 6");
 		ui_interface->declare(&fVbargraph14, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33c97d0", &fVbargraph14, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36f4bc0", &fVbargraph14, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("16");
-		ui_interface->declare(&fVbargraph15, "osc", "/output16");
+		ui_interface->declare(&fVbargraph15, "osc", "/output16 -70 6");
 		ui_interface->declare(&fVbargraph15, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33d13c0", &fVbargraph15, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x36fc7b0", &fVbargraph15, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("17");
-		ui_interface->declare(&fVbargraph16, "osc", "/output17");
+		ui_interface->declare(&fVbargraph16, "osc", "/output17 -70 6");
 		ui_interface->declare(&fVbargraph16, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33d9090", &fVbargraph16, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3704480", &fVbargraph16, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("18");
-		ui_interface->declare(&fVbargraph17, "osc", "/output18");
+		ui_interface->declare(&fVbargraph17, "osc", "/output18 -70 6");
 		ui_interface->declare(&fVbargraph17, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33e0e40", &fVbargraph17, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x370c230", &fVbargraph17, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("19");
-		ui_interface->declare(&fVbargraph18, "osc", "/output19");
+		ui_interface->declare(&fVbargraph18, "osc", "/output19 -70 6");
 		ui_interface->declare(&fVbargraph18, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33e9a20", &fVbargraph18, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3714ff0", &fVbargraph18, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("20");
-		ui_interface->declare(&fVbargraph19, "osc", "/output20");
+		ui_interface->declare(&fVbargraph19, "osc", "/output20 -70 6");
 		ui_interface->declare(&fVbargraph19, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33f1d80", &fVbargraph19, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x371d530", &fVbargraph19, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("21");
-		ui_interface->declare(&fVbargraph20, "osc", "/output21");
+		ui_interface->declare(&fVbargraph20, "osc", "/output21 -70 6");
 		ui_interface->declare(&fVbargraph20, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x33fa1c0", &fVbargraph20, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3725b50", &fVbargraph20, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("22");
-		ui_interface->declare(&fVbargraph21, "osc", "/output22");
+		ui_interface->declare(&fVbargraph21, "osc", "/output22 -70 6");
 		ui_interface->declare(&fVbargraph21, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x34026e0", &fVbargraph21, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x372e250", &fVbargraph21, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("23");
-		ui_interface->declare(&fVbargraph22, "osc", "/output23");
+		ui_interface->declare(&fVbargraph22, "osc", "/output23 -70 6");
 		ui_interface->declare(&fVbargraph22, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x340a8f0", &fVbargraph22, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3736460", &fVbargraph22, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("24");
-		ui_interface->declare(&fVbargraph23, "osc", "/output24");
+		ui_interface->declare(&fVbargraph23, "osc", "/output24 -70 6");
 		ui_interface->declare(&fVbargraph23, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3412be0", &fVbargraph23, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x373e750", &fVbargraph23, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("25");
-		ui_interface->declare(&fVbargraph24, "osc", "/output25");
+		ui_interface->declare(&fVbargraph24, "osc", "/output25 -70 6");
 		ui_interface->declare(&fVbargraph24, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x341afb0", &fVbargraph24, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x3746b20", &fVbargraph24, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("26");
-		ui_interface->declare(&fVbargraph25, "osc", "/output26");
+		ui_interface->declare(&fVbargraph25, "osc", "/output26 -70 6");
 		ui_interface->declare(&fVbargraph25, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x3423460", &fVbargraph25, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x374efd0", &fVbargraph25, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->closeBox();
@@ -1302,250 +1316,242 @@ class mydsp : public dsp {
 		double fSlow3 = double(fEntry0);
 		double fSlow4 = ((((fSlow0 / fSlow1) + fSlow2) * fSlow3) * (1.0 - double(fCheckbox1)));
 		double fSlow5 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider1))));
-		double fSlow6 = double(fHslider2);
-		double fSlow7 = cos(fSlow6);
-		double fSlow8 = double(fHslider3);
-		double fSlow9 = cos(fSlow8);
-		double fSlow10 = (fSlow7 * fSlow9);
-		double fSlow11 = (6.123233995736766e-17 * fSlow10);
-		double fSlow12 = sin(fSlow8);
-		double fSlow13 = (fSlow11 + fSlow12);
-		double fSlow14 = (1.0 - double(fCheckbox2));
-		double fSlow15 = (3.0 * (fSlow13 * fSlow14));
-		double fSlow16 = (fConst3 / fSlow1);
-		double fSlow17 = (fSlow16 + 1.0);
-		double fSlow18 = (fConst2 / (fSlow17 * fSlow1));
-		double fSlow19 = (fConst3 / fSlow3);
-		double fSlow20 = (1.0 / (fSlow19 + 1.0));
-		double fSlow21 = (((fSlow17 * fSlow0) * fSlow3) / fSlow1);
-		double fSlow22 = (fConst2 / fSlow3);
-		double fSlow23 = (fSlow2 * fSlow3);
-		double fSlow24 = (1.0 - double(fCheckbox3));
-		double fSlow25 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow13)) + -1.0) * fSlow24));
-		double fSlow26 = mydsp_faustpower2_f(fSlow16);
-		double fSlow27 = (((fConst4 / fSlow1) + (3.0 * fSlow26)) + 1.0);
-		double fSlow28 = (1.0 / fSlow27);
-		double fSlow29 = (12.0 * fSlow26);
-		double fSlow30 = ((fConst5 / fSlow1) + fSlow29);
-		double fSlow31 = mydsp_faustpower2_f(fSlow19);
-		double fSlow32 = (1.0 / (((fConst4 / fSlow3) + (3.0 * fSlow31)) + 1.0));
-		double fSlow33 = (((fSlow27 * fSlow0) * fSlow3) / fSlow1);
-		double fSlow34 = (12.0 * fSlow31);
-		double fSlow35 = (fSlow34 + (fConst5 / fSlow3));
-		double fSlow36 = (3.0 * ((fSlow7 * fSlow14) * fSlow9));
-		double fSlow37 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow10)) + -1.0) * fSlow24));
-		double fSlow38 = cos((fSlow6 + -1.5707963267948966));
-		double fSlow39 = (3.0 * ((fSlow38 * fSlow14) * fSlow9));
-		double fSlow40 = (fSlow38 * fSlow9);
-		double fSlow41 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow40)) + -1.0) * fSlow24));
-		double fSlow42 = cos((fSlow6 + -3.1415926535897931));
-		double fSlow43 = (3.0 * ((fSlow42 * fSlow14) * fSlow9));
-		double fSlow44 = (fSlow42 * fSlow9);
-		double fSlow45 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow44)) + -1.0) * fSlow24));
-		double fSlow46 = cos((fSlow6 + -4.7123889803846897));
-		double fSlow47 = (3.0 * ((fSlow46 * fSlow14) * fSlow9));
-		double fSlow48 = (fSlow46 * fSlow9);
-		double fSlow49 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow48)) + -1.0) * fSlow24));
-		double fSlow50 = (fSlow11 - fSlow12);
-		double fSlow51 = (3.0 * (fSlow50 * fSlow14));
-		double fSlow52 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow50)) + -1.0) * fSlow24));
-		double fSlow53 = (0.70710678118654757 * fSlow10);
-		double fSlow54 = (0.70710678118654746 * fSlow12);
-		double fSlow55 = (fSlow53 + fSlow54);
-		double fSlow56 = (3.0 * (fSlow55 * fSlow14));
-		double fSlow57 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow55)) + -1.0) * fSlow24));
-		double fSlow58 = (0.70710678118654757 * fSlow40);
-		double fSlow59 = (fSlow54 + fSlow58);
-		double fSlow60 = (3.0 * (fSlow59 * fSlow14));
-		double fSlow61 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow59)) + -1.0) * fSlow24));
-		double fSlow62 = (0.70710678118654757 * fSlow44);
-		double fSlow63 = (fSlow54 + fSlow62);
-		double fSlow64 = (3.0 * (fSlow63 * fSlow14));
-		double fSlow65 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow63)) + -1.0) * fSlow24));
-		double fSlow66 = (0.70710678118654757 * fSlow48);
-		double fSlow67 = (fSlow54 + fSlow66);
-		double fSlow68 = (3.0 * (fSlow67 * fSlow14));
-		double fSlow69 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow67)) + -1.0) * fSlow24));
-		double fSlow70 = cos((fSlow6 + -0.78539816339744828));
-		double fSlow71 = (3.0 * ((fSlow70 * fSlow14) * fSlow9));
-		double fSlow72 = (fSlow70 * fSlow9);
-		double fSlow73 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow72)) + -1.0) * fSlow24));
-		double fSlow74 = cos((fSlow6 + -2.3561944901923448));
-		double fSlow75 = (3.0 * ((fSlow74 * fSlow14) * fSlow9));
-		double fSlow76 = (fSlow74 * fSlow9);
-		double fSlow77 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow76)) + -1.0) * fSlow24));
-		double fSlow78 = cos((fSlow6 + -3.9269908169872414));
-		double fSlow79 = (3.0 * ((fSlow78 * fSlow14) * fSlow9));
-		double fSlow80 = (fSlow78 * fSlow9);
-		double fSlow81 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow80)) + -1.0) * fSlow24));
-		double fSlow82 = cos((fSlow6 + -5.497787143782138));
-		double fSlow83 = (3.0 * ((fSlow82 * fSlow14) * fSlow9));
-		double fSlow84 = (fSlow82 * fSlow9);
-		double fSlow85 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow84)) + -1.0) * fSlow24));
-		double fSlow86 = (fSlow53 - fSlow54);
-		double fSlow87 = (3.0 * (fSlow86 * fSlow14));
-		double fSlow88 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow86)) + -1.0) * fSlow24));
-		double fSlow89 = (fSlow58 - fSlow54);
-		double fSlow90 = (3.0 * (fSlow89 * fSlow14));
-		double fSlow91 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow89)) + -1.0) * fSlow24));
-		double fSlow92 = (fSlow62 - fSlow54);
-		double fSlow93 = (3.0 * (fSlow92 * fSlow14));
-		double fSlow94 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow92)) + -1.0) * fSlow24));
-		double fSlow95 = (fSlow66 - fSlow54);
-		double fSlow96 = (3.0 * (fSlow95 * fSlow14));
-		double fSlow97 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow95)) + -1.0) * fSlow24));
-		double fSlow98 = (0.81649658092772592 * fSlow72);
-		double fSlow99 = (0.57735026918962584 * fSlow12);
-		double fSlow100 = (fSlow98 + fSlow99);
-		double fSlow101 = (3.0 * (fSlow100 * fSlow14));
-		double fSlow102 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow100)) + -1.0) * fSlow24));
-		double fSlow103 = (0.81649658092772592 * fSlow76);
-		double fSlow104 = (fSlow99 + fSlow103);
-		double fSlow105 = (3.0 * (fSlow104 * fSlow14));
-		double fSlow106 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow104)) + -1.0) * fSlow24));
-		double fSlow107 = (0.81649658092772592 * fSlow80);
-		double fSlow108 = (fSlow99 + fSlow107);
-		double fSlow109 = (3.0 * (fSlow108 * fSlow14));
-		double fSlow110 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow108)) + -1.0) * fSlow24));
-		double fSlow111 = (0.81649658092772592 * fSlow84);
-		double fSlow112 = (fSlow99 + fSlow111);
-		double fSlow113 = (3.0 * (fSlow112 * fSlow14));
-		double fSlow114 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow112)) + -1.0) * fSlow24));
-		double fSlow115 = (fSlow98 - fSlow99);
-		double fSlow116 = (3.0 * (fSlow115 * fSlow14));
-		double fSlow117 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow115)) + -1.0) * fSlow24));
-		double fSlow118 = (fSlow103 - fSlow99);
-		double fSlow119 = (3.0 * (fSlow118 * fSlow14));
-		double fSlow120 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow118)) + -1.0) * fSlow24));
-		double fSlow121 = (fSlow107 - fSlow99);
-		double fSlow122 = (3.0 * (fSlow121 * fSlow14));
-		double fSlow123 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow121)) + -1.0) * fSlow24));
-		double fSlow124 = (fSlow111 - fSlow99);
-		double fSlow125 = (3.0 * (fSlow124 * fSlow14));
-		double fSlow126 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow124)) + -1.0) * fSlow24));
+		double fSlow6 = (1.0 - double(fCheckbox2));
+		double fSlow7 = double(fHslider2);
+		double fSlow8 = sin(fSlow7);
+		double fSlow9 = (3.0 * (fSlow6 * fSlow8));
+		double fSlow10 = (fConst3 / fSlow1);
+		double fSlow11 = (fSlow10 + 1.0);
+		double fSlow12 = (fConst2 / (fSlow11 * fSlow1));
+		double fSlow13 = (fConst3 / fSlow3);
+		double fSlow14 = (1.0 / (fSlow13 + 1.0));
+		double fSlow15 = (((fSlow11 * fSlow0) * fSlow3) / fSlow1);
+		double fSlow16 = (fConst2 / fSlow3);
+		double fSlow17 = (fSlow2 * fSlow3);
+		double fSlow18 = (1.0 - double(fCheckbox3));
+		double fSlow19 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow8)) + -1.0) * fSlow18));
+		double fSlow20 = mydsp_faustpower2_f(fSlow10);
+		double fSlow21 = (((fConst4 / fSlow1) + (3.0 * fSlow20)) + 1.0);
+		double fSlow22 = (1.0 / fSlow21);
+		double fSlow23 = (12.0 * fSlow20);
+		double fSlow24 = ((fConst5 / fSlow1) + fSlow23);
+		double fSlow25 = mydsp_faustpower2_f(fSlow13);
+		double fSlow26 = (1.0 / (((fConst4 / fSlow3) + (3.0 * fSlow25)) + 1.0));
+		double fSlow27 = (((fSlow21 * fSlow0) * fSlow3) / fSlow1);
+		double fSlow28 = (12.0 * fSlow25);
+		double fSlow29 = (fSlow28 + (fConst5 / fSlow3));
+		double fSlow30 = double(fHslider3);
+		double fSlow31 = cos(fSlow30);
+		double fSlow32 = cos(fSlow7);
+		double fSlow33 = (3.0 * ((fSlow31 * fSlow6) * fSlow32));
+		double fSlow34 = mydsp_faustpower2_f(fSlow32);
+		double fSlow35 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow31) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow36 = cos((fSlow30 + -1.5707963267948966));
+		double fSlow37 = (3.0 * ((fSlow36 * fSlow6) * fSlow32));
+		double fSlow38 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow36) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow39 = cos((fSlow30 + -3.1415926535897931));
+		double fSlow40 = (3.0 * ((fSlow39 * fSlow6) * fSlow32));
+		double fSlow41 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow39) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow42 = cos((fSlow30 + -4.7123889803846897));
+		double fSlow43 = (3.0 * ((fSlow42 * fSlow6) * fSlow32));
+		double fSlow44 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow42) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow45 = (fSlow31 * fSlow32);
+		double fSlow46 = ((6.123233995736766e-17 * fSlow45) - fSlow8);
+		double fSlow47 = (3.0 * (fSlow46 * fSlow6));
+		double fSlow48 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow46)) + -1.0) * fSlow18));
+		double fSlow49 = (0.70710678118654757 * fSlow45);
+		double fSlow50 = (0.70710678118654746 * fSlow8);
+		double fSlow51 = (fSlow49 + fSlow50);
+		double fSlow52 = (3.0 * (fSlow51 * fSlow6));
+		double fSlow53 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow51)) + -1.0) * fSlow18));
+		double fSlow54 = (0.70710678118654757 * (fSlow36 * fSlow32));
+		double fSlow55 = (fSlow50 + fSlow54);
+		double fSlow56 = (3.0 * (fSlow55 * fSlow6));
+		double fSlow57 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow55)) + -1.0) * fSlow18));
+		double fSlow58 = (0.70710678118654757 * (fSlow39 * fSlow32));
+		double fSlow59 = (fSlow50 + fSlow58);
+		double fSlow60 = (3.0 * (fSlow59 * fSlow6));
+		double fSlow61 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow59)) + -1.0) * fSlow18));
+		double fSlow62 = (0.70710678118654757 * (fSlow42 * fSlow32));
+		double fSlow63 = (fSlow50 + fSlow62);
+		double fSlow64 = (3.0 * (fSlow63 * fSlow6));
+		double fSlow65 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow63)) + -1.0) * fSlow18));
+		double fSlow66 = cos((fSlow30 + -0.78539816339744828));
+		double fSlow67 = (3.0 * ((fSlow66 * fSlow6) * fSlow32));
+		double fSlow68 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow66) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow69 = cos((fSlow30 + -2.3561944901923448));
+		double fSlow70 = (3.0 * ((fSlow69 * fSlow6) * fSlow32));
+		double fSlow71 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow69) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow72 = cos((fSlow30 + -3.9269908169872414));
+		double fSlow73 = (3.0 * ((fSlow72 * fSlow6) * fSlow32));
+		double fSlow74 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow72) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow75 = cos((fSlow30 + -5.497787143782138));
+		double fSlow76 = (3.0 * ((fSlow75 * fSlow6) * fSlow32));
+		double fSlow77 = (2.5 * (((3.0 * (mydsp_faustpower2_f(fSlow75) * fSlow34)) + -1.0) * fSlow18));
+		double fSlow78 = (fSlow49 - fSlow50);
+		double fSlow79 = (3.0 * (fSlow78 * fSlow6));
+		double fSlow80 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow78)) + -1.0) * fSlow18));
+		double fSlow81 = (fSlow54 - fSlow50);
+		double fSlow82 = (3.0 * (fSlow81 * fSlow6));
+		double fSlow83 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow81)) + -1.0) * fSlow18));
+		double fSlow84 = (fSlow58 - fSlow50);
+		double fSlow85 = (3.0 * (fSlow84 * fSlow6));
+		double fSlow86 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow84)) + -1.0) * fSlow18));
+		double fSlow87 = (fSlow62 - fSlow50);
+		double fSlow88 = (3.0 * (fSlow87 * fSlow6));
+		double fSlow89 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow87)) + -1.0) * fSlow18));
+		double fSlow90 = (0.81649658092772592 * (fSlow66 * fSlow32));
+		double fSlow91 = (0.57735026918962584 * fSlow8);
+		double fSlow92 = (fSlow90 + fSlow91);
+		double fSlow93 = (3.0 * (fSlow92 * fSlow6));
+		double fSlow94 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow92)) + -1.0) * fSlow18));
+		double fSlow95 = (0.81649658092772592 * (fSlow69 * fSlow32));
+		double fSlow96 = (fSlow91 + fSlow95);
+		double fSlow97 = (3.0 * (fSlow96 * fSlow6));
+		double fSlow98 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow96)) + -1.0) * fSlow18));
+		double fSlow99 = (0.81649658092772592 * (fSlow72 * fSlow32));
+		double fSlow100 = (fSlow91 + fSlow99);
+		double fSlow101 = (3.0 * (fSlow100 * fSlow6));
+		double fSlow102 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow100)) + -1.0) * fSlow18));
+		double fSlow103 = (0.81649658092772592 * (fSlow75 * fSlow32));
+		double fSlow104 = (fSlow91 + fSlow103);
+		double fSlow105 = (3.0 * (fSlow104 * fSlow6));
+		double fSlow106 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow104)) + -1.0) * fSlow18));
+		double fSlow107 = (fSlow90 - fSlow91);
+		double fSlow108 = (3.0 * (fSlow107 * fSlow6));
+		double fSlow109 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow107)) + -1.0) * fSlow18));
+		double fSlow110 = (fSlow95 - fSlow91);
+		double fSlow111 = (3.0 * (fSlow110 * fSlow6));
+		double fSlow112 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow110)) + -1.0) * fSlow18));
+		double fSlow113 = (fSlow99 - fSlow91);
+		double fSlow114 = (3.0 * (fSlow113 * fSlow6));
+		double fSlow115 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow113)) + -1.0) * fSlow18));
+		double fSlow116 = (fSlow103 - fSlow91);
+		double fSlow117 = (3.0 * (fSlow116 * fSlow6));
+		double fSlow118 = (2.5 * (((3.0 * mydsp_faustpower2_f(fSlow116)) + -1.0) * fSlow18));
 		for (int i = 0; (i < count); i = (i + 1)) {
 			fRec1[0] = (fSlow5 + (0.999 * fRec1[1]));
 			double fTemp0 = (fRec1[0] * double(input0[i]));
 			double fTemp1 = (fSlow4 * fTemp0);
 			fRec4[0] = (fRec4[1] + fRec3[1]);
-			fRec3[0] = (fSlow20 * ((fSlow21 * fTemp0) - (fSlow22 * fRec4[0])));
+			fRec3[0] = (fSlow14 * ((fSlow15 * fTemp0) - (fSlow16 * fRec4[0])));
 			fRec2[0] = (fRec3[0] + fRec2[1]);
-			double fTemp2 = (fSlow23 * fTemp0);
+			double fTemp2 = (fSlow17 * fTemp0);
 			fRec6[0] = (fRec6[1] + fRec5[1]);
-			fRec5[0] = (fSlow20 * (fTemp2 - (fSlow22 * fRec6[0])));
-			double fTemp3 = ((fSlow18 * (fRec2[0] - fRec3[0])) + (fRec3[0] + fRec5[0]));
+			fRec5[0] = (fSlow14 * (fTemp2 - (fSlow16 * fRec6[0])));
+			double fTemp3 = ((fSlow12 * (fRec2[0] - fRec3[0])) + (fRec3[0] + fRec5[0]));
 			fRec9[0] = (fRec9[1] + fRec8[1]);
 			fRec10[0] = (fRec10[1] + fRec9[1]);
-			fRec8[0] = (fSlow32 * ((fSlow33 * fTemp0) - ((fSlow35 * fRec9[0]) + (fSlow34 * fRec10[0]))));
+			fRec8[0] = (fSlow26 * ((fSlow27 * fTemp0) - ((fSlow29 * fRec9[0]) + (fSlow28 * fRec10[0]))));
 			fRec7[0] = (fRec8[0] + fRec7[1]);
 			double fTemp4 = (fRec7[0] - fRec8[0]);
 			fVec0[0] = fTemp4;
 			fRec11[0] = (fRec11[1] + fVec0[1]);
 			fRec13[0] = (fRec13[1] + fRec12[1]);
 			fRec14[0] = (fRec14[1] + fRec13[1]);
-			fRec12[0] = (fSlow32 * (fTemp2 - ((fSlow35 * fRec13[0]) + (fSlow34 * fRec14[0]))));
-			double fTemp5 = ((fSlow28 * ((fSlow30 * fTemp4) + (fSlow29 * fRec11[0]))) + (fRec8[0] + fRec12[0]));
-			double fTemp6 = (0.047619047619047623 * ((fTemp1 + (fSlow15 * fTemp3)) + (fSlow25 * fTemp5)));
+			fRec12[0] = (fSlow26 * (fTemp2 - ((fSlow29 * fRec13[0]) + (fSlow28 * fRec14[0]))));
+			double fTemp5 = ((fSlow22 * ((fSlow24 * fTemp4) + (fSlow23 * fRec11[0]))) + (fRec8[0] + fRec12[0]));
+			double fTemp6 = (0.047619047619047623 * ((fTemp1 + (fSlow9 * fTemp3)) + (fSlow19 * fTemp5)));
 			fRec0[0] = max((fRec0[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp6))))));
 			fVbargraph0 = FAUSTFLOAT(fRec0[0]);
 			output0[i] = FAUSTFLOAT(fTemp6);
-			double fTemp7 = (0.047619047619047623 * ((fTemp1 + (fSlow36 * fTemp3)) + (fSlow37 * fTemp5)));
+			double fTemp7 = (0.047619047619047623 * ((fTemp1 + (fSlow33 * fTemp3)) + (fSlow35 * fTemp5)));
 			fRec15[0] = max((fRec15[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp7))))));
 			fVbargraph1 = FAUSTFLOAT(fRec15[0]);
 			output1[i] = FAUSTFLOAT(fTemp7);
-			double fTemp8 = (0.047619047619047623 * ((fTemp1 + (fSlow39 * fTemp3)) + (fSlow41 * fTemp5)));
+			double fTemp8 = (0.047619047619047623 * ((fTemp1 + (fSlow37 * fTemp3)) + (fSlow38 * fTemp5)));
 			fRec16[0] = max((fRec16[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp8))))));
 			fVbargraph2 = FAUSTFLOAT(fRec16[0]);
 			output2[i] = FAUSTFLOAT(fTemp8);
-			double fTemp9 = (0.047619047619047623 * ((fTemp1 + (fSlow43 * fTemp3)) + (fSlow45 * fTemp5)));
+			double fTemp9 = (0.047619047619047623 * ((fTemp1 + (fSlow40 * fTemp3)) + (fSlow41 * fTemp5)));
 			fRec17[0] = max((fRec17[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp9))))));
 			fVbargraph3 = FAUSTFLOAT(fRec17[0]);
 			output3[i] = FAUSTFLOAT(fTemp9);
-			double fTemp10 = (0.047619047619047623 * ((fTemp1 + (fSlow47 * fTemp3)) + (fSlow49 * fTemp5)));
+			double fTemp10 = (0.047619047619047623 * ((fTemp1 + (fSlow43 * fTemp3)) + (fSlow44 * fTemp5)));
 			fRec18[0] = max((fRec18[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp10))))));
 			fVbargraph4 = FAUSTFLOAT(fRec18[0]);
 			output4[i] = FAUSTFLOAT(fTemp10);
-			double fTemp11 = (0.047619047619047623 * ((fTemp1 + (fSlow51 * fTemp3)) + (fSlow52 * fTemp5)));
+			double fTemp11 = (0.047619047619047623 * ((fTemp1 + (fSlow47 * fTemp3)) + (fSlow48 * fTemp5)));
 			fRec19[0] = max((fRec19[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp11))))));
 			fVbargraph5 = FAUSTFLOAT(fRec19[0]);
 			output5[i] = FAUSTFLOAT(fTemp11);
-			double fTemp12 = (0.038095238095238099 * ((fTemp1 + (fSlow56 * fTemp3)) + (fSlow57 * fTemp5)));
+			double fTemp12 = (0.038095238095238099 * ((fTemp1 + (fSlow52 * fTemp3)) + (fSlow53 * fTemp5)));
 			fRec20[0] = max((fRec20[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp12))))));
 			fVbargraph6 = FAUSTFLOAT(fRec20[0]);
 			output6[i] = FAUSTFLOAT(fTemp12);
-			double fTemp13 = (0.038095238095238099 * ((fTemp1 + (fSlow60 * fTemp3)) + (fSlow61 * fTemp5)));
+			double fTemp13 = (0.038095238095238099 * ((fTemp1 + (fSlow56 * fTemp3)) + (fSlow57 * fTemp5)));
 			fRec21[0] = max((fRec21[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp13))))));
 			fVbargraph7 = FAUSTFLOAT(fRec21[0]);
 			output7[i] = FAUSTFLOAT(fTemp13);
-			double fTemp14 = (0.038095238095238099 * ((fTemp1 + (fSlow64 * fTemp3)) + (fSlow65 * fTemp5)));
+			double fTemp14 = (0.038095238095238099 * ((fTemp1 + (fSlow60 * fTemp3)) + (fSlow61 * fTemp5)));
 			fRec22[0] = max((fRec22[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp14))))));
 			fVbargraph8 = FAUSTFLOAT(fRec22[0]);
 			output8[i] = FAUSTFLOAT(fTemp14);
-			double fTemp15 = (0.038095238095238099 * ((fTemp1 + (fSlow68 * fTemp3)) + (fSlow69 * fTemp5)));
+			double fTemp15 = (0.038095238095238099 * ((fTemp1 + (fSlow64 * fTemp3)) + (fSlow65 * fTemp5)));
 			fRec23[0] = max((fRec23[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp15))))));
 			fVbargraph9 = FAUSTFLOAT(fRec23[0]);
 			output9[i] = FAUSTFLOAT(fTemp15);
-			double fTemp16 = (0.038095238095238099 * ((fTemp1 + (fSlow71 * fTemp3)) + (fSlow73 * fTemp5)));
+			double fTemp16 = (0.038095238095238099 * ((fTemp1 + (fSlow67 * fTemp3)) + (fSlow68 * fTemp5)));
 			fRec24[0] = max((fRec24[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp16))))));
 			fVbargraph10 = FAUSTFLOAT(fRec24[0]);
 			output10[i] = FAUSTFLOAT(fTemp16);
-			double fTemp17 = (0.038095238095238099 * ((fTemp1 + (fSlow75 * fTemp3)) + (fSlow77 * fTemp5)));
+			double fTemp17 = (0.038095238095238099 * ((fTemp1 + (fSlow70 * fTemp3)) + (fSlow71 * fTemp5)));
 			fRec25[0] = max((fRec25[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp17))))));
 			fVbargraph11 = FAUSTFLOAT(fRec25[0]);
 			output11[i] = FAUSTFLOAT(fTemp17);
-			double fTemp18 = (0.038095238095238099 * ((fTemp1 + (fSlow79 * fTemp3)) + (fSlow81 * fTemp5)));
+			double fTemp18 = (0.038095238095238099 * ((fTemp1 + (fSlow73 * fTemp3)) + (fSlow74 * fTemp5)));
 			fRec26[0] = max((fRec26[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp18))))));
 			fVbargraph12 = FAUSTFLOAT(fRec26[0]);
 			output12[i] = FAUSTFLOAT(fTemp18);
-			double fTemp19 = (0.038095238095238099 * ((fTemp1 + (fSlow83 * fTemp3)) + (fSlow85 * fTemp5)));
+			double fTemp19 = (0.038095238095238099 * ((fTemp1 + (fSlow76 * fTemp3)) + (fSlow77 * fTemp5)));
 			fRec27[0] = max((fRec27[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp19))))));
 			fVbargraph13 = FAUSTFLOAT(fRec27[0]);
 			output13[i] = FAUSTFLOAT(fTemp19);
-			double fTemp20 = (0.038095238095238099 * ((fTemp1 + (fSlow87 * fTemp3)) + (fSlow88 * fTemp5)));
+			double fTemp20 = (0.038095238095238099 * ((fTemp1 + (fSlow79 * fTemp3)) + (fSlow80 * fTemp5)));
 			fRec28[0] = max((fRec28[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp20))))));
 			fVbargraph14 = FAUSTFLOAT(fRec28[0]);
 			output14[i] = FAUSTFLOAT(fTemp20);
-			double fTemp21 = (0.038095238095238099 * ((fTemp1 + (fSlow90 * fTemp3)) + (fSlow91 * fTemp5)));
+			double fTemp21 = (0.038095238095238099 * ((fTemp1 + (fSlow82 * fTemp3)) + (fSlow83 * fTemp5)));
 			fRec29[0] = max((fRec29[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp21))))));
 			fVbargraph15 = FAUSTFLOAT(fRec29[0]);
 			output15[i] = FAUSTFLOAT(fTemp21);
-			double fTemp22 = (0.038095238095238099 * ((fTemp1 + (fSlow93 * fTemp3)) + (fSlow94 * fTemp5)));
+			double fTemp22 = (0.038095238095238099 * ((fTemp1 + (fSlow85 * fTemp3)) + (fSlow86 * fTemp5)));
 			fRec30[0] = max((fRec30[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp22))))));
 			fVbargraph16 = FAUSTFLOAT(fRec30[0]);
 			output16[i] = FAUSTFLOAT(fTemp22);
-			double fTemp23 = (0.038095238095238099 * ((fTemp1 + (fSlow96 * fTemp3)) + (fSlow97 * fTemp5)));
+			double fTemp23 = (0.038095238095238099 * ((fTemp1 + (fSlow88 * fTemp3)) + (fSlow89 * fTemp5)));
 			fRec31[0] = max((fRec31[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp23))))));
 			fVbargraph17 = FAUSTFLOAT(fRec31[0]);
 			output17[i] = FAUSTFLOAT(fTemp23);
-			double fTemp24 = (0.03214285714285714 * ((fTemp1 + (fSlow101 * fTemp3)) + (fSlow102 * fTemp5)));
+			double fTemp24 = (0.03214285714285714 * ((fTemp1 + (fSlow93 * fTemp3)) + (fSlow94 * fTemp5)));
 			fRec32[0] = max((fRec32[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp24))))));
 			fVbargraph18 = FAUSTFLOAT(fRec32[0]);
 			output18[i] = FAUSTFLOAT(fTemp24);
-			double fTemp25 = (0.03214285714285714 * ((fTemp1 + (fSlow105 * fTemp3)) + (fSlow106 * fTemp5)));
+			double fTemp25 = (0.03214285714285714 * ((fTemp1 + (fSlow97 * fTemp3)) + (fSlow98 * fTemp5)));
 			fRec33[0] = max((fRec33[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp25))))));
 			fVbargraph19 = FAUSTFLOAT(fRec33[0]);
 			output19[i] = FAUSTFLOAT(fTemp25);
-			double fTemp26 = (0.03214285714285714 * ((fTemp1 + (fSlow109 * fTemp3)) + (fSlow110 * fTemp5)));
+			double fTemp26 = (0.03214285714285714 * ((fTemp1 + (fSlow101 * fTemp3)) + (fSlow102 * fTemp5)));
 			fRec34[0] = max((fRec34[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp26))))));
 			fVbargraph20 = FAUSTFLOAT(fRec34[0]);
 			output20[i] = FAUSTFLOAT(fTemp26);
-			double fTemp27 = (0.03214285714285714 * ((fTemp1 + (fSlow113 * fTemp3)) + (fSlow114 * fTemp5)));
+			double fTemp27 = (0.03214285714285714 * ((fTemp1 + (fSlow105 * fTemp3)) + (fSlow106 * fTemp5)));
 			fRec35[0] = max((fRec35[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp27))))));
 			fVbargraph21 = FAUSTFLOAT(fRec35[0]);
 			output21[i] = FAUSTFLOAT(fTemp27);
-			double fTemp28 = (0.03214285714285714 * ((fTemp1 + (fSlow116 * fTemp3)) + (fSlow117 * fTemp5)));
+			double fTemp28 = (0.03214285714285714 * ((fTemp1 + (fSlow108 * fTemp3)) + (fSlow109 * fTemp5)));
 			fRec36[0] = max((fRec36[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp28))))));
 			fVbargraph22 = FAUSTFLOAT(fRec36[0]);
 			output22[i] = FAUSTFLOAT(fTemp28);
-			double fTemp29 = (0.03214285714285714 * ((fTemp1 + (fSlow119 * fTemp3)) + (fSlow120 * fTemp5)));
+			double fTemp29 = (0.03214285714285714 * ((fTemp1 + (fSlow111 * fTemp3)) + (fSlow112 * fTemp5)));
 			fRec37[0] = max((fRec37[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp29))))));
 			fVbargraph23 = FAUSTFLOAT(fRec37[0]);
 			output23[i] = FAUSTFLOAT(fTemp29);
-			double fTemp30 = (0.03214285714285714 * ((fTemp1 + (fSlow122 * fTemp3)) + (fSlow123 * fTemp5)));
+			double fTemp30 = (0.03214285714285714 * ((fTemp1 + (fSlow114 * fTemp3)) + (fSlow115 * fTemp5)));
 			fRec38[0] = max((fRec38[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp30))))));
 			fVbargraph24 = FAUSTFLOAT(fRec38[0]);
 			output24[i] = FAUSTFLOAT(fTemp30);
-			double fTemp31 = (0.03214285714285714 * ((fTemp1 + (fSlow125 * fTemp3)) + (fSlow126 * fTemp5)));
+			double fTemp31 = (0.03214285714285714 * ((fTemp1 + (fSlow117 * fTemp3)) + (fSlow118 * fTemp5)));
 			fRec39[0] = max((fRec39[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp31))))));
 			fVbargraph25 = FAUSTFLOAT(fRec39[0]);
 			output25[i] = FAUSTFLOAT(fTemp31);
@@ -1597,7 +1603,6 @@ class mydsp : public dsp {
 
 	
 };
-
 
 //----------------------------------------------------------------------------
 // SuperCollider/Faust interface
@@ -1830,7 +1835,7 @@ void Faust_Ctor(Faust* unit)  // module constructor
                 }
                 SETCALC(Faust_next_copy);
             }
-    #if !defined(NDEBUG)
+    #if defined(F2SC_DEBUG_MES)
             Print("Faust[%s]:\n", g_unitName);
             Print("    Inputs:   %d\n"
                   "    Outputs:  %d\n"
@@ -1893,7 +1898,7 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
   
     name = normalizeClassName(name);
 
-#if !defined(NDEBUG) & defined(SC_API_EXPORT)
+#if defined(F2SC_DEBUG_MES) & defined(SC_API_EXPORT)
     Print("Faust: supercollider.cpp: sc_api_version = %d\n", sc_api_version);
 #endif
 
@@ -1922,10 +1927,16 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
         kUnitDef_CantAliasInputsToOutputs
         );
 
-#if !defined(NDEBUG)
+#if defined(F2SC_DEBUG_MES)
     Print("Faust: %s numControls=%d\n", name.c_str(), g_numControls);
-#endif // NDEBUG
+#endif // F2SC_DEBUG_MES
 }
+
+#ifdef SUPERNOVA 
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_supernova; }
+#else
+extern "C" FAUST_EXPORT int server_type(void) { return sc_server_scsynth; }
+#endif
 
 // EOF
 

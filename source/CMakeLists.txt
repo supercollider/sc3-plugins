@@ -131,11 +131,6 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} M
   SET_SOURCE_FILES_PROPERTIES(${BHOBFILT_CPP} PROPERTIES COMPILE_FLAGS "-fno-slp-vectorize")
 endif()
 
-#HOAUGens
-if (CMAKE_COMPILER_IS_CLANG)
-    set_property(TARGET HOAUGens APPEND PROPERTY COMPILE_FLAGS "-fbracket-depth=2048")
-endif()
-
 set(plugins "")
 set(supernova_plugins "")
 
@@ -151,7 +146,7 @@ endif()
 GET_GCC_VERSION(gcc_version)
 
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|.*BSD|DragonFly")
     set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
     if (QUARKS)
         set(INSTALL_DESTINATION_LADSPALIST
@@ -170,6 +165,13 @@ else()
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
 
+#HOAUGens
+if (CMAKE_COMPILER_IS_CLANG)
+    file(GLOB HOAUGensSources HOAUGens/*cpp)
+    foreach(HOAUGensSourceFile ${HOAUGensSources})
+	set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
+    endforeach(HOAUGensSourceFile)
+endif()
 
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
@@ -240,9 +242,9 @@ BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membran
 
 # LadspaUGen
 if(NOT WIN32)
-    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "dl" "LadspaUGen")
+    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "${CMAKE_DL_LIBS}" "LadspaUGen")
     add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
-    target_link_libraries(ladspalist dl)
+    target_link_libraries(ladspalist "${CMAKE_DL_LIBS}")
 endif()
 
 # OteyPianoUGens
@@ -338,9 +340,11 @@ else()
     BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
 endif()
 
+# NovaDiskIO
 if (NOVA_DISK_IO)
-  add_subdirectory(NovaDiskIO)
+    add_subdirectory(NovaDiskIO)
 endif()
+
 #--------
 # INSTALL
 #--------

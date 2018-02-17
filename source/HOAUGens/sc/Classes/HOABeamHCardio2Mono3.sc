@@ -1,4 +1,4 @@
-FaustHOABeamHCardio2Mono3 : UGen
+HOABeamHCardio2Mono3 : UGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, order(1.0), output_gain(0.0), azimuth(0.0), elevation(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, in16, order, output_gain, azimuth, elevation)
@@ -20,6 +20,9 @@ FaustHOABeamHCardio2Mono3 : UGen
     ^this.checkValidInputs
   }
 
-  name { ^"FaustHOABeamHCardio2Mono3" }
+  name { ^"HOABeamHCardio2Mono3" }
+
+
+  info { ^"Generated with Faust" }
 }
 

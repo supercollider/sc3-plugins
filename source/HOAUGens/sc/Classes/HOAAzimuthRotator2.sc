@@ -1,4 +1,4 @@
-FaustHOAAzimuthRotator2 : MultiOutUGen
+HOAAzimuthRotator2 : MultiOutUGen
 {
   *ar { | in1, in2, in3, in4, in5, in6, in7, in8, in9, azimuth(0.0) |
       ^this.multiNew('audio', in1, in2, in3, in4, in5, in6, in7, in8, in9, azimuth)
@@ -25,6 +25,9 @@ FaustHOAAzimuthRotator2 : MultiOutUGen
       ^this.initOutputs(9, rate)
   }
 
-  name { ^"FaustHOAAzimuthRotator2" }
+  name { ^"HOAAzimuthRotator2" }
+
+
+  info { ^"Generated with Faust" }
 }
 
