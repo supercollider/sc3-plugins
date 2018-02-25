@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
-# Creates assets for sc3-plugins
-# Requires: readlink (in coreutils package), git, access to /tmp
+# Creates assets for sc3-plugins in the form of
+# 'sc3-plugins-Version-x.x.x.tar.gz' and moves the file to $HOME (macOS) the
+# repository's package folder (Linux).
+# Requires a writable /tmp folder.
 
 set -euo pipefail
 
 get_absolute_path() {
   echo $(dirname $(readlink -f "$0"))
-}
-
-create_source_dir(){
-  local abs_path="$1"
-  mkdir -pv "${abs_path}/source"
-  echo "${abs_path}/source"
 }
 
 remove_source_dir(){
@@ -37,10 +33,13 @@ checkout_external_libraries() {
 
 clean_sources() {
   cd "${source_dir}/${package_name}"
-  rm -rfv .gitigonre \
-          .git/ \
+  echo "Removing unneeded files and folders..."
+  rm -rfv .gitignore \
+          .gitmodules \
           .travis.yml \
-          website
+          .git/ \
+          website \
+          package
 }
 
 rename_sources() {
@@ -56,15 +55,23 @@ compress_sources() {
 
 move_sources() {
   cd "${source_dir}"
-  mv -v "${package_name}-Version-${version}.tar.tgz" "${abs_path}/"
+  mv -v "${package_name}-Version-${version}.tar.tgz" "${output_dir}/"
+}
+
+cleanup_source_dir() {
+  cd "${source_dir}"
+  rm -rf "${package_name}-Version-${version}"
 }
 
 upstream="https://github.com/supercollider/sc3-plugins"
 package_name="sc3-plugins"
 source_dir="/tmp"
+output_dir="$HOME"
 os=`uname`
 version=`date "+%Y-%m-%d"`
-abs_path=$(get_absolute_path $0)
+if [ $os = "Linux" ]; then
+  output_dir=$(get_absolute_path $0)
+fi
 
 while getopts ":v:s" Option
 do
@@ -83,6 +90,7 @@ clean_sources
 rename_sources
 compress_sources
 move_sources
+cleanup_source_dir
 
 exit 0
 
