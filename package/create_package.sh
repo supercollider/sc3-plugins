@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Creates assets for sc3-plugins in the form of
-# 'sc3-plugins-Version-x.x.x.tar.gz' and moves the file to $HOME (macOS) the
-# repository's package folder (Linux).
+# 'sc3-plugins-Version-x.x.x.tar.gz' and moves the file to the repository's
+# package folder.
 # Requires a writable /tmp folder.
 
 set -euo pipefail
@@ -63,22 +63,33 @@ cleanup_source_dir() {
   rm -rf "${package_name}-Version-${version}"
 }
 
+print_help() {
+  echo "Usage: $0 -v <version tag>"
+  exit 1
+}
+
 upstream="https://github.com/supercollider/sc3-plugins"
 package_name="sc3-plugins"
 source_dir="/tmp"
 version=`date "+%Y-%m-%d"`
 output_dir=$(get_absolute_path $0)
 
-while getopts ":v:s" Option
-do
-  case $Option in
-    v ) version=$OPTARG
+if [ ${#@} -gt 0 ]; then
+  while getopts 'hv:' flag; do
+    case "${flag}" in
+      h) print_help
+          ;;
+      v) version=$OPTARG
+          ;;
+      *)
+        echo "Error! Try '${0} -h'."
+        exit 1
         ;;
-    s ) package_type="source"
-        ;;
-  esac
-done
-shift $(($OPTIND - 1))
+    esac
+  done
+else
+  print_help
+fi
 
 checkout_project
 checkout_external_libraries
