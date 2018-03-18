@@ -7,7 +7,7 @@
 set -euo pipefail
 
 get_absolute_path() {
-  echo $(dirname $(readlink -f "$0"))
+  echo "$(cd "$(dirname "$0")" && pwd -P)"
 }
 
 remove_source_dir(){
@@ -66,12 +66,8 @@ cleanup_source_dir() {
 upstream="https://github.com/supercollider/sc3-plugins"
 package_name="sc3-plugins"
 source_dir="/tmp"
-output_dir="$HOME"
-os=`uname`
 version=`date "+%Y-%m-%d"`
-if [ $os = "Linux" ]; then
-  output_dir=$(get_absolute_path $0)
-fi
+output_dir=$(get_absolute_path $0)
 
 while getopts ":v:s" Option
 do
