@@ -58,13 +58,20 @@ move_sources() {
   mv -v "${package_name}-Version-${version}.tar.tgz" "${output_dir}/"
 }
 
+sign_sources() {
+  cd "${output_dir}"
+  gpg2 --default-key "${signer}" \
+       --output "${package_name}-Version-${version}.tar.tgz.asc" \
+       --detach-sign "${package_name}-Version-${version}.tar.tgz"
+}
+
 cleanup_source_dir() {
   cd "${source_dir}"
   rm -rf "${package_name}-Version-${version}"
 }
 
 print_help() {
-  echo "Usage: $0 -v <version tag>"
+  echo "Usage: $0 -v <version tag> -s <signature email>"
   exit 1
 }
 
@@ -72,12 +79,17 @@ upstream="https://github.com/supercollider/sc3-plugins"
 package_name="sc3-plugins"
 source_dir="/tmp"
 version=`date "+%Y-%m-%d"`
+signer=""
+signature=0
 output_dir=$(get_absolute_path $0)
 
 if [ ${#@} -gt 0 ]; then
-  while getopts 'hv:' flag; do
+  while getopts 'hv:s:' flag; do
     case "${flag}" in
       h) print_help
+          ;;
+      s) signer=$OPTARG
+         signature=1
           ;;
       v) version=$OPTARG
           ;;
@@ -97,6 +109,9 @@ clean_sources
 rename_sources
 compress_sources
 move_sources
+if [ $signature -eq 1 ]; then
+  sign_sources
+fi
 cleanup_source_dir
 
 exit 0
