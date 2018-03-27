@@ -3,15 +3,20 @@ set(SUPERNOVA_CMAKE_MINVERSION 3.1)
 project (sc3-plugins)
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
-  message(FATAL_ERROR "nova-simd submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
+  message(FATAL_ERROR "The nova-simd submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of sc3-plugins repository")
 endif()
 
 if (NOT SYSTEM_STK)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk/include/Stk.h)
-    message(FATAL_ERROR "stk submodule is missing: please run `git submodule init && git submodule update' from the toplevel of your git working tree")
+    message(FATAL_ERROR "The stk submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of the sc3-plugins repository")
   endif()
 endif()
 
+if (SUPERNOVA)
+  if (NOT EXISTS ${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt)
+    message(FATAL_ERROR "The nova-tt submodule in the SuperCollider repository is missing (required for SuperNova plugins). This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of the SuperCollider repository")
+  endif()
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
                       ${CMAKE_MODULE_PATH})
@@ -52,7 +57,7 @@ option(SYSTEM_STK "Use STK libraries from system" OFF)
 
 option(NOVA_DISK_IO "Build with Nova's DiskIO UGens. Requires boost source tree, break warranty & eats your children." OFF)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 	set(CMAKE_COMPILER_IS_CLANG 1)
 endif()
 
@@ -135,10 +140,22 @@ if (OSX_PACKAGE)
   add_subdirectory(osx_package)
 endif()
 
-if(WIN32)
-    configure_file( README_WINDOWS.txt.in README_WINDOWS.txt)
-    install( FILES "${CMAKE_CURRENT_BINARY_DIR}/README_WINDOWS.txt" DESTINATION . RENAME README.txt )
+# Configure readme file
+if (WIN32 OR APPLE)
+    if (WIN32)
+        set(README_FILENAME README_WINDOWS.txt)
+    elseif(APPLE)
+        set(README_FILENAME README_MACOS.txt)
+    else()
+        unset(README_FILENAME)
+    endif()
 endif()
+
+if (DEFINED README_FILENAME)
+    configure_file( "${README_FILENAME}.in" "${README_FILENAME}" )
+    install( FILES "${CMAKE_CURRENT_BINARY_DIR}/${README_FILENAME}" DESTINATION . RENAME README.txt )
+endif()
+
 
 #############################################
 # CPack support
