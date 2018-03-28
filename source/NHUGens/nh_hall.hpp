@@ -21,7 +21,8 @@ SOFTWARE.
 */
 
 #pragma once
-#include <cstring> // for memset
+#include <cstdlib> // malloc / free
+#include <cstring> // memset
 #include <memory> // std::unique_ptr
 #include <array> // std::array
 #include <cmath> // cosf/sinf
