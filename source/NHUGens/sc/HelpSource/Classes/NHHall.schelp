@@ -14,6 +14,8 @@ The reverb can be frozen by setting the reverberation time to infinity. Empirica
 
 This reverb was written by Nathan Ho specifically for SuperCollider, ChucK, and Auraglyph (an open source modular synth for iPad).
 
+warning:: This UGen is usable but currently still undergoing minor tweaks. Expect some slight changes in sound over different versions. Eventually, this UGen will be migrated to the core SuperCollider app and backward compatibility will be guaranteed. ::
+
 CLASSMETHODS::
 
 METHOD:: ar
