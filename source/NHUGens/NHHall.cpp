@@ -142,7 +142,7 @@ private:
 
         float stereo_ramp = (stereo - m_last_stereo) * reciprocal_block_size;
         float low_freq_ramp = (low_freq - m_last_low_freq) * reciprocal_block_size;
-        float low_ratio_ramp = (low_ratio - m_last_low_freq) * reciprocal_block_size;
+        float low_ratio_ramp = (low_ratio - m_last_low_ratio) * reciprocal_block_size;
         float hi_freq_ramp = (hi_freq - m_last_hi_freq) * reciprocal_block_size;
         float hi_ratio_ramp = (hi_ratio - m_last_hi_ratio) * reciprocal_block_size;
         float early_diffusion_ramp = (early_diffusion - m_last_early_diffusion) * reciprocal_block_size;
