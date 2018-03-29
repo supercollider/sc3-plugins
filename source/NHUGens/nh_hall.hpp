@@ -254,6 +254,10 @@ public:
         update_amplitude();
     }
 
+    inline void seed(uint32_t seed) {
+        m_lcg_state = seed;
+    }
+
     inline uint16_t run_lcg(void) {
         m_lcg_state = m_lcg_state * 22695477 + 1;
         uint16_t result = m_lcg_state >> 16;
@@ -700,6 +704,10 @@ public:
 
     inline void set_mod_depth(float mod_depth) {
         m_lfo.set_depth(mod_depth);
+    }
+
+    inline void seed(uint32_t seed) {
+        m_lfo.seed(seed);
     }
 
     Stereo process(Stereo in) {

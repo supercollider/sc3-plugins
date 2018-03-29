@@ -60,6 +60,9 @@ public:
 
         set_calc_function<NHHall, &NHHall::next>();
 
+        uint32_t seed = mParent->mRGen->drand() * 0x10000;
+        m_core.seed(seed);
+
         m_last_k = m_core.compute_k_from_rt60(in0(2));
         m_last_stereo = in0(3);
         m_last_low_freq = in0(4);
