@@ -128,14 +128,16 @@ private:
         float k_ramp = (new_k - m_last_k) * reciprocal_block_size;
 
         // The stereo, low shelf, and hi shelf parameters are a bit expensive
-        // to update, so I have opted to avoid recomputing them if they are
+        // to update, so I have opted to avoid recomputing them unless they are
         // modulated.
         bool stereo_has_changed = stereo != m_last_stereo;
         bool low_shelf_parameters_have_changed = (
+            new_k != m_last_k ||
             low_freq != m_last_low_freq ||
             low_ratio != m_last_low_ratio
         );
         bool hi_shelf_parameters_have_changed = (
+            new_k != m_last_k ||
             hi_freq != m_last_hi_freq ||
             hi_ratio != m_last_hi_ratio
         );

@@ -1,4 +1,9 @@
 /*
+NHHall -- a stereo reverb
+Version 2018-03-28
+
+https://github.com/snappizz/nh-ugens
+
 Copyright 2018 Nathan Ho.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -18,6 +23,134 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+NHHall is an open source algorithmic reverb unit in a single C++11 header
+file. Features:
+
+- Allpass loop topology with delay line modulaton for a lush 90's IDM sound
+- True stereo signal path with controllable spread
+- Infinite hold support
+- Respectable CPU use
+- Sample-rate independence
+- No dependencies outside the C++ standard library
+- Bring your own real-time safe memory allocator (no unwanted `malloc` calls!)
+- Permissive MIT license
+- Clean, readable source code for easy modification
+
+NHHall was designed by Nathan Ho specifically for SuperCollider, ChucK, and
+Auraglyph. Special thanks:
+
+- Spencer Salazar for advising the project
+- Brian Heim and Scott Carver for C++ help
+- Patrick Dupuis for testing and feedback
+
+-------------------------------------------------------------------------------
+
+USAGE:
+
+NHHall provides only the wet signal. Pre-delay and post-EQ are left up to you.
+
+If you don't mind a real-time-unsafe call to malloc when initializing the unit
+(maybe you're in an NRT context, or you're an absolute rascal), instantiate
+the NHHall template with no arguments:
+
+    #include "nh_hall.hpp"
+
+    // Setup:
+    float sample_rate = 48000.0f;
+    nh_ugens::NHHall<> nh_hall(sample_rate);
+
+    if (!nh_hall.m_initialization_was_successful) {
+        // This happens when a memory allocation failed.
+        ...
+    }
+
+    // Calculation:
+    float in_left = 0.0f;
+    float in_right = 0.0f;
+    float out_left, out_right;
+    std::array<float, 2> result = nh_hall.process(in_left, in_right);
+    out_left = result[0];
+    out_right = result[1];
+
+This uses a default allocator class nh_ugens::Allocator which simply wraps
+malloc and free.
+
+You can replace this with your own allocator class that defines "allocate" and
+"deallocate" methods like this:
+
+    class MyAllocator {
+    public:
+        Engine* m_engine;
+        MyAllocator(Engine* engine) : m_engine(engine) { }
+
+        void* allocate(int memory_size) {
+            return m_engine->allocate(memory_size);
+        }
+
+        void deallocate(void* memory) {
+            m_engine->free(memory_size);
+        }
+    };
+
+Then instantiate a std::unique_ptr to a MyAllocator and pass it into the new
+NHHall as a second argument:
+
+    nh_ugens::NHHall<MyAllocator> nh_hall(
+        sample_rate,
+        std::unique_ptr<MyAllocator>(new MyAllocator(engine))
+    );
+
+The std::unique_ptr is passed into the NHHall with move semantics. I'm sorry if
+that's a little complicated, but it ensures that the MyAllocator isn't
+unceremoniously tampered with after NHHall receives it and makes the program
+easier to reason about. After this initialization, use of the unit is unchanged
+from the above.
+
+If the allocator ever returns a null pointer during initialization, NHHall
+immediately stops all further allocation and sets the
+m_initialization_was_successful flag to false. You should always check that
+flag and make sure it worked. If you forget to do this, running NHHall.process
+will access garbage memory and probably crash your app.
+
+The following settings are available:
+
+    NHHall.set_rt60(float rt60)
+        Set the 60 dB decay time for mid frequencies.
+
+    NHHall.set_stereo(float stereo)
+        Set the stereo spread. 0 keeps the two channel paths separate, 1 causes
+        them to bleed into each other almost instantly.
+
+    NHHall.set_low_shelf_parameters(float frequency, float ratio)
+    NHHall.set_hi_shelf_parameters(float frequency, float ratio)
+        Set the frequency cutoffs and decay ratios of the damping filters.
+
+    NHHall.set_early_diffusion(float diffusion)
+    NHHall.set_late_diffusion(float diffusion)
+        Diffusion coefficients.
+
+    NHHall.set_mod_rate(float mod_rate)
+    NHHall.set_mod_depth(float mod_depth)
+        Rate and depth of LFO. These are arbitrarily scaled so that 0..1 offers
+        musically useful ranges.
+
+Instead of using set_rt60, you can also use the utility function
+
+    float NHHall.compute_k_from_rt60(float rt60)
+
+and manually set the public member NHHall.m_k. When interpolating the reverb
+time, it's better to linearly interpolate m_k than to interpolate rt60, because
+m_k may be 1 for an infinite hold reverb, putting rt60 at infinity. Trying to
+interpolate from a finite value to infinity is asking for trouble.
+
+Speaking of interpolation, it's your responsibility to smooth out these
+parameters to avoid clicks when modulating them. All parameters are worth
+smoothing out except mod_rate, which only checks its frequency parameter
+occasionally.
+
 */
 
 #pragma once
@@ -531,14 +664,18 @@ public:
     }
 
     inline void set_low_shelf_parameters(float frequency, float ratio) {
+        float k = powf(m_k, 1.0f / ratio - 1.0f);
+        k = std::max(k, 0.01f);
         for (auto& x : m_low_shelves) {
-            x.set_parameters(frequency, ratio);
+            x.set_parameters(frequency, k);
         }
     }
 
     inline void set_hi_shelf_parameters(float frequency, float ratio) {
+        float k = powf(m_k, 1.0f / ratio - 1.0f);
+        k = std::max(k, 0.01f);
         for (auto& x : m_hi_shelves) {
-            x.set_parameters(frequency, ratio);
+            x.set_parameters(frequency, k);
         }
     }
 

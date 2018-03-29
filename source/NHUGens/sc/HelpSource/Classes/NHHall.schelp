@@ -40,7 +40,7 @@ The low frequency cutoff.
 
 ARGUMENT:: lowRatio
 
-The ratio of the decay rate for low frequencies. 0.01 to 1 is a safe range. Set this to 1 to disable low-frequency attenuation.
+The decay rate multiplier for low frequencies. Set this to 1 to use the same decay time as the mid frequencies.
 
 ARGUMENT:: hiFreq
 
@@ -48,7 +48,7 @@ The high frequency cutoff.
 
 ARGUMENT:: hiRatio
 
-The ratio of the decay rate for high frequencies. 0.01 to 1 is a safe range. Set this to 1 to disable high-frequency attenuation.
+The decay rate multiplier for high frequencies. Set this to 1 to use the same decay time as the mid frequencies.
 
 ARGUMENT:: earlyDiffusion
 
