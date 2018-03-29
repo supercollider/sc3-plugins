@@ -1,6 +1,6 @@
 /*
 NHHall -- a stereo reverb
-Version 2018-03-28
+Version 2018-03-29
 
 https://github.com/snappizz/nh-ugens
 
@@ -35,7 +35,7 @@ file. Features:
 - Respectable CPU use
 - Sample-rate independence
 - No dependencies outside the C++ standard library
-- Bring your own real-time safe memory allocator (no unwanted `malloc` calls!)
+- Bring your own real-time safe memory allocator (no unwanted malloc calls!)
 - Permissive MIT license
 - Clean, readable source code for easy modification
 
@@ -136,6 +136,9 @@ The following settings are available:
     NHHall.set_mod_depth(float mod_depth)
         Rate and depth of LFO. These are arbitrarily scaled so that 0..1 offers
         musically useful ranges.
+
+    NHHall.seed(uint32_t seed)
+        Seed the random LFO. By default, the LFO has a fixed seed.
 
 Instead of using set_rt60, you can also use the utility function
 
@@ -576,7 +579,6 @@ private:
     float m_diffusion_sign;
 };
 
-/* NHHall allows you to pass in a memory allocator of your choice. */
 template <class Alloc = Allocator>
 class NHHall {
 public:
