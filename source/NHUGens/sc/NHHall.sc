@@ -36,7 +36,7 @@ NHHall : MultiOutUGen {
         );
     }
 
-    init { arg ... theInputs;
+    init { |... theInputs|
         inputs = theInputs;
         ^this.initOutputs(2, rate);
     }
