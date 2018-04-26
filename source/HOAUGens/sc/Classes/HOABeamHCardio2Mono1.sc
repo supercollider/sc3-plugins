@@ -1,11 +1,11 @@
 HOABeamHCardio2Mono1 : UGen
 {
-  *ar { | in1, in2, in3, in4, output_gain(0.0), azimuth(0.0), elevation(0.0) |
-      ^this.multiNew('audio', in1, in2, in3, in4, output_gain, azimuth, elevation)
+  *ar { | in1, in2, in3, in4, int_float(0.0), order(0.0), output_gain(0.0), azimuth(0.0), elevation(0.0) |
+      ^this.multiNew('audio', in1, in2, in3, in4, int_float, order, output_gain, azimuth, elevation)
   }
 
-  *kr { | in1, in2, in3, in4, output_gain(0.0), azimuth(0.0), elevation(0.0) |
-      ^this.multiNew('control', in1, in2, in3, in4, output_gain, azimuth, elevation)
+  *kr { | in1, in2, in3, in4, int_float(0.0), order(0.0), output_gain(0.0), azimuth(0.0), elevation(0.0) |
+      ^this.multiNew('control', in1, in2, in3, in4, int_float, order, output_gain, azimuth, elevation)
   } 
 
   checkInputs {

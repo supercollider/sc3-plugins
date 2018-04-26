@@ -1,11 +1,11 @@
 HOABeamHCardio2HOA1 : MultiOutUGen
 {
-  *ar { | in1, in2, in3, in4, azimuth(0.0), elevation(0.0), order(0.0) |
-      ^this.multiNew('audio', in1, in2, in3, in4, azimuth, elevation, order)
+  *ar { | in1, in2, in3, in4, azimuth(0.0), elevation(0.0), int_float(0.0), order(0.0) |
+      ^this.multiNew('audio', in1, in2, in3, in4, azimuth, elevation, int_float, order)
   }
 
-  *kr { | in1, in2, in3, in4, azimuth(0.0), elevation(0.0), order(0.0) |
-      ^this.multiNew('control', in1, in2, in3, in4, azimuth, elevation, order)
+  *kr { | in1, in2, in3, in4, azimuth(0.0), elevation(0.0), int_float(0.0), order(0.0) |
+      ^this.multiNew('control', in1, in2, in3, in4, azimuth, elevation, int_float, order)
   } 
 
   checkInputs {
