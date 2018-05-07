@@ -1,6 +1,6 @@
 /*
 NHHall -- a stereo reverb
-Version 2018-03-29
+Version 2018-05-07
 
 https://github.com/snappizz/nh-ugens
 
@@ -612,8 +612,8 @@ public:
     m_early_delays {{
         Delay(sample_rate, 5.45e-3),
         Delay(sample_rate, 3.25e-3),
-        Delay(sample_rate, 7.36e-3),
-        Delay(sample_rate, 2.17e-3)
+        Delay(sample_rate, 2.36e-3),
+        Delay(sample_rate, 7.17e-3)
     }},
 
     m_late_variable_allpasses {{
