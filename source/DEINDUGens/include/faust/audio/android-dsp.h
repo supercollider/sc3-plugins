@@ -1,6 +1,6 @@
 /************************************************************************
  FAUST Architecture File
- Copyright (C) 2015-2015 GRAME, Centre National de Creation Musicale
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
  ---------------------------------------------------------------------
  This Architecture section is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public License
@@ -19,10 +19,7 @@
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
  architecture section is not modified.
- 
- 
- ************************************************************************
- *************************************************************************/
+ ************************************************************************/
 
 #ifndef __android_dsp__
 #define __android_dsp__
@@ -454,22 +451,22 @@ class androidaudio : public audio {
             }
         }
     
-        virtual int get_buffer_size()
+        virtual int getBufferSize()
         {
             return fBufferSize;
         }
         
-        virtual int get_sample_rate()
+        virtual int getSampleRate()
         {
             return fSampleRate;
         }
         
-        virtual int get_num_inputs()
+        virtual int getNumInputs()
         {
             return fNumInChans;
         }
         
-        virtual int get_num_outputs()
+        virtual int getNumOutputs()
         {
             return fNumOutChans;
         }

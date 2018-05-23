@@ -1,20 +1,25 @@
 /************************************************************************
- ************************************************************************
- FAUST Polyphonic Architecture File
+ FAUST Architecture File
  Copyright (C) 2013 GRAME, Romain Michon, CCRMA - Stanford University
- Copyright (C) 2003-2015 GRAME, Centre National de Creation Musicale
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
  ---------------------------------------------------------------------
-
- This is sample code. This file is provided as an example of minimal
- FAUST architecture file. Redistribution and use in source and binary
- forms, with or without modification, in part or in full are permitted.
- In particular you can create a derived work of this FAUST architecture
- and distribute that work under terms of your choice.
-
- This sample code is distributed in the hope that it will be useful,
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- ************************************************************************
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __faust_poly_engine__
@@ -226,10 +231,10 @@ class FaustPolyEngine {
         }
 
         /*
-         * deleteVoice(long voice)
-         * Delete a voice based on its MapUI* casted as a long.
+         * deleteVoice(unsigned long voice)
+         * Delete a voice based on its MapUI* casted as a unsigned long.
          */
-        int deleteVoice(long voice)
+        int deleteVoice(unsigned long voice)
         {
             return deleteVoice(reinterpret_cast<MapUI*>(voice));
         }
@@ -278,7 +283,7 @@ class FaustPolyEngine {
     
         /*
          * buildUserInterface(ui)
-         * Calls the polyphonic of monophonic buildUserInterface with the ui parameter.
+         * Calls the polyphonic or monophonic buildUserInterface with the ui parameter.
          */
         void buildUserInterface(UI* ui_interface)
         {
@@ -346,7 +351,7 @@ class FaustPolyEngine {
          * the voice. setVoiceParamValue can only be
          * used if the [style:poly] metadata is used in the Faust code.
          */
-        void setVoiceParamValue(const char* address, long voice, float value)
+        void setVoiceParamValue(const char* address, unsigned long voice, float value)
         {
             reinterpret_cast<MapUI*>(voice)->setParamValue(address, value);
         }
@@ -357,7 +362,7 @@ class FaustPolyEngine {
          * the voice. setVoiceParamValue can only be
          * used if the [style:poly] metadata is used in the Faust code.
          */
-        void setVoiceParamValue(int id, long voice, float value)
+        void setVoiceParamValue(int id, unsigned long voice, float value)
         {
             reinterpret_cast<MapUI*>(voice)->setParamValue(reinterpret_cast<MapUI*>(voice)->getParamAddress(id), value);
         }
@@ -368,7 +373,7 @@ class FaustPolyEngine {
          * getVoiceParamValue can only be used if the [style:poly] metadata
          * is used in the Faust code.
          */
-        float getVoiceParamValue(const char* address, long voice)
+        float getVoiceParamValue(const char* address, unsigned long voice)
         {
             return reinterpret_cast<MapUI*>(voice)->getParamValue(address);
         }
@@ -379,7 +384,7 @@ class FaustPolyEngine {
          * getVoiceParamValue can only be used if the [style:poly] metadata
          * is used in the Faust code.
          */
-        float getVoiceParamValue(int id, long voice)
+        float getVoiceParamValue(int id, unsigned long voice)
         {
             return reinterpret_cast<MapUI*>(voice)->getParamValue(reinterpret_cast<MapUI*>(voice)->getParamAddress(id));
         }
@@ -398,7 +403,7 @@ class FaustPolyEngine {
          * Returns the address of a parameter for a specific voice 
          * in function of its "id".
          */
-        const char* getVoiceParamAddress(int id, long voice)
+        const char* getVoiceParamAddress(int id, unsigned long voice)
         {
             return reinterpret_cast<MapUI*>(voice)->getParamAddress(id).c_str();
         }
@@ -461,22 +466,22 @@ class FaustPolyEngine {
         }
     
         /*
-         * getParamTooltip(address)
-         * Returns the tooltip of a parameter.
+         * getMetadata(address, key)
+         * Returns the metadata of a parameter.
          */
-        const char* getParamTooltip(const char* address)
+        const char* getMetadata(const char* address, const char* key)
         {
             int id = fAPIUI.getParamIndex(address);
-            return (id >= 0) ? fAPIUI.getParamTooltip(id) : "";
+            return (id >= 0) ? fAPIUI.getMetadata(id, key) : "";
         }
     
         /*
-         * getParamTooltip(id)
-         * Returns the tooltip of a parameter.
+         * getMetadata(id, key)
+         * Returns the metadata of a parameter.
          */
-        const char* getParamTooltip(int id)
+        const char* getMetadata(int id, const char* key)
         {
-            return fAPIUI.getParamTooltip(id);
+            return fAPIUI.getMetadata(id, key);
         }
 
         /*
@@ -521,7 +526,7 @@ class FaustPolyEngine {
          * getCPULoad()
          * Return DSP CPU load.
          */
-        float getCPULoad() { return fDriver->get_cpu_load(); }
+        float getCPULoad() { return fDriver->getCPULoad(); }
 
         /*
          * getScreenColor() -> c:int
@@ -549,7 +554,7 @@ extern "C" {
     
     bool isRunning(void* dsp) { return reinterpret_cast<FaustPolyEngine*>(dsp)->isRunning(); }
 
-    long keyOn(void* dsp, int pitch, int velocity) { return (long)reinterpret_cast<FaustPolyEngine*>(dsp)->keyOn(pitch, velocity); }
+    unsigned long keyOn(void* dsp, int pitch, int velocity) { return (unsigned long)reinterpret_cast<FaustPolyEngine*>(dsp)->keyOn(pitch, velocity); }
     int keyOff(void* dsp, int pitch) { return reinterpret_cast<FaustPolyEngine*>(dsp)->keyOff(pitch); }
     
     void propagateMidi(void* dsp, int count, double time, int type, int channel, int data1, int data2)
@@ -568,11 +573,11 @@ extern "C" {
     void setParamIdValue(void* dsp, int id, float value) { reinterpret_cast<FaustPolyEngine*>(dsp)->setParamValue(id, value); }
     float getParamIdValue(void* dsp, int id) { return reinterpret_cast<FaustPolyEngine*>(dsp)->getParamValue(id); }
     
-    void setVoiceParamValue(void* dsp, const char* address, long voice, float value)
+    void setVoiceParamValue(void* dsp, const char* address, unsigned long voice, float value)
     {
         reinterpret_cast<FaustPolyEngine*>(dsp)->setVoiceParamValue(address, voice, value);
     }
-    float getVoiceParamValue(void* dsp, const char* address, long voice) { return reinterpret_cast<FaustPolyEngine*>(dsp)->getVoiceParamValue(address, voice); }
+    float getVoiceParamValue(void* dsp, const char* address, unsigned long voice) { return reinterpret_cast<FaustPolyEngine*>(dsp)->getVoiceParamValue(address, voice); }
     
     const char* getParamAddress(void* dsp, int id) { return reinterpret_cast<FaustPolyEngine*>(dsp)->getParamAddress(id); }
 

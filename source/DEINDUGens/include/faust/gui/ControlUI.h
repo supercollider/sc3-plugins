@@ -1,36 +1,34 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef CONTROL_UI_H
 #define CONTROL_UI_H
 
-#include "faust/gui/UI.h"
 #include <jack/midiport.h>
 #include <vector>
 #include <assert.h>
+
+#include "faust/gui/UI.h"
 
 class ControlUI : public UI {  
 
@@ -62,7 +60,7 @@ class ControlUI : public UI {
         
     public:
        
-        void encode_control(float* control_buffer, unsigned int frames)
+        void encodeControl(float* control_buffer, unsigned int frames)
         { 
             assert(fControlOut.size() <= frames);
             
@@ -71,7 +69,7 @@ class ControlUI : public UI {
             }
         }
         
-        void decode_control(float* control_buffer, unsigned int frames)
+        void decodeControl(float* control_buffer, unsigned int frames)
         {
             assert(fControlIn.size() <= frames);
             
@@ -80,7 +78,7 @@ class ControlUI : public UI {
             }
         }
         
-        void encode_midi_control(void* midi_control_buffer, unsigned int frames)
+        void encodeMidiControl(void* midi_control_buffer, unsigned int frames)
         { 
             assert(fControlOut.size() <= frames);
             jack_midi_reset_buffer(midi_control_buffer);
@@ -92,7 +90,7 @@ class ControlUI : public UI {
             }
         }
     
-        static void encode_midi_control(void* midi_control_buffer, float* control_buffer, int count)
+        static void encodeMidiControl(void* midi_control_buffer, float* control_buffer, int count)
         {
             jack_midi_reset_buffer(midi_control_buffer);
             
@@ -103,7 +101,7 @@ class ControlUI : public UI {
             }
         }
         
-        void decode_midi_control(void* midi_control_buffer, unsigned int frames)
+        void decodeMidiControl(void* midi_control_buffer, unsigned int frames)
         {
             assert(jack_midi_get_event_count(midi_control_buffer) <= frames);
             
@@ -114,7 +112,7 @@ class ControlUI : public UI {
             }
         }
         
-        static void decode_midi_control(void* midi_control_buffer, float* control_buffer, int count)
+        static void decodeMidiControl(void* midi_control_buffer, float* control_buffer, int count)
         {
             assert(jack_midi_get_event_count(midi_control_buffer) <= count);
             
