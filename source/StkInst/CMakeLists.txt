@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 set(PROJECT "StkInst")
-project (${PROJECT})
+
 
 if(NOT SYSTEM_STK)
     set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../external_libraries/stk)
