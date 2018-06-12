@@ -93,7 +93,6 @@ set(PLUGIN_DIRS
     DistortionUGens
     DWGUGens
     GlitchUGens
-    HOAUGens
     JoshUGens
     LoopBufUGens
     MCLDUGens
@@ -165,12 +164,15 @@ else()
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
 
-#HOAUGens
-if (CMAKE_COMPILER_IS_CLANG)
-    file(GLOB HOAUGensSources HOAUGens/*cpp)
-    foreach(HOAUGensSourceFile ${HOAUGensSources})
-	  set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
-    endforeach(HOAUGensSourceFile)
+# HOAUGens
+if (HOA_UGENS)
+    list(APPEND PLUGIN_DIRS HOAUGens)
+    if (CMAKE_COMPILER_IS_CLANG)
+        file(GLOB HOAUGensSources HOAUGens/*cpp)
+        foreach(HOAUGensSourceFile ${HOAUGensSources})
+            set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
+        endforeach(HOAUGensSourceFile)
+    endif()
 endif()
 
 foreach(DIR ${PLUGIN_DIRS})
