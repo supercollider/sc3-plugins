@@ -72,6 +72,8 @@ Copy the `SC3plugins` folder to your Extensions folder (evaluate `Platform.userE
 
 NOTE: on macOS, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
 
+**Note for SuperCollider < 3.9.1** The Supernova server on macOS and Windows incorrectly searches for plugins in the `/Extensions/plugins` directory. The scsynth server correctly searches for plugins in `/Extensions`. If Supernova is unable to find the sc3-plugins, make sure that they are located in `/Extensions/plugins`.
+
 ### Cmake Options
 
 + Set install target
