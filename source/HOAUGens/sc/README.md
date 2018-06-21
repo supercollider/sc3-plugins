@@ -16,12 +16,10 @@ The SuperCollider library was written by [Florian Grond](http://www.grond.at). I
 
 ## Installation
 
-The HOAUGens can be installed as part of the sc3-plugins collection. In order for the HOAUGens to be built when compiling sc3-plugins, the cmake variable `HOA_UGENS` must be set to `ON`.
+The HOAUGens can be installed as part of the sc3-plugins collection. Because of compiler restrictions on specific platforms (see below), HOAUGens are currently disabled by default. To enable them, set the cmake variable `HOA_UGENS` to `ON`, as follows:
 ```shell
 cmake -DHOA_UGENS=ON ..
 ```
-By default, this variable is set to `OFF`, which causes these UGens not to be compiled. This means that the HOAUGens are excluded by default when compiling the sc3-plugins. This is necessary for reasons of cross-platform compatibility.
-
 The HOAUGens are known to compile successfully on **macOS** (clang) and **Linux** (gcc).
 
 **note for Windows** The HOAUGens are unable to build using MSVC due a limitation in the depth of bracket nesting that is permitted by this compiler. Compilation using other Windows compilers has not been tested.
