@@ -1,6 +1,6 @@
 /*
 NHHall -- a stereo reverb
-Version 2018-05-07
+Version 2018-06-24
 
 https://github.com/snappizz/nh-ugens
 
@@ -511,7 +511,7 @@ public:
     {
     }
 
-    float set_diffusion(float diffusion) {
+    void set_diffusion(float diffusion) {
         m_k = diffusion * m_diffusion_sign;
     }
 
@@ -544,7 +544,7 @@ public:
     {
     }
 
-    float set_diffusion(float diffusion) {
+    void set_diffusion(float diffusion) {
         m_k = diffusion * m_diffusion_sign;
     }
 
