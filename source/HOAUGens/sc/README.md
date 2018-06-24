@@ -16,20 +16,18 @@ The SuperCollider library was written by [Florian Grond](http://www.grond.at). I
 
 ## Installation
 
-The HOAUGens can be compiled and installed as part of the sc3-plugins collection. Compilation of the HOAUGens can be turned `ON` by setting the corresponding cmake variable:
+The HOAUGens can be installed as part of the sc3-plugins collection. Because of compiler restrictions on specific platforms (see below), HOAUGens are currently disabled by default. To enable them, set the cmake variable `HOA_UGENS` to `ON`, as follows:
 ```shell
 cmake -DHOA_UGENS=ON ..
 ```
-This variable is set to `OFF` by default.
+The HOAUGens are known to compile successfully on **macOS** (clang) and **Linux** (gcc).
 
-The HOAUGens can be compiled successfully on **macOS** and **Linux**.
+**note for Windows** The HOAUGens are unable to build using MSVC due a limitation in the depth of bracket nesting that is permitted by this compiler. Compilation using other Windows compilers has not been tested.
 
-**note for Windows** The HOAUGens are unable to build using MSVC due a limitation in the depth of bracket nesting that is permitted by this compiler. These UGens have not been tested on Windows, and any build for this platform should be considered experimental.
-
-**note for Embedded Linux systems** Although these UGens can be built on Linux, there have been issues compiling them successfully on small Embedded Linux systems (Raspberry Pi, etc.).
+**note for Embedded Linux systems** Although these UGens can be compiled on Linux, there have been issues compiling them successfully on small Embedded Linux systems (Raspberry Pi, etc.).
 
 
 ## Acknowledgements
 
-The implementation of SC-HOA was supported by a postdoctoral fellowship of Fonds de Recherche du Québec - Société et Culture (FRQSC) http://www.frqsc.gouv.qc.ca/ conducted at CIRMMT https://www.cirmmt.org/ and through the Metalab at the Société des Arts Technologiques http://sat.qc.ca/ in Montreal.
+The implementation of HOAUGens was supported by a postdoctoral fellowship of Fonds de Recherche du Québec - Société et Culture (FRQSC) http://www.frqsc.gouv.qc.ca/ conducted at CIRMMT https://www.cirmmt.org/ and through the Metalab at the Société des Arts Technologiques http://sat.qc.ca/ in Montreal.
 Special thanks goes to Nicolas Bouillot, Michal Seta, Till Bovermann and Carlo Capocasa.
