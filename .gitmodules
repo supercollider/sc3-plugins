@@ -1,6 +1,6 @@
 [submodule "external_libraries/nova-simd"]
 	path = external_libraries/nova-simd
-	url = git://github.com/timblechmann/nova-simd.git
+	url = https://github.com/timblechmann/nova-simd.git
 [submodule "external_libraries/stk"]
 	path = external_libraries/stk
 	url = https://github.com/thestk/stk.git
