@@ -1,0 +1,73 @@
+---
+---
+@import "{{ site.theme }}";
+$link-color: #ce534d;
+$link-color-hover: #ab443f;
+
+a {
+  color: $link-color;
+}
+
+.page-header {
+  background-color: transparent;
+  background-image: none;
+  color: inherit;
+  padding: 1em 2rem;
+  border-bottom: 1px solid #cecece;
+
+  .project-name {
+    &:before {
+      content: "";
+      display: inline-block;
+      background: url(../img/supercollider.png) no-repeat;
+      background-size: 70px;
+      width: 70px;
+      height: 70px;
+      vertical-align: bottom;
+      padding-right: 16px;
+    }
+  }
+
+  .btn {
+    &:before {
+      content: "";
+      display: inline-block;
+      background: url(../img/github.png) no-repeat;
+      background-size: 20px;
+      width: 20px;
+      height: 20px;
+      vertical-align: sub;
+      padding-right: 10px;
+    }
+  }
+}
+
+.main-content {
+  h1,h2,h3,h4,h5,h6 {
+    color: inherit;
+    font-weight: bold;
+  }
+}
+
+.btn {
+  background-color: $link-color;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  &:hover {
+    background-color: $link-color-hover;
+  }
+}
+
+.main-content {
+  padding: 1rem;
+}
+
+.site-footer {
+  text-align: center;
+}
+
+.highlight {
+  .nt {
+    color: inherit;
+  }
+}
