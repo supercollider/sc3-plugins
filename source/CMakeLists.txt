@@ -173,6 +173,17 @@ if (CMAKE_COMPILER_IS_CLANG)
     endforeach(HOAUGensSourceFile)
 endif()
 
+#if(APPLE)
+#    FILE(GLOB_RECURSE HOAUGensSources HOAUGens/*cpp)
+#    FOREACH(item ${HOAUGensSources})
+#        IF(${item} MATCHES "foo/main.c")
+#          LIST(REMOVE_ITEM files ${item})
+#        ENDIF(${item} MATCHES "foo/main.c")
+#    ENDFOREACH(item)
+#    MESSAGE(STATUS "${files}")
+#endif()
+
+
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
 endforeach(DIR)
