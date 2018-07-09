@@ -175,8 +175,6 @@ if (HOA_UGENS)
     endif()
 endif()
 
-
-
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
 endforeach(DIR)
