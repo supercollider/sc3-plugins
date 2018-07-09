@@ -4,7 +4,7 @@ copyright: "(c) Pierre Lecomte 2014"
 license: "GPL"
 name: "HOAEncoder1"
 version: "1.0"
-Code generated with Faust 2.5.21 (https://faust.grame.fr)
+Code generated with Faust 2.5.23 (https://faust.grame.fr)
 Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
@@ -639,29 +639,26 @@ class mydsp : public dsp {
 	int fSamplingFreq;
 	double fConst0;
 	double fConst1;
-	FAUSTFLOAT fHslider0;
-	double fRec1[2];
 	FAUSTFLOAT fCheckbox0;
 	FAUSTFLOAT fEntry0;
+	FAUSTFLOAT fHslider0;
 	FAUSTFLOAT fHslider1;
-	double fRec2[2];
+	double fRec1[2];
 	double fRec0[2];
 	FAUSTFLOAT fVbargraph0;
 	double fConst2;
 	FAUSTFLOAT fHslider2;
-	double fRec4[2];
 	FAUSTFLOAT fHslider3;
-	double fRec5[2];
 	double fConst3;
 	double fConst4;
-	double fRec8[2];
-	double fRec7[2];
-	double fRec6[2];
+	double fRec5[2];
+	double fRec4[2];
 	double fRec3[2];
+	double fRec2[2];
 	FAUSTFLOAT fVbargraph1;
-	double fRec9[2];
+	double fRec6[2];
 	FAUSTFLOAT fVbargraph2;
-	double fRec10[2];
+	double fRec7[2];
 	FAUSTFLOAT fVbargraph3;
 	
  public:
@@ -671,6 +668,7 @@ class mydsp : public dsp {
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
 		m->declare("copyright", "(c) Pierre Lecomte 2014");
+		m->declare("filename", "HOAEncoder1");
 		m->declare("gui.lib/author", "Pierre Lecomte");
 		m->declare("gui.lib/copyright", "(c) Pierre Lecomte 2016");
 		m->declare("gui.lib/license", "GPL");
@@ -766,10 +764,10 @@ class mydsp : public dsp {
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0);
 		fCheckbox0 = FAUSTFLOAT(0.0);
 		fEntry0 = FAUSTFLOAT(1.0700000000000001);
-		fHslider1 = FAUSTFLOAT(2.0);
+		fHslider0 = FAUSTFLOAT(2.0);
+		fHslider1 = FAUSTFLOAT(0.0);
 		fHslider2 = FAUSTFLOAT(0.0);
 		fHslider3 = FAUSTFLOAT(0.0);
 		
@@ -781,11 +779,11 @@ class mydsp : public dsp {
 			
 		}
 		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			fRec2[l1] = 0.0;
+			fRec0[l1] = 0.0;
 			
 		}
 		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
-			fRec0[l2] = 0.0;
+			fRec5[l2] = 0.0;
 			
 		}
 		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
@@ -793,31 +791,19 @@ class mydsp : public dsp {
 			
 		}
 		for (int l4 = 0; (l4 < 2); l4 = (l4 + 1)) {
-			fRec5[l4] = 0.0;
+			fRec3[l4] = 0.0;
 			
 		}
 		for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
-			fRec8[l5] = 0.0;
+			fRec2[l5] = 0.0;
 			
 		}
 		for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
-			fRec7[l6] = 0.0;
+			fRec6[l6] = 0.0;
 			
 		}
 		for (int l7 = 0; (l7 < 2); l7 = (l7 + 1)) {
-			fRec6[l7] = 0.0;
-			
-		}
-		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
-			fRec3[l8] = 0.0;
-			
-		}
-		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
-			fRec9[l9] = 0.0;
-			
-		}
-		for (int l10 = 0; (l10 < 2); l10 = (l10 + 1)) {
-			fRec10[l10] = 0.0;
+			fRec7[l7] = 0.0;
 			
 		}
 		
@@ -845,14 +831,14 @@ class mydsp : public dsp {
 		ui_interface->openHorizontalBox("HOAEncoder1");
 		ui_interface->openVerticalBox("Parameters");
 		ui_interface->openHorizontalBox("Source  0");
-		ui_interface->declare(&fHslider0, "0+1", "");
-		ui_interface->declare(&fHslider0, "osc", "/gain_0 -20 20");
-		ui_interface->declare(&fHslider0, "style", "knob");
-		ui_interface->addHorizontalSlider("Gain  0", &fHslider0, 0.0, -20.0, 20.0, 0.10000000000000001);
-		ui_interface->declare(&fHslider1, "0+2", "");
-		ui_interface->declare(&fHslider1, "osc", "/radius_0 0.5 50");
+		ui_interface->declare(&fHslider1, "0+1", "");
+		ui_interface->declare(&fHslider1, "osc", "/gain_0 -20 20");
 		ui_interface->declare(&fHslider1, "style", "knob");
-		ui_interface->addHorizontalSlider("Radius  0", &fHslider1, 2.0, 0.5, 50.0, 0.01);
+		ui_interface->addHorizontalSlider("Gain  0", &fHslider1, 0.0, -20.0, 20.0, 0.10000000000000001);
+		ui_interface->declare(&fHslider0, "0+2", "");
+		ui_interface->declare(&fHslider0, "osc", "/radius_0 0.5 50");
+		ui_interface->declare(&fHslider0, "style", "knob");
+		ui_interface->addHorizontalSlider("Radius  0", &fHslider0, 2.0, 0.5, 50.0, 0.01);
 		ui_interface->declare(&fHslider3, "0+3", "");
 		ui_interface->declare(&fHslider3, "osc", "/azimuth_0 0 360");
 		ui_interface->declare(&fHslider3, "style", "knob");
@@ -874,21 +860,21 @@ class mydsp : public dsp {
 		ui_interface->openHorizontalBox("0");
 		ui_interface->openVerticalBox("0");
 		ui_interface->declare(&fVbargraph0, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x25edca0", &fVbargraph0, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x564b557222e0", &fVbargraph0, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->openHorizontalBox("1");
 		ui_interface->openVerticalBox("1");
 		ui_interface->declare(&fVbargraph1, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2606310", &fVbargraph1, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x564b55737310", &fVbargraph1, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("2");
 		ui_interface->declare(&fVbargraph2, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x260bc40", &fVbargraph2, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x564b5573ce20", &fVbargraph2, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("3");
 		ui_interface->declare(&fVbargraph3, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2611a10", &fVbargraph3, -70.0, 6.0);
+		ui_interface->addVerticalBargraph("0x564b55742dd0", &fVbargraph3, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->closeBox();
@@ -902,56 +888,54 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output1 = outputs[1];
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
-		double fSlow0 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider0))));
-		double fSlow1 = double(fCheckbox0);
-		double fSlow2 = (1.0 - fSlow1);
-		double fSlow3 = double(fEntry0);
-		double fSlow4 = (fSlow1 * fSlow3);
-		double fSlow5 = (0.0010000000000000009 * double(fHslider1));
-		double fSlow6 = (0.0010000000000000009 * double(fHslider2));
-		double fSlow7 = (0.0010000000000000009 * double(fHslider3));
-		double fSlow8 = (1.0 / ((fConst4 / fSlow3) + 1.0));
-		double fSlow9 = (fConst3 / fSlow3);
+		double fSlow0 = double(fCheckbox0);
+		double fSlow1 = double(fEntry0);
+		double fSlow2 = double(fHslider0);
+		double fSlow3 = (1.0 - fSlow0);
+		double fSlow4 = (((fSlow0 * fSlow1) / fSlow2) + fSlow3);
+		double fSlow5 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider1))));
+		double fSlow6 = sin(double(fHslider2));
+		double fSlow7 = pow((1.0 - mydsp_faustpower2_f(fSlow6)), 0.5);
+		double fSlow8 = double(fHslider3);
+		double fSlow9 = (fConst2 * (fSlow7 * sin(fSlow8)));
+		double fSlow10 = ((fConst4 / fSlow2) + 1.0);
+		double fSlow11 = (fConst3 / (fSlow10 * fSlow2));
+		double fSlow12 = (1.0 / ((fConst4 / fSlow1) + 1.0));
+		double fSlow13 = (((fSlow10 * fSlow0) * fSlow1) / fSlow2);
+		double fSlow14 = (fConst3 / fSlow1);
+		double fSlow15 = (1.7320508075688772 * fSlow6);
+		double fSlow16 = (fConst2 * (cos(fSlow8) * fSlow7));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			fRec1[0] = (fSlow0 + (0.999 * fRec1[1]));
-			fRec2[0] = (fSlow5 + (0.999 * fRec2[1]));
-			double fTemp0 = double(input0[i]);
-			double fTemp1 = ((fRec1[0] * (fSlow2 + (fSlow4 / fRec2[0]))) * fTemp0);
+			fRec1[0] = (fSlow5 + (0.999 * fRec1[1]));
+			double fTemp0 = (fRec1[0] * double(input0[i]));
+			double fTemp1 = (fSlow4 * fTemp0);
 			fRec0[0] = max((fRec0[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp1))))));
 			fVbargraph0 = FAUSTFLOAT(fRec0[0]);
 			output0[i] = FAUSTFLOAT(fTemp1);
-			fRec4[0] = (fSlow6 + (0.999 * fRec4[1]));
-			double fTemp2 = sin(fRec4[0]);
-			double fTemp3 = pow((1.0 - mydsp_faustpower2_f(fTemp2)), 0.5);
-			fRec5[0] = (fSlow7 + (0.999 * fRec5[1]));
-			double fTemp4 = ((fConst4 / fRec2[0]) + 1.0);
-			fRec8[0] = (fRec8[1] + fRec7[1]);
-			fRec7[0] = (fSlow8 * ((fSlow4 * (((fRec1[0] * fTemp4) * fTemp0) / fRec2[0])) - (fSlow9 * fRec8[0])));
-			fRec6[0] = (fRec7[0] + fRec6[1]);
-			double fTemp5 = ((fConst3 * ((fRec6[0] - fRec7[0]) / (fRec2[0] * fTemp4))) + (fRec7[0] + (fSlow2 * (fRec1[0] * fTemp0))));
-			double fTemp6 = (fConst2 * ((fTemp3 * sin(fRec5[0])) * fTemp5));
-			fRec3[0] = max((fRec3[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp6))))));
-			fVbargraph1 = FAUSTFLOAT(fRec3[0]);
-			output1[i] = FAUSTFLOAT(fTemp6);
-			double fTemp7 = (1.7320508075688772 * (fTemp2 * fTemp5));
-			fRec9[0] = max((fRec9[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp7))))));
-			fVbargraph2 = FAUSTFLOAT(fRec9[0]);
-			output2[i] = FAUSTFLOAT(fTemp7);
-			double fTemp8 = (fConst2 * ((fTemp3 * cos(fRec5[0])) * fTemp5));
-			fRec10[0] = max((fRec10[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp8))))));
-			fVbargraph3 = FAUSTFLOAT(fRec10[0]);
-			output3[i] = FAUSTFLOAT(fTemp8);
+			fRec5[0] = (fRec5[1] + fRec4[1]);
+			fRec4[0] = (fSlow12 * ((fSlow13 * fTemp0) - (fSlow14 * fRec5[0])));
+			fRec3[0] = (fRec4[0] + fRec3[1]);
+			double fTemp2 = ((fSlow11 * (fRec3[0] - fRec4[0])) + (fRec4[0] + (fSlow3 * fTemp0)));
+			double fTemp3 = (fSlow9 * fTemp2);
+			fRec2[0] = max((fRec2[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp3))))));
+			fVbargraph1 = FAUSTFLOAT(fRec2[0]);
+			output1[i] = FAUSTFLOAT(fTemp3);
+			double fTemp4 = (fSlow15 * fTemp2);
+			fRec6[0] = max((fRec6[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp4))))));
+			fVbargraph2 = FAUSTFLOAT(fRec6[0]);
+			output2[i] = FAUSTFLOAT(fTemp4);
+			double fTemp5 = (fSlow16 * fTemp2);
+			fRec7[0] = max((fRec7[1] - fConst1), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp5))))));
+			fVbargraph3 = FAUSTFLOAT(fRec7[0]);
+			output3[i] = FAUSTFLOAT(fTemp5);
 			fRec1[1] = fRec1[0];
-			fRec2[1] = fRec2[0];
 			fRec0[1] = fRec0[0];
-			fRec4[1] = fRec4[0];
 			fRec5[1] = fRec5[0];
-			fRec8[1] = fRec8[0];
-			fRec7[1] = fRec7[0];
-			fRec6[1] = fRec6[0];
+			fRec4[1] = fRec4[0];
 			fRec3[1] = fRec3[0];
-			fRec9[1] = fRec9[0];
-			fRec10[1] = fRec10[0];
+			fRec2[1] = fRec2[0];
+			fRec6[1] = fRec6[0];
+			fRec7[1] = fRec7[0];
 			
 		}
 		
