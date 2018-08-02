@@ -11,6 +11,8 @@ The HOAUGens are intended to be used with their accompagnying SuperCollider Quar
 
 As a whole, the HOA library provides classes to encode, transform and decode Higher Order Ambisonics sound signals up to order 5. The basis for the library are UGens compiled from Faust code written by Pierre Lecomte, see [ambitools](https://github.com/sekisushai/ambitools). Documentation and tutorials are partly based on the [ambitools documentation](https://github.com/sekisushai/ambitools/blob/master/Documentation/documentation.pdf) (pdf).
 
+Additional plane wave encoders and optimizers have been added, adpated from [CICM](http://cicm.mshparisnord.org/)'s [HoaLibrary](http://hoalibrary.mshparisnord.fr/) and [Aaron Heller](https://www.sri.com/about/people/aaron-j-heller)'s [ambidecodertoolbox](https://bitbucket.org/ambidecodertoolbox/adt.git).  
+
 The SuperCollider library was written by [Florian Grond](http://www.grond.at). It includes soundfield recordings made together with Romain Dumoulin using the Eigenmike from [CIRMMT](http://www.cirmmt.org).
 
 
