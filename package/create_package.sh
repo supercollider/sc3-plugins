@@ -10,7 +10,7 @@ get_absolute_path() {
   echo "$(cd "$(dirname "$0")" && pwd -P)"
 }
 
-remove_source_dir(){
+remove_source_dir() {
   echo "Removing potential previous sources."
   rm -rf "${source_dir}/sc3-plugins"*
 }
@@ -19,16 +19,7 @@ checkout_project() {
   remove_source_dir
   echo "Cloning project..."
   cd "$source_dir"
-  git clone $upstream
-  echo "Checking out version: Version-$version"
-  cd "$package_name"
-  git checkout "Version-$version"
-}
-
-checkout_external_libraries() {
-  echo "Checking out external libraries..."
-  cd "${source_dir}/${package_name}"
-  git submodule update --init --recursive
+  git clone $upstream --branch "Version-$version" --single-branch --recursive
 }
 
 clean_sources() {
@@ -104,7 +95,6 @@ else
 fi
 
 checkout_project
-checkout_external_libraries
 clean_sources
 rename_sources
 compress_sources
