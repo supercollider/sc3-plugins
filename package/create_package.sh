@@ -35,30 +35,30 @@ clean_sources() {
 
 rename_sources() {
   cd "${source_dir}"
-  mv -v "${package_name}" "${package_name}-Version-${version}"
+  mv -v "${package_name}" "${package_name}-${version}-Source"
 }
 
 compress_sources() {
   cd "${source_dir}"
-  tar cvfz "${package_name}-Version-${version}.tar.tgz" \
-    "${package_name}-Version-${version}"
+  tar cvfz "${package_name}-${version}-Source.tar.bz2" \
+    "${package_name}-${version}-Source"
 }
 
 move_sources() {
   cd "${source_dir}"
-  mv -v "${package_name}-Version-${version}.tar.tgz" "${output_dir}/"
+  mv -v "${package_name}-${version}-Source.tar.bz2" "${output_dir}/"
 }
 
 sign_sources() {
   cd "${output_dir}"
   gpg2 --default-key "${signer}" \
-       --output "${package_name}-Version-${version}.tar.tgz.asc" \
-       --detach-sign "${package_name}-Version-${version}.tar.tgz"
+       --output "${package_name}-${version}-Source.tar.bz2.asc" \
+       --detach-sign "${package_name}-${version}-Source.tar.bz2"
 }
 
 cleanup_source_dir() {
   cd "${source_dir}"
-  rm -rf "${package_name}-Version-${version}"
+  rm -rf "${package_name}-${version}"
 }
 
 print_help() {
