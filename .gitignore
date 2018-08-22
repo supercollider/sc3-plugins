@@ -1,6 +1,6 @@
 .DS_Store
 build*
-package/*.tar.tgz
+package/*.tar.bz2
 package/*.asc
 source/local/*.cpp
 source/local/*.scd
