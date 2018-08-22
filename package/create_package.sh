@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Creates assets for sc3-plugins in the form of
-# 'sc3-plugins-Version-x.x.x.tar.gz' and moves the file to the repository's
+# 'sc3-plugins-x.x.x-Source.tar.bz2' and moves the file to the repository's
 # package folder.
 # Requires a writable /tmp folder.
 
