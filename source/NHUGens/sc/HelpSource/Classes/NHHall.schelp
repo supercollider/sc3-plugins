@@ -1,0 +1,71 @@
+TITLE:: NHHall
+summary:: Stereo reverb
+categories:: UGens>Filters
+
+DESCRIPTION::
+
+A general-purpose stereo-to-stereo reverb. Both the early and late reflections are "true stereo," designed so that the reflections bloom outward from the panned positions of the input signal. Random modulation adds lush chorus effects to the sound.
+
+This provides only the wet signal. A practical reverb should generally have a wet/dry mix, predelay, and post-EQ (or pre-EQ). Since these are elementary to write in SuperCollider, they are not built in.
+
+For a mono-to-stereo reverb, turn the input signal into a stereo signal with Pan2. For a mono-to-mono reverb, turn the stereo spread up to 1 and use only the left or right output channel. It is not advisable to sum the two channels together due to the use of the Haas effect in the output taps.
+
+The reverb can be frozen by setting the reverberation time to infinity. Empirical tests have shown that this remains stable for at least a few minutes.
+
+This reverb was written by Nathan Ho specifically for SuperCollider, ChucK, and Auraglyph (an open source modular synth for iPad).
+
+warning:: There is currently a denormal number bug in this UGen that causes CPU spikes on ARM processors (e.g. Raspberry Pi). ::
+
+warning:: This UGen is usable but currently still undergoing minor tweaks. Expect some slight changes in sound over different versions. Eventually, this UGen will be migrated to the core SuperCollider app and backward compatibility will be guaranteed. ::
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+All arguments except the input are control-rate.
+
+ARGUMENT:: in
+
+Input signal.
+
+ARGUMENT:: rt60
+
+Approximate 60dB decay time of the mid frequencies. Setting this to infinity results in an infinite hold reverb.
+
+ARGUMENT:: stereo
+
+Rate at which audio spreads between the left and right channels. At 0, the two channel paths are kept separate. At 1, they blend together nearly instantly. In between, the stereo spread happens slowly over time.
+
+ARGUMENT:: lowFreq
+
+The low frequency cutoff.
+
+ARGUMENT:: lowRatio
+
+The decay rate multiplier for low frequencies. Set this to 1 to use the same decay time as the mid frequencies.
+
+ARGUMENT:: hiFreq
+
+The high frequency cutoff.
+
+ARGUMENT:: hiRatio
+
+The decay rate multiplier for high frequencies. Set this to 1 to use the same decay time as the mid frequencies.
+
+ARGUMENT:: earlyDiffusion
+
+The coefficient for the early reflection Schroeder allpass filters. Ranges from 0 to 1, but most normal reverbs will use 0.5 to 0.9. Higher values have a sharper attack and add metallic coloration to the signal.
+
+Modulation depth for early reflections. Ranges from 0 to 1.
+
+ARGUMENT:: lateDiffusion
+
+The coefficient for the late reflection Schroeder allpass filters. Ranges from 0 to 1, but most normal reverbs will use 0.5 to 0.9. Higher values have a sharper attack and add metallic coloration to the signal.
+
+ARGUMENT:: modRate
+
+Modulation rate for late reflections. Ranges from 0 to 1.
+
+ARGUMENT:: modDepth
+
+Modulation depth for late reflections. Ranges from 0 to 1.
