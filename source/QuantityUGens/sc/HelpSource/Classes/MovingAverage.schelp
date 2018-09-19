@@ -5,6 +5,7 @@ categories:: UGens>Analysis, UGens>Maths
 
 description::
 A running average, power or RMS over a variable number of samples.
+For a running sum (not averaged) see link::Classes/MovingSum::.
 
 classmethods::
 method:: ar, kr
