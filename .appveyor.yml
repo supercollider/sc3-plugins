@@ -1,0 +1,74 @@
+# Appveyor config file for sc3-plugins
+# Author: Brian Heim
+# Created on 2018-06-24
+# See http://www.appveyor.com/docs/appveyor-yml
+
+version: '{build}' # incremented with each build
+
+# shallow_clone doesn't clone, repository is not git so can't get submodules
+clone_depth: 5
+
+# https://www.appveyor.com/docs/build-environment/#build-worker-images
+image: Visual Studio 2017
+
+# disable automatic tests
+test: off
+
+environment:
+    CMAKE_CONFIGURATION: Release
+
+    matrix:
+        - CMAKE_GENERATOR: "Visual Studio 15 2017"
+          FFTW_URL: ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip
+          ARCH: "x86"
+          # https://www.appveyor.com/docs/lang/cpp/
+          VCVARS_SCRIPT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars32.bat"
+
+        - CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
+          FFTW_URL: ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip
+          ARCH: "x64"
+          VCVARS_SCRIPT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat"
+
+install:
+# Load command-line tools (lib.exe)
+- cmd: call "%VCVARS_SCRIPT%"
+
+- cmd: echo "Get submodules"
+- cmd: git submodule update --init --recursive
+
+- cmd: echo "Get SuperCollider"
+- cmd: git clone --recursive --depth 1 https://github.com/supercollider/supercollider ../supercollider
+
+# FFTW3, including lib prep
+- cmd: echo "Install fftw"
+- cmd: mkdir fftw && cd fftw
+# can't use appveyor DownloadFile because it's FTP
+- ps: Invoke-WebRequest $env:FFTW_URL -OutFile fftw.zip
+- ps: 7z x fftw.zip -y
+- cmd: lib.exe /machine:%ARCH% /def:libfftw3f-3.def
+- cmd: echo "Done installing fftw"
+- cmd: cd ..
+
+before_build:
+- mkdir build
+- cd build
+
+build_script:
+- cmake -G "%CMAKE_GENERATOR%" -DSC_PATH=../../supercollider -DFFTW3F_INCLUDE_DIR=../fftw -DFFTW3F_LIBRARY=../fftw/libfftw3f-3.lib ..
+- cmake --build . --target install --config %CMAKE_CONFIGURATION%
+
+# TODO
+# artifacts:
+#     - path: artifacts
+#       name: art_folder
+
+# TODO
+# github releases - only tags
+# - provider: GitHub
+#   description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
+#   artifact: installer
+#   auth_token:
+#     secure: rxXJNY+6n25Th9R4+7qI+AcnTj0wCAMSnBGH2+5s7DlVLrAGsSY6+EEDbeHWGGeI
+#   prerelease: true
+#   on:
+#     appveyor_repo_tag: true

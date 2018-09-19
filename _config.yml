@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+sass:
+  style: compressed
+release_baseurl: "https://github.com/supercollider/sc3-plugins/releases"

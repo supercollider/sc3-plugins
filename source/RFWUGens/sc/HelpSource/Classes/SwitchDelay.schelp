@@ -6,7 +6,7 @@ categories:: UGens>Delays
 
 Description::
 
-A feedback delay line which allows moving the buffer read position using the switch-and-ramp technique as described by Miller S. Puckette in his Theory and Techniques of Electronic Music book. http://crca.ucsd.edu/~msp/techniques/latest/book.pdf (chapter 4)
+A feedback delay line which allows moving the buffer read position using the switch-and-ramp technique as described by Miller S. Puckette in his Theory and Techniques of Electronic Music book. http://msp.ucsd.edu/techniques/latest/book-html/node63.html
 
 Altering the buffer read position, in order to affect the perceived delay speed/timing, creates a discontinuity in the signal, typically causing unwanted audible artefacts. The switch-and-ramp technique seeks to neutralise these artefacts and allow switching with minimal clicks. See examples.
 

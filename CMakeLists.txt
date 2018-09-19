@@ -61,9 +61,8 @@ option(NOVA_SIMD "Build VBAP with nova-simd support." ON)
 option(CPP11 "Build with c++11." ON)
 option(NATIVE "Optimize for this specific machine." OFF)
 option(SYSTEM_STK "Use STK libraries from system" OFF)
-
-option(NOVA_DISK_IO "Build with Nova's DiskIO UGens. Requires boost source
-tree, break warranty & eats your children." OFF)
+option(HOA_UGENS "Build with HOAUGens (Higher-order Ambisonics)" ON)
+option(NOVA_DISK_IO "Build with Nova's DiskIO UGens. Requires boost source tree, break warranty & eats your children." OFF)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     set(CMAKE_COMPILER_IS_CLANG 1)

@@ -1,5 +1,7 @@
 .DS_Store
 build*
+package/*.tar.bz2
+package/*.asc
 source/local/*.cpp
 source/local/*.scd
 source/local/*.sc
@@ -10,7 +12,6 @@ source/local/*.html
 *~
 *.orig
 
-
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -20,3 +21,6 @@ install_manifest.txt
 cmake_uninstall.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
+
+_site/
+vendor/
