@@ -19,16 +19,12 @@ argument::maxsamp
 Maximum size of the summing window. Pre-allocates memory up to this size and
 your strong::numsamp:: will be clipped at this value. strong::maxsamp:: cannot
 be modulated.
-argument::avg
-A flag specifying whether to output the average of the running sum over the
-strong::numsamp:: frames. code::0:: outputs the sum, code::> 0:: outputs the
-average. This is used internally by link::Classes/MovingAverage::.
 
 examples::
 
 code::
 /*
-Compare the values of RunningSum vs. MovingAverage, which uses MovingSum internally.
+Compare the values of RunningSum vs. MovingSum.
 */
 
 /* load synthdefs */
@@ -39,10 +35,10 @@ s.waitForBoot({
 
 	// noise source: Pink Noise
 	SynthDef(\noisrc, { |out|
-		Out.ar(out, PinkNoise.ar);
+		Out.ar(out, PinkNoise.ar * 4410.reciprocal); // scale down to see on scope
 	}).add;
 
-	// RunningSum, averaged
+	// RunningSum
 	SynthDef(\rs_avg, { |out, in, samps=4410|
 		Out.kr( out,
 			A2K.kr(                // convert to control rate for scoping
@@ -50,16 +46,15 @@ s.waitForBoot({
 					In.ar(in),
 					samps          // RunningSum samps is non-modulatable
 				)
-				* samps.reciprocal // take average
 			)
 		);
 	}).add;
 
-	// MovingAverage, internally using the MovingSum avg=true flag
-	SynthDef(\mvavg, { |out, in, samps=4410|
+	// MovingSum
+	SynthDef(\msum, { |out, in, samps=4410|
 		Out.kr( out,
 			A2K.kr(                // convert to control rate for scoping
-				MovingAverage.ar(
+				MovingSum.ar(
 					In.ar(in),
 					samps,
 					SampleRate.ir * maxWin  // max window size, in samples, non-modulatable
@@ -75,18 +70,18 @@ s.waitForBoot({
 (
 // A bus for the noise source
 ~noiBus = Bus.audio(s, 1);
-~avgBus = Bus.control(s, 2);
+~sumBus = Bus.control(s, 2);
 
 ~noiSrc = Synth(\noisrc,  [\out, ~noiBus.index]);
 
-~rs = Synth(\rs_avg,   [\out, ~avgBus.index,   \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
-~mavg = Synth(\mvavg, [\out, ~avgBus.index+1, \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
+~rs = Synth(\rs_avg,   [\out, ~sumBus.index,   \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
+~msum = Synth(\msum, [\out, ~sumBus.index+1, \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
 )
 
 /* scope the results */
 (
 var sv;
-~scp = s.scope(2, ~avgBus.index, rate:'control');
+~scp = s.scope(2, ~sumBus.index, rate:'control');
 ~scp.style = 1; // overlay the busses to compare their values
 
 sv = ~scp.scopeView;
@@ -98,11 +93,11 @@ sv.waveColors = [Color.yellow, Color.red];
 )
 
 /* change window size */
-~mavg.set(\samps, 0.5 * s.sampleRate);  // 0.5s window size
-~mavg.set(\samps, 4410);                // identical to RunningSum fixed window size
-~mavg.set(\samps, 0.01 * s.sampleRate); // 0.01s window size
+~msum.set(\samps, 4410 * 2);   // 2x RunningSum window size
+~msum.set(\samps, 4410);       // identical to RunningSum fixed window size
+~msum.set(\samps, 4410 * 0.1); // 0.1x RunningSum window size
 
 /* cleanup */
-[~noiBus, ~avgBus, ~noiSrc, ~rs, ~mavg].do(_.free);
+[~noiBus, ~sumBus, ~noiSrc, ~rs, ~msum].do(_.free);
 ~scp.quit;
 ::

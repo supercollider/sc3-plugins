@@ -63,7 +63,7 @@ s.waitForBoot({
 	}).add;
 
 	// MovingAverage
-	SynthDef(\mvavg, { |out, in, samps=4410|
+	SynthDef(\mavg, { |out, in, samps=4410|
 		Out.kr( out,
 			A2K.kr(                // convert to control rate for scoping
 				MovingAverage.ar(  // average method
@@ -87,7 +87,7 @@ s.waitForBoot({
 ~noiSrc = Synth(\noisrc,  [\out, ~noiBus.index]);
 
 ~rs = Synth(\rs_avg,   [\out, ~avgBus.index,   \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
-~mavg = Synth(\mvavg, [\out, ~avgBus.index+1, \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
+~mavg = Synth(\mavg, [\out, ~avgBus.index+1, \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
 )
 
 /* scope the results */

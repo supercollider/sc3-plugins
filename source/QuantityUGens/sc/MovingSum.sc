@@ -7,24 +7,25 @@ Jo Anderson     j.anderson@ambisonictoolkit.net
 // A sum of samples over a variable rectangular window of time
 MovingSum : UGen {
 
-	*ar { arg in, numsamp=40, maxsamp=400, avg = 0;
-		^this.multiNew('audio', in, numsamp, maxsamp, avg);
+	*ar { arg in, numsamp=40, maxsamp=400;
+		^this.multiNew('audio', in, numsamp, maxsamp);
 	}
 
-	*kr { arg in, numsamp=40, maxsamp=400, avg = 0;
-		^this.multiNew('control', in, numsamp, maxsamp, avg);
+	*kr { arg in, numsamp=40, maxsamp=400;
+		^this.multiNew('control', in, numsamp, maxsamp);
 	}
 
 }
 
-MovingAverage {
+// An average of samples over a variable rectangular window of time
+MovingAverage : UGen {
 
 	*ar { arg in, numsamp=40, maxsamp=400;
-		^MovingSum.ar(in, numsamp, maxsamp, avg: 1)
+		^this.multiNew('audio', in, numsamp, maxsamp);
 	}
 
 	*kr { arg in, numsamp=40, maxsamp=400;
-		^MovingSum.kr(in, numsamp, maxsamp, avg: 1)
+		^this.multiNew('control', in, numsamp, maxsamp);
 	}
 
 	*power { arg in, numsamp=40, maxsamp=400;
