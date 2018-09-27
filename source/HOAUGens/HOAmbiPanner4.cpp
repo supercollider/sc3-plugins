@@ -5,7 +5,7 @@ license: "GPL"
 name: "HOAmbiPanner4"
 version: "1.0"
 Code generated with Faust 2.5.23 (https://faust.grame.fr)
-Compilation options: cpp, -scal -ftz 0
+Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -617,11 +617,11 @@ private:
 
 #include <cmath>
 
-float mydsp_faustpower2_f(float value) {
+double mydsp_faustpower2_f(double value) {
 	return (value * value);
 	
 }
-float mydsp_faustpower4_f(float value) {
+double mydsp_faustpower4_f(double value) {
 	return (((value * value) * value) * value);
 	
 }
@@ -639,9 +639,9 @@ class mydsp : public dsp {
  private:
 	
 	FAUSTFLOAT fHslider0;
-	float fRec0[2];
+	double fRec0[2];
 	FAUSTFLOAT fHslider1;
-	float fRec1[2];
+	double fRec1[2];
 	int fSamplingFreq;
 	
  public:
@@ -802,18 +802,18 @@ class mydsp : public dsp {
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0f);
-		fHslider1 = FAUSTFLOAT(0.0f);
+		fHslider0 = FAUSTFLOAT(0.0);
+		fHslider1 = FAUSTFLOAT(0.0);
 		
 	}
 	
 	virtual void instanceClear() {
 		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
-			fRec0[l0] = 0.0f;
+			fRec0[l0] = 0.0;
 			
 		}
 		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			fRec1[l1] = 0.0f;
+			fRec1[l1] = 0.0;
 			
 		}
 		
@@ -841,10 +841,10 @@ class mydsp : public dsp {
 		ui_interface->openVerticalBox("HOAmbiPanner4");
 		ui_interface->declare(&fHslider0, "1", "");
 		ui_interface->declare(&fHslider0, "unit", "rad");
-		ui_interface->addHorizontalSlider("azi", &fHslider0, 0.0f, -3.14159274f, 3.14159274f, 1.00000001e-07f);
+		ui_interface->addHorizontalSlider("azi", &fHslider0, 0.0, -3.1415926535898002, 3.1415926535898002, 9.9999999999999995e-08);
 		ui_interface->declare(&fHslider1, "2", "");
 		ui_interface->declare(&fHslider1, "unit", "rad");
-		ui_interface->addHorizontalSlider("ele", &fHslider1, 0.0f, -1.57079637f, 1.57079637f, 1.00000001e-07f);
+		ui_interface->addHorizontalSlider("ele", &fHslider1, 0.0, -1.5707963267949001, 1.5707963267949001, 9.9999999999999995e-08);
 		ui_interface->closeBox();
 		
 	}
@@ -876,58 +876,58 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output22 = outputs[22];
 		FAUSTFLOAT* output23 = outputs[23];
 		FAUSTFLOAT* output24 = outputs[24];
-		float fSlow0 = (0.00100000005f * float(fHslider0));
-		float fSlow1 = (0.00100000005f * float(fHslider1));
+		double fSlow0 = (0.0010000000000000009 * double(fHslider0));
+		double fSlow1 = (0.0010000000000000009 * double(fHslider1));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			float fTemp0 = float(input0[i]);
+			double fTemp0 = double(input0[i]);
 			output0[i] = FAUSTFLOAT(fTemp0);
-			fRec0[0] = (fSlow0 + (0.999000013f * fRec0[1]));
-			float fTemp1 = sinf(fRec0[0]);
-			fRec1[0] = (fSlow1 + (0.999000013f * fRec1[1]));
-			float fTemp2 = cosf(fRec1[0]);
-			float fTemp3 = (fTemp1 * fTemp2);
+			fRec0[0] = (fSlow0 + (0.999 * fRec0[1]));
+			double fTemp1 = sin(fRec0[0]);
+			fRec1[0] = (fSlow1 + (0.999 * fRec1[1]));
+			double fTemp2 = cos(fRec1[0]);
+			double fTemp3 = (fTemp1 * fTemp2);
 			output1[i] = FAUSTFLOAT((fTemp3 * fTemp0));
-			float fTemp4 = sinf(fRec1[0]);
+			double fTemp4 = sin(fRec1[0]);
 			output2[i] = FAUSTFLOAT((fTemp4 * fTemp0));
-			float fTemp5 = cosf(fRec0[0]);
-			float fTemp6 = (fTemp2 * fTemp5);
+			double fTemp5 = cos(fRec0[0]);
+			double fTemp6 = (fTemp2 * fTemp5);
 			output3[i] = FAUSTFLOAT((fTemp6 * fTemp0));
-			float fTemp7 = (fTemp1 * mydsp_faustpower2_f(fTemp2));
-			float fTemp8 = (fTemp7 * fTemp5);
-			output4[i] = FAUSTFLOAT((1.73205078f * (fTemp8 * fTemp0)));
-			float fTemp9 = (fTemp3 * fTemp4);
-			output5[i] = FAUSTFLOAT((1.73205078f * (fTemp9 * fTemp0)));
-			float fTemp10 = mydsp_faustpower2_f(fTemp4);
-			output6[i] = FAUSTFLOAT((0.5f * (((3.0f * fTemp10) + -1.0f) * fTemp0)));
-			float fTemp11 = ((fTemp2 * fTemp4) * fTemp5);
-			output7[i] = FAUSTFLOAT((1.73205078f * (fTemp11 * fTemp0)));
-			float fTemp12 = mydsp_faustpower2_f(fTemp6);
-			float fTemp13 = mydsp_faustpower2_f(fTemp3);
-			float fTemp14 = (fTemp12 - fTemp13);
-			output8[i] = FAUSTFLOAT((0.866025388f * (fTemp14 * fTemp0)));
-			float fTemp15 = ((3.0f * fTemp12) - fTemp13);
-			output9[i] = FAUSTFLOAT((0.790569425f * ((fTemp3 * fTemp15) * fTemp0)));
-			output10[i] = FAUSTFLOAT((3.87298346f * (((fTemp7 * fTemp4) * fTemp5) * fTemp0)));
-			float fTemp16 = (5.0f * fTemp10);
-			float fTemp17 = (fTemp16 + -1.0f);
-			output11[i] = FAUSTFLOAT((0.612372458f * ((fTemp3 * fTemp17) * fTemp0)));
-			output12[i] = FAUSTFLOAT((0.5f * ((fTemp4 * (fTemp16 + -3.0f)) * fTemp0)));
-			output13[i] = FAUSTFLOAT((0.612372458f * ((fTemp6 * fTemp17) * fTemp0)));
-			output14[i] = FAUSTFLOAT((1.93649173f * ((fTemp4 * fTemp14) * fTemp0)));
-			float fTemp18 = (fTemp12 - (3.0f * fTemp13));
-			output15[i] = FAUSTFLOAT((0.790569425f * ((fTemp6 * fTemp18) * fTemp0)));
-			output16[i] = FAUSTFLOAT((2.95804f * ((fTemp8 * fTemp14) * fTemp0)));
-			output17[i] = FAUSTFLOAT((2.09165001f * ((fTemp9 * fTemp15) * fTemp0)));
-			float fTemp19 = (7.0f * fTemp10);
-			float fTemp20 = (fTemp19 + -1.0f);
-			output18[i] = FAUSTFLOAT((1.11803401f * ((fTemp8 * fTemp20) * fTemp0)));
-			float fTemp21 = (fTemp19 + -3.0f);
-			output19[i] = FAUSTFLOAT((0.790569425f * ((fTemp9 * fTemp21) * fTemp0)));
-			output20[i] = FAUSTFLOAT((0.125f * (((fTemp10 * ((35.0f * fTemp10) + -30.0f)) + 3.0f) * fTemp0)));
-			output21[i] = FAUSTFLOAT((0.790569425f * ((fTemp11 * fTemp21) * fTemp0)));
-			output22[i] = FAUSTFLOAT((0.559017003f * ((fTemp14 * fTemp20) * fTemp0)));
-			output23[i] = FAUSTFLOAT((2.09165001f * ((fTemp11 * fTemp18) * fTemp0)));
-			output24[i] = FAUSTFLOAT((0.73951f * (((fTemp12 * (fTemp12 - (6.0f * fTemp13))) + mydsp_faustpower4_f(fTemp3)) * fTemp0)));
+			double fTemp7 = (fTemp1 * mydsp_faustpower2_f(fTemp2));
+			double fTemp8 = (fTemp7 * fTemp5);
+			output4[i] = FAUSTFLOAT((1.7320508075688774 * (fTemp8 * fTemp0)));
+			double fTemp9 = (fTemp3 * fTemp4);
+			output5[i] = FAUSTFLOAT((1.7320508075688774 * (fTemp9 * fTemp0)));
+			double fTemp10 = mydsp_faustpower2_f(fTemp4);
+			output6[i] = FAUSTFLOAT((0.5 * (((3.0 * fTemp10) + -1.0) * fTemp0)));
+			double fTemp11 = ((fTemp2 * fTemp4) * fTemp5);
+			output7[i] = FAUSTFLOAT((1.7320508075688774 * (fTemp11 * fTemp0)));
+			double fTemp12 = mydsp_faustpower2_f(fTemp6);
+			double fTemp13 = mydsp_faustpower2_f(fTemp3);
+			double fTemp14 = (fTemp12 - fTemp13);
+			output8[i] = FAUSTFLOAT((0.86602540378443871 * (fTemp14 * fTemp0)));
+			double fTemp15 = ((3.0 * fTemp12) - fTemp13);
+			output9[i] = FAUSTFLOAT((0.79056941504209477 * ((fTemp3 * fTemp15) * fTemp0)));
+			output10[i] = FAUSTFLOAT((3.8729833462074166 * (((fTemp7 * fTemp4) * fTemp5) * fTemp0)));
+			double fTemp16 = (5.0 * fTemp10);
+			double fTemp17 = (fTemp16 + -1.0);
+			output11[i] = FAUSTFLOAT((0.61237243569579447 * ((fTemp3 * fTemp17) * fTemp0)));
+			output12[i] = FAUSTFLOAT((0.5 * ((fTemp4 * (fTemp16 + -3.0)) * fTemp0)));
+			output13[i] = FAUSTFLOAT((0.61237243569579447 * ((fTemp6 * fTemp17) * fTemp0)));
+			output14[i] = FAUSTFLOAT((1.9364916731037083 * ((fTemp4 * fTemp14) * fTemp0)));
+			double fTemp18 = (fTemp12 - (3.0 * fTemp13));
+			output15[i] = FAUSTFLOAT((0.79056941504209477 * ((fTemp6 * fTemp18) * fTemp0)));
+			output16[i] = FAUSTFLOAT((2.9580398915498081 * ((fTemp8 * fTemp14) * fTemp0)));
+			output17[i] = FAUSTFLOAT((2.0916500663351885 * ((fTemp9 * fTemp15) * fTemp0)));
+			double fTemp19 = (7.0 * fTemp10);
+			double fTemp20 = (fTemp19 + -1.0);
+			output18[i] = FAUSTFLOAT((1.1180339887498949 * ((fTemp8 * fTemp20) * fTemp0)));
+			double fTemp21 = (fTemp19 + -3.0);
+			output19[i] = FAUSTFLOAT((0.79056941504209477 * ((fTemp9 * fTemp21) * fTemp0)));
+			output20[i] = FAUSTFLOAT((0.125 * (((fTemp10 * ((35.0 * fTemp10) + -30.0)) + 3.0) * fTemp0)));
+			output21[i] = FAUSTFLOAT((0.79056941504209477 * ((fTemp11 * fTemp21) * fTemp0)));
+			output22[i] = FAUSTFLOAT((0.55901699437494745 * ((fTemp14 * fTemp20) * fTemp0)));
+			output23[i] = FAUSTFLOAT((2.0916500663351885 * ((fTemp11 * fTemp18) * fTemp0)));
+			output24[i] = FAUSTFLOAT((0.73950997288745202 * (((fTemp12 * (fTemp12 - (6.0 * fTemp13))) + mydsp_faustpower4_f(fTemp3)) * fTemp0)));
 			fRec0[1] = fRec0[0];
 			fRec1[1] = fRec1[0];
 			

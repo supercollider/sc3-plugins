@@ -5,7 +5,7 @@ license: "GPL"
 name: "HOAmbiPanner2"
 version: "1.0"
 Code generated with Faust 2.5.23 (https://faust.grame.fr)
-Compilation options: cpp, -scal -ftz 0
+Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -617,7 +617,7 @@ private:
 
 #include <cmath>
 
-float mydsp_faustpower2_f(float value) {
+double mydsp_faustpower2_f(double value) {
 	return (value * value);
 	
 }
@@ -635,9 +635,7 @@ class mydsp : public dsp {
  private:
 	
 	FAUSTFLOAT fHslider0;
-	float fRec0[2];
 	FAUSTFLOAT fHslider1;
-	float fRec1[2];
 	int fSamplingFreq;
 	
  public:
@@ -734,20 +732,12 @@ class mydsp : public dsp {
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0f);
-		fHslider1 = FAUSTFLOAT(0.0f);
+		fHslider0 = FAUSTFLOAT(0.0);
+		fHslider1 = FAUSTFLOAT(0.0);
 		
 	}
 	
 	virtual void instanceClear() {
-		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
-			fRec0[l0] = 0.0f;
-			
-		}
-		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			fRec1[l1] = 0.0f;
-			
-		}
 		
 	}
 	
@@ -771,12 +761,12 @@ class mydsp : public dsp {
 	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("HOAmbiPanner2");
-		ui_interface->declare(&fHslider0, "1", "");
-		ui_interface->declare(&fHslider0, "unit", "rad");
-		ui_interface->addHorizontalSlider("azi", &fHslider0, 0.0f, -3.14159274f, 3.14159274f, 1.00000001e-07f);
-		ui_interface->declare(&fHslider1, "2", "");
+		ui_interface->declare(&fHslider1, "1", "");
 		ui_interface->declare(&fHslider1, "unit", "rad");
-		ui_interface->addHorizontalSlider("ele", &fHslider1, 0.0f, -1.57079637f, 1.57079637f, 1.00000001e-07f);
+		ui_interface->addHorizontalSlider("azi", &fHslider1, 0.0, -3.1415926535898002, 3.1415926535898002, 9.9999999999999995e-08);
+		ui_interface->declare(&fHslider0, "2", "");
+		ui_interface->declare(&fHslider0, "unit", "rad");
+		ui_interface->addHorizontalSlider("ele", &fHslider0, 0.0, -1.5707963267949001, 1.5707963267949001, 9.9999999999999995e-08);
 		ui_interface->closeBox();
 		
 	}
@@ -792,29 +782,30 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output6 = outputs[6];
 		FAUSTFLOAT* output7 = outputs[7];
 		FAUSTFLOAT* output8 = outputs[8];
-		float fSlow0 = (0.00100000005f * float(fHslider0));
-		float fSlow1 = (0.00100000005f * float(fHslider1));
+		double fSlow0 = double(fHslider0);
+		double fSlow1 = cos(fSlow0);
+		double fSlow2 = double(fHslider1);
+		double fSlow3 = sin(fSlow2);
+		double fSlow4 = (fSlow1 * fSlow3);
+		double fSlow5 = sin(fSlow0);
+		double fSlow6 = cos(fSlow2);
+		double fSlow7 = (fSlow1 * fSlow6);
+		double fSlow8 = (1.7320508075688774 * ((mydsp_faustpower2_f(fSlow1) * fSlow3) * fSlow6));
+		double fSlow9 = (1.7320508075688774 * (fSlow4 * fSlow5));
+		double fSlow10 = (0.5 * ((3.0 * mydsp_faustpower2_f(fSlow5)) + -1.0));
+		double fSlow11 = (1.7320508075688774 * (fSlow7 * fSlow5));
+		double fSlow12 = (0.86602540378443871 * (mydsp_faustpower2_f(fSlow7) - mydsp_faustpower2_f(fSlow4)));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			float fTemp0 = float(input0[i]);
+			double fTemp0 = double(input0[i]);
 			output0[i] = FAUSTFLOAT(fTemp0);
-			fRec0[0] = (fSlow0 + (0.999000013f * fRec0[1]));
-			float fTemp1 = sinf(fRec0[0]);
-			fRec1[0] = (fSlow1 + (0.999000013f * fRec1[1]));
-			float fTemp2 = cosf(fRec1[0]);
-			float fTemp3 = (fTemp1 * fTemp2);
-			output1[i] = FAUSTFLOAT((fTemp3 * fTemp0));
-			float fTemp4 = sinf(fRec1[0]);
-			output2[i] = FAUSTFLOAT((fTemp4 * fTemp0));
-			float fTemp5 = cosf(fRec0[0]);
-			float fTemp6 = (fTemp2 * fTemp5);
-			output3[i] = FAUSTFLOAT((fTemp6 * fTemp0));
-			output4[i] = FAUSTFLOAT((1.73205078f * (((fTemp1 * mydsp_faustpower2_f(fTemp2)) * fTemp5) * fTemp0)));
-			output5[i] = FAUSTFLOAT((1.73205078f * ((fTemp3 * fTemp4) * fTemp0)));
-			output6[i] = FAUSTFLOAT((0.5f * (((3.0f * mydsp_faustpower2_f(fTemp4)) + -1.0f) * fTemp0)));
-			output7[i] = FAUSTFLOAT((1.73205078f * (((fTemp2 * fTemp4) * fTemp5) * fTemp0)));
-			output8[i] = FAUSTFLOAT((0.866025388f * ((mydsp_faustpower2_f(fTemp6) - mydsp_faustpower2_f(fTemp3)) * fTemp0)));
-			fRec0[1] = fRec0[0];
-			fRec1[1] = fRec1[0];
+			output1[i] = FAUSTFLOAT((fSlow4 * fTemp0));
+			output2[i] = FAUSTFLOAT((fSlow5 * fTemp0));
+			output3[i] = FAUSTFLOAT((fSlow7 * fTemp0));
+			output4[i] = FAUSTFLOAT((fSlow8 * fTemp0));
+			output5[i] = FAUSTFLOAT((fSlow9 * fTemp0));
+			output6[i] = FAUSTFLOAT((fSlow10 * fTemp0));
+			output7[i] = FAUSTFLOAT((fSlow11 * fTemp0));
+			output8[i] = FAUSTFLOAT((fSlow12 * fTemp0));
 			
 		}
 		

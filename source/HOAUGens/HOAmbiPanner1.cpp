@@ -5,7 +5,7 @@ license: "GPL"
 name: "HOAmbiPanner1"
 version: "1.0"
 Code generated with Faust 2.5.23 (https://faust.grame.fr)
-Compilation options: cpp, -scal -ftz 0
+Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -631,9 +631,7 @@ class mydsp : public dsp {
  private:
 	
 	FAUSTFLOAT fHslider0;
-	float fRec0[2];
 	FAUSTFLOAT fHslider1;
-	float fRec1[2];
 	int fSamplingFreq;
 	
  public:
@@ -710,20 +708,12 @@ class mydsp : public dsp {
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0f);
-		fHslider1 = FAUSTFLOAT(0.0f);
+		fHslider0 = FAUSTFLOAT(0.0);
+		fHslider1 = FAUSTFLOAT(0.0);
 		
 	}
 	
 	virtual void instanceClear() {
-		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
-			fRec0[l0] = 0.0f;
-			
-		}
-		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			fRec1[l1] = 0.0f;
-			
-		}
 		
 	}
 	
@@ -747,12 +737,12 @@ class mydsp : public dsp {
 	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("HOAmbiPanner1");
-		ui_interface->declare(&fHslider0, "1", "");
-		ui_interface->declare(&fHslider0, "unit", "rad");
-		ui_interface->addHorizontalSlider("azi", &fHslider0, 0.0f, -3.14159274f, 3.14159274f, 1.00000001e-07f);
-		ui_interface->declare(&fHslider1, "2", "");
+		ui_interface->declare(&fHslider1, "1", "");
 		ui_interface->declare(&fHslider1, "unit", "rad");
-		ui_interface->addHorizontalSlider("ele", &fHslider1, 0.0f, -1.57079637f, 1.57079637f, 1.00000001e-07f);
+		ui_interface->addHorizontalSlider("azi", &fHslider1, 0.0, -3.1415926535898002, 3.1415926535898002, 9.9999999999999995e-08);
+		ui_interface->declare(&fHslider0, "2", "");
+		ui_interface->declare(&fHslider0, "unit", "rad");
+		ui_interface->addHorizontalSlider("ele", &fHslider0, 0.0, -1.5707963267949001, 1.5707963267949001, 9.9999999999999995e-08);
 		ui_interface->closeBox();
 		
 	}
@@ -763,19 +753,18 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output1 = outputs[1];
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
-		float fSlow0 = (0.00100000005f * float(fHslider0));
-		float fSlow1 = (0.00100000005f * float(fHslider1));
+		double fSlow0 = double(fHslider0);
+		double fSlow1 = cos(fSlow0);
+		double fSlow2 = double(fHslider1);
+		double fSlow3 = (fSlow1 * sin(fSlow2));
+		double fSlow4 = sin(fSlow0);
+		double fSlow5 = (fSlow1 * cos(fSlow2));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			float fTemp0 = float(input0[i]);
+			double fTemp0 = double(input0[i]);
 			output0[i] = FAUSTFLOAT(fTemp0);
-			fRec0[0] = (fSlow0 + (0.999000013f * fRec0[1]));
-			fRec1[0] = (fSlow1 + (0.999000013f * fRec1[1]));
-			float fTemp1 = cosf(fRec1[0]);
-			output1[i] = FAUSTFLOAT(((sinf(fRec0[0]) * fTemp1) * fTemp0));
-			output2[i] = FAUSTFLOAT((sinf(fRec1[0]) * fTemp0));
-			output3[i] = FAUSTFLOAT(((fTemp1 * cosf(fRec0[0])) * fTemp0));
-			fRec0[1] = fRec0[0];
-			fRec1[1] = fRec1[0];
+			output1[i] = FAUSTFLOAT((fSlow3 * fTemp0));
+			output2[i] = FAUSTFLOAT((fSlow4 * fTemp0));
+			output3[i] = FAUSTFLOAT((fSlow5 * fTemp0));
 			
 		}
 		
