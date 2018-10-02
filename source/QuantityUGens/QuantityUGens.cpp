@@ -31,6 +31,7 @@
  */
 
 #include "SC_PlugIn.h"
+#include <limits.h>
 
 static InterfaceTable *ft;
 
@@ -75,12 +76,13 @@ void MovingAverage_Ctor( MovingAverage* unit )
 
 inline void MovingXCtorHelper( MovingX* unit, UnitCalcFunc calcFunc )
 {
-    if ((int) ZIN0(2) == 0) {
-        printf("MovingSum Error: maxSamps initialized to 0.\n");
-        SETCALC(*ClearUnitOutputs);
-        unit->mDone = true;
-        return;
-    }
+	if (((int) ZIN0(2) <= 0) || ((int) ZIN0(2) > INT_MAX) || sc_isnan(ZIN0(2)) || !sc_isfinite(ZIN0(2))) {
+		printf("MovingSum/Average Error: maxSamps argument is invalid: %f (<= 0, > INT_MAX, nan, or inf)\n", ZIN0(2));
+		SETCALC(*ClearUnitOutputs);
+		ClearUnitOutputs(unit, 1);
+		unit->mDone = true;
+		return;
+	}
     
     unit->mCalcFunc = calcFunc;
     
