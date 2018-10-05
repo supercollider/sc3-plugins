@@ -99,6 +99,7 @@ set(PLUGIN_DIRS
     MdaUGens
     Neuromodules
     NHUGens
+    QuantityUGens
     RFWUGens
     RMEQSuiteUGens
     SCMIRUGens

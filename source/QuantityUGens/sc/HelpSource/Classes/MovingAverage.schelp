@@ -1,0 +1,115 @@
+class:: MovingAverage
+summary:: The average of samples over a variable number of frames.
+related:: Classes/RunningSum, Classes/MovingSum
+categories:: UGens>Analysis, UGens>Maths
+
+description::
+A running average, power or RMS over a variable number of samples.
+For a running sum (not averaged) see link::Classes/MovingSum::.
+
+classmethods::
+method:: ar, kr
+Output the average of strong::numsamp:: audio or control rate samples.
+argument::in
+An input signal.
+argument::numsamp
+Size of the time window, in samples. Modulatable between 1 and
+strong::maxsamp::. Default: 40.
+argument::maxsamp
+Maximum size of the time window. Pre-allocates memory up to this size and
+your strong::numsamp:: will be clipped at this value. strong::maxsamp:: cannot
+be modulated.
+
+method:: power
+Output the time averaged power of the the signal. Implemented as the input
+squared, summed over the time window, averaged by the window size. The output
+rate is determined by the rate of the strong::in:: signal.
+
+method:: rms
+Output the root mean square (RMS) of the the signal. Implemented as the input
+squared, summed over the time window, averaged by the window size, and square
+rooted. The output rate is determined by the rate of
+the strong::in:: signal.
+
+examples::
+
+code::
+/*
+Compare the values of RunningSum vs. MovingAverage
+*/
+
+/* load synthdefs */
+(
+s.waitForBoot({
+
+	var maxWin = 1.0; // maximum summing/averaging window, in seconds.
+
+	// noise source: Pink Noise
+	SynthDef(\noisrc, { |out|
+		Out.ar(out, PinkNoise.ar);
+	}).add;
+
+	// RunningSum, averaged
+	SynthDef(\rs_avg, { |out, in, samps=4410|
+		Out.kr( out,
+			A2K.kr(                // convert to control rate for scoping
+				RunningSum.ar(
+					In.ar(in),
+					samps          // RunningSum samps is non-modulatable
+				)
+				* samps.reciprocal // take average
+			)
+		);
+	}).add;
+
+	// MovingAverage
+	SynthDef(\mavg, { |out, in, samps=4410|
+		Out.kr( out,
+			A2K.kr(                // convert to control rate for scoping
+				MovingAverage.ar(  // average method
+					In.ar(in),
+					samps,
+					SampleRate.ir * maxWin  // max window size, in samples, non-modulatable
+				)
+			)
+		);
+	}).add;
+
+})
+)
+
+/* play the synths */
+(
+// A bus for the noise source
+~noiBus = Bus.audio(s, 1);
+~avgBus = Bus.control(s, 2);
+
+~noiSrc = Synth(\noisrc,  [\out, ~noiBus.index]);
+
+~rs = Synth(\rs_avg,   [\out, ~avgBus.index,   \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
+~mavg = Synth(\mavg, [\out, ~avgBus.index+1, \in, ~noiBus.index, \samps, 4410], addAction: 'addToTail');
+)
+
+/* scope the results */
+(
+var sv;
+~scp = s.scope(2, ~avgBus.index, rate:'control');
+~scp.style = 1; // overlay the busses to compare their values
+
+sv = ~scp.scopeView;
+
+sv.yZoom = 3; // zoom in to see values a bit better
+sv.fill = false;
+// discern different values by color: red is RunningSum2
+sv.waveColors = [Color.yellow, Color.red];
+)
+
+/* change window size */
+~mavg.set(\samps, 0.5 * s.sampleRate);  // 0.5s window size
+~mavg.set(\samps, 4410);                // identical to RunningSum fixed window size
+~mavg.set(\samps, 0.01 * s.sampleRate); // 0.01s window size
+
+/* cleanup */
+[~noiBus, ~avgBus, ~noiSrc, ~rs, ~mavg].do(_.free);
+~scp.quit;
+::
