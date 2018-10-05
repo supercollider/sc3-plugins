@@ -76,13 +76,15 @@ void MovingAverage_Ctor( MovingAverage* unit )
 
 inline void MovingXCtorHelper( MovingX* unit, UnitCalcFunc calcFunc )
 {
-	if (((int) ZIN0(2) <= 0) || ((int) ZIN0(2) > INT_MAX) || sc_isnan(ZIN0(2)) || !sc_isfinite(ZIN0(2))) {
-		printf("MovingSum/Average Error: maxSamps argument is invalid: %f (<= 0, > INT_MAX, nan, or inf)\n", ZIN0(2));
-		SETCALC(*ClearUnitOutputs);
-		ClearUnitOutputs(unit, 1);
-		unit->mDone = true;
-		return;
-	}
+    unit->msquares = nullptr; // in case we error out before msquares is assigned
+    
+    if (ZIN0(2) < 1 || ZIN0(2) > std::numeric_limits<int>::max() || !std::isfinite(ZIN0(2))) {
+        printf("MovingSum/Average Error:\n\t'maxsamp' argument must be >= 1, and within integer resolution.\n\tReceived: %f\n", ZIN0(2));
+        SETCALC(*ClearUnitOutputs);
+        ClearUnitOutputs(unit, 1);
+        unit->mDone = true;
+        return;
+    }
     
     unit->mCalcFunc = calcFunc;
     
@@ -100,7 +102,7 @@ inline void MovingXCtorHelper( MovingX* unit, UnitCalcFunc calcFunc )
         SETCALC(*ClearUnitOutputs);
         ClearUnitOutputs(unit, 1);
         if (unit->mWorld->mVerbosity > -2) {
-            printf("Failed to allocate memory for MovingSum\n");
+            Print("Failed to allocate memory for MovingSum/Average\n");
         }
         return;
     }
@@ -115,11 +117,15 @@ inline void MovingXCtorHelper( MovingX* unit, UnitCalcFunc calcFunc )
 
 void MovingSum_Dtor(MovingSum *unit)
 {
-    RTFree(unit->mWorld, unit->msquares);
+    if (unit->msquares) {
+        RTFree(unit->mWorld, unit->msquares);
+    }
 }
 void MovingAverage_Dtor(MovingAverage *unit)
 {
-    RTFree(unit->mWorld, unit->msquares);
+    if (unit->msquares) {
+        RTFree(unit->mWorld, unit->msquares);
+    }
 }
 
 
