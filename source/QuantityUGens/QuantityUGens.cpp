@@ -79,7 +79,7 @@ inline void MovingXCtorHelper( MovingX* unit, UnitCalcFunc calcFunc )
     unit->msquares = nullptr; // in case we error out before msquares is assigned
     
     if (ZIN0(2) < 1 || ZIN0(2) > std::numeric_limits<int>::max() || !std::isfinite(ZIN0(2))) {
-        printf("MovingSum/Average Error:\n\t'maxsamp' argument must be >= 1, and within integer resolution.\n\tReceived: %f\n", ZIN0(2));
+        Print("MovingSum/Average Error:\n\t'maxsamp' argument must be >= 1, and within integer resolution.\n\tReceived: %f\n", ZIN0(2));
         SETCALC(*ClearUnitOutputs);
         ClearUnitOutputs(unit, 1);
         unit->mDone = true;
