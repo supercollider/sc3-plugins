@@ -32,7 +32,7 @@ struct DWGPlucked : public Unit
 	float rellevel;
 	float rellevelstep;
 };
-SCWrapClass(DWGPlucked);
+SCWrapClassZeroInit(DWGPlucked);
 DWGPlucked::DWGPlucked(Unit* unit)
 {
 	m_trig = 0.0;
@@ -40,7 +40,7 @@ DWGPlucked::DWGPlucked(Unit* unit)
 	relcount = SAMPLERATE * release;
 	rellevel = 1.0;
 	rellevelstep = 1.0/(float)relcount;
-	SETCALC(DWGPlucked_next);
+
 }
 void DWGPlucked::Release(float trig,float *out,int NumSamples){
 	
@@ -112,11 +112,11 @@ struct DWGPluckedStiff : public DWGPlucked
 	ThirianDispersion<4> disper;
 	DWGPluckedStiff(Unit* unit);
 };
-SCWrapClass(DWGPluckedStiff);
+SCWrapClassZeroInit(DWGPluckedStiff);
 
 DWGPluckedStiff::DWGPluckedStiff(Unit* unit):DWGPlucked(unit)
 {
-    SETCALC(DWGPluckedStiff_next);
+
 }
 
 void DWGPluckedStiff_next(DWGPluckedStiff *unit, int inNumSamples)
@@ -170,11 +170,11 @@ struct DWGPlucked2 : public DWGPlucked
 	FilterC1C3 Loss2;
 	DWGPlucked2(Unit* unit);
 };
-SCWrapClass(DWGPlucked2);
+SCWrapClassZeroInit(DWGPlucked2);
 
 DWGPlucked2::DWGPlucked2(Unit* unit):DWGPlucked(unit)
 {
-    SETCALC(DWGPlucked2_next);
+
 }
 
 void DWGPlucked2_next(DWGPlucked2 *unit, int inNumSamples)
