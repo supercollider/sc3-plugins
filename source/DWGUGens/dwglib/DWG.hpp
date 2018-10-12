@@ -67,6 +67,14 @@ void volcar(const char *_Message, const char *_File, unsigned _Line);
 void classname##_Ctor(classname* unit){new(unit) classname(unit);}\
 void classname##_Dtor(classname* unit){unit->~classname();}
 
+#define SCWrapClassZeroInit(classname) extern "C" {\
+	void classname##_Ctor(classname* unit);\
+	void classname##_next(classname *unit, int inNumSamples);\
+	void classname##_Dtor(classname *unit);\
+}\
+void classname##_Ctor(classname* unit){new(unit) classname(unit);SETCALC(classname##_next);ZOUT0(0) = 0.0;}\
+void classname##_Dtor(classname* unit){unit->~classname();}
+
 
 inline bool approximatelyEqual(float a, float b, float epsilon = 1e-7f)
 {

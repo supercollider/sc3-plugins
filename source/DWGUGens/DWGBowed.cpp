@@ -39,14 +39,13 @@ struct DWGBowedSimple:public Unit
 	float rellevel;
 	float rellevelstep;
 };
-SCWrapClass(DWGBowedSimple);
+SCWrapClassZeroInit(DWGBowedSimple);
 DWGBowedSimple::DWGBowedSimple(Unit* unit){
 		m_trig = 0.0;
 		float release = ZIN0(5);
 		relcount = SAMPLERATE * release;
 		rellevel = 1.0;
 		rellevelstep = 1.0/(float)relcount;
-		SETCALC(DWGBowedSimple_next);
 }
 void DWGBowedSimple::Release(float trig,float *out,int NumSamples){
 	
@@ -78,8 +77,8 @@ struct DWGBowedStk : public DWGBowedSimple
 {
 	DWGBowedStk(Unit* unit);
 };
-SCWrapClass(DWGBowedStk);
-DWGBowedStk::DWGBowedStk(Unit* unit):DWGBowedSimple(unit){ SETCALC(DWGBowedStk_next);}
+SCWrapClassZeroInit(DWGBowedStk);
+DWGBowedStk::DWGBowedStk(Unit* unit):DWGBowedSimple(unit){ }
 ////////////////////////////////////////////////////
 struct DWGBowed : public DWGBowedSimple
 {
@@ -101,8 +100,8 @@ const float DWGBowed::mus = 0.8;
 const float DWGBowed::mud = 0.3;
 const float DWGBowed::mue = 0.2;
 
-SCWrapClass(DWGBowed);
-DWGBowed::DWGBowed(Unit* unit):DWGBowedSimple(unit),stickslip(0){ SETCALC(DWGBowed_next);}
+SCWrapClassZeroInit(DWGBowed);
+DWGBowed::DWGBowed(Unit* unit):DWGBowedSimple(unit),stickslip(0){ }
 ////////////////////////////////////////////////////
 struct DWGBowedTor:public DWGBowed{
 	DCBlocker dcblock2;
@@ -111,8 +110,8 @@ struct DWGBowedTor:public DWGBowed{
 	DWGBowedTor(Unit* unit);
 	float Ztra,Ztor;
 };
-SCWrapClass(DWGBowedTor);
-DWGBowedTor::DWGBowedTor(Unit* unit):DWGBowed(unit){ SETCALC(DWGBowedTor_next);}
+SCWrapClassZeroInit(DWGBowedTor);
+DWGBowedTor::DWGBowedTor(Unit* unit):DWGBowed(unit){ }
 /////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////
@@ -125,10 +124,9 @@ struct DWGSoundBoard : public Unit
 	DWGSoundBoard(Unit *unit);
 	~DWGSoundBoard(){};
 };
-SCWrapClass(DWGSoundBoard);
+SCWrapClassZeroInit(DWGSoundBoard);
 DWGSoundBoard :: DWGSoundBoard(Unit *unit){
     getargs(unit,true);
-	SETCALC(DWGSoundBoard_next);
 }
 void DWGSoundBoard::getargs(Unit *unit,bool force)
 {
