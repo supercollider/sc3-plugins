@@ -54,21 +54,23 @@ before_build:
 - cd build
 
 build_script:
-- cmake -G "%CMAKE_GENERATOR%" -DSC_PATH=../../supercollider -DFFTW3F_INCLUDE_DIR=../fftw -DFFTW3F_LIBRARY=../fftw/libfftw3f-3.lib ..
+- cmake -G "%CMAKE_GENERATOR%" -DSC_PATH=../../supercollider -DFFTW3F_INCLUDE_DIR=../fftw -DFFTW3F_LIBRARY=../fftw/libfftw3f-3.lib -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/build/install" ..
 - cmake --build . --target install --config %CMAKE_CONFIGURATION%
 
-# TODO
-# artifacts:
-#     - path: artifacts
-#       name: art_folder
+after_build:
+- ps: 7z a -mx7 sc3-plugins-Windows-$env:ARCH-VS.zip install
 
-# TODO
+artifacts:
+- path: build/sc3-plugins-Windows-%ARCH%-VS.zip
+  name: Plugins
+
 # github releases - only tags
-# - provider: GitHub
-#   description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
-#   artifact: installer
-#   auth_token:
-#     secure: rxXJNY+6n25Th9R4+7qI+AcnTj0wCAMSnBGH2+5s7DlVLrAGsSY6+EEDbeHWGGeI
-#   prerelease: true
-#   on:
-#     appveyor_repo_tag: true
+deploy:
+- provider: GitHub
+  description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
+  artifact: Plugins
+  auth_token:
+    secure: 4uMFrJ2Vc3ju6OtWpQ9chRce/2JHNhfy/sjX+w+KFTNDvmSPD5CqdEuwFp/+Ln/s
+  prerelease: true
+  on:
+    appveyor_repo_tag: true
