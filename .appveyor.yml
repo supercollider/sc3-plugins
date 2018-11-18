@@ -15,7 +15,7 @@ image: Visual Studio 2017
 test: off
 
 environment:
-    CMAKE_CONFIGURATION: Release
+    CMAKE_CONFIGURATION: Debug
 
     matrix:
         - CMAKE_GENERATOR: "Visual Studio 15 2017"
