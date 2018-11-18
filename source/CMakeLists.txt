@@ -148,68 +148,9 @@ install(DIRECTORY local DESTINATION "${INSTALL_DESTINATION_DISTRO}"
 # plugins with extras:
 #---------------------
 
-
-# AuditoryModeling
-file(GLOB AuditoryModelingSources AuditoryModeling/*cpp)
-
-BUILD_PLUGIN(AuditoryModeling "${AuditoryModelingSources}" "" "AuditoryModeling")
-
-
 #BetablockerUGens
 BUILD_PLUGIN(BetablockerUGens "BetablockerUGens/BetablockerUGens.cpp;BetablockerUGens/betablocker/machine.cpp;BetablockerUGens/betablocker/thread.cpp"
              "" "BetablockerUGens")
-
-# ChaosUGens
-BUILD_PLUGIN(NoiseRing
-"ChaosUGens/NoiseRing.cpp"
-             "" "ChaosUGens")
-BUILD_PLUGIN(PredPrey
-"ChaosUGens/PredPrey.cpp"
-             "" "ChaosUGens")
-
-# MembraneUGens
-BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
-             "" "MembraneUGens")
-
-# LadspaUGen
-if(NOT WIN32)
-    BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "${CMAKE_DL_LIBS}" "LadspaUGen")
-    add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
-    target_link_libraries(ladspalist "${CMAKE_DL_LIBS}")
-endif()
-
-# OteyPianoUGens
-BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
-             "" "OteyPianoUGens")
-
-# PitchDetectionUGens
-file(GLOB PitchDetectionSources PitchDetection/*cpp)
-
-if(APPLE)
-    set (PitchDetectionLibs "-framework Accelerate")
-else()
-    find_package(FFTW3f)
-    if (!FFTW3F_FOUND)
-        message(SEND_ERROR "Cannot find libfftw3f")
-    endif()
-    set (PitchDetectionLibs ${FFTW3F_LIBRARY})
-endif()
-
-BUILD_PLUGIN(PitchDetection "${PitchDetectionSources}"
-             "${PitchDetectionLibs}" "PitchDetection")
-
-if (APPLE)
-    set_property(TARGET PitchDetection APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
-    if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_VDSP)
-    endif()
-else()
-    include_directories(${FFTW3F_INCLUDE_DIR})
-    set_property(TARGET PitchDetection APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
-    if (SUPERNOVA)
-        set_property(TARGET PitchDetection_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
-    endif()
-endif()
 
 #--------
 # INSTALL
@@ -219,11 +160,6 @@ endif()
 if (NOT APPLE)
     install(TARGETS ${plugins} ${supernova_plugins}
             DESTINATION ${INSTALL_DESTINATION})
-endif()
-
-if(NOT WIN32)
-  install(TARGETS ladspalist
-    DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
 endif()
 
 # install help and sc specific files that are found in 'PLUGIN_NAME/sc' folder
