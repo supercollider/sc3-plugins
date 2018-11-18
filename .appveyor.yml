@@ -62,9 +62,9 @@ after_build:
 - ps: |
     if (Get-Variable 'APPVEYOR_REPO_TAG_NAME' -Scope Global -ErrorAction 'Ignore') {
         $env:VERSION_SLUG=$env:APPVEYOR_REPO_TAG_NAME | % { $_ -replace "Version-","" }
-        $env:ZIP_NAME=sc3-plugins-$env:VERSION_SLUG-Windows-$env:ARCH-VS.zip
+        $env:ZIP_NAME="sc3-plugins-$env:VERSION_SLUG-Windows-$env:ARCH-VS.zip"
     } else {
-        $env:ZIP_NAME=sc3-plugins-$env:APPVEYOR_REPO_COMMIT-Windows-$env:ARCH-VS.zip
+        $env:ZIP_NAME="sc3-plugins-$env:APPVEYOR_REPO_COMMIT-Windows-$env:ARCH-VS.zip"
     }
 - ps: 7z a -mx7 $env:ZIP_NAME install
 
