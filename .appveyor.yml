@@ -60,7 +60,7 @@ build_script:
 after_build:
 # create archive name; either the version (if tagged) or commit hash
 - ps: |
-    if (Get-Variable 'APPVEYOR_REPO_TAG_NAME' -Scope Global -ErrorAction 'Ignore') {
+    if (Test-Path env:APPVEYOR_REPO_TAG_NAME) {
         $env:VERSION_SLUG=$env:APPVEYOR_REPO_TAG_NAME | % { $_ -replace "Version-","" }
         $env:ZIP_NAME="sc3-plugins-$env:VERSION_SLUG-Windows-$env:ARCH-VS.zip"
     } else {
