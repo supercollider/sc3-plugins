@@ -82,47 +82,10 @@ endmacro()
 #-----------------------
 
 set(PLUGIN_DIRS
-    AntiAliasingOscillators
-    ATK
-    BatUGens
-    BBCut2UGens
-    BerlachUGens
-    BhobUGens
-    BlackrainUGens
-    ConcatUGens
-    DistortionUGens
-    DWGUGens
-    GlitchUGens
-    JoshUGens
-    LoopBufUGens
-    MCLDUGens
-    MdaUGens
-    Neuromodules
-    NHUGens
-    RFWUGens
-    RMEQSuiteUGens
-    SCMIRUGens
-    SkUGens
-    SLUGens
-    SummerUGens
-    TagSystemUGens
-    VBAPUGens
-    VOSIMUGens
 )
 
 # plugins with extra lib
 set(PLUGIN_DIRS_EXTRA
-    AuditoryModeling
-    BetablockerUGens
-    ChaosUGens
-    DEINDUGens
-    LadspaUGen
-    MembraneUGens
-    NCAnalysisUGens
-    OteyPianoUGens
-    PitchDetection
-    StkUGens
-    TJUGens
 )
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES "^6.0.")
@@ -165,17 +128,6 @@ else()
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
 
-# HOAUGens
-if (HOA_UGENS)
-    list(APPEND PLUGIN_DIRS HOAUGens)
-    if (CMAKE_COMPILER_IS_CLANG)
-        file(GLOB HOAUGensSources HOAUGens/*cpp)
-        foreach(HOAUGensSourceFile ${HOAUGensSources})
-            set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
-        endforeach(HOAUGensSourceFile)
-    endif()
-endif()
-
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
 endforeach(DIR)
@@ -214,30 +166,6 @@ BUILD_PLUGIN(NoiseRing
 BUILD_PLUGIN(PredPrey
 "ChaosUGens/PredPrey.cpp"
              "" "ChaosUGens")
-
-# DEINDUGens
-BUILD_PLUGIN(RMS
-"DEINDUGens/RMS.cpp"
-             "" "DEINDUGens")
-BUILD_PLUGIN(DiodeRingMod
-"DEINDUGens/DiodeRingMod.cpp"
-             "" "DEINDUGens")
-BUILD_PLUGIN(complexRes
-"DEINDUGens/complexRes.cpp"
-             "" "DEINDUGens")
-include_directories(DEINDUGens/include)
-BUILD_PLUGIN(JPverb
-"DEINDUGens/JPverbRaw.cpp"
-             "" "DEINDUGens")
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB)
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
-BUILD_PLUGIN(Greyhole
-"DEINDUGens/GreyholeRaw.cpp"
-             "" "DEINDUGens")
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE)
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
@@ -281,71 +209,6 @@ else()
     if (SUPERNOVA)
         set_property(TARGET PitchDetection_supernova APPEND PROPERTY COMPILE_DEFINITIONS SC_FFT_FFTW)
     endif()
-endif()
-
-# StkUGens
-if(SYSTEM_STK)
-    find_package(STK)
-    add_definitions(-DSYSTEM_STK)
-    include_directories(${STK_INCLUDE_DIR})
-    if (EXISTS ${STK_INCLUDE_DIR}/SKINI.msg)
-      add_definitions(-DSTK_SKINIMSG)
-    else()
-      if (NOT EXISTS ${STK_INCLUDE_DIR}/SKINImsg.h)
-        message(FATAL_ERROR "Your system's stk library headers are missing the SKINI msg include file. Please read Debian Bug #805549 for more information & a fix. Alternatively, you can build the sc3 plugins without SYSTEM_STK using the included stk library.")
-      endif()
-    endif()
-    BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp" ${STK_LIBRARY} "StkUGens")
-    add_subdirectory(StkInst)
-else()
-    add_subdirectory(StkInst)
-    file(GLOB STKSources "../external_libraries/stk/src/*.cpp")
-    file(GLOB UnneededSTKSources "../external_libraries/stk/src/Rt*.cpp"
-                             "../external_libraries/stk/src/Inet*.cpp"
-                             "../external_libraries/stk/src/Socket.cpp"
-                             "../external_libraries/stk/src/Tcp*.cpp"
-                             "../external_libraries/stk/src/UdpSocket.cpp"
-                             "../external_libraries/stk/src/Thread.cpp"
-                             "../external_libraries/stk/src/Mutex.cpp"
-    )
-    list(REMOVE_ITEM STKSources ${UnneededSTKSources})
-    include_directories(../external_libraries/stk)
-    include_directories(../external_libraries/stk/include)
-    include_directories(../external_libraries/stk/src/include)
-    BUILD_PLUGIN(StkUGens "StkUGens/StkAll.cpp;${STKSources}" "" "StkUGens")
-endif()
-
-# NCAnalysisUGens
-file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
-if(APPLE)
-    set (NCAnalysisLibs "-framework Accelerate")
-else()
-    set (NCAnalysisLibs ${FFTW3F_LIBRARY})
-endif()
-
-BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources}"
-             ${NCAnalysisLibs} "NCAnalysisUGens")
-
-# AYUGens
-if (AY)
-    list(APPEND PLUGIN_DIRS_EXTRA AYUGens)
-    include_directories(AYUGens/AY_libayemu/include)
-    BUILD_PLUGIN(AY_UGen "AYUGens/AY_UGen.cpp;AYUGens/AY_libayemu/src/ay8912.c"
-                 "" "AYUGens")
-endif()
-
-# TJUGens
-if (APPLE AND gcc_version MATCHES "4\\.0.*")
-    list(REMOVE_ITEM PLUGIN_DIRS_EXTRA TJUGens)
-    message(WARNING "TJUGens won't be built with gcc-4.0 on Apple")
-else()
-    file(GLOB TJUGensSources TJUGens/*.cpp)
-    BUILD_PLUGIN(TJUGens "${TJUGensSources}" "" "TJUGens")
-endif()
-
-# NovaDiskIO
-if (NOVA_DISK_IO)
-    add_subdirectory(NovaDiskIO)
 endif()
 
 #--------
