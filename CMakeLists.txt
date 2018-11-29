@@ -2,22 +2,36 @@ cmake_minimum_required (VERSION 2.8)
 set(SUPERNOVA_CMAKE_MINVERSION 3.1)
 project (sc3-plugins)
 
+set(NOVA_SIMD_MISSING_ERROR "The nova-simd source code is missing in \
+${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd.\n This probably \
+means you forgot to clone submodules.\n To fix this, run `git submodule \
+update --init` from the root of the sc3-plugins repository")
+
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
-  message(FATAL_ERROR "The nova-simd submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of sc3-plugins repository")
+  message(FATAL_ERROR "${NOVA_SIMD_MISSING_ERROR}")
 endif()
+
+set(STK_MISSING_ERROR "The stk source code is missing in \
+${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk.\n This probably means you \
+forgot to clone submodules.\n To fix this, run `git submodule update --init` \
+from the root of the sc3-plugins repository")
 
 if (NOT SYSTEM_STK)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk/include/Stk.h)
-    message(FATAL_ERROR "The stk submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of the sc3-plugins repository")
+    message(FATAL_ERROR ${STK_MISSING_ERROR})
   endif()
 endif()
 
+set(NOVA_TT_MISSING_ERROR "The nova-tt source code is missing in \
+${SC_PATH}/external_libraries/nova-tt.\n Make sure to point to a valid version \
+of SuperCollider's source code (with the help of the SC_PATH variable).\n It's \
+easiest to use a release tarball of SuperCollider.\n If you use a git clone, \
+make sure you have all submodules by running `git submodule update --init \
+--recursive` in the root of SuperCollider's source code repository.")
+
 if (NOVA_DISK_IO)
   if (NOT EXISTS ${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt)
-    message(FATAL_ERROR "The nova-tt submodule in the SuperCollider repository
-    is missing (required for NovaDiskIO plugin). This probably means you forgot
-    to clone submodules. To fix this, run `git submodule update --init` from
-    the root folder of the SuperCollider repository")
+    message(FATAL_ERROR ${NOVA_TT_MISSING_ERROR})
   endif()
 endif()
 
@@ -57,8 +71,7 @@ option(NOVA_SIMD "Build VBAP with nova-simd support." ON)
 option(CPP11 "Build with c++11." ON)
 option(NATIVE "Optimize for this specific machine." OFF)
 option(SYSTEM_STK "Use STK libraries from system" OFF)
-
-option(NOVA_DISK_IO "Build with Nova's DiskIO UGens. Requires boost source tree, break warranty & eats your children." OFF)
+option(NOVA_DISK_IO "Build with Nova's DiskIO UGens (experimental). Requires SuperCollider source code." OFF)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   set(CMAKE_COMPILER_IS_CLANG 1)
