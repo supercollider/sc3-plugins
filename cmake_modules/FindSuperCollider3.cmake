@@ -13,7 +13,7 @@
 # Find the telltale header file
 #
 GET_FILENAME_COMPONENT(SOURCEPARENT "${CMAKE_CURRENT_SOURCE_DIR}" PATH)
-find_path(SC_PATH NAMES include/plugin_interface/SC_PlugIn.h
+find_path(SC_PATH NAMES plugin_interface/SC_PlugIn.h
 	PATHS "${SOURCEPARENT}"
 	PATH_SUFFIXES SuperCollider)
 
