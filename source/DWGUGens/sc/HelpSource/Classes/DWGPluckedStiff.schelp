@@ -47,10 +47,10 @@ Examples::
 code::
 //Define pluck synthdef
 (
-SynthDef(\help_dwgpluckedstiff, { |out=0, freq=440, amp=0.5, gate=1, c3=20, pan=0,fB = 80|
+SynthDef(\help_dwgpluckedstiff, { |out=0, freq=440, amp=0.5, gate=1, c3=20, pan=0, rel=1, fB = 80|
 	var env = Env.new([0,1, 1, 0],[0.001,0.006, 0.0005],[5,-5, -8]);
 	var inp = amp * LFClipNoise.ar(2000) * EnvGen.ar(env,gate);
-    var son = DWGPluckedStiff.ar(freq, amp, gate,0.1,1,c3,inp,fB);
+    var son = DWGPluckedStiff.ar(freq, amp, gate,0.1,1,c3,inp,rel,fB);
     DetectSilence.ar(son, 0.001, doneAction:2);
     Out.ar(out, Pan2.ar(son * 0.1, pan));
 }).add;
@@ -69,7 +69,7 @@ Pbind(
     \instrument, \help_dwgpluckedstiff,
     \scale ,a,
     \delta , Pseq([1,0.5,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,1,1]*0.25,inf),
-    \dur , 2,
+    \dur , 0.9,
     \degree, Pseq([1,8,8,8,8,8,8,-6,Prand([9,10,11],1),1,7,8]-8, inf),
     \amp , Pwhite(0.2,0.8),
     \c3 , Pseq([Pseq([1400],24),Pseq([300],24)],inf),
