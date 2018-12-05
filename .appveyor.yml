@@ -37,8 +37,7 @@ install:
 - cmd: git submodule update --init --recursive
 
 - cmd: echo "Get SuperCollider"
-# can shallow clone, no submodules needed (no supernova)
-- cmd: git clone --depth 1 https://github.com/supercollider/supercollider ../supercollider
+- cmd: git clone --recursive --depth 1 https://github.com/supercollider/supercollider ../supercollider
 
 # FFTW3, including lib prep
 - cmd: echo "Install fftw"
