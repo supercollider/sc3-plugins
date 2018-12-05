@@ -18,7 +18,7 @@ from the root of the sc3-plugins repository")
 
 if (NOT SYSTEM_STK)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/stk/include/Stk.h)
-    message(FATAL_ERROR ${STK_MISSING_ERROR})
+    message(FATAL_ERROR "${STK_MISSING_ERROR}")
   endif()
 endif()
 
@@ -48,8 +48,8 @@ make sure you have all submodules by running `git submodule update --init \
 --recursive` in the root of SuperCollider's source code repository.")
 
 if (NOVA_DISK_IO)
-  if (NOT EXISTS ${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt)
-    message(FATAL_ERROR ${NOVA_TT_MISSING_ERROR})
+  if (NOT EXISTS "${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt")
+    message(FATAL_ERROR "${NOVA_TT_MISSING_ERROR}")
   endif()
 endif()
 
