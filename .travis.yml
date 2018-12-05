@@ -17,14 +17,14 @@ before_install:
  - ifmac () { if [[ $TRAVIS_OS_NAME == osx ]]; then eval $@; fi; }
  - iflin () { if [[ $TRAVIS_OS_NAME == linux ]]; then eval $@; fi; }
  - iflin sudo apt-get install libicu-dev libfftw3-dev libxt-dev pkg-config libstdc++5
- - git clone https://github.com/supercollider/supercollider.git
+ - git clone --depth 1 https://github.com/supercollider/supercollider.git
 
 before_script:
  - mkdir BUILD && cd BUILD
  - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider ..
 
 script:
- - iflin make -j 2
+ - iflin make -j
  - ifmac make install
  - ifmac mkdir -p $HOME/artifacts
  - ifmac zip -q -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
@@ -67,7 +67,7 @@ deploy:
      condition: $TRAVIS_OS_NAME = osx && ! -z $GITHUB_KEY
      tags: true
      all_branches: true
-after-deploy:
+after_deploy:
  - "echo S3 Build Location: $S3_URL"
 
 notifications:
