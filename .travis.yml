@@ -1,33 +1,31 @@
-language: objective-c
+language: cpp
 
-os:
- - osx
+matrix:
+  fast_finish: true
+  include:
+    - os: linux
+      sudo: required
+      dist: trusty
+    - os: osx
 
 cache:
+ - ccache
  - apt
  - bundler
 
 before_install:
  - ifmac () { if [[ $TRAVIS_OS_NAME == osx ]]; then eval $@; fi; }
  - iflin () { if [[ $TRAVIS_OS_NAME == linux ]]; then eval $@; fi; }
- - ifmac brew install cmake || true
- - iflin sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
- - iflin sudo add-apt-repository -y ppa:andykimpe/cmake  # backport of cmake 2.8.12
- - iflin sudo add-apt-repository -y ppa:ondrej/php5 # libicu-dev 52
- - iflin sudo apt-get update
- - iflin sudo apt-get install libicu-dev=52.1-1+debphp.org~precise+1 gcc-4.7 g++-4.7 aptitude build-essential libfftw3-dev libxt-dev pkg-config cmake=2.8.12.2-3 libstdc++5
- - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
- - iflin sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
- - iflin sudo update-alternatives --auto gcc
+ - iflin sudo apt-get install libicu-dev libfftw3-dev libxt-dev pkg-config libstdc++5
  - git clone https://github.com/supercollider/supercollider.git
 
 before_script:
- - mkdir BUILD
- - cd BUILD
+ - mkdir BUILD && cd BUILD
  - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider ..
 
 script:
- - make install
+ - iflin make -j 2
+ - ifmac make install
  - ifmac mkdir -p $HOME/artifacts
  - ifmac zip -q -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
 
@@ -71,7 +69,6 @@ deploy:
      all_branches: true
 after-deploy:
  - "echo S3 Build Location: $S3_URL"
-
 
 notifications:
   on_success: change
