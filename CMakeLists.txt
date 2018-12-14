@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 2.8)
-set(SUPERNOVA_CMAKE_MINVERSION 3.1)
-project (sc3-plugins)
+cmake_minimum_required (VERSION 3.5)
+cmake_policy(SET CMP0048 NEW)
+project (sc3-plugins VERSION ${PROJECT_VERSION})
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd/simd_memory.hpp)
   message(FATAL_ERROR "The nova-simd submodule is missing. This probably means you forgot to clone submodules. To fix this, run `git submodule update --init` from the root folder of sc3-plugins repository")
