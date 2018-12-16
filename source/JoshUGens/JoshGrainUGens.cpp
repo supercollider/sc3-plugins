@@ -6735,7 +6735,7 @@ inline float grain_in_at(Unit* unit, int index, int offset)
 		return IN0(index);
 }
 
-
+#undef GRAIN_BUF
 #define GRAIN_BUF													\
 	const SndBuf *buf;												\
 	if (bufnum >= world->mNumSndBufs) {								\
@@ -6812,6 +6812,7 @@ static inline bool getGrainWin(Unit * unit, float wintype, SndBuf *& window, con
 	return true;
 }
 
+#undef GRAIN_LOOP_BODY_4
 #define GRAIN_LOOP_BODY_4										\
 		float amp = y1 * y1;									\
 		phase = sc_gloop(phase, loopMax);						\
@@ -6841,6 +6842,7 @@ static inline bool getGrainWin(Unit * unit, float wintype, SndBuf *& window, con
 		y2 = y1;												\
 		y1 = y0;
 
+#undef GRAIN_LOOP_BODY_2
 #define GRAIN_LOOP_BODY_2								\
 		float amp = y1 * y1;							\
 		phase = sc_gloop(phase, loopMax);				\
