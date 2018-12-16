@@ -1,0 +1,29 @@
+class:: Timbre
+summary:: Wavefolder virtual analog model
+related:: 
+categories:: UGens>Filters
+
+
+Description::
+This is a model of the "timbre" circuit of the Buchla 259 Complex Wave Generator. The model follows the circuit modelling as seen on the paper link::http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_82.pdf::, using 5 folds.
+
+
+classmethods::
+
+method::ar
+
+argument::in
+Input signal.
+
+argument::fold
+Folding ammount (control rate). Useful range: [0, ..]
+
+argument::offset
+Input offset (control rate). Useful range: [-1, 1].
+
+
+Examples::
+
+code::
+{Timbre.ar(SinOsc.ar(200), MouseX.kr(0,3), MouseY.kr(-1,1))}.scope
+::
