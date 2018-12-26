@@ -5,16 +5,16 @@
 static InterfaceTable *ft;
 
 // declare struct to hold unit generator state
-struct Timbre : public SCUnit{
+struct BFold : public SCUnit{
 
 // Constructor usually does 3 things.
 // 1. set the calculation function.
 // 2. initialize the unit generator state variables.
 // 3. calculate one sample of output.
 public:
-    Timbre() {
+    BFold() {
         // 1. set the calculation function.
-        set_calc_function<Timbre,&Timbre::next>();
+        set_calc_function<BFold,&BFold::next>();
 
         // 3. calculate one sample of output.
         next(1);
@@ -75,10 +75,10 @@ private:
                         }
                     }
                 }
-            } 
+            }
             // out must be written last for in place operation
             outBuf[i] = (fold1 + fold2 + fold3 + fold4 + fold5 + 5.f * sigNorm)/3.f;
-        }       
+        }
     }
 
 };
@@ -92,5 +92,5 @@ PluginLoad(TimbreUGens)
     // registerUnit takes the place of the Define*Unit functions. It automatically checks for the presence of a
     // destructor function.
     // However, it does not seem to be possible to disable buffer aliasing with the C++ header.
-    registerUnit<Timbre>(ft, "Timbre");
+    registerUnit<BFold>(ft, "BFold");
 }
