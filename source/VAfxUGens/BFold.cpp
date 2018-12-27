@@ -33,7 +33,7 @@ private:
 
         // get the pointer to the input buffer
         const float *sig = in(0);
-        const float fold = in0(1);
+        const float *fold = in(1);
         const float offset = in0(2);
 
         // perform a loop for the number of samples in the control period.
@@ -51,7 +51,7 @@ private:
             float fold4 = 0.f;
             float fold5 = 0.f;
 
-            sigNorm = offset*0.6 + (fold*5.4 +0.6)*sig[i];
+            sigNorm = offset*0.6 + (fold[i]*5.4 +0.6)*sig[i];
             // sigNorm = 0.5 + 2.f*sig[i]*0.6;
             sigAbs = fabs(sigNorm);
             sgn = copysignf(1.0, sig[i]);
