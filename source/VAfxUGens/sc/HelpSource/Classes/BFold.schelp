@@ -5,7 +5,7 @@ categories:: UGens>Filters
 
 
 Description::
-This is a model of the "timbre" circuit of the Buchla 259 Complex Wave Generator. The model follows the circuit modelling as seen on the paper link::http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_82.pdf::, using 5 folds.
+A model of the "timbre" circuit of the Buchla 259 Complex Wave Generator. The model follows the circuit modelling as seen on the paper link::http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_82.pdf::, using 5 folds.
 
 
 classmethods::
@@ -16,7 +16,7 @@ argument::in
 Input signal.
 
 argument::fold
-Folding amount (control rate). Useful range: [0, ..]
+Folding amount (audio rate). Useful range: [0, ..]
 
 argument::offset
 Input offset (control rate). Useful range: [-1, 1].
