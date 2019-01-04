@@ -84,7 +84,7 @@ private:
 };
 
 // the entry point is called by the host when the plug-in is loaded
-PluginLoad(TimbreUGens)
+PluginLoad(VAfxUGens)
 {
     // InterfaceTable *inTable implicitly given as argument to the load function
     ft = inTable; // store pointer to InterfaceTable
