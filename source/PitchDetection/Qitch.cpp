@@ -191,7 +191,7 @@ void Qitch_Ctor(Qitch* unit)
 		unit->m_amps[i]= g_amps[i];
 	
 	uint32 ampbufnum = (uint32)ZIN0(4);
-	if (!((ampbufnum > world->mNumSndBufs) || ampbufnum<0)) {
+	if (ampbufnum < world->mNumSndBufs) {
 		SndBuf *buf2 = world->mSndBufs + ampbufnum; 
 		
 		bufsize = buf2->samples;

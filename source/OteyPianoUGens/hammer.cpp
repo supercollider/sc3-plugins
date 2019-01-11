@@ -38,10 +38,6 @@ StulovHammer :: StulovHammer(float f, float Fs, float m, float K, float p, float
 
 }
 
-Hammer :: ~Hammer() {
-}
-BanksHammer :: ~BanksHammer() {
-}
 void StulovHammer::trigger(float v){
   // this->v0 = v;
    this->v = v;
