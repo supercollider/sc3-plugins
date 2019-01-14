@@ -381,237 +381,232 @@ void MedianSeparation_next( MedianSeparation *unit, int inNumSamples ) {
             //printf("now recall %d %d \n",bufnum1,bufnum2);
             
             World *world = unit->mWorld;
-            
-            if ((bufnum1 >= 0) && (bufnum2 >= 0) ) { 
-                
-                SndBuf *buf1, *buf2;
-                
-                if (bufnum1 >= world->mNumSndBufs) { 
-                    int localBufNum = bufnum1 - world->mNumSndBufs; 
-                    Graph *parent = unit->mParent; 
-                    if(localBufNum <= parent->localBufNum) { 
-                        buf1 = parent->mLocalSndBufs + localBufNum; 
-                    } else { 
-                        buf1 = world->mSndBufs; 
-                    } 
-                } else { 
-                    buf1 = world->mSndBufs + bufnum1; 
-                } 
-                
-                LOCK_SNDBUF(buf1); 
-                
-                if (bufnum2 >= world->mNumSndBufs) { 
-                    int localBufNum = bufnum2 - world->mNumSndBufs; 
-                    Graph *parent = unit->mParent; 
-                    if(localBufNum <= parent->localBufNum) { 
-                        buf2 = parent->mLocalSndBufs + localBufNum; 
-                    } else { 
-                        buf2 = world->mSndBufs; 
-                    } 
-                } else { 
-                    buf2 = world->mSndBufs + bufnum2; 
-                } 
-                
-                LOCK_SNDBUF(buf2); 
-                
-                int numbins1 = (buf1->samples >> 1)  + 1; 
-                int numbins2 = (buf2->samples >> 1)  + 1; 
-                
-                //printf("check %d %d numbands %d further check %d %d \n",numbins1,numbins2,numbands,buf1->samples,buf2->samples);
-                
-                
-                if((numbins1 == numbands) && (numbins2 ==numbands)) {
-                    
-                    int hardorsoft = ZIN0(5); 
-                    
-                    //unit->hardorsoft_ = ZIN0(5); 
-                    //unit->p_ = ZIN0(6);
-                    
-                    //to magnitude and phase representation 
-                    SCPolarBuf *polar1 = ToPolarApx(buf1);
-                    SCPolarBuf *polar2 = ToPolarApx(buf2);
-                    
-                    SCPolar * data1 = polar1->bin; 
-                    SCPolar * data2 = polar2->bin; 
-                    
-                    //writing into the two output arrays of the buffers 
-                    
-                    
-                    //magsnow already pointing to write place in magnitudes
-                    //magsnow = mags + (midindex*numbands);
-                    
-                    //+mid+2, adding so no danger, just add 1
-                    int phaseindex = (unit->phaseposition_+1)%(mid+1); //midpoint is next one (about to be overwritten after increment below)
-                    
-                    float * phasesnow = phases + (phaseindex*numbands); 
-                    
-                    //dc, nyquist, phase to zero
-                    
-                    //buf1,polar 1 is harmonic, 2 is percussive
-                    
-                    //0 larger of horizontal and vertical is winner, or 1 more subtle blend 
-                    if(hardorsoft==0) {
-                        //hard
-                        
-                        //printf("hard calc \n");     
-                        
-                        if(horizontal[0]>vertical[0]) {
-                            
-                            polar1->dc = magsnow[0]; 
-                            polar2->dc = 0.f;
-                            
-                        } else {
-                            
-                            polar2->dc = magsnow[0]; 
-                            polar1->dc = 0.f;
-                        }
-                        
-                        
-                        if(horizontal[top]>vertical[top]) {
-                            
-                            polar1->nyq = magsnow[top]; 
-                            polar2->nyq = 0.f;
-                            
-                        } else {
-                            
-                            polar2->nyq = magsnow[top]; 
-                            polar1->nyq = 0.f;
-                        }
-                        
-                        int count = 0;  
-                        
-                        //setting 
-                        for (i=0; i<numbands-2; ++i) {
-                            
-                            int indexnow = i+1; 
-                            
-                            //if(i==20) {data1[i].mag=1024; data2[i].mag=1024;}
-                            
-                            //else {data1[i].mag = 0.0f; data2[i].mag = 0.f;}
-                            
-                            
-                            if(horizontal[indexnow]>vertical[indexnow]) {
-                                
-                                ++count; 
-                                
-                                data1[i].mag = magsnow[indexnow];
-                                data1[i].phase = phasesnow[indexnow];
-                                data2[i].mag = 0.0f;
-                                data2[i].phase = 0.0f; //phasesnow[i+1];
-                                
-                            } else {
-                                
-                                data2[i].mag = magsnow[indexnow];
-                                data2[i].phase = phasesnow[indexnow];
-                                data1[i].mag = 0.0f;
-                                data1[i].phase = 0.0f; //phasesnow[i+1];
-                                
-                            }
-                            
-                            //                        if(i<10) {
-                            //                            
-                            //                            printf("mag %d %f %f horiz %f vert %f further %f %f \n ",i, data1[i].mag,data2[i].mag,horizontal[indexnow],vertical[indexnow],polar1->bin[i].mag,polar2->bin[i].mag);
-                            //                            
-                            //                        }
-                            //                        
-                        }
-                        
-                        
-                        //printf("count %d \n",count);
-                        
-                        
-                    } else {
-                        
-                        
-                        //printf("I hope not!\n");
-                        
-                        //soft, Wiener filtering
-                        float pfactor = ZIN0(6); 
-                        
-                        float maskp, maskh, hp, pp, combine;
-                        
-                        //dc
-                        hp = powf(horizontal[0],pfactor);
-                        pp = powf(vertical[0],pfactor);
-                        
-                        combine = hp+pp; 
-                        
-                        maskh = 0.f; 
-                        maskp = 0.f; 
-                        
-                        //watch for zeroes
-                        if(combine>0.00000000001f) {
-                            maskh = hp/combine; 
-                            maskp = pp/combine; 
-                        }
-                        
-                        polar1->dc = magsnow[0] * maskh;
-                        polar2->dc = magsnow[0] * maskp;
-                        
-                        //nyquist
-                        hp = powf(horizontal[top],pfactor);
-                        pp = powf(vertical[top],pfactor);
-                        
-                        combine = hp+pp; 
-                        
-                        maskh = 0.f; 
-                        maskp = 0.f; 
-                        
-                        //watch for zeroes
-                        if(combine>0.00000000001f) {
-                            maskh = hp/combine; 
-                            maskp = pp/combine; 
-                        }
-                        
-                        polar1->nyq = magsnow[top] * maskh;
-                        polar2->nyq = magsnow[top] * maskp;
-                        
-                        //setting 
-                        for (i=0; i<numbands-2; ++i) {
-                            
-                            int indexnow = i+1; 
-                            
-                            hp = powf(horizontal[indexnow],pfactor);
-                            pp = powf(vertical[indexnow],pfactor);
-                            
-                            combine = hp+pp; 
-                            
-                            //if(i<5) {                       
-                            //     printf("mag %d %f %f %f %f %f \n",i ,horizontal[indexnow],vertical[indexnow],hp,pp,combine);
-                            //}
-                            
-                            maskh = 0.f; 
-                            maskp = 0.f; 
-                            
-                            //watch for zeroes
-                            if(combine>0.00000000001f) {
-                                maskh = hp/combine; 
-                                maskp = pp/combine; 
-                            }
-                            
-                            data1[i].mag = magsnow[indexnow] * maskh;
-                            data1[i].phase = phasesnow[indexnow];
-                            data2[i].mag = magsnow[indexnow] * maskp;
-                            data2[i].phase = phasesnow[indexnow];
-                            
-                        }
-                        
-                        
-                    }
-                    
-                    
-                    //printf("now output %d %d \n",bufnum1,bufnum2);
-                    
-                    //update output
-                    
-                    OUT0(0) = bufnum1; //2.f; //-1.f; //bufnum1; //-1;
-                    OUT0(1) = bufnum2; //-1;
-                    
+
+            SndBuf *buf1, *buf2;
+
+            if (bufnum1 >= world->mNumSndBufs) {
+                int localBufNum = bufnum1 - world->mNumSndBufs;
+                Graph *parent = unit->mParent;
+                if(localBufNum <= parent->localBufNum) {
+                    buf1 = parent->mLocalSndBufs + localBufNum;
+                } else {
+                    buf1 = world->mSndBufs;
                 }
-                
-                
-            } 
-            
+            } else {
+                buf1 = world->mSndBufs + bufnum1;
+            }
+
+            LOCK_SNDBUF(buf1);
+
+            if (bufnum2 >= world->mNumSndBufs) {
+                int localBufNum = bufnum2 - world->mNumSndBufs;
+                Graph *parent = unit->mParent;
+                if(localBufNum <= parent->localBufNum) {
+                    buf2 = parent->mLocalSndBufs + localBufNum;
+                } else {
+                    buf2 = world->mSndBufs;
+                }
+            } else {
+                buf2 = world->mSndBufs + bufnum2;
+            }
+
+            LOCK_SNDBUF(buf2);
+
+            int numbins1 = (buf1->samples >> 1)  + 1;
+            int numbins2 = (buf2->samples >> 1)  + 1;
+
+            //printf("check %d %d numbands %d further check %d %d \n",numbins1,numbins2,numbands,buf1->samples,buf2->samples);
+
+
+            if((numbins1 == numbands) && (numbins2 ==numbands)) {
+
+                int hardorsoft = ZIN0(5);
+
+                //unit->hardorsoft_ = ZIN0(5);
+                //unit->p_ = ZIN0(6);
+
+                //to magnitude and phase representation
+                SCPolarBuf *polar1 = ToPolarApx(buf1);
+                SCPolarBuf *polar2 = ToPolarApx(buf2);
+
+                SCPolar * data1 = polar1->bin;
+                SCPolar * data2 = polar2->bin;
+
+                //writing into the two output arrays of the buffers
+
+
+                //magsnow already pointing to write place in magnitudes
+                //magsnow = mags + (midindex*numbands);
+
+                //+mid+2, adding so no danger, just add 1
+                int phaseindex = (unit->phaseposition_+1)%(mid+1); //midpoint is next one (about to be overwritten after increment below)
+
+                float * phasesnow = phases + (phaseindex*numbands);
+
+                //dc, nyquist, phase to zero
+
+                //buf1,polar 1 is harmonic, 2 is percussive
+
+                //0 larger of horizontal and vertical is winner, or 1 more subtle blend
+                if(hardorsoft==0) {
+                    //hard
+
+                    //printf("hard calc \n");
+
+                    if(horizontal[0]>vertical[0]) {
+
+                        polar1->dc = magsnow[0];
+                        polar2->dc = 0.f;
+
+                    } else {
+
+                        polar2->dc = magsnow[0];
+                        polar1->dc = 0.f;
+                    }
+
+
+                    if(horizontal[top]>vertical[top]) {
+
+                        polar1->nyq = magsnow[top];
+                        polar2->nyq = 0.f;
+
+                    } else {
+
+                        polar2->nyq = magsnow[top];
+                        polar1->nyq = 0.f;
+                    }
+
+                    int count = 0;
+
+                    //setting
+                    for (i=0; i<numbands-2; ++i) {
+
+                        int indexnow = i+1;
+
+                        //if(i==20) {data1[i].mag=1024; data2[i].mag=1024;}
+
+                        //else {data1[i].mag = 0.0f; data2[i].mag = 0.f;}
+
+
+                        if(horizontal[indexnow]>vertical[indexnow]) {
+
+                            ++count;
+
+                            data1[i].mag = magsnow[indexnow];
+                            data1[i].phase = phasesnow[indexnow];
+                            data2[i].mag = 0.0f;
+                            data2[i].phase = 0.0f; //phasesnow[i+1];
+
+                        } else {
+
+                            data2[i].mag = magsnow[indexnow];
+                            data2[i].phase = phasesnow[indexnow];
+                            data1[i].mag = 0.0f;
+                            data1[i].phase = 0.0f; //phasesnow[i+1];
+
+                        }
+
+                        //                        if(i<10) {
+                        //
+                        //                            printf("mag %d %f %f horiz %f vert %f further %f %f \n ",i, data1[i].mag,data2[i].mag,horizontal[indexnow],vertical[indexnow],polar1->bin[i].mag,polar2->bin[i].mag);
+                        //
+                        //                        }
+                        //
+                    }
+
+
+                    //printf("count %d \n",count);
+
+
+                } else {
+
+
+                    //printf("I hope not!\n");
+
+                    //soft, Wiener filtering
+                    float pfactor = ZIN0(6);
+
+                    float maskp, maskh, hp, pp, combine;
+
+                    //dc
+                    hp = powf(horizontal[0],pfactor);
+                    pp = powf(vertical[0],pfactor);
+
+                    combine = hp+pp;
+
+                    maskh = 0.f;
+                    maskp = 0.f;
+
+                    //watch for zeroes
+                    if(combine>0.00000000001f) {
+                        maskh = hp/combine;
+                        maskp = pp/combine;
+                    }
+
+                    polar1->dc = magsnow[0] * maskh;
+                    polar2->dc = magsnow[0] * maskp;
+
+                    //nyquist
+                    hp = powf(horizontal[top],pfactor);
+                    pp = powf(vertical[top],pfactor);
+
+                    combine = hp+pp;
+
+                    maskh = 0.f;
+                    maskp = 0.f;
+
+                    //watch for zeroes
+                    if(combine>0.00000000001f) {
+                        maskh = hp/combine;
+                        maskp = pp/combine;
+                    }
+
+                    polar1->nyq = magsnow[top] * maskh;
+                    polar2->nyq = magsnow[top] * maskp;
+
+                    //setting
+                    for (i=0; i<numbands-2; ++i) {
+
+                        int indexnow = i+1;
+
+                        hp = powf(horizontal[indexnow],pfactor);
+                        pp = powf(vertical[indexnow],pfactor);
+
+                        combine = hp+pp;
+
+                        //if(i<5) {
+                        //     printf("mag %d %f %f %f %f %f \n",i ,horizontal[indexnow],vertical[indexnow],hp,pp,combine);
+                        //}
+
+                        maskh = 0.f;
+                        maskp = 0.f;
+
+                        //watch for zeroes
+                        if(combine>0.00000000001f) {
+                            maskh = hp/combine;
+                            maskp = pp/combine;
+                        }
+
+                        data1[i].mag = magsnow[indexnow] * maskh;
+                        data1[i].phase = phasesnow[indexnow];
+                        data2[i].mag = magsnow[indexnow] * maskp;
+                        data2[i].phase = phasesnow[indexnow];
+
+                    }
+
+
+                }
+
+
+                //printf("now output %d %d \n",bufnum1,bufnum2);
+
+                //update output
+
+                OUT0(0) = bufnum1; //2.f; //-1.f; //bufnum1; //-1;
+                OUT0(1) = bufnum2; //-1;
+
+            }
+
             unit->magnitudeposition_ = (unit->magnitudeposition_+1)%medsize; 
             unit->phaseposition_ = (unit->phaseposition_+1)%(mid+1); 
             
