@@ -246,9 +246,9 @@ void AmplitudeMod_next(AmplitudeMod* unit, int inNumSamples)
 }
 
 static inline float saturate(float input) {
-#define _limit 0.95
-  float x1 = fabsf( input + _limit );
-  float x2 = fabsf( input - _limit );
+  const float limit = 0.95f;
+  float x1 = fabsf( input + limit );
+  float x2 = fabsf( input - limit );
   return 0.5 * (x1 - x2);
 }
 

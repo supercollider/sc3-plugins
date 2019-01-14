@@ -77,7 +77,6 @@ macro(BUILD_PLUGIN PLUGIN_NAME PLUGIN_SOURCES PLUGIN_LIBS PLUGIN_DIR)
 
 endmacro()
 
-
 #-----------------------
 # plugins without extras
 #-----------------------
@@ -100,6 +99,7 @@ set(PLUGIN_DIRS
     MdaUGens
     Neuromodules
     NHUGens
+    QuantityUGens
     RFWUGens
     RMEQSuiteUGens
     SCMIRUGens
@@ -166,6 +166,16 @@ else()
     set(INSTALL_DESTINATION_DISTRO "SC3plugins")
 endif()
 
+# HOAUGens
+if (HOA_UGENS)
+    list(APPEND PLUGIN_DIRS HOAUGens)
+    if (CMAKE_COMPILER_IS_CLANG)
+        file(GLOB HOAUGensSources HOAUGens/*cpp)
+        foreach(HOAUGensSourceFile ${HOAUGensSources})
+            set_source_files_properties("${HOAUGensSourceFile}" PROPERTIES COMPILE_FLAGS "-fbracket-depth=4096")
+        endforeach(HOAUGensSourceFile)
+    endif()
+endif()
 
 foreach(DIR ${PLUGIN_DIRS})
     FIND_AND_BUILD_PLUGINS(${DIR})
@@ -218,17 +228,17 @@ BUILD_PLUGIN(complexRes
              "" "DEINDUGens")
 include_directories(DEINDUGens/include)
 BUILD_PLUGIN(JPverb
-"DEINDUGens/JPverbRaw.cpp" 
+"DEINDUGens/JPverbRaw.cpp"
              "" "DEINDUGens")
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB) 
-             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS mydsp=JPVERB)
+             set_property(TARGET JPverb APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
 BUILD_PLUGIN(Greyhole
-"DEINDUGens/GreyholeRaw.cpp" 
+"DEINDUGens/GreyholeRaw.cpp"
              "" "DEINDUGens")
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"") 
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE) 
-             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG) 
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS SC_FAUST_PREFIX="\"\"")
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS mydsp=GREYHOLE)
+             set_property(TARGET Greyhole APPEND PROPERTY COMPILE_DEFINITIONS NDEBUG)
 
 # MembraneUGens
 BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membrane.cpp"
@@ -244,7 +254,7 @@ endif()
 # OteyPianoUGens
 BUILD_PLUGIN(OteyPianoUGens "OteyPianoUGens/OteyPiano.cpp;OteyPianoUGens/dwgs.cpp;OteyPianoUGens/filter.cpp;OteyPianoUGens/hammer.cpp;OteyPianoUGens/reverb.cpp"
              "" "OteyPianoUGens")
-             
+
 # PitchDetectionUGens
 file(GLOB PitchDetectionSources PitchDetection/*cpp)
 

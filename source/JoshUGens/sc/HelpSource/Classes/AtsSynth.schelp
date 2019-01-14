@@ -83,3 +83,4 @@ a = AtsFile.new("path/to/file.ats").load;
 		filePointer: LFSaw.kr(a.sndDur.reciprocal, 1, 0.5, 0.5), mul: 1)
 	}.play(s);
 );
+::
