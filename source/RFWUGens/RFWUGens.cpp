@@ -183,7 +183,8 @@ void AverageOutput_next( AverageOutput *unit, int inNumSamples ) {
     }
 
 	for (i=0; i<inNumSamples; ++i) {
-        average = ((count * average) + *(in+i)) / ++count;
+        average = ((count * average) + *(in+i)) / (count + 1);
+        ++count;
         ZXP(out) = average;
 	}
 

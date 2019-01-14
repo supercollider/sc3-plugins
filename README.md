@@ -1,4 +1,4 @@
-# SC3-plugins
+# sc3-plugins
 
 
 This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
@@ -77,7 +77,7 @@ NOTE: on macOS, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to 
 See the README in `source/HOAUGens` for information on compiling the HOAUGens (higher-order
 ambisonics) subproject.
 
-### Cmake Options
+### CMake Options
 
 + Set install target
     * (default on linux `/usr/local`)

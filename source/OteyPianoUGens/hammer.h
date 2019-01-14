@@ -29,7 +29,7 @@ struct UnitDelay{
 class Hammer {
 public:
   Hammer(float f, float Fs, float m, float K, float p, float Z, float alpha, float v0);
-  ~Hammer();
+  virtual ~Hammer() = default;
    void* operator new(size_t sz){
 		return RTAlloc(gWorld, sz);
 	}
@@ -55,7 +55,6 @@ class BanksHammer:public Hammer
 {
 public:
   BanksHammer(float f, float Fs, float m, float K, float p, float Z, float alpha, float v0);
-  ~BanksHammer();
   float load( float vin);
   void trigger(float v);
   float vh;
@@ -69,7 +68,6 @@ class StulovHammer:public Hammer
 {
 public:
   StulovHammer(float f, float Fs, float m, float K, float p, float Z, float alpha, float v0);
-  ~StulovHammer();
   float load( float vin);
   void trigger(float v);
   float upprev;
