@@ -27,7 +27,7 @@ before_script:
  - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider -DSUPERNOVA=ON ..
 
 script:
- - iflin make -j
+ - iflin make -j2
  - ifmac make install
  - ifmac mkdir -p $HOME/artifacts
  - ifmac zip -q -r $HOME/artifacts/Plugins-$TRAVIS_COMMIT.zip SC3plugins
