@@ -294,6 +294,7 @@ OteySoundBoard::OteySoundBoard(Unit *unit){
 	shaping3.setcoeffs(800.0,SAMPLERATE,1.0,Biquad::low);
 	soundboard.setcoeffs(c1b,c3b,-1.0/4.0,mix,SAMPLERATE);
 	SETCALC(OteySoundBoard_next);
+	ClearUnitOutputs(unit, 1);
 }
 
 void OteyPianoStrings_Ctor(OteyPianoStrings* unit) {
@@ -328,6 +329,7 @@ void OteyPianoStrings_Ctor(OteyPianoStrings* unit) {
 	new(unit) OteyPianoStrings(unit);
 	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,amprl,amprr,rcore,minl,maxl,ampll,amplr,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune,hammer_type);
 	SETCALC(OteyPianoStrings_next);
+	ClearUnitOutputs(unit, 1);
 }
 
 void OteyPianoStrings_Dtor(OteyPianoStrings* unit) {
@@ -384,6 +386,7 @@ void OteyPiano_Ctor(OteyPiano* unit) {
 	unit->piano.init(freq,SAMPLERATE,velocity*10,minr,maxr,ampr,centerr,rcore,minl,maxl,ampl,centerl,rho,young,zb,zh,mh,k,alpha,p,ph,loss,detune,hammer_type);
 
 	SETCALC(OteyPiano_next);
+	ClearUnitOutputs(unit, 1);
 }
 
 void OteyPiano_Dtor(OteyPiano* unit) {
