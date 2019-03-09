@@ -1,14 +1,10 @@
 # sc3-plugins
 
+sc3-plugins is a collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/) contributed by users between 2006 and 2018. (Plugins extend the functionality of the SuperCollider server, and are distinct from [quarks](https://github.com/supercollider-quarks/), which are packages for the SuperCollider programming language.)
 
-This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
-An installation extends the functionality of SuperCollider by additional UGens that run on `scsynth`, the SuperCollider audio synthesis server.
+While containing a lot of useful content, this collection grew over the years with very little quality control. Please note that the UGens in this repository are generally less stable than the core collection and maintenance is less active. Use at your own risk!
 
-Please note that the UGens in this repository are, on average, less stable and well-maintained than the core collection. Use at your own risk!
-
-**Note:** Extensions for the SuperCollider programming language are different. They are collected within the [Quarks](https://github.com/supercollider-quarks/) packaging system.
-
-To learn how to write your own plugins, see [example-plugins](https://github.com/supercollider/example-plugins) and the "[Writing UGens](http://doc.sccode.org/Guides/WritingUGens.html)" helpfile.
+To help keep a focused scope for the official SuperCollider project, **sc3-plugins has been frozen and no longer accepts new unit generators.** Developers are instead encouraged to use [cookiecutter-supercolider-plugin](https://github.com/supercollider/cookiecutter-supercollider-plugin/) to create self-contained git repositories for building custom plugins. Some information on plugin development can be found at [example-plugins](https://github.com/supercollider/example-plugins) and the "[Writing UGens](http://doc.sccode.org/Guides/WritingUGens.html)" helpfile.
 
 For community discussion and support see the [SuperCollider mailing lists](http://www.birmingham.ac.uk/facilities/BEAST/research/supercollider/mailinglist.aspx) and the [github issue tracker](https://github.com/supercollider/sc3-plugins/issues).
 
