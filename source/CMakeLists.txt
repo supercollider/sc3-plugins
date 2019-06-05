@@ -117,7 +117,6 @@ set(PLUGIN_DIRS_EXTRA
     BetablockerUGens
     ChaosUGens
     DEINDUGens
-    LadspaUGen
     MembraneUGens
     NCAnalysisUGens
     OteyPianoUGens
@@ -245,7 +244,8 @@ BUILD_PLUGIN(MembraneUGens "MembraneUGens/Membrane_shape.c;MembraneUGens/Membran
              "" "MembraneUGens")
 
 # LadspaUGen
-if(NOT WIN32)
+if(LADSPA AND NOT WIN32)
+    list(APPEND PLUGIN_DIRS_EXTRA LadspaUGen)
     BUILD_PLUGIN(LadspaUGen "LadspaUGen/LadspaUGen.cpp;LadspaUGen/search.c" "${CMAKE_DL_LIBS}" "LadspaUGen")
     add_executable(ladspalist LadspaUGen/ladspalist.c LadspaUGen/search.c)
     target_link_libraries(ladspalist "${CMAKE_DL_LIBS}")
@@ -359,7 +359,7 @@ if (NOT APPLE)
             DESTINATION ${INSTALL_DESTINATION})
 endif()
 
-if(NOT WIN32)
+if(LADSPA AND NOT WIN32)
   install(TARGETS ladspalist
     DESTINATION ${INSTALL_DESTINATION_LADSPALIST})
 endif()

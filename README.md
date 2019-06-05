@@ -83,7 +83,7 @@ ambisonics) subproject.
     * (default on linux `/usr/local`)
     * `cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
 + Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX`
-    * (OSX ONLY, default=ON)
+    * (macOS ONLY, default=ON)
     * `cmake -DIN_PLACE_BUILD=ON`
 + Build the plugins as quarks
     * (default 'OFF')
@@ -91,6 +91,9 @@ ambisonics) subproject.
 + Build supernova-plugins
     * (default 'OFF')
     * `cmake -DSUPERNOVA=ON ..`
++ Build Ladspa UGen
+    * (macOS AND LINUX ONLY, default=ON)
+    * `sc3-plugins/build/$ cmake -DLADSPA=ON ..`
 + Print all cmake options
     * `sc3-plugins/build/$ cmake -L ..`
 
