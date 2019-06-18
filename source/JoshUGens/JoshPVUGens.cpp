@@ -10,6 +10,9 @@
 //third party Phase Vocoder UGens
 #include <vector>
 #include <algorithm>
+#ifdef _MSC_VER
+# include <malloc.h> // for _alloca()
+#endif
 #include "SC_fftlib.h"
 #include "FFT_UGens.h"
 #include "SCComplex.h"
@@ -968,9 +971,6 @@ void PV_MagMap_next(PV_MagMap* unit, int inNumSamples)
 
 
 /* a function for sorting floats */
-#ifdef _MSC_VER
-#include <functional>
-#else
 int isfloatgreater(const void *a, const void *b);
 int isfloatgreater (const void *a, const void *b)
 {
@@ -988,7 +988,6 @@ int isfloatless (const void *a, const void *b)
 
   return (*fa < *fb) - (*fa > *fb);
 }
-#endif
 
 void PV_MaxMagN_Ctor(PV_MaxMagN *unit)
 {
@@ -1005,7 +1004,7 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> magarray(numbins);
+	float *magarray = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float magarray[numbins];
 #endif
@@ -1017,11 +1016,8 @@ void PV_MaxMagN_next(PV_MaxMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
-#ifdef _MSC_VER
-	std::sort(magarray.begin(), magarray.end());
-#else
 	qsort(magarray, numbins, sizeof (float), isfloatless);
-#endif
+
 	float minmag = magarray[(int)numpars];
 	for (int i = 0; i < numbins; ++i){
 	    if (p->bin[i].mag <= minmag) p->bin[i].mag = 0.f;
@@ -1043,7 +1039,7 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> magarray(numbins);
+	float *magarray = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float magarray[numbins];
 #endif
@@ -1055,11 +1051,7 @@ void PV_MinMagN_next(PV_MinMagN* unit, int inNumSamples)
 
 	float numpars = IN0(1);
 
-#ifdef _MSC_VER
-	std::sort(magarray.begin(), magarray.end(), std::greater<float>());
-#else
 	qsort(magarray, numbins, sizeof(float), isfloatgreater);
-#endif
 
 	float maxmag = magarray[(int)numpars];
 
@@ -2051,7 +2043,7 @@ void PV_BinPlayBuf_first(PV_BinPlayBuf* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> bins(numbins);
+	float *bins = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float bins[numbins];
 #endif
@@ -2149,7 +2141,7 @@ void PV_BinPlayBuf_next(PV_BinPlayBuf* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> bins(numbins);
+	float *bins = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float bins[numbins];
 #endif
@@ -2395,7 +2387,7 @@ void PV_BinBufRd_first(PV_BinBufRd* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> bins(numbins);
+	float *bins = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float bins[numbins];
 #endif
@@ -2490,7 +2482,7 @@ void PV_BinBufRd_next(PV_BinBufRd* unit, int inNumSamples)
 
 	// MSVC does not support variable length arrays...
 #ifdef _MSC_VER
-	std::vector<float> bins(numbins);
+	float *bins = (float *)_alloca(sizeof(float) * numbins);
 #else
 	float bins[numbins];
 #endif
