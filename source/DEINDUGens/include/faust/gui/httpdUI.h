@@ -1,27 +1,24 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __httpdUI__
@@ -29,9 +26,10 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 #include "faust/gui/HTTPDControler.h"
-#include "faust/gui/UI.h"
+#include "faust/gui/DecoratorUI.h"
 #include "faust/gui/PathBuilder.h"
 #include "faust/misc.h"
 
@@ -51,6 +49,8 @@
 class httpdUIAux
 {
     public:
+    
+        virtual ~httpdUIAux() {}
 
         virtual bool run()              = 0;
         virtual void stop()             = 0;
@@ -138,6 +138,10 @@ class httpdServerUI : public UI, public httpdUIAux
                                         { fCtrl->addnode("hbargraph", tr(label), zone, min, max); }
         virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
                                         { fCtrl->addnode("vbargraph", tr(label), zone, min, max); }
+    
+        // -- soundfiles
+    
+        virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
         virtual void declare(FAUSTFLOAT*, const char* key, const char* val) { fCtrl->declare(key, val); }
 
@@ -151,7 +155,6 @@ class httpdServerUI : public UI, public httpdUIAux
 
 // API from sourcefetcher.hh and compiled in libHTTPDFaust library.
 int http_fetch(const char *url, char **fileBuf);
-
 
 /*
 Use to control a running Faust DSP wrapped with "httpdServerUI".
@@ -212,7 +215,7 @@ class httpdClientUI : public GUI, public PathBuilder, public httpdUIAux
                     std::string path = (*it).first;
                     http_fetch(path.c_str(), &answer);
                     std::string answer_str = answer;
-                    (*(*it).second) = (FAUSTFLOAT)strtod(answer_str.substr(answer_str.find(' ')).c_str(), NULL);
+                    (*(*it).second) = (FAUSTFLOAT)std::strtod(answer_str.substr(answer_str.find(' ')).c_str(), NULL);
                     // 'http_fetch' result must be deallocated
                     free(answer);
                 }
@@ -237,7 +240,7 @@ class httpdClientUI : public GUI, public PathBuilder, public httpdUIAux
             http_fetch(json_url.c_str(), &json_buffer);
             if (json_buffer) {
                 fJSON = json_buffer;
-                fTCPPort = atoi(server_url.substr(server_url.find_last_of(':') + 1).c_str());
+                fTCPPort = std::atoi(server_url.substr(server_url.find_last_of(':') + 1).c_str());
                 // 'http_fetch' result must be deallocated
                 free(json_buffer);
                 std::cout << "Faust httpd client controling server '" << server_url << "'" << std::endl;
@@ -338,49 +341,6 @@ class httpdClientUI : public GUI, public PathBuilder, public httpdUIAux
 /*
 Creates a httpdServerUI or httpdClientUI depending of the presence of '-server URL' parameter.
 */
-
-//----------------------------------------------------------------
-//  Generic decorator
-//----------------------------------------------------------------
-
-class DecoratorUI : public UI
-{
-    protected:
-
-        UI* fUI;
-
-    public:
-
-        DecoratorUI(UI* ui = 0):fUI(ui)
-        {}
-
-        virtual ~DecoratorUI() { delete fUI; }
-
-        // -- widget's layouts
-        virtual void openTabBox(const char* label)          { fUI->openTabBox(label); }
-        virtual void openHorizontalBox(const char* label)   { fUI->openHorizontalBox(label); }
-        virtual void openVerticalBox(const char* label)     { fUI->openVerticalBox(label); }
-        virtual void closeBox()                             { fUI->closeBox(); }
-
-        // -- active widgets
-        virtual void addButton(const char* label, FAUSTFLOAT* zone)         { fUI->addButton(label, zone); }
-        virtual void addCheckButton(const char* label, FAUSTFLOAT* zone)    { fUI->addCheckButton(label, zone); }
-        virtual void addVerticalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
-            { fUI->addVerticalSlider(label, zone, init, min, max, step); }
-        virtual void addHorizontalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
-            { fUI->addHorizontalSlider(label, zone, init, min, max, step); }
-        virtual void addNumEntry(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
-            { fUI->addNumEntry(label, zone, init, min, max, step); }
-
-        // -- passive widgets
-        virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
-            { fUI->addHorizontalBargraph(label, zone, min, max); }
-        virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
-            { fUI->addVerticalBargraph(label, zone, min, max); }
-
-        virtual void declare(FAUSTFLOAT* zone, const char* key, const char* val) { fUI->declare(zone, key, val); }
-
-};
 
 class httpdUI : public DecoratorUI
 {
