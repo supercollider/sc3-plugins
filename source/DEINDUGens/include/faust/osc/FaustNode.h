@@ -33,8 +33,6 @@
 #include "faust/osc/smartpointer.h"
 #include "faust/osc/RootNode.h"
 
-class GUI;
-
 namespace oscfaust
 {
 
@@ -53,19 +51,25 @@ template <typename C> struct mapping
 /*!
 	\brief a faust node is a terminal node and represents a faust parameter controler
 */
-template <typename C> class FaustNode : public MessageDriven, public uiItem
+template <typename C> class FaustNode : public MessageDriven, public uiTypedItem<C>
 {
 	mapping<C>	fMapping;
     RootNode* fRoot;
     bool fInput;  // true for input nodes (slider, button...)
 	
-	bool	store(C val) { *fZone = fMapping.clip(val); return true; }
+	//---------------------------------------------------------------------
+	// Warning !!!
+	// The cast (C *)fZone is necessary because the real size allocated is
+	// only known at execution time. When the library is compiled, fZone is
+	// uniquely defined by FAUSTFLOAT.
+	//---------------------------------------------------------------------
+	bool	store(C val) { *(C *)this->fZone = fMapping.clip(val); return true; }
 	void	sendOSC() const;
 
 	protected:
 		FaustNode(RootNode* root, const char *name, C* zone, C init, C min, C max, const char* prefix, GUI* ui, bool initZone, bool input) 
-			: MessageDriven(name, prefix), uiItem(ui, zone), fRoot(root), fMapping(min, max), fInput(input)
-			{ 
+			: MessageDriven(name, prefix), uiTypedItem<C>(ui, zone), fMapping(min, max), fRoot(root), fInput(input)
+			{
                 if (initZone) {
                     *zone = init; 
                 }
@@ -85,10 +89,10 @@ template <typename C> class FaustNode : public MessageDriven, public uiItem
             node->addReference();
             return node; 
         }
-
+    
 		bool accept(const Message* msg);
 		void get(unsigned long ipdest) const;		///< handler for the 'get' message
-		virtual void reflectZone() { sendOSC(); fCache = *fZone; }
+		virtual void reflectZone() { sendOSC(); this->fCache = *this->fZone; }
 };
 
 } // end namespace

@@ -1,26 +1,25 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
-************************************************************************/
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
 
 #ifndef __dsp_bench__
 #define __dsp_bench__
@@ -33,6 +32,8 @@
 #include <algorithm>
 #include <assert.h>
 #include <string.h>
+#include <pwd.h>
+#include <unistd.h>
 
 #include "faust/dsp/dsp.h"
 
@@ -53,6 +54,20 @@
 #include <mach/mach_time.h>
 #endif
 
+#define BENCH_SAMPLE_RATE 44100.0
+#define NV 4096     // number of vectors in BIG buffer (should exceed cache)
+
+template <typename VAL_TYPE>
+void FAUSTBENCH_LOG(VAL_TYPE val)
+{
+    const char* log = getenv("FAUSTBENCH_LOG");
+    if (log && (strcasecmp(log, "on") == 0)) {
+        std::ofstream gFaustbenchLog;
+        gFaustbenchLog.open("Faustbench.csv", std::ofstream::app);
+        gFaustbenchLog << val << std::endl;
+    }
+}
+
 /*
     A class to do do timing measurements
 */
@@ -66,14 +81,14 @@ class time_bench {
     #endif
     
         int fMeasure;
-        int fMeasureCount;
+        int fCount;
         int fSkip;
     
         // These values are used to determine the number of clocks in a second
         uint64 fFirstRDTSC;
         uint64 fLastRDTSC;
     
-        // These tables contains the last fMeasureCount in clocks
+        // These tables contains the last fCount in clocks
         uint64* fStarts;
         uint64* fStops;
     
@@ -83,7 +98,7 @@ class time_bench {
         /**
          * Returns the number of clock cycles elapsed since the last reset of the processor
          */
-        inline uint64 rdtsc(void)
+        uint64 rdtsc(void)
         {
         #ifdef TARGET_OS_IPHONE
             return (uint64)(mach_absolute_time() * (double)fTimeInfo.numer / (double)fTimeInfo.denom);
@@ -157,12 +172,12 @@ class time_bench {
         time_bench(int count, int skip)
         {
             fSkip = skip;
-            fMeasureCount = count;
+            fCount = count;
             fMeasure = 0;
             fFirstRDTSC = 0;
             fLastRDTSC = 0;
-            fStarts = new uint64[fMeasureCount];
-            fStops = new uint64[fMeasureCount];
+            fStarts = new uint64[fCount];
+            fStops = new uint64[fCount];
         #ifdef TARGET_OS_IPHONE
             mach_timebase_info(&fTimeInfo);
         #endif
@@ -174,9 +189,9 @@ class time_bench {
             delete [] fStops;
         }
     
-        void startMeasure() { fStarts[fMeasure % fMeasureCount] = rdtsc(); }
+        void startMeasure() { fStarts[fMeasure % fCount] = rdtsc(); }
     
-        void stopMeasure() { fStops[fMeasure % fMeasureCount] = rdtsc(); fMeasure++; }
+        void stopMeasure() { fStops[fMeasure % fCount] = rdtsc(); fMeasure++; }
         
         void openMeasure()
         {
@@ -203,12 +218,10 @@ class time_bench {
          */
         double getStats(int bsize, int ichans, int ochans)
         {
-            //std::cout << "getStats fMeasure = " << fMeasure << " fMeasureCount = " << fMeasureCount << std::endl;
+            assert(fMeasure > fCount);
+            std::vector<uint64> V(fCount);
             
-            assert(fMeasure > fMeasureCount);
-            std::vector<uint64> V(fMeasureCount);
-            
-            for (int i = 0; i < fMeasureCount; i++) {
+            for (int i = 0; i < fCount; i++) {
                 V[i] = fStops[i] - fStarts[i];
             }
             
@@ -220,14 +233,14 @@ class time_bench {
         }
 
         /**
-         * Print the median value (in Megabytes/second) of fMeasureCount throughputs measurements.
+         * Print the median value (in Megabytes/second) of fCount throughputs measurements.
          */
         void printStats(const char* applname, int bsize, int ichans, int ochans)
         {
-            assert(fMeasure > fMeasureCount);
-            std::vector<uint64> V(fMeasureCount);
+            assert(fMeasure > fCount);
+            std::vector<uint64> V(fCount);
             
-            for (int i = 0; i < fMeasureCount; i++) {
+            for (int i = 0; i < fCount; i++) {
                 V[i] = fStops[i] - fStarts[i];
             }
             
@@ -235,9 +248,9 @@ class time_bench {
             
             // Mean of 10 best values (gives relatively stable results)
             uint64 meaval00 = meanValue(V.begin(), V.begin()+ 5);
-            uint64 meaval25 = meanValue(V.begin() + fMeasureCount / 4 - 2, V.begin()+fMeasureCount / 4 + 3);
-            uint64 meaval50 = meanValue(V.begin() + fMeasureCount / 2 - 2, V.begin()+fMeasureCount / 2 + 3);
-            uint64 meaval75 = meanValue(V.begin() + 3 * fMeasureCount / 4 - 2, V.begin() + 3 * fMeasureCount / 4 + 3);
+            uint64 meaval25 = meanValue(V.begin() + fCount / 4 - 2, V.begin()+fCount / 4 + 3);
+            uint64 meaval50 = meanValue(V.begin() + fCount / 2 - 2, V.begin()+fCount / 2 + 3);
+            uint64 meaval75 = meanValue(V.begin() + 3 * fCount / 4 - 2, V.begin() + 3 * fCount / 4 + 3);
             uint64 meaval100 = meanValue(V.end() - 5, V.end());
             
             // Printing
@@ -250,7 +263,12 @@ class time_bench {
             << std::endl;
         }
     
-        bool isRunning() { return (fMeasure <= (fMeasureCount + fSkip)); }
+        bool isRunning() { return (fMeasure <= (fCount + fSkip)); }
+    
+        int getCount()
+        {
+            return fMeasure;
+        }
 
 };
 
@@ -263,22 +281,68 @@ class measure_dsp : public decorator_dsp {
     protected:
     
         FAUSTFLOAT** fInputs;
+        FAUSTFLOAT** fAllInputs;
         FAUSTFLOAT** fOutputs;
+        FAUSTFLOAT** fAllOutputs;
         time_bench* fBench;
         int fBufferSize;
+        int fInputIndex;
+        int fOutputIndex;
+        int fCount;
     
         void init()
         {
+            fDSP->init(BENCH_SAMPLE_RATE);
+            
+            fInputIndex = 0;
+            fOutputIndex = 0;
+            
             fInputs = new FAUSTFLOAT*[fDSP->getNumInputs()];
+            fAllInputs = new FAUSTFLOAT*[fDSP->getNumInputs()];
             for (int i = 0; i < fDSP->getNumInputs(); i++) {
-                fInputs[i] = new FAUSTFLOAT[fBufferSize];
-                memset(fInputs[i], 0, sizeof(FAUSTFLOAT) * fBufferSize);
+                fAllInputs[i] = new FAUSTFLOAT[fBufferSize * NV];
+                fInputs[i] = fAllInputs[i];
+                // Write noise in inputs (to avoid 'speedup' effect due to null values)
+                int R0_0 = 0;
+                for (int j = 0; j < fBufferSize * NV; j++) {
+                    int R0temp0 = (12345 + (1103515245 * R0_0));
+                    fAllInputs[i][j] = FAUSTFLOAT(4.656613e-10f * R0temp0);
+                    R0_0 = R0temp0;
+                }
             }
+            
             fOutputs = new FAUSTFLOAT*[fDSP->getNumOutputs()];
+            fAllOutputs = new FAUSTFLOAT*[fDSP->getNumOutputs()];
             for (int i = 0; i < fDSP->getNumOutputs(); i++) {
-                fOutputs[i] = new FAUSTFLOAT[fBufferSize];
-                memset(fOutputs[i], 0, sizeof(FAUSTFLOAT) * fBufferSize);
+                fAllOutputs[i] = new FAUSTFLOAT[fBufferSize * NV];
+                fOutputs[i] = fAllOutputs[i];
+                // Write zero in outputs
+                memset(fAllOutputs[i], 0, sizeof(FAUSTFLOAT) * fBufferSize * NV);
             }
+        }
+    
+        bool setRealtimePriority()
+        {
+            struct passwd* pw;
+            struct sched_param param;
+            int policy;
+            uid_t uid = getuid();
+            pw = getpwnam("root");
+            setuid(pw->pw_uid);
+            
+            int err = pthread_getschedparam(pthread_self(), &policy, &param);
+            if (err != 0) {
+                std::cerr << "setRealtimePriority : pthread_getschedparam res = %d" << err << std::endl;
+            }
+            policy = SCHED_RR;
+            param.sched_priority = 80;
+            err = pthread_setschedparam(pthread_self(), policy, &param);
+            if (err != 0) {
+                std::cerr << "setRealtimePriority : pthread_setschedparam res = %d" << err << std::endl;
+            }
+            
+            setuid(uid);
+            return (err != -1);
         }
     
     public:
@@ -289,43 +353,56 @@ class measure_dsp : public decorator_dsp {
          * @param dsp - the dsp to be measured.
          * @param buffer_size - the buffer size used when calling 'computeAll'
          * @param count - the number of cycles using in 'computeAll'
-         * @param skip - ??
          *
          */
-        measure_dsp(dsp* dsp, int buffer_size, int count, int skip)
-            :decorator_dsp(dsp), fBufferSize(buffer_size)
+        measure_dsp(dsp* dsp, int buffer_size, int count, bool trace = true)
+            :decorator_dsp(dsp), fBufferSize(buffer_size), fCount(count)
         {
             init();
-            fBench = new time_bench(count, 10);
+            fBench = new time_bench(fCount, 10);
         }
     
-        measure_dsp(dsp* dsp, int buffer_size, double duration_in_sec)
+        /**
+         * Constructor.
+         *
+         * @param dsp - the dsp to be measured.
+         * @param buffer_size - the buffer size used when calling 'computeAll'
+         * @param duration_in_sec - the wanted durection used in 'computeAll'
+         *
+         */
+        measure_dsp(dsp* dsp, int buffer_size, double duration_in_sec, bool trace = true)
             :decorator_dsp(dsp), fBufferSize(buffer_size)
         {
             init();
             
             // Creates a first time_bench object to estimate the proper 'count' number of measure to do later
-            fBench = new time_bench(500, 10);
+            fBench = new time_bench(1000, 10);
             measure();
             double duration = fBench->measureDurationUsec();
-            int cout = int (500 * (duration_in_sec * 1e6 / duration));
+            if (trace) std::cout << "duration " << (duration / 1e6) << std::endl;
+            fCount = int(1000 * (duration_in_sec * 1e6 / duration));
             delete fBench;
             
             // Then allocate final time_bench object with proper 'count' parameter
-            fBench = new time_bench(cout, 10);
+            fBench = new time_bench(fCount, 10);
         }
     
         virtual ~measure_dsp()
         {
             for (int i = 0; i < fDSP->getNumInputs(); i++) {
-                delete [] fInputs[i];
+                delete [] fAllInputs[i];
             }
             delete [] fInputs;
+            delete [] fAllInputs;
+            
             for (int i = 0; i < fDSP->getNumOutputs(); i++) {
-                delete [] fOutputs[i];
+                delete [] fAllOutputs[i];
             }
-            delete[] fOutputs;
+            delete [] fOutputs;
+            delete [] fAllOutputs;
+            
             delete fBench;
+            // DSP is deallocated by the decorator_dsp class.
         }
     
         /**
@@ -333,6 +410,7 @@ class measure_dsp : public decorator_dsp {
          */
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs)
         {
+            AVOIDDENORMALS;
             fBench->startMeasure();
             fDSP->compute(count, inputs, outputs);
             fBench->stopMeasure();
@@ -349,6 +427,16 @@ class measure_dsp : public decorator_dsp {
         void computeAll()
         {
             do {
+                for (int i = 0; i < fDSP->getNumInputs(); i++) {
+                    FAUSTFLOAT* allinputs = fAllInputs[i];
+                    fInputs[i] = &allinputs[fInputIndex * fBufferSize];
+                    fInputIndex = (1 + fInputIndex) % NV;
+                }
+                for (int i = 0; i < fDSP->getNumOutputs(); i++) {
+                    FAUSTFLOAT* alloutputs = fAllOutputs[i];
+                    fOutputs[i] = &alloutputs[fOutputIndex * fBufferSize];
+                    fOutputIndex = (1 + fOutputIndex) % NV;
+                }
                 compute(0, fBufferSize, fInputs, fOutputs);
             } while (fBench->isRunning());
         }
@@ -371,6 +459,8 @@ class measure_dsp : public decorator_dsp {
     
         void measure()
         {
+            setRealtimePriority();
+            
             openMeasure();
             computeAll();
             closeMeasure();
@@ -385,7 +475,7 @@ class measure_dsp : public decorator_dsp {
         }
     
         /**
-         * Print the median value (in Megabytes/second) of fMeasureCount throughputs measurements
+         * Print the median value (in Megabytes/second) of fCount throughputs measurements
          */
         void printStats(const char* applname)
         {
@@ -393,6 +483,13 @@ class measure_dsp : public decorator_dsp {
         }
     
         bool isRunning() { return fBench->isRunning(); }
+    
+        float getCPULoad()
+        {
+            return (fBench->measureDurationUsec() / 1000.0 * BENCH_SAMPLE_RATE) / (fBench->getCount() * fBufferSize * 1000.0);
+        }
+    
+        int getCount() { return fCount; }
     
 };
 
