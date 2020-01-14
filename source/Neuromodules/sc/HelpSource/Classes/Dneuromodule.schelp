@@ -37,7 +37,7 @@ CODE::
 {
 	var dt, module, m;
 	dt = 0.001;
-	module = DNeuromodule(2,
+	module = Dneuromodule(2,
 			theta: [MouseX.kr(-2, 2), MouseY.kr(-2, 2)],
 			x: [0.1, 0.3],
 			weights: [-3, 2, -2, 0]
