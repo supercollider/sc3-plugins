@@ -27,6 +27,7 @@ For more information, please refer to <http://unlicense.org>
 
 #include "nh_hall.hpp"
 #include "SC_PlugIn.hpp"
+#include <cstdio>
 
 static InterfaceTable* ft;
 
