@@ -32,94 +32,102 @@ INSTANCEMETHODS::
 EXAMPLES::
 
 code::
-s.boot;
-
 (
-Routine.run({
-	// use as multislider - del time vals on top, feedback on the bottom
-	// max delay time is 1 second, delaytime and fb are initialized to 0.0
-	// and are controlled by the GUI. The multi-slider on the top controls
-	// each bins delay time, the bottom controls FB.
+// use as multislider - del time vals on top, feedback on the bottom
+// max delay time is 1 second, delaytime and fb are initialized to 0.0
+// and are controlled by the GUI. The multi-slider on the top controls
+// each bins delay time, the bottom controls FB.
 
-	var size, awin, bsl, car, dar, fsl, maxdel, synth, cond;
+s.boot;
+s.doWhenBooted({
+	var size, fftSize, awin, delaySilder, fbSlider, maxdel, synth, cond, playbuf;
+	var setup, onReadyFunc, fftBuffer, delTimeBuffer, fbAmtBuffer, createGUI, liveInputMix;
 
 	size = 128;
+	fftSize = size * 2;
 	maxdel = 0.5;
 	cond = Condition.new;
-	s.sendMsg(\b_alloc, b=s.bufferAllocator.alloc(1), size * 2);
-	s.sendMsg(\b_alloc, c=s.bufferAllocator.alloc(1), size);
-	s.sendMsg(\b_alloc, d=s.bufferAllocator.alloc(1), size);
+	liveInputMix = 0.0; // change to 1 to hear sound from live input, otherwise, an Impulse
 
-	y = Array.fill(size, {0.0});
-	s.sendBundle(0.1, [\b_setn, d, 0, size] ++ y);
-
-	z = Array.fill(size, {arg i; 0.0});
-	s.sendBundle(0.1, [\b_setn, c, 0, size] ++ z);
-	s.sync(cond);
-
-	synth = SynthDef("help-noopFFT", { arg inbus,out=0,bufnum=0,   dels=0, fb=0;
+	SynthDef(\helpBinDelay, { arg inbus=0, inMix = 0.0, out=0, fftBuf=0, delayBuf=0, fbBuf=0;
 		var in, chain;
-		in = Impulse.ar(0.33);
-		in = PlayBuf.ar(1, playbuf, loop: 1);
-		chain = FFT(bufnum, in, 0.25);
-		chain = PV_BinDelay(chain, maxdel, dels, fb, 0.25);
+		in = (Impulse.ar(0.33) * (1.0 - inMix)) + (In.ar(inbus, 1) * inMix);
+		chain = FFT(fftBuf, in, 0.25);
+		chain = PV_BinDelay(chain, maxdel, delayBuf, fbBuf, 0.25);
 		Out.ar(out,
-			in + IFFT(chain) // inverse FFT
+			in + IFFT(chain) * -24.dbamp// inverse FFT
 		);
-	}).play(s,[\out,0,\bufnum,b,\dels, c, \fb, d, \inbus, s.options.numOutputBusChannels]);
-	{
-	awin = GUI.window.new("test", Rect(200 , 450, 10 + (size * 1), 10 + (size * 2)));
-	awin.view.decorator = FlowLayout(awin.view.bounds);
+	}).add;
 
-	bsl = GUI.multiSliderView.new(awin, Rect(0, 0, size * 1, size * 1));
-	bsl.action = {arg xb; ("Deltime index: " ++ xb.index ++" value: " ++
-			(xb.currentvalue * maxdel)).postln;
-		s.sendMsg(\b_set, c, xb.index, xb.currentvalue * maxdel);
+	/* Functions that allocate buffers and call onReadyFunc when done */
+	setup = {
+		Routine.run({
+			"Allocating FFT buffer".postln;
+			fftBuffer = Buffer.alloc(s, fftSize, 1);
+			"Allocating DelTime buffer".postln;
+			delTimeBuffer = Buffer.alloc(s, size, 1);
+			"Allocating FB buffer".postln;
+			fbAmtBuffer = Buffer.alloc(s, size, 1);
+			s.sync(cond);
+			onReadyFunc.value()
+		});
+	};
+
+	createGUI = {
+
+		awin = Window("test", Rect(200 , 450, 10 + (size * 1), 10 + (size * 2)));
+		awin.view.decorator = FlowLayout(awin.view.bounds);
+
+		delaySilder = MultiSliderView(awin, Rect(0, 0, size * 1, size * 1));
+		delaySilder.action = {arg xb;
+			("Deltime index: " ++ xb.index ++" value: " ++ (xb.currentvalue * maxdel)).postln;
+			delTimeBuffer.set(xb.index, xb.currentvalue * maxdel)
 		};
 
-	fsl = GUI.multiSliderView.new(awin, Rect(0, 0, size * 1, size * 1));
-	fsl.action = {arg xb; ("FB index: " ++ xb.index ++" value: " ++ xb.currentvalue).postln;
-		s.sendMsg(\b_set, d, xb.index, xb.currentvalue);
+		fbSlider = MultiSliderView(awin, Rect(0, 0, size * 1, size * 1));
+		fbSlider.action = {arg xb;
+			("FB index: " ++ xb.index ++" value: " ++ xb.currentvalue).postln;
+			fbAmtBuffer.set(xb.index, xb.currentvalue)
 		};
 
-	car = Array.new;
-	size.do({arg i;
-		car = car.add(0);
-	});
-	bsl.value_(car);
+		[delaySilder, fbSlider].do({arg thisSliderView;
+			var initDataArray;
+			initDataArray = Array.fill(size, {0.0});
+			thisSliderView.value_(initDataArray);
+			thisSliderView.xOffset_(5);
+			thisSliderView.thumbSize_(12.0);
 
-	dar = Array.new;
-	size.do({arg i;
-		dar = dar.add(0);
-	});
-	fsl.value_(car);
+			// value axis size of each blip in pixels
+			thisSliderView.valueThumbSize_(15.0);
+			// index axis size of each blip in pixels
+			thisSliderView.indexThumbSize_( thisSliderView.bounds.width / initDataArray.size );
+			thisSliderView.gap = 0;
+		});
 
-	bsl.xOffset_(5);
-	bsl.thumbSize_(12.0);
-	fsl.xOffset_(5);
-	fsl.thumbSize_(12.0);
+		awin.front;
 
-	// value axis size of each blip in pixels
-	bsl.valueThumbSize_(15.0);
-	// index axis size of each blip in pixels
-	bsl.indexThumbSize_( bsl.bounds.width / car.size );
-	bsl.gap = 0;
-
-	// value axis size of each blip in pixels
-	fsl.valueThumbSize_(15.0);
-	// index axis size of each blip in pixels
-	fsl.indexThumbSize_( fsl.bounds.width / dar.size );
-	fsl.gap = 0;
-
-	awin.front;
-
-	awin.onClose_({
-		synth.free;
-		s.sendMsg(\b_free, b);
-		s.sendMsg(\b_free, c);
-		s.sendMsg(\b_free, d);
+		awin.onClose_({
+			synth.free;
+			fftBuffer.free;
+			fbAmtBuffer.free;
+			delTimeBuffer.free;
 		})
-	}.defer;
-	})
+	};
+
+	onReadyFunc = {
+		createGUI.defer();
+
+		synth = Synth(\helpBinDelay, [
+			\inbus, s.options.numOutputBusChannels,
+			\inMix, liveInputMix,
+			\out, 0,
+			\fftBuf, fftBuffer.bufnum,
+			\delayBuf, delTimeBuffer.bufnum,
+			\fbBuf, fbAmtBuffer.bufnum,
+		]);
+	};
+
+	setup.value();
+})
 )
 ::
