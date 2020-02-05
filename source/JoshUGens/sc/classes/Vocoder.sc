@@ -31,6 +31,7 @@ Vocoder {
 		^out + ( hpfscal * hf )}
 	// code based on the Audacity plug-in here:
 	// https://github.com/audacity/audacity/blob/master/plug-ins/vocoder.ny
+	// Credit to Audacity® and "Edgar-RFT"
 	*audacity {
 		arg carrier_wave, model_wave, number_of_bands,
 		lowest_band = 20,
