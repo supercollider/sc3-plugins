@@ -6,24 +6,24 @@ Vocoder {
 
 	*ar { 	arg car, mod, num, low=100, high=5000, q=0.02, hpf=5000, hpfscal=0.05, outscal=25;
 
-			var width, cf, hf,  out, filtmod, filtcar, tracker, ratio;
+		var width, cf, hf,  out, filtmod, filtcar, tracker, ratio;
 
 
 		out = Mix.arFill(( num + 1 ), { arg i;
 
-					ratio = (( high / low)**num.reciprocal );
+			ratio = (( high / low)**num.reciprocal );
 
-				 	cf =  ( ratio**i) * low;
+			cf =  ( ratio**i) * low;
 
-					filtmod = BPF.ar( mod, cf, q);
+			filtmod = BPF.ar( mod, cf, q);
 
-					tracker = Amplitude.kr(filtmod);
+			tracker = Amplitude.kr(filtmod);
 
-					filtcar = BPF.ar( car, cf, q);
+			filtcar = BPF.ar( car, cf, q);
 
 
-					( outscal * ( filtcar * tracker ));
-					});
+			( outscal * ( filtcar * tracker ));
+		});
 
 		hf = HPF.ar(HPF.ar( mod, hpf), hpf);
 
