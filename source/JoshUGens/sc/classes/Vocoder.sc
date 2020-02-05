@@ -2,7 +2,37 @@
 // to be spaced over the threshhold. distance controls how much the output sounds like the model voice. the higher the
 // distance, the less it will sound like the model wave
 Vocoder {
-	*ar {
+
+
+
+	*ar { 	arg car, mod, num, low=100, high=5000, q=0.02, hpf=5000, hpfscal=0.05, outscal=25;
+
+			var width, cf, hf,  out, filtmod, filtcar, tracker, ratio;
+
+
+		out = Mix.arFill(( num + 1 ), { arg i;
+
+					ratio = (( high / low)**num.reciprocal );
+
+				 	cf =  ( ratio**i) * low;
+
+					filtmod = BPF.ar( mod, cf, q);
+
+					tracker = Amplitude.kr(filtmod);
+
+					filtcar = BPF.ar( car, cf, q);
+
+
+					( outscal * ( filtcar * tracker ));
+					});
+
+		hf = HPF.ar(HPF.ar( mod, hpf), hpf);
+
+
+		^out + ( hpfscal * hf )}
+	// code based on the Audacity plug-in here:
+	// https://github.com/audacity/audacity/blob/master/plug-ins/vocoder.ny
+	*audacity {
 		arg carrier_wave, model_wave, number_of_bands,
 		lowest_band = 20,
 		highest_band = 20000,
