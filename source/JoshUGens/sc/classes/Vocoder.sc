@@ -1,6 +1,5 @@
-// carrier_wave is "pitch you hear" (like a saw wave, or sound), model_wave is voice, number_of_bands is number of bands
-// to be spaced over the threshhold. distance controls how much the output sounds like the model voice. the higher the
-// distance, the less it will sound like the model wave
+// car is "pitch you hear" (like a saw wave, or sound), mod is voice, num is number of bands
+// to be spaced over the threshhold, , hpf and scale add back some of mod
 Vocoder {
 
 
