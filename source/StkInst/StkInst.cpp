@@ -215,6 +215,7 @@ void StkInst_Ctor(StkInst* unit) {
     }
 
     SETCALC(StkInst_next);
+    ClearUnitOutputs(unit, 1);
 }
 
 void StkInst_Dtor(StkInst* unit)
@@ -318,10 +319,10 @@ void StkMesh2D_Ctor(StkMesh2D* unit) {
         SETCALC(StkMesh2D_next_nop);
         return;
     }
-    //Print("Mesh created\n");
+
     unit->inst->setDecay(unit->decay);
     SETCALC(StkMesh2D_next);
-    //Print("Mesh created2\n");
+    ClearUnitOutputs(unit, 1);
 }
 
 void StkMesh2D_Dtor(StkMesh2D* unit)
@@ -411,6 +412,7 @@ void StkGlobals_Ctor(StkGlobals* unit) {
     Stk::printErrors(unit->printErrors);
     RTFree(unit->mWorld,unit->rawwavePath);
     SETCALC(StkGlobals_next);
+    (unit->mCalcFunc)(unit, 1);
 }
 ////////////////////////////////////////
 PluginLoad(StkUnit){

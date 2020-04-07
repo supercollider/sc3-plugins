@@ -30,7 +30,7 @@ argument::t60
 approximate reverberation time in seconds code::(0.1..60 sec):: (code::T60:: - the time for the reverb to decay by 60db when code::damp == 0:: ). Does not effect early reflections.
 
 argument::damp
-controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping. Values should be between code::(0..1).
+controls damping of high-frequencies as the reverb decays. 0 is no damping, 1 is very strong damping. Values should be between code::(0..1)::.
 
 argument::size
 scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound metallic. Values should be between code::(0.5..5)::.
