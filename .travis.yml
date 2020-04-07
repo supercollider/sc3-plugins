@@ -21,7 +21,7 @@ before_install:
 
 before_script:
  - mkdir BUILD && cd BUILD
- - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider ..
+ - cmake -DCMAKE_INSTALL_PREFIX:PATH=$PWD/SC3plugins -DSUPERNOVA=ON -DCMAKE_BUILD_TYPE=Release -DSC_PATH=../supercollider ..
 
 script:
  - iflin make -j 2
