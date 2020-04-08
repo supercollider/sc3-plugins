@@ -1,6 +1,10 @@
-cmake_minimum_required (VERSION 2.8)
-set(SUPERNOVA_CMAKE_MINVERSION 3.1)
-project (sc3-plugins)
+include("${SC_PATH}/SCVersion.txt")
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
+message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
+
+cmake_minimum_required (VERSION 3.5)
+cmake_policy(SET CMP0048 NEW)
+project (sc3-plugins VERSION ${PROJECT_VERSION})
 
 set(NOVA_SIMD_MISSING_ERROR "The nova-simd source code is missing in \
 ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd.\n This probably \
@@ -53,9 +57,6 @@ if (NOVA_DISK_IO)
   endif()
 endif()
 
-include("${SC_PATH}/SCVersion.txt")
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
-message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT CMAKE_VERSION VERSION_LESS SUPERNOVA_CMAKE_MINVERSION)
 	option(SUPERNOVA "Build plugins for supernova" ON)
