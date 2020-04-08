@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.47">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Monaco; min-height: 15.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {color: #0033f1}
+span.s2 {color: #000000}
+span.s3 {color: #0000bf}
+span.s4 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>FFTSubbandPower - Spectral power, divided into subbands</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>#[power1, power2, ... powerN+1] = FFTSubbandPower.kr(chain, [cutfreq1, cutfreq2, ... cutfreqN], square, scalemode)</b></p>
+<p class="p4"><br></p>
+<p class="p3">Calculates the spectral power measure, in the same manner as <a href="FFTPower.help.rtf"><span class="s1">FFTPower</span></a>, but divides the spectrum into (adjacent, non-overlapping) subbands, so returns separate power measures for the different subbands.</p>
+<p class="p4"><br></p>
+<p class="p3">The <b>cutfreqs</b> parameter must be an array of frequencies. For example, to divide a 44100Hz signal into three subbands we might specify<span class="Apple-converted-space">  </span>[ 5512, 11025 ]<span class="Apple-converted-space">  </span>as the cutfreqs, giving subbands of 0-5512Hz, 5512-11025Hz, and 11025-22050Hz. (Frequencies above the Nyquist frequency are not included.)</p>
+<p class="p4"><br></p>
+<p class="p3">The third parameter <b>square</b> performs the same role as in FFTPower.</p>
+<p class="p4"><br></p>
+<p class="p3">The fourth parameter <b>scalemode</b> specifies how the band powers are scaled:</p>
+<p class="p4"><br></p>
+<ul>
+<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Mode <b>1</b> (default) is to scale the same way as FFTPower does (according to the <i>total</i> number of bins in the FFT). This means that if you add up the power from the various bins, you'll get the same result as if you'd just used FFTPower. This gives the best impression of how the power is "really" distributed among the bands.</li>
+<li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica">Mode <b>2</b> scales each band separately, by dividing by the number of bins in that band. This should be handy for EQ-meter type applications since the dynamic range of each output should be more similar.</li>
+</ul>
+<p class="p4"><br></p>
+<p class="p3"><b>cutfreqs</b>, <b>square</b> and <b>scalemode</b> can only be specified on initialisation - they can't be modulated.</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p3"><b>Examples</b></p>
+<p class="p5"><br></p>
+<p class="p6">// Simple example</p>
+<p class="p6"><span class="s2">s = </span><span class="s3">Server</span><span class="s2">.local.boot; </span>//Server.internal.boot;</p>
+<p class="p7">b = <span class="s3">Buffer</span>.alloc(s,2048,1);</p>
+<p class="p7">(</p>
+<p class="p7">x = {</p>
+<p class="p7"><span class="s3">var</span> in, chain, powers, cutfreqs;</p>
+<p class="p7">in = <span class="s3">LPF</span>.ar(<span class="s3">WhiteNoise</span>.ar, <span class="s3">MouseX</span>.kr(10,10000, 1));</p>
+<p class="p7">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p8"><br></p>
+<p class="p7">powers = <span class="s3">FFTSubbandPower</span>.kr(chain, [100, 200, 400, 800, 1600, 3200, 6400, 12800]);</p>
+<p class="p8"><br></p>
+<p class="p7"><span class="s3">Out</span>.ar(0, in * 0.1);</p>
+<p class="p7">powers.collect{<span class="s3">|pow, index|</span> pow.poll(label: <span class="s4">"band"</span>+index)};</p>
+<p class="p7">powers.sum.poll(label: <span class="s4">"sum"</span>);</p>
+<p class="p7"><span class="s3">FFTPower</span>.kr(chain).poll(label: <span class="s4">"pow"</span>);</p>
+<p class="p7">}.play(s);</p>
+<p class="p7">)</p>
+<p class="p8"><br></p>
+<p class="p7">x.free;</p>
+<p class="p5"><br></p>
+<p class="p4"><br></p>
+<p class="p3">In this next example we create a <b>graphic EQ meter</b>. The subband power measurements are written out to a control bus, then on the language side we create a task which polls the values and updates a multi-slider to display the power distribution in the familiar home hi-fi style.</p>
+<p class="p8"><br></p>
+<p class="p7">s = <span class="s3">Server</span>.local.boot;</p>
+<p class="p7">b = <span class="s3">Buffer</span>.alloc(s,2048,1);</p>
+<p class="p7">(</p>
+<p class="p7"><span class="s3">var</span> win, size=8;</p>
+<p class="p6"><span class="s2">c = </span><span class="s3">Bus</span><span class="s2">.control(s, size); </span>// Values will be written to control busses</p>
+<p class="p7">win = <span class="s3">SCWindow</span>(<span class="s4">"EQ meter"</span>, <span class="s3">Rect</span>(100, 200, 360, 110));</p>
+<p class="p7">~slider = <span class="s3">SCMultiSliderView</span>(win, <span class="s3">Rect</span>(0, 0, 350, 100));</p>
+<p class="p7">~slider.value_(0.dup(size)).size_(size).isFilled_(<span class="s3">true</span>).indexThumbSize_(350/8);</p>
+<p class="p7">win.front;</p>
+<p class="p7">)</p>
+<p class="p7">(</p>
+<p class="p7"><span class="s3">var</span> size=8;</p>
+<p class="p7">x = {</p>
+<p class="p7"><span class="s3">var</span> in, chain, powers, cutfreqs;</p>
+<p class="p7">in = <span class="s3">BPF</span>.ar(<span class="s3">WhiteNoise</span>.ar, <span class="s3">MouseX</span>.kr(10,14000, 1), <span class="s3">MouseY</span>.kr(0.1, 2, 1));</p>
+<p class="p7">chain = <span class="s3">FFT</span>(b.bufnum, in);</p>
+<p class="p7">cutfreqs = [100, 200, 400, 800, 1600, 3200, 6400];</p>
+<p class="p7">powers = <span class="s3">FFTSubbandPower</span>.kr(chain, cutfreqs, 1, 2);</p>
+<p class="p7"><span class="s3">Out</span>.ar(0, (in * 0.1).dup);</p>
+<p class="p7"><span class="s3">Out</span>.kr(c.index, powers);</p>
+<p class="p7">}.play(s);</p>
+<p class="p8"><br></p>
+<p class="p7">t = <span class="s3">Task</span>({</p>
+<p class="p7"><span class="Apple-tab-span">	</span>loop{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.1.wait;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>c.getn(size, {<span class="s3">|vals|</span> {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>~slider.value_((vals.log2 + 7 * 0.08).max(0).min(1));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}.defer});</p>
+<p class="p7"><span class="Apple-tab-span">	</span>};</p>
+<p class="p7">}).start;</p>
+<p class="p7">)</p>
+<p class="p8"><br></p>
+<p class="p7">x.free;</p>
+<p class="p7">t.stop;</p>
+</body>
+</html>

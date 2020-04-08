@@ -56,7 +56,6 @@ if(SUPERNOVA)
     endif()
     set_property(TARGET ${PROJECT}_supernova APPEND PROPERTY COMPILE_DEFINITIONS  "SUPERNOVA")
     include_directories(${SC_PATH}/external_libraries
-                    ${SC_PATH}/external_libraries/boost-lockfree
                     ${SC_PATH}/external_libraries/nova-simd
                     ${SC_PATH}/external_libraries/nova-tt
                     )
