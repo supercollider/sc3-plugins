@@ -16,17 +16,25 @@ test: off
 
 environment:
     CMAKE_CONFIGURATION: Release
+    # XXX vvv TEMPORARY WORKAROUND DUE TO APPVEYOR ARTIFACT STORAGE LIMIT
+    AWS_ACCESS_KEY_ID:
+        secure: cUwCIb/EtpG3uAP48WylcMNxAh3yEbPNcQGPZDnh6go=
+    AWS_SECRET_ACCESS_KEY:
+        secure: 9n0lOPh/3hpwSEf1l0QySYngrgWYqplZozQ9ZJMxtDARIV5DIBn/NXttTfkh1Z3k
+    # XXX ^^^ TEMPORARY WORKAROUND DUE TO APPVEYOR ARTIFACT STORAGE LIMIT
 
     matrix:
         - CMAKE_GENERATOR: "Visual Studio 15 2017"
           FFTW_URL: ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip
           ARCH: "x86"
+          S3_BUILDS_LOCATION: "builds/supercollider/sc3-plugins/win32"
           # https://www.appveyor.com/docs/lang/cpp/
           VCVARS_SCRIPT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars32.bat"
 
         - CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
           FFTW_URL: ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip
           ARCH: "x64"
+          S3_BUILDS_LOCATION: "builds/supercollider/sc3-plugins/win64"
           VCVARS_SCRIPT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat"
 
 install:
@@ -69,17 +77,30 @@ after_build:
     }
 - ps: 7z a -mx7 $env:ZIP_NAME install
 
-artifacts:
-- path: build/%ZIP_NAME%
-  name: Plugins
+# XXX vvv TEMPORARY WORKAROUND DUE TO APPVEYOR ARTIFACT STORAGE LIMIT
+- ps: $env:S3_URL="https://supercollider.s3.amazonaws.com/$env:S3_BUILDS_LOCATION/$env:ZIP_NAME"
+- ps: >-
+    If ($env:APPVEYOR_REPO_NAME -eq "supercollider/sc3-plugins") {
+        If ([string]::IsNullOrEmpty($env:APPVEYOR_PULL_REQUEST_NUMBER)) {
+            echo "Pushing artifact to S3"
+            aws s3 cp --region us-west-2 --acl public-read $env:APPVEYOR_BUILD_FOLDER/build/$env:ZIP_NAME s3://supercollider/$env:S3_BUILDS_LOCATION/$env:ZIP_NAME
+            echo "S3 Build Location = $env:S3_URL"
+        }
+    }
+# XXX ^^^ TEMPORARY WORKAROUND DUE TO APPVEYOR ARTIFACT STORAGE LIMIT
 
-# github releases - only tags
-deploy:
-- provider: GitHub
-  description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
-  artifact: Plugins
-  auth_token:
-    secure: 4uMFrJ2Vc3ju6OtWpQ9chRce/2JHNhfy/sjX+w+KFTNDvmSPD5CqdEuwFp/+Ln/s
-  prerelease: true
-  on:
-    appveyor_repo_tag: true
+# XXX vvv TEMPORARILY DISABLED DUE TO APPVEYOR ARTIFACT STORAGE LIMIT
+#artifacts:
+#- path: build/%ZIP_NAME%
+#  name: Plugins
+#
+## github releases - only tags
+#deploy:
+#- provider: GitHub
+#  description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
+#  artifact: Plugins
+#  auth_token:
+#    secure: 4uMFrJ2Vc3ju6OtWpQ9chRce/2JHNhfy/sjX+w+KFTNDvmSPD5CqdEuwFp/+Ln/s
+#  prerelease: true
+#  on:
+#    appveyor_repo_tag: true
