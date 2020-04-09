@@ -29,7 +29,7 @@ struct Grain2 {
     double phase, rate, attPhase, decPhase;
     double attIncr, decIncr;
     float pan1, pan2;
-    int counter, decCount;
+    int startDelay, counter, decCount;
     int bufnum;
     int chan;
     int interp;
@@ -173,75 +173,13 @@ inline double sc_gloop(double in, double hi) {
 void TGrains2_next(TGrains2* unit, const int inNumSamples) {
     const float* trigin = IN(0);
     float prevtrig = unit->mPrevTrig;
-
     const uint32 numOutputs = unit->mNumOutputs;
-    ClearUnitOutputs(unit, inNumSamples);
-    float* out[16];
-    for (auto i = 0; i < numOutputs; ++i) {
-        out[i] = ZOUT(i);
-    }
 
     const World* world = unit->mWorld;
     SndBuf* bufs = world->mSndBufs;
     const uint32 numBufs = world->mNumSndBufs;
 
-    for (auto i = 0; i < unit->mNumActive;) {
-        Grain2* grain = unit->mGrains + i;
-        const uint32 bufnum = grain->bufnum;
-
-        GRAIN_BUF
-
-        if (bufChannels != 1) {
-            ++i;
-            continue;
-        }
-
-        const double loopMax = (double)bufFrames;
-
-        const float pan1 = grain->pan1;
-        const float pan2 = grain->pan2;
-        const double rate = grain->rate;
-        double phase = grain->phase;
-        int counter = grain->counter;
-
-        const uint32 chan1 = grain->chan;
-        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
-
-        float* out1 = out[chan1];
-        float* out2 = out[chan2];
-
-        const int nsmps = sc_min(grain->counter, inNumSamples);
-        if (grain->interp >= 4) {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_2;
-                GRAIN2_LOOP_BODY_4;
-                phase += rate;
-            }
-        } else if (grain->interp >= 2) {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_2;
-                GRAIN2_LOOP_BODY_2;
-                phase += rate;
-            }
-        } else {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_2;
-                GRAIN2_LOOP_BODY_1;
-                phase += rate;
-            }
-        }
-
-        grain->phase = phase;
-
-        grain->counter = counter;
-        if (grain->counter <= 0) {
-            // remove grain
-            *grain = unit->mGrains[--unit->mNumActive];
-        } else {
-            ++i;
-        }
-    }
-
+    // PROCESS TRIGGERS
     const int trigSamples = INRATE(0) == calc_FullRate ? inNumSamples : 1;
 
     for (auto i = 0; i < trigSamples; ++i) {
@@ -270,7 +208,6 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
 
             const double dur = IN_AT(unit, 4, i);
             double counter = sc_max(4.0, floor(dur * SAMPLERATE));
-
             const double rate = grain->rate = IN_AT(unit, 2, i) * bufRateScale;
             const double centerPhase = IN_AT(unit, 3, i) * bufSampleRate;
             double phase = centerPhase - 0.5 * counter * rate;
@@ -320,46 +257,84 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
             grain->decCount = decCount;
             grain->attPhase = 0.f;
             grain->decPhase = 1.f;
-
-            const uint32 chan1 = grain->chan;
-            const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
-
-            float* out1 = out[chan1] + i;
-            float* out2 = out[chan2] + i;
-
-            const int nsmps = sc_min(grain->counter, inNumSamples - i);
-            if (grain->interp >= 4) {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_2;
-                    GRAIN2_LOOP_BODY_4;
-                    phase += rate;
-                }
-            } else if (grain->interp >= 2) {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_2;
-                    GRAIN2_LOOP_BODY_2;
-                    phase += rate;
-                }
-            } else {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_2;
-                    GRAIN2_LOOP_BODY_1;
-                    phase += rate;
-                }
-            }
-
             grain->phase = phase;
-
             grain->counter = (int)counter;
-            if (grain->counter <= 0) {
-                // remove grain
-                *grain = unit->mGrains[--unit->mNumActive];
-            }
+            grain->startDelay = i;
         }
         prevtrig = trig;
     }
-
     unit->mPrevTrig = prevtrig;
+
+    // SETUP OUTPUTS
+    ClearUnitOutputs(unit, inNumSamples);
+    float* out[16];
+    for (auto i = 0; i < numOutputs; ++i) {
+        out[i] = ZOUT(i);
+    }
+
+    // PROCESS GRAINS
+    for (auto i = 0; i < unit->mNumActive;) {
+        Grain2* grain = unit->mGrains + i;
+        const uint32 bufnum = grain->bufnum;
+
+        GRAIN_BUF
+
+        if (bufChannels != 1) {
+            ++i;
+            continue;
+        }
+
+        const double loopMax = (double)bufFrames;
+
+        const float pan1 = grain->pan1;
+        const float pan2 = grain->pan2;
+        const double rate = grain->rate;
+        double phase = grain->phase;
+        int counter = grain->counter;
+
+        const uint32 chan1 = grain->chan;
+        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
+
+        float* out1 = out[chan1];
+        float* out2 = out[chan2];
+
+        int nsmps = sc_min(grain->counter, inNumSamples);
+        if (grain->startDelay > 0) {
+            nsmps -= grain->startDelay;
+            out1 += grain->startDelay;
+            out2 += grain->startDelay;
+            grain->startDelay = 0;
+        }
+
+        if (grain->interp >= 4) {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_2;
+                GRAIN2_LOOP_BODY_4;
+                phase += rate;
+            }
+        } else if (grain->interp >= 2) {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_2;
+                GRAIN2_LOOP_BODY_2;
+                phase += rate;
+            }
+        } else {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_2;
+                GRAIN2_LOOP_BODY_1;
+                phase += rate;
+            }
+        }
+
+        grain->phase = phase;
+        grain->counter = counter;
+        if (grain->counter <= 0) {
+            // remove grain
+            *grain = unit->mGrains[--unit->mNumActive];
+        } else {
+            ++i;
+        }
+    }
 }
 
 void TGrains2_Ctor(TGrains2* unit) {
@@ -390,75 +365,13 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
     float prevtrig = unit->mPrevTrig;
     float* window = unit->mWindow;
     const int windowSize = unit->mWindowSize;
-
     const uint32 numOutputs = unit->mNumOutputs;
-    ClearUnitOutputs(unit, inNumSamples);
-    float* out[16];
-    for (uint32 i = 0; i < numOutputs; ++i) {
-        out[i] = ZOUT(i);
-    }
 
     const World* world = unit->mWorld;
     SndBuf* bufs = world->mSndBufs;
     const uint32 numBufs = world->mNumSndBufs;
 
-    for (int i = 0; i < unit->mNumActive;) {
-        Grain2* grain = unit->mGrains + i;
-        const uint32 bufnum = grain->bufnum;
-
-        GRAIN_BUF
-
-        if (bufChannels != 1) {
-            ++i;
-            continue;
-        }
-
-        const double loopMax = (double)bufFrames;
-
-        const float pan1 = grain->pan1;
-        const float pan2 = grain->pan2;
-        const double rate = grain->rate;
-        double phase = grain->phase;
-        int counter = grain->counter;
-
-        const uint32 chan1 = grain->chan;
-        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
-
-        float* out1 = out[chan1];
-        float* out2 = out[chan2];
-        // printf("B chan %d %d  %08X %08X", chan1, chan2, out1, out2);
-
-        const int nsmps = sc_min(grain->counter, inNumSamples);
-        if (grain->interp >= 4) {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_3;
-                GRAIN2_LOOP_BODY_4;
-                phase += rate;
-            }
-        } else if (grain->interp >= 2) {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_3;
-                GRAIN2_LOOP_BODY_2;
-                phase += rate;
-            }
-        } else {
-            for (auto j = 0; j < nsmps; ++j) {
-                GRAIN_AMP_3;
-                GRAIN2_LOOP_BODY_1;
-                phase += rate;
-            }
-        }
-
-        grain->phase = phase;
-
-        grain->counter = counter;
-        if (grain->counter <= 0) {
-            // remove grain
-            *grain = unit->mGrains[--unit->mNumActive];
-        } else
-            ++i;
-    }
-
+    // PROCESS TRIGGERS
     const int trigSamples = INRATE(0) == calc_FullRate ? inNumSamples : 1;
 
     for (int i = 0; i < trigSamples; ++i) {
@@ -540,46 +453,86 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
             grain->decCount = decCount;
             grain->attPhase = 0.f;
             grain->decPhase = (float)windowSize;
-
-            const uint32 chan1 = grain->chan;
-            const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
-
-            float* out1 = out[chan1] + i;
-            float* out2 = out[chan2] + i;
-
-            const int nsmps = sc_min(grain->counter, inNumSamples - i);
-            if (grain->interp >= 4) {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_3;
-                    GRAIN2_LOOP_BODY_4;
-                    phase += rate;
-                }
-            } else if (grain->interp >= 2) {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_3;
-                    GRAIN2_LOOP_BODY_2;
-                    phase += rate;
-                }
-            } else {
-                for (int j = 0; j < nsmps; ++j) {
-                    GRAIN_AMP_3;
-                    GRAIN2_LOOP_BODY_1;
-                    phase += rate;
-                }
-            }
-
             grain->phase = phase;
-
             grain->counter = (int)counter;
-            if (grain->counter <= 0) {
-                // remove grain
-                *grain = unit->mGrains[--unit->mNumActive];
-            }
+            grain->startDelay = i;
         }
         prevtrig = trig;
     }
-
     unit->mPrevTrig = prevtrig;
+
+    // SETUP OUTPUTS
+    ClearUnitOutputs(unit, inNumSamples);
+    float* out[16];
+    for (uint32 i = 0; i < numOutputs; ++i) {
+        out[i] = ZOUT(i);
+    }
+
+    // PROCESS GRAINS
+    for (int i = 0; i < unit->mNumActive;) {
+        Grain2* grain = unit->mGrains + i;
+        const uint32 bufnum = grain->bufnum;
+
+        GRAIN_BUF
+
+        if (bufChannels != 1) {
+            ++i;
+            continue;
+        }
+
+        const double loopMax = (double)bufFrames;
+
+        const float pan1 = grain->pan1;
+        const float pan2 = grain->pan2;
+        const double rate = grain->rate;
+        double phase = grain->phase;
+        int counter = grain->counter;
+
+        const uint32 chan1 = grain->chan;
+        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
+
+        float* out1 = out[chan1];
+        float* out2 = out[chan2];
+        // printf("B chan %d %d  %08X %08X", chan1, chan2, out1, out2);
+
+        int nsmps = sc_min(grain->counter, inNumSamples);
+        if (grain->startDelay > 0) {
+            nsmps -= grain->startDelay;
+            out1 += grain->startDelay;
+            out2 += grain->startDelay;
+            grain->startDelay = 0;
+        }
+
+        if (grain->interp >= 4) {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_3;
+                GRAIN2_LOOP_BODY_4;
+                phase += rate;
+            }
+        } else if (grain->interp >= 2) {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_3;
+                GRAIN2_LOOP_BODY_2;
+                phase += rate;
+            }
+        } else {
+            for (auto j = 0; j < nsmps; ++j) {
+                GRAIN_AMP_3;
+                GRAIN2_LOOP_BODY_1;
+                phase += rate;
+            }
+        }
+
+        grain->phase = phase;
+
+        grain->counter = counter;
+        if (grain->counter <= 0) {
+            // remove grain
+            *grain = unit->mGrains[--unit->mNumActive];
+        } else {
+            ++i;
+        }
+    }
 }
 
 void TGrains3_Ctor(TGrains3* unit) {
