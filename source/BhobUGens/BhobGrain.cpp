@@ -169,6 +169,24 @@ const float* table2 = table1 + 1;                                               
     ZXP(out2) += outval * pan2;                                                                                        \
     counter--;
 
+const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Graph* parent)
+{
+    const SndBuf* buf;
+
+    if (bufnum >= world->mNumSndBufs) {
+        int localBufNum = bufnum - world->mNumSndBufs;
+        if (localBufNum <= parent->localBufNum) {
+            buf = parent->mLocalSndBufs + localBufNum;
+        } else {
+            bufnum = 0;
+            buf = world->mSndBufs + bufnum;
+        }
+    } else {
+        buf = world->mSndBufs + bufnum;
+    }
+
+    return buf;
+};
 
 void TGrains2_next(TGrains2* unit, const int inNumSamples) {
     const float* trigin = IN(0);
@@ -190,11 +208,12 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
             if (unit->mNumActive + 1 >= kMaxGrains) {
                 break;
             }
-            const uint32 bufnum = (uint32)IN_AT(unit, 1, i);
-            if (bufnum >= numBufs) {
-                continue;
-            }
-            GRAIN_BUF
+            uint32_t bufnum = (uint32_t )IN_AT(unit, 1, i);
+            const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
+            const float* bufData = buf->data;
+            const uint32_t bufChannels = buf->channels;
+            const uint32_t bufSamples = buf->samples;
+            const uint32_t bufFrames = buf->frames;
 
             if (bufChannels != 1)
                 continue;
@@ -275,14 +294,20 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
     // PROCESS GRAINS
     for (auto i = 0; i < unit->mNumActive;) {
         Grain2* grain = unit->mGrains + i;
-        const uint32 bufnum = grain->bufnum;
-
-        GRAIN_BUF
+        uint32 bufnum = grain->bufnum;
+        const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
+        const float* bufData = buf->data;
+        const uint32 bufChannels = buf->channels;
+        const uint32 bufSamples = buf->samples;
+        const uint32 bufFrames = buf->frames;
+        const int guardFrame = bufFrames - 2;
 
         if (bufChannels != 1) {
             ++i;
             continue;
         }
+
+        LOCK_SNDBUF_SHARED(buf);
 
         const double loopMax = (double)bufFrames;
 
@@ -382,11 +407,12 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
             if (unit->mNumActive + 1 >= kMaxGrains) {
                 break;
             }
-            uint32 bufnum = (uint32)IN_AT(unit, 1, i);
-            if (bufnum >= numBufs) {
-                continue;
-            }
-            GRAIN_BUF
+            uint32_t bufnum = (uint32_t )IN_AT(unit, 1, i);
+            const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
+            const float* bufData = buf->data;
+            const uint32_t bufChannels = buf->channels;
+            const uint32_t bufSamples = buf->samples;
+            const uint32_t bufFrames = buf->frames;
 
             if (bufChannels != 1) {
                 continue;
@@ -471,14 +497,20 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
     // PROCESS GRAINS
     for (int i = 0; i < unit->mNumActive;) {
         Grain2* grain = unit->mGrains + i;
-        const uint32 bufnum = grain->bufnum;
-
-        GRAIN_BUF
+        uint32 bufnum = grain->bufnum;
+        const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
+        const float* bufData = buf->data;
+        const uint32 bufChannels = buf->channels;
+        const uint32 bufSamples = buf->samples;
+        const uint32 bufFrames = buf->frames;
+        const int guardFrame = bufFrames - 2;
 
         if (bufChannels != 1) {
             ++i;
             continue;
         }
+
+        LOCK_SNDBUF_SHARED(buf);
 
         const double loopMax = (double)bufFrames;
 
