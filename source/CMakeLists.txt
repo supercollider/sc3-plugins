@@ -6,8 +6,6 @@ if (SUPERNOVA)
     include_directories(${SC_PATH}/external_libraries/nova-tt)
     # actually just boost.atomic
     include_directories(${SC_PATH}/external_libraries/boost)
-    include_directories(${SC_PATH}/external_libraries/boost_lockfree)
-    include_directories(${SC_PATH}/external_libraries/boost-lockfree)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include/)

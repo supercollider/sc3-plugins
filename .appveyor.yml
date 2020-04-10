@@ -37,7 +37,8 @@ install:
 - cmd: git submodule update --init --recursive
 
 - cmd: echo "Get SuperCollider"
-- cmd: git clone --recursive --depth 1 https://github.com/supercollider/supercollider ../supercollider
+# can shallow clone, no submodules needed (no supernova)
+- cmd: git clone --depth 1 https://github.com/supercollider/supercollider ../supercollider
 
 # FFTW3, including lib prep
 - cmd: echo "Install fftw"
@@ -54,21 +55,31 @@ before_build:
 - cd build
 
 build_script:
-- cmake -G "%CMAKE_GENERATOR%" -DSC_PATH=../../supercollider -DFFTW3F_INCLUDE_DIR=../fftw -DFFTW3F_LIBRARY=../fftw/libfftw3f-3.lib ..
+- cmake -G "%CMAKE_GENERATOR%" -DSC_PATH=../../supercollider -DFFTW3F_INCLUDE_DIR=../fftw -DFFTW3F_LIBRARY=../fftw/libfftw3f-3.lib -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/build/install" ..
 - cmake --build . --target install --config %CMAKE_CONFIGURATION%
 
-# TODO
-# artifacts:
-#     - path: artifacts
-#       name: art_folder
+after_build:
+# create archive name; either the version (if tagged) or commit hash
+- ps: |
+    if (Test-Path env:APPVEYOR_REPO_TAG_NAME) {
+        $env:VERSION_SLUG=$env:APPVEYOR_REPO_TAG_NAME | % { $_ -replace "Version-","" }
+        $env:ZIP_NAME="sc3-plugins-$env:VERSION_SLUG-Windows-$env:ARCH-VS.zip"
+    } else {
+        $env:ZIP_NAME="sc3-plugins-$env:APPVEYOR_REPO_COMMIT-Windows-$env:ARCH-VS.zip"
+    }
+- ps: 7z a -mx7 $env:ZIP_NAME install
 
-# TODO
+artifacts:
+- path: build/%ZIP_NAME%
+  name: Plugins
+
 # github releases - only tags
-# - provider: GitHub
-#   description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
-#   artifact: installer
-#   auth_token:
-#     secure: rxXJNY+6n25Th9R4+7qI+AcnTj0wCAMSnBGH2+5s7DlVLrAGsSY6+EEDbeHWGGeI
-#   prerelease: true
-#   on:
-#     appveyor_repo_tag: true
+deploy:
+- provider: GitHub
+  description: appveyor_$(APPVEYOR_REPO_TAG_NAME)
+  artifact: Plugins
+  auth_token:
+    secure: 4uMFrJ2Vc3ju6OtWpQ9chRce/2JHNhfy/sjX+w+KFTNDvmSPD5CqdEuwFp/+Ln/s
+  prerelease: true
+  on:
+    appveyor_repo_tag: true
