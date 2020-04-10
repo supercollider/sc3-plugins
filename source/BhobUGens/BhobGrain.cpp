@@ -121,10 +121,10 @@ inline double sc_gloop(double in, double hi) {
 #define GRAIN2_LOOP_BODY_4                                                                                             \
     phase = sc_gloop(phase, loopMax);                                                                                  \
     int32 iphase = (int32)phase;                                                                                       \
-    float* table1 = bufData + iphase;                                                                                  \
-    float* table0 = table1 - 1;                                                                                        \
-    float* table2 = table1 + 1;                                                                                        \
-    float* table3 = table1 + 2;                                                                                        \
+    const float* table1 = bufData + iphase;                                                                                  \
+    const float* table0 = table1 - 1;                                                                                        \
+    const float* table2 = table1 + 1;                                                                                        \
+    const float* table3 = table1 + 2;                                                                                        \
     if (iphase == 0) {                                                                                                 \
         table0 += bufSamples;                                                                                          \
     } else if (iphase >= guardFrame) {                                                                                 \
@@ -148,8 +148,8 @@ inline double sc_gloop(double in, double hi) {
 #define GRAIN2_LOOP_BODY_2                                                                                             \
     phase = sc_gloop(phase, loopMax);                                                                                  \
     int32 iphase = (int32)phase;                                                                                       \
-    float* table1 = bufData + iphase;                                                                                  \
-    float* table2 = table1 + 1;                                                                                        \
+    const float* table1 = bufData + iphase;                                                                                  \
+const float* table2 = table1 + 1;                                                                                        \
     if (iphase > guardFrame) {                                                                                         \
         table2 -= bufSamples;                                                                                          \
     }                                                                                                                  \
