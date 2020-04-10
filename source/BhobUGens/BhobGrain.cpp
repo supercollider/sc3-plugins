@@ -105,7 +105,7 @@ inline double sc_gloop(double in, double hi) {
 }
 
 #define GRAIN_AMP_2                                                                                                    \
-    double amp;                                                                                                  \
+    double amp;                                                                                                        \
     const auto attPhase = grain->attPhase;                                                                             \
     const auto decPhase = grain->decPhase;                                                                             \
     if (counter > grain->decCount) {                                                                                   \
@@ -121,10 +121,10 @@ inline double sc_gloop(double in, double hi) {
 #define GRAIN2_LOOP_BODY_4                                                                                             \
     phase = sc_gloop(phase, loopMax);                                                                                  \
     int32 iphase = (int32)phase;                                                                                       \
-    const float* table1 = bufData + iphase;                                                                                  \
-    const float* table0 = table1 - 1;                                                                                        \
-    const float* table2 = table1 + 1;                                                                                        \
-    const float* table3 = table1 + 2;                                                                                        \
+    const float* table1 = bufData + iphase;                                                                            \
+    const float* table0 = table1 - 1;                                                                                  \
+    const float* table2 = table1 + 1;                                                                                  \
+    const float* table3 = table1 + 2;                                                                                  \
     if (iphase == 0) {                                                                                                 \
         table0 += bufSamples;                                                                                          \
     } else if (iphase >= guardFrame) {                                                                                 \
@@ -148,8 +148,8 @@ inline double sc_gloop(double in, double hi) {
 #define GRAIN2_LOOP_BODY_2                                                                                             \
     phase = sc_gloop(phase, loopMax);                                                                                  \
     int32 iphase = (int32)phase;                                                                                       \
-    const float* table1 = bufData + iphase;                                                                                  \
-const float* table2 = table1 + 1;                                                                                        \
+    const float* table1 = bufData + iphase;                                                                            \
+    const float* table2 = table1 + 1;                                                                                  \
     if (iphase > guardFrame) {                                                                                         \
         table2 -= bufSamples;                                                                                          \
     }                                                                                                                  \
@@ -169,8 +169,7 @@ const float* table2 = table1 + 1;                                               
     ZXP(out2) += outval * pan2;                                                                                        \
     counter--;
 
-const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Graph* parent)
-{
+const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Graph* parent) {
     const SndBuf* buf;
 
     if (bufnum >= world->mNumSndBufs) {
@@ -208,7 +207,7 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
             if (unit->mNumActive + 1 >= kMaxGrains) {
                 break;
             }
-            uint32_t bufnum = (uint32_t )IN_AT(unit, 1, i);
+            uint32_t bufnum = (uint32_t)IN_AT(unit, 1, i);
             const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
             const float* bufData = buf->data;
             const uint32_t bufChannels = buf->channels;
@@ -248,17 +247,17 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
             float panangle;
             float pan1, pan2;
             if (numOutputs > 1) {
-            if (numOutputs > 2) {
-                pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
+                if (numOutputs > 2) {
+                    pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
                     float cpan = numOutputs * pan + 0.5f;
-                float ipan = floor(cpan);
-                float panfrac = cpan - ipan;
+                    float ipan = floor(cpan);
+                    float panfrac = cpan - ipan;
                     panangle = panfrac * pi2_f;
-                grain->chan = (int)ipan;
-                if (grain->chan >= (int)numOutputs)
-                    grain->chan -= numOutputs;
-            } else {
-                grain->chan = 0;
+                    grain->chan = (int)ipan;
+                    if (grain->chan >= (int)numOutputs)
+                        grain->chan -= numOutputs;
+                } else {
+                    grain->chan = 0;
                     pan = sc_clip(pan * 0.5f + 0.5f, 0.f, 1.f);
                     panangle = pan * pi2_f;
                 }
@@ -373,8 +372,8 @@ void TGrains2_Ctor(TGrains2* unit) {
 
 #define GRAIN_AMP_3                                                                                                    \
     float amp;                                                                                                         \
-    const int i_attPhase = (int)grain->attPhase;                                                                             \
-    const int i_decPhase = (int)grain->decPhase;                                                                             \
+    const int i_attPhase = (int)grain->attPhase;                                                                       \
+    const int i_decPhase = (int)grain->decPhase;                                                                       \
     if (counter > grain->decCount) {                                                                                   \
         amp = window[sc_min(i_attPhase, windowSize)];                                                                  \
         if (i_attPhase < windowSize) {                                                                                 \
@@ -407,7 +406,7 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
             if (unit->mNumActive + 1 >= kMaxGrains) {
                 break;
             }
-            uint32_t bufnum = (uint32_t )IN_AT(unit, 1, i);
+            uint32_t bufnum = (uint32_t)IN_AT(unit, 1, i);
             const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
             const float* bufData = buf->data;
             const uint32_t bufChannels = buf->channels;
@@ -450,18 +449,18 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
             float panangle;
             float pan1, pan2;
             if (numOutputs > 1) {
-            if (numOutputs > 2) {
-                pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
-                const float cpan = numOutputs * pan + 0.5f;
-                const float ipan = floor(cpan);
-                const float panfrac = cpan - ipan;
-                panangle = panfrac * pi2_f;
-                grain->chan = (int)ipan;
-                if (grain->chan >= (int)numOutputs) {
-                    grain->chan -= numOutputs;
-                }
-            } else {
-                grain->chan = 0;
+                if (numOutputs > 2) {
+                    pan = sc_wrap(pan * 0.5f, 0.f, 1.f);
+                    const float cpan = numOutputs * pan + 0.5f;
+                    const float ipan = floor(cpan);
+                    const float panfrac = cpan - ipan;
+                    panangle = panfrac * pi2_f;
+                    grain->chan = (int)ipan;
+                    if (grain->chan >= (int)numOutputs) {
+                        grain->chan -= numOutputs;
+                    }
+                } else {
+                    grain->chan = 0;
                     pan = sc_clip(pan * 0.5f + 0.5f, 0.f, 1.f);
                     panangle = pan * pi2_f;
                 }
