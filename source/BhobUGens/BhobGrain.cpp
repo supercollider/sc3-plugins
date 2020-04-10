@@ -172,9 +172,9 @@ constexpr const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Grap
 };
 
 template <typename TGrainsT> void TGrains(TGrainsT* unit, int inNumSamples) {
-    constexpr auto hasWindowBuffer = std::is_same<TGrainsT, TGrains3>::value;
-    constexpr auto interpolationArgIndex = hasWindowBuffer ? 10 : 9;
-    constexpr auto windowBufferAmp = [](Grain2* grain, const double& counter, const int& windowSize,
+    constexpr const auto hasWindowBuffer = std::is_same<TGrainsT, TGrains3>::value;
+    constexpr const auto interpolationArgIndex = hasWindowBuffer ? 10 : 9;
+    constexpr const auto windowBufferAmp = [](Grain2* grain, const double& counter, const int& windowSize,
                                                           float* window) {
         float amp;
         const int i_attPhase = (int)grain->attPhase;
@@ -191,7 +191,7 @@ template <typename TGrainsT> void TGrains(TGrainsT* unit, int inNumSamples) {
         return amp;
     };
 
-    constexpr auto linearAmp = [](Grain2* grain, const double& counter) {
+    constexpr const auto linearAmp = [](Grain2* grain, const double& counter) {
         double amp;
         const auto attPhase = grain->attPhase;
         const auto decPhase = grain->decPhase;
