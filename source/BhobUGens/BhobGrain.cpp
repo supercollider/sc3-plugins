@@ -172,22 +172,18 @@ inline double sc_gloop(double in, double hi) {
     ZXP(out2) += outval * pan2;                                                                                        \
     counter--;
 
-const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Graph* parent) {
-    const SndBuf* buf;
-
+inline const SndBuf* findBuf(uint32_t& bufnum, const World* world, const Graph* parent) {
     if (bufnum >= world->mNumSndBufs) {
         int localBufNum = bufnum - world->mNumSndBufs;
         if (localBufNum <= parent->localBufNum) {
-            buf = parent->mLocalSndBufs + localBufNum;
+            return parent->mLocalSndBufs + localBufNum;
         } else {
             bufnum = 0;
-            buf = world->mSndBufs + bufnum;
+            return world->mSndBufs + bufnum;
         }
     } else {
-        buf = world->mSndBufs + bufnum;
+        return world->mSndBufs + bufnum;
     }
-
-    return buf;
 };
 
 void TGrains2_next(TGrains2* unit, const int inNumSamples) {
