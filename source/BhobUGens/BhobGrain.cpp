@@ -70,6 +70,9 @@ static float cubicinterp(float x, float y0, float y1, float y2, float y3)
     return ((c3 * x + c2) * x + c1) * x + c0;
 }
 */
+
+constexpr auto NO_BUFFER = -1e9f;
+
 #define GRAIN_BUF                                                                                                      \
     SndBuf* buf = bufs + bufnum;                                                                                       \
     float* bufData __attribute__((__unused__)) = buf->data;                                                            \
@@ -291,17 +294,28 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
     }
 
     // PROCESS GRAINS
+    const SndBuf* buf = nullptr;
+    uint32 bufnum = NO_BUFFER;
+    const float* bufData;
+    uint32 bufChannels = 0;
+    uint32 bufSamples;
+    uint32 bufFrames;
+    int guardFrame;
+
     for (auto i = 0; i < unit->mNumActive;) {
         Grain2* grain = unit->mGrains + i;
-        uint32 bufnum = grain->bufnum;
-        const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
-        const float* bufData = buf->data;
-        const uint32 bufChannels = buf->channels;
-        const uint32 bufSamples = buf->samples;
-        const uint32 bufFrames = buf->frames;
-        const int guardFrame = bufFrames - 2;
 
-        if (bufChannels != 1) {
+        if (bufnum != grain->bufnum) {
+            bufnum = grain->bufnum;
+            buf = findBuf(bufnum, world, unit->mParent);
+            bufData = buf->data;
+            bufChannels = buf->channels;
+            bufSamples = buf->samples;
+            bufFrames = buf->frames;
+            guardFrame = bufFrames - 2;
+        }
+
+        if (bufChannels != 1 || !buf) {
             ++i;
             continue;
         }
@@ -494,17 +508,28 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
     }
 
     // PROCESS GRAINS
+    const SndBuf* buf = nullptr;
+    uint32 bufnum = NO_BUFFER;
+    const float* bufData;
+    uint32 bufChannels = 0;
+    uint32 bufSamples;
+    uint32 bufFrames;
+    int guardFrame;
+
     for (int i = 0; i < unit->mNumActive;) {
         Grain2* grain = unit->mGrains + i;
-        uint32 bufnum = grain->bufnum;
-        const SndBuf* buf = findBuf(bufnum, world, unit->mParent);
-        const float* bufData = buf->data;
-        const uint32 bufChannels = buf->channels;
-        const uint32 bufSamples = buf->samples;
-        const uint32 bufFrames = buf->frames;
-        const int guardFrame = bufFrames - 2;
 
-        if (bufChannels != 1) {
+        if (bufnum != grain->bufnum) {
+            bufnum = grain->bufnum;
+            buf = findBuf(bufnum, world, unit->mParent);
+            bufData = buf->data;
+            bufChannels = buf->channels;
+            bufSamples = buf->samples;
+            bufFrames = buf->frames;
+            guardFrame = bufFrames - 2;
+        }
+
+        if (bufChannels != 1 || !buf) {
             ++i;
             continue;
         }
