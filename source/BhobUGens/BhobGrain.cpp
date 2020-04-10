@@ -293,7 +293,7 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
         int counter = grain->counter;
 
         const uint32 chan1 = grain->chan;
-        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
+        const uint32 chan2 = (chan1 + 1) % numOutputs;
 
         float* out1 = out[chan1];
         float* out2 = out[chan2];
@@ -489,7 +489,7 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
         int counter = grain->counter;
 
         const uint32 chan1 = grain->chan;
-        const uint32 chan2 = (chan2 >= numOutputs) ? 0 : chan1 + 1;
+        const uint32 chan2 = (chan1 + 1) % numOutputs;
 
         float* out1 = out[chan1];
         float* out2 = out[chan2];
