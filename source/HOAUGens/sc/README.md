@@ -13,8 +13,13 @@ As a whole, the HOA library provides classes to encode, transform and decode Hig
 
 The SuperCollider library was written by [Florian Grond](http://www.grond.at). It includes soundfield recordings made together with Romain Dumoulin using the Eigenmike from [CIRMMT](http://www.cirmmt.org).
 
+## Additional lightweight Ugens
+
+AmbiPanner is addapted from Aaron Heler's & Florian Grond's [high order ambisonic encoder](https://bitbucket.org/ambidecodertoolbox/adt/src/b6c8c11dc421e7b6a1261b03872788bbd7a8fee7/faust/ambi_panner_ambix_o5.dsp?at=master&fileviewer=file-view-default) from the [ambidecodertoolkit](https://bitbucket.org/ambidecodertoolbox/adt/overview) project.
+
+Plane wave High order ambisonic encoder and optimisations Enc3D, InPhase, MaxRE are addapted from CICM's [HoaLib](http://hoalibrary.mshparisnord.fr/en) [faust implementation](https://github.com/CICM/HoaLibrary-Faust).
 
 ## Acknowledgements
 
 The implementation of HOAUGens was supported by a postdoctoral fellowship of Fonds de Recherche du Québec - Société et Culture (FRQSC) http://www.frqsc.gouv.qc.ca/ conducted at CIRMMT https://www.cirmmt.org/ and through the Metalab at the Société des Arts Technologiques http://sat.qc.ca/ in Montreal.
-Special thanks goes to Nicolas Bouillot, Michal Seta, Till Bovermann and Carlo Capocasa.
+Special thanks goes to Nicolas Bouillot, Michal Seta, Till Bovermann, Carlo Capocasa and Pierre Guillot.
