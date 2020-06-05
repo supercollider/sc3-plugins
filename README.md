@@ -58,10 +58,11 @@ replace `/path/to/sc/` with the path to the SuperCollider source directory. That
 `../../supercollider` if you cloned both repositories in the same working directory.
 
 ```shell
+cd sc3-plugins
 mkdir build && cd build
 cmake -DSC_PATH=/path/to/sc/ ..
 cmake --build . --config Release
-# to install the plugins
+# to install the plugins - note: linux users likely need sudo
 cmake --build . --config Release --target install
 ```
 
