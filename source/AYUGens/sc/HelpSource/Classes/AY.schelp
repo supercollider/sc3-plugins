@@ -12,6 +12,35 @@ The chip's inputs are integer values, so non-integer values will be rounded off.
 
 The emulation is provided by the libayemu library: http://sourceforge.net/projects/libayemu - I have merely wrapped it up as a SC UGen.
 
+SUBSECTION:: Oscillator behavior
+
+Typically, we think of oscillators as vibrating around zero (balanced output, with no DC offset).
+
+The AY chip has three pulse oscillators and one noise oscillator (which may be multiplied in with the other oscillators' signals). They vibrate as follows (note that their sum is scaled down to valid floating-point signal range):
+
+table::
+## strong::Oscillator:: || Low value || High value
+## A || 0 || 4
+## B || 0 || 2
+## C || 0 || 1
+::
+
+note:: There is always DC offset with this UGen. It's strongly recommended to use link::Classes/LeakDC:: on AY's output. ::
+
+The code::control:: input controls whether the oscillator will be used or not, and whether the pulse wave will be multiplied by noise or not.
+
+If code::control:: disables an oscillator, it produces its nonzero value as DC. This way, the three oscillators working together can access all 8 possible states resulting from three bits.
+
+list::
+## A alone oscillates between 3 and 7 (because B and C's nonzero values add up to 3).
+## B alone oscillates between 5 and 7 (because A and C's nonzero values add up to 5).
+## C alone oscillates between 6 and 7 (because A and B's nonzero values add up to 6).
+::
+
+This means oscillator B will be perceived to be quieter than A, and C quieter than B.
+
+This characteristic can be used to simulate wave shapes. For example, if A:B:C = fundamental : octave : 2 octaves, mixing the three oscillators at equal volume is close to a sawtooth wave.
+
 CLASSMETHODS::
 
 METHOD::ar
@@ -29,16 +58,28 @@ ARGUMENT::noise
 the period of the pseudo-random noise generator, strong::0 to 31::
 
 ARGUMENT::control
-controls how the noise is mixed into the tone(s), strong::0 to 32:: (0 is mute). This is a binary mask value which masks the noise/tone mixture in each channel, so it's not linear.
+controls how the noise is mixed into the tone(s), strong::0 to 63:: (0 is mute). This is a binary mask value which masks the noise/tone mixture in each channel, so it's not linear.
+
+Six bits are used: code::fedcba:: (with code::a:: being least significant and code::f:: most significant).
+
+list::
+## Bits a and d control oscillator A.
+## Bits b and e control oscillator B.
+## Bits c and f control oscillator C.
+## Bits a, b, and c turn oscillators A, B and C on or off, respectively: 001 = decimal 1 plays oscillator A only, 110 = decimal 6 plays oscillators B and C together. (Turning an oscillator "off" produces its nonzero DC value.)
+## Bits d, e and f multiply A, B and C respectively by noise. When the oscillator is "off" (nonzero), continuous noise is produced. When the oscillator is on, noise will turn on and off periodically according to the oscillator's frequency.
+::
+
+Control value 7 will mix A, B and C's clean tones together. Control value 0 reduces all oscillators to DC.
 
 ARGUMENT::vola
-volume of the first of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+volume of the first of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype).
 
 ARGUMENT::volb
-volume of the second of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+volume of the second of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype). Its perceived volume is 1/2 of oscillator A's volume.
 
 ARGUMENT::volc
-volume of the third of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype)
+volume of the third of the three voices, strong::0 to 15:: (or 0 to 31 if using YM chiptype). Its perceived volume is 1/4 of oscillator A's volume.
 
 ARGUMENT::envfreq
 envelope frequency, strong::0 to 4095::
