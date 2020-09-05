@@ -3,8 +3,8 @@ sc3-plugins: Information for Developers
 
 ## Building on Windows
 
-This is doable (with VS 2013), but you will have to manually set the CMake variables
-`FFTW3_INCLUDE_DIR` and `FFTW3F_LIBRARY` to the directory of FFTW3 and the lib file created while
+This is doable (with VS 2013, also tested with 2019), but you will have to manually set the CMake variables
+`FFTW3F_INCLUDE_DIR` and `FFTW3F_LIBRARY` to the directory of FFTW3 and the lib file created while
 building SuperCollider. See the SuperCollider repo's `README_WINDOWS.md` file for instructions
 related to that.
 
