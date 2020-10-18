@@ -84,18 +84,26 @@ ambisonics) subproject.
     * (default on linux `/usr/local`)
     * `cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..`
 + Install in cmake build folder instead of `CMAKE_INSTALL_PREFIX`
-    * (OSX ONLY, default=ON)
+    * (macOS ONLY, default=ON)
     * `cmake -DIN_PLACE_BUILD=ON`
 + Build the plugins as quarks
-    * (default 'OFF')
+    * (default=OFF)
     * `cmake -DQUARKS=ON ..`
 + Build supernova-plugins
-    * (default 'OFF')
+    * (default=OFF)
     * `cmake -DSUPERNOVA=ON ..`
++ Build Ladspa UGen
+    * (macOS AND LINUX ONLY, default=ON)
+    * `sc3-plugins/build/$ cmake -DLADSPA=ON ..`
 + Print all cmake options
     * `sc3-plugins/build/$ cmake -L ..`
 
 ### Troubleshooting
+
+#### Known issues
+
+**On some Linux distributions** it has been reported that Ladspa UGen could prevent SuperCollider server from booting ([sc3-plugins/#210](https://github.com/supercollider/sc3-plugins/issues/210), [sc3-plugins/#23](https://github.com/supercollider/sc3-plugins/issues/23) and [supercollider/#4421](https://github.com/supercollider/supercollider/issues/4421)).
+See above how to build sc3-plugins without Ladspa if needed.
 
 #### Build errors
 
