@@ -311,7 +311,7 @@ FM7 : MultiOutUGen {
 	}
 	*arAlgo { | algo=0, ctlMatrix, feedback=0.0 |
 		var modMatrix, channels;
-		#modMatrix, channels = this.algoSpec(algo, feedback).postln;
+		#modMatrix, channels = this.algoSpec(algo, feedback);
 		^this.ar(ctlMatrix, modMatrix).slice(channels)
 	}
 
