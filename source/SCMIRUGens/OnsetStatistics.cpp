@@ -57,7 +57,7 @@ struct OnsetStatistics : public Unit  {
     
     float krsampletotime_; //conversion factor to get from kr samples to actual time in seconds
     
-    //int * onsettimes_; //relative to last updated master position
+    //int * onsettimes_; //relative to last updated main position
     //int onsettimesindex_;
 
     deque<int> * onsettimes_;
