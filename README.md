@@ -60,7 +60,7 @@ replace `/path/to/sc/` with the path to the SuperCollider source directory. That
 ```shell
 cd sc3-plugins
 mkdir build && cd build
-# for both scsynth and supernova plugins; omit -DSUPERNOVA=ON to build only scsynth plugins
+# for both scsynth and supernova plugins; set -DSUPERNOVA=OFF to build only scsynth plugins
 cmake -DSC_PATH=/path/to/sc/ -DCMAKE_BUILD_TYPE=Release -DSUPERNOVA=ON ..
 cmake --build . --config Release
 # to install the plugins - note: linux users likely need sudo
