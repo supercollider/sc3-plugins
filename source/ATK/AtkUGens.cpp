@@ -1944,9 +1944,10 @@ void FoaNFC_next_k(FoaNFC *unit, int inNumSamples)
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
+
     for(int i = 0; i < inNumSamples; i++){
-		float freq = 53.0 / distanceStart;
+		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
+		float freq = 54.59014548052 / distanceStart;
 		float wc = (twopi * freq) * SAMPLEDUR;
 
 		//	a0 = (1 + (wc.cos.neg * 2 + 2).sqrt).reciprocal;
@@ -1994,9 +1995,10 @@ void FoaNFC_next_a(FoaNFC *unit, int inNumSamples)
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
+
     for(int i = 0; i < inNumSamples; i++){
-		float freq = 53.0 / distance[i];
+		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
+		float freq = 54.59014548052 / distance[i];
 		float wc = (twopi * freq) * SAMPLEDUR;
 		float a0 = 1 / (sqrt((cos(wc) * -2) + 2) + 1);
 
@@ -2058,9 +2060,10 @@ void FoaProximity_next_k(FoaProximity *unit, int inNumSamples)
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
-    for(int i=0; i<inNumSamples;i++){
-		float freq = 53.0 / distanceStart;
+
+    for(int i = 0; i < inNumSamples;i++){
+		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
+		float freq = 54.59014548052 / distance[i];
 		float wc = (twopi * freq) * SAMPLEDUR;
 
 		//	a0 = 1 + (wc.cos.neg * 2 + 2).sqrt;
@@ -2108,9 +2111,10 @@ void FoaProximity_next_a(FoaProximity *unit, int inNumSamples)
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
-    for(int i = 0; i<inNumSamples; i++){
-		float freq = 53.0 / distance[i];
+
+    for(int i = 0; i < inNumSamples; i++){
+		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
+		float freq = 54.59014548052 / distance[i];
 		float wc = (twopi * freq) * SAMPLEDUR;
 		float a0 = 1 + sqrt((cos(wc) * -2) + 2);
 

@@ -173,7 +173,12 @@ Ambisonic Toolkit.
 List of Changes
 ---------------
 
-Unreleased 3.9.0
+Version 3.12.0
+
+*  Refactoring:
+    * Update AtkFoa.speedOfSound == AtkHoa.speedOfSound == 343.0 m/s
+
+Version 3.9.0
 
 *  Refactoring:
     *  Quark-ify: classes, extension methods & documentation moved to
