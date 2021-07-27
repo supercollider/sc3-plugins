@@ -212,7 +212,7 @@ List of Changes
 Version 3.12.0
 
 *  Refactoring:
-    * Update AtkFoa.speedOfSound == AtkHoa.speedOfSound == 343.0 m/s
+    * Update (AtkFoa.speedOfSound == AtkHoa.speedOfSound) & user settable
 
 Version 3.9.0
 

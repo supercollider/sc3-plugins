@@ -136,12 +136,12 @@ struct FoaDominateZ : FoaDominateX { };
 
 struct FoaNFC : public Unit
 {
-    float m_distanceStart, m_y1x, m_y1y, m_y1z;
+    float m_distanceStart, m_speedOfSound, m_y1x, m_y1y, m_y1z;
 };
 
 struct FoaProximity : public Unit
 {
-    float m_distanceStart, m_y1x, m_y1y, m_y1z;
+    float m_distanceStart, m_speedOfSound, m_y1x, m_y1y, m_y1z;
 };
 
 struct FoaPsychoShelf : public Unit
@@ -1917,6 +1917,7 @@ void FoaNFC_Ctor(FoaNFC* unit)
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
+    unit->m_speedOfSound = IN0(5);
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaNFC_next_a);
     } else {
@@ -1937,20 +1938,17 @@ void FoaNFC_next_k(FoaNFC *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float distanceEnd = IN0(4);
+    float speedOfSound = unit->m_speedOfSound;
+
     float distanceStart = unit->m_distanceStart;
-    
     float distanceInc = CALCSLOPE(distanceEnd, distanceStart);
-    
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
 
     for(int i = 0; i < inNumSamples; i++){
-		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
-		float freq = 54.59014548052 / distanceStart;
-		float wc = (twopi * freq) * SAMPLEDUR;
-
-		//	a0 = (1 + (wc.cos.neg * 2 + 2).sqrt).reciprocal;
+		float wc = (speedOfSound / distanceStart) * SAMPLEDUR;
 		float a0 = 1 / (sqrt((cos(wc) * -2) + 2) + 1);
 
 		// W is passed straight out
@@ -1991,15 +1989,14 @@ void FoaNFC_next_a(FoaNFC *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float *distance = IN(4);
-    
+    float speedOfSound = unit->m_speedOfSound;
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
 
     for(int i = 0; i < inNumSamples; i++){
-		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
-		float freq = 54.59014548052 / distance[i];
-		float wc = (twopi * freq) * SAMPLEDUR;
+		float wc = (speedOfSound / distance[i]) * SAMPLEDUR;
 		float a0 = 1 / (sqrt((cos(wc) * -2) + 2) + 1);
 
 		// W is passed straight out
@@ -2033,6 +2030,7 @@ void FoaProximity_Ctor(FoaProximity* unit)
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
+    unit->m_speedOfSound = IN0(5);
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaProximity_next_a);
     } else {
@@ -2053,20 +2051,17 @@ void FoaProximity_next_k(FoaProximity *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float distanceEnd = IN0(4);
+    float speedOfSound = unit->m_speedOfSound;
+
     float distanceStart = unit->m_distanceStart;
-    
     float distanceInc = CALCSLOPE(distanceEnd, distanceStart);
-    
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
 
     for(int i = 0; i < inNumSamples;i++){
-		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
-		float freq = 54.59014548052 / distance[i];
-		float wc = (twopi * freq) * SAMPLEDUR;
-
-		//	a0 = 1 + (wc.cos.neg * 2 + 2).sqrt;
+		float wc = (speedOfSound / distanceStart) * SAMPLEDUR;
 		float a0 = 1 + sqrt((cos(wc) * -2) + 2);
 
 		// W is passed straight out
@@ -2107,15 +2102,14 @@ void FoaProximity_next_a(FoaProximity *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float *distance = IN(4);
-    
+    float speedOfSound = unit->m_speedOfSound;
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
 
     for(int i = 0; i < inNumSamples; i++){
-		// AtkFoa.speedOfSound = 343.0  --> 343.0 / 2pi --> 54.59014548052
-		float freq = 54.59014548052 / distance[i];
-		float wc = (twopi * freq) * SAMPLEDUR;
+		float wc = (speedOfSound / distance[i]) * SAMPLEDUR;
 		float a0 = 1 + sqrt((cos(wc) * -2) + 2);
 
 		// W is passed straight out
