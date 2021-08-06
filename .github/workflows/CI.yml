@@ -31,6 +31,8 @@ jobs:
           - name: macOS
             os: macos-10.15
             cmake-generator: 'Xcode'
+            xcode-version: '10.3'
+            deployment-target: '10.10'
             
           - name: Windows-32bit-VS
             cmake-generator: 'Visual Studio 16 2019'
@@ -91,6 +93,9 @@ jobs:
       if: matrix.vcvars-script
       shell: cmd
       working-directory: ${{ env.FFTW_INSTALL_DIR }}
+      env:
+        DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
+        MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         call "${{ matrix.vcvars-script }}"
         lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
