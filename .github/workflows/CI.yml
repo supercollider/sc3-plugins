@@ -1,0 +1,132 @@
+name: CI
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '**.html'
+      - '**.schelp'
+      - 'README'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '**.html'
+      - '**.schelp'
+      - 'README'
+      - 'LICENSE'
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux-x64
+            os: ubuntu-18.04
+            
+          - name: macOS
+            os: macos-10.15
+            cmake-generator: 'Xcode'
+            
+          - name: Windows-32bit-VS
+            cmake-generator: 'Visual Studio 16 2019'
+            cmake-arch: 'Win32'
+            os: windows-2019
+            vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
+            fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
+            fftw-arch: 'X86'
+            
+          - name: Windows-64bit-VS
+            os: windows-2019
+            cmake-generator: 'Visual Studio 16 2019'
+            cmake-arch: 'x64'
+            vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
+            fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
+            fftw-arch: 'X64'
+
+    env:
+      SC_SRC_PATH: ${{ github.workspace }}/supercollider
+      BUILD_PATH: ${{ github.workspace }}/build
+      INSTALL_PATH: ${{ github.workspace }}/build/install
+      FFTW_INSTALL_DIR: "C:/Program Files/fftw"
+
+    name: ${{ matrix.name }}
+    steps:
+    - name: set filename # use tag or sha for version
+      id: set-filename
+      shell: bash
+      run: |
+        if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+          FULL_TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${FULL_TAG##Version-}
+        else
+          VERSION=$GITHUB_SHA
+        fi
+        echo "::set-output name=filename::sc3-plugins-$VERSION-${{ matrix.name }}"
+    - name: checkout sc3-plugins
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: checkout supercollider
+      uses: actions/checkout@v2
+      with:
+        repository: supercollider/supercollider
+        path: ${{ env.SC_SRC_PATH }}
+        ref: main
+    - name: install Linux dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get install --yes libfftw3-dev
+    - name: install FFTW
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        mkdir -p "$FFTW_INSTALL_DIR" && cd "$FFTW_INSTALL_DIR"
+        curl -L ${{ matrix.fftw-url }} -o fftw.zip
+        7z x fftw.zip -y
+    - name: create FFTW MSVC library
+      if: matrix.vcvars-script
+      shell: cmd
+      working-directory: ${{ env.FFTW_INSTALL_DIR }}
+      run: |
+        call "${{ matrix.vcvars-script }}"
+        lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
+    - name: configure
+      shell: bash
+      run: |
+        mkdir $BUILD_PATH && cd $BUILD_PATH
+        GENERATOR="${{ matrix.cmake-generator }}"
+        ARCH="${{ matrix.cmake-arch }}"
+        cmake ${GENERATOR:+-G "$GENERATOR"} ${ARCH:+-A "$ARCH"} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF -D CMAKE_OSX_DEPLOYMENT_TARGET=10.10 .. --debug-output
+    - name: build
+      shell: bash
+      working-directory: ${{ env.BUILD_PATH }}
+      env:
+        CMAKE_BUILD_PARALLEL_LEVEL: 4
+      run: |
+        cmake --build . --config Release --target install
+    - name: compress plugins
+      shell: bash
+      working-directory: ${{ env.INSTALL_PATH }}
+      run: | 
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          7z a ${{ steps.set-filename.outputs.filename }}.zip -tzip .
+        else
+          zip -r ${{ steps.set-filename.outputs.filename }}.zip .
+        fi
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.set-filename.outputs.filename }}
+        path: ${{ env.INSTALL_PATH }}/${{ steps.set-filename.outputs.filename }}.zip
+    - name: deploy release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        file: ${{ env.INSTALL_PATH }}/${{ steps.set-filename.outputs.filename }}.zip
+        tag: ${{ github.ref }}
