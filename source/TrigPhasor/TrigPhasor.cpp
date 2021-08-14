@@ -25,10 +25,10 @@ void TrigPhasor_Ctor(TrigPhasor* unit) {
 
 void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
     float *inTrig   = IN(0);
-    float resetPos  = IN0(1);
+    float rate      = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
-    float rate      = IN0(4);
+    float resetPos  = IN0(4);
 
     float *out      = OUT(0);
     float *outTrig  = OUT(1);
@@ -65,10 +65,10 @@ void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
 
 void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
     float inTrig    = IN0(0);
-    float resetPos  = IN0(1);
+    float rate      = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
-    float rate      = IN0(4);
+    float resetPos  = IN0(4);
 
     float *out      = OUT(0);
     float *outTrig  = OUT(1);
