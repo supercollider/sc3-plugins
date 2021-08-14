@@ -3,7 +3,7 @@
 static InterfaceTable *ft;
 
 struct TrigPhasor : public Unit {
-    float prevReset;
+    float prevInTrig;
     float level;
 };
 
@@ -12,7 +12,7 @@ static void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples);
 static void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples);
 
 void TrigPhasor_Ctor(TrigPhasor* unit) {
-    unit->prevReset = 0;
+    unit->prevInTrig = 0;
     unit->level = 0;
 
     if (INRATE(0) == calc_FullRate) {
@@ -24,7 +24,7 @@ void TrigPhasor_Ctor(TrigPhasor* unit) {
 }
 
 void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
-    float *reset    = IN(0);
+    float *inTrig   = IN(0);
     float resetPos  = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
@@ -36,7 +36,7 @@ void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
     for (int i = 0; i < inNumSamples; i++) {
         float slope = end - start;
 
-        if (unit->prevReset <= 0 && reset[i] > 0) {
+        if (unit->prevInTrig <= 0 && inTrig[i] > 0) {
             unit->level = resetPos;
         } else {
             unit->level += copysignf(step, slope);
@@ -59,12 +59,12 @@ void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
         }
 
         out[i] = unit->level;
-        unit->prevReset = reset[i];
+        unit->prevInTrig = inTrig[i];
     }
 }
 
 void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
-    float reset     = IN0(0);
+    float inTrig    = IN0(0);
     float resetPos  = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
@@ -76,7 +76,7 @@ void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
     for (int i = 0; i < inNumSamples; i++) {
         float slope = end - start;
 
-        if (unit->prevReset <= 0 && reset > 0) {
+        if (unit->prevInTrig <= 0 && inTrig > 0) {
             unit->level = resetPos;
         } else {
             unit->level += copysignf(step, slope);
@@ -99,7 +99,7 @@ void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
         }
 
         out[i] = unit->level;
-        unit->prevReset = reset;
+        unit->prevInTrig = inTrig;
     }
 }
 
