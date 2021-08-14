@@ -30,22 +30,20 @@ jobs:
             
           - name: macOS
             os: macos-10.15
-            cmake-generator: 'Xcode'
+            cmake-flags: '-G Xcode'
             xcode-version: '10.3'
             deployment-target: '10.10'
             
-            cmake-generator: 'Visual Studio 16 2019'
-            cmake-arch: 'Win32'
           - name: Windows-32bit
             os: windows-2019
+            cmake-flags: '-G "Visual Studio 16 2019" -A Win32'
             vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
             fftw-arch: 'X86'
             
           - name: Windows-64bit
             os: windows-2019
-            cmake-generator: 'Visual Studio 16 2019'
-            cmake-arch: 'x64'
+            cmake-flags: '-G "Visual Studio 16 2019" -A x64'
             vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
             fftw-arch: 'X64'
@@ -103,9 +101,7 @@ jobs:
         MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         mkdir $BUILD_PATH && cd $BUILD_PATH
-        GENERATOR="${{ matrix.cmake-generator }}"
-        ARCH="${{ matrix.cmake-arch }}"
-        cmake ${GENERATOR:+-G "$GENERATOR"} ${ARCH:+-A "$ARCH"} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF -D CMAKE_OSX_DEPLOYMENT_TARGET=10.10 .. --debug-output
+        cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF ..
     - name: build
       shell: bash
       working-directory: ${{ env.BUILD_PATH }}
