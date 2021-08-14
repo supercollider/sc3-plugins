@@ -34,15 +34,15 @@ jobs:
             xcode-version: '10.3'
             deployment-target: '10.10'
             
-          - name: Windows-32bit-VS
             cmake-generator: 'Visual Studio 16 2019'
             cmake-arch: 'Win32'
+          - name: Windows-32bit
             os: windows-2019
             vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
             fftw-arch: 'X86'
             
-          - name: Windows-64bit-VS
+          - name: Windows-64bit
             os: windows-2019
             cmake-generator: 'Visual Studio 16 2019'
             cmake-arch: 'x64'
