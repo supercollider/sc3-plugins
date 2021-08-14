@@ -27,6 +27,8 @@ jobs:
         include:
           - name: Linux-x64
             os: ubuntu-18.04
+            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
+            cache-path: '~/.ccache'
             
           - name: macOS
             os: macos-10.15
@@ -77,6 +79,13 @@ jobs:
         repository: supercollider/supercollider
         path: ${{ env.SC_SRC_PATH }}
         ref: main
+    - name: cache ccache
+      uses: actions/cache@v2
+      if: matrix.cache-path
+      with:
+        path: ${{ matrix.cache-path }}
+        key: ${{ matrix.name }}-${{ github.run_id }}
+        restore-keys: ${{ matrix.name }}-
     - name: install Linux dependencies
       if: runner.os == 'Linux'
       run: sudo apt-get install --yes libfftw3-dev
