@@ -1,0 +1,62 @@
+class:: TrigPhasor
+summary:: Phasor-like UGen with a trigger output.
+categories::  UGens>Triggers, UGens>Buffer
+
+
+Description::
+
+TrigPhasor attempts to be compatible with the Phasor UGen and
+provides an additional trigger output that will become positive
+when TrigPhasor reaches the end of its ramp.
+
+
+classmethods::
+
+method::ar, kr
+
+argument::trig
+
+When triggered, jump to resetPos (default: 0, equivalent to
+start).
+
+
+argument::rate
+
+The amount of change per sample, i.e at a rate of 1 the value of
+each sample will be 1 greater than the preceding sample.
+
+
+argument::start
+
+Start point of the ramp.
+
+
+argument::end
+
+End point of the ramp.
+
+
+argument::resetPos
+
+The value to jump to upon receiving a trigger.
+
+
+Examples::
+
+code::
+
+(
+{ var phase, trig, rate;
+
+	rate = MouseX.kr(0.2, 2, 1);
+
+	# phase, trig = TrigPhasor.ar(
+		Impulse.ar(rate),
+		rate/SampleRate.ir,
+		0, 1, 0);
+
+	[phase, Trig.ar(trig, dur: 0.1)];
+}.scope;
+)
+
+::
