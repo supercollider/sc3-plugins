@@ -28,7 +28,7 @@ void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
     float resetPos  = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
-    float step      = IN0(4);
+    float rate      = IN0(4);
 
     float *out      = OUT(0);
     float *outTrig  = OUT(1);
@@ -39,7 +39,7 @@ void TrigPhasor_next_a(TrigPhasor* unit, int inNumSamples) {
         if (unit->prevInTrig <= 0 && inTrig[i] > 0) {
             unit->level = resetPos;
         } else {
-            unit->level += copysignf(step, slope);
+            unit->level += copysignf(rate, slope);
         }
 
         if (slope <= 0) {
@@ -68,7 +68,7 @@ void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
     float resetPos  = IN0(1);
     float start     = IN0(2);
     float end       = IN0(3);
-    float step      = IN0(4);
+    float rate      = IN0(4);
 
     float *out      = OUT(0);
     float *outTrig  = OUT(1);
@@ -79,7 +79,7 @@ void TrigPhasor_next_k(TrigPhasor* unit, int inNumSamples) {
         if (unit->prevInTrig <= 0 && inTrig > 0) {
             unit->level = resetPos;
         } else {
-            unit->level += copysignf(step, slope);
+            unit->level += copysignf(rate, slope);
         }
 
         if (slope <= 0) {
