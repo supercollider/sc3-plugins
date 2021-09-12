@@ -1,6 +1,9 @@
 
 
 Dfsm : DUGen {
+
+	classvar <>verbose = false;
+
 	*new { arg rules, n = 1, rgen;
 		^this.multiNewList(['demand', n, rgen ? Dwhite.new]
 			++ this.convertRules(rules))
@@ -24,10 +27,12 @@ Dfsm : DUGen {
 		data = states ++ nextStates.flat;
 
 		res = [states.size] ++ sizes ++ data;
-		res.do { |x, i|
-			postf("% : %\n", i + 3, x.asCompileString)
+		if(verbose) {
+			res.do { |x, i|
+				postf("% : %\n", i + 3, x.asCompileString)
+			}
 		};
-		^res;
+		^res
 	}
 
 }
