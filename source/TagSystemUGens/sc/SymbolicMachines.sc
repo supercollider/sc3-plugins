@@ -2,8 +2,6 @@
 
 Dfsm : DUGen {
 
-	classvar <>verbose = false;
-
 	*new { arg rules, n = 1, rgen;
 		^this.multiNewList(['demand', n, rgen ?? { Dwhite.new }] ++ this.convertRules(rules))
 	}
