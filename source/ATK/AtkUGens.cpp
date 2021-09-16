@@ -1910,14 +1910,26 @@ void FoaAsymmetry_next_k(FoaAsymmetry *unit, int inNumSamples)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-// FoaNFC - 
+// FoaNFC
 void FoaNFC_Ctor(FoaNFC* unit)
 {
+    int numChannels = unit->mNumInputs;
+
     unit->m_y1x = 0.0f;
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
-    unit->m_speedOfSound = IN0(5);
+    /*
+    maintain backwards compatibility w/ atk-sc3 quark <= v5.0.3
+    https://github.com/ambisonictoolkit/atk-sc3
+    */
+    if (numChannels == 6) {
+        unit->m_speedOfSound = IN0(5);
+    } else {
+        // previous (equivalent) value
+        unit->m_speedOfSound = 333.0;
+    }
+
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaNFC_next_a);
     } else {
@@ -2026,11 +2038,23 @@ void FoaNFC_next_a(FoaNFC *unit, int inNumSamples)
 
 void FoaProximity_Ctor(FoaProximity* unit)
 {
+    int numChannels = unit->mNumInputs;
+
     unit->m_y1x = 0.0f;
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
-    unit->m_speedOfSound = IN0(5);
+    /*
+    maintain backwards compatibility w/ atk-sc3 quark <= v5.0.3
+    https://github.com/ambisonictoolkit/atk-sc3
+    */
+    if (numChannels == 6) {
+        unit->m_speedOfSound = IN0(5);
+    } else {
+        // previous (equivalent) value
+        unit->m_speedOfSound = 333.0;
+    }
+
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaProximity_next_a);
     } else {
