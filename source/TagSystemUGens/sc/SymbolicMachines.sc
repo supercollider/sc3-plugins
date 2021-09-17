@@ -1,13 +1,13 @@
 
 
 Dfsm : DUGen {
+
 	*new { arg rules, n = 1, rgen;
-		^this.multiNewList(['demand', n, rgen ? Dwhite.new]
-			++ this.convertRules(rules))
+		^this.multiNewList(['demand', n, rgen ?? { Dwhite.new }] ++ this.convertRules(rules))
 	}
 
 	*convertRules { arg rules;
-		var states, nextStates, sizes, data, res;
+		var states, nextStates, sizes, data;
 
 		// if exit state not given, add one.
 		if(rules.size.odd) { rules = rules ++ 0.0 };
@@ -23,11 +23,8 @@ Dfsm : DUGen {
 		sizes = nextStates.collect { |x| x.asArray.size };
 		data = states ++ nextStates.flat;
 
-		res = [states.size] ++ sizes ++ data;
-		res.do { |x, i|
-			postf("% : %\n", i + 3, x.asCompileString)
-		};
-		^res;
+		^[states.size] ++ sizes ++ data
+
 	}
 
 }
