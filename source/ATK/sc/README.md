@@ -3,15 +3,24 @@ ATK UGens for SuperCollider3 : Read Me
 
 This is the unit generator plugin (UGen) component of the SuperCollider3 version
 of the Ambisonic Toolkit (ATK), which is distributed via the
-[sc3-plugins](https://github.com/supercollider/sc3-plugins) project. It can be
-used with [SuperCollider3](http://supercollider.github.io/) on OSX, Linux and
-Windows.
+[sc3-plugins](https://github.com/supercollider/sc3-plugins) project. It can be used with [SuperCollider](http://supercollider.github.io/) on OSX,
+Linux and Windows, and is distributed as a
+[Quark package](https://github.com/ambisonictoolkit/atk-sc3) with [sc3-plugins](https://github.com/supercollider/sc3-plugins) components, and
+[other dependencies](http://www.ambisonictoolkit.net/download/supercollider/).
+
 
 The Ambisonic Toolkit (ATK) is intended to bring together a number of
 tools and methods for working with Ambisonic surround sound. The intention
 is for the toolset to be both ergonomic and comprehensive, providing both
 classic and novel algorithms to creatively manipulate and synthesise
 complex Ambisonic soundfields.
+
+Tools are offered in two sets:
+* The first of these is modeled after the hardware and software
+tools offered in the world of classic, aka Gerzonic, First Order
+Ambisonics (FOA).
+* The second is framed as a modern Near-Field Controlled Higher Order
+Ambisonic (NFC-HOA) solution.
 
 The tools are framed for the user to think in terms of the soundfield
 kernel. By this, it is meant the ATK addresses the holistic problem of
@@ -24,11 +33,11 @@ technique.
 
 We hope you enjoy the ATK!
 
-For more information please visit the
-[Ambisonic Toolkit website](http:www.ambisonictoolkit.net) or send us an
+For more information please visit the [Ambisonic Toolkit
+website](http:www.ambisonictoolkit.net/) or send us an
 [e-mail](mailto:info[at]ambisonictoolkit.net). See also
-[Introducing the Ambisonic Toolkit](http://doc.sccode.org/Guides/Intro-to-the-ATK.html)
-for an overview on working with the ATK for SuperCollider3.
+[ABCs of the ATK](http://doc.sccode.org/Tutorials/ABCs-of-the-ATK.html)
+for an overview on working with the ATK for SuperCollider.
 
 
 
@@ -44,7 +53,7 @@ Installing
 Requirements
 ------------
 
-* ATK for [SuperCollider3](http://supercollider.github.io) requires version 3.5
+ATK for [SuperCollider](http://supercollider.github.io) requires version 3.10
 or later. Download the latest version
 [here](http://supercollider.github.io/download), or fork the source code at
 [GitHub](http://supercollider.github.io/).
@@ -54,9 +63,9 @@ or later. Download the latest version
 atk-sc3 Quark
 -----------
 
-The ATK for [SuperCollider3](http://supercollider.github.io)'s classes,
+The ATK for [SuperCollider](http://supercollider.github.io)'s classes,
 extension methods and documentation are distributed via the
-[atk-sc3 Quark](https://github.com/ambisonictoolkit/atk-sc3). Start by reviewing
+[atk-sc3 quark](https://github.com/ambisonictoolkit/atk-sc3). Start by reviewing
 the Quark installation instructions
 [found here](https://github.com/supercollider-quarks/quarks#installing). See
 also [Using Quarks](http://doc.sccode.org/Guides/UsingQuarks.html).
@@ -65,7 +74,16 @@ With [git](https://git-scm.com/) installed, you can easily install the
 [atk-sc3 Quark](https://github.com/ambisonictoolkit/atk-sc3) directly by
 running the following line of code in SuperCollider:
 
-    Quarks.install("https://github.com/ambisonictoolkit/atk-sc3.git");
+```supercollider
+Quarks.install("https://github.com/ambisonictoolkit/atk-sc3.git");
+```
+
+If you've previously installed the ATK, you'll want to update all the dependencies
+to their current versions. The easiest way to do so is via the Quarks GUI:
+
+```supercollider
+QuarksGui.new;
+```
 
 
 sc3-plugins
@@ -85,43 +103,58 @@ You may need to create the `Extensions` folder if it does not already exist.
 On other platforms, you can find where this is by running the following line of
 code in SuperCollider:
 
-    (  
-    // post the directory in which to move the SC3Plugins folder  
-    Platform.userExtensionDir.postln;  
-    )  
-    (  
-    // alternatively, SC can open it for you  
-    // (assuming it already exists! - you may need to create /Extensions)  
-    Platform.userExtensionDir.openOS;  
-    )  
+```supercollider
+(  
+// post the directory in which to move the SC3Plugins folder  
+Platform.userExtensionDir.postln;  
+)  
+(  
+// alternatively, SC can open it for you  
+// (assuming it already exists! - you may need to create /Extensions)  
+Platform.userExtensionDir.openOS;  
+)
+```
+
+If you've previously installed the ATK, you'll want to be sure to install the
+version of [sc3-plugins](https://github.com/supercollider/sc3-plugins/releases)
+that is compatible with your installed version of [SuperCollider](http://supercollider.github.io/download).
 
 
-Kernels & Recordings
+Kernels, Matrices & Soundfiles
 --------------------
 
-Additionally, the SuperCollider3 version of the ATK has further dependencies:
+Additionally, the SuperCollider version of the ATK has further dependencies:
 
-* Download and install [ATK Kernels](http://www.ambisonictoolkit.net/download/kernels/).
-* Download and install [ATK Sound File Example Recordings](http://www.ambisonictoolkit.net/download/recordings/).
+* [ATK Kernels](http://www.ambisonictoolkit.net/download/kernels/)
+* [ATK Matrices](http://www.ambisonictoolkit.net/download/matrices/)
+* [ATK Soundfiles](http://www.ambisonictoolkit.net/download/recordings/)
 
+Install Kernels, Matrices, and Soundfiles by running the following code:
+
+```supercollider
+Atk.downloadKernels;
+Atk.downloadMatrices;
+Atk.downloadSounds;
+```
+
+If successful, these three dependencies are installed here:
+
+```supercollider
+(
+// post the kernel, matrix and sounds directories
+Atk.userKernelDir.postln;
+Atk.userMatrixDir.postln;
+Atk.userSoundsDir.postln;
+)
+```
 
 &nbsp;
 
-### Source code
+Source code
+-----------
 
 You can build the ATK for SuperCollider UGen components from the [sc3-plugins](https://github.com/supercollider/sc3-plugins) source-code.
 
-
-&nbsp;
-
-If you are using Ambisonic Toolkit with Reaper as well,
-the convolution kernels are installed in the same place and have
-the exact same content. We do not expect this to cause any conflicts.
-
-If you want to take a look at the installed files and do not see the
-Library folder in Finder, please press the ALT button while clicking
-the "Go" menu in Finder. The Library folder will show up as an
-additional option.
 
 &nbsp;
 
@@ -136,10 +169,9 @@ You can find a collection of sound files here. (Download as part of installation
 
 Additional sound files can be grabbed from these fine sources:
 
-* [http://ambisonia.com/](http://ambisonia.com/).
-* [http://www.freesound.org/browse/tags/B-format/](http://www.freesound.org/browse/tags/B-format/).
-* [http://www.surround-library.com/](http://www.surround-library.com/) (commercial library ambisonic sound effects).
-* [http://www.spheric-collection.com/](http://www.spheric-collection.com/) (commercial library ambisonic sound effects).
+* [Ambisonic Sound Library](https://library.soundfield.com/).
+* [Ambisonia](http://ambisonia.com/).
+* [Freesound](http://www.freesound.org/browse/tags/B-format/).
 
 &nbsp;
 
@@ -157,15 +189,19 @@ Feedback and Bug Reports
 Known issues are logged at
 [GitHub](https://github.com/ambisonictoolkit/atk-sc3/issues).
 
-If you experience problems or have questions pertaining to the ATK for Reaper
-plugins, please create an issue in the
-[ATK-Reaper issue tracker](https://github.com/ambisonictoolkit/atk-sc3/issues).
+If you experience problems or have questions pertaining to the ATK for
+SuperCollider, please create an issue in the
+[atk-sc3 issue tracker](https://github.com/ambisonictoolkit/atk-sc3/issues).
 
-If you use the plugins for some project, please
-[let us know](mailto:info[at]ambisonictoolkit.net). We
-[plan on](https://github.com/ambisonictoolkit/ambisonictoolkit.github.io/issues/9)
-adding a gallery of example artistic and creative projects that make use of the
-Ambisonic Toolkit.
+Experienced users and the developers are active participants on
+the [sc-users mailing list](http://www.beast.bham.ac.uk/research/sc_mailing_lists.shtml).
+Questions posted here are usually answered fairly quickly.
+
+An archive of this list can be searched from
+[this page](http://www.listarc.bham.ac.uk/lists/sc-users/search/).
+
+If need be, the developers can be contacted directly via
+[this address](info@ambisonictoolkit.net).
 
 &nbsp;
 
@@ -173,7 +209,12 @@ Ambisonic Toolkit.
 List of Changes
 ---------------
 
-Unreleased 3.9.0
+Version 3.12.0
+
+*  Refactoring:
+    * Update (AtkFoa.speedOfSound == AtkHoa.speedOfSound) & user settable
+
+Version 3.9.0
 
 *  Refactoring:
     *  Quark-ify: classes, extension methods & documentation moved to
@@ -291,7 +332,7 @@ Credits
 &nbsp;
 
 Copyright the ATK Community, Joseph Anderson, and Joshua Parmenter, 2011,
-2016-17.
+2016-21.
 
 * J Anderson : [[e-mail]](mailto:j.anderson[at]ambisonictoolkit.net)
 * J Parmenter : [[e-mail]](mailto:j.parmenter[at]ambisonictoolkit.net)
@@ -309,7 +350,10 @@ are copyright the Ambisonic Toolkit Community and Joseph Anderson,
 Contributors
 ------------
 
-Unreleased 3.9.0
+Version 3.12.0
+*  Joseph Anderson (@joslloand)
+
+Version 3.9.0
 *  Joseph Anderson (@joslloand)
 *  Julian Rohrhuber (@telephon)
 *  Michael McCrea (@mtmccrea)

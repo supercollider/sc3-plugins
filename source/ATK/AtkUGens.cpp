@@ -136,12 +136,12 @@ struct FoaDominateZ : FoaDominateX { };
 
 struct FoaNFC : public Unit
 {
-    float m_distanceStart, m_y1x, m_y1y, m_y1z;
+    float m_distanceStart, m_speedOfSound, m_y1x, m_y1y, m_y1z;
 };
 
 struct FoaProximity : public Unit
 {
-    float m_distanceStart, m_y1x, m_y1y, m_y1z;
+    float m_distanceStart, m_speedOfSound, m_y1x, m_y1y, m_y1z;
 };
 
 struct FoaPsychoShelf : public Unit
@@ -1910,13 +1910,26 @@ void FoaAsymmetry_next_k(FoaAsymmetry *unit, int inNumSamples)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-// FoaNFC - 
+// FoaNFC
 void FoaNFC_Ctor(FoaNFC* unit)
 {
+    int numChannels = unit->mNumInputs;
+
     unit->m_y1x = 0.0f;
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
+    /*
+    maintain backwards compatibility w/ atk-sc3 quark <= v5.0.3
+    https://github.com/ambisonictoolkit/atk-sc3
+    */
+    if (numChannels == 6) {
+        unit->m_speedOfSound = IN0(5);
+    } else {
+        // previous (equivalent) value
+        unit->m_speedOfSound = 333.0;
+    }
+
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaNFC_next_a);
     } else {
@@ -1937,19 +1950,17 @@ void FoaNFC_next_k(FoaNFC *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float distanceEnd = IN0(4);
+    float speedOfSound = unit->m_speedOfSound;
+
     float distanceStart = unit->m_distanceStart;
-    
     float distanceInc = CALCSLOPE(distanceEnd, distanceStart);
-    
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
-    for(int i = 0; i < inNumSamples; i++){
-		float freq = 53.0 / distanceStart;
-		float wc = (twopi * freq) * SAMPLEDUR;
 
-		//	a0 = (1 + (wc.cos.neg * 2 + 2).sqrt).reciprocal;
+    for(int i = 0; i < inNumSamples; i++){
+		float wc = (speedOfSound / distanceStart) * SAMPLEDUR;
 		float a0 = 1 / (sqrt((cos(wc) * -2) + 2) + 1);
 
 		// W is passed straight out
@@ -1990,14 +2001,14 @@ void FoaNFC_next_a(FoaNFC *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float *distance = IN(4);
-    
+    float speedOfSound = unit->m_speedOfSound;
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
+
     for(int i = 0; i < inNumSamples; i++){
-		float freq = 53.0 / distance[i];
-		float wc = (twopi * freq) * SAMPLEDUR;
+		float wc = (speedOfSound / distance[i]) * SAMPLEDUR;
 		float a0 = 1 / (sqrt((cos(wc) * -2) + 2) + 1);
 
 		// W is passed straight out
@@ -2027,10 +2038,23 @@ void FoaNFC_next_a(FoaNFC *unit, int inNumSamples)
 
 void FoaProximity_Ctor(FoaProximity* unit)
 {
+    int numChannels = unit->mNumInputs;
+
     unit->m_y1x = 0.0f;
     unit->m_y1y = 0.0f;
     unit->m_y1z = 0.0f;
     unit->m_distanceStart = IN0(4);
+    /*
+    maintain backwards compatibility w/ atk-sc3 quark <= v5.0.3
+    https://github.com/ambisonictoolkit/atk-sc3
+    */
+    if (numChannels == 6) {
+        unit->m_speedOfSound = IN0(5);
+    } else {
+        // previous (equivalent) value
+        unit->m_speedOfSound = 333.0;
+    }
+
     if (INRATE(4) == calc_FullRate) {
 	SETCALC(FoaProximity_next_a);
     } else {
@@ -2051,19 +2075,17 @@ void FoaProximity_next_k(FoaProximity *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float distanceEnd = IN0(4);
+    float speedOfSound = unit->m_speedOfSound;
+
     float distanceStart = unit->m_distanceStart;
-    
     float distanceInc = CALCSLOPE(distanceEnd, distanceStart);
-    
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
-    for(int i=0; i<inNumSamples;i++){
-		float freq = 53.0 / distanceStart;
-		float wc = (twopi * freq) * SAMPLEDUR;
 
-		//	a0 = 1 + (wc.cos.neg * 2 + 2).sqrt;
+    for(int i = 0; i < inNumSamples;i++){
+		float wc = (speedOfSound / distanceStart) * SAMPLEDUR;
 		float a0 = 1 + sqrt((cos(wc) * -2) + 2);
 
 		// W is passed straight out
@@ -2104,14 +2126,14 @@ void FoaProximity_next_a(FoaProximity *unit, int inNumSamples)
     float *Yin = IN(2);
     float *Zin = IN(3);
     float *distance = IN(4);
-    
+    float speedOfSound = unit->m_speedOfSound;
+
     float y1x = unit->m_y1x;
     float y1y = unit->m_y1y;
     float y1z = unit->m_y1z;
-    
-    for(int i = 0; i<inNumSamples; i++){
-		float freq = 53.0 / distance[i];
-		float wc = (twopi * freq) * SAMPLEDUR;
+
+    for(int i = 0; i < inNumSamples; i++){
+		float wc = (speedOfSound / distance[i]) * SAMPLEDUR;
 		float a0 = 1 + sqrt((cos(wc) * -2) + 2);
 
 		// W is passed straight out
