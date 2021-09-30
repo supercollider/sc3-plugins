@@ -8,6 +8,12 @@ on:
       - '**.schelp'
       - 'README'
       - 'LICENSE'
+      - '_data/**'
+      - '.bundle/**'
+      - 'assets/**'
+      - 'index.*'
+      - '_config.yml'
+      - 'Gemfile*'
   pull_request:
     paths-ignore:
       - '**.md'
@@ -16,6 +22,12 @@ on:
       - '**.schelp'
       - 'README'
       - 'LICENSE'
+      - '_data/**'
+      - '.bundle/**'
+      - 'assets/**'
+      - 'index.*'
+      - '_config.yml'
+      - 'Gemfile*'
 
 jobs:
   build:
