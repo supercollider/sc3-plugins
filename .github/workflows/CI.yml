@@ -8,6 +8,12 @@ on:
       - '**.schelp'
       - 'README'
       - 'LICENSE'
+      - '_data/**'
+      - '.bundle/**'
+      - 'assets/**'
+      - 'index.*'
+      - '_config.yml'
+      - 'Gemfile*'
   pull_request:
     paths-ignore:
       - '**.md'
@@ -16,6 +22,12 @@ on:
       - '**.schelp'
       - 'README'
       - 'LICENSE'
+      - '_data/**'
+      - '.bundle/**'
+      - 'assets/**'
+      - 'index.*'
+      - '_config.yml'
+      - 'Gemfile*'
 
 jobs:
   build:
@@ -27,25 +39,25 @@ jobs:
         include:
           - name: Linux-x64
             os: ubuntu-18.04
+            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
+            cache-path: '~/.ccache'
             
           - name: macOS
             os: macos-10.15
-            cmake-generator: 'Xcode'
+            cmake-flags: '-G Xcode'
             xcode-version: '10.3'
             deployment-target: '10.10'
             
-          - name: Windows-32bit-VS
-            cmake-generator: 'Visual Studio 16 2019'
-            cmake-arch: 'Win32'
+          - name: Windows-32bit
             os: windows-2019
+            cmake-flags: '-G "Visual Studio 16 2019" -A Win32'
             vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
             fftw-arch: 'X86'
             
-          - name: Windows-64bit-VS
+          - name: Windows-64bit
             os: windows-2019
-            cmake-generator: 'Visual Studio 16 2019'
-            cmake-arch: 'x64'
+            cmake-flags: '-G "Visual Studio 16 2019" -A x64'
             vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
             fftw-arch: 'X64'
@@ -79,6 +91,13 @@ jobs:
         repository: supercollider/supercollider
         path: ${{ env.SC_SRC_PATH }}
         ref: main
+    - name: cache ccache
+      uses: actions/cache@v2
+      if: matrix.cache-path
+      with:
+        path: ${{ matrix.cache-path }}
+        key: ${{ matrix.name }}-${{ github.run_id }}
+        restore-keys: ${{ matrix.name }}-
     - name: install Linux dependencies
       if: runner.os == 'Linux'
       run: sudo apt-get install --yes libfftw3-dev
@@ -93,19 +112,17 @@ jobs:
       if: matrix.vcvars-script
       shell: cmd
       working-directory: ${{ env.FFTW_INSTALL_DIR }}
-      env:
-        DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
-        MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         call "${{ matrix.vcvars-script }}"
         lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
     - name: configure
       shell: bash
+      env:
+        DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
+        MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         mkdir $BUILD_PATH && cd $BUILD_PATH
-        GENERATOR="${{ matrix.cmake-generator }}"
-        ARCH="${{ matrix.cmake-arch }}"
-        cmake ${GENERATOR:+-G "$GENERATOR"} ${ARCH:+-A "$ARCH"} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF -D CMAKE_OSX_DEPLOYMENT_TARGET=10.10 .. --debug-output
+        cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF ..
     - name: build
       shell: bash
       working-directory: ${{ env.BUILD_PATH }}
