@@ -96,6 +96,9 @@ ambisonics) subproject.
 + Build Ladspa UGen
     * (macOS AND LINUX ONLY, default=ON)
     * `sc3-plugins/build/$ cmake -DLADSPA=ON ..`
++ Install libraries in suffixed `lib` directory (eg. `lib64`)
+    * (64-BIT LINUX ONLY)
+    * `cmake -DLIB_SUFFIX=64`
 + Print all cmake options
     * `sc3-plugins/build/$ cmake -L ..`
 

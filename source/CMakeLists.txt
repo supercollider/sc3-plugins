@@ -145,7 +145,7 @@ GET_GCC_VERSION(gcc_version)
 
 
 if(UNIX AND NOT APPLE)
-	option(LIB_SUFFIX "Install plugins to suffixed lib directory: eg. `64` for `lib64`")
+    option(LIB_SUFFIX "Install plugins to suffixed lib directory: eg. `64` for `lib64`")
 endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|.*BSD|DragonFly")
