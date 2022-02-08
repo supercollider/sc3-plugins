@@ -144,8 +144,12 @@ endif()
 GET_GCC_VERSION(gcc_version)
 
 
+if(UNIX AND NOT APPLE)
+    option(LIB_SUFFIX "Install plugins to suffixed lib directory: eg. `64` for `lib64`")
+endif()
+
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|.*BSD|DragonFly")
-    set(INSTALL_DESTINATION "lib/SuperCollider/plugins")
+    set(INSTALL_DESTINATION "lib${LIB_SUFFIX}/SuperCollider/plugins")
     if (QUARKS)
         set(INSTALL_DESTINATION_LADSPALIST
                 "share/SuperCollider/SC3plugins/LadspaUGen")
