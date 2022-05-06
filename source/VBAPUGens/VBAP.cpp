@@ -88,8 +88,8 @@ using nova::wrap_argument;
 #endif
 
 #define RES_ID 9171					/* resource ID for assistance (we'll add that later) */
-#define MAX_LS_SETS 100				/* maximum number of loudspeaker sets (triplets or pairs) allowed */
-#define MAX_LS_AMOUNT 55			/* maximum amount of loudspeakers, can be increased */
+#define MAX_LS_SETS 256				/* maximum number of loudspeaker sets (triplets or pairs) allowed */
+#define MAX_LS_AMOUNT 128			/* maximum amount of loudspeakers, can be increased */
 
 static InterfaceTable *ft;
 

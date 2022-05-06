@@ -27,7 +27,7 @@ use or for distribution:
 
 
 VBAPSpeakerArray {
-	classvar <>maxNumSpeakers = 55, minSideLength = 0.01;
+	classvar <>maxNumSpeakers = 128, minSideLength = 0.01;
 	var <dim, <speakers, <numSpeakers, sets;
 
 	*new { |dim, directions|
