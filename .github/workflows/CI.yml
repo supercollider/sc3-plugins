@@ -65,6 +65,8 @@ jobs:
       BUILD_PATH: ${{ github.workspace }}/build
       INSTALL_PATH: ${{ github.workspace }}/build/install
       FFTW_INSTALL_DIR: "C:/Program Files/fftw"
+      DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
+      MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
 
     name: ${{ matrix.name }}
     steps:
@@ -115,9 +117,6 @@ jobs:
         lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
     - name: configure
       shell: bash
-      env:
-        DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
-        MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         mkdir $BUILD_PATH && cd $BUILD_PATH
         cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF ..
