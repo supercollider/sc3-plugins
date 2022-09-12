@@ -1,0 +1,56 @@
+TITLE:: StkPluck
+categories:: UGens>PhysicalModels>StkUGens
+related:: Classes/Stk, Classes/StkInst
+
+CLASSMETHODS::
+
+METHOD:: ar
+ARGUMENT:: freq
+ARGUMENT:: decay
+ARGUMENT:: mul
+ARGUMENT:: add
+
+
+EXAMPLES::
+code::
+( // Add SynthDef.
+SynthDef(\helpStkPluck, {
+    arg freq=440, decay=0.99, amp=0.2, gate=1, out=0;
+
+    var env = EnvGen.kr(Env.asr(0,1,0.1), gate, doneAction:2);
+    var sig = StkPluck.ar(freq, decay);
+    sig = sig * env * amp;
+
+    Out.ar(0, sig.dup);
+}).add;
+)
+
+( // Play SynthDef
+Pbind(
+    \instrument, \helpStkPluck,
+    \degree, Pseq([0,2,4,8], 1),
+    \dur, 1
+).play;
+)
+
+( // Guitar tuning.
+var midinotes=[40, 45, 50, 55, 59, 64];
+Pbind(
+    \instrument, \helpStkPluck,
+    \midinote, Pseq(midinotes),
+    \dur, 1
+).play;
+)
+
+( // Guitar chords.
+var midinotes=[40, 45, 50, 55, 59, 64];
+var fretsE=[ 0,  2,  2,  1,  0,  0];
+var fretsA=[Rest(0), 0, 2, 2, 2, 0];
+Pbind(
+    \instrument, \helpStkPluck,
+    \midinote, midinotes + Pseq([Pn(fretsE, 8), Pn(fretsA, 8)], 2),
+    \strum, Pseq([1, -1], inf) * Pwhite(0.0125, 0.035),
+    \dur, Pseq([2, 2, 1, 1, 1/2, 1/2, 1/2, 1/2], inf)
+).play;
+)
+::

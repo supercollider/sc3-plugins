@@ -1,0 +1,48 @@
+TITLE:: StkShakers
+categories:: UGens>PhysicalModels>StkUGens
+related:: Classes/Stk, Classes/StkInst
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: instr
+An integer between 0 and 21, inclusive. Instruments can be found with link::#-directory::
+ARGUMENT:: energy
+ARGUMENT:: decay
+ARGUMENT:: objects
+ARGUMENT:: resfreq
+ARGUMENT:: mul
+ARGUMENT:: add
+
+METHOD:: directory
+Returns a dictionary of shaker instrument numbers.
+RETURNS:: A link::Classes/Dictionary::
+code::
+StkShakers.directory;
+::
+
+EXAMPLES::
+
+code::
+(
+SynthDef(\helpStkShakers, {
+    arg instr=0, energy=64, decay=64, objects=64, resfreq=64, amp=0.2, gate=1;
+
+    var env = EnvGen.kr(Env.asr(0, 1, 0.1), gate: gate, doneAction: 2);
+    var sig = StkShakers.ar(instr, energy, decay, objects, resfreq);
+    sig = sig * env * amp;
+
+    Out.ar(0, sig.dup);
+}).add;
+)
+
+(
+Pbind(
+    \instrument, \helpStkShakers,
+    \instr, 11,
+    \dur, Pseq([2, Rest(2), 2, Rest(2), 2]),
+    \amp, 0.5
+).play;
+)
+::
