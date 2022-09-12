@@ -629,11 +629,11 @@ void StkBowed_next(StkBowed *unit, int inNumSamples)
 	*/
 	if(gate != unit->gate){
 		if(gate){
-			Print("Starting\n");
+			//Print("Starting\n");
 		    unit->bowed->noteOn(freq, 1000.f);
 //			unit->bowed->startBowing(1.f, IN0(7)); // IN0(7) is attackrate
 		}else{
-			Print("Stopping\n");
+			//Print("Stopping\n");
 			unit->bowed->noteOff(1000.f);
 //			unit->bowed->stopBowing(IN0(8)); // IN0(8) is decayrate
 		}
