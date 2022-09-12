@@ -36,14 +36,14 @@ jobs:
       matrix:
         include:
           - name: Linux-x64
-            os: ubuntu-18.04
+            os: ubuntu-20.04
             cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
             cache-path: '~/.ccache'
             
           - name: macOS
-            os: macos-10.15
-            cmake-flags: '-G Xcode'
-            xcode-version: '10.3'
+            os: macos-11
+            cmake-flags: '-G Xcode -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
+            xcode-version: '12.4'
             deployment-target: '10.10'
             
           - name: Windows-32bit
@@ -65,6 +65,8 @@ jobs:
       BUILD_PATH: ${{ github.workspace }}/build
       INSTALL_PATH: ${{ github.workspace }}/build/install
       FFTW_INSTALL_DIR: "C:/Program Files/fftw"
+      DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
+      MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
 
     name: ${{ matrix.name }}
     steps:
@@ -115,9 +117,6 @@ jobs:
         lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
     - name: configure
       shell: bash
-      env:
-        DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
-        MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
       run: |
         mkdir $BUILD_PATH && cd $BUILD_PATH
         cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF ..
