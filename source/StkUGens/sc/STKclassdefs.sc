@@ -49,11 +49,45 @@ StkSaxofony : UGen {
 }
 
 StkShakers : UGen {
+	classvar shakerTypes;
+
+	*initClass {
+		shakerTypes = Dictionary[
+			"Maraca" -> 0,
+			"Cabasa" -> 1,
+			"Sekere" -> 2,
+			"Guiro" -> 3,
+			"Water Drops" -> 4,
+			"Bamboo Chimes" -> 5,
+			"Tambourine" -> 6,
+			"Sleigh Bells" -> 7,
+			"Sticks" -> 8,
+			"Crunch" -> 9,
+			"Wrench" -> 10,
+			"Sand Paper" -> 11,
+			"Coke Can" -> 12,
+			"Next Mug" -> 13,
+			"Penny + Mug" -> 14,
+			"Nickle + Mug" -> 15, // Mispelling of "Nickel" in original STK docs
+			"Dime + Mug" -> 16,
+			"Quarter + Mug" -> 17,
+			"Franc + Mug" -> 18,
+			"Peso + Mug" -> 19,
+			"Big Rocks" -> 20,
+			"Little Rocks" -> 21,
+			"Tuned Bamboo Chimes" -> 21
+		].freeze;
+	}
+
 	*ar { arg  instr=0, energy=64, decay=64, objects=64, resfreq=64, mul = 1.0, add = 0.0;
 		^this.multiNew('audio',instr, energy, decay, objects, resfreq).madd(mul, add)
 	}
 	*kr { arg   instr=0, energy=64, decay=64, objects=64, resfreq=64, mul = 1.0, add = 0.0;
 		^this.multiNew('control',  instr, energy, decay, objects, resfreq ).madd(mul, add)
+	}
+
+	*directory {
+		^shakerTypes
 	}
 }
 
