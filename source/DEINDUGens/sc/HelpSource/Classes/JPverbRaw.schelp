@@ -38,14 +38,14 @@ Sets frequency at which the crossover between the low and mid bands of the rever
 argument::lowx
 Sets multiplier for the reverberation time within the low band. (0..1)
 
-argument::midx
-Sets multiplier for the reverberation time within the mid band. (0..1)
-
 argument::mdepth
 Sets depth of delay-line modulation in samples. Use in combination with mFreq to set amount of chorusing within the structure. (0..50)
 
 argument::mfreq
 Sets frequency of delay-line modulation. Use in combination with mDepth to set amount of chorusing within the structure. (0..10)
+
+argument::midx
+Sets multiplier for the reverberation time within the mid band. (0..1)
 
 argument::size
 Scales size of delay-lines within the reverberator, producing the impression of a larger or smaller space. Values below 1 can sound quite metallic. (0.5..5)
