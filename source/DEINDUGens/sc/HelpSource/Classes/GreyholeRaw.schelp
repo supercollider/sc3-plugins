@@ -13,9 +13,6 @@ CLASSMETHODS::
 private:: categories
 
 METHOD:: ar
-*ar { | in1, in2, damping(0.0), delaytime(2.0), diffusion(0.5), feedback(0.9), moddepth(0.1), modfreq(2.0), size(1.0) |
-    ^this.multiNew('audio', in1, in2, damping, delaytime, diffusion, feedback, moddepth, modfreq, size)
-
 
 argument::in1
 Left channel
