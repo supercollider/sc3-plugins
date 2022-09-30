@@ -75,7 +75,7 @@ StkShakers : UGen {
 			"Peso + Mug" -> 19,
 			"Big Rocks" -> 20,
 			"Little Rocks" -> 21,
-			"Tuned Bamboo Chimes" -> 21
+			"Tuned Bamboo Chimes" -> 22
 		].freeze;
 	}
 
