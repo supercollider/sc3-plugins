@@ -51,9 +51,10 @@ move_sources() {
 
 sign_sources() {
   cd "${output_dir}"
-  gpg2 --default-key "${signer}" \
-       --output "${package_name}-${version}-Source.tar.bz2.asc" \
-       --detach-sign "${package_name}-${version}-Source.tar.bz2"
+  gpg --detach-sign \
+      -u "${signer}" \
+      -o "${package_name}-${version}-Source.tar.bz2.asc" \
+      "${package_name}-${version}-Source.tar.bz2"
 }
 
 cleanup_source_dir() {
