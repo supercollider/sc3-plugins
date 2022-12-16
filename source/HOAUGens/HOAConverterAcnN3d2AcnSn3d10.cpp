@@ -5637,7 +5637,7 @@ inline static void Faust_updateControls(Faust* unit)
     Control* controls = unit->mControls;
     size_t numControls = unit->mNumControls;
     int curControl = unit->mDSP->getNumInputs();
-    for (int i = 0; i < numControls; ++i) {
+    for (size_t i = 0; i < numControls; ++i) {
         float value = IN0(curControl);
         (controls++)->update(value);
         curControl++;
