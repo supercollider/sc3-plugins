@@ -1,6 +1,5 @@
 # sc3-plugins
-**Note:** This is a fork of the original repository. It was modified to facilitate the use of VBAP with more than 55 loudspeakers.
-There are several rooms at the University of Music, Karlsruhe, where this is useful: 1) "3D Sound Lab" (63.1 setup) , 2) "Wolfgang-Rihm-Forum" (58.4 setup).
+
 
 This repository contains the community collection of unit generator plugins for [SuperCollider](http://supercollider.github.io/).
 An installation extends the functionality of SuperCollider by additional UGens that run on `scsynth`, the SuperCollider audio synthesis server.
