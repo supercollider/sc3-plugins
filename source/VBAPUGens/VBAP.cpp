@@ -108,7 +108,7 @@ struct VBAP : Unit
 	float x_spread_base[3];				   /* used to create uniform spreading */
 	float *final_gs;
 
-	float m_chanamp[MAX_LS_AMOUNT]; // for smoothing amp changes max channels 55 at the moment
+	float m_chanamp[MAX_LS_AMOUNT]; // for smoothing amp changes max channels 128 at the moment
 };
 
 // for circular smoothing

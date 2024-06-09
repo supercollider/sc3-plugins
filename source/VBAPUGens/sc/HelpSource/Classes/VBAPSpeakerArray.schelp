@@ -30,7 +30,7 @@ VBAPSpeakerArray.new(3, [[-22.5, 14.97], [22.5, 14.97], [-67.5, 14.97], [67.5, 1
 ::
 
 method:: maxNumSpeakers
-Set/get the maximum number of speakers in an array. Default is 55. (This limitation will be removed in a later version.)
+Set/get the maximum number of speakers in an array. Default is 128.
 
 instancemethods::
 
