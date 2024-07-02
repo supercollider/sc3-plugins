@@ -50,6 +50,8 @@ git clone --recursive https://github.com/supercollider/sc3-plugins.git
 git clone --recursive https://github.com/supercollider/supercollider.git
 ```
 
+Note, if you are building for an older version of supercollider you should checkout the sc3-plugins tag which matches the version of supercollider.
+
 Be sure to use `--recursive`, or to initialize the submodules after cloning, otherwise you will not have files
 that are necessary to build the project.
 
