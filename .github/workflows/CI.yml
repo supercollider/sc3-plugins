@@ -136,6 +136,9 @@ jobs:
         else
           zip -r ${{ steps.set-filename.outputs.filename }}.zip .
         fi
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          zip -d ${{ steps.set-filename.outputs.filename }}.zip \*/._\*
+        fi
     - name: upload artifacts
       uses: actions/upload-artifact@v2
       with:
