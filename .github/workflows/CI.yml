@@ -92,7 +92,7 @@ jobs:
         path: ${{ env.SC_SRC_PATH }}
         ref: main
     - name: cache ccache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       if: matrix.cache-path
       with:
         path: ${{ matrix.cache-path }}
