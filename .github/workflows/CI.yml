@@ -82,11 +82,11 @@ jobs:
         fi
         echo "::set-output name=filename::sc3-plugins-$VERSION-${{ matrix.name }}"
     - name: checkout sc3-plugins
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: checkout supercollider
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: supercollider/supercollider
         path: ${{ env.SC_SRC_PATH }}
