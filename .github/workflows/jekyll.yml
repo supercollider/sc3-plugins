@@ -27,7 +27,7 @@ jobs:
     - name: setup ruby and build
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
+        ruby-version: 3.3
         bundler: 'Gemfile.lock'
         bundler-cache: true # this will run bundle install
 
