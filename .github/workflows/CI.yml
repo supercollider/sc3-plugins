@@ -35,8 +35,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Linux-x64
+          - name: Linux-x64-22.04
             os: ubuntu-22.04
+            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
+            cache-path: '~/.ccache'
+
+          - name: Linux-x64-24.04
+            os: ubuntu-24.04
             cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
             cache-path: '~/.ccache'
             
