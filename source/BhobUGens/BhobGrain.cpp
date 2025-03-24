@@ -28,7 +28,7 @@ static InterfaceTable* ft;
 struct Grain2 {
     double phase, rate, attPhase, decPhase;
     double attIncr, decIncr;
-    float pan1, pan2;
+    float pan1, pan2, amp;
     int startDelay, counter, decCount;
     int bufnum;
     int chan;
@@ -112,12 +112,12 @@ inline double sc_gloop(double in, double hi) {
     const auto attPhase = grain->attPhase;                                                                             \
     const auto decPhase = grain->decPhase;                                                                             \
     if (counter > grain->decCount) {                                                                                   \
-        amp = attPhase;                                                                                                \
+        amp = attPhase * grain->amp;                                                                                   \
         if (attPhase < 1.f) {                                                                                          \
             grain->attPhase += grain->attIncr;                                                                         \
         }                                                                                                              \
     } else {                                                                                                           \
-        amp = decPhase;                                                                                                \
+        amp = decPhase * grain->amp;                                                                                   \
         grain->decPhase -= grain->decIncr;                                                                             \
     }
 
@@ -230,7 +230,7 @@ void TGrains2_next(TGrains2* unit, const int inNumSamples) {
             double phase = centerPhase - 0.5 * counter * rate;
 
             float pan = IN_AT(unit, 5, i);
-            const float amp = IN_AT(unit, 6, i);
+            grain->amp = IN_AT(unit, 6, i);
             double att = sc_max((double)IN_AT(unit, 7, i), SAMPLEDUR);
             double dec = IN_AT(unit, 8, i);
 
@@ -385,12 +385,12 @@ void TGrains2_Ctor(TGrains2* unit) {
     const int i_attPhase = (int)grain->attPhase;                                                                       \
     const int i_decPhase = (int)grain->decPhase;                                                                       \
     if (counter > grain->decCount) {                                                                                   \
-        amp = window[sc_min(i_attPhase, windowSize)];                                                                  \
+        amp = window[sc_min(i_attPhase, windowSize)] * grain->amp;                                                     \
         if (i_attPhase < windowSize) {                                                                                 \
             grain->attPhase += grain->attIncr;                                                                         \
         }                                                                                                              \
     } else {                                                                                                           \
-        amp = window[sc_max(i_decPhase, 0)];                                                                           \
+        amp = window[sc_max(i_decPhase, 0)] * grain->amp;                                                              \
         grain->decPhase -= grain->decIncr;                                                                             \
     }
 
@@ -443,7 +443,7 @@ void TGrains3_next(TGrains3* unit, int inNumSamples) {
             double phase = centerPhase - 0.5 * counter * rate;
 
             float pan = IN_AT(unit, 5, i);
-            const float amp = IN_AT(unit, 6, i);
+            grain->amp = IN_AT(unit, 6, i);
             double att = IN_AT(unit, 7, i);
             double dec = IN_AT(unit, 8, i);
 
