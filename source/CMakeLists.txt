@@ -93,6 +93,7 @@ set(PLUGIN_DIRS
     GlitchUGens
     JoshUGens
     LoopBufUGens
+    LFSRNoiseUGens
     MCLDUGens
     MdaUGens
     Neuromodules
