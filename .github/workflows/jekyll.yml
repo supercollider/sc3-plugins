@@ -10,6 +10,7 @@ on:
       - '_config.yml'
       - 'Gemfile*'
       - 'README.md'
+      - '.github/**'
 
 jobs:
   build:
