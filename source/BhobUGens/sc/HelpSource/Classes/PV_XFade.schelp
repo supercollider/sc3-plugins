@@ -6,7 +6,7 @@ categories:: UGens>FFT
 
 Description::
 
-Interpolates bins between two fft buffers.
+Interpolates bins between two fft buffers by interpolating each bin's complex (Cartesian) coordinates.
 
 
 classmethods::
