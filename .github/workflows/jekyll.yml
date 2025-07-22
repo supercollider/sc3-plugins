@@ -10,10 +10,11 @@ on:
       - '_config.yml'
       - 'Gemfile*'
       - 'README.md'
+      - '.github/**'
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: 'jekyll build'
     env:
       # use BUNDLE_ env vars to set 'bundle config' options
