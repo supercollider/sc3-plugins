@@ -26,6 +26,7 @@ on:
       - 'index.*'
       - '_config.yml'
       - 'Gemfile*'
+  workflow_dispatch:
 
 jobs:
   build:
