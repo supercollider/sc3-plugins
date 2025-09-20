@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.12)
 set(SUPERNOVA_CMAKE_MINVERSION 3.1)
 project (sc3-plugins)
 
