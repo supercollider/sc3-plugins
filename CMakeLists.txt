@@ -73,6 +73,7 @@ option(NATIVE "Optimize for this specific machine." OFF)
 option(SYSTEM_STK "Use STK libraries from system" OFF)
 option(HOA_UGENS "Build with HOAUGens (Higher-order Ambisonics)" ON)
 option(NOVA_DISK_IO "Build with Nova's DiskIO UGens (experimental). Requires SuperCollider source code." OFF)
+option(USE_CCACHE "Use ccache if available." ON)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 	set(CMAKE_COMPILER_IS_CLANG 1)
@@ -143,6 +144,65 @@ endif()
 # all plugins directories in the dmg root)
 if (APPLE AND OSX_PACKAGE)
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/build_osx")
+endif()
+
+############################################
+# Detect CCache
+
+if(USE_CCACHE)
+
+  # find ccache
+  find_program(CCACHE_PROGRAM ccache)
+
+  if(CCACHE_PROGRAM)
+
+    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+
+    if (MSVC)
+      # workaround for Visual Studio adapted from https://github.com/ccache/ccache/wiki/MS-Visual-Studio#usage
+      # NOTE: there is an issue with ccache installed from chocolatey
+      # since chocolatey puts a "shim" as opposed to the actual executable in the PATH
+      # the solution is to add the path to the actual ccache executable earlier in the path
+      # e.g. in bash: export PATH=`echo c:/ProgramData/chocolatey/lib/ccache/tools/ccache*`:$PATH
+      message(STATUS "Found ccache at ${CCACHE_PROGRAM}: using ccache with MSVC to speed up build process")
+
+      file(COPY_FILE
+        ${CCACHE_PROGRAM} ${CMAKE_BINARY_DIR}/cl.exe
+        ONLY_IF_DIFFERENT)
+
+      set(CMAKE_VS_GLOBALS
+        "CLToolExe=cl.exe"
+        "CLToolPath=${CMAKE_BINARY_DIR}"
+        "TrackFileAccess=false"
+        "UseMultiToolTask=true"
+        "DebugInformationFormat=OldStyle"
+      )
+    else()
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        message(STATUS "Found ccache at ${CCACHE_PROGRAM}: using ccache with Xcode to speed up build process")
+
+        # workaround for using ccache with Xcode generator
+        # thanks to Craig Scott: https://crascit.com/2016/04/09/using-ccache-with-cmake/
+
+        # Set up wrapper scripts
+        set(SC_LAUNCH_C_SCRIPT   "${CMAKE_BINARY_DIR}/launch-c")
+        set(SC_LAUNCH_CXX_SCRIPT "${CMAKE_BINARY_DIR}/launch-cxx")
+        configure_file("cmake_modules/launch-c.in"   launch-c)
+        configure_file("cmake_modules/launch-cxx.in" launch-cxx)
+        execute_process(COMMAND chmod a+rx "${SC_LAUNCH_C_SCRIPT}" "${SC_LAUNCH_CXX_SCRIPT}")
+
+        # Set Xcode project attributes to route compilation and linking
+        # through our scripts
+        set(CMAKE_XCODE_ATTRIBUTE_CC         "${SC_LAUNCH_C_SCRIPT}")
+        set(CMAKE_XCODE_ATTRIBUTE_CXX        "${SC_LAUNCH_CXX_SCRIPT}")
+        set(CMAKE_XCODE_ATTRIBUTE_LD         "${SC_LAUNCH_C_SCRIPT}")
+        set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS "${SC_LAUNCH_CXX_SCRIPT}")
+      else()
+        message(STATUS "Found ccache at ${CCACHE_PROGRAM}: using ccache to speed up build process")
+      endif() # Xcode
+    endif() # MSVC
+  endif() # ccache found
 endif()
 
 add_subdirectory(source)
