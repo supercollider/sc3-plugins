@@ -38,19 +38,20 @@ jobs:
         include:
           - name: Linux-x64-22.04
             os: ubuntu-22.04
-            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
-            cache-path: '~/.ccache'
+            cmake-flags: '-G "Unix Makefiles"'
+            cache-path: '~/.cache/ccache'
 
           - name: Linux-x64-24.04
             os: ubuntu-24.04
-            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
-            cache-path: '~/.ccache'
+            cmake-flags: '-G "Unix Makefiles"'
+            cache-path: '~/.cache/ccache'
             
           - name: macOS
             os: macos-14
             cmake-flags: '-G Xcode -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
             xcode-version: '15.4'
             deployment-target: '10.15'
+            cache-path: '~/Library/Caches/ccache'
             
           - name: Windows-32bit
             os: windows-2022
@@ -58,6 +59,7 @@ jobs:
             vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
             fftw-arch: 'X86'
+            cache-path: '~/AppData/Local/ccache'
             
           - name: Windows-64bit
             os: windows-2022
@@ -65,6 +67,7 @@ jobs:
             vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
             fftw-arch: 'X64'
+            cache-path: '~/AppData/Local/ccache'
 
     env:
       SC_SRC_PATH: ${{ github.workspace }}/supercollider
@@ -106,7 +109,16 @@ jobs:
         restore-keys: ${{ matrix.name }}-
     - name: install Linux dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get install --yes libfftw3-dev
+      run: sudo apt-get install --yes libfftw3-dev ccache
+    - name: install macOS dependencies
+      if: runner.os == 'macOS'
+      run: brew install ccache
+    - name: install Windows dependencies
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        choco install ccache --no-progress
+        echo "`echo c:/ProgramData/chocolatey/lib/ccache/tools/ccache*`" >> $GITHUB_PATH # put the direct path before the path of the choco's "shim" (link substitute)
     - name: install FFTW
       if: runner.os == 'Windows'
       shell: bash
