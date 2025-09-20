@@ -86,7 +86,7 @@ jobs:
         else
           VERSION=$GITHUB_SHA
         fi
-        echo "::set-output name=filename::sc3-plugins-$VERSION-${{ matrix.name }}"
+        echo "filename=sc3-plugins-$VERSION-${{ matrix.name }}" >> $GITHUB_OUTPUT
     - name: checkout sc3-plugins
       uses: actions/checkout@v4
       with:
