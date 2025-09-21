@@ -1,0 +1,96 @@
+class:: PV_Whiten
+summary:: Adaptive whitening
+categories::  UGens>FFT, UGens>Analysis
+related:: OnsetsDS
+
+Description::
+
+This UGen implements a kind of real-time "adaptive whitening", in other words, boosting some frequency ranges with the aim of ensuring that all frequencies' dynamic ranges reach the same peak. It tracks the peak magnitudes within each FFT bin, and rescales the values over time so that the peak magnitude in each bin reaches a value of 1. The memory of recent peaks fades over time, fading away in a time specified by the relaxtime parameter but never dropping below floor (the default floor of 0.1 is useful for many applications but for some applications you may wish to push it right down, as far as 0.000001). Floor should never be zero or negative; you'll probably have divide-by-zero problems in those cases.
+
+PV_Whiten requires a secondary buffer (the parameter trackbufnum) in which it will store its record of recent magnitudes. You can query this buffer while the synth is running, to get a view of the current state of the bin tracking.
+
+
+Note: relaxtime needs to be scaled according to the frame-rate of your FFT stream. In other words, the default of 0.1 does not represent 0.1 seconds, but 0.1 * (frame hop size), which when using the standard FFT UGen means 0.1 * (FFT size / 2). For FFT of size 512 (as used in the examples below) this means 0.1 ==> 25.6 seconds relax time.
+
+
+The smear factor smooths out the spectral profile being derived. If the smear factor is greater than zero, the stored magnitudes are compared against their immediate neighbours multiplied by the smear factor, the largest value being kept.  Sensible values for the smear factor are between zero and one. The UGen will not prevent you from trying unsensible values.
+
+
+The motivation for creating this UGen was as a preprocessing step for onset detection - see link::OnsetsDS:: - but feel free to use it for other things.
+
+classmethods::
+
+method::new
+
+argument::chain
+an fft chain
+
+argument::trackbufnum
+a secondary buffer in which will store records of recent magnitudes
+
+argument::relaxtime
+the memory of recent peaks fades over time, fading away in a time specified by the relaxtime parameter
+
+argument::floor
+minimun value for floor the memory of recent peaks fades over time. The default floor of 0.1 is useful for many applications but for some applications you may wish to push it right down, as far as 0.000001; floor should never be zero or negative; you'll probably have divide-by-zero problems in those cases.
+
+argument::smear
+smooths out the spectral profile being derived. If the smear factor is greater than zero, the stored magnitudes are compared against their immediate neighbours multiplied by the smear factor, the largest value being kept. Sensible values for the smear factor are between zero and one.
+
+argument::bindownsample
+
+Examples::
+
+code::
+
+(
+s.boot.doWhenBooted({
+b = Buffer.alloc(s, 512, 1); // For FFT
+c = Buffer.read(s,"sounds/a11wlk01.wav");
+d = Buffer.alloc(s, 512, 1); // For PV_Whiten to store its peak estimates
+});
+)
+
+
+(
+// Move the mouse left-right to vary the relax time, up/down to vary the smear
+SynthDef("help-pv_whiten", { arg out=0, bufnum=0, soundBufnum=2, trackbufnum=3;
+	var in, chain;
+
+	in = PlayBuf.ar(1, soundBufnum, BufRateScale.kr(soundBufnum), loop: 1);
+	chain = FFT(bufnum, in);
+	chain = PV_Whiten(chain, trackbufnum, MouseX.kr(0.01, 10, 1), smear: MouseY.kr(0, 1));
+
+	Out.ar(out, 0.5 * IFFT(chain).dup);
+
+}).play(s,[\out, 0, \bufnum, b.bufnum, \soundBufnum, c.bufnum, \trackbufnum, d.bufnum]);
+)
+
+
+// What's in the buffer?
+
+d.getToFloatArray(action: {|ar| {ar.plot}.defer});
+
+
+// This task plots the buffer contents many times per second.
+// WARNING: You'll probably need Cmd+. to stop it
+
+(
+
+t = Task({
+	var oldw;
+	loop({
+	d.getToFloatArray(count: 150, action: {|ar| {
+		oldw = w;
+		w = ar.plot;
+		if(oldw.isNil.not, {oldw.close});
+	}.defer});
+
+	0.05.wait;
+
+})}).play;
+)
+
+t.stop;
+::
+
