@@ -15,7 +15,7 @@ TestMovingSum : UnitTest {
 		numTestSamps = Server.default.sampleRate / 2;
 
 		// ramp up to sumWin and hold that value through numTestSamps
-		testOutput = (1.0, 2 .. sumWin)++(numTestSamps - sumWin).asInt.collect{sumWin};
+		testOutput = (1.0, 2 .. sumWin)++(numTestSamps - sumWin).asInteger.collect{sumWin};
 
 		[RunningSum, MovingSum].do{ |ugen, i|
 

@@ -56,7 +56,7 @@
 
 		while({ (upperInd - lowerInd) > 1 },{
 
-			centerInd = (((upperInd - lowerInd)/2.0)+lowerInd).round.asInt;
+			centerInd = (((upperInd - lowerInd)/2.0)+lowerInd).round.asInteger;
 
 			if( value < this[centerInd], {
 				upperInd = centerInd;
@@ -84,7 +84,7 @@
 
 			while({ (upperInd - lowerInd) > 1 },{
 
-				centerInd = (((upperInd - lowerInd)/2.0)+lowerInd).round.asInt;
+				centerInd = (((upperInd - lowerInd)/2.0)+lowerInd).round.asInteger;
 
 				if( value < this[centerInd], {
 					upperInd = centerInd;
