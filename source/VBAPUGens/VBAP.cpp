@@ -87,19 +87,19 @@ using nova::wrap_argument;
 
 #endif
 
-#define RES_ID 9171					/* resource ID for assistance (we'll add that later) */
-#define MAX_LS_SETS 100				/* maximum number of loudspeaker sets (triplets or pairs) allowed */
-#define MAX_LS_AMOUNT 55			/* maximum amount of loudspeakers, can be increased */
 
 static InterfaceTable *ft;
+
+static float rad2ang = 360.0 / ( 2.0f * pi );
+static float atorad = (2.0f * pi) / 360.0f;
 
 struct VBAP : Unit
 {
 	float x_azi;				/* panning direction azimuth */
 	float x_ele;				/* panning direction elevation */
-	float x_set_inv_matx[MAX_LS_SETS][9];  /* inverse matrice for each loudspeaker set */
-	float x_set_matx[MAX_LS_SETS][9];	   /* matrice for each loudspeaker set */
-	int x_lsset[MAX_LS_SETS][3];		  /* channel numbers of loudspeakers in each LS set */
+    float* *x_set_inv_matx;  /* inverse matrice for each loudspeaker set */
+    float* *x_set_matx;      /* matrice for each loudspeaker set */
+    int* *x_lsset;          /* channel numbers of loudspeakers in each LS set */
 	int x_lsset_available;			/* have loudspeaker sets been defined with define_loudspeakers */
 	int x_lsset_amount;			/* amount of loudspeaker sets */
 	int x_ls_amount;					  /* amount of loudspeakers */
@@ -108,7 +108,7 @@ struct VBAP : Unit
 	float x_spread_base[3];				   /* used to create uniform spreading */
 	float *final_gs;
 
-	float m_chanamp[MAX_LS_AMOUNT]; // for smoothing amp changes max channels 55 at the moment
+	float *m_chanamp;
 };
 
 // for circular smoothing
@@ -140,7 +140,6 @@ extern "C"
 static void angle_to_cart(float azi, float ele, float res[3])
 /* converts angular coordinates to cartesian */
 {
-	float atorad = (2 * 3.1415927 / 360) ;
 	res[0] = cos((float) azi * atorad) * cos((float) ele * atorad);
 	res[1] = sin((float) azi * atorad) * cos((float) ele * atorad);
 	res[2] = sin((float) ele * atorad);
@@ -149,10 +148,6 @@ static void angle_to_cart(float azi, float ele, float res[3])
 static void cart_to_angle(float cvec[3], float avec[3])
 /* converts cartesian coordinates to angular */
 {
-	//	float tmp, tmp2, tmp3, tmp4; /* warning: unused variable */
-	float atorad = (2 * 3.1415927 / 360) ;
-	float pi =	3.1415927;
-	//	float power; /* warning: unused variable */
 	float dist, atan_y_per_x, atan_x_pl_y_per_z;
 	float azi, ele;
 
@@ -187,14 +182,13 @@ static void new_spread_dir(VBAP *x, float spreaddir[3], float vscartdir[3], floa
 {
 	float beta,gamma;
 	float a,b;
-	float pi = 3.1415927;
 	float power;
 
 	gamma = acos(vscartdir[0] * spread_base[0] +
 				 vscartdir[1] * spread_base[1] +
 				 vscartdir[2] * spread_base[2])/pi*180;
-	if(fabs(gamma) < 1){
-		angle_to_cart(x->x_azi+90, 0, spread_base);
+	if(fabs(gamma) < 1 || fabs(gamma) > 179 || fabs(gamma) < -179){
+		angle_to_cart(x->x_azi+90.0, 0, spread_base);
 		gamma = acos(vscartdir[0] * spread_base[0] +
 					 vscartdir[1] * spread_base[1] +
 					 vscartdir[2] * spread_base[2])/pi*180;
@@ -217,7 +211,6 @@ static void new_spread_base(VBAP *x, float spreaddir[3], float vscartdir[3])
 /* subroutine for spreading */
 {
 	float d;
-	float pi = 3.1415927;
 	float power;
 
 	d = cos(x->x_spread/180*pi);
@@ -254,11 +247,9 @@ static void additive_vbap(float *final_gs, float cartdir[3], VBAP *x)
 	float small_g;
 	float big_sm_g, gtmp[3];
 	int winner_set;
-	//		float new_cartdir[3];	/* warning: unused variable */
-	//		float new_angle_dir[3];		/* warning: unused variable */
 	int dim = x->x_dimension;
 	int neg_g_am, best_neg_g_am;
-	float g[3];
+	float g[3] = { 0, 0, 0 };
 	int ls[3] = { 0, 0, 0 };
 
 	big_sm_g = -100000.0;
@@ -302,25 +293,19 @@ static void additive_vbap(float *final_gs, float cartdir[3], VBAP *x)
 		if(g[i]<-0.01){
 			gains_modified=1;
 		}
-
-	if(gains_modified != 1){
-		if(dim==3)
-			power=sqrt(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
-		else
-			power=sqrt(g[0]*g[0] + g[1]*g[1]);
-		g[0] /= power;
-		g[1] /= power;
-		if(dim==3)
-			g[2] /= power;
-
-		final_gs[ls[0]-1] += g[0];
-		final_gs[ls[1]-1] += g[1];
-		/* BUG FIX: this was causing negative indices with 2 dimensions so I
-		 * made it only try when using 3 dimensions.
-		 * 2006-08-13 <hans@at.or.at> */
-		if(dim==3)
-			final_gs[ls[2]-1] += g[2];
-	}
+		
+    // new from PD
+    if(gains_modified != 1){
+  		power=sqrt(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
+  		g[0] /= power;
+  		g[1] /= power;
+  		g[2] /= power;
+  		
+  		final_gs[ls[0]-1] += g[0];
+  		final_gs[ls[1]-1] += g[1];
+  		if (dim==3)
+  			final_gs[ls[2]-1] += g[2];
+  	}
 }
 
 static void spread_it(VBAP *x, float *final_gs)
@@ -413,23 +398,28 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 	float new_angle_dir[3];
 	int dim = x->x_dimension;
 	int neg_g_am, best_neg_g_am;
-
-	/* transfering the azimuth angle to a decent value */
-	while(x->x_azi > 180)
-		x->x_azi -= 360;
-	while(x->x_azi < -179)
-		x->x_azi += 360;
-
-	/* transferring the elevation to a decent value */
-	if(dim == 3){
-		while(x->x_ele > 180)
-			x->x_ele -= 360;
-		while(x->x_ele < -179)
-			x->x_ele += 360;
-	} else
-		x->x_ele = 0;
-
-
+	
+    // new from PD
+    // transfering the azimuth angle to a decent value
+    if(x->x_azi > 360.0 || x->x_azi < -360.0)
+        x->x_azi = fmod(x->x_azi, 360.0);
+    if(x->x_azi > 180.0)
+        x->x_azi -= 360.0;
+    if(x->x_azi < -179.0)
+        x->x_azi += 360.0;
+    
+  	
+    // transferring the elevation to a decent value
+    if(dim == 3){
+        if(x->x_ele > 360.0 || x->x_ele < -360.0)
+            x->x_ele = fmod(x->x_ele, 360.0);
+        if(x->x_ele > 180.0)
+            x->x_ele -= 360.0;
+        if(x->x_ele < -179.0)
+            x->x_ele += 360.0;
+    } else
+        x->x_ele = 0.0;
+	
 	/* go through all defined loudspeaker sets and find the set which
 		// has all positive values. If such is not found, set with largest
 		// minimum value is chosen. If at least one of gain factors of one LS set is negative
@@ -472,29 +462,30 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 		// calculate direction that corresponds	 to these new
 		// gain values. This happens when the virtual source is outside of
 		// all loudspeaker sets. */
-
-	if(dim==3){
-		gains_modified=0;
-		for(i=0;i<dim;i++)
-			if(g[i]<-0.01){
-				g[i]=0.0001;
-				gains_modified=1;
-			}
-		if(gains_modified==1){
-			new_cartdir[0] =  x->x_set_matx[winner_set][0] * g[0]
-				+ x->x_set_matx[winner_set][1] * g[1]
-				+ x->x_set_matx[winner_set][2] * g[2];
-			new_cartdir[1] =  x->x_set_matx[winner_set][3] * g[0]
-				+ x->x_set_matx[winner_set][4] * g[1]
-				+ x->x_set_matx[winner_set][5] * g[2];
-			new_cartdir[2] =  x->x_set_matx[winner_set][6] * g[0]
-				+ x->x_set_matx[winner_set][7] * g[1]
-				+ x->x_set_matx[winner_set][8] * g[2];
-			cart_to_angle(new_cartdir,new_angle_dir);
-			x->x_azi = (float) (new_angle_dir[0] + 0.5);
-			x->x_ele = (float) (new_angle_dir[1] + 0.5);
-		}
-	}
+	
+    gains_modified=0;
+    for(i=0;i<dim;i++)
+        if(g[i]<-0.01){
+            g[i]=0.0001;
+            gains_modified=1;
+        }
+    
+        if(gains_modified==1){
+            new_cartdir[0] =  x->x_set_matx[winner_set][0] * g[0] 
+            + x->x_set_matx[winner_set][1] * g[1]
+            + x->x_set_matx[winner_set][2] * g[2];
+            new_cartdir[1] =  x->x_set_matx[winner_set][3] * g[0] 
+                + x->x_set_matx[winner_set][4] * g[1] 
+                + x->x_set_matx[winner_set][5] * g[2];
+            if (dim == 3) {
+                new_cartdir[2] =  x->x_set_matx[winner_set][6] * g[0] 
+                    + x->x_set_matx[winner_set][7] * g[1]
+                    + x->x_set_matx[winner_set][8] * g[2];
+            } else new_cartdir[2] = 0;
+            cart_to_angle(new_cartdir,new_angle_dir);
+            x->x_azi = (new_angle_dir[0]);
+            x->x_ele = (new_angle_dir[1]);
+        }
 
 		power=sqrt(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
 		g[0] /= power;
@@ -605,10 +596,14 @@ static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 }
 #endif
 
+// needs to check that numOutputs and x_ls_amount match!!
 static void VBAP_Ctor(VBAP* unit)
 {
+	//printf("VBAP-1.0.3.2\n");
 	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
-
+	
+    unit->m_chanamp = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
+    
 	// initialise interpolation levels and outputs
 	for (int i=0; i<numOutputs; ++i) {
 		unit->m_chanamp[i] = 0;
@@ -660,6 +655,15 @@ static void VBAP_Ctor(VBAP* unit)
 //		return;
 	}
 
+    unit->x_set_inv_matx = (float**)RTAlloc(unit->mWorld, counter * sizeof(float*));
+    unit->x_set_matx = (float**)RTAlloc(unit->mWorld, counter * sizeof(float*));
+    unit->x_lsset = (int**)RTAlloc(unit->mWorld, counter * sizeof(int*));
+    
+    for(i=0; i<counter; i++){
+        unit->x_set_inv_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
+        unit->x_set_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
+        unit->x_lsset[i] = (int*)RTAlloc(unit->mWorld, 3 * sizeof(int));
+    }
 	// probably sets should be created with rtalloc
 	while(counter-- > 0){
 		for(i=0; i < unit->x_dimension; i++){
@@ -688,23 +692,52 @@ static void VBAP_Ctor(VBAP* unit)
 #endif
 		SETCALC(VBAP_next);
 
-    if (unit->x_lsset_available == 1) {
-        unit->x_spread_base[0] = 0.0;
-        unit->x_spread_base[1] = 1.0;
-        unit->x_spread_base[2] = 0.0;
-        VBAP_next(unit, 1); // calculate initial gain factors && compute initial sample
-    } else {
-        ZOUT0(0) = 0;
+	ZOUT0(0) = ZIN0(0);
+	unit->x_azi = ZIN0(2);
+	unit->x_ele = ZIN0(3);
+	unit->x_spread_base[0] = 0.0;
+	unit->x_spread_base[1] = 1.0;
+	unit->x_spread_base[2] = 0.0;
+	unit->x_spread = ZIN0(4);
+	
+	// calculate initial gain factors
+	float g[3];
+	int ls[3];
+	float *final_gs = unit->final_gs;
+	
+	if(unit->x_lsset_available ==1){
+		vbap(g,ls, unit);
+		for(i=0;i<unit->x_ls_amount;i++)
+			final_gs[i]=0.0; 			
+		for(i=0;i<unit->x_dimension;i++){
+			final_gs[ls[i]-1]=g[i];  
+		}
+		if(unit->x_spread != 0){
+			spread_it(unit,final_gs);
+		}
+
+	} else {
 		// if the ls data was bad, just set every gain to 0 and bail
 		for(i=0;i<unit->x_ls_amount;i++)
-			unit->final_gs[i]=0.f;
+			final_gs[i]=0.f;
     }
 }
 
 
 static void VBAP_Dtor(VBAP* unit)
 {
+    int counter = unit->x_lsset_amount;
 	RTFree(unit->mWorld, unit->final_gs);
+    
+    for(int i=0; i<counter; i++){
+        RTFree(unit->mWorld, unit->x_set_inv_matx[i]);
+        RTFree(unit->mWorld, unit->x_set_matx[i]);
+        RTFree(unit->mWorld, unit->x_lsset[i]);
+    }
+    
+    RTFree(unit->mWorld, unit->x_set_inv_matx);
+    RTFree(unit->mWorld, unit->x_set_matx);
+    RTFree(unit->mWorld, unit->x_lsset);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

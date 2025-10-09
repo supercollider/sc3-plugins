@@ -1,6 +1,6 @@
 /*
 VBAP created by Ville Pukki
-This version ported from ver 0.99 PD code by Scott Wilson
+This version ported from ver 1.0.3.2 PD code by Scott Wilson
 Development funded in part by the AHRC http://www.ahrc.ac.uk
 
 Copyright
@@ -27,7 +27,7 @@ use or for distribution:
 
 
 VBAPSpeakerArray {
-	classvar <>maxNumSpeakers = 55, minSideLength = 0.01;
+	classvar minSideLength = 0.01;
 	var <dim, <speakers, <numSpeakers, sets;
 
 	*new { |dim, directions|
@@ -42,7 +42,7 @@ VBAPSpeakerArray {
 	}
 
 	anglesToCartesian {
-		var atorad = (2 * 3.1415927 / 360);
+		var atorad = (2 * pi / 360);
 		speakers.do({ |spkr|
 			var azi, ele;
 			azi = spkr.azi;
@@ -70,6 +70,10 @@ VBAPSpeakerArray {
 		^Buffer.loadCollection(server, this.getSetsAndMatrices);
 	}
 
+	sendToBuffer {|server|
+		^Buffer.sendCollection(server, this.getSetsAndMatrices);
+	}
+
 
 	     /* Selects the loudspeaker triplets, and
       calculates the inversion matrices for each selected triplet.
@@ -85,24 +89,19 @@ VBAPSpeakerArray {
 
 	choose_ls_triplets {
 		var i1, j1, k1, m, li, table_size;
-		var vb1,vb2,tmp_vec; // instances of VBAPSpeaker
 		var connections;
-		var angles;
-		var sorted_angles;
 		var distance_table;
 		var distance_table_i;
 		var distance_table_j;
 		var distance;
 
 		// init vars defined above
-		connections = Array.fill(maxNumSpeakers, {Array.newClear(maxNumSpeakers)});
-		angles = Array.newClear(maxNumSpeakers);
-		sorted_angles = Array.newClear(maxNumSpeakers);
-		distance_table = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-		distance_table_i = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
-		distance_table_j = Array.newClear((maxNumSpeakers * (maxNumSpeakers - 1)) / 2);
+		connections = Array.fill(numSpeakers, {Array.newClear(numSpeakers)});
+		distance_table = Array.newClear((numSpeakers * (numSpeakers - 1)) / 2);
+		distance_table_i = Array.newClear((numSpeakers * (numSpeakers - 1)) / 2);
+		distance_table_j = Array.newClear((numSpeakers * (numSpeakers - 1)) / 2);
 
-		sets = nil;
+  		sets = nil;
 		for(0.0, numSpeakers -1, {|i|
 			for(i+1.0, numSpeakers -1, {|j|
 				for(j+1.0, numSpeakers -1, {|k|
@@ -180,9 +179,9 @@ VBAPSpeakerArray {
 	     /* checks if two lines intersect on 3D sphere
 	       */
 		var v1, v2, v3, neg_v3; // VBAPSpeaker
-		var angle;
 		var dist_ij,dist_kl,dist_iv3,dist_jv3,dist_inv3,dist_jnv3;
 		var dist_kv3,dist_lv3,dist_knv3,dist_lnv3;
+		var epsilon = 1e-9;
 
 		v1 = this.unq_cross_prod(speakers[i], speakers[j]);
 		v2 = this.unq_cross_prod(speakers[k], speakers[l]);
@@ -205,16 +204,16 @@ VBAPSpeakerArray {
 		dist_lnv3 = (this.vec_angle(neg_v3, speakers[l]));
 
 		/* if one of loudspeakers is close to crossing point, don't do anything*/
-		if((abs(dist_iv3) <= 0.01) || (abs(dist_jv3) <= 0.01) ||
-			(abs(dist_kv3) <= 0.01) || (abs(dist_lv3) <= 0.01) ||
-			(abs(dist_inv3) <= 0.01) || (abs(dist_jnv3) <= 0.01) ||
-			(abs(dist_knv3) <= 0.01) || (abs(dist_lnv3) <= 0.01), {^false});
+		if((abs(dist_iv3) <= epsilon) || (abs(dist_jv3) <= epsilon) ||
+			(abs(dist_kv3) <= epsilon) || (abs(dist_lv3) <= epsilon) ||
+			(abs(dist_inv3) <= epsilon) || (abs(dist_jnv3) <= epsilon) ||
+			(abs(dist_knv3) <= epsilon) || (abs(dist_lnv3) <= epsilon), {^false});
 
 		/* if crossing point is on line between both loudspeakers return 1 */
-		if (((abs(dist_ij - (dist_iv3 + dist_jv3)) <= 0.01 ) &&
-	       (abs(dist_kl - (dist_kv3 + dist_lv3))  <= 0.01)) ||
-	      ((abs(dist_ij - (dist_inv3 + dist_jnv3)) <= 0.01)  &&
-	       (abs(dist_kl - (dist_knv3 + dist_lnv3)) <= 0.01 )), { ^true}, {^false});
+		if (((abs(dist_ij - (dist_iv3 + dist_jv3)) <= epsilon ) &&
+	       (abs(dist_kl - (dist_kv3 + dist_lv3))  <= epsilon)) ||
+	      ((abs(dist_ij - (dist_inv3 + dist_jnv3)) <= epsilon)  &&
+	       (abs(dist_kl - (dist_knv3 + dist_lnv3)) <= epsilon )), { ^true}, {^false});
 
 	}
 
@@ -389,22 +388,22 @@ VBAPSpeakerArray {
 	choose_ls_tuplets {
      /* selects the loudspeaker pairs, calculates the inversion
         matrices and stores the data to a global array*/
-		var atorad = (2 * 3.1415927 / 360);
-		var w1,w2;
-		var p1,p2;
+		var atorad = (2 * pi / 360);
 		var sorted_lss;
 		var exist;
 		var amount=0;
 		var inv_mat;
-		var ls_table;
+		var mat;
 		var list_length;
 		var result;
 		var pointer;
 
-		exist = Array.newClear(maxNumSpeakers);
-		inv_mat = Array.fill(maxNumSpeakers, {Array.newClear(4)});
+		exist = Array.newClear(numSpeakers);
+		inv_mat = Array.fill(numSpeakers, {Array.newClear(4)});
+		// not sure
+		mat = Array.fill(numSpeakers, {Array.newClear(4)});
 
-		for(0, maxNumSpeakers - 1, {|i|
+		for(0, numSpeakers - 1, {|i|
 			exist[i]=0;
 		});
 
@@ -415,25 +414,25 @@ VBAPSpeakerArray {
 		for(0, numSpeakers -2, {|i|
 			if((speakers[sorted_lss[i+1]].azi - speakers[sorted_lss[i]].azi) <= (180 - 10), {
 				if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[i]].azi,
-					speakers[sorted_lss[i+1]].azi, inv_mat[i]),{
+					speakers[sorted_lss[i+1]].azi, inv_mat[i], mat[i]),{
 					exist[i]=1;
 					amount = amount + 1;
 				});
 			});
 		});
 
-		if(((6.283 - speakers[sorted_lss[numSpeakers-1]].azi)
+		if(((360 - speakers[sorted_lss[numSpeakers-1]].azi)
 			+ speakers[sorted_lss[0]].azi) <= (180 -  10), {
 			if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[numSpeakers-1]].azi,
                            speakers[sorted_lss[0]].azi,
-                           inv_mat[numSpeakers-1]), {
+				inv_mat[numSpeakers-1], mat[numSpeakers-1]), {
 				exist[numSpeakers-1]=1;
 				amount = amount + 1;
 			});
 		});
 
 		/* Output */
-		list_length= amount * 6 + 2;
+		list_length= amount * 10 + 2;
 		result = Array.newClear(list_length);
 
 		result[0] = dim;
@@ -450,6 +449,10 @@ VBAPSpeakerArray {
 					result[pointer] = inv_mat[i][j];
 					pointer = pointer + 1;
 				});
+				for(0, 3, {|j|
+					result[pointer] = mat[i][j];
+					pointer = pointer + 1;
+				});
 			});
 		});
 		if(exist[numSpeakers-1] == 1, {
@@ -461,6 +464,10 @@ VBAPSpeakerArray {
 				result[pointer] = inv_mat[numSpeakers-1][j];
 				pointer = pointer + 1;
 			});
+			for(0, 3, {|j|
+				result[pointer] = mat[numSpeakers-1][j];
+				pointer = pointer + 1;
+			});
 		});
 		^result;
 	}
@@ -468,14 +475,12 @@ VBAPSpeakerArray {
 	sort_2D_lss {
 		/* sort loudspeakers according to azimuth angle */
 
-		var i,j,index;
+		var i,j;
 		var tmp, tmp_azi;
 		var rad2ang = 360.0 / ( 2 * pi );
-
-		var x,y;
 		var sorted_lss;
 
-		sorted_lss = Array.newClear(maxNumSpeakers);
+		sorted_lss = Array.newClear(numSpeakers);
 
 		/* Transforming angles between -180 and 180 */
 		for (0, numSpeakers - 1, {|i|
@@ -488,7 +493,9 @@ VBAPSpeakerArray {
 			speakers[i].azi = speakers[i].azi * tmp;
 		});
 		for (0, numSpeakers - 1, {|i|
+			var index = 0;
 			tmp = 2000;
+
 			for (0, numSpeakers - 1, {|j|
 				if (speakers[j].azi <= tmp, {
 					tmp = speakers[j].azi;
@@ -506,18 +513,17 @@ VBAPSpeakerArray {
 		^sorted_lss;
 	}
 
-	calc_2D_inv_tmatrix { |azi1, azi2, inv_mat|
+	calc_2D_inv_tmatrix { |azi1, azi2, inv_mat, mat|
 	/* calculate inverse 2x2 matrix */
 
 		var x1,x2,x3,x4;
-		var y1,y2,y3,y4;
 		var det;
-		var rad2ang = 360.0 / ( 2  * 3.141592 );
+		var rad2ang = 360.0 / ( 2  * pi );
 
-		x1 = cos(azi1 / rad2ang);
-		x2 = sin(azi1 / rad2ang);
-		x3 = cos(azi2 / rad2ang);
-		x4 = sin(azi2 / rad2ang);
+		mat[0] = x1 = cos(azi1 / rad2ang);
+		mat[1] = x2 = sin(azi1 / rad2ang);
+		mat[2] = x3 = cos(azi2 / rad2ang);
+		mat[3] = x4 = sin(azi2 / rad2ang);
 		det = (x1 * x4) - ( x3 * x2 );
 		if(abs(det) <= 0.001, {
 			inv_mat[0] = 0.0;

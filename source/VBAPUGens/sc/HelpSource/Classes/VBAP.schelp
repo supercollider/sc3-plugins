@@ -5,7 +5,7 @@ related:: Classes/VBAPSpeakerArray, Classes/CircleRamp
 
 description::
 An implementation of Vector Base Amplitude Panning. footnote::
-This version of VBAP for SC was ported from the ver. 0.99 PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
+This version of VBAP for SC was ported from PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
 :: This allows for equal power panning of a source over an arbitrary array of equidistant speakers. Normally this would be a ring, a dome, or partial dome.
 
 VBAP was created by Ville Pulkki. For more information on VBAP see http://www.acoustics.hut.fi/research/cat/vbap/
