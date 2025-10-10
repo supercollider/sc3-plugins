@@ -1,0 +1,28 @@
+class:: BFold
+summary:: Wavefolder virtual analog model
+categories:: UGens>Filters
+
+
+Description::
+A model of the "timbre" circuit of the Buchla 259 Complex Wave Generator. The model follows the circuit modelling as seen on the paper link::http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_82.pdf::, using 5 folds.
+
+
+classmethods::
+
+method::ar
+
+argument::in
+Input signal.
+
+argument::fold
+Folding amount (audio rate). Useful range: [0, ..]
+
+argument::offset
+Input offset (control rate). Useful range: [-1, 1].
+
+
+Examples::
+
+code::
+{BFold.ar(SinOsc.ar(200), K2A.ar(MouseX.kr(0,3)), MouseY.kr(-1,1))}.scope
+::
