@@ -8,7 +8,7 @@ VBAPSpeaker represents a speaker in a VBAPSpeakerArray. Its instance variables a
 
 VBAP was created by Ville Pulkki. For more information on VBAP see http://www.acoustics.hut.fi/research/cat/vbap/
 
-This version of VBAP for SC was ported from the ver. 0.99 PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
+This version of VBAP for SC was ported from the PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
 
 classmethods::
 
