@@ -1,26 +1,24 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __jack_midi__
@@ -28,36 +26,35 @@
 
 #include <iostream>
 #include <cstdlib>
+
 #include <jack/midiport.h>
 #include "faust/midi/midi.h"
 #include "faust/gui/ring-buffer.h"
 
 class MapUI;
 
-class jack_midi_handler : public midi_handler {
+//-----------------------------------------------
+// MIDI input/output handling using JACK library
+//-----------------------------------------------
 
+class jack_midi_handler : public midi_handler {
+        
     protected:
 
         ringbuffer_t* fOutBuffer;
 
-        void writeMessage(unsigned char* buffer, size_t size)
+        void writeMessage(double date, unsigned char* buffer, size_t size)
         {
-            if (fOutBuffer) {
-                size_t res;
-                // Write size of message
-                if ((res = ringbuffer_write(fOutBuffer, (const char*)&size, sizeof(size_t))) != sizeof(size_t)) {
-                    std::cerr << "writeMessage size : error size = " << size << " res = " << res << std::endl;
-                }
-                // Write message content
-                if ((res = ringbuffer_write(fOutBuffer, (const char*)buffer, size)) != size) {
-                    std::cerr << "writeMessage size : error size = " << size << " res = " << res << std::endl;
-                }
+            size_t res;
+            DatedMessage dated_message(date, buffer, size);
+            if ((res = ringbuffer_write(fOutBuffer, (const char*)&dated_message, sizeof(DatedMessage))) != sizeof(DatedMessage)) {
+                std::cerr << "ringbuffer_write error DatedMessage" << std::endl;
             }
         }
 
         void processMidiInBuffer(void* port_buf_in)
         {
-            for (int i = 0; i < jack_midi_get_event_count(port_buf_in); ++i) {
+            for (size_t i = 0; i < jack_midi_get_event_count(port_buf_in); ++i) {
                 jack_midi_event_t event;
                 if (jack_midi_event_get(&event, port_buf_in, i) == 0) {
 
@@ -73,6 +70,9 @@ class jack_midi_handler : public midi_handler {
                         handleData1(time, type, channel, (int)event.buffer[1]);
                     } else if (nBytes == 3) {
                         handleData2(time, type, channel, (int)event.buffer[1], (int)event.buffer[2]);
+                    } else {
+                        std::vector<unsigned char> message(event.buffer, event.buffer + event.size);
+                        handleMessage(time, type, message);
                     }
                 }
             }
@@ -87,17 +87,13 @@ class jack_midi_handler : public midi_handler {
             } else {
                 jack_midi_clear_buffer(port_buf_out);
             }
-            size_t res, message_size;
-         
+           
             // Write each message one by one
-            while (ringbuffer_read(fOutBuffer, (char*)&message_size, sizeof(message_size)) == sizeof(message_size)) {
-                // Reserve MIDI event with the correct size
-                jack_midi_data_t* data = jack_midi_event_reserve(port_buf_out, 0, message_size);
+            DatedMessage dated_message;
+            while (ringbuffer_read(fOutBuffer, (char*)&dated_message, sizeof(DatedMessage)) == sizeof(DatedMessage)) {
+                jack_midi_data_t* data = jack_midi_event_reserve(port_buf_out, dated_message.fDate, dated_message.fSize);
                 if (data) {
-                    // Write its content
-                    if ((res = ringbuffer_read(fOutBuffer, (char*)data, message_size)) != message_size) {
-                        std::cerr << "processMidiOut incorrect message : res = " << res << std::endl;
-                    }
+                    memcpy(data, dated_message.fBuffer, dated_message.fSize);
                 } else {
                     std::cerr << "jack_midi_event_reserve error" << std::endl;
                 }
@@ -116,13 +112,14 @@ class jack_midi_handler : public midi_handler {
             ringbuffer_free(fOutBuffer);
         }
 
+        // MIDI output API
         MapUI* keyOn(int channel, int pitch, int velocity)
         {
             unsigned char buffer[3]
                 = { static_cast<unsigned char>(MIDI_NOTE_ON + channel),
                     static_cast<unsigned char>(pitch),
                     static_cast<unsigned char>(velocity) };
-            writeMessage(buffer, 3);
+            writeMessage(0, buffer, 3);
             return 0;
         }
 
@@ -132,7 +129,7 @@ class jack_midi_handler : public midi_handler {
                 = { static_cast<unsigned char>(MIDI_NOTE_OFF + channel),
                     static_cast<unsigned char>(pitch),
                     static_cast<unsigned char>(velocity) };
-            writeMessage(buffer, 3);
+            writeMessage(0, buffer, 3);
         }
 
         void ctrlChange(int channel, int ctrl, int val)
@@ -141,7 +138,7 @@ class jack_midi_handler : public midi_handler {
                 = { static_cast<unsigned char>(MIDI_CONTROL_CHANGE + channel),
                     static_cast<unsigned char>(ctrl),
                     static_cast<unsigned char>(val) };
-            writeMessage(buffer, 3);
+            writeMessage(0, buffer, 3);
         }
 
         void chanPress(int channel, int press)
@@ -149,7 +146,7 @@ class jack_midi_handler : public midi_handler {
             unsigned char buffer[2]
                 = { static_cast<unsigned char>(MIDI_AFTERTOUCH + channel),
                     static_cast<unsigned char>(press) };
-            writeMessage(buffer, 2);
+            writeMessage(0, buffer, 2);
         }
 
         void progChange(int channel, int pgm)
@@ -157,7 +154,7 @@ class jack_midi_handler : public midi_handler {
             unsigned char buffer[2]
                 = { static_cast<unsigned char>(MIDI_PROGRAM_CHANGE + channel),
                     static_cast<unsigned char>(pgm) };
-            writeMessage(buffer, 2);
+            writeMessage(0, buffer, 2);
         }
 
         void keyPress(int channel, int pitch, int press)
@@ -166,7 +163,7 @@ class jack_midi_handler : public midi_handler {
                 = { static_cast<unsigned char>(MIDI_POLY_AFTERTOUCH + channel),
                     static_cast<unsigned char>(pitch),
                     static_cast<unsigned char>(press) };
-            writeMessage(buffer, 3);
+            writeMessage(0, buffer, 3);
         }
 
         void pitchWheel(int channel, int wheel)
@@ -175,27 +172,32 @@ class jack_midi_handler : public midi_handler {
                 = { static_cast<unsigned char>(MIDI_PITCH_BEND + channel),
                     static_cast<unsigned char>(wheel & 0x7F),
                     static_cast<unsigned char>((wheel >> 7) & 0x7F) };
-            writeMessage(buffer, 3);
+            writeMessage(0, buffer, 3);
         }
 
         void ctrlChange14bits(int channel, int ctrl, int value) {}
 
-        void start_sync(double date)
+        void startSync(double date)
         {
             unsigned char buffer[1] = { MIDI_START };
-            writeMessage(buffer, 1);
+            writeMessage(date, buffer, 1);
         }
-
-        void stop_sync(double date)
+  
+        void stopSync(double date)
         {
             unsigned char buffer[1] = { MIDI_STOP };
-            writeMessage(buffer, 1);
+            writeMessage(date, buffer, 1);
         }
 
         void clock(double date)
         {
             unsigned char buffer[1] = { MIDI_CLOCK };
-            writeMessage(buffer, 1);
+            writeMessage(date, buffer, 1);
+        }
+    
+        void sysEx(double date, std::vector<unsigned char>& message)
+        {
+            writeMessage(date, message.data(), (int)message.size());
         }
 
 };
