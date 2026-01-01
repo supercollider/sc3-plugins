@@ -155,7 +155,7 @@ jobs:
           zip -r ${{ steps.set-filename.outputs.filename }}.zip .
         fi
     - name: upload artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ steps.set-filename.outputs.filename }}
         path: ${{ env.INSTALL_PATH }}/${{ steps.set-filename.outputs.filename }}.zip
