@@ -22,7 +22,7 @@ jobs:
       BUNDLE_FORCE_RUBY_PLATFORM: 'true' #  avoid platform mismatch for nokogiri
     steps:
     - name: checkout sc3-plugins
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: setup ruby and build
