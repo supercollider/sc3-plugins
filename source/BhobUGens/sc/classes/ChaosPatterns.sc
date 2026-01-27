@@ -43,7 +43,7 @@ Platoo : Pattern {
 }
 
 Plorenz : Pattern {
-	var <>s, <>r, <>b, <>h, <>x, <>y, <>z, <>h;
+	var <>s, <>r, <>b, <>h, <>x, <>y, <>z;
 	*new {|s=10, r=28, b=2.66666666667, h=0.01, x=0.090879182417163, y=2.97077458055, z=24.282041054363|
 		^super.newCopyArgs(s, r, b, h, x, y, z);
 	}
