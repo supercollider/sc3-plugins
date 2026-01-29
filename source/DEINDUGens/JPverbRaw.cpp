@@ -1532,9 +1532,6 @@ void Faust_Ctor(Faust* unit)  // module constructor
     unit->mInBufCopy = nullptr;
     unit->mInBufValue = nullptr;
 
-    // set a default calc function
-    SETCALC(Faust_next_clear);
-
     // allocate dsp
     void* mem = RTAlloc(unit->mWorld, sizeof(FAUSTCLASS));
     ClearUnitIfMemFailed(mem);
