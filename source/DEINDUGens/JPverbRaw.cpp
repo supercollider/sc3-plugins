@@ -1526,12 +1526,16 @@ void Faust_next_clear(Faust* unit, int inNumSamples)
 
 void Faust_Ctor(Faust* unit)  // module constructor
 {
+    // init such that we can still free them in the destructor if
+    // allocation fails.
+    unit->mDSP = nullptr;
+    unit->mInBufCopy = nullptr;
+    unit->mInBufValue = nullptr;
+
     // allocate dsp
-    unit->mDSP = new(RTAlloc(unit->mWorld, sizeof(FAUSTCLASS))) FAUSTCLASS();
-    if (!unit->mDSP) {
-        Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
-        goto end;
-    }
+    void* mem = RTAlloc(unit->mWorld, sizeof(FAUSTCLASS));
+    ClearUnitIfMemFailed(mem);
+    unit->mDSP = new (mem) FAUSTCLASS();
     {
         // init dsp
         unit->mDSP->instanceInit((int)SAMPLERATE);
@@ -1561,24 +1565,15 @@ void Faust_Ctor(Faust* unit)  // module constructor
                 SETCALC(Faust_next);
             } else {
                 unit->mInBufCopy = (float**)RTAlloc(unit->mWorld, unit->getNumAudioInputs()*sizeof(float*));
-                if (!unit->mInBufCopy) {
-                    Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
-                    goto end;
-                }
+                ClearUnitIfMemFailed(unit->mInBufCopy);
                 // Allocate memory for input buffer copies (numInputs * bufLength)
                 // and linear interpolation state (numInputs)
                 // = numInputs * (bufLength + 1)
                 unit->mInBufValue = (float*)RTAlloc(unit->mWorld, unit->getNumAudioInputs()*sizeof(float));
-                if (!unit->mInBufValue) {
-                    Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
-                    goto end;
-                }
+                ClearUnitIfMemFailed(unit->mInBufValue);
                 // Aquire memory for interpolator state.
-                float* mem = (float*)RTAlloc(unit->mWorld, unit->getNumAudioInputs()*BUFLENGTH*sizeof(float));
-                if (mem) {
-                    Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
-                    goto end;
-                }
+                auto* mem = (float*)RTAlloc(unit->mWorld, unit->getNumAudioInputs()*BUFLENGTH*sizeof(float));
+                ClearUnitIfMemFailed(mem);
                 for (int i = 0; i < unit->getNumAudioInputs(); ++i) {
                     // Initialize interpolator.
                     unit->mInBufValue[i] = IN0(i);
@@ -1608,7 +1603,6 @@ void Faust_Ctor(Faust* unit)  // module constructor
         }
     }
     
-end:
     // Fix for https://github.com/grame-cncm/faust/issues/13
     ClearUnitOutputs(unit, 1);
 }
