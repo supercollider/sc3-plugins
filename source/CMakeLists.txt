@@ -133,12 +133,8 @@ set(plugins "")
 set(supernova_plugins "")
 
 set(CMAKE_SHARED_MODULE_PREFIX "")
-set(PLUGIN_EXTENSION ".so")
-
-if (APPLE OR WIN32)
-    set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
-    set(PLUGIN_EXTENSION ".scx")
-endif()
+set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
+set(PLUGIN_EXTENSION ".scx")
 
 
 GET_GCC_VERSION(gcc_version)
