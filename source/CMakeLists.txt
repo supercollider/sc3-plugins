@@ -134,7 +134,9 @@ set(supernova_plugins "")
 
 set(CMAKE_SHARED_MODULE_PREFIX "")
 set(CMAKE_SHARED_MODULE_SUFFIX ".scx")
-set(PLUGIN_EXTENSION ".scx")
+if(NOT WIN32 AND NOT APPLE AND (NOT DEFINED SC_VERSION OR SC_VERSION VERSION_LESS "3.15"))
+    set(CMAKE_SHARED_MODULE_SUFFIX ".so") # before SC 3.15, SuperCollider on *nix expected plugins to have .so extension
+endif()
 
 
 GET_GCC_VERSION(gcc_version)
