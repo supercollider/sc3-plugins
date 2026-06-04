@@ -646,7 +646,7 @@ static void VBAP_Ctor(VBAP* unit)
 	if(unit->x_dimension == 3)
 		counter = (numvals - 2) / ((unit->x_dimension * unit->x_dimension*2) + unit->x_dimension);
 	if(unit->x_dimension == 2)
-		counter = (numvals - 2) / ((unit->x_dimension * unit->x_dimension) + unit->x_dimension);
+		counter = (numvals - 2) / ((unit->x_dimension * unit->x_dimension*2) + unit->x_dimension);
 	unit->x_lsset_amount=counter;
 
 	if(counter<=0){
@@ -674,7 +674,7 @@ static void VBAP_Ctor(VBAP* unit)
 			unit->x_set_inv_matx[setpointer][i]=buf->data[datapointer++];
 				/*				post("%d",deb++); */
 		}
-		if(unit->x_dimension == 3){
+		if(unit->x_dimension == 2 || unit->x_dimension == 3){
 			for(i=0; i < unit->x_dimension*unit->x_dimension; i++){
 				unit->x_set_matx[setpointer][i]=buf->data[datapointer++];
 
