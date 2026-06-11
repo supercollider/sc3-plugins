@@ -96,10 +96,11 @@ z = {
 		MouseY.kr(1,0,\linear),
 		LFSaw.kr(1,0,3));	// filter mode - sweep modes
 	 (CombN.ar(sig, 0.4, [0.4,0.35],2) * 0.4) + (sig * 0.5);
-}.play)
+}.play
+)
 z.release
 
-// bhob's benchmark ;)
+// bhob's benchmark
 (
 z = {
 	var sig;
