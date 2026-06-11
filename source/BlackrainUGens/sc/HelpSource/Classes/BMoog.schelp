@@ -31,6 +31,7 @@ table::
 ::
 defaults to lowpass.
 
+argument::saturation
 
 Examples::
 
@@ -44,7 +45,8 @@ z = {
 		MouseY.kr(1.0, 0.0, \linear), // q
 		0, // mode - lowpass
 		0.25); // mul
-}.play)
+}.play
+)
 z.release;
 
 (
@@ -57,7 +59,8 @@ z = {
 		MouseY.kr(1,0,\linear),
 		0);	// filter mode - lowpass
 	 (CombN.ar(sig, 0.4, [0.4,0.35],2) * 0.4) + (sig * 0.5);
-}.play)
+}.play
+)
 z.release
 
 (
@@ -70,7 +73,8 @@ z = {
 		MouseY.kr(1,0,\linear),
 		1);	// filter mode - highpass
 	 (CombN.ar(sig, 0.4, [0.4,0.35],2) * 0.4) + (sig * 0.5);
-}.play)
+}.play
+)
 z.release
 
 (
@@ -83,7 +87,8 @@ z = {
 		MouseY.kr(1,0,\linear),
 		2);	// filter mode - bandpass
 	 (CombN.ar(sig, 0.4, [0.4,0.35],2) * 0.4) + (sig * 0.5);
-}.play)
+}.play
+)
 z.release
 
 (
