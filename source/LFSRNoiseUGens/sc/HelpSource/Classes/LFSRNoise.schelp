@@ -1,0 +1,133 @@
+class:: LFSRNoise
+summary:: 32-bit linear feedback shift register (LFSR) noise
+related:: Classes/LFClipNoise
+categories::  UGens>Generators>Stochastic
+
+
+Description::
+
+Pseudo-random noise that generates the values -1 or +1 at a rate given by the nearest
+integer division of the sample rate by the  code::freq:: argument.
+
+Generates a periodic waveform capable of a range of complex tones from square waves to pseudo-random "pitched" noise.
+Probably not great for your speakers at high amplitudes. Very low frequency values will cause lengthy periods of DC offset.
+
+classmethods::
+
+method::ar, kr
+
+argument::freq
+Approximate rate at which to generate values.
+
+argument::fbIndex
+Bitwise index (1-31, zero-based) to insert new values. Related to LFSR cycle period.
+
+argument::reset
+Trigger. Resets the LFSR's internal integer value to a value determined by code::iState::.
+
+argument::iState
+Initial integer state to set the LFSR to when reset (see link::#Discussion:: for more details):
+-1 sets all bits to 1.
+0 sets only bits up to fbIndex to 1.
+1 sets only the least significant bit to 1.
+
+argument::mul
+Output will be multiplied by this value.
+
+argument::add
+This value will be added to the output.
+
+discussion::
+To produce a pseudo-random number sequence, the noise generator performs a bitwise XOR on the two least-significant bits of a 32-bit integer, shifts all bits one position to the right, and inserts the result of the XOR at the index given by the  code::fbIndex:: argument. The UGen's output is the right-most bit (LSB) of the integer, scaled to ±1.
+
+Because the state of the LFSR must always be a non-zero integer to produce new values, the UGen automatically resets its internal integer value every time it reaches zero.
+
+Note that, in general, the period length of the LFSR increases as the index value (code::fbIndex::) increases.
+
+Examples::
+
+code::
+
+//defaults
+{ LFSRNoise.ar(500.0, 14) }.play;
+
+//modulate frequency
+{LFSRNoise.ar(XLine.kr(1000, 10000, 10, 1, 0, 2), 14)}.play;
+
+//modulate fbIndex
+{ LFSRNoise.ar( 10000, Line.kr(0, 31, 15, doneAction: 2).ceil.poll(label: "Index") ) }.play;
+
+//mouse freq
+{ LFSRNoise.ar(MouseX.kr(1, SampleRate.ir, 1)) }.play;
+
+//mouse fbIndex
+{ LFSRNoise.ar(10000, MouseY.kr(1, 31), 1) }.play;
+
+//reset
+{ LFSRNoise.ar(10000, 29, Impulse.kr( XLine.kr(0.1, 30, 10) )) }.play;
+
+//different iStates
+{ LFSRNoise.ar(10000, 29, Impulse.kr(20), -1) }.play;
+{ LFSRNoise.ar(10000, 29, Impulse.kr(20), 0) }.play;
+{ LFSRNoise.ar(10000, 29, Impulse.kr(20), 1) }.play;
+
+//mouse reign supreme
+{ LFSRNoise.ar( MouseX.kr(1, SampleRate.ir), MouseY.kr(1, 31), MouseButton.kr(1, 0, 0)) }.play;
+
+//use as a frequency control
+{SinOsc.ar(LFSRNoise.kr(10, 3, 1, 0, 200, 600) )}.play;
+
+
+(
+SynthDef(\help_LFSRNoise, {
+    var sig = LFSRNoise.ar(\freq.kr(1000), \fbIndex.kr(14), \reset.tr(0), \iState.kr(-1));
+    var env = Env.asr(ControlDur.ir, 1, ControlDur.ir).kr(2, 1);
+    sig = LeakDC.ar(sig);
+    sig = sig * env * \amp.kr(1);
+    sig = Pan2.ar(sig, \pan.kr(0));
+    Out.ar(\out.kr(0), sig);
+}).add;
+)
+
+//8 bit rave Super Colltendo style
+(
+t = TempoClock(3);
+p = {|pattern| Pdup(Prand([4,5], inf), pattern)};
+PmonoArtic(
+    \help_LFSRNoise,
+    \amp, 1,
+    \dur, p.(Prand([0.25, 0.5], inf)),
+    \freq, p.(Pexprand(1, 40) * 500),
+    \fbIndex, p.(Prand([6, 14], inf)),
+).play(t);
+)
+
+//bass line oscillator
+(
+t = TempoClock(2.5);
+PmonoArtic(
+    \help_LFSRNoise,
+    \dur, Prand([Pseq(0.5!2), Pseq([1]), Pseq(0.25!4)], inf),
+    \scale, Scale.at(\minorPentatonic),
+    \degree, Pwhite(0,10),
+    \octave, 6,
+    \fbIndex, 4,
+    \amp, Pwhite(0.8, 1.0)
+).play(t);
+)
+
+//vweep vwoip brrr
+(
+PmonoArtic(
+    \help_LFSRNoise,
+    \dur, 0.5,
+    \freq, Pexprand(10000.0, 20000.0),
+    \reset, 1,
+    \iState, Pwhite(-1, 1),
+    \fbIndex, Pwhite(6, 31),
+    \amp, Pwhite(0.8, 1.0),
+    \legato, 1
+).play;
+)
+
+::
