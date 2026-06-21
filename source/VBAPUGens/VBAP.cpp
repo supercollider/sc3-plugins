@@ -95,17 +95,17 @@ static float atorad = (2.0f * pi) / 360.0f;
 
 struct VBAP : Unit
 {
-	float x_azi;				/* panning direction azimuth */
-	float x_ele;				/* panning direction elevation */
-    float* *x_set_inv_matx;  /* inverse matrice for each loudspeaker set */
-    float* *x_set_matx;      /* matrice for each loudspeaker set */
-    int* *x_lsset;          /* channel numbers of loudspeakers in each LS set */
-	int x_lsset_available;			/* have loudspeaker sets been defined with define_loudspeakers */
-	int x_num_lssets;			/* number of loudspeaker sets (pairs or triplets) */
-	int x_num_ls;					  /* number of loudspeakers */
-	int x_dimension;					  /* 2 or 3 */
-	float x_spread;							/* speading amount of virtual source (0-100) */
-	float x_spread_base[3];				   /* used to create uniform spreading */
+	float x_azi;                /* panning direction azimuth */
+	float x_ele;                /* panning direction elevation */
+    float* *x_set_inv_matx;     /* inverse matrice for each loudspeaker set */
+    float* *x_set_matx;         /* matrice for each loudspeaker set */
+    int* *x_lsset;              /* channel numbers of loudspeakers in each LS set */
+	int x_lsset_available;      /* have loudspeaker sets been defined with define_loudspeakers */
+	int x_num_lssets;           /* number of loudspeaker sets (pairs or triplets) */
+	int x_num_ls;               /* number of loudspeakers */
+	int x_dimension;            /* 2 or 3 */
+	float x_spread;             /* speading amount of virtual source (0-100) */
+	float x_spread_base[3];     /* used to create uniform spreading */
 	float *final_gs;
 
 	float *m_chanamp;
@@ -516,20 +516,18 @@ static inline void VBAP_calc_gain_factors(VBAP * unit)
 		unit->x_ele = elevation;
 		unit->x_spread = spread;
 
-		if(unit->x_lsset_available ==1){
-			vbap(g,ls, unit);
-			for(i=0;i<unit->x_num_ls;i++)
-				final_gs[i]=0.0;
-			for(i=0;i<unit->x_dimension;i++){
-				final_gs[ls[i]-1]=g[i];
-			}
-			if(unit->x_spread != 0){
-				spread_it(unit,final_gs);
-			}
-//			for(i=0; i < unit->mNumOutputs; i++){
-//				printf("chan %i: %f\n", i, final_gs[i] );
-//			}
-		}
+        vbap(g,ls, unit);
+        for(i=0;i<unit->x_num_ls;i++)
+            final_gs[i]=0.0;
+        for(i=0;i<unit->x_dimension;i++){
+            final_gs[ls[i]-1]=g[i];
+        }
+        if(unit->x_spread != 0){
+            spread_it(unit,final_gs);
+        }
+//        for(i=0; i < unit->mNumOutputs; i++){
+//            printf("chan %i: %f\n", i, final_gs[i] );
+//        }
 	}
 }
 
@@ -596,22 +594,16 @@ static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 }
 #endif
 
-// needs to check that numOutputs and x_ls_amount match!!
 static void VBAP_Ctor(VBAP* unit)
 {
 	//printf("VBAP-1.0.3.2\n");
-	int numOutputs = unit->mNumOutputs, numSets=0, datapointer=0, setpointer=0, i;
-	
-    unit->m_chanamp = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
-    
-	// initialise interpolation levels and outputs
-	for (int i=0; i<numOutputs; ++i) {
-		unit->m_chanamp[i] = 0;
-		ZOUT0(i) = 0.f;
-	}
+    int numOutputs = unit->mNumOutputs;
+    int datapointer=0, setpointer=0;
+    int i;
 
-	// [dim, numSpeakers, [chanOffsets 0-2, invmx 0-8, [lp1, lp2, lp2].x, sim.y, sim.z] * sets.size].flat
-	float fbufnum = ZIN0(1);
+    /* Access loudspeaker data buffer, validate */
+
+    float fbufnum = ZIN0(1);
 	uint32 ibufnum = (uint32)fbufnum;
 	World *world = unit->mWorld;
 
@@ -628,31 +620,60 @@ static void VBAP_Ctor(VBAP* unit)
 		buf = world->mSndBufs + ibufnum;
 	}
 
-	int dataLength = buf->samples; // loudspeaker data buffer length
-	int dim = unit->x_dimension = (int)(buf->data[datapointer++]); // 2D or 3D
-	unit->x_num_ls = (int)(buf->data[datapointer++]); // number of loudspeakers
-
-	unit->x_azi = unit->x_ele = unit->x_spread = std::numeric_limits<float>::quiet_NaN();
-
-	unit->final_gs = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
-	unit->x_lsset_available = 1;
-
-	if(((dim != 2) && (dim != 3)) || (unit->x_num_ls < 2)) {
-		printf("vbap: Error in loudspeaker data. Bufnum: %i\n", (int)fbufnum);
-		unit->x_lsset_available = 0;
-		// do something else here
+    // Validate data header: dimension and number of loudspeakers
+    bool passing = true;
+	int dim = (int)(buf->data[datapointer++]); // 2D or 3D
+    int num_ls = (int)(buf->data[datapointer++]); // number of loudspeakers
+    
+    if(numOutputs != num_ls) {
+        printf("VBAP Error: ugen's numOutputs (%d) does not match the number of loudspeakers reported in the loudspeaker buffer (%d). Bufnum: %i\n", numOutputs, num_ls, (int)fbufnum);
+        passing = false;
+    }
+    
+	if(((dim != 2) && (dim != 3)) || (num_ls < 2)) {
+		printf("VBAP Error: Error in loudspeaker data. Dimension must be 2 or 3 (%d specified), and there must be at least 2 loudspeakers (%d provided). Bufnum: %i\n", dim, num_ls, (int)fbufnum);
+        passing = false;
 	}
 
-    // vbap.sc: data_length = 2 + (numSets  * (dim + (dim * dim) + (dim * dim)));
-    numSets = (dataLength - 2) / (dim + (dim * dim) + (dim * dim));
-	unit->x_num_lssets = numSets;
+    /*  Validate loudspeaker set payload.
+        buffer data structure:
+        2D: [dim, numSpeakers, numSets * [pairChanIndices (1x2), invmtx (2x2), fwdmtx (2x2)]].flat
+        3D: [dim, numSpeakers, numSets * [tripChanIndices (1x3), invmtx (3x3), spkcoords (3x3)]].flat
+        Size of this buffer factors to: 2 + (numSets * (dim + (dim * dim) + (dim * dim)))
+        This size should match data_length calc in vbap.sc
+     */
+    int dataLength = buf->samples;
+    int payload = dataLength - 2;     // payload size without header
+    int stride = dim + 2 * dim * dim; // payload stride
+    int numSets = payload / stride;
 
-	if(numSets <= 0){
-		printf("vbap: Error in loudspeaker data. Bufnum: %i\n", (int)fbufnum);
-		unit->x_lsset_available=0;
-//		return;
-	}
+    if (numSets <= 0 || (payload % stride) != 0) {
+        printf("VBAP error: Error in loudspeaker data. Size of the loudspeaker data buffer (%d) doesn't match what's expected for given the number of loudspeaker sets (%d) and the loudspeaker array dimension (%d). Bufnum: %i\n",
+               dataLength, numSets, dim, (int)fbufnum);
+        passing = false;
+    }
+    
+    if(!passing) {
+        unit->x_lsset_available = 0;
+        SETCALC(*ClearUnitOutputs);
+        ClearUnitOutputs(unit, 1);
+        return;
+    }
+    
+    /* Loudspeaker data buffer is now validated, init vars and alloc memory */
+    unit->x_lsset_available = 1;
+    
+    unit->x_dimension = dim;
+    unit->x_num_ls = num_ls;
+    unit->x_num_lssets = numSets;
+    
+    // "uninitialized controls" will trigger re-calc in the initial call to _next
+    // because NaNs are not equal to any floating point number
+    unit->x_azi = unit->x_ele = unit->x_spread = std::numeric_limits<float>::quiet_NaN();
 
+    unit->final_gs = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
+    unit->m_chanamp = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
+    
     unit->x_set_inv_matx = (float**)RTAlloc(unit->mWorld, numSets * sizeof(float*));
     unit->x_set_matx = (float**)RTAlloc(unit->mWorld, numSets * sizeof(float*));
     unit->x_lsset = (int**)RTAlloc(unit->mWorld, numSets * sizeof(int*));
@@ -663,27 +684,23 @@ static void VBAP_Ctor(VBAP* unit)
         unit->x_set_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
         unit->x_lsset[i] = (int*)RTAlloc(unit->mWorld, 3 * sizeof(int));
     }
-	// probably sets should be created with rtalloc
+    
+    /* Read data from loudspeaker data buffer into vars */
     int setCounter = numSets;
 	while(setCounter-- > 0){
 		for(i=0; i < unit->x_dimension; i++){
 			unit->x_lsset[setpointer][i]=(int)buf->data[datapointer++];
 		}
-
 		for(i=0; i < unit->x_dimension*unit->x_dimension; i++){
 			unit->x_set_inv_matx[setpointer][i]=buf->data[datapointer++];
-				/*				post("%d",deb++); */
 		}
 		if(unit->x_dimension == 2 || unit->x_dimension == 3){
 			for(i=0; i < unit->x_dimension*unit->x_dimension; i++){
 				unit->x_set_matx[setpointer][i]=buf->data[datapointer++];
-
 			}
 		}
-
 		setpointer++;
 	}
-	//printf("vbap: Loudspeaker setup configured!\n");
 
 #ifdef NOVA_SIMD
 	if (!(BUFLENGTH & 15))
@@ -692,52 +709,34 @@ static void VBAP_Ctor(VBAP* unit)
 #endif
 		SETCALC(VBAP_next);
 
-	ZOUT0(0) = ZIN0(0);
-	unit->x_azi = ZIN0(2);
-	unit->x_ele = ZIN0(3);
-	unit->x_spread_base[0] = 0.0;
-	unit->x_spread_base[1] = 1.0;
-	unit->x_spread_base[2] = 0.0;
-	unit->x_spread = ZIN0(4);
-	
-	// calculate initial gain factors
-	float g[3];
-	int ls[3];
-	float *final_gs = unit->final_gs;
-	
-	if(unit->x_lsset_available ==1){
-		vbap(g,ls, unit);
-		for(i=0;i<unit->x_num_ls;i++)
-			final_gs[i]=0.0; 			
-		for(i=0;i<unit->x_dimension;i++){
-			final_gs[ls[i]-1]=g[i];  
-		}
-		if(unit->x_spread != 0){
-			spread_it(unit,final_gs);
-		}
-
-	} else {
-		// if the ls data was bad, just set every gain to 0 and bail
-		for(i=0;i<unit->x_num_ls;i++)
-			final_gs[i]=0.f;
-    }
+    // init gains
+    VBAP_calc_gain_factors(unit);
+    // init channel amps to avoid fade-in from zero through the first block
+    for(i=0;i<unit->x_num_ls;i++)
+        unit->m_chanamp[i] = unit->final_gs[i];
+    
+    VBAP_next(unit, 1); // don't call the SIMD _next with one sample!
 }
 
 
 static void VBAP_Dtor(VBAP* unit)
 {
-    int counter = unit->x_num_lssets;
-	RTFree(unit->mWorld, unit->final_gs);
     
-    for(int i=0; i<counter; i++){
-        RTFree(unit->mWorld, unit->x_set_inv_matx[i]);
-        RTFree(unit->mWorld, unit->x_set_matx[i]);
-        RTFree(unit->mWorld, unit->x_lsset[i]);
+    if (unit->x_lsset_available > 0) { // only free if initialization occured
+        int counter = unit->x_num_lssets;
+        RTFree(unit->mWorld, unit->final_gs);
+        RTFree(unit->mWorld, unit->m_chanamp);
+        
+        for(int i=0; i<counter; i++){
+            RTFree(unit->mWorld, unit->x_set_inv_matx[i]);
+            RTFree(unit->mWorld, unit->x_set_matx[i]);
+            RTFree(unit->mWorld, unit->x_lsset[i]);
+        }
+        
+        RTFree(unit->mWorld, unit->x_set_inv_matx);
+        RTFree(unit->mWorld, unit->x_set_matx);
+        RTFree(unit->mWorld, unit->x_lsset);
     }
-    
-    RTFree(unit->mWorld, unit->x_set_inv_matx);
-    RTFree(unit->mWorld, unit->x_set_matx);
-    RTFree(unit->mWorld, unit->x_lsset);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
