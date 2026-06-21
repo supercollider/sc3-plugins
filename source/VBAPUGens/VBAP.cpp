@@ -101,8 +101,8 @@ struct VBAP : Unit
     float* *x_set_matx;      /* matrice for each loudspeaker set */
     int* *x_lsset;          /* channel numbers of loudspeakers in each LS set */
 	int x_lsset_available;			/* have loudspeaker sets been defined with define_loudspeakers */
-	int x_lsset_amount;			/* amount of loudspeaker sets */
-	int x_ls_amount;					  /* amount of loudspeakers */
+	int x_num_lssets;			/* number of loudspeaker sets (pairs or triplets) */
+	int x_num_ls;					  /* number of loudspeakers */
 	int x_dimension;					  /* 2 or 3 */
 	float x_spread;							/* speading amount of virtual source (0-100) */
 	float x_spread_base[3];				   /* used to create uniform spreading */
@@ -260,7 +260,7 @@ static void additive_vbap(float *final_gs, float cartdir[3], VBAP *x)
 		* bug. 2006-08-13 <hans@at.or.at>
 		*/
 	//	post("x_lsset_amount: %li", x->x_lsset_amount);
-	for(i=0;i<x->x_lsset_amount;i++){
+	for(i=0;i<x->x_num_lssets;i++){
 		small_g = 10000000.0;
 		neg_g_am = 3;
 		for(j=0;j<dim;j++){
@@ -369,16 +369,16 @@ static void spread_it(VBAP *x, float *final_gs)
 		return;
 
 	if(x->x_spread > 70)
-		for(i=0;i<x->x_ls_amount;i++){
+		for(i=0;i<x->x_num_ls;i++){
 			final_gs[i] += (x->x_spread - 70) / 30.0 * (x->x_spread - 70) / 30.0 * 10.0;
 		}
 
-	for(i=0,power=0.0;i<x->x_ls_amount;i++){
+	for(i=0,power=0.0;i<x->x_num_ls;i++){
 		power += final_gs[i] * final_gs[i];
 	}
 
     power = sqrt(power);
-	for(i=0;i<x->x_ls_amount;i++){
+	for(i=0;i<x->x_num_ls;i++){
 		final_gs[i] /= power;
 	}
 }
@@ -430,7 +430,7 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 	best_neg_g_am=3;		  /* how many negative values in this set */
 
 
-	for(i=0;i<x->x_lsset_amount;i++){
+	for(i=0;i<x->x_num_lssets;i++){
 		small_g = 10000000.0;
 		neg_g_am = 3;
 		for(j=0;j<dim;j++){
@@ -518,7 +518,7 @@ static inline void VBAP_calc_gain_factors(VBAP * unit)
 
 		if(unit->x_lsset_available ==1){
 			vbap(g,ls, unit);
-			for(i=0;i<unit->x_ls_amount;i++)
+			for(i=0;i<unit->x_num_ls;i++)
 				final_gs[i]=0.0;
 			for(i=0;i<unit->x_dimension;i++){
 				final_gs[ls[i]-1]=g[i];
@@ -600,7 +600,7 @@ static inline_functions void VBAP_next_simd(VBAP *unit, int inNumSamples)
 static void VBAP_Ctor(VBAP* unit)
 {
 	//printf("VBAP-1.0.3.2\n");
-	int numOutputs = unit->mNumOutputs, counter = 0, datapointer=0, setpointer=0, i;
+	int numOutputs = unit->mNumOutputs, numSets=0, datapointer=0, setpointer=0, i;
 	
     unit->m_chanamp = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
     
@@ -628,44 +628,44 @@ static void VBAP_Ctor(VBAP* unit)
 		buf = world->mSndBufs + ibufnum;
 	}
 
-	int numvals = buf->samples;
-	unit->x_dimension = (int)(buf->data[datapointer++]);
-	unit->x_ls_amount = (int)(buf->data[datapointer++]);
+	int dataLength = buf->samples; // loudspeaker data buffer length
+	int dim = unit->x_dimension = (int)(buf->data[datapointer++]); // 2D or 3D
+	unit->x_num_ls = (int)(buf->data[datapointer++]); // number of loudspeakers
 
 	unit->x_azi = unit->x_ele = unit->x_spread = std::numeric_limits<float>::quiet_NaN();
 
 	unit->final_gs = (float*)RTAlloc(unit->mWorld, numOutputs * sizeof(float));
 	unit->x_lsset_available = 1;
 
-	if(((unit->x_dimension != 2) && (unit->x_dimension != 3)) || (unit->x_ls_amount < 2)) {
+	if(((dim != 2) && (dim != 3)) || (unit->x_num_ls < 2)) {
 		printf("vbap: Error in loudspeaker data. Bufnum: %i\n", (int)fbufnum);
 		unit->x_lsset_available = 0;
 		// do something else here
 	}
 
-	if(unit->x_dimension == 3)
-		counter = (numvals - 2) / ((unit->x_dimension * unit->x_dimension*2) + unit->x_dimension);
-	if(unit->x_dimension == 2)
-		counter = (numvals - 2) / ((unit->x_dimension * unit->x_dimension*2) + unit->x_dimension);
-	unit->x_lsset_amount=counter;
+    // vbap.sc: data_length = 2 + (numSets  * (dim + (dim * dim) + (dim * dim)));
+    numSets = (dataLength - 2) / (dim + (dim * dim) + (dim * dim));
+	unit->x_num_lssets = numSets;
 
-	if(counter<=0){
+	if(numSets <= 0){
 		printf("vbap: Error in loudspeaker data. Bufnum: %i\n", (int)fbufnum);
 		unit->x_lsset_available=0;
 //		return;
 	}
 
-    unit->x_set_inv_matx = (float**)RTAlloc(unit->mWorld, counter * sizeof(float*));
-    unit->x_set_matx = (float**)RTAlloc(unit->mWorld, counter * sizeof(float*));
-    unit->x_lsset = (int**)RTAlloc(unit->mWorld, counter * sizeof(int*));
+    unit->x_set_inv_matx = (float**)RTAlloc(unit->mWorld, numSets * sizeof(float*));
+    unit->x_set_matx = (float**)RTAlloc(unit->mWorld, numSets * sizeof(float*));
+    unit->x_lsset = (int**)RTAlloc(unit->mWorld, numSets * sizeof(int*));
     
-    for(i=0; i<counter; i++){
+    // TODO: why are these a fixed size of 3 x 3? are 2D sets treated as 3D?
+    for(i=0; i<numSets; i++){
         unit->x_set_inv_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
         unit->x_set_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
         unit->x_lsset[i] = (int*)RTAlloc(unit->mWorld, 3 * sizeof(int));
     }
 	// probably sets should be created with rtalloc
-	while(counter-- > 0){
+    int setCounter = numSets;
+	while(setCounter-- > 0){
 		for(i=0; i < unit->x_dimension; i++){
 			unit->x_lsset[setpointer][i]=(int)buf->data[datapointer++];
 		}
@@ -707,7 +707,7 @@ static void VBAP_Ctor(VBAP* unit)
 	
 	if(unit->x_lsset_available ==1){
 		vbap(g,ls, unit);
-		for(i=0;i<unit->x_ls_amount;i++)
+		for(i=0;i<unit->x_num_ls;i++)
 			final_gs[i]=0.0; 			
 		for(i=0;i<unit->x_dimension;i++){
 			final_gs[ls[i]-1]=g[i];  
@@ -718,7 +718,7 @@ static void VBAP_Ctor(VBAP* unit)
 
 	} else {
 		// if the ls data was bad, just set every gain to 0 and bail
-		for(i=0;i<unit->x_ls_amount;i++)
+		for(i=0;i<unit->x_num_ls;i++)
 			final_gs[i]=0.f;
     }
 }
@@ -726,7 +726,7 @@ static void VBAP_Ctor(VBAP* unit)
 
 static void VBAP_Dtor(VBAP* unit)
 {
-    int counter = unit->x_lsset_amount;
+    int counter = unit->x_num_lssets;
 	RTFree(unit->mWorld, unit->final_gs);
     
     for(int i=0; i<counter; i++){
