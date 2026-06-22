@@ -321,7 +321,7 @@ VBAPSpeakerArray {
 		var lp1, lp2, lp3;
 		var invmx;
 		var numTriplets, pointer, data_length;
-		var result;
+		var mat;
 		var dim;
 
 		if(sets.isNil, {
@@ -341,10 +341,10 @@ VBAPSpeakerArray {
 		dim = 3; // 3D, loudspeaker sets are triplets
 		numTriplets = sets.size; // number of triplets
 		data_length = 2 + (numTriplets * (dim + (dim * dim) + (dim * dim)));
-		result = FloatArray.newClear(data_length);
+		mat = FloatArray.newClear(data_length);
 
-		result[0] = dim;
-		result[1] = numSpeakers;
+		mat[0] = dim;
+		mat[1] = numSpeakers;
 		pointer=2;
 
 		sets.do({|set|
@@ -374,25 +374,30 @@ VBAPSpeakerArray {
 			invmx[8] = ((lp1.x * lp2.y) - (lp1.y * lp2.x)) * invdet;
 			set.inv_mx = invmx;
 			3.do({|i|
-				result[pointer] = set.chanOffsets[i] + 1;
+				mat[pointer] = set.chanOffsets[i] + 1;
 				pointer = pointer + 1;
 			});
 			9.do({|i|
-				result[pointer] = invmx[i];
+				mat[pointer] = invmx[i];
 				pointer = pointer + 1;
 			});
-			result[pointer] = lp1.x; pointer = pointer + 1;
-			result[pointer] = lp2.x; pointer = pointer + 1;
-			result[pointer] = lp3.x; pointer = pointer + 1;
-			result[pointer] = lp1.y; pointer = pointer + 1;
-			result[pointer] = lp2.y; pointer = pointer + 1;
-			result[pointer] = lp3.y; pointer = pointer + 1;
-			result[pointer] = lp1.z; pointer = pointer + 1;
-			result[pointer] = lp2.z; pointer = pointer + 1;
-			result[pointer] = lp3.z; pointer = pointer + 1;
+
+			/* directional cosines: angle -> cartesian coords */
+			/* mat = [ x1, x2, x3,
+		               y1, y2, y3
+                       z1, z2, z3 ] */
+			mat[pointer] = lp1.x; pointer = pointer + 1;
+			mat[pointer] = lp2.x; pointer = pointer + 1;
+			mat[pointer] = lp3.x; pointer = pointer + 1;
+			mat[pointer] = lp1.y; pointer = pointer + 1;
+			mat[pointer] = lp2.y; pointer = pointer + 1;
+			mat[pointer] = lp3.y; pointer = pointer + 1;
+			mat[pointer] = lp1.z; pointer = pointer + 1;
+			mat[pointer] = lp2.z; pointer = pointer + 1;
+			mat[pointer] = lp3.z; pointer = pointer + 1;
 
 		});
-		^result;
+		^mat;
 	}
 
 	choose_ls_tuplets {
@@ -535,15 +540,21 @@ VBAPSpeakerArray {
 	calc_2D_inv_tmatrix { |azi1, azi2, inv_mat, mat|
 	/* calculate inverse 2x2 matrix */
 
-		var x1,x2,x3,x4;
+		var x1, x2, y1, y2;
 		var det;
-		var rad2ang = 360.0 / ( 2  * pi );
+		azi1 = azi1.degrad;
+		azi2 = azi2.degrad;
 
-		mat[0] = x1 = cos(azi1 / rad2ang);
-		mat[1] = x2 = sin(azi1 / rad2ang);
-		mat[2] = x3 = cos(azi2 / rad2ang);
-		mat[3] = x4 = sin(azi2 / rad2ang);
-		det = (x1 * x4) - ( x3 * x2 );
+		/* directional cosines: angle -> cartesian coords */
+        /*   mat = [ x1, x2,
+		             y1, y2 ] */
+		mat[0] = x1 = cos(azi1);
+		mat[1] = x2 = cos(azi2);
+		mat[2] = y1 = sin(azi1);
+		mat[3] = y2 = sin(azi2);
+
+		det = (x1 * y2) - ( x2 * y1 );
+
 		if(abs(det) <= 0.001, {
 			inv_mat[0] = 0.0;
 			inv_mat[1] = 0.0;
@@ -551,10 +562,10 @@ VBAPSpeakerArray {
 			inv_mat[3] = 0.0;
 			^false;
 		}, {
-			inv_mat[0] =   (x4 / det);
-			inv_mat[1] =  (x3.neg / det);
-			inv_mat[2] =   (x2.neg / det);
-			inv_mat[3] =    (x1 / det);
+			inv_mat[0] = y2 / det;
+			inv_mat[1] = x2.neg / det;
+			inv_mat[2] = y1.neg / det;
+			inv_mat[3] = x1 / det;
 			^true;
 		})
 	}

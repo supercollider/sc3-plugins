@@ -389,7 +389,7 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 {
 	/* calculates gain factors using loudspeaker setup and given direction */
 	float power;
-	int i,j,k, gains_modified;
+	int i,j,k;
 	float small_g;
 	float big_sm_g, gtmp[3];
 	int winner_set=0;
@@ -427,12 +427,12 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 
 	angle_to_cart(x->x_azi,x->x_ele,cartdir);
 	big_sm_g = -100000.0;	/* initial value for largest minimum gain value */
-	best_neg_g_am=3;		  /* how many negative values in this set */
+	best_neg_g_am = dim;		  /* how many negative values in this set */
 
 
 	for(i=0;i<x->x_num_lssets;i++){
 		small_g = 10000000.0;
-		neg_g_am = 3;
+		neg_g_am = dim;
 		for(j=0;j<dim;j++){
 			gtmp[j]=0.0;
 			for(k=0;k<dim;k++)
@@ -446,15 +446,11 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 			big_sm_g = small_g;
 			best_neg_g_am = neg_g_am;
 			winner_set=i;
-			g[0]=gtmp[0]; g[1]=gtmp[1];
-			ls[0]= x->x_lsset[i][0]; ls[1]= x->x_lsset[i][1];
-			if(dim==3){
-				g[2]=gtmp[2];
-				ls[2]= x->x_lsset[i][2];
-			} else {
-				g[2]=0.0;
-				ls[2]=0;
-			}
+            for(j = 0; j < dim; j++) {
+                g[j] = gtmp[j];
+                ls[j] = x->x_lsset[i][j];
+            }
+            if (dim < 3) { g[2] = 0.0; ls[2] = 0; } // third slot unused for 2D
 		}
 	}
 
@@ -463,34 +459,35 @@ static void vbap(float g[3], int ls[3], VBAP *x)
 		// gain values. This happens when the virtual source is outside of
 		// all loudspeaker sets. */
 	
-    gains_modified=0;
-    for(i=0;i<dim;i++)
-        if(g[i]<-0.01){
+    bool gains_clamped = false;
+    for(i=0;i<dim;i++) {
+        if(g[i]<-0.01) {
             g[i]=0.0001;
-            gains_modified=1;
+            gains_clamped = true;
         }
+    }
     
-        if(gains_modified==1){
-            new_cartdir[0] =  x->x_set_matx[winner_set][0] * g[0] 
-            + x->x_set_matx[winner_set][1] * g[1]
-            + x->x_set_matx[winner_set][2] * g[2];
-            new_cartdir[1] =  x->x_set_matx[winner_set][3] * g[0] 
-                + x->x_set_matx[winner_set][4] * g[1] 
-                + x->x_set_matx[winner_set][5] * g[2];
-            if (dim == 3) {
-                new_cartdir[2] =  x->x_set_matx[winner_set][6] * g[0] 
-                    + x->x_set_matx[winner_set][7] * g[1]
-                    + x->x_set_matx[winner_set][8] * g[2];
-            } else new_cartdir[2] = 0;
-            cart_to_angle(new_cartdir,new_angle_dir);
-            x->x_azi = (new_angle_dir[0]);
-            x->x_ele = (new_angle_dir[1]);
+    if(gains_clamped) {
+        float * setmtx = &x->x_set_matx[winner_set][0];
+        if (dim == 3) {
+            new_cartdir[0] = setmtx[0] * g[0] + setmtx[1] * g[1] + setmtx[2] * g[2];
+            new_cartdir[1] = setmtx[3] * g[0] + setmtx[4] * g[1] + setmtx[5] * g[2];
+            new_cartdir[2] = setmtx[6] * g[0] + setmtx[7] * g[1] + setmtx[8] * g[2];
+        } else {
+            new_cartdir[0] = setmtx[0] * g[0] + setmtx[1] * g[1];
+            new_cartdir[1] = setmtx[2] * g[0] + setmtx[3] * g[1];
+            new_cartdir[2] = 0.f;
         }
-
-		power=sqrt(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
-		g[0] /= power;
-		g[1] /= power;
-		g[2] /= power;
+        
+        cart_to_angle(new_cartdir, new_angle_dir);
+        x->x_azi = (new_angle_dir[0]);
+        x->x_ele = (new_angle_dir[1]);
+    }
+    
+    power = sqrt(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
+    g[0] /= power;
+    g[1] /= power;
+    g[2] /= power;
 }
 
 
@@ -508,7 +505,7 @@ static inline void VBAP_calc_gain_factors(VBAP * unit)
 	// only recalculate gain factors if inputs have changed
 	if((azimuth != unit->x_azi) || (elevation != unit->x_ele) || (spread != unit->x_spread)){
 
-		float g[3];
+		float g[3]; // note only 2 slots used in 2D case
 		int ls[3];
 		int i;
 
@@ -680,9 +677,9 @@ static void VBAP_Ctor(VBAP* unit)
     
     // TODO: why are these a fixed size of 3 x 3? are 2D sets treated as 3D?
     for(i=0; i<numSets; i++){
-        unit->x_set_inv_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
-        unit->x_set_matx[i] = (float*)RTAlloc(unit->mWorld, 9 * sizeof(float));
-        unit->x_lsset[i] = (int*)RTAlloc(unit->mWorld, 3 * sizeof(int));
+        unit->x_set_inv_matx[i] = (float*)RTAlloc(unit->mWorld, (dim * dim) * sizeof(float));
+        unit->x_set_matx[i] = (float*)RTAlloc(unit->mWorld, (dim * dim) * sizeof(float));
+        unit->x_lsset[i] = (int*)RTAlloc(unit->mWorld, dim * sizeof(int));
     }
     
     /* Read data from loudspeaker data buffer into vars */
@@ -723,11 +720,11 @@ static void VBAP_Dtor(VBAP* unit)
 {
     
     if (unit->x_lsset_available > 0) { // only free if initialization occured
-        int counter = unit->x_num_lssets;
+        int numsets = unit->x_num_lssets;
         RTFree(unit->mWorld, unit->final_gs);
         RTFree(unit->mWorld, unit->m_chanamp);
         
-        for(int i=0; i<counter; i++){
+        for(int i=0; i<numsets; i++){
             RTFree(unit->mWorld, unit->x_set_inv_matx[i]);
             RTFree(unit->mWorld, unit->x_set_matx[i]);
             RTFree(unit->mWorld, unit->x_lsset[i]);
