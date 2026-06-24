@@ -105,6 +105,7 @@ set(PLUGIN_DIRS
     SLUGens
     SummerUGens
     TagSystemUGens
+    VAfxUGens
     VBAPUGens
     VOSIMUGens
 )
