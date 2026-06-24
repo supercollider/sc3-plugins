@@ -1,47 +1,31 @@
 /************************************************************************
-    IMPORTANT NOTE : this file contains two clearly delimited sections :
-    the ARCHITECTURE section (in two parts) and the USER section. Each section
-    is governed by its own copyright and license. Please check individually
-    each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
-/******************************************************************************
-*******************************************************************************
-
-								FAUST DSP
-
-*******************************************************************************
-*******************************************************************************/
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
 
 #ifndef __dsp__
 #define __dsp__
+
+#include <string>
+#include <vector>
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
@@ -49,6 +33,19 @@
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -68,31 +65,34 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
     
-        /** Global init, calls the following methods:
-         * - static class 'classInit': static table initialisation
-         * - 'instanceInit': constants and instance table initialisation
+        /**
+         * Global init, calls the following methods:
+         * - static class 'classInit': static tables initialization
+         * - 'instanceInit': constants and instance state initialization
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void init(int samplingRate) = 0;
-    
-        /** Init instance state
+
+        /**
+         * Init instance state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
-    
-        /** Init instance constant state
+
+        /**
+         * Init instance constant state
          *
          * @param samplingRate - the sampling rate in Hertz
          */
@@ -103,8 +103,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
-    
-        /**  
+ 
+        /**
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -112,16 +112,16 @@ class dsp {
         virtual dsp* clone() = 0;
     
         /**
-         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value metadata).
+         * Trigger the Meta* parameter with instance specific calls to 'declare' (key, value) metadata.
          *
          * @param m - the Meta* meta user
          */
         virtual void metadata(Meta* m) = 0;
     
         /**
-         * DSP instance computation, to be called with sucessive in/out audio buffers.
+         * DSP instance computation, to be called with successive in/out audio buffers.
          *
-         * @param count - the nomber of frames to compute
+         * @param count - the number of frames to compute
          * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
@@ -132,12 +132,12 @@ class dsp {
          * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
-         * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param count - the number of frames to compute
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (either float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (either float, double or quad)
          *
          */
-        virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
+        virtual void compute(double /*date_usec*/, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
        
 };
 
@@ -166,11 +166,38 @@ class decorator_dsp : public dsp {
         virtual void instanceResetUserInterface() { fDSP->instanceResetUserInterface(); }
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
-        virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        virtual void metadata(Meta* m) { fDSP->metadata(m); }
         // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-       
+    
+};
+
+/**
+ * DSP factory class.
+ */
+
+class dsp_factory {
+    
+    protected:
+    
+        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
+        virtual ~dsp_factory() {}
+    
+    public:
+    
+        virtual std::string getName() = 0;
+        virtual std::string getSHAKey() = 0;
+        virtual std::string getDSPCode() = 0;
+        virtual std::string getCompileOptions() = 0;
+        virtual std::vector<std::string> getLibraryList() = 0;
+        virtual std::vector<std::string> getIncludePathnames() = 0;
+    
+        virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
+    
 };
 
 /**
