@@ -99,6 +99,12 @@ general add controls for the resulting signal
 METHOD::freqtotone
 converts a frequency value to something appropriate for the strong::tonea::, strong::toneb:: and strong::tonec:: inputs.
 
+ARGUMENT::freq
+the frequency value in Hertz.
+
+ARGUMENT::sampleRate
+sample rate for the frequency conversion. default is strong::Server.default.sampleRate::.
+
 EXAMPLES::
 
 CODE::
