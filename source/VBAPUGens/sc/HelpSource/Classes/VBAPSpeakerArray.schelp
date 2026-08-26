@@ -11,26 +11,31 @@ VBAP was created by Ville Pulkki. For more information on VBAP see http://www.ac
 This version of VBAP for SC was ported from the PD code by Scott Wilson, as part of the BEASTMulch project. Development was partially funded by the Arts and Humanities Research Council: http://www.ahrc.ac.uk
 
 classmethods::
+
 method:: new
 Create a new VBAPSpeakerArray.
 argument:: dim
 Number of dimensions in the array, either 2 (ring or partial ring), or 3 (partial or full dome or sphere).
 argument:: directions
-An link::Classes/Array:: containing speaker locations in degrees. If dim is 2 this will be an array of azimuth angles, if dim is 3 this will be an array of arrays of [azimuth, elevation] angle pairs.
+An link::Classes/Array:: containing speaker locations in degrees. If strong::dim:: is code::2::, this will be an array of azimuth angles. If strong::dim:: is code::3:: this will be an array of arrays of code::[azimuth, elevation]:: angle pairs.
 
-Angles are given in degrees, with azimuth +/- 180 degrees from the median plane (i.e. straight ahead), and elevation +/- 90 degrees from the azimuth plane.
+Angles are given in degrees, with azimuth +/- 180 degrees from the median plane (i.e. straight ahead), and elevation +/- 90 degrees from the horizontal plane.
 
 The order of the speakers corresponds to the order of the outputs when using a VBAP UGen.
+
+warning::
+Gaps of more than 180 degrees are not supported. If you pan a signal into such a gap, the behavior is undefined.
+::
+
 discussion::
 2D and 3D examples
 code::
-VBAPSpeakerArray.new(2, [ -30, 30, 0, -110, 110 ]); // 5.1 array
+// 2D: a 5.1 loudspeaker array
+VBAPSpeakerArray.new(2, [ -30, 30, 0, -110, 110 ]);
 
-VBAPSpeakerArray.new(3, [[-22.5, 14.97], [22.5, 14.97], [-67.5, 14.97], [67.5, 14.97], [-112.5, 14.97], [112.5, 14.97], [-157.5, 14.97], [157.5, 14.97], [-45, 0], [45, 0], [-90, 0], [90, 0], [-135, 0], [135, 0], [0, 0], [180, 0]]); // zig zag partial dome
+// 3D: a zig zag partial dome
+VBAPSpeakerArray.new(3, [[-22.5, 14.97], [22.5, 14.97], [-67.5, 14.97], [67.5, 14.97], [-112.5, 14.97], [112.5, 14.97], [-157.5, 14.97], [157.5, 14.97], [-45, 0], [45, 0], [-90, 0], [90, 0], [-135, 0], [135, 0], [0, 0], [180, 0]]);
 ::
-
-method:: maxNumSpeakers
-Set/get the maximum number of speakers in an array. Default is 55. (This limitation will be removed in a later version.)
 
 instancemethods::
 
@@ -44,18 +49,23 @@ method:: speakers
 Returns an link::Classes/Array:: containing instances of link::Classes/VBAPSpeaker::.
 
 method:: getSetsAndMatrices
-Sort the speaker array into loudspeaker pairs or triplets and return this data in a form appropriate for loading into a buffer. Once loaded this data can be used by a link::Classes/VBAP:: UGen.
-discussion::
+Calculate the loudspeaker panning pairs (2D) or triplets (3D) and their associated forward and inverse matrices which are used by a link::Classes/VBAP:: UGen.
+
+If you don't need to inspect this data, and just want to use the link::Classes/VBAP:: UGen, you can call link::#-loadToBuffer::.
+
 code::
-a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); // 8 channel ring
-b = Buffer.loadCollection(s, a.getSetsAndMatrices);
+// 8 channel ring
+a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]);
+~lsBufferData = a.getSetsAndMatrices;
+b = Buffer.loadCollection(s, ~lsBufferData);
 ::
 
 method:: loadToBuffer
-A shortcut for calling getSetsAndMatrices and loading into a Buffer. Returns a link::Classes/Buffer:: object.
-discussion::
+Load the loudspeaker panning data into a buffer to be used by the link::Classes/VBAP:: UGen. Calls link::#-getSetsAndMatrices:: internally.
+
 code::
-a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]); // 8 channel ring
+// 8 channel ring
+a = VBAPSpeakerArray.new(2, [0, 45, 90, 135, 180, -135, -90, -45]);
 b = a.loadToBuffer;
 ::
 

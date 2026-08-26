@@ -164,7 +164,7 @@ VBAPSpeakerArray {
 
 	  /* remove triangles which had crossing sides
 	     with smaller triangles or include loudspeakers*/
-		//"triplet_amount before stripping: %\n".postf(sets.size);
+		//"numTriplets before stripping: %\n".postf(sets.size);
 		sets = sets.reject({|set|
 			i1 = set.chanOffsets[0];
 			j1 = set.chanOffsets[1];
@@ -172,7 +172,7 @@ VBAPSpeakerArray {
 			(connections[i1][j1] == 0) || (connections[i1][k1] == 0) || (connections[j1][k1] == 0)
 				|| this.any_ls_inside_triplet(i1,j1,k1);
 		});
-		//"triplet_amount after stripping: %\n".postf(sets.size);
+		//"numTriplets after stripping: %\n".postf(sets.size);
 	}
 
 	lines_intersect { |i, j, k, l|
@@ -320,21 +320,31 @@ VBAPSpeakerArray {
 		var invdet;
 		var lp1, lp2, lp3;
 		var invmx;
-		var triplet_amount = 0, pointer,list_length=0;
-		var result;
+		var numTriplets, pointer, data_length;
+		var mat;
+		var dim;
 
 		if(sets.isNil, {
 			postln("define-loudspeakers: Not valid 3-D configuration");
 			^nil;
 		});
 
-		triplet_amount = sets.size;
-		//"triplet_amount: %\n".postf(triplet_amount);
-		list_length = triplet_amount * 21 + 2;
-		result = FloatArray.newClear(list_length);
+		// Returned FLoatArray data structure:
+		//  "header":
+		//     layout dimentions: 2 or 3 (1)
+		//     number of loudspeakers (1)
+		//  triplet data (x numTriplets):
+		//     channel indices of the triplet (3)
+		//     inverse matrix for gain solving (3 x 3, flattened to 9)
+		//     cartesian coords of each loudspeaker in the triplet (xyz x 3, flattened to 9)
+		// So buffer size is 1 + 1 + (numTriplets * (3 + 9 + 9));
+		dim = 3; // 3D, loudspeaker sets are triplets
+		numTriplets = sets.size; // number of triplets
+		data_length = 2 + (numTriplets * (dim + (dim * dim) + (dim * dim)));
+		mat = FloatArray.newClear(data_length);
 
-		result[0] = dim;
-		result[1] = numSpeakers;
+		mat[0] = dim;
+		mat[1] = numSpeakers;
 		pointer=2;
 
 		sets.do({|set|
@@ -364,25 +374,30 @@ VBAPSpeakerArray {
 			invmx[8] = ((lp1.x * lp2.y) - (lp1.y * lp2.x)) * invdet;
 			set.inv_mx = invmx;
 			3.do({|i|
-				result[pointer] = set.chanOffsets[i] + 1;
+				mat[pointer] = set.chanOffsets[i] + 1;
 				pointer = pointer + 1;
 			});
 			9.do({|i|
-				result[pointer] = invmx[i];
+				mat[pointer] = invmx[i];
 				pointer = pointer + 1;
 			});
-			result[pointer] = lp1.x; pointer = pointer + 1;
-			result[pointer] = lp2.x; pointer = pointer + 1;
-			result[pointer] = lp3.x; pointer = pointer + 1;
-			result[pointer] = lp1.y; pointer = pointer + 1;
-			result[pointer] = lp2.y; pointer = pointer + 1;
-			result[pointer] = lp3.y; pointer = pointer + 1;
-			result[pointer] = lp1.z; pointer = pointer + 1;
-			result[pointer] = lp2.z; pointer = pointer + 1;
-			result[pointer] = lp3.z; pointer = pointer + 1;
+
+			/* directional cosines: angle -> cartesian coords */
+			/* mat = [ x1, x2, x3,
+		               y1, y2, y3
+                       z1, z2, z3 ] */
+			mat[pointer] = lp1.x; pointer = pointer + 1;
+			mat[pointer] = lp2.x; pointer = pointer + 1;
+			mat[pointer] = lp3.x; pointer = pointer + 1;
+			mat[pointer] = lp1.y; pointer = pointer + 1;
+			mat[pointer] = lp2.y; pointer = pointer + 1;
+			mat[pointer] = lp3.y; pointer = pointer + 1;
+			mat[pointer] = lp1.z; pointer = pointer + 1;
+			mat[pointer] = lp2.z; pointer = pointer + 1;
+			mat[pointer] = lp3.z; pointer = pointer + 1;
 
 		});
-		^result;
+		^mat;
 	}
 
 	choose_ls_tuplets {
@@ -391,10 +406,10 @@ VBAPSpeakerArray {
 		var atorad = (2 * pi / 360);
 		var sorted_lss;
 		var exist;
-		var amount=0;
+		var numPairs = 0; // number of loudspeaker pairs
 		var inv_mat;
 		var mat;
-		var list_length;
+		var data_length;
 		var result;
 		var pointer;
 
@@ -416,7 +431,7 @@ VBAPSpeakerArray {
 				if(this.calc_2D_inv_tmatrix(speakers[sorted_lss[i]].azi,
 					speakers[sorted_lss[i+1]].azi, inv_mat[i], mat[i]),{
 					exist[i]=1;
-					amount = amount + 1;
+					numPairs = numPairs + 1;
 				});
 			});
 		});
@@ -427,13 +442,22 @@ VBAPSpeakerArray {
                            speakers[sorted_lss[0]].azi,
 				inv_mat[numSpeakers-1], mat[numSpeakers-1]), {
 				exist[numSpeakers-1]=1;
-				amount = amount + 1;
+				numPairs = numPairs + 1;
 			});
 		});
 
 		/* Output */
-		list_length= amount * 10 + 2;
-		result = Array.newClear(list_length);
+		// data structure:
+		//  header:
+		//     layout dimention: 2 (1)
+		//     number of loudspeakers (1)
+		//  pair data (x numPairs):
+		//     channel indices of the pair (2)
+		//     inverse matrix for gain solving (2 x 2, flattened to 4)
+		//     forward matrix for inversion (2 x 2, flattened to 4)
+		// So buffer size is 1 + 1 + (numPairs * (2 + 4 + 4));
+		data_length = 2 + (numPairs * (dim + (dim * dim) + (dim * dim)));
+		result = Array.newClear(data_length);
 
 		result[0] = dim;
 		result[1] = numSpeakers;
@@ -516,15 +540,21 @@ VBAPSpeakerArray {
 	calc_2D_inv_tmatrix { |azi1, azi2, inv_mat, mat|
 	/* calculate inverse 2x2 matrix */
 
-		var x1,x2,x3,x4;
+		var x1, x2, y1, y2;
 		var det;
-		var rad2ang = 360.0 / ( 2  * pi );
+		azi1 = azi1.degrad;
+		azi2 = azi2.degrad;
 
-		mat[0] = x1 = cos(azi1 / rad2ang);
-		mat[1] = x2 = sin(azi1 / rad2ang);
-		mat[2] = x3 = cos(azi2 / rad2ang);
-		mat[3] = x4 = sin(azi2 / rad2ang);
-		det = (x1 * x4) - ( x3 * x2 );
+		/* directional cosines: angle -> cartesian coords */
+        /*   mat = [ x1, x2,
+		             y1, y2 ] */
+		mat[0] = x1 = cos(azi1);
+		mat[1] = x2 = cos(azi2);
+		mat[2] = y1 = sin(azi1);
+		mat[3] = y2 = sin(azi2);
+
+		det = (x1 * y2) - ( x2 * y1 );
+
 		if(abs(det) <= 0.001, {
 			inv_mat[0] = 0.0;
 			inv_mat[1] = 0.0;
@@ -532,10 +562,10 @@ VBAPSpeakerArray {
 			inv_mat[3] = 0.0;
 			^false;
 		}, {
-			inv_mat[0] =   (x4 / det);
-			inv_mat[1] =  (x3.neg / det);
-			inv_mat[2] =   (x2.neg / det);
-			inv_mat[3] =    (x1 / det);
+			inv_mat[0] = y2 / det;
+			inv_mat[1] = x2.neg / det;
+			inv_mat[2] = y1.neg / det;
+			inv_mat[3] = x1 / det;
 			^true;
 		})
 	}
