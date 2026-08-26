@@ -69,7 +69,7 @@ cmake --build . --config Release
 cmake --build . --config Release --target install
 ```
 
-If no `SC_PATH` is provided the build system assumes the SuperCollider include files are in `/usr/include/SuperCollider/`.
+If no `SC_PATH` is provided, the build system will find the SuperCollider include files in `/usr/include/SuperCollider/`, or the SuperCollider source tree in a directory adjecent to sc3-plugins source, i.e. `../../supercollider` from the build directory.
 
 On macOS, the plugins will end up in `sc3-plugins/build/SC3plugins`.
 Copy the `SC3plugins` folder to your Extensions folder (evaluate `Platform.userExtensionDir` in SuperCollider to find it).
