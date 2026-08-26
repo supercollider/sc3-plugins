@@ -116,7 +116,7 @@ LPCAnalyzer.ar(input,source, 64,MouseX.kr(1,64), windowtype:1)
 
 //////////////////////////////////////
 
-//residual test assumes windowtype 0)
+//residual test assumes windowtype 0:
 (
 {
 var input,source;
