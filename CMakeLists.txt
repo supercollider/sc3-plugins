@@ -1,6 +1,18 @@
 cmake_minimum_required (VERSION 3.12)
-set(SUPERNOVA_CMAKE_MINVERSION 3.1)
-project (sc3-plugins)
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
+                      ${CMAKE_MODULE_PATH})
+
+find_package(SuperCollider3)
+if (NOT SC_FOUND)
+	message(SEND_ERROR "cannot find SuperCollider3 headers. Set the variable SC_PATH.")
+else()
+	message(STATUS "Using SC source located at ${SC_PATH}")
+endif()
+
+include("${SC_PATH}/SCVersion.txt")
+project (sc3-plugins VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR}.${SC_VERSION_PATCH})
+message(STATUS "Building plugins for SuperCollider version: ${SC_VERSION}")
 
 set(NOVA_SIMD_MISSING_ERROR "The nova-simd source code is missing in \
 ${CMAKE_CURRENT_SOURCE_DIR}/external_libraries/nova-simd.\n This probably \
@@ -22,9 +34,6 @@ if (NOT SYSTEM_STK)
   endif()
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
-                      ${CMAKE_MODULE_PATH})
-
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
@@ -32,13 +41,6 @@ configure_file(
 
 add_custom_target(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
-
-find_package(SuperCollider3)
-if (NOT SC_FOUND)
-	message(SEND_ERROR "cannot find SuperCollider3 headers. Set the variable SC_PATH.")
-else()
-	message(STATUS "Using SC source located at ${SC_PATH}")
-endif()
 
 set(NOVA_TT_MISSING_ERROR "The nova-tt source code is missing in \
 ${SC_PATH}/external_libraries/nova-tt.\n Make sure to point to a valid version \
@@ -53,15 +55,7 @@ if (NOVA_DISK_IO)
   endif()
 endif()
 
-include("${SC_PATH}/SCVersion.txt")
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
-message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
-
-if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT CMAKE_VERSION VERSION_LESS SUPERNOVA_CMAKE_MINVERSION)
-	option(SUPERNOVA "Build plugins for supernova" ON)
-else()
-	option(SUPERNOVA "Build plugins for supernova" OFF)
-endif()
+option(SUPERNOVA "Build plugins for supernova" ON)
 
 option(AY "Build with AY ugens" ON)
 option(LADSPA "Build with Ladspa ugen" ON)
@@ -234,11 +228,6 @@ endif()
 
 #############################################
 # CPack support
-
-set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 if(WIN32)
     set(CPACK_GENERATOR ZIP)
