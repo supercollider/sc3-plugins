@@ -36,9 +36,10 @@ template <typename C> class jsonui;
 class jsonfaustui : public UI, public Meta
 {
 	jsonui<FAUSTFLOAT>* fJSON;
+    
 	public:
 
-				 jsonfaustui(const char *name, const char* address, int port);
+        jsonfaustui(const char *name, const char* address, int port);
 		virtual ~jsonfaustui();
 
 		//--------------------------------------------
@@ -60,6 +61,9 @@ class jsonfaustui : public UI, public Meta
 		// -- passive widgets
 		void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max);
 		void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, float min, float max);
+    
+        // -- soundfiles
+        virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
 
 		// -- metadata declarations
 		void declare(FAUSTFLOAT*, const char*, const char*);
@@ -68,7 +72,7 @@ class jsonfaustui : public UI, public Meta
 		// additionnal methods (not part of UI)
 		//--------------------------------------------
 		void numInput(int n);			// should be called with the inputs number
-		void numOutput(int n);		// should be called with the outputs number
+		void numOutput(int n);          // should be called with the outputs number
 		void declare(const char* , const char*); // global metadata declaration
 
 		//--------------------------------------------

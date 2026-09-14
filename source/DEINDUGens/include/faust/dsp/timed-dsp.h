@@ -1,38 +1,37 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __timed_dsp__
 #define __timed_dsp__
 
-#include "faust/dsp/dsp.h" 
-#include "faust/gui/GUI.h" 
-#include "faust/gui/ring-buffer.h"
-
 #include <set>
 #include <float.h>
 #include <assert.h>
+
+#include "faust/dsp/dsp.h" 
+#include "faust/gui/GUI.h" 
+#include "faust/gui/DecoratorUI.h"
+#include "faust/gui/ring-buffer.h"
 
 namespace {
     
@@ -75,13 +74,13 @@ inline double GetCurrentTimeInUsec(void)
  * ZoneUI : this class collect zones in a set.
  */
 
-struct ZoneUI : public UI
+struct ZoneUI : public GenericUI
 {
     
     std::set<FAUSTFLOAT*> fZoneSet;
     
-    ZoneUI() {};
-    virtual ~ZoneUI() {};
+    ZoneUI():GenericUI() {}
+    virtual ~ZoneUI() {}
     
     void insertZone(FAUSTFLOAT* zone) 
     { 
@@ -89,16 +88,6 @@ struct ZoneUI : public UI
             fZoneSet.insert(zone);
         } 
     }
-    
-    // -- widget's layouts
-    void openTabBox(const char* label)
-    {}
-    void openHorizontalBox(const char* label)
-    {}
-    void openVerticalBox(const char* label)
-    {}
-    void closeBox()
-    {}
     
     // -- active widgets
     void addButton(const char* label, FAUSTFLOAT* zone)
@@ -125,17 +114,13 @@ struct ZoneUI : public UI
     // -- passive widgets
     void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT fmin, FAUSTFLOAT fmax)
     {
-       insertZone(zone);
+        insertZone(zone);
     }
     void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT fmin, FAUSTFLOAT fmax)
     {
         insertZone(zone);
     }
-    
-    // -- metadata declarations
-    void declare(FAUSTFLOAT* zone, const char* key, const char* val)
-    {}
-
+  
 };
 
 /**
@@ -152,21 +137,20 @@ class timed_dsp : public decorator_dsp {
         double fOffsetUsec;     // Compute call offset in usec
         bool fFirstCallback;
         ZoneUI fZoneUI;
-        
+    
+        FAUSTFLOAT** fInputsSlice;
+        FAUSTFLOAT** fOutputsSlice;
+    
         void computeSlice(int offset, int slice, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) 
         {
             if (slice > 0) {
-                FAUSTFLOAT** inputs_slice = (FAUSTFLOAT**)alloca(fDSP->getNumInputs() * sizeof(FAUSTFLOAT*));
                 for (int chan = 0; chan < fDSP->getNumInputs(); chan++) {
-                    inputs_slice[chan] = &(inputs[chan][offset]);
+                    fInputsSlice[chan] = &(inputs[chan][offset]);
                 }
-                
-                FAUSTFLOAT** outputs_slice = (FAUSTFLOAT**)alloca(fDSP->getNumOutputs() * sizeof(FAUSTFLOAT*));
                 for (int chan = 0; chan < fDSP->getNumOutputs(); chan++) {
-                    outputs_slice[chan] = &(outputs[chan][offset]);
+                    fOutputsSlice[chan] = &(outputs[chan][offset]);
                 }
-                
-                fDSP->compute(slice, inputs_slice, outputs_slice);
+                fDSP->compute(slice, fInputsSlice, fOutputsSlice);
             } 
         }
         
@@ -175,7 +159,7 @@ class timed_dsp : public decorator_dsp {
             return std::max<double>(0., (double(getSampleRate()) * (usec - fDateUsec)) / 1000000.);
         }
         
-        ztimedmap::iterator getNextControl(DatedControl& res, bool convert_ts)
+        ztimedmap::iterator getNextControl(DatedControl& res)
         {
             DatedControl date1(DBL_MAX, 0);
             ztimedmap::iterator it1, it2 = GUI::gTimedZoneMap.end();
@@ -195,11 +179,6 @@ class timed_dsp : public decorator_dsp {
                 }
             }
             
-            // If needed, convert date1 in samples from begining of the buffer, possible moving to 0 (if negative)
-            if (convert_ts) {
-                date1.fDate = convertUsecToSample(date1.fDate);
-            }
-                
             res = date1;
             return it2;
         }
@@ -211,7 +190,12 @@ class timed_dsp : public decorator_dsp {
             DatedControl next_control;
              
             // Do audio computation "slice" by "slice"
-            while ((it = getNextControl(next_control, convert_ts)) != GUI::gTimedZoneMap.end()) {
+            while ((it = getNextControl(next_control)) != GUI::gTimedZoneMap.end()) {
+                
+                // If needed, convert next_control in samples from begining of the buffer, possible moving to 0 (if negative)
+                if (convert_ts) {
+                    next_control.fDate = convertUsecToSample(next_control.fDate);
+                }
                      
                 // Compute audio slice
                 slice = int(next_control.fDate) - offset;
@@ -234,9 +218,15 @@ class timed_dsp : public decorator_dsp {
     public:
 
         timed_dsp(dsp* dsp):decorator_dsp(dsp), fDateUsec(0), fOffsetUsec(0), fFirstCallback(true)
-        {}
+        {
+            fInputsSlice = new FAUSTFLOAT*[dsp->getNumInputs()];
+            fOutputsSlice = new FAUSTFLOAT*[dsp->getNumOutputs()];
+        }
         virtual ~timed_dsp() 
-        {}
+        {
+            delete [] fInputsSlice;
+            delete [] fOutputsSlice;
+        }
         
         virtual void init(int samplingRate)
         {
@@ -269,12 +259,13 @@ class timed_dsp : public decorator_dsp {
             } else {
                 // Save the timestamp offset in the first callback
                 if (fFirstCallback) {
-                    fOffsetUsec = ::GetCurrentTimeInUsec() - date_usec;
-                    fDateUsec = date_usec + fOffsetUsec;
                     fFirstCallback = false;
+                    double current_date_usec = ::GetCurrentTimeInUsec();
+                    fDateUsec = current_date_usec;
+                    fOffsetUsec = current_date_usec - date_usec;
                 }
                 
-                // RtMidi mode : timestamp must be converted in frames
+                // RtMidi mode: timestamp must be converted in frames
                 computeAux(count, inputs, outputs, true);
                 
                 // Keep call date 
