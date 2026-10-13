@@ -1,0 +1,38 @@
+TITLE:: StkFlute
+summary:: Synthesis Toolkit Flute
+categories:: UGens>PhysicalModels>StkUGens
+related:: Classes/Stk, Classes/StkInst
+
+CLASSMETHODS::
+
+METHOD:: ar
+ARGUMENT:: freq
+ARGUMENT:: jetDelay
+ARGUMENT:: noisegain
+ARGUMENT:: jetRatio
+ARGUMENT:: mul
+ARGUMENT:: add
+
+
+EXAMPLES::
+code::
+( // Add SynthDef
+SynthDef(\helpStkFlute, {
+    arg freq=440, jetDelay=49, noisegain=0.15, jetRatio=0.32, amp=0.2, gate=1, out=1;
+    
+    var env = EnvGen.kr(Env.asr(0, 1, 0.1), gate, doneAction: 2);
+    var sig = StkFlute.ar(freq, jetDelay: jetDelay, noisegain: noisegain, jetRatio: jetRatio);
+    sig = sig * env * amp;
+    
+    Out.ar(0, sig.dup);
+}).add;
+)
+
+( // Play SynthDef
+Pbind(
+    \instrument, \helpStkFlute,
+    \degree, Pseq((0..7)),
+    \octave, 6
+).play;
+)
+::
