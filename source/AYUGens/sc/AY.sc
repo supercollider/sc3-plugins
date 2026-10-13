@@ -16,9 +16,11 @@ AY : UGen {
 
 	*categories { ^ #["UGens>Oscillators"] }
 
-	*freqtotone { |freq|
-		// Approximate empirical...
-		//^(109300 / (freq - 3.70727))
-		^(110300 / (freq - 0.5))
+	*freqtotone { |freq, sampleRate|
+		var chipTactsPerOutCount;
+		sampleRate = sampleRate ?? { Server.default.sampleRate };
+		// this mirrors ayemu's internal calculation of ChipTacts_per_outcount
+		chipTactsPerOutCount = 1773400.div(sampleRate).div(8);
+		^(sampleRate * chipTactsPerOutCount / (2 * freq)).round
 	}
 }
