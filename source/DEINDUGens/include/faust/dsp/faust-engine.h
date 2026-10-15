@@ -1,19 +1,25 @@
 /************************************************************************
- ************************************************************************
- FAUST Polyphonic Architecture File
- Copyright (C) 2016 GRAME, Centre National de Creation Musicale
+ FAUST Architecture File
+ Copyright (C) 2013 GRAME, Romain Michon, CCRMA - Stanford University
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
  ---------------------------------------------------------------------
-
- This is sample code. This file is provided as an example of minimal
- FAUST architecture file. Redistribution and use in source and binary
- forms, with or without modification, in part or in full are permitted.
- In particular you can create a derived work of this FAUST architecture
- and distribute that work under terms of your choice.
-
- This sample code is distributed in the hope that it will be useful,
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- ************************************************************************
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __faust_engine__
@@ -31,7 +37,7 @@ extern "C" {
     
     bool isRunning(void*);
 
-    long keyOn(void*, int, int);
+    unsigned long keyOn(void*, int, int);
     int keyOff(void*, int);
     
     void propagateMidi(void*, int, double, int, int, int, int);
@@ -47,8 +53,8 @@ extern "C" {
     void setParamIdValue(void*, int, float);
     float getParamIdValue(void*, int);
 
-    void setVoiceParamValue(void*, const char*, long, float);
-    float getVoiceParamValue(void*, const char*, long);
+    void setVoiceParamValue(void*, const char*, unsigned long, float);
+    float getVoiceParamValue(void*, const char*, unsigned long);
 
     const char* getParamAddress(void*, int);
 
