@@ -319,7 +319,7 @@ void DWGBowed_next(DWGBowed *unit, int inNumSamples)
 {
 
 	float *out = OUT(0);
-	float freq = ZIN0(0);
+	float freq = std::max(ZIN0(0),1.0f);
 	float bowvelocity = ZIN0(1);
 	float bowforce = ZIN0(2);
 	float trig = ZIN0(3);
@@ -369,7 +369,7 @@ void DWGBowedTor_next(DWGBowedTor *unit, int inNumSamples)
 {
 
 	float *out = OUT(0);
-	float freq = ZIN0(0);
+	float freq = std::max(ZIN0(0),1.0f);
 	float bowvelocity = ZIN0(1);
 	float bowforce = ZIN0(2);
 	float trig = ZIN0(3);
@@ -451,7 +451,7 @@ void DWGBowedSimple_next(DWGBowedSimple *unit, int inNumSamples)
 {
 
 	float *out = OUT(0);
-	float freq = ZIN0(0);
+	float freq = std::max(ZIN0(0),1.0f);
 	float bowvelocity = ZIN0(1);
 	float bowforce = ZIN0(2);
 	float trig = ZIN0(3);
@@ -494,7 +494,7 @@ void DWGBowedStk_next(DWGBowedStk *unit, int inNumSamples)
 {
 
 	float *out = OUT(0);
-	float freq = ZIN0(0);
+	float freq = std::max(ZIN0(0),1.0f);
 	float bowvelocity = ZIN0(1);
 	float bowforce = ZIN0(2);
 	float trig = ZIN0(3);
