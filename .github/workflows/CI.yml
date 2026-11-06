@@ -47,9 +47,9 @@ jobs:
             cache-path: '~/.cache/ccache'
             
           - name: macOS
-            os: macos-14
+            os: macos-15
             cmake-flags: '-G Xcode -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
-            xcode-version: '15.4'
+            xcode-version: '16.4'
             deployment-target: '10.15'
             cache-path: '~/Library/Caches/ccache'
             
