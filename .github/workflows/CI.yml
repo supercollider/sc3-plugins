@@ -56,24 +56,21 @@ jobs:
           - name: Windows-32bit
             os: windows-2022
             cmake-flags: '-G "Visual Studio 17 2022" -A Win32'
-            vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
-            fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
-            fftw-arch: 'X86'
+            vcpkg-triplet: 'x86-windows-static-md'
             cache-path: '~/AppData/Local/ccache'
+            vcpkg-cache-path: '~/AppData/Local/vcpkg/archives'
             
           - name: Windows-64bit
             os: windows-2022
             cmake-flags: '-G "Visual Studio 17 2022" -A x64'
-            vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
-            fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
-            fftw-arch: 'X64'
+            vcpkg-triplet: 'x64-windows-static-md-release'
             cache-path: '~/AppData/Local/ccache'
+            vcpkg-cache-path: '~/AppData/Local/vcpkg/archives'
 
     env:
       SC_SRC_PATH: ${{ github.workspace }}/supercollider
       BUILD_PATH: ${{ github.workspace }}/build
       INSTALL_PATH: ${{ github.workspace }}/build/install
-      FFTW_INSTALL_DIR: "C:/Program Files/fftw"
       DEVELOPER_DIR: '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
       MACOSX_DEPLOYMENT_TARGET: '${{ matrix.deployment-target }}'
 
@@ -107,6 +104,13 @@ jobs:
         path: ${{ matrix.cache-path }}
         key: ${{ matrix.name }}-${{ github.run_id }}
         restore-keys: ${{ matrix.name }}-
+    - name: cache vcpkg
+      if: matrix.vcpkg-triplet && matrix.vcpkg-cache-path
+      uses: actions/cache@v6
+      with:
+        path: ${{ matrix.vcpkg-cache-path }}
+        key: vcpkg-${{ matrix.name }}-${{ github.run_id }}
+        restore-keys: vcpkg-${{ matrix.name }}-
     - name: install Linux dependencies
       if: runner.os == 'Linux'
       run: sudo apt-get install --yes libfftw3-dev ccache
@@ -119,25 +123,20 @@ jobs:
       run: |
         choco install ccache --no-progress
         echo "`echo c:/ProgramData/chocolatey/lib/ccache/tools/ccache*`" >> $GITHUB_PATH # put the direct path before the path of the choco's "shim" (link substitute)
-    - name: install FFTW
-      if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        mkdir -p "$FFTW_INSTALL_DIR" && cd "$FFTW_INSTALL_DIR"
-        curl -L ${{ matrix.fftw-url }} -o fftw.zip
-        7z x fftw.zip -y
-    - name: create FFTW MSVC library
-      if: matrix.vcvars-script
-      shell: cmd
-      working-directory: ${{ env.FFTW_INSTALL_DIR }}
-      run: |
-        call "${{ matrix.vcvars-script }}"
-        lib.exe /machine:${{ matrix.fftw-arch }} /def:libfftw3f-3.def
+
+        if [[ -n "${{ matrix.vcpkg-triplet }}" ]]; then
+          echo "running vcpkg install fftw3 --triplet=${{ matrix.vcpkg-triplet }}"
+          vcpkg install fftw3 --triplet="${{ matrix.vcpkg-triplet }}"
+        fi
     - name: configure
       shell: bash
       run: |
         mkdir $BUILD_PATH && cd $BUILD_PATH
-        cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF ..
+        set ADDITIONAL_CMAKE_FLAGS=
+        if [[ -n "${{ matrix.vcpkg-triplet }}" ]]; then
+          ADDITIONAL_CMAKE_FLAGS="$ADDITIONAL_CMAKE_FLAGS -D CMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -D VCPKG_TARGET_TRIPLET=${{ matrix.vcpkg-triplet }}"
+        fi
+        cmake ${{ matrix.cmake-flags }} -D SC_PATH=$SC_SRC_PATH -D CMAKE_BUILD_TYPE=Release -D SUPERNOVA=ON -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH -D IN_PLACE_BUILD=OFF $ADDITIONAL_CMAKE_FLAGS ..
     - name: build
       shell: bash
       working-directory: ${{ env.BUILD_PATH }}
