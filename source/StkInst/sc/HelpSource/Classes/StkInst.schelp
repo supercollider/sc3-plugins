@@ -48,7 +48,6 @@ SynthDef(\helpStkbowed,{arg out=0,freq=220,gate=1,amp=1,bowpressure = 64, bowpos
 
 //Use it.
 (
-
 Pbind(
     \instrument, \helpStkbowed,
     \dur , 0.25,
@@ -58,9 +57,20 @@ Pbind(
 ).play;
 )
 
-//now a instrument that uses waveforms///////////////////
+//an instrument that uses waveforms///////////////////
 //first set rawfilepath to let Stk know where to look
-{StkGlobals.ar(1,1,Platform.userExtensionDir ++"/SC3Plugins/StkInst/rawwaves")}.play;
+({
+    var path = [
+        Platform.userExtensionDir ++ "/SC3Plugins/StkInst/rawwaves",
+        Platform.userExtensionDir ++ "/SC3Plugins/StkInst/rawwaves",
+        Platform.systemExtensionDir ++ "/SC3plugins/StkInst/rawwaves",
+        Platform.systemExtensionDir ++ "/SC3plugins/StkInst/rawwaves"
+    ].select({ |possiblePath| File.exists(possiblePath) }).first;
+    
+    if(path.isNil, {Error("audio files not found").throw;});
+
+    StkGlobals.ar(1,1,path)
+}.play;)
 
 //Define mandolin synthdef
 (
@@ -74,7 +84,6 @@ SynthDef(\helpMandolin,{arg out=0,freq=220,gate=1,amp=1;
 
 //Use it.
 (
-
 Pbind(
     \instrument, \helpMandolin,
     \dur , 0.25,

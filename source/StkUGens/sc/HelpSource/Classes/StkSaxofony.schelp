@@ -1,0 +1,47 @@
+TITLE:: StkSaxofony
+summary:: Synthesis Toolkit Saxophony
+categories:: UGens>PhysicalModels>StkUGens
+related:: Classes/Stk, Classes/StkInst
+
+CLASSMETHODS::
+
+METHOD:: ar
+
+ARGUMENT:: freq
+ARGUMENT:: reedstiffness
+ARGUMENT:: reedaperture
+ARGUMENT:: noisegain
+ARGUMENT:: blowposition
+ARGUMENT:: vibratofrequency
+ARGUMENT:: vibratogain
+ARGUMENT:: breathpressure
+ARGUMENT:: trig
+ARGUMENT:: mul
+ARGUMENT:: add
+
+
+EXAMPLES::
+
+code::
+( // Add SynthDef
+SynthDef(\helpStkSaxofony, {
+    arg freq=220, reedstiffness=64, reeddeparture=64, noisegain=20,
+    blowposition=26, vibratofrequency=20, vibratogain=20, breathpressure=128, gate=1, amp=1, out=0;
+    
+    var env = EnvGen.kr(Env.new(times: [0, 0.1]), gate: gate, doneAction: 2);
+    var sig = StkSaxofony.ar(freq, reedstiffness, reeddeparture, noisegain,
+        blowposition, vibratofrequency, vibratogain, breathpressure, trig: gate);
+    
+    sig = sig * env * amp;
+    
+    Out.ar(out, sig.dup);
+}).add;
+)
+
+( // Play SynthDef
+Pbind(
+    \instrument, \helpStkSaxofony,
+    \degree, Pseq([0,2,4,7], 2)
+).play;
+)
+::

@@ -1,0 +1,41 @@
+TITLE:: StkClarinet
+summary:: Synthesis Toolkit Clarinet
+categories:: UGens>PhysicalModels>StkUGens
+related:: Classes/Stk, Classes/StkInst
+
+CLASSMETHODS::
+
+METHOD:: ar
+ARGUMENT:: freq
+ARGUMENT:: reedstiffness
+ARGUMENT:: noisegain
+ARGUMENT:: vibfreq
+ARGUMENT:: vibgain
+ARGUMENT:: breathpressure
+ARGUMENT:: trig
+ARGUMENT:: mul
+ARGUMENT:: add
+
+EXAMPLES::
+
+code::
+( // Add SynthDef
+SynthDef.ar(\helpStkClarinet, {
+    arg freq=440, reedstiffness=64, noisegain=4, vibfreq=64, vibgain=11, breathpressure=64, gate=1, amp=1, out=0;
+    
+    var env = EnvGen.kr(Env.new(times: [0, 0.1]), gate: gate, doneAction: 2);
+    var sig = StkClarinet.ar(freq, reedstiffness, noisegain, vibfreq, vibgain, breathpressure, trig: gate);
+    
+    sig = sig * env * amp;
+    
+    Out.ar(out, sig.dup);
+}).add;
+)
+
+( // Play SynthDef
+Pbind(
+    \instrument, \helpStkClarinet,
+    \degree, Pseq([0,2,4,7], 2)
+).play;
+)
+::
