@@ -14,7 +14,7 @@ Classmethods::
 method::ar
 
 argument::freq
-Sound frequency.
+Sound frequency.(min 1 Hz)
 
 argument::velb
 Bow velocity.
