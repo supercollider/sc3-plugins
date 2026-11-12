@@ -89,6 +89,25 @@ ambisonics) subproject.
 + Build the plugins as quarks
     * (default=OFF)
     * `cmake -DQUARKS=ON ..`
++ Build specific UGens:
+    * `LADSPA`
+        * Run LADSPA plugins inside SuperCollider (macOS and Linux only)
+        * default=ON
+        * `sc3-plugins/build/$ cmake -DLADSPA=ON ..`
+    * `AY`
+        * Emulator of the AY (aka YM) soundchip
+        * default=ON
+        * `sc3-plugins/build/$ cmake -DAY=ON ..`
+    *  `HOA_UGENS`
+        * A suite of Higher-order Ambisonics UGens
+        * default=ON
+        * `sc3-plugins/build/$ cmake -DHOA_UGENS=ON ..`
+    * `NOVA_DISK_IO`
+        * Experimental DiskIO Ugens for supernova
+        * Requires full SuperCollider source code
+        * default=OFF
+        * `sc3-plugins/build/$ cmake -DNOVA_DISK_IO=OFF ..`
+    * All other UGens are built by default
 + Build without supernova plugins
     * (default=ON)
     * `cmake -DSUPERNOVA=OFF ..`
