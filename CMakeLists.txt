@@ -40,19 +40,6 @@ else()
 	message(STATUS "Using SC source located at ${SC_PATH}")
 endif()
 
-set(NOVA_TT_MISSING_ERROR "The nova-tt source code is missing in \
-${SC_PATH}/external_libraries/nova-tt.\n Make sure to point to a valid version \
-of SuperCollider's source code (with the help of the SC_PATH variable).\n It's \
-easiest to use a release tarball of SuperCollider.\n If you use a git clone, \
-make sure you have all submodules by running `git submodule update --init \
---recursive` in the root of SuperCollider's source code repository.")
-
-if (NOVA_DISK_IO)
-  if (NOT EXISTS "${SC_PATH}/external_libraries/nova-tt/CMakeLists.txt")
-    message(FATAL_ERROR "${NOVA_TT_MISSING_ERROR}")
-  endif()
-endif()
-
 include("${SC_PATH}/SCVersion.txt")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}${PROJECT_VERSION_PATCH}")
 message(STATUS "Building plugins for SuperCollider version: ${PROJECT_VERSION}")
