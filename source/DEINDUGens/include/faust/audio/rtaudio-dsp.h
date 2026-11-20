@@ -1,16 +1,6 @@
 /************************************************************************
- 
- IMPORTANT NOTE : this file contains two clearly delimited sections :
- the ARCHITECTURE section (in two parts) and the USER section. Each section
- is governed by its own copyright and license. Please check individually
- each section for license and copyright information.
- *************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
  FAUST Architecture File
- Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
  ---------------------------------------------------------------------
  This Architecture section is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public License
@@ -29,9 +19,6 @@
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
  architecture section is not modified.
- 
- 
- ************************************************************************
  ************************************************************************/
 
 #ifndef __rtaudio_dsp__
@@ -114,7 +101,7 @@ class rtaudio : public audio {
         virtual bool init(const char* name, dsp* DSP)
         {
             if (init(name, DSP->getNumInputs(), DSP->getNumOutputs())) {
-                set_dsp(DSP);
+                setDsp(DSP);
                 return true;
             } else {
                 return false;
@@ -157,7 +144,7 @@ class rtaudio : public audio {
             return true;
         }
         
-        void set_dsp(dsp* DSP)
+        void setDsp(dsp* DSP)
         {
             fDsp = DSP;
             
@@ -191,22 +178,22 @@ class rtaudio : public audio {
             }
         }
         
-        virtual int get_buffer_size() 
+        virtual int getBufferSize() 
         { 
             return fBufferSize; 
         }
         
-        virtual int get_sample_rate() 
+        virtual int getSampleRate()
         { 
             return fSampleRate; 
         }
         
-        virtual int get_num_inputs() 
+        virtual int getNumInputs()
         {
             return fDevNumInChans;
         }
         
-        virtual int get_num_outputs() 
+        virtual int getNumOutputs()
         {
             return fDevNumOutChans;
         }

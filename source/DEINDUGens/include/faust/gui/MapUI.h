@@ -1,35 +1,28 @@
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef FAUST_MAPUI_H
 #define FAUST_MAPUI_H
-
-#ifndef FAUSTFLOAT
-#define FAUSTFLOAT float
-#endif
 
 #include <vector>
 #include <map>
@@ -115,6 +108,9 @@ class MapUI : public UI, public PathBuilder
             fPathZoneMap[buildPath(label)] = zone;
             fLabelZoneMap[label] = zone;
         }
+    
+        // -- soundfiles
+        virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
         
         // -- metadata declarations
         void declare(FAUSTFLOAT* zone, const char* key, const char* val)
@@ -144,7 +140,7 @@ class MapUI : public UI, public PathBuilder
         // map access 
         std::map<std::string, FAUSTFLOAT*>& getMap() { return fPathZoneMap; }
         
-        int getParamsCount() { return fPathZoneMap.size(); }
+        int getParamsCount() { return int(fPathZoneMap.size()); }
         
         std::string getParamAddress(int index)
         { 
@@ -152,6 +148,24 @@ class MapUI : public UI, public PathBuilder
             while (index-- > 0 && it++ != fPathZoneMap.end()) {}
             return (*it).first;
         }
+    
+        std::string getParamAddress(FAUSTFLOAT* zone)
+        {
+            std::map<std::string, FAUSTFLOAT*>::iterator it = fPathZoneMap.begin();
+            do {
+                if ((*it).second == zone) return (*it).first;
+            }
+            while (it++ != fPathZoneMap.end());
+            return "";
+        }
+    
+        static bool endsWith(std::string const& str, std::string const& end)
+        {
+            size_t l1 = str.length();
+            size_t l2 = end.length();
+            return (l1 >= l2) && (0 == str.compare(l1 - l2, l2, end));
+        }
 };
+
 
 #endif // FAUST_MAPUI_H

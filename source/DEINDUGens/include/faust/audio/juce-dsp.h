@@ -1,7 +1,6 @@
 /************************************************************************
  FAUST Architecture File
- Copyright (C) 2017 Allen Weng
- Copyright (C) 2017 GRAME, Centre National de Creation Musicale
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
  ---------------------------------------------------------------------
  This Architecture section is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public License
@@ -20,7 +19,6 @@
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
  architecture section is not modified.
- 
  ************************************************************************/
 
 #ifndef __juce_dsp__
@@ -38,10 +36,10 @@ class juceaudio : public audio, private AudioAppComponent {
         
         dsp* fDSP;
     
-        void prepareToPlay (int, double) override
+        void prepareToPlay(int, double) override
         {
-            const BigInteger activeInputChannels =  deviceManager.getCurrentAudioDevice()->getActiveInputChannels();
-            const BigInteger activeOutputChannels =  deviceManager.getCurrentAudioDevice()->getActiveOutputChannels();
+            const BigInteger activeInputChannels = deviceManager.getCurrentAudioDevice()->getActiveInputChannels();
+            const BigInteger activeOutputChannels = deviceManager.getCurrentAudioDevice()->getActiveOutputChannels();
             const int maxInputChannels = activeInputChannels.getHighestBit() + 1;
             const int maxOutputChannels = activeOutputChannels.getHighestBit() + 1;
             
@@ -56,7 +54,7 @@ class juceaudio : public audio, private AudioAppComponent {
         void releaseResources() override
         {}
         
-        void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
+        void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override
         {
             AVOIDDENORMALS;
             
@@ -100,20 +98,20 @@ class juceaudio : public audio, private AudioAppComponent {
             shutdownAudio();
         }
         
-        int get_buffer_size() override
+        int getBufferSize() override
         {
             return int(deviceManager.getCurrentAudioDevice()->getCurrentBufferSizeSamples());
         }
         
-        int get_sample_rate() override
+        int getSampleRate() override
         {
             return int(deviceManager.getCurrentAudioDevice()->getCurrentSampleRate());
         }
         
-        int get_num_inputs() override { return deviceManager.getCurrentAudioDevice()->getActiveInputChannels().toInteger(); }
-        int get_num_outputs() override { return deviceManager.getCurrentAudioDevice()->getActiveOutputChannels().toInteger(); }
+        int getNumInputs() override { return deviceManager.getCurrentAudioDevice()->getActiveInputChannels().toInteger(); }
+        int getNumOutputs() override { return deviceManager.getCurrentAudioDevice()->getActiveOutputChannels().toInteger(); }
         
-        float get_cpu_load() override { return float(deviceManager.getCpuUsage()); }
+        float getCPULoad() override { return float(deviceManager.getCpuUsage()); }
 };
 
 #endif

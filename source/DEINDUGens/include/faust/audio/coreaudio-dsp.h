@@ -1,36 +1,24 @@
 /************************************************************************
-	IMPORTANT NOTE : this file contains two clearly delimited sections :
-	the ARCHITECTURE section (in two parts) and the USER section. Each section
-	is governed by its own copyright and license. Please check individually
-	each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
 
 #ifndef __coreaudio_dsp__
@@ -79,7 +67,7 @@ static void PrintStreamDesc(AudioStreamBasicDescription *inDesc)
     printf("- - - - - - - - - - - - - - - - - - - -\n");
     printf("  Sample Rate:%f\n", inDesc->mSampleRate);
     printf("  Format ID:%.*s\n", (int)sizeof(inDesc->mFormatID), (char*)&inDesc->mFormatID);
-    printf("  Format Flags:%lX\n", inDesc->mFormatFlags);
+    printf("  Format Flags:%lX\n", (unsigned long)inDesc->mFormatFlags);
     printf("  Bytes per Packet:%ld\n", (long)inDesc->mBytesPerPacket);
     printf("  Frames per Packet:%ld\n", (long)inDesc->mFramesPerPacket);
     printf("  Bytes per Frame:%ld\n", (long)inDesc->mBytesPerFrame);
@@ -235,6 +223,8 @@ class TCoreAudioRenderer
         bool fIsOutJackDevice;
         
         dsp* fDSP;
+    
+        audio* fAudio;
 
         AudioBufferList* fInputData;
         AudioDeviceID fDeviceID;
@@ -734,13 +724,13 @@ class TCoreAudioRenderer
                 if (fAggregatePluginID > 0)   {
                     osErr = AudioObjectGetPropertyDataSize(fAggregatePluginID, &pluginAOPA, 0, NULL, &outDataSize);
                     if (osErr != noErr) {
-                        printf("TCoreAudioRenderer::DestroyAggregateDevice : AudioObjectGetPropertyDataSize error\n");
-                        printError(osErr);
+                        //printf("TCoreAudioRenderer::DestroyAggregateDevice : AudioObjectGetPropertyDataSize error\n");
+                        //printError(osErr);
                     }
                     osErr = AudioObjectGetPropertyData(fAggregatePluginID, &pluginAOPA, 0, NULL, &outDataSize, &fAggregateDeviceID);
                     if (osErr != noErr) {
-                        printf("TCoreAudioRenderer::DestroyAggregateDevice : AudioObjectGetPropertyData error\n");
-                        printError(osErr);
+                        //printf("TCoreAudioRenderer::DestroyAggregateDevice : AudioObjectGetPropertyData error\n");
+                        //printError(osErr);
                     }
                 }
             }
@@ -974,6 +964,7 @@ class TCoreAudioRenderer
                     fOutChannel[i] = (float*)ioData->mBuffers[i].mData;
                 }
                 fDSP->compute(double(AudioConvertHostTimeToNanos(inTimeStamp->mHostTime))/1000., inNumberFrames, fInChannel, fOutChannel);
+                fAudio->runControlCallbacks();
             } else {
                 printf("AudioUnitRender error... %x\n", fInputData);
                 printError(err);
@@ -982,18 +973,20 @@ class TCoreAudioRenderer
         }
         
     public:
-
-        TCoreAudioRenderer()
+    
+        TCoreAudioRenderer(audio* audio)
             :fAggregateDeviceID(-1),fAggregatePluginID(-1),
             fDevNumInChans(0),fDevNumOutChans(0),
             fPhysicalInputs(0), fPhysicalOutputs(0),
             fInChannel(0),fOutChannel(0),
-            fBufferSize(0),fSampleRate(0), 
-            fDSP(0),fInputData(0),
-            fDeviceID(0),fAUHAL(0),
-            fState(false), 
+            fBufferSize(0),fSampleRate(0),
             fIsInJackDevice(false),
-            fIsOutJackDevice(false)
+            fIsOutJackDevice(false),
+            fDSP(0),
+            fAudio(audio),
+            fInputData(0),
+            fDeviceID(0),fAUHAL(0),
+            fState(false)
         {}
 
         virtual ~TCoreAudioRenderer()
@@ -1206,7 +1199,7 @@ class TCoreAudioRenderer
                 //printf("Error calling AudioUnitGetPropertyInfo - kAudioOutputUnitProperty_ChannelMap 1\n");
                 //printError(err);
             } else {
-                fPhysicalInputs = (err == noErr) ? outSize / sizeof(SInt32) : 0;
+                fPhysicalInputs = outSize / sizeof(SInt32);
                 //printf("fPhysicalInputs = %ld\n", fPhysicalInputs);
             }
                     
@@ -1215,7 +1208,7 @@ class TCoreAudioRenderer
                 //printf("Error calling AudioUnitGetPropertyInfo - kAudioOutputUnitProperty_ChannelMap 0\n");
                 //printError(err);
             } else {
-                fPhysicalOutputs = (err == noErr) ? outSize / sizeof(SInt32) : 0;
+                fPhysicalOutputs = outSize / sizeof(SInt32);
                 //printf("fPhysicalOutputs = %ld\n", fPhysicalOutputs);
             }
             
@@ -1447,7 +1440,7 @@ class TCoreAudioRenderer
             }
         }
     
-        void set_dsp(dsp* DSP)
+        void setDsp(dsp* DSP)
         {
             fDSP = DSP;
         }
@@ -1473,8 +1466,8 @@ class coreaudio : public audio {
 
     public:
       
-        coreaudio(int srate, int bsize) : fSampleRate(srate), fBufferSize(bsize) {}
-            coreaudio(int bsize) : fSampleRate(-1), fBufferSize(bsize) {}
+        coreaudio(int srate, int bsize) : fAudioDevice(this), fSampleRate(srate), fBufferSize(bsize) {}
+        coreaudio(int bsize) : fAudioDevice(this), fSampleRate(-1), fBufferSize(bsize) {}
         virtual ~coreaudio() { fAudioDevice.Close(); }
 
         virtual bool init(const char* /*name*/, dsp* DSP) 
@@ -1483,7 +1476,7 @@ class coreaudio : public audio {
                 printf("Cannot open CoreAudio device\n");
                 return false;
             }
-            fAudioDevice.set_dsp(DSP);
+            fAudioDevice.setDsp(DSP);
             // If -1 was given, fSampleRate will be changed by OpenDefault
             DSP->init(fSampleRate);
             return true;
@@ -1503,11 +1496,11 @@ class coreaudio : public audio {
             fAudioDevice.Stop();
         }
         
-        virtual int get_buffer_size() { return fAudioDevice.GetBufferSize(); }
-        virtual int get_sample_rate() { return fAudioDevice.GetSampleRate(); }
+        virtual int getBufferSize() { return fAudioDevice.GetBufferSize(); }
+        virtual int getSampleRate() { return fAudioDevice.GetSampleRate(); }
         
-        virtual int get_num_inputs() { return fAudioDevice.GetNumInputs(); }
-        virtual int get_num_outputs() { return fAudioDevice.GetNumOutputs(); }
+        virtual int getNumInputs() { return fAudioDevice.GetNumInputs(); }
+        virtual int getNumOutputs() { return fAudioDevice.GetNumOutputs(); }
 
 };
 
