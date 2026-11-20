@@ -87,7 +87,7 @@ struct WinGrainI
 
 const int kMaxGrains = 64;
 
-const int kMaxSynthGrains = 512;
+const int kMaxSynthGrains = 2048;
 
 struct MonoGrain : public Unit
 {
