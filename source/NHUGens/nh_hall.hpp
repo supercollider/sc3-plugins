@@ -162,6 +162,7 @@ occasionally.
 #include <memory> // std::unique_ptr
 #include <array> // std::array
 #include <cmath> // cosf/sinf
+#include <cstdint> // uint16_t / uint32_t
 
 namespace nh_ugens {
 

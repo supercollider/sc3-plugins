@@ -103,7 +103,7 @@ s.sync;
 }.play;
 
 ~updater = Task{loop{
-	~foundbus.getn(3, {|data| ~nearests = data.asInt});
+	~foundbus.getn(3, {|data| ~nearests = data.asInteger});
 	~mousebus.getn(2, {|data| ~mousepos = data});
 	s.sync;
 	defer{w.refresh};

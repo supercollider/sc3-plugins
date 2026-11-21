@@ -26,6 +26,7 @@ on:
       - 'index.*'
       - '_config.yml'
       - 'Gemfile*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -35,30 +36,38 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Linux-x64
-            os: ubuntu-20.04
-            cmake-flags: '-G "Unix Makefiles" -D RULE_LAUNCH_COMPILE=ccache'
-            cache-path: '~/.ccache'
+          - name: Linux-x64-22.04
+            os: ubuntu-22.04
+            cmake-flags: '-G "Unix Makefiles"'
+            cache-path: '~/.cache/ccache'
+
+          - name: Linux-x64-24.04
+            os: ubuntu-24.04
+            cmake-flags: '-G "Unix Makefiles"'
+            cache-path: '~/.cache/ccache'
             
           - name: macOS
-            os: macos-11
+            os: macos-15
             cmake-flags: '-G Xcode -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
-            xcode-version: '12.4'
-            deployment-target: '10.10'
+            xcode-version: '16.4'
+            deployment-target: '10.15'
+            cache-path: '~/Library/Caches/ccache'
             
           - name: Windows-32bit
-            os: windows-2019
-            cmake-flags: '-G "Visual Studio 16 2019" -A Win32'
-            vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
+            os: windows-2022
+            cmake-flags: '-G "Visual Studio 17 2022" -A Win32'
+            vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars32.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip'
             fftw-arch: 'X86'
+            cache-path: '~/AppData/Local/ccache'
             
           - name: Windows-64bit
-            os: windows-2019
-            cmake-flags: '-G "Visual Studio 16 2019" -A x64'
-            vcvars-script: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
+            os: windows-2022
+            cmake-flags: '-G "Visual Studio 17 2022" -A x64'
+            vcvars-script: 'C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat'
             fftw-url: 'ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip'
             fftw-arch: 'X64'
+            cache-path: '~/AppData/Local/ccache'
 
     env:
       SC_SRC_PATH: ${{ github.workspace }}/supercollider
@@ -80,19 +89,19 @@ jobs:
         else
           VERSION=$GITHUB_SHA
         fi
-        echo "::set-output name=filename::sc3-plugins-$VERSION-${{ matrix.name }}"
+        echo "filename=sc3-plugins-$VERSION-${{ matrix.name }}" >> $GITHUB_OUTPUT
     - name: checkout sc3-plugins
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
       with:
         submodules: recursive
     - name: checkout supercollider
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
       with:
         repository: supercollider/supercollider
         path: ${{ env.SC_SRC_PATH }}
         ref: main
     - name: cache ccache
-      uses: actions/cache@v2
+      uses: actions/cache@v6
       if: matrix.cache-path
       with:
         path: ${{ matrix.cache-path }}
@@ -100,7 +109,16 @@ jobs:
         restore-keys: ${{ matrix.name }}-
     - name: install Linux dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get install --yes libfftw3-dev
+      run: sudo apt-get install --yes libfftw3-dev ccache
+    - name: install macOS dependencies
+      if: runner.os == 'macOS'
+      run: brew install ccache
+    - name: install Windows dependencies
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        choco install ccache --no-progress
+        echo "`echo c:/ProgramData/chocolatey/lib/ccache/tools/ccache*`" >> $GITHUB_PATH # put the direct path before the path of the choco's "shim" (link substitute)
     - name: install FFTW
       if: runner.os == 'Windows'
       shell: bash
@@ -137,7 +155,7 @@ jobs:
           zip -r ${{ steps.set-filename.outputs.filename }}.zip .
         fi
     - name: upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ steps.set-filename.outputs.filename }}
         path: ${{ env.INSTALL_PATH }}/${{ steps.set-filename.outputs.filename }}.zip
