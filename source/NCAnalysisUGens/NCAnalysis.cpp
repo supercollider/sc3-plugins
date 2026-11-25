@@ -36,8 +36,6 @@ PluginLoad(NCAnalysis)
 
 	init_SCComplex(inTable);
 
-	//scfft_global_init();
-
 	loadSMS(inTable);
 	loadTPV(inTable);
 	loadWaveletDaub(inTable);
