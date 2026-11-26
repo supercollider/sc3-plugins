@@ -62,8 +62,7 @@ replace `/path/to/sc/` with the path to the SuperCollider source directory. That
 ```shell
 cd sc3-plugins
 mkdir build && cd build
-# for both scsynth and supernova plugins; set -DSUPERNOVA=OFF to build only scsynth plugins
-cmake -DSC_PATH=/path/to/sc/ -DCMAKE_BUILD_TYPE=Release -DSUPERNOVA=ON ..
+cmake -DSC_PATH=/path/to/sc/ -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . --config Release
 # to install the plugins - note: linux users likely need sudo
 cmake --build . --config Release --target install
@@ -75,8 +74,6 @@ On macOS, the plugins will end up in `sc3-plugins/build/SC3plugins`.
 Copy the `SC3plugins` folder to your Extensions folder (evaluate `Platform.userExtensionDir` in SuperCollider to find it).
 
 NOTE: on macOS, if you want to install into `CMAKE_INSTALL_PREFIX`, you have to specify it by disabling the `IN_PLACE_BUILD` cmake option which defaults to ON (see below).
-
-**Note for SuperCollider < 3.9.1** The Supernova server on macOS and Windows incorrectly searches for plugins in the `/Extensions/plugins` directory. The scsynth server correctly searches for plugins in `/Extensions`. If Supernova is unable to find the sc3-plugins, make sure that they are located in `/Extensions/plugins`.
 
 See the README in `source/HOAUGens` for information on compiling the HOAUGens (higher-order
 ambisonics) subproject.
@@ -92,9 +89,9 @@ ambisonics) subproject.
 + Build the plugins as quarks
     * (default=OFF)
     * `cmake -DQUARKS=ON ..`
-+ Build supernova-plugins
-    * (default=OFF)
-    * `cmake -DSUPERNOVA=ON ..`
++ Build without supernova plugins
+    * (default=ON)
+    * `cmake -DSUPERNOVA=OFF ..`
 + Build Ladspa UGen
     * (macOS AND LINUX ONLY, default=ON)
     * `sc3-plugins/build/$ cmake -DLADSPA=ON ..`
