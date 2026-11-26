@@ -3,7 +3,6 @@
 #---------
 
 if (SUPERNOVA)
-    include_directories(${SC_PATH}/external_libraries/nova-tt)
     # actually just boost.atomic
     include_directories(${SC_PATH}/external_libraries/boost)
 endif()
