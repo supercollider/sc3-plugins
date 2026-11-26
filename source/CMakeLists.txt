@@ -317,14 +317,7 @@ endif()
 
 # NCAnalysisUGens
 file(GLOB NCAnalysisSources NCAnalysisUGens/*cpp)
-if(APPLE)
-    set (NCAnalysisLibs "-framework Accelerate")
-else()
-    set (NCAnalysisLibs ${FFTW3F_LIBRARY})
-endif()
-
-BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources}"
-             ${NCAnalysisLibs} "NCAnalysisUGens")
+BUILD_PLUGIN(NCAnalysisUGens "${NCAnalysisSources}" "" "NCAnalysisUGens")
 
 # AYUGens
 if (AY)
