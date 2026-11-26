@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 3.12)
 set(PROJECT "StkInst")
 project (${PROJECT})
 
+set(PLUGIN_DIR ${PROJECT}) # needed for the install path on macOS
+
 if(NOT SYSTEM_STK)
     set(STKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../external_libraries/stk)
 
